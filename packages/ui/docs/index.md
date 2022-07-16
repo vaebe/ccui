@@ -1,10 +1,7 @@
 ---
 layout: home
-title: vue cc ui
-titleTemplate: 看过星辰大海，才明白自己渺小如沙
-
 hero:
-  name: vue cc ui
+  name: vue-cc-ui
   text: 看过星辰大海，才明白自己渺小如沙
   tagline:
   image:
