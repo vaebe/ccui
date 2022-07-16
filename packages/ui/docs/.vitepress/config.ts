@@ -1,2 +1,2 @@
 const config = require('./config/index')
-module.exports = config.default
+export default config.default
