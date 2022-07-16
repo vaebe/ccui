@@ -1,0 +1,39 @@
+{
+  "name": "ccui",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "pnpm dev --filter cc-ui-vue",
+    "lint": "pnpm run lint:script && pnpm run lint:style",
+    "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
+    "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
+    "postinstall": "husky install"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.6.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.6.2",
+    "stylelint": "^13.13.1",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^22.0.0",
+    "stylelint-prettier": "^2.0.0"
+  },
+  "lint-staged": {
+    "packages/**/*.{vue,js,jsx,ts,tsx}": [
+      "npm run lint:script",
+      "git add --force"
+    ],
+    "packages**/*.{css,scss}": [
+      "npm run lint:style",
+      "git add --force"
+    ]
+  },
+  "license": "MIT"
+}
