@@ -14,11 +14,11 @@ export default defineComponent({
 
     return () => (
       <div class={boxClass}>
-        <div class='card-header' v-show={isHeader}>
-          {(slots.header && slots.header()) || props.header /* title 具名插槽 */}
+        <div class='okUi-card-header' v-show={isHeader}>
+          {(slots.header && slots.header()) || props.header}
         </div>
-        <div class='card-body' style={props.bodyStyle}>
-          {slots.default && slots.default() /* 默认插槽 */}
+        <div class='okUi-card-body' style={props.bodyStyle}>
+          {slots.default && slots.default()}
         </div>
       </div>
     );

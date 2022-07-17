@@ -24,9 +24,12 @@ pnpm-debug.log*
 *.sw?
 *.zip
 
-packages/okUiVue/okUi/okUiVue.ts
-packages/okUiVue/okUi/theme/theme.scss
-packages/okUiVue/docs/.vitepress/config/sidebar.ts
-packages/okUiVue/docs/.vitepress/config/enSidebar.ts
-packages/okUiVue/docs/.vitepress/config.ts.js
+packages/ccui/ui/okUiVue.ts
+packages/ccui/ui/theme/theme.scss
+packages/ccui/docs/.vitepress/config/sidebar.ts
+packages/ccui/docs/.vitepress/config/enSidebar.ts
+packages/ccui/docs/.vitepress/config.ts.js
+# test
+packages/ccui/coverage
+packages/ccui/ui/**/__snapshots__
 .pnpm-debug.log
