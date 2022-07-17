@@ -6,6 +6,7 @@
     "dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
+    "register:components": "vitepress-rc",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
