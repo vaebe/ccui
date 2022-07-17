@@ -28,4 +28,5 @@ packages/okUiVue/okUi/okUiVue.ts
 packages/okUiVue/okUi/theme/theme.scss
 packages/okUiVue/docs/.vitepress/config/sidebar.ts
 packages/okUiVue/docs/.vitepress/config/enSidebar.ts
+packages/okUiVue/docs/.vitepress/config.ts.js
 .pnpm-debug.log
