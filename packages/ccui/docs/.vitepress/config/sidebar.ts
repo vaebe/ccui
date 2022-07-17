@@ -4,8 +4,8 @@ export default {
       text: '快速开始',
       items: [
         {
-          text: '快速开始',
-          link: '/'
+          text: '介绍',
+          link: '/introduce'
         }
       ]
     },
