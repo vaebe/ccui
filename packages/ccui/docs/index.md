@@ -10,7 +10,7 @@ hero:
   actions:
   - theme: brand
     text: 开始
-    link: /guide/what-is-vitepress
+    link: /components/card/
 features:
     - icon: 🖖
       title: 沟通

@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/node": "^18.0.5",
     "@vitejs/plugin-vue-jsx": "^2.0.0",
+    "sass": "^1.53.0",
     "vite-svg-loader": "^3.4.0",
     "vitepress": "1.0.0-alpha.4",
     "vitepress-theme-demoblock": "^1.4.2",

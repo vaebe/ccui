@@ -1,0 +1,29 @@
+.okUi-card {
+  overflow: hidden;
+  color: #303133;
+  background: white;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  transition: 0.3s;
+
+  .card-header {
+    box-sizing: border-box;
+    padding: 18px 20px;
+    border-bottom: 1px solid #ebeef5;
+  }
+}
+
+.okUi-card-always-shadow {
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+
+.okUi-card-hover-shadow {
+  &:hover,
+  &:focus {
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  }
+}
+
+.okUi-card-never-shadow {
+  box-shadow: none;
+}
