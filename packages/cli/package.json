@@ -1,0 +1,49 @@
+{
+  "name": "okui-cli",
+  "version": "0.0.0",
+  "description": "okUiCli",
+  "keywords": [
+    "cli"
+  ],
+  "author": "cjz",
+  "license": "MIT",
+  "main": "lib/okUi-cli.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib",
+    "types"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/mucuni/ok-ui.git"
+  },
+  "scripts": {
+    "dev": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --watch",
+    "build": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --minify-whitespace",
+    "cli": "node ./index.js create",
+    "build:lib": "node ./commands/build.js && cp ../okUiVue/package.json build && cp ../okUiVue/README.md build"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.17.9",
+    "@babel/traverse": "^7.17.9",
+    "chalk": "^4.1.2",
+    "esbuild": "^0.13.15",
+    "esbuild-register": "^3.3.2",
+    "lodash": "^4.17.21",
+    "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.2.0",
+    "@vitejs/plugin-vue-jsx": "^1.3.7",
+    "commander": "^9.0.0",
+    "esbuild": "^0.13.15",
+    "fs-extra": "^10.0.1",
+    "inquirer": "^8.2.0",
+    "kolorist": "^1.5.1",
+    "ora": "^5.4.1",
+    "rimraf": "^3.0.2",
+    "vite": "^2.8.0"
+  }
+}
