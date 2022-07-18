@@ -9,13 +9,13 @@ const {
 const fs = require('fs-extra');
 const { resolve } = require('path');
 const {
-  DEVUI_DIR,
+  UI_DIR,
   TESTS_DIR_NAME,
   INDEX_FILE_NAME,
   DOCS_FILE_NAME,
-  VUE_DEVUI_FILE,
-  VUE_DEVUI_IGNORE_DIRS,
-  VUE_DEVUI_FILE_NAME,
+  VUE_UI_FILE,
+  VUE_UI_IGNORE_DIRS,
+  VUE_UI_FILE_NAME,
   CREATE_SUPPORT_TYPES,
   CREATE_UNFINISHED_TYPES,
   CREATE_SUPPORT_TYPE_MAP,
@@ -82,9 +82,9 @@ async function createComponent(params = {}) {
   // 增加文档模板
   const docTemplate = createDocumentTemplate(_params);
 
-  const componentDir = resolve(DEVUI_DIR, componentName);
+  const componentDir = resolve(UI_DIR, componentName);
   const srcDir = resolve(componentDir, 'src');
-  const testsDir = resolve(DEVUI_DIR, componentName, TESTS_DIR_NAME);
+  const testsDir = resolve(UI_DIR, componentName, TESTS_DIR_NAME);
   const docsDir = resolve(SITES_COMPONENTS_DIR, componentName);
 
   if (fs.pathExistsSync(componentDir)) {
@@ -161,7 +161,7 @@ async function createComponent(params = {}) {
 }
 
 async function createVueUi(params, { ignoreParseError, env }) {
-  const fileInfo = resolveDirFilesInfo(DEVUI_DIR, VUE_DEVUI_IGNORE_DIRS).filter(
+  const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS).filter(
     ({ name }) =>
       (env === 'prod' && isReadyToRelease(kebabCase(name))) ||
       !env ||
@@ -182,13 +182,13 @@ async function createVueUi(params, { ignoreParseError, env }) {
 
   const template = createUiTemplate(exportModules);
 
-  const spinner = ora(`开始创建 ${VUE_DEVUI_FILE_NAME} 文件...`).start();
+  const spinner = ora(`开始创建 ${VUE_UI_FILE_NAME} 文件...`).start();
 
   try {
-    await fs.writeFile(VUE_DEVUI_FILE, template, { encoding: 'utf-8' });
+    await fs.writeFile(VUE_UI_FILE, template, { encoding: 'utf-8' });
 
-    spinner.succeed(`${VUE_DEVUI_FILE_NAME} 文件创建成功！`);
-    logger.info(`文件地址：${VUE_DEVUI_FILE}`);
+    spinner.succeed(`${VUE_UI_FILE_NAME} 文件创建成功！`);
+    logger.info(`文件地址：${VUE_UI_FILE}`);
   } catch (e) {
     spinner.fail(e.toString());
     process.exit(1);
@@ -206,7 +206,7 @@ async function createVitepressSidebar() {
       location: VITEPRESS_SIDEBAR_FILE_EN
     }
   };
-  const fileInfo = resolveDirFilesInfo(DEVUI_DIR, VUE_DEVUI_IGNORE_DIRS);
+  const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS);
   const componentsInfo = [];
   fileInfo.forEach((f) => {
     const info = parseComponentInfo(f.dirname);

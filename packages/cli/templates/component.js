@@ -1,4 +1,4 @@
-const { DEVUI_NAMESPACE, CSS_CLASS_PREFIX } = require('../shared/constant');
+const { UI_NAMESPACE, CSS_CLASS_PREFIX } = require('../shared/constant');
 const { camelCase } = require('lodash');
 const { bigCamelCase } = require('../shared/utils');
 
@@ -15,7 +15,7 @@ import { ${camelCase(componentName)}Props, ${bigCamelCase(
 import './${styleName}.scss'
 
 export default defineComponent({
-  name: '${bigCamelCase(DEVUI_NAMESPACE)}${bigCamelCase(componentName)}',
+  name: '${bigCamelCase(UI_NAMESPACE)}${bigCamelCase(componentName)}',
   props: ${camelCase(componentName)}Props,
   emits: [],
   setup(props: ${bigCamelCase(componentName)}Props, ctx) {

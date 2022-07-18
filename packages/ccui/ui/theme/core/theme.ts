@@ -32,7 +32,7 @@ class Theme {
       return;
     }
 
-    const id = 'devui-theme-variable';
+    const id = 'ccui-theme-variable';
     const themeVariable = `:root { ${stringify(theme)} }`;
     let styleElement = document.getElementById(id);
     if (styleElement) {

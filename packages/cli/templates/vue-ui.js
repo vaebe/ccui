@@ -2,7 +2,7 @@ const { relative } = require('path');
 const {
   INDEX_FILE_NAME,
   VERSION,
-  VUE_DEVUI_FILE
+  VUE_UI_FILE
 } = require('../shared/constant');
 
 exports.createUiTemplate = (exportModules = []) => {
@@ -12,7 +12,7 @@ exports.createUiTemplate = (exportModules = []) => {
 
   exportModules.forEach((m) => {
     const { fileInfo } = m;
-    const relativePath = relative(VUE_DEVUI_FILE, fileInfo.path)
+    const relativePath = relative(VUE_UI_FILE, fileInfo.path)
       .replace(/\\/g, '/')
       .replace('..', '.')
       .replace('/' + INDEX_FILE_NAME, '');

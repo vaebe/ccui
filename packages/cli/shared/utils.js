@@ -1,7 +1,7 @@
 const { camelCase, upperFirst } = require('lodash');
 const {
   INDEX_FILE_NAME,
-  DEVUI_DIR,
+  UI_DIR,
   WHITE_LIST_READY_COMPONENTS
 } = require('./constant');
 const { resolve } = require('path');
@@ -96,10 +96,9 @@ const parseComponentInfo = (name) => {
     name: this.bigCamelCase(name)
   };
   let hasExportDefault = false;
-  const indexContent = fs.readFileSync(
-    resolve(DEVUI_DIR, name, INDEX_FILE_NAME),
-    { encoding: 'utf-8' }
-  );
+  const indexContent = fs.readFileSync(resolve(UI_DIR, name, INDEX_FILE_NAME), {
+    encoding: 'utf-8'
+  });
 
   const ast = babelParser.parse(indexContent, {
     sourceType: 'module',
