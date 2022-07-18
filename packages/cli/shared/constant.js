@@ -5,7 +5,7 @@ exports.VERSION = version;
 exports.isProd = process.env.NODE_ENV === 'production';
 exports.CWD = process.cwd();
 exports.UI_DIR = resolve(this.CWD, '../ccui/ui');
-exports.UI_NAMESPACE = 'C';
+exports.UI_NAMESPACE = 'c';
 exports.CSS_CLASS_PREFIX = 'ccui';
 exports.TESTS_DIR_NAME = 'test';
 exports.INDEX_FILE_NAME = 'index.ts';
