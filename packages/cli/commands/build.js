@@ -7,7 +7,7 @@ const vueJsx = require('@vitejs/plugin-vue-jsx');
 const nuxtBuild = require('./build-nuxt-auto-import');
 const { isReadyToRelease } = require('../shared/utils');
 
-const entryDir = path.resolve(__dirname, '../../ccui');
+const entryDir = path.resolve(__dirname, '../../ccui/ui');
 const outputDir = path.resolve(__dirname, '../../build');
 
 const baseConfig = defineConfig({
