@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vitepress dev docs",
+    "predev": "node ../cli/index.js create -t ccui --ignore-parse-error && node ../cli/index.js generate:theme",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
     "register:components": "vitepress-rc",

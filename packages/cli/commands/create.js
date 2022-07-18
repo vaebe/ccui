@@ -256,8 +256,6 @@ exports.create = async (cwd) => {
     type = result.type;
   }
 
-  console.log(type, 'ppps', CREATE_UNFINISHED_TYPES);
-
   if (CREATE_UNFINISHED_TYPES.includes(type)) {
     logger.info('抱歉，该功能暂未完成！');
     process.exit(0);
