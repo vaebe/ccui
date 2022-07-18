@@ -4,7 +4,7 @@ import './card.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KCard',
+  name: 'CCard',
   props: cardProps,
   setup(props: CardProps, { slots }) {
     const ns = useNamespace('card');
