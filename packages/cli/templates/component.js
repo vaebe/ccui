@@ -214,9 +214,9 @@ export default defineComponent({
 
 :::
 
-### k-${componentName}
+### ${UI_NAMESPACE}-${componentName}
 
-k-${componentName} 参数
+${UI_NAMESPACE}-${componentName} 参数
 
 | 参数 | 类型 | 默认 | 说明 |
 | ---- | ---- | ---- | ---- |
@@ -224,7 +224,7 @@ k-${componentName} 参数
 |      |      |      |      |
 |      |      |      |      |
 
-k-${componentName} 事件
+${UI_NAMESPACE}-${componentName} 事件
 
 | 事件 | 类型 | 说明 |
 | ---- | ---- | ---- |
@@ -232,7 +232,7 @@ k-${componentName} 事件
 |      |      |      |
 |      |      |      |
 
-k-${componentName} 插槽
+${UI_NAMESPACE}-${componentName} 插槽
 
 | 插槽名 | 说明 |
 | ---- | ---- |
