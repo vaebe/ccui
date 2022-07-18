@@ -20,11 +20,16 @@
     "url": "https://gitee.com/mucuni/ok-ui.git"
   },
   "scripts": {
-    "dev": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --watch",
-    "build": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --minify-whitespace",
-    "cli": "node ./index.js create",
+    "build": "pnpm generate:theme && node --max-old-space-size=4096 node_modules/vitepress/bin/vitepress.js build docs && cp public/* docs/.vitepress/dist/assets && cp docs/assets/* docs/.vitepress/dist/assets",
+    "build:lib": "pnpm predev -- -e prod && pnpm build:components && pnpm changelog && pnpm release",
+    "build:components": "node ./index.js build",
     "generate:theme": "node ./index.js generate:theme",
-    "build:lib": "node ./commands/build.js && cp ../ccui/package.json build && cp ../ccui/README.md build"
+    "generate:dts": "node ./index.js generate:dts",
+    "release": "node ./index.js release",
+    "cli": "node ./index.js",
+    "cli:create": "node ./index.js create -t component",
+    "prebuild": "node ./index.js create -t vue-devui --ignore-parse-error",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
     "@babel/parser": "^7.17.9",

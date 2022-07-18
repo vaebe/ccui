@@ -279,7 +279,7 @@ exports.create = async (cwd) => {
         await createComponent(params, cwd);
         break;
       case CREATE_SUPPORT_TYPE_MAP['ccui']:
-        // 创建 ccui/ccui.ts
+        // 创建 ui.ts
         await createVueUi(params, cwd);
         // 创建 docs/.vitepress/config/sidebar.ts enSidebar.ts
         await createVitepressSidebar();

@@ -16,7 +16,7 @@ exports.generateTheme = async () => {
   );
   try {
     await fs.outputFile(outputFilePath, fileStr, 'utf-8');
-    logger.success(`生成主题文件成功!, ${outputFilePath}`);
+    logger.success(`生成主题文件成功, ${outputFilePath}!`);
   } catch (err) {
     logger.success('生成主题文件失败！');
   }
