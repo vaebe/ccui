@@ -1,4 +1,4 @@
-.okUi-card {
+.ccui-card {
   overflow: hidden;
   color: #303133;
   background: white;
@@ -6,24 +6,24 @@
   border-radius: 4px;
   transition: 0.3s;
 
-  &-header {
+  &--header {
     box-sizing: border-box;
     padding: 18px 20px;
     border-bottom: 1px solid #ebeef5;
   }
 }
 
-.okUi-card-always-shadow {
+.ccui-card--always-shadow {
   box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
 }
 
-.okUi-card-hover-shadow {
+.ccui-card--hover-shadow {
   &:hover,
   &:focus {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   }
 }
 
-.okUi-card-never-shadow {
+.ccui-card--never-shadow {
   box-shadow: none;
 }
