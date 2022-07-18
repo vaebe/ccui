@@ -159,7 +159,10 @@ exports.createTestsTemplate = ({
   hasDirective,
   hasService
 }) => `\
-import { mount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import { expect, test, it } from 'vitest';
+import { useNamespace } from '../../shared/hooks/use-namespace';
+
 import { ${[
   hasComponent ? bigCamelCase(componentName) : null,
   hasDirective ? bigCamelCase(directiveName) : null,
@@ -168,11 +171,15 @@ import { ${[
   .filter((p) => p !== null)
   .join(', ')} } from '../index';
 
-describe('${componentName} test', () => {
-  it('${componentName} init render', async () => {
-    // todo
-  })
-})
+test('${componentName} test', () => {
+  const wrapper = shallowMount(${bigCamelCase(componentName)}, {
+    props: {}
+  });
+
+  it('${componentName} demo has created successfully', async () => {
+    expect(wrapper).toBeTruthy();
+  });
+});
 `;
 
 // 创建文档模板

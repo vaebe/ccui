@@ -59,7 +59,7 @@ async function createComponent(params = {}) {
   const typesName = kebabCase(name) + '-types';
   const directiveName = kebabCase(name) + '-directive';
   const serviceName = kebabCase(name) + '-service';
-  const testName = kebabCase(name) + '.spec';
+  const testName = kebabCase(name) + '.test.ts';
 
   const _params = {
     ...params,
@@ -105,7 +105,7 @@ async function createComponent(params = {}) {
 
     const writeFiles = [
       fs.writeFile(resolve(componentDir, INDEX_FILE_NAME), indexTemplate),
-      fs.writeFile(resolve(testsDir, `${testName}.tsx`), testsTemplate)
+      fs.writeFile(resolve(testsDir, testName), testsTemplate)
     ];
 
     if (!fs.existsSync(docsDir)) {
