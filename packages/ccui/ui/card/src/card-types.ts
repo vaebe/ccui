@@ -1,8 +1,10 @@
-import type { ExtractPropTypes } from 'vue';
+import type { PropType, ExtractPropTypes } from 'vue';
+
+type ShadowType = PropType<'always' | 'hover' | 'never'>;
 
 export const cardProps = {
   shadow: {
-    type: String,
+    type: String as ShadowType,
     default: 'always'
   },
   header: {
