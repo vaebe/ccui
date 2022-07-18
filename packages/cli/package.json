@@ -23,6 +23,7 @@
     "dev": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --watch",
     "build": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --minify-whitespace",
     "cli": "node ./index.js create",
+    "generate:theme": "node ./index.js generate:theme",
     "build:lib": "node ./commands/build.js && cp ../ccui/package.json build && cp ../ccui/README.md build"
   },
   "dependencies": {
