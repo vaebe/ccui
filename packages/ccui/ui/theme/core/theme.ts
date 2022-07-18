@@ -1,4 +1,4 @@
-const inBrowser = typeof window !== 'undefined';
+import { inBrowser } from '../../shared/utils/common-var';
 
 function stringify(theme: any) {
   return Object.entries(theme)
