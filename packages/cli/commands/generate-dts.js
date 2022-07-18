@@ -3,7 +3,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const logger = require('../shared/logger');
 
-const entryDir = path.resolve(__dirname, '../../devui');
+const entryDir = path.resolve(__dirname, '../../ccui');
 const outputDir = path.resolve(__dirname, '../../build');
 
 function generateIndexDts(buildDir) {

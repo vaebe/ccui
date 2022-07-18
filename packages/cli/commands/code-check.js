@@ -10,7 +10,7 @@ const chalkEslint = chalk.hex('#4b32c3');
 
 const chalkUnitTest = chalk.hex('#99425b');
 
-const entryDir = path.resolve(__dirname, '../../okUiVue/okUi');
+const entryDir = path.resolve(__dirname, '../../ccui/ui');
 
 const completeComponents = fs.readdirSync(entryDir).filter((name) => {
   const componentDir = path.resolve(entryDir, name);
@@ -24,7 +24,7 @@ const completeComponents = fs.readdirSync(entryDir).filter((name) => {
 
 const eslintCheckSingle = async (name) => {
   log(chalkEslint(`Start ESLint check ${name}...`));
-  await shell.exec(`eslint --color "./devui/${name}/**/{*.ts,*.tsx}"`);
+  await shell.exec(`eslint --color "./ui/${name}/**/{*.ts,*.tsx}"`);
   log(chalkEslint(`ESLint check ${name} finished!`));
 };
 

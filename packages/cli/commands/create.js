@@ -45,7 +45,7 @@ const {
   createTestsTemplate,
   createDocumentTemplate
 } = require('../templates/component');
-const { createVueOkUiTemplate } = require('../templates/vue-okUi');
+const { createUiTemplate } = require('../templates/vue-ui');
 const ora = require('ora');
 const {
   createVitepressSidebarTemplates
@@ -160,7 +160,7 @@ async function createComponent(params = {}) {
   }
 }
 
-async function createVueDevui(params, { ignoreParseError, env }) {
+async function createVueUi(params, { ignoreParseError, env }) {
   const fileInfo = resolveDirFilesInfo(DEVUI_DIR, VUE_DEVUI_IGNORE_DIRS).filter(
     ({ name }) =>
       (env === 'prod' && isReadyToRelease(kebabCase(name))) ||
@@ -180,7 +180,7 @@ async function createVueDevui(params, { ignoreParseError, env }) {
     exportModules.push(em);
   });
 
-  const template = createVueOkUiTemplate(exportModules);
+  const template = createUiTemplate(exportModules);
 
   const spinner = ora(`开始创建 ${VUE_DEVUI_FILE_NAME} 文件...`).start();
 
@@ -280,9 +280,9 @@ exports.create = async (cwd) => {
 
         await createComponent(params, cwd);
         break;
-      case CREATE_SUPPORT_TYPE_MAP['vue-okUi']:
-        // 创建 devui/vue-devui.ts
-        await createVueDevui(params, cwd);
+      case CREATE_SUPPORT_TYPE_MAP['ccui']:
+        // 创建 ccui/ccui.ts
+        await createVueUi(params, cwd);
         // 创建 docs/.vitepress/config/sidebar.ts enSidebar.ts
         await createVitepressSidebar();
         break;

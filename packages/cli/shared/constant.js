@@ -4,16 +4,16 @@ const { version } = require('../package.json');
 exports.VERSION = version;
 exports.isProd = process.env.NODE_ENV === 'production';
 exports.CWD = process.cwd();
-exports.DEVUI_DIR = resolve(this.CWD, '../okUiVue/okUi');
-exports.DEVUI_NAMESPACE = 'K';
-exports.CSS_CLASS_PREFIX = 'okUi';
-exports.TESTS_DIR_NAME = '__tests__';
+exports.DEVUI_DIR = resolve(this.CWD, '../ccui/ui');
+exports.DEVUI_NAMESPACE = 'C';
+exports.CSS_CLASS_PREFIX = 'ccui';
+exports.TESTS_DIR_NAME = 'test';
 exports.INDEX_FILE_NAME = 'index.ts';
 exports.DOCS_FILE_NAME = 'index.md';
 exports.VUE_DEVUI_IGNORE_DIRS = ['shared', 'style'];
-exports.VUE_DEVUI_FILE_NAME = 'okUiVue.ts';
+exports.VUE_DEVUI_FILE_NAME = 'ccui.ts';
 exports.VUE_DEVUI_FILE = resolve(this.DEVUI_DIR, this.VUE_DEVUI_FILE_NAME);
-exports.SITES_DIR = resolve(this.CWD, '../okUiVue/docs');
+exports.SITES_DIR = resolve(this.CWD, '../ccui/docs');
 exports.SITES_COMPONENTS_DIR_NAME = 'components';
 exports.SITES_COMPONENTS_DIR_NAME_EN = 'en-US/components';
 exports.SITES_COMPONENTS_DIR = resolve(
@@ -73,7 +73,7 @@ exports.COMPONENT_PARTS_MAP = [
 
 exports.CREATE_SUPPORT_TYPE_MAP = Object.freeze({
   component: 'component',
-  'vue-okUi': 'vue-okUi',
+  ccui: 'ccui',
   'theme-variable': 'theme-variable'
 });
 exports.CREATE_SUPPORT_TYPES = Object.keys(this.CREATE_SUPPORT_TYPE_MAP);

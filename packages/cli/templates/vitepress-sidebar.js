@@ -12,8 +12,8 @@ const logger = require('../shared/logger');
 //   return { text, link: `/${SITES_COMPONENTS_DIR_NAME}/${kebabCase(name)}/`, status }
 // }
 
-function buildCategoryOptions(text, children = []) {
-  return { text, children };
+function buildCategoryOptions(text, items = []) {
+  return { text, items };
 }
 
 function generateZhMenus(componentsInfo) {
@@ -73,7 +73,13 @@ exports.createVitepressSidebarTemplates = (componentsInfo = []) => {
   return rootNavs.map((nav) => {
     const rootItem = {
       text: nav.text,
-      link: nav.link
+      link: nav.link,
+      items: [
+        {
+          text: '简介',
+          link: '/introduce'
+        }
+      ]
     };
     const sidebar = [].concat(rootItem, nav.handler(componentsInfo));
     return {

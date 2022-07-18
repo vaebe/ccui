@@ -1,13 +1,13 @@
 {
-  "name": "okui-cli",
+  "name": "ccui-cli",
   "version": "0.0.0",
-  "description": "okUiCli",
+  "description": "ccui-cli",
   "keywords": [
     "cli"
   ],
   "author": "cjz",
   "license": "MIT",
-  "main": "lib/okUi-cli.js",
+  "main": "lib/ccui-cli.js",
   "directories": {
     "lib": "lib"
   },
@@ -23,7 +23,7 @@
     "dev": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --watch",
     "build": "rimraf ./lib && esbuild --bundle ./index.js --format=cjs --platform=node --outfile=./lib/index.js --external:esbuild --minify-whitespace",
     "cli": "node ./index.js create",
-    "build:lib": "node ./commands/build.js && cp ../okUiVue/package.json build && cp ../okUiVue/README.md build"
+    "build:lib": "node ./commands/build.js && cp ../ccui/package.json build && cp ../ccui/README.md build"
   },
   "dependencies": {
     "@babel/parser": "^7.17.9",

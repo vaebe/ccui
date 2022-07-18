@@ -5,7 +5,7 @@ const {
   VUE_DEVUI_FILE
 } = require('../shared/constant');
 
-exports.createVueOkUiTemplate = (exportModules = []) => {
+exports.createUiTemplate = (exportModules = []) => {
   const packages = [];
   const imports = [];
   const installs = [];
