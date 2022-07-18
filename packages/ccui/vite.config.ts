@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 
 // jsx 依赖
 import vueJsx from '@vitejs/plugin-vue-jsx';
