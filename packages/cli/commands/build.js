@@ -16,8 +16,10 @@ const baseConfig = defineConfig({
   plugins: [vue(), vueJsx()]
 });
 
+// 排除vue会抛 Error: Cannot find module 'vue'
 const rollupOptions = {
-  external: ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom'],
+  // external: ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom'],
+  external: ['vue-router', '@vueuse/core', '@floating-ui/dom'],
   output: {
     globals: {
       vue: 'Vue'

@@ -6,19 +6,19 @@ const { CSS_CLASS_PREFIX } = require('../shared/constant');
 const lightTheme = require('../../ccui/ui/theme/themes/light.ts').default;
 const darkTheme = require('../../ccui/ui/theme/themes/dark.ts').default;
 
-const getFileStr = (data) => {
-  return Object.entries(data)
-    .map(
-      ([key, value]) =>
-        `$${CSS_CLASS_PREFIX}-${key}: var(--${CSS_CLASS_PREFIX}-${key}, ${value})`
-    )
-    .join(';\n');
-};
+const lightFileStr = Object.entries(lightTheme)
+  .map(
+    ([key, value]) =>
+      `$${CSS_CLASS_PREFIX}-${key}: var(--${CSS_CLASS_PREFIX}-${key}, ${value})`
+  )
+  .join(';\n');
 
-const lightFileStr = getFileStr(lightTheme);
+let darkCssVariablesStr = Object.entries(darkTheme)
+  .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)
+  .join(';\n');
 
-const darkFileStr = `.dark{
-${getFileStr(darkTheme)}
+darkCssVariablesStr = `.dark{
+${darkCssVariablesStr}
 }`;
 
 exports.generateTheme = async () => {
@@ -33,10 +33,10 @@ exports.generateTheme = async () => {
 
   try {
     await fs.outputFile(lightThemeFilePath, lightFileStr, 'utf-8');
-    logger.success(`生成主题文件成功, ${lightThemeFilePath}!`);
+    logger.success(`生成theme主题文件成功, ${lightThemeFilePath}!`);
 
-    await fs.outputFile(darkThemeFilePath, darkFileStr, 'utf-8');
-    logger.success(`生成主题文件成功, ${darkThemeFilePath}!`);
+    await fs.outputFile(darkThemeFilePath, darkCssVariablesStr, 'utf-8');
+    logger.success(`生成 darkTheme css 主题变量成功, ${darkThemeFilePath}!`);
   } catch (err) {
     logger.success('生成主题文件失败！');
   }

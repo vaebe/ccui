@@ -1,7 +1,6 @@
 {
   "name": "vue3-ccui",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.4",
   "license": "MIT",
   "description": "CcUi components based on Vite and Vue3",
   "keywords": [
