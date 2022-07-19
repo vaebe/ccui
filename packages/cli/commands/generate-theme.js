@@ -20,8 +20,6 @@ const darkFileStr = `.dark{
 ${getFileStr(darkTheme)}
 }`;
 
-console.log(darkFileStr, 'pppp');
-
 exports.generateTheme = async () => {
   const lightThemeFilePath = path.resolve(
     __dirname,
