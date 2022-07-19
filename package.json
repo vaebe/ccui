@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "pnpm --filter cc-ui-vue dev",
+    "dev": "pnpm --filter vue3-ccui dev",
     "lint": "pnpm run lint:script && pnpm run lint:style",
     "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
     "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
