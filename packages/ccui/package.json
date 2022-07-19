@@ -2,6 +2,28 @@
   "name": "vue3-ccui",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
+  "description": "CcUi components based on Vite and Vue3",
+  "keywords": [
+    "frontend",
+    "typescript",
+    "ui-component",
+    "components",
+    "vue-components",
+    "vue",
+    "vue3",
+    "vite",
+    "jsx",
+    "ccui"
+  ],
+  "homepage": "https://vue-devui.github.io/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaebe/ccui.git"
+  },
+  "main": "vue-ccui.umd.js",
+  "module": "vue-ccui.es.js",
+  "style": "style.css",
   "scripts": {
     "dev": "vitepress dev docs",
     "predev": "node ../cli/index.js create -t ccui --ignore-parse-error && node ../cli/index.js generate:theme",

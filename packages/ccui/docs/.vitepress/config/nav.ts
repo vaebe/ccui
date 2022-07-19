@@ -1,5 +1,5 @@
 const nav = [
-  { text: 'code仓库', link: 'https://gitee.com/mucuni/ok-ui' }
+  { text: 'code仓库', link: 'https://github.com/vaebe/ccui.git' }
 ]
 
 export default nav
