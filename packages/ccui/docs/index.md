@@ -2,8 +2,8 @@
 layout: home
 hero:
   name: vue-cc-ui
-  text: 看过星辰大海，才明白自己渺小如沙
-  tagline:
+  text: 一个使用 vue3、tsx 的组件库示例
+  tagline: 看过星辰大海，才明白自己渺小如沙
   image:
     src: /logo.svg
     alt: cc ui
@@ -12,13 +12,15 @@ hero:
     text: 开始
     link: /components/card/
 features:
-    - icon: 🖖
-      title: 沟通
-      details: 不能解决问题的沟通都是无意义的。
-    - icon: ⚡
-      title: 优化
-      details: 要过于设计，也不要过于优化。
-    - icon: 🔑
-      title: 用心
-      details: 代码是最诚实的，他不会欺骗你。
+  - icon: 🛠️
+    title: 丰富的功能
+    details: 内置微脚手架，专注于组件的开发。
+
+  - icon: ⚡️
+    title: 快速
+    details: vite3不只是块。
+ 
+  - icon: 💡
+    title: 技术栈
+    details: vite3、vitepress、vue3、tsx。
 ---
