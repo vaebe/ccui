@@ -1,4 +1,6 @@
-.ccui-card {
+@import "../../style-var/index.scss";
+
+.#{$cls-prefix}-card {
   overflow: hidden;
   color: #303133;
   background: white;
@@ -13,17 +15,17 @@
   }
 }
 
-.ccui-card--always-shadow {
+.#{$cls-prefix}-card--always-shadow {
   box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
 }
 
-.ccui-card--hover-shadow {
+.#{$cls-prefix}-card--hover-shadow {
   &:hover,
   &:focus {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   }
 }
 
-.ccui-card--never-shadow {
+.#{$cls-prefix}-card--never-shadow {
   box-shadow: none;
 }

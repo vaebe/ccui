@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "pnpm generate:theme && node --max-old-space-size=4096 node_modules/vitepress/bin/vitepress.js build docs && cp public/* docs/.vitepress/dist/assets && cp docs/assets/* docs/.vitepress/dist/assets",
-    "build:lib": "pnpm predev -- -e prod && pnpm build:components && pnpm changelog && pnpm release",
+    "build:lib": "pnpm --filter vue3-ccui predev -- -e prod && pnpm build:components && pnpm changelog && pnpm release",
     "build:components": "node ./index.js build",
     "generate:theme": "node ./index.js generate:theme",
     "generate:dts": "node ./index.js generate:dts",
