@@ -1,13 +1,13 @@
-@import "../../style-var/index.scss";
+@import '../../style-var/index.scss';
 
 .#{$cls-prefix}-card {
   overflow: hidden;
   color: #303133;
   background: white;
+  background: $ccui-global-bg;
   border: 1px solid #ebeef5;
   border-radius: 4px;
   transition: 0.3s;
-  background: $ccui-global-bg;
 
   &--header {
     box-sizing: border-box;

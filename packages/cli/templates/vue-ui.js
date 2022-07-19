@@ -1,9 +1,5 @@
 const { relative } = require('path');
-const {
-  INDEX_FILE_NAME,
-  VERSION,
-  VUE_UI_FILE
-} = require('../shared/constant');
+const { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } = require('../shared/constant');
 
 exports.createUiTemplate = (exportModules = []) => {
   const packages = [];
