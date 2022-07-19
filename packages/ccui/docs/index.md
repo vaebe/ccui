@@ -22,5 +22,5 @@ features:
  
   - icon: 💡
     title: 技术栈
-    details: vite3、vitepress、vue3、tsx。
+    details: vite3、vitepress、vitest、vue3、tsx。
 ---
