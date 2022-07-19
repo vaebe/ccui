@@ -31,6 +31,7 @@ packages/ccui/ui/theme/darkTheme.scss
 packages/ccui/docs/.vitepress/config/sidebar.ts
 packages/ccui/docs/.vitepress/config/enSidebar.ts
 packages/ccui/docs/.vitepress/config.ts.js
+**CHANGELOG.md
 # test
 packages/ccui/coverage
 packages/ccui/ui/**/__snapshots__
