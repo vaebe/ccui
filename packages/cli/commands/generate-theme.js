@@ -3,18 +3,19 @@ const path = require('path');
 const fs = require('fs-extra');
 const logger = require('../shared/logger');
 const { CSS_CLASS_PREFIX } = require('../shared/constant');
-const theme = require('../../ccui/ui/theme/themes/light.ts').default;
+const lightTheme = require('../../ccui/ui/theme/themes/light.ts').default;
 const darkTheme = require('../../ccui/ui/theme/themes/dark.ts').default;
 
 const getFileStr = (data) => {
   return Object.entries(data)
     .map(
-      ([key, value]) => `$${CSS_CLASS_PREFIX}-${key}: var(--${key}, ${value})`
+      ([key, value]) =>
+        `$${CSS_CLASS_PREFIX}-${key}: var(--${CSS_CLASS_PREFIX}-${key}, ${value})`
     )
     .join(';\n');
 };
 
-const lightFileStr = getFileStr(theme);
+const lightFileStr = getFileStr(lightTheme);
 
 const darkFileStr = `.dark{
 ${getFileStr(darkTheme)}
