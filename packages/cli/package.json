@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/mucuni/ok-ui.git"
+    "url": "https://github.com/vaebe/ccui.git"
   },
   "scripts": {
     "build": "pnpm generate:theme && node --max-old-space-size=4096 node_modules/vitepress/bin/vitepress.js build docs && cp public/* docs/.vitepress/dist/assets && cp docs/assets/* docs/.vitepress/dist/assets",
