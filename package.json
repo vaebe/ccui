@@ -8,11 +8,13 @@
     "lint": "pnpm run lint:script && pnpm run lint:style",
     "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
     "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "precommit": "lint-staged"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@ls-lint/ls-lint": "^1.11.2",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "commitlint": "^17.0.3",

@@ -6,6 +6,7 @@ importers:
     specifiers:
       '@commitlint/cli': ^17.0.3
       '@commitlint/config-conventional': ^17.0.3
+      '@ls-lint/ls-lint': ^1.11.2
       '@typescript-eslint/eslint-plugin': ^5.19.0
       '@typescript-eslint/parser': ^5.19.0
       commitlint: ^17.0.3
@@ -24,6 +25,7 @@ importers:
     devDependencies:
       '@commitlint/cli': 17.0.3
       '@commitlint/config-conventional': 17.0.3
+      '@ls-lint/ls-lint': 1.11.2
       '@typescript-eslint/eslint-plugin': registry.npmmirror.com/@typescript-eslint/eslint-plugin/5.30.6_37aegrfvhaergwpsqtcxz36fjq
       '@typescript-eslint/parser': registry.npmmirror.com/@typescript-eslint/parser/5.30.6_eslint@7.32.0
       commitlint: 17.0.3
@@ -480,6 +482,13 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
+  /@ls-lint/ls-lint/1.11.2:
+    resolution: {integrity: sha512-kX+CCjgNz+NHCaOcFyJLSBLRgAoyOxN18QFLpgucz5ILvbr60BGjwKaoPYTv/rBV/77L+Oz82lpP24mzJ2wGsQ==}
+    cpu: [x64, arm64]
+    os: [darwin, linux, win32]
+    hasBin: true
     dev: true
 
   /@nodelib/fs.scandir/2.1.5:

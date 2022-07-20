@@ -1,0 +1,19 @@
+ls:
+  /{packages}/*:
+    .dir: kebab-case | regex:__[a-z0-9]+__
+    .scss: kebab-case # 对所有 scss 文件使用 kebab-case 形式
+    .vue: kebab-case
+    .js: kebab-case | pointcase # pointcase 文件和目录名必须满足帕斯卡命名法，且只支持字母和数字，如 ABeautifulName
+    .ts: kebab-case | pointcase
+    .tsx: kebab-case | pointcase
+    .spec.ts: kebab-case
+    .spec.tsx: kebab-case
+    .route.ts: kebab-case
+    .type.ts: kebab-case
+
+ignore:
+  # ccui
+  - packages/ccui/node_modules
+  - packages/ccui/docs
+  - packages/cli/node_modules
+  - packages/build
