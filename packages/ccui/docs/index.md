@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: vue-cc-ui
+  name: vue3-ccui
   text: 一个使用 vue3、tsx 的组件库示例
   tagline: 看过星辰大海，才明白自己渺小如沙
   image:
@@ -10,7 +10,7 @@ hero:
   actions:
   - theme: brand
     text: 开始
-    link: /components/card/
+    link: /introduce
 features:
   - icon: 🛠️
     title: 丰富的功能
@@ -18,7 +18,7 @@ features:
 
   - icon: ⚡️
     title: 快速
-    details: vite3不只是块。
+    details: vite3不只是快。
  
   - icon: 💡
     title: 技术栈
