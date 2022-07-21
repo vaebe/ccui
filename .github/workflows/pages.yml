@@ -25,7 +25,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 6
+          version: 7
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
@@ -36,10 +36,7 @@ jobs:
       - name: Install deps
         run: pnpm i
 
-      - name: run dev
-        run: pnpm dev
-
-      - name: Build site
+      - name: Build docs
         run: pnpm docs:build
 
       - name: Cd docs
