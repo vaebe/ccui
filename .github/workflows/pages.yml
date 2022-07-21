@@ -39,11 +39,17 @@ jobs:
       - name: Build docs
         run: pnpm docs:build
 
-      - name: Cd docs
+      - name: cd docs
         run: cd packages/ccui/docs/.vitepress/dist
 
       - name: git init
         run: git init
+
+      - name: set git user.email
+        run:  git config --global user.email "18137693952@163.com"
+
+      - name: set git user.name
+        run:  git config --global user.name "zcj"
 
       - name: git add
         run: git add -A
