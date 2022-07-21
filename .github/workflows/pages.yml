@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [ 16.x ]
 
     steps:
       - name: Checkout
@@ -35,6 +35,21 @@ jobs:
 
       - name: Install deps
         run: pnpm i
-    
+
       - name: Build site
-        run: pnpm build
+        run: pnpm docs:build
+
+      - name: Cd docs
+        run: cd packages/ccui/docs/.vitepress/dist
+
+      - name: git init
+        run: git init
+
+      - name: git add
+        run: git add -A
+
+      - name: git commit
+        run: git commit -m 'deploy'
+
+      - name: git push
+        run: git push -f https://github.com/vaebe/ccui.git master:gh-pages
