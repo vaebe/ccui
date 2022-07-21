@@ -36,6 +36,9 @@ jobs:
       - name: Install deps
         run: pnpm i
 
+      - name: run dev
+        run: pnpm dev
+
       - name: Build site
         run: pnpm docs:build
 
