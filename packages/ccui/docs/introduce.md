@@ -20,13 +20,26 @@ $ pnpm install vue3-ccui
   <!-- 导入样式 -->
   <link
       rel="stylesheet"
-      href="//cdn.jsdelivr.net/npm/vue3-ccui/dist/index.css"
+      href="https://unpkg.com/vue3-ccui/style.css"
   />
   <!-- 导入 Vue 3 -->
   <script src="//cdn.jsdelivr.net/npm/vue@next"></script>
   <!-- 导入组件库 -->
-  <script src="//cdn.jsdelivr.net/npm/vue3-ccui"></script>
+  <script src="https://unpkg.com/vue3-ccui"></script>
 </head>
+
+<script>
+  const App = {
+    data() {
+      return {
+        message: "Hello vue3-ccui",
+      };
+    },
+  };
+  const app = Vue.createApp(App);
+  app.use(VueCcui.default);
+  app.mount("#app");
+</script>
 ```
 
 ## 快速开始
