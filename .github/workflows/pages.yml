@@ -39,23 +39,12 @@ jobs:
       - name: Build docs
         run: pnpm docs:build
 
-      - name: cd docs
-        run: cd packages/ccui/docs/.vitepress/dist
-
-      - name: git init
-        run: git init
-
-      - name: set git user.email
-        run:  git config --global user.email "18137693952@163.com"
-
-      - name: set git user.name
-        run:  git config --global user.name "zcj"
-
-      - name: git add
-        run: git add -A
-
-      - name: git commit
-        run: git commit -m 'deploy'
-
-      - name: git push
-        run: git push -f https://github.com/vaebe/ccui.git master:gh-pages
+      - name: pr docs
+        run: |
+          git init
+          git config --global user.email "18137693952@163.com"
+          git config --global user.name "zcj"
+          git add -A
+          git commit -m 'deploy'
+          git push -f https://github.com/vaebe/ccui.git master:gh-pages
+        working-directory: ./packages/ccui/docs/.vitepress/dist/
