@@ -2,28 +2,27 @@
 
 .#{$cls-prefix}-card {
   overflow: hidden;
-  color: #303133;
-  background: white;
-  background: $ccui-global-bg;
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
+  color: $ccui-text;
+  background: $ccui-global-bg-normal;
+  border: 1px solid $ccui-line;
+  border-radius: $ccui-border-radius-card;
   transition: 0.3s;
 
   &--header {
     box-sizing: border-box;
     padding: 18px 20px;
-    border-bottom: 1px solid #ebeef5;
+    border-bottom: 1px solid $ccui-dividing-line;
   }
 }
 
 .#{$cls-prefix}-card--always-shadow {
-  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  box-shadow: $ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
 }
 
 .#{$cls-prefix}-card--hover-shadow {
   &:hover,
   &:focus {
-    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    box-shadow:$ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
   }
 }
 
