@@ -8,8 +8,7 @@
     "lint": "pnpm run lint:script && pnpm run lint:style",
     "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
     "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
-    "postinstall": "husky install",
-    "precommit": "lint-staged"
+    "postinstall": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
@@ -34,11 +33,11 @@
   "lint-staged": {
     "packages/**/*.{vue,js,jsx,ts,tsx}": [
       "npm run lint:script",
-      "git add --force"
+      "git add ."
     ],
     "packages**/*.{css,scss}": [
       "npm run lint:style",
-      "git add --force"
+      "git add ."
     ]
   },
   "license": "MIT"
