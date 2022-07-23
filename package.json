@@ -9,8 +9,7 @@
     "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
     "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
     "postinstall": "husky install",
-    "precommit": "lint-staged",
-    "ls-lint": "ls-lint"
+    "precommit": "lint-staged"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
