@@ -1,4 +1,17 @@
+# 简介
 ## 快速开始
+### 安装
+```shell
+# NPM
+$ npm install vue3-ccui --save
+
+# Yarn
+$ yarn add vue3-ccui
+
+# pnpm
+$ pnpm install vue3-ccui
+```
+
 ### 完整引入
 ```ts
 import {createApp} from 'vue'
