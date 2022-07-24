@@ -1,7 +1,7 @@
 {
   "name": "ccui",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.8",
   "scripts": {
     "dev": "pnpm --filter vue3-ccui dev",
     "docs:build": "pnpm --filter vue3-ccui predev -- -e prod && pnpm --filter vue3-ccui docs:build",

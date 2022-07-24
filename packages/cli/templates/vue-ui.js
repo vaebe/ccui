@@ -15,7 +15,7 @@ exports.createUiTemplate = (exportModules = []) => {
 
     const importStr = `import ${m.default}, { ${m.parts.join(
       ', '
-    )} } from '${relativePath}'`;
+    )} } from '${relativePath}';`;
 
     packages.push(...m.parts);
     imports.push(importStr);
@@ -23,23 +23,23 @@ exports.createUiTemplate = (exportModules = []) => {
   });
 
   return `\
-import type { App } from 'vue'
+import type { App } from 'vue';
 
 ${imports.join('\n')}
 
 const installs = [
   ${installs.join(',\n\t')}
-]
+];
 
 export {
   ${packages.join(',\n\t')}
-}
+};
 
 export default {
-  version: '${VERSION}',
+  version: '1.0.8',
   install(app: App): void {
-    installs.forEach((p) => app.use(p as any))
+    installs.forEach((p) => app.use(p));
   }
-}
+};
 `;
 };
