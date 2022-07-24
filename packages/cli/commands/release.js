@@ -45,7 +45,7 @@ exports.release = async ({ version }) => {
   );
   shell.cp(
     '-R',
-    path.resolve(__dirname, '../../ccui/ui/theme/darkTheme.scss'),
+    path.resolve(__dirname, '../../ccui/ui/theme/darkTheme.css'),
     path.resolve(outputDir, 'theme')
   );
   // shell.exec('npm publish');
