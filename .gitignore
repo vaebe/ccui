@@ -27,7 +27,7 @@ pnpm-debug.log*
 
 packages/ccui/ui/vue-ccui.ts
 packages/ccui/ui/theme/theme.scss
-packages/ccui/ui/theme/darkTheme.scss
+packages/ccui/ui/theme/darkTheme.css
 packages/ccui/docs/.vitepress/config/sidebar.ts
 packages/ccui/docs/.vitepress/config/enSidebar.ts
 packages/ccui/docs/.vitepress/config.ts.js

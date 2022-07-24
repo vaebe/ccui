@@ -12,10 +12,17 @@ export default ({ mode }) => {
     description: 'vue3-ccui 组件库',
     lastUpdated: true,
     head: [
+      // 这里的路径没有被自动更改 手动更改路径
       [
         'link',
-          // 这里的路径没有被自动更改 手动更改路径
         { rel: 'icon', type: 'image/svg+xml', href: `${basePath}logo.svg` }
+      ],
+      [
+        'link',
+        {
+          rel: 'stylesheet',
+          href: 'https://unpkg.com/vue3-ccui/theme/darkTheme.css'
+        }
       ]
     ],
     markdown,

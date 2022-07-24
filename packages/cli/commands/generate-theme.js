@@ -26,9 +26,11 @@ exports.generateTheme = async () => {
     __dirname,
     '../../ccui/ui/theme/theme.scss'
   );
+
+  // 生成深色主题css文件
   const darkThemeFilePath = path.resolve(
     __dirname,
-    '../../ccui/ui/theme/darkTheme.scss'
+    '../../ccui/ui/theme/darkTheme.css'
   );
 
   try {
