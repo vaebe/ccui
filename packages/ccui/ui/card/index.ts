@@ -6,9 +6,10 @@ Card.install = function (app: App): void {
   app.component(Card.name, Card);
 };
 
+// 按需
 export { Card };
 
-// 按需
+// 内部统一注册
 export default {
   title: 'Card 卡片',
   category: '数据展示',
