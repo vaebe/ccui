@@ -2,7 +2,7 @@
   "name": "vue3-ccui",
   "version": "1.0.6",
   "license": "MIT",
-  "description": "CcUi components based on Vite and Vue3",
+  "description": "vue3-ccui components based on Vite and Vue3",
   "keywords": [
     "frontend",
     "typescript",
@@ -13,9 +13,9 @@
     "vue3",
     "vite",
     "jsx",
-    "ccui"
+    "vue3-ccui"
   ],
-  "homepage": "https://github.com/vaebe/ccui.git",
+  "homepage": "https://vaebe.github.io/ccui/",
   "repository": {
     "type": "git",
     "url": "https://github.com/vaebe/ccui.git"
