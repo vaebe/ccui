@@ -32,8 +32,7 @@
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "sass": "^1.53.0"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/parser": "^7.17.9",
@@ -51,6 +50,7 @@
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5",
     "vite": "^2.8.0",
-    "conventional-changelog-cli": "^2.2.2"
+    "conventional-changelog-cli": "^2.2.2",
+    "sass": "^1.53.0"
   }
 }
