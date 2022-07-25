@@ -3,7 +3,7 @@ const fsExtra = require('fs-extra');
 const { omit } = require('lodash');
 const shell = require('shelljs');
 
-const outputDir = path.resolve(__dirname, '../../build');
+const outputDir = path.resolve(__dirname, '../../ccui/build');
 
 const packageJson = require('../../ccui/package.json');
 

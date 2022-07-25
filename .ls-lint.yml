@@ -15,6 +15,7 @@ ignore:
   # ccui
   - packages/ccui/node_modules
   - packages/ccui/docs
+  - packages/ccui/build
   - packages/ccui/ui/theme
   - packages/cli/node_modules
   - packages/build

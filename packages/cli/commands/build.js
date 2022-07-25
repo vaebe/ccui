@@ -8,7 +8,7 @@ const nuxtBuild = require('./build-nuxt-auto-import');
 const { isReadyToRelease } = require('../shared/utils');
 
 const entryDir = path.resolve(__dirname, '../../ccui/ui');
-const outputDir = path.resolve(__dirname, '../../build');
+const outputDir = path.resolve(__dirname, '../../ccui/build');
 
 const baseConfig = defineConfig({
   configFile: false,
@@ -16,10 +16,8 @@ const baseConfig = defineConfig({
   plugins: [vue(), vueJsx()]
 });
 
-// 排除vue会抛 Error: Cannot find module 'vue'
 const rollupOptions = {
-  // external: ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom'],
-  external: ['vue-router', '@vueuse/core', '@floating-ui/dom'],
+  external: ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom'],
   output: {
     globals: {
       vue: 'Vue'

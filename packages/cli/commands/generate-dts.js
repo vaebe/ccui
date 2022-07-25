@@ -4,7 +4,7 @@ const fse = require('fs-extra');
 const logger = require('../shared/logger');
 
 const entryDir = path.resolve(__dirname, '../../ccui');
-const outputDir = path.resolve(__dirname, '../../build');
+const outputDir = path.resolve(__dirname, '../../ccui/build');
 
 function generateIndexDts(buildDir) {
   const fileStr = `import { App } from 'vue';

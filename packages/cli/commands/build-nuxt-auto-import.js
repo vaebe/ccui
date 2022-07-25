@@ -1,8 +1,8 @@
 const path = require('path');
 const fsExtra = require('fs-extra');
 
-const outputDir = path.resolve(__dirname, '../../build');
-const outputNuxtDir = path.resolve(__dirname, '../../build/nuxt');
+const outputDir = path.resolve(__dirname, '../../ccui/build');
+const outputNuxtDir = path.resolve(__dirname, '../../ccui/build/nuxt');
 
 exports.createNuxtPlugin = () => {
   const fileStr = `import { join } from 'pathe'

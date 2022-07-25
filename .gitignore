@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-build
 dist
 dist-ssr
 **/lib
@@ -31,6 +30,7 @@ packages/ccui/ui/theme/darkTheme.css
 packages/ccui/docs/.vitepress/config/sidebar.ts
 packages/ccui/docs/.vitepress/config/enSidebar.ts
 packages/ccui/docs/.vitepress/config.ts.js
+packages/ccui/build
 **CHANGELOG.md
 # test
 packages/ccui/coverage
