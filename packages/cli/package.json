@@ -26,7 +26,7 @@
     "generate:theme": "node ./index.js generate:theme",
     "generate:dts": "node ./index.js generate:dts",
     "release": "node ./index.js release",
-    "cli": "node ./index.js",
+    "cli": "node ./index.js create",
     "cli:create": "node ./index.js create -t component",
     "prebuild": "node ./index.js create -t ccui --ignore-parse-error",
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"

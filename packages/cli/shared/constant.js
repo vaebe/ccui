@@ -73,8 +73,7 @@ exports.COMPONENT_PARTS_MAP = [
 
 exports.CREATE_SUPPORT_TYPE_MAP = Object.freeze({
   component: 'component',
-  ccui: 'ccui',
-  'theme-variable': 'theme-variable'
+  ccui: 'ccui'
 });
 exports.CREATE_SUPPORT_TYPES = Object.keys(this.CREATE_SUPPORT_TYPE_MAP);
 exports.CREATE_UNFINISHED_TYPES = [];
