@@ -50,6 +50,12 @@ module.exports = {
         ignoreTypes: ['/^d-/']
       }
     ],
+    'at-rule-no-unknown': [
+      true,
+      {
+        ignoreAtRules: ['mixin', 'include']
+      }
+    ],
     'color-hex-length': 'long',
     'no-descending-specificity': null,
     'font-family-no-missing-generic-family-keyword': null,
