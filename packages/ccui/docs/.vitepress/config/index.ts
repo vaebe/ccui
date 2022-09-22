@@ -29,7 +29,15 @@ export default ({ mode }) => {
     themeConfig: {
       sidebar,
       nav,
-      logo: '/logo.svg'
+      logo: '/logo.svg',
+      socialLinks: [
+        { icon: 'github', link: 'https://github.com/vaebe/ccui.git' }
+      ],
+      outlineTitle: '快速前往',
+      footer: {
+        message: 'Released under the MIT License.',
+        copyright: 'Copyright © 2019-present vaebe'
+      }
     }
   };
 };

@@ -1,5 +1,5 @@
 const nav = [
-  { text: 'code仓库', link: 'https://github.com/vaebe/ccui.git' }
+  { text: '组件', link: '/components/card/' }
 ]
 
 export default nav
