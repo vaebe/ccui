@@ -9,6 +9,7 @@ ls:
     .route.ts: kebab-case
     .type.ts: kebab-case
     .test.ts: kebab-case
+    .spec.ts: kebab-case
     .config.ts: kebab-case
 
 ignore:
