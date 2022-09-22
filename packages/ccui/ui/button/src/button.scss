@@ -1,0 +1,166 @@
+.okUi-button {
+  --primary-color: #7693f5;
+  --success-color: #67c23a;
+  --info-color: #909399;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --primary-light-color: rgb(118 147 245 / 10%);
+  --success-light-color: rgb(103 194 58 / 10%);
+  --info-light-color: rgb(144 147 153 / 10%);
+  --warning-light-color: rgb(230 162 60 / 10%);
+  --danger-light-color: rgb(245 108 108 / 10%);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+  height: 32px;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: #606266;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: #ffffff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  outline: none;
+  transition: 0.1s;
+  appearance: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &-primary,
+  &-success,
+  &-info,
+  &-warning,
+  &-danger {
+    color: #ffffff;
+
+    // 获取焦点、选中
+    &:focus,
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &-primary {
+    background: var(--primary-color);
+  }
+
+  &-success {
+    background: var(--success-color);
+  }
+
+  &-info {
+    background: var(--info-color);
+  }
+
+  &-warning {
+    background: var(--warning-color);
+  }
+
+  &-danger {
+    background: var(--danger-color);
+  }
+
+  &-text {
+    color: #7693f5;
+    border: none;
+  }
+
+  // plain 朴素按钮
+  &-plain-primary,
+  &-plain-success,
+  &-plain-info,
+  &-plain-warning,
+  &-plain-danger {
+    &:focus,
+    &:active {
+      color: #ffffff;
+    }
+  }
+
+  &-plain-primary {
+    color: var(--primary-color);
+    background: var(--primary-light-color);
+
+    &:focus,
+    &:active {
+      background: var(--primary-color);
+    }
+  }
+
+  &-plain-success {
+    color: var(--success-color);
+    background: var(--success-light-color);
+
+    &:focus,
+    &:active {
+      background: var(--success-color);
+    }
+  }
+
+  &-plain-info {
+    color: var(--info-color);
+    background: var(--info-light-color);
+
+    &:focus,
+    &:active {
+      background: var(--info-color);
+    }
+  }
+
+  &-plain-warning {
+    color: var(--warning-color);
+    background: var(--warning-light-color);
+
+    &:focus,
+    &:active {
+      background: var(--warning-color);
+    }
+  }
+
+  &-plain-danger {
+    color: var(--danger-color);
+    background: var(--danger-light-color);
+
+    &:focus,
+    &:active {
+      background: var(--danger-color);
+    }
+  }
+
+  // 大小
+  &-size-large {
+    height: 40px;
+    padding: 12px 19px;
+  }
+
+  &-size-small {
+    height: 24px;
+    padding: 5px 11px;
+    font-size: 12px;
+  }
+
+  // 圆角
+  &-is-round {
+    border-radius: 20px;
+  }
+
+  // 圆形
+  &-is-circle {
+    padding: 8px;
+    border-radius: 50%;
+  }
+}

@@ -22,7 +22,7 @@
 .#{$cls-prefix}-card--hover-shadow {
   &:hover,
   &:focus {
-    box-shadow:$ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
+    box-shadow: $ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
   }
 }
 

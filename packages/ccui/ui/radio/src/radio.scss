@@ -1,0 +1,44 @@
+.okUi-radio {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.5;
+  color: black;
+  cursor: pointer;
+
+  // 隐藏inout元素方便后边自定义
+  &-input {
+    z-index: -1;
+    display: none;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  &-icon {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    overflow: hidden;
+    line-height: 16px;
+    vertical-align: middle;
+    user-select: none;
+  }
+
+  &.active {
+    color: #7693f5;
+    fill: #7693f5;
+  }
+
+  &.disabled {
+    color: gray;
+    cursor: not-allowed;
+    fill: gray;
+  }
+}
