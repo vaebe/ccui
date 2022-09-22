@@ -11,6 +11,7 @@ export default ({ mode }) => {
     title: 'vue3-ccui',
     description: 'vue3-ccui 组件库',
     lastUpdated: true,
+    ignoreDeadLinks: true, // 忽略死链接
     head: [
       // 这里的路径没有被自动更改 手动更改路径
       [
