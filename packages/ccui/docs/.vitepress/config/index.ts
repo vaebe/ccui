@@ -31,6 +31,11 @@ export default ({ mode }) => {
       sidebar,
       nav,
       logo: '/logo.svg',
+      algolia: {
+        appId: '80R2DL2AVI',
+        apiKey: 'c0cdf35477fa2b1fd157433354e69110',
+        indexName: 'vue3-ccui'
+      },
       socialLinks: [
         { icon: 'github', link: 'https://github.com/vaebe/ccui.git' }
       ],
