@@ -7,7 +7,7 @@ export default ({ mode }) => {
 
   return {
     base: basePath,
-    lang: 'en-US',
+    lang: 'en-ZH',
     title: 'vue3-ccui',
     description: 'vue3-ccui 组件库',
     lastUpdated: true,
@@ -32,9 +32,9 @@ export default ({ mode }) => {
       nav,
       logo: '/logo.svg',
       algolia: {
-        appId: '80R2DL2AVI',
-        apiKey: 'c0cdf35477fa2b1fd157433354e69110',
-        indexName: 'vue3-ccui'
+        appId: 'K0NNJA38K6',
+        apiKey: '0b6d20552d2073390d2bbb0a84fb49dd',
+        indexName: 'ccui'
       },
       socialLinks: [
         { icon: 'github', link: 'https://github.com/vaebe/ccui.git' }
