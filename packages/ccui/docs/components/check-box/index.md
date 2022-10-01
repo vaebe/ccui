@@ -19,7 +19,8 @@
   <k-check-box v-model='checked3' :disabled='true'>禁用 check-box</k-check-box>
   <k-check-box v-model='checked4' color='RGB(255, 193, 7)'>改变 icon 的颜色</k-check-box>
 
-  <k-check-box v-model='checked5' @change='checkBoxChange'>checkBoxChange 事件， 关联下方beforeChange的切换状态</k-check-box>
+  <k-check-box v-model='checked5' @change='checkBoxChange'>checkBoxChange 事件， 关联下方beforeChange的切换状态
+  </k-check-box>
   <k-check-box v-model='checked6' :beforeChange='checkBoxBeforeChange'>
     beforeChange 返回 {{checked5}} {{checked5 ? '可以' : '不能'}} 切换状态
   </k-check-box>
@@ -27,7 +28,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -76,9 +77,9 @@ export default defineComponent({
 ```vue
 
 <template>
-  <div style='display: flex;justify-content: space-between'>
-    <div>
-      <p>基础示例</p>
+  <div>
+    <div class="mb10">
+      <h4>基础示例</h4>
       <k-check-box-group v-model='checkedList'>
         <k-check-box label='beijing'>北京</k-check-box>
         <k-check-box label='shanghai'>上海</k-check-box>
@@ -86,8 +87,8 @@ export default defineComponent({
       </k-check-box-group>
     </div>
 
-    <div>
-      <p>禁用</p>
+    <div class="mb10">
+      <h4>禁用</h4>
       <k-check-box-group v-model='checkedList' :disabled='true'>
         <k-check-box label='beijing'>北京</k-check-box>
         <k-check-box label='shanghai'>上海</k-check-box>
@@ -95,8 +96,8 @@ export default defineComponent({
       </k-check-box-group>
     </div>
 
-    <div>
-      <p>横向排列</p>
+    <div class="mb10">
+      <h4>横向排列</h4>
       <k-check-box-group v-model='checkedList' direction='row'>
         <k-check-box label='beijing'>北京</k-check-box>
         <k-check-box label='shanghai'>上海</k-check-box>
@@ -104,8 +105,8 @@ export default defineComponent({
       </k-check-box-group>
     </div>
 
-    <div>
-      <p>checkBoxChange 和 color 颜色</p>
+    <div class="mb10">
+      <h4>checkBoxChange 和 color 颜色</h4>
       <k-check-box-group v-model='checkedList' color='RGB(255, 193, 7)' @change='checkBoxChange'>
         <k-check-box label='beijing'>北京</k-check-box>
         <k-check-box label='shanghai'>上海</k-check-box>
@@ -114,7 +115,7 @@ export default defineComponent({
     </div>
 
     <div>
-      <p>beforeChange (选中上海可以切换) {{canChange ? '可以' : '不可以'}}切换</p>
+      <h4>beforeChange (选中上海可以切换) {{canChange ? '可以' : '不可以'}}切换</h4>
       <k-check-box-group v-model='checkedList' :beforeChange='checkBoxBeforeChange'>
         <k-check-box label='beijing'>北京</k-check-box>
         <k-check-box label='shanghai'>上海</k-check-box>
@@ -125,7 +126,7 @@ export default defineComponent({
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import {defineComponent, ref, computed} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -153,8 +154,10 @@ export default defineComponent({
 })
 </script>
 
-<style>
-
+<style scoped>
+.mb10 {
+  margin-bottom: 10px;
+}
 </style>
 ```
 
