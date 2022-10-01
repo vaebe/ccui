@@ -4,6 +4,8 @@
 
 :root {
     --vp-c-brand: #646cff;
+    /* 版本更新后移除 */
+    --c-brand: var(--vp-c-brand);
     --vp-c-brand-light: #747bff;
     --vp-c-brand-lighter: #9499ff;
     --vp-c-brand-lightest: #bcc0ff;
