@@ -50,8 +50,10 @@ export default defineComponent({
 <template>
   <k-calendar v-model="curDate" @change="curDateChange">
     <template #header="date">
-      当前日期 {{date}}
-      <k-button @click="addADay">加一天</k-button>
+      <div class="customize-header">
+        当前日期 {{date}}
+        <k-button type="primary" plain @click="addADay">加一天</k-button>
+      </div>
     </template>
   </k-calendar>
 </template>
@@ -80,8 +82,10 @@ export default defineComponent({
 })
 </script>
 
-<style>
-
+<style scoped>
+.customize-header {
+  padding: 10px;
+}
 </style>
 ```
 
@@ -140,4 +144,5 @@ export default defineComponent({
 | 插槽名 | 说明 |
 | ---- | -- |
 | header | 自定义日历头部，参数`date`当前日期 |
-| dateCell | 返回 `data: { isSelected, date, day }` 参数 `isSelected` 是否选中,`date` 是格式化的日期格式为 YYYY-MM-DD, `day` 单元格的日期 。 |
+| dateCell | 返回 `data: { isSelected, date, day }` 参数 `isSelected` 是否选中,`date` 是格式化的日期格式为
+YYYY-MM-DD, `day` 单元格的日期 。 |

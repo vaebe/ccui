@@ -117,9 +117,9 @@ export default defineComponent({
         const isSelected = currentDate.value === item.date;
         // 计算 绑定的class
         const className = {
-          'date-item': true,
           'current-month': isCurrentMonth,
-          'current-date': isSelected
+          'current-date': isSelected,
+          [ns.em('day-box', 'day')]: true
         };
 
         const dateCellOpts = {
@@ -143,7 +143,7 @@ export default defineComponent({
 
     // header 周 列表
     const weekItemList = weekList.map((item) => {
-      return <div class='date-item'>{item}</div>;
+      return <div class={ns.em('week', 'item')}>{item}</div>;
     });
 
     const defaultHeader = () => {

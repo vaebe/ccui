@@ -11,16 +11,20 @@
     padding: 5px;
     border: 1px solid $ccui-form-control-line;
     border-bottom: none;
+
+    button {
+      margin-left: 10px;
+    }
   }
 
-  &__day-box,
-  &__week {
+  &__day-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     width: 100%;
 
-    .date-item {
+
+    &--day {
       width: calc(100% / 7);
       height: 85px;
       padding: 8px;
@@ -31,12 +35,12 @@
       border-left: 1px solid $ccui-form-control-line;
     }
 
-    .date-item:nth-of-type(7n) {
+    &--day:nth-of-type(7n) {
       margin-right: 0;
       border-right: 1px solid $ccui-form-control-line;
     }
 
-    .date-item:hover {
+    &--day:hover {
       background: $ccui-list-item-active-hover-bg;
     }
 
@@ -51,14 +55,20 @@
   }
 
   &__week {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
     border: 1px solid $ccui-form-control-line;
-    border-right: none;
 
-
-    .date-item {
+    &--item {
+      padding: 8px;
+      width: calc(100% / 7);
       height: 40px;
       text-align: center;
-      border: none;
+      color: $ccui-text-weak;
+      font-weight: 400;
+      cursor: default;
     }
   }
 }
