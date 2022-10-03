@@ -17,9 +17,9 @@
 <template>
   <div style="display: flex; align-items: center; justify-content: space-between;">
     <k-avatar name="张三"></k-avatar>
-    <k-avatar :width="50" :height="50" name="张三张三张三张三张三大壮"></k-avatar>
-    <k-avatar :width="80" :height="80" name="lihua"></k-avatar>
-    <k-avatar :width="110" :height="110" name="hua li" :isRound="false"></k-avatar>
+    <k-avatar :width="24" :height="24" name="张三张三张三张三张三大壮"></k-avatar>
+    <k-avatar :width="32" :height="32" name="lihua"></k-avatar>
+    <k-avatar :width="40" :height="40" name="hua li" :isRound="false"></k-avatar>
     <k-avatar name="李六" customText="王二"></k-avatar>
     <k-avatar
         name="刘武"
@@ -61,19 +61,33 @@ export default defineComponent({
     1. 多个英文名连用：取传入字符串的前两个英文名首字母
     1. 非中英文开头：取传入字符串的前两个字符
 
-## Avatar 参数
+## Avatar参数
 
-| 参数       | 类型    | 默认  | 说明                                                           |
-| ---------- | ------- | ----- | -------------------------------------------------------------- |
-| name       | string  | -     | 必选，传入字符串用于制作头像 （可以不传 展示默认）             |
-| gender     | string  | -     | 可选，根据性别区分头像颜色，传入 `string。可以是 male、female` |
-| width      | number  | 36    | 可选，设定组件的宽度， 单位为 px                               |
-| height     | number  | 36    | 可选，设定组件的高度，单位为 px                                |
-| isRound    | boolean | true  | 可选，是否显示为圆形                                           |
-| imgSrc     | string  | -     | 可选，传入自定义图片作为头像                                   |
-| customText | string  | -     | 可选，传入自定义显示文字，不做处理                             |
-| fit        | string  | cover | 可以是 `fill、contain、cover、none、scale-down`                |
+| 参数       | 类型                        | 默认  | 说明                                                          |
+| ---------- |---------------------------| ----- | ------------------------------------------------------------- |
+| name       | string                    | -     | 必选，传入字符串用于制作头像 （可以不传 展示默认）            |
+| gender     | [GenderType](#genderType) | -     | 可选，根据性别区分头像颜色|
+| width      | number                    | 36    | 可选，设定组件的宽度， 单位为 px                              |
+| height     | number                    | 36    | 可选，设定组件的高度，单位为 px                               |
+| isRound    | boolean                   | true  | 可选，是否显示为圆形                                          |
+| imgSrc     | string                    | -     | 可选，传入自定义图片作为头像                                  |
+| customText | string                    | -     | 可选，传入自定义显示文字，不做处理                            |
+| fit        | [FitType](#fitType)       | cover | 内容应该如何适应到其使用高度和宽度        |
 
-## Avatar 事件
+## Avatar类型定义
+
+### GenderType
+
+```ts
+export type GenderType = 'male' | 'female' | string;
+```
+
+### FitType
+
+```ts
+export type FitType = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
+```
+
+## Avatar事件
 
 - 无

@@ -1,4 +1,7 @@
-import type { ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
+
+export type FitType = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
+export type GenderType = 'male' | 'female' | string;
 
 export const avatarProps = {
   name: {
@@ -6,7 +9,7 @@ export const avatarProps = {
     default: null
   },
   gender: {
-    type: String as () => 'male' | 'female' | string,
+    type: String as PropType<GenderType>,
     default: null
   },
   width: {
@@ -30,7 +33,7 @@ export const avatarProps = {
     default: null
   },
   fit: {
-    type: String as () => 'fill' | 'contain' | 'cover' | 'none' | 'scale-down',
+    type: String as PropType<FitType>,
     default: 'cover'
   }
 } as const;

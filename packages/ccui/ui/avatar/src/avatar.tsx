@@ -1,16 +1,17 @@
-import { defineComponent, ref, toRefs, watch } from 'vue';
+import { defineComponent, ref, toRefs, watch, computed } from 'vue';
 import { avatarProps, AvatarProps } from './avatar-types';
 import './avatar.scss';
 import useGetDisplayName from './composables/use-get-display-name';
 import useGetBackgroundColor from './composables/use-get-background-color';
 import { IconBody } from './components/icon-body';
 import { IconImgError } from './components/icon-img-error';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KAvatar',
   props: avatarProps,
   emits: [],
-  setup(props: AvatarProps, ctx) {
+  setup(props: AvatarProps) {
     const { name, width, height, customText, gender, imgSrc, isRound, fit } =
       toRefs(props);
 
@@ -72,9 +73,12 @@ export default defineComponent({
       />
     );
 
+    const ns = useNamespace('avatar');
+    const styleNs = ns.e('style');
+
     const imgSrcErrElement = (
       <span
-        class={`okUi-avatar-style`}
+        class={styleNs}
         style={{ borderRadius: isRound.value ? '100%' : '0' }}
       >
         <IconImgError width={width.value} height={height.value} />
@@ -93,9 +97,13 @@ export default defineComponent({
       return null;
     };
 
+    const backgroundNs = computed(() => {
+      return ns.m(`background-${BgColorCode.value}`);
+    });
+
     const nameElement = (
       <span
-        class={`okUi-avatar-style okUi-avatar-background-${BgColorCode.value}`}
+        class={[styleNs, backgroundNs.value]}
         style={{
           height: `${height.value}px`,
           width: `${width.value}px`,
@@ -110,7 +118,7 @@ export default defineComponent({
 
     const noNameElement = (
       <span
-        class={`okUi-avatar-style`}
+        class={styleNs}
         style={{ borderRadius: isRound.value ? '100%' : '0' }}
       >
         <IconBody width={width.value} height={height.value} />
@@ -131,7 +139,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class='okUi-avatar'>
+        <div class={ns.b()}>
           {hasImgElement()}
           {hasNameElement()}
         </div>
