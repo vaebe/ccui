@@ -5,11 +5,12 @@
   background: $ccui-base-bg;
 
   &__header {
-    padding: 5px;
-    border: 1px solid $ccui-form-control-line;
     display: flex;
     align-content: center;
     justify-content: space-between;
+    padding: 5px;
+    border: 1px solid $ccui-form-control-line;
+    border-bottom: none;
   }
 
   &__day-box,
@@ -51,7 +52,7 @@
 
   &__week {
     border: 1px solid $ccui-form-control-line;
-    border-top: none;
+    border-right: none;
 
 
     .date-item {
