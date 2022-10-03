@@ -84,7 +84,7 @@ export default defineComponent({
 </script>
 
 <style>
-.okUi-button {
+.ccui-button {
   margin-right: 10px;
 }
 </style>

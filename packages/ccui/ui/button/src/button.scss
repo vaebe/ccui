@@ -16,19 +16,18 @@
   display: inline-flex;
   align-content: center;
   justify-content: center;
-  height: 32px;
   padding: 8px 15px;
+  height: 32px;
+  color: $ccui-text;
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
-  color: #606266;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
-  background-color: #ffffff;
-  border: 1px solid #dcdfe6;
+  background-color: $ccui-base-bg;
   border-radius: 4px;
   outline: none;
   transition: 0.1s;
@@ -78,7 +77,6 @@
 
   &--text {
     color: #7693f5;
-    border: none;
   }
 
   // plain 朴素按钮
