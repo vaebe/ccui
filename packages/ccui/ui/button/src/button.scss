@@ -1,4 +1,6 @@
-.okUi-button {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-button {
   --primary-color: #7693f5;
   --success-color: #67c23a;
   --info-color: #909399;
@@ -40,11 +42,11 @@
     cursor: not-allowed;
   }
 
-  &-primary,
-  &-success,
-  &-info,
-  &-warning,
-  &-danger {
+  &--primary,
+  &--success,
+  &--info,
+  &--warning,
+  &--danger {
     color: #ffffff;
 
     // 获取焦点、选中
@@ -54,44 +56,44 @@
     }
   }
 
-  &-primary {
+  &--primary {
     background: var(--primary-color);
   }
 
-  &-success {
+  &--success {
     background: var(--success-color);
   }
 
-  &-info {
+  &--info {
     background: var(--info-color);
   }
 
-  &-warning {
+  &--warning {
     background: var(--warning-color);
   }
 
-  &-danger {
+  &--danger {
     background: var(--danger-color);
   }
 
-  &-text {
+  &--text {
     color: #7693f5;
     border: none;
   }
 
   // plain 朴素按钮
-  &-plain-primary,
-  &-plain-success,
-  &-plain-info,
-  &-plain-warning,
-  &-plain-danger {
+  &--plain-primary,
+  &--plain-success,
+  &--plain-info,
+  &--plain-warning,
+  &--plain-danger {
     &:focus,
     &:active {
       color: #ffffff;
     }
   }
 
-  &-plain-primary {
+  &--plain-primary {
     color: var(--primary-color);
     background: var(--primary-light-color);
 
@@ -101,7 +103,7 @@
     }
   }
 
-  &-plain-success {
+  &--plain-success {
     color: var(--success-color);
     background: var(--success-light-color);
 
@@ -111,7 +113,7 @@
     }
   }
 
-  &-plain-info {
+  &--plain-info {
     color: var(--info-color);
     background: var(--info-light-color);
 
@@ -121,7 +123,7 @@
     }
   }
 
-  &-plain-warning {
+  &--plain-warning {
     color: var(--warning-color);
     background: var(--warning-light-color);
 
@@ -131,7 +133,7 @@
     }
   }
 
-  &-plain-danger {
+  &--plain-danger {
     color: var(--danger-color);
     background: var(--danger-light-color);
 
@@ -142,24 +144,24 @@
   }
 
   // 大小
-  &-size-large {
+  &--large {
     height: 40px;
     padding: 12px 19px;
   }
 
-  &-size-small {
+  &--small {
     height: 24px;
     padding: 5px 11px;
     font-size: 12px;
   }
 
   // 圆角
-  &-is-round {
+  &--round {
     border-radius: 20px;
   }
 
   // 圆形
-  &-is-circle {
+  &--circle {
     padding: 8px;
     border-radius: 50%;
   }

@@ -1,14 +1,23 @@
 import type { PropType, ExtractPropTypes } from 'vue';
 
+export type ButtonType =
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'text';
+
+export type ButtonSizeType = 'large' | 'default' | 'small';
+export type ButtonNativeType = 'button' | 'submit' | 'reset';
+
 export const buttonProps = {
   type: {
-    type: String as PropType<
-      'primary' | 'success' | 'warning' | 'danger' | 'info' | 'text'
-    >,
+    type: String as PropType<ButtonType>,
     default: ''
   },
   size: {
-    type: String as PropType<'large' | 'default' | 'small'>,
+    type: String as PropType<ButtonSizeType>,
     default: ''
   },
   disabled: {
@@ -32,7 +41,7 @@ export const buttonProps = {
     default: false
   },
   nativeType: {
-    type: String as PropType<'button' | 'submit' | 'reset'>,
+    type: String as PropType<ButtonNativeType>,
     default: 'button'
   }
 } as const;

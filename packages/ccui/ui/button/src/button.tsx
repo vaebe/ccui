@@ -1,20 +1,23 @@
 import { defineComponent, computed } from 'vue';
 import { buttonProps, ButtonProps } from './button-types';
 import './button.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
+import tree from '../../tree';
 
 export default defineComponent({
   name: 'KButton',
   props: buttonProps,
   emits: ['click'],
   setup(props: ButtonProps, { slots, emit }) {
+    const ns = useNamespace('button');
     const butCls = computed(() => {
       return {
-        'okUi-button': true,
-        [`okUi-button-${props.type}`]: !!props.type,
-        [`okUi-button-plain-${props.type}`]: !!props.plain,
-        [`okUi-button-size-${props.size}`]: !!props.size,
-        [`okUi-button-is-round`]: props.round,
-        [`okUi-button-is-circle`]: props.circle
+        [ns.b()]: true,
+        [ns.m(props.type)]: !!props.type,
+        [ns.m(`plain-${props.type}`)]: !!props.plain,
+        [ns.m(props.size)]: !!props.size,
+        [ns.m('round')]: props.round,
+        [ns.m('circle')]: props.circle
       };
     });
 
