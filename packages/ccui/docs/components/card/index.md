@@ -44,10 +44,18 @@ export default {
 
 :::
 
-## Card 参数
+## Card参数
 
-| 参数 | 类型 | 默认 | 说明 |
-| ---- | ---- | ---- | ---- |
-| header | string |  —    | 卡片的标题 可以通过设置 header 来修改标题，也可以通过 slot#header 传入 DOM 节点 |
-| body-style |object| '{ padding: '20px' }'| body 的样式  |
-| shadow | string | always | 设置阴影显示时机 always / hover / never  |
+| 参数 | 类型                        | 默认 | 说明 |
+| ---- |---------------------------| ---- | ---- |
+| header | string                    |  —    | 卡片的标题 可以通过设置 header 来修改标题，也可以通过 slot#header 传入 DOM 节点 |
+| body-style | object                    | '{ padding: '20px' }'| body 的样式  |
+| shadow | [ShadowType](#shadowType) | always | 设置阴影显示时机  |
+
+## Card类型定义
+
+### ShadowType
+
+```ts
+export type ShadowType = PropType<'always' | 'hover' | 'never'>;
+```

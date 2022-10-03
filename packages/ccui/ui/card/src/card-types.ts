@@ -1,6 +1,6 @@
 import type { PropType, ExtractPropTypes } from 'vue';
 
-type ShadowType = PropType<'always' | 'hover' | 'never'>;
+export type ShadowType = PropType<'always' | 'hover' | 'never'>;
 
 export const cardProps = {
   shadow: {
