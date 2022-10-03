@@ -1,6 +1,7 @@
 import { defineComponent, ref, computed, watch, Ref } from 'vue';
 import { calendarProps, CalendarProps, dateItem } from './calendar-types';
 import './calendar.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 import moment from 'moment';
 
 export default defineComponent({
@@ -8,6 +9,8 @@ export default defineComponent({
   props: calendarProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CalendarProps, { emit, slots }) {
+    const ns = useNamespace('calendar');
+
     // 当前天 选中天
     const currentDate = ref(
       props.modelValue
@@ -32,9 +35,10 @@ export default defineComponent({
       ).format('YYYY-MM-DD');
 
       // 整理数据
-      // [...Array(42).keys()] 这个是生成了长度42的数组，为什么是42呢？ 因为有的月份是28 或者30 31， 35 会导致某些月份展示不全。
-      curDateList.value = [...Array(42).keys()].reduce(
-        (acc: Array<dateItem>, index: number) => {
+      // 生成长度42的数组，为什么是42呢？ 因为有的月份是28 或者30 31， 35 会导致某些月份展示不全。
+      curDateList.value = [...Array(42)]
+        .map((item, index) => index)
+        .reduce((acc: Array<dateItem>, index: number) => {
           // 获取展示的日期
           const date = moment(startDate)
             .add(index + 1, 'days')
@@ -53,9 +57,7 @@ export default defineComponent({
           });
           // 返回数组
           return acc;
-        },
-        []
-      );
+        }, []);
     };
 
     // 初始化
@@ -146,9 +148,9 @@ export default defineComponent({
 
     const defaultHeader = () => {
       return (
-        <div class='default-header'>
+        <div class={ns.e('header')}>
           <div>{currentMonth.value}</div>
-          <div class='operate'>
+          <div>
             <k-button
               type='primary'
               plain={true}
@@ -182,12 +184,10 @@ export default defineComponent({
     };
 
     return () => (
-      <div class='okUi-calendar'>
-        <div class='header'>
-          {slots.header ? slots.header(currentDate.value) : defaultHeader()}
-        </div>
-        <div class='week-box'>{weekItemList}</div>
-        <div class='date-item-box'>{dateItemList.value}</div>
+      <div class={ns.b()}>
+        {slots.header ? slots.header(currentDate.value) : defaultHeader()}
+        <div class={ns.e('week')}>{weekItemList}</div>
+        <div class={ns.e('day-box')}>{dateItemList.value}</div>
       </div>
     );
   }

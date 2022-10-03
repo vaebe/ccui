@@ -1,19 +1,19 @@
-.okUi-calendar {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-calendar {
   width: 100%;
+  background: $ccui-base-bg;
 
-  .header {
+  &__header {
     padding: 5px;
-    border: 1px solid #ebeef5;
-
-    .default-header {
-      display: flex;
-      align-content: center;
-      justify-content: space-between;
-    }
+    border: 1px solid $ccui-form-control-line;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
   }
 
-  .date-item-box,
-  .week-box {
+  &__day-box,
+  &__week {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -24,32 +24,35 @@
       height: 85px;
       padding: 8px;
       font-weight: 400;
-      color: gray;
+      color: $ccui-text-weak;
       cursor: default;
-      border: 1px solid #ebeef5;
+      border-bottom: 1px solid $ccui-form-control-line;
+      border-left: 1px solid $ccui-form-control-line;
     }
 
     .date-item:nth-of-type(7n) {
       margin-right: 0;
+      border-right: 1px solid $ccui-form-control-line;
     }
 
     .date-item:hover {
-      background: #f2f8fe;
+      background: $ccui-list-item-active-hover-bg;
     }
 
     .current-month {
-      color: black;
+      color: $ccui-text;
     }
 
     .current-date {
-      color: #7693f5;
-      background: #f2f8fe;
+      color: $ccui-list-item-active-text;
+      background: $ccui-list-item-active-bg;
     }
   }
 
-  .week-box {
-    border-right: 1px solid #ebeef5;
-    border-left: 1px solid #ebeef5;
+  &__week {
+    border: 1px solid $ccui-form-control-line;
+    border-top: none;
+
 
     .date-item {
       height: 40px;
