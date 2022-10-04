@@ -41,7 +41,7 @@ export default defineComponent({
 
 :::
 
-## 自定义 header
+## 自定义header
 
 :::demo Calendar 示例
 
@@ -127,19 +127,19 @@ export default defineComponent({
 
 :::
 
-## Calendar 参数
+## Calendar参数
 
 | 参数 | 类型         | 默认 | 说明 |
 | ---- |------------| ---- | ---- |
 | v-model | `Date` | -- |  必选，组件绑定的值 |
 
-## Calendar 事件
+## Calendar事件
 
 | 事件 | 类型 | 说明 |
 | ---- | ---- | ---- |
 | change |  `string` |   日期改变后的值   |
 
-## Calendar 插槽
+## Calendar插槽
 
 | 插槽名 | 说明 |
 | ---- | -- |

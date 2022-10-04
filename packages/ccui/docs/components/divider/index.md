@@ -6,7 +6,7 @@
 
 + 对不同段落的文本进行分割。
 
-## Divider 基本用法
+## Divider基本用法
 
 :::demo Divider 示例
 
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -68,7 +68,7 @@ export default defineComponent({
 
 :::
 
-## Divider 参数
+## Divider参数
 
 | 参数 | 类型                            | 默认         | 说明           |
 | ---- |-------------------------------|------------|--------------|
@@ -79,3 +79,22 @@ export default defineComponent({
 | content-color | string                        | --     | 设置分割线文案的颜色   |
 | content-background-color | string                        | --     | 设置分割线文案的背景颜色 |
 
+## Divider类型定义
+
+### DirectionType
+
+```ts
+export type DirectionType = 'horizontal' | 'vertical';
+```
+
+### BorderStyleType
+
+```ts
+export type BorderStyleType = 'dashed' | 'solid';
+```
+
+### ContentPositionType
+
+```ts
+export type ContentPositionType = 'left' | 'right' | 'center';
+```

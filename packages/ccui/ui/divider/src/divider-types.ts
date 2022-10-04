@@ -1,8 +1,12 @@
 import type { PropType, ExtractPropTypes } from 'vue';
 
+export type DirectionType = 'horizontal' | 'vertical';
+export type BorderStyleType = 'dashed' | 'solid';
+export type ContentPositionType = 'left' | 'right' | 'center';
+
 export const dividerProps = {
   direction: {
-    type: String as PropType<'horizontal' | 'vertical'>,
+    type: String as PropType<DirectionType>,
     default: 'horizontal'
   },
   color: {
@@ -10,11 +14,11 @@ export const dividerProps = {
     default: ''
   },
   borderStyle: {
-    type: String as PropType<'dashed' | 'solid'>,
+    type: String as PropType<BorderStyleType>,
     default: 'solid'
   },
   contentPosition: {
-    type: String as PropType<'left' | 'right' | 'center'>,
+    type: String as PropType<ContentPositionType>,
     default: 'center'
   },
   contentColor: {
