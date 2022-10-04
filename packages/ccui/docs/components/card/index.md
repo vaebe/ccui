@@ -50,7 +50,7 @@ export default {
 | ---- |---------------------------| ---- | ---- |
 | header | string                    |  —    | 卡片的标题 可以通过设置 header 来修改标题，也可以通过 slot#header 传入 DOM 节点 |
 | body-style | object                    | '{ padding: '20px' }'| body 的样式  |
-| shadow | [ShadowType](#shadowType) | always | 设置阴影显示时机  |
+| shadow | [ShadowType](#shadowtype) | always | 设置阴影显示时机  |
 
 ## Card类型定义
 

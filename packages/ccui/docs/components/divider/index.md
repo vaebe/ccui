@@ -70,14 +70,14 @@ export default defineComponent({
 
 ## Divider参数
 
-| 参数 | 类型                            | 默认         | 说明           |
-| ---- |-------------------------------|------------|--------------|
-| color | string                        | --| 设置分割线的颜色     |
-| direction | string `horizontal / vertical` | horizontal | 设置分割线方向      |
-| border-style | string `dashed / solid`       | solid| 设置分隔符样式      |
-| content-position | string`left / right / center` | center     | 设置分割线文案的位置   |
-| content-color | string                        | --     | 设置分割线文案的颜色   |
-| content-background-color | string                        | --     | 设置分割线文案的背景颜色 |
+| 参数 | 类型                                          | 默认         | 说明           |
+| ---- |---------------------------------------------|------------|--------------|
+| color | string                                      | --| 设置分割线的颜色     |
+| direction | [DirectionType](#directiontype)             | horizontal | 设置分割线方向      |
+| border-style | [BorderStyleType](#borderstyletype)         | solid| 设置分隔符样式      |
+| content-position | [ContentPositionType](#Contentpositiontype) | center     | 设置分割线文案的位置   |
+| content-color | string                                      | --     | 设置分割线文案的颜色   |
+| content-background-color | string                                      | --     | 设置分割线文案的背景颜色 |
 
 ## Divider类型定义
 

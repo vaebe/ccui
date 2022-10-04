@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -42,18 +42,20 @@ export default defineComponent({
 
 :::
 
-## Status 参数
+## Status参数
 
 | 参数 | 类型 | 默认 | 说明 |
 |------| ---- | ---- | -- |
 | type |   [IStatusType](#istatustype)   | invalid | status的类型 |
 
-## Status 插槽
+## Status插槽
+
 | 插槽名 | 说明 |
 |-----|--|
 | - | 默认插槽 |
 
-## Status 类型定义
+## Status类型定义
+
 ### IStatusType
 
 ```ts

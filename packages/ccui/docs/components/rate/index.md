@@ -185,17 +185,11 @@ export default {
 
 ## Rate事件
 
-| 参数   | 类型                            | 说明           | 回调参数     |
-| ------ |-------------------------------| -------------- | ------------ |
-| change | [OnChangeType](#onChangeType) | 分值改变时触发 | 改变后的分值 |
+| 参数   | 类型 | 说明           | 回调参数     |
+| ------ |---| -------------- | ------------ |
+| change | `(value: number) => void`  | 分值改变时触发 | 改变后的分值 |
 
 ## Rate类型定义
-
-### OnChangeType
-
-```ts
-export type OnChangeType = (value: number) => void;
-```
 
 ### OnTouchedType
 

@@ -66,13 +66,13 @@ export default defineComponent({
 | 参数       | 类型                        | 默认  | 说明                                                          |
 | ---------- |---------------------------| ----- | ------------------------------------------------------------- |
 | name       | string                    | -     | 必选，传入字符串用于制作头像 （可以不传 展示默认）            |
-| gender     | [GenderType](#genderType) | -     | 可选，根据性别区分头像颜色|
+| gender     | [GenderType](#gendertype) | -     | 可选，根据性别区分头像颜色|
 | width      | number                    | 36    | 可选，设定组件的宽度， 单位为 px                              |
 | height     | number                    | 36    | 可选，设定组件的高度，单位为 px                               |
 | isRound    | boolean                   | true  | 可选，是否显示为圆形                                          |
 | imgSrc     | string                    | -     | 可选，传入自定义图片作为头像                                  |
 | customText | string                    | -     | 可选，传入自定义显示文字，不做处理                            |
-| fit        | [FitType](#fitType)       | cover | 内容应该如何适应到其使用高度和宽度        |
+| fit        | [FitType](#fittype)       | cover | 内容应该如何适应到其使用高度和宽度        |
 
 ## Avatar类型定义
 

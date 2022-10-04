@@ -124,13 +124,19 @@ export default defineComponent({
 
 ## Radio参数
 
-|           参数           |        类型        |   默认   |                           说明    | 
-|----------------------|----------------|------|-------------------------------------------------------|
-| v-model  | string / number  |   -    |                      必选 radio 的绑定值                      |
-|         label          | string / number  |   -    |                         必选，单选项值                         |
-|          name          |      string      |   -    |                       原生 name 属性                        |
-|        disabled        |     boolean      | false  |                       可选，是否禁用该单选项                       |
-|      before-change      |     [BeforeChangeType](#beforeChangeType)     |   -    | 可选，radio 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 radio 切换  |
+|           参数           | 类型                                    |   默认   |                           说明    | 
+|----------------------|---------------------------------------|------|-------------------------------------------------------|
+| v-model  | \'string' \'number'                   |   -    |                      必选 radio 的绑定值                      |
+|         label          | \'string' \'number'                       |   -    |                         必选，单选项值                         |
+|          name          | string                                |   -    |                       原生 name 属性                        |
+|        disabled        | boolean                               | false  |                       可选，是否禁用该单选项                       |
+|      before-change      | [BeforeChangeType](#beforechangetype) |   -    | 可选，radio 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 radio 切换  |
+
+## Radio事件
+
+| 事件 | 类型 | 说明 |
+|-------|--|-----------------|
+| change | `(value: string) => void` | 单选项值改变时触发，返回选中的值 |
 
 ## Radio类型定义
 
@@ -139,12 +145,6 @@ export default defineComponent({
 ```ts
 export type BeforeChangeType = (value: string) => boolean | Promise<boolean>;
 ```
-
-## Radio事件
-
-|   事件    |   类型   |        说明         |
-|-------|------|-----------------|
-| change  |        | 单选项值改变时触发，返回选中的值  |
 
 ## Radio插槽
 

@@ -96,14 +96,14 @@ export default defineComponent({
 
 | 参数 | 类型                                    | 默认 | 说明 |
 | ---- |---------------------------------------| ---- | ---- |
-| size | [ButtonSizeType](#buttonSizeType)     | -- | 尺寸 |
-| type | [ButtonType](#buttonType)             | -- | 类型 |
+| size | [ButtonSizeType](#buttonsizetype)     | -- | 尺寸 |
+| type | [ButtonType](#buttontype)             | -- | 类型 |
 | plain | boolean                               | false | 是否为朴素按钮 |
 | round | boolean                               | false | 是否为圆角按钮 |
 | circle | boolean                               | false | 是否为圆形按钮 |
 | disabled | boolean                               | false | 是否为禁用状态 |
 | autofocus | boolean                               | false | 原生 autofocus 属性 |
-| native-type | [ButtonNativeType](#buttonNativeType) | button | 原生 type 属性 |
+| native-type | [ButtonNativeType](#buttonnativetype) | button | 原生 type 属性 |
 
 ## Button类型定义
 

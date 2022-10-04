@@ -169,9 +169,15 @@ export default defineComponent({
 | ---- |---------------------------------------| ---- | ---- |
 |  v-model | boolean                               | -- | 必选，选中项绑定值 |
 | disabled | boolean                               | false | 可选，是否禁用 |
-| label | [LabelType](#labelType)               |  --    | 单独使用 check-box 且无默认插槽时当作info展示，存在插槽帮定制无效，结合 check-box-group使用时作为选中项的值。 | 
+| label | [LabelType](#labeltype)               |  --    | 单独使用 check-box 且无默认插槽时当作info展示，存在插槽帮定制无效，结合 check-box-group使用时作为选中项的值。 | 
 | color | string                                |  -- | 可选，复选框颜色 |
-| beforeChange | [BeforeChangeType](#beforeChangeType) | -- | 可选，checkbox 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 checkbox 切换 |
+| beforeChange | [BeforeChangeType](#beforechangetype) | -- | 可选，checkbox 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 checkbox 切换 |
+
+## CheckBox事件
+
+| 事件 | 类型 | 说明 |
+| ---- | ---- | ---- |
+| change | Function |  复选框的值改变时发出的事件，值是当前状态 |
 
 ## CheckBox类型定义
 
@@ -191,12 +197,6 @@ export type BeforeChangeType = (
 ) => boolean | Promise<boolean>;
 ```
 
-## CheckBox事件
-
-| 事件 | 类型 | 说明 |
-| ---- | ---- | ---- |
-| change | Function |  复选框的值改变时发出的事件，值是当前状态 |
-
 ## CheckBox插槽
 
 默认插槽
@@ -208,8 +208,8 @@ export type BeforeChangeType = (
 | v-model | Array                                 | []       | 必选，选中项绑定值 |
 | disabled | boolean                               | false    | 可选，是否禁用 |
 | color | string                                | --       | 可选，复选框颜色 |
-| direction | [DirectionType](#directionType)       | 'column' | 可选，设置横向或纵向排列 |
-| beforeChange | [BeforeChangeType](#beforeChangeType) | --       | 可选，checkbox 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 checkbox 切换 |
+| direction | [DirectionType](#directiontype)       | 'column' | 可选，设置横向或纵向排列 |
+| beforeChange | [BeforeChangeType](#beforechangetype) | --       | 可选，checkbox 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 checkbox 切换 |
 
 ## CheckBoxGroup类型定义
 

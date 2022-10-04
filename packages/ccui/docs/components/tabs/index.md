@@ -295,8 +295,8 @@ export type BeforeChangeType = (id: Active) => boolean;
 
 | 参数 | 类型                      | 默认  | 说明 |
 | --- |-------------------------|-----|---|
-|  label  | [LabelType](#labelType) | -   | 选项卡标题  |
-|   name | [NameType](#nameType)   | -   |   与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+|  label  | [LabelType](#labeltype) | -   | 选项卡标题  |
+|   name | [NameType](#nametype)   | -   |   与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
 
 ## tab类型定义
 
