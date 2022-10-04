@@ -7,6 +7,7 @@ import {
 import IconActive from './components/icon-active';
 import IconDefault from './components/icon-default';
 import './check-box.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KCheckBox',
@@ -14,6 +15,8 @@ export default defineComponent({
   emits: ['change', 'update:modelValue'],
   setup(props: CheckBoxProps, { emit, slots }) {
     return () => {
+      const ns = useNamespace('check-box');
+
       const checkBoxGroupInject = inject(checkBoxGroupInjectionKey, null);
 
       const isDisabled = computed(() => {
@@ -28,7 +31,7 @@ export default defineComponent({
 
       // 计算组件样式
       const labelClass = computed(() => {
-        return `okUi-check-box ${isChecked.value ? 'active' : ''} ${
+        return `${ns.b()} ${isChecked.value ? 'active' : ''} ${
           isDisabled.value ? 'disabled' : ''
         }`;
       });
@@ -78,7 +81,7 @@ export default defineComponent({
         <label class={labelClass.value}>
           <input
             type='checkbox'
-            class='okUi-check-box-input'
+            class={ns.e('input')}
             onChange={handleChange}
             name={props.name}
             value={props.label}
@@ -86,7 +89,7 @@ export default defineComponent({
             checked={isChecked.value}
           />
           {/* 判断展示那种icon */}
-          <span class='okUi-check-box-icon' style={iconColor.value}>
+          <span class={ns.e('icon')} style={iconColor.value}>
             {isChecked.value ? <IconActive /> : <IconDefault />}
           </span>
 
