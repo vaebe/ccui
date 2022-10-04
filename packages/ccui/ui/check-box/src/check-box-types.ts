@@ -1,13 +1,22 @@
 import type { PropType, ExtractPropTypes } from 'vue';
 import { InjectionKey, Ref } from 'vue';
 
+export type LabelType = string | number | boolean;
+
+export type BeforeChangeType = (
+  isChecked: boolean,
+  v: string
+) => boolean | Promise<boolean>;
+
+export type DirectionType = 'row' | 'column';
+
 export const checkBoxProps = {
   modelValue: {
     type: Boolean,
     default: null
   },
   label: {
-    type: String || Number || Boolean,
+    type: String as PropType<LabelType>,
     default: ''
   },
   name: {
@@ -23,9 +32,7 @@ export const checkBoxProps = {
     default: false
   },
   beforeChange: {
-    type: Function as PropType<
-      (isChecked: boolean, v: string) => boolean | Promise<boolean>
-    >,
+    type: Function as PropType<BeforeChangeType>,
     default: undefined
   }
 } as const;
@@ -41,7 +48,7 @@ export const checkBoxGroupProps = {
     required: true
   },
   direction: {
-    type: String as PropType<'row' | 'column'>,
+    type: String as PropType<DirectionType>,
     default: 'column'
   }
 } as const;
@@ -52,9 +59,7 @@ export type CheckBoxGroupProps = ExtractPropTypes<typeof checkBoxGroupProps>;
 interface CheckBoxGroupInjection {
   disabled: Ref<boolean>;
   color: Ref<string | undefined>;
-  beforeChange:
-    | undefined
-    | ((isChecked: boolean, v: string) => boolean | Promise<boolean>);
+  beforeChange: undefined | BeforeChangeType;
   toggleGroupVal: (v: string) => void;
   isItemChecked: (v: string) => boolean;
 }
