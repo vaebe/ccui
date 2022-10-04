@@ -1,14 +1,16 @@
-.okUi-rate {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-rate {
   display: inline-flex;
   align-content: center;
 
-  &-read-only {
+  &--read-only {
     span {
       cursor: not-allowed;
     }
   }
 
-  &-icon {
+  &__icon {
     position: relative;
     width: 16px;
     height: 16px;
@@ -25,12 +27,12 @@
     }
   }
 
-  &-active {
+  &--active {
     color: #7693f5;
     fill: #6a81ed;
   }
 
-  &-info {
+  &__info {
     margin: 0;
   }
 }

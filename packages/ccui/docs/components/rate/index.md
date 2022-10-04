@@ -6,17 +6,17 @@
 
 用户对一个产品进行评分时可以使用。
 
-###只读模式
+## 只读模式
 
 :::demo
 
 ```vue
 
 <template>
-  <k-rate v-model="value1" :read-only="true" />
+  <k-rate v-model="value1" :read-only="true"/>
 </template>
 <script>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   setup() {
@@ -38,10 +38,10 @@ export default {
 ```vue
 
 <template>
-  <k-rate v-model="value" icon="star-o" />
+  <k-rate v-model="value" icon="star-o"/>
 </template>
 <script>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   setup() {
@@ -66,7 +66,7 @@ export default {
   <k-rate color="#ffa500" v-model="value" :count="6">A</k-rate>
 </template>
 <script>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   setup() {
@@ -95,7 +95,7 @@ export default {
   </k-rate>
 </template>
 <script>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   setup() {
@@ -114,7 +114,7 @@ export default {
 
 :::
 
-## 使用 color 参数
+## 使用color参数
 
 :::demo
 
@@ -123,31 +123,31 @@ export default {
 <template>
   <div class="mb20">
     <k-rate
-      v-model="value1"
-      :read-only="true"
-      color="blue"
-      :count="5"
-      icon="star"
+        v-model="value1"
+        :read-only="true"
+        color="blue"
+        :count="5"
+        icon="star"
     />
   </div>
   <div class="mb20">
     <k-rate
-      v-model="value2"
-      :read-only="true"
-      color="orange"
-      :count="5"
-      icon="star"
+        v-model="value2"
+        :read-only="true"
+        color="orange"
+        :count="5"
+        icon="star"
     />
   </div>
   <div class="mb20">
-    <k-rate v-model="value3" :read-only="true" color="red" :count="5" />
+    <k-rate v-model="value3" :read-only="true" color="red" :count="5"/>
   </div>
   <div>
     <k-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">N</k-rate>
   </div>
 </template>
 <script>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   setup() {
@@ -173,7 +173,7 @@ export default {
 
 :::
 
-### Rate 参数
+### Rate参数
 
 |   参数    |              类型               | 默认值 | 描述                                                     |
 | :-------: | :-----------------------------: | :----: | :------------------------------------------------------- |
@@ -183,13 +183,28 @@ export default {
 |   color   | `string` |   --   | 可选，星星选中颜色                                           |
 | allow-half | `boolean` | false  | 可选，动态模式下是否允许半选                             |
 
-## Rate 事件
+## Rate事件
 
-| 参数   | 类型                   | 说明           | 回调参数     |
-| ------ | ---------------------- | -------------- | ------------ |
-| change | `number` | 分值改变时触发 | 改变后的分值 |
+| 参数   | 类型                            | 说明           | 回调参数     |
+| ------ |-------------------------------| -------------- | ------------ |
+| change | [OnChangeType](#onChangeType) | 分值改变时触发 | 改变后的分值 |
 
-## Rate 插槽
+## Rate类型定义
+
+### OnChangeType
+
+```ts
+export type OnChangeType = (value: number) => void;
+```
+
+### OnTouchedType
+
+```ts
+export type OnTouchedType = () => void;
+
+```
+
+## Rate插槽
 
 | 插槽名 | 说明 |
 | ---- | ---- |

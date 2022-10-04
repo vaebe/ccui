@@ -1,10 +1,13 @@
 import { ExtractPropTypes, PropType } from 'vue';
 
+export type OnChangeType = (value: number) => void;
+export type OnTouchedType = () => void;
 export const rateProps = {
   modelValue: {
     type: Number,
     default: 0
   },
+  // todo 替换为 disabled
   readOnly: {
     type: Boolean,
     default: false
@@ -22,11 +25,11 @@ export const rateProps = {
     default: false
   },
   onChange: {
-    type: Function as PropType<(value: number) => void>,
+    type: Function as PropType<OnChangeType>,
     default: undefined
   },
   onTouched: {
-    type: Function as PropType<() => void>,
+    type: Function as PropType<OnTouchedType>,
     default: undefined
   }
 } as const;

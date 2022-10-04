@@ -2,12 +2,15 @@ import { defineComponent, computed, ref } from 'vue';
 import { rateProps, RateProps } from './rate-types';
 import iconDefault from './components/icon-default';
 import './rate.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KRate',
   props: rateProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RateProps, { emit, slots }) {
+    const ns = useNamespace('rate');
+
     // 选中的数值
     const selectedQuantity = ref(props.modelValue);
 
@@ -73,7 +76,7 @@ export default defineComponent({
       return iconStateList.value.map((item, index) => {
         return (
           <div
-            class='okUi-rate-icon'
+            class={ns.e('icon')}
             onMousemove={(e) => {
               iconOnMousemove(e, index);
             }}
@@ -83,7 +86,7 @@ export default defineComponent({
           >
             <span>{rateItem.value}</span>
             <span
-              class='okUi-rate-active'
+              class={ns.m('active')}
               style={{
                 width: item.width,
                 color: props.color,
@@ -99,8 +102,8 @@ export default defineComponent({
 
     const rateCls = computed(() => {
       return {
-        'okUi-rate': true,
-        'okUi-rate-read-only': props.readOnly
+        [ns.b()]: true,
+        [ns.m('read-only')]: props.readOnly
       };
     });
 
@@ -113,7 +116,7 @@ export default defineComponent({
           }}
         >
           {iconList()}
-          <div class='okUi-rate-info'>
+          <div class={ns.e('info')}>
             {slots.info && slots.info(selectedQuantity.value)}
           </div>
         </div>
