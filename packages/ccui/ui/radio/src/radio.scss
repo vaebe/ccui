@@ -1,15 +1,17 @@
-.okUi-radio {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-radio {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   font-size: 14px;
   font-weight: normal;
   line-height: 1.5;
-  color: black;
+  color: $ccui-text;
   cursor: pointer;
 
   // 隐藏inout元素方便后边自定义
-  &-input {
+  &__input {
     z-index: -1;
     display: none;
     width: 0;
@@ -19,7 +21,7 @@
     opacity: 0;
   }
 
-  &-icon {
+  &__icon {
     position: relative;
     display: inline-block;
     width: 16px;
@@ -29,6 +31,7 @@
     line-height: 16px;
     vertical-align: middle;
     user-select: none;
+    fill: $ccui-icon-fill;
   }
 
   &.active {

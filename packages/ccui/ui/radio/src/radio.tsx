@@ -1,14 +1,17 @@
-import { defineComponent, ref, watchEffect, inject, computed } from 'vue';
+import { defineComponent, inject, computed } from 'vue';
 import { radioProps, RadioProps, radioGroupInjectionKey } from './radio-types';
 import IconActive from './components/icon-active';
 import IconCircle from './components/icon-circle';
 import './radio.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KRadio',
   props: radioProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RadioProps, { emit, slots }) {
+    const ns = useNamespace('radio');
+
     const radioGroupInject = inject(radioGroupInjectionKey, null);
 
     // 是否可以切换
@@ -26,7 +29,7 @@ export default defineComponent({
 
     // 计算组件样式
     const labelClass = computed(() => {
-      return `okUi-radio ${isActive.value ? 'active' : ''} ${
+      return `${ns.b()} ${isActive.value ? 'active' : ''} ${
         isDisabled.value ? 'disabled' : ''
       }`;
     });
@@ -54,7 +57,7 @@ export default defineComponent({
     };
 
     const handleChange = async (event: Event) => {
-      const _label = props.label;
+      const _label = props.label + '';
       judgeCanChange(_label).then((res) => {
         if (res) {
           // 触发 radioGroup 的 emitChangeValue 事件更新数据
@@ -72,7 +75,7 @@ export default defineComponent({
       return (
         <label class={labelClass.value}>
           <input
-            class='okUi-radio-input'
+            class={ns.e('input')}
             onChange={handleChange}
             type='radio'
             name={props.name}
@@ -81,7 +84,7 @@ export default defineComponent({
             checked={isActive.value}
           />
           {/* 判断展示那种icon */}
-          <span class='okUi-radio-icon'>
+          <span class={ns.e('icon')}>
             {isActive.value ? <IconActive /> : <IconCircle />}
           </span>
 
