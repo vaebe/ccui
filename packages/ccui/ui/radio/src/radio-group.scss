@@ -1,4 +1,6 @@
-.okUi-radio-group {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-radio-group {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -12,7 +14,7 @@
     flex-direction: column;
   }
 
-  .okUi-radio {
+  .#{$cls-prefix}-radio {
     line-height: 28px;
 
     &:not(:last-child) {

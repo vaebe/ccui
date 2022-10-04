@@ -5,12 +5,15 @@ import {
   radioGroupInjectionKey
 } from './radio-types';
 import './radio-group.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KRadioGroup',
   props: radioGroupProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RadioGroupProps, { emit, slots }) {
+    const ns = useNamespace('radio-group');
+
     const emitChangeValue = (val: string) => {
       emit('update:modelValue', val);
       emit('change', val);
@@ -29,7 +32,7 @@ export default defineComponent({
     };
 
     const radioGroupClass = computed(() => {
-      return `okUi-radio-group ${directionType[props.direction]}`;
+      return `${ns.b()} ${directionType[props.direction]}`;
     });
 
     return () => {
