@@ -5,12 +5,15 @@ import {
   checkBoxGroupInjectionKey
 } from './check-box-types';
 import './check-box-group.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KCheckBoxGroup',
   props: checkBoxGroupProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CheckBoxGroupProps, { emit, slots }) {
+    const ns = useNamespace('check-box-group');
+
     const valueList = toRef(props, 'modelValue');
 
     const toggleGroupVal = (val: string) => {
@@ -50,7 +53,7 @@ export default defineComponent({
     };
 
     const checkBoxGroupClass = computed(() => {
-      return `okUi-check-box-group ${directionType[props.direction]}`;
+      return `${ns.b()} ${directionType[props.direction]}`;
     });
 
     return () => {

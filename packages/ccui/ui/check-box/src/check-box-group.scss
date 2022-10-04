@@ -1,4 +1,6 @@
-.okUi-check-box-group {
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-check-box-group {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -12,7 +14,7 @@
     flex-direction: column;
   }
 
-  .okUi-check-box {
+  .#{$cls-prefix}-check-box {
     line-height: 28px;
 
     &:not(:last-child) {
