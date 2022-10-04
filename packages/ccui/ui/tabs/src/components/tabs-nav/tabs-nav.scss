@@ -1,305 +1,312 @@
-@mixin tabs-after {
-  position: absolute;
-  z-index: -1;
-  content: '';
-  background-color: #d7d8da;
-}
+@import '../../../../style-var/index.scss';
 
-@mixin tabs-item {
-  padding: 4px 20px;
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.okUi-tabs-nav {
-  &--top,
-  &--bottom {
-    position: relative;
-    display: flex;
-
-    &::after {
-      @include tabs-after;
-
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-    }
-
-    &-item {
-      @include tabs-item;
-
-      border-bottom: 2px solid transparent;
-    }
-
-    &-item-active {
-      color: #7693f5;
-      border-bottom-color: #7693f5;
-    }
+.#{$cls-prefix}-tabs {
+  @mixin tabs-after {
+    position: absolute;
+    z-index: -1;
+    content: '';
+    background-color: $ccui-base-bg;
   }
 
-  &--left,
-  &--right {
-    position: relative;
-    display: block;
-    height: 100%;
+  @mixin tabs-item {
+    padding: 4px 20px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+  }
 
-    &::after {
-      @include tabs-after;
+  .#{$cls-prefix}-tabs-nav {
+    &--top,
+    &--bottom {
+      position: relative;
+      display: flex;
 
-      top: 0;
-      width: 2px;
+      &::after {
+        @include tabs-after;
+
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+      }
+
+      &-item {
+        @include tabs-item;
+
+        border-bottom: 2px solid transparent;
+      }
+
+      &-item-active {
+        color: $ccui-primary;
+        border-bottom-color: $ccui-primary;
+      }
+    }
+
+    &--left,
+    &--right {
+      position: relative;
+      display: block;
       height: 100%;
-    }
 
-    &-item {
-      @include tabs-item;
-    }
+      &::after {
+        @include tabs-after;
 
-    &-item-active {
-      color: #7693f5;
-    }
-  }
-
-  &--left {
-    float: left;
-
-    &::after {
-      right: 0;
-    }
-
-    &-item {
-      border-right: 2px solid transparent;
-    }
-
-    &-item-active {
-      border-right-color: #7693f5;
-    }
-  }
-
-  &--right {
-    float: right;
-
-    &::after {
-      left: 0;
-    }
-
-    &-item {
-      border-left: 2px solid transparent;
-    }
-
-    &-item-active {
-      border-left-color: #7693f5;
-    }
-  }
-}
-
-.okUi-tabs-nav-card {
-  &--top,
-  &--bottom {
-    position: relative;
-    display: flex;
-
-    &::after {
-      @include tabs-after;
-
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-    }
-
-    &-item {
-      @include tabs-item;
-
-      border: 1px solid #d7d8da;
-      border-bottom: 2px solid transparent;
-
-      &:first-of-type {
-        border-top-left-radius: 4px;
+        top: 0;
+        width: 2px;
+        height: 100%;
       }
 
-      &:last-of-type {
-        border-top-right-radius: 4px;
+      &-item {
+        @include tabs-item;
+      }
+
+      &-item-active {
+        color: $ccui-primary;
       }
     }
 
-    &-item-active {
-      color: #7693f5;
-      border-bottom-color: #7693f5;
+    &--left {
+      float: left;
+
+      &::after {
+        right: 0;
+      }
+
+      &-item {
+        border-right: 2px solid transparent;
+      }
+
+      &-item-active {
+        border-right-color: $ccui-primary;
+      }
+    }
+
+    &--right {
+      float: right;
+
+      &::after {
+        left: 0;
+      }
+
+      &-item {
+        border-left: 2px solid transparent;
+      }
+
+      &-item-active {
+        border-left-color: $ccui-primary;
+      }
     }
   }
 
-  &--left,
-  &--right {
-    position: relative;
-    display: block;
-    height: 100%;
+  .#{$cls-prefix}-tabs-nav-card {
+    &--top,
+    &--bottom {
+      position: relative;
+      display: flex;
 
-    &::after {
-      @include tabs-after;
+      &::after {
+        @include tabs-after;
 
-      top: 0;
-      width: 2px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+      }
+
+      &-item {
+        @include tabs-item;
+
+        border: 1px solid $ccui-line;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+
+        &:first-of-type {
+          border: 1px solid $ccui-line;
+          border-top-left-radius: $ccui-border-radius;
+        }
+
+        &:last-of-type {
+          border-top-right-radius: $ccui-border-radius;
+        }
+      }
+
+      &-item-active {
+        color: $ccui-primary;
+        border-bottom-color: $ccui-primary;
+      }
+    }
+
+    &--left,
+    &--right {
+      position: relative;
+      display: block;
       height: 100%;
-    }
 
-    &-item {
-      @include tabs-item;
+      &::after {
+        @include tabs-after;
 
-      border: 1px solid #d7d8da;
-    }
-
-    &-item-active {
-      color: #7693f5;
-    }
-  }
-
-  &--left {
-    float: left;
-
-    &::after {
-      right: 0;
-    }
-
-    &-item {
-      border-right: 2px solid transparent;
-
-      &:first-of-type {
-        border-top-left-radius: 4px;
+        top: 0;
+        width: 2px;
+        height: 100%;
       }
 
-      &:last-of-type {
-        border-bottom-left-radius: 4px;
+      &-item {
+        @include tabs-item;
+
+        border: 1px solid $ccui-line;
+      }
+
+      &-item-active {
+        color: $ccui-primary;
       }
     }
 
-    &-item-active {
-      border-right-color: #7693f5;
-    }
-  }
+    &--left {
+      float: left;
 
-  &--right {
-    float: right;
-
-    &::after {
-      left: 0;
-    }
-
-    &-item {
-      border-left: 2px solid transparent;
-
-      &:first-of-type {
-        border-top-right-radius: 4px;
+      &::after {
+        right: 0;
       }
 
-      &:last-of-type {
-        border-bottom-right-radius: 4px;
+      &-item {
+        border-right: 2px solid transparent;
+
+        &:first-of-type {
+          border-top-left-radius: $ccui-border-radius;
+        }
+
+        &:last-of-type {
+          border-bottom-left-radius: $ccui-border-radius;
+        }
+      }
+
+      &-item-active {
+        border-right-color: $ccui-primary;
       }
     }
 
-    &-item-active {
-      border-left-color: #7693f5;
-    }
-  }
-}
+    &--right {
+      float: right;
 
-.okUi-tabs-nav-border-card {
-  &--top,
-  &--bottom {
-    position: relative;
-    display: flex;
-    background: #f5f7fa;
-    border: 1px solid #e4e7ed;
+      &::after {
+        left: 0;
+      }
 
-    &::after {
-      @include tabs-after;
+      &-item {
+        border-left: 2px solid transparent;
 
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 1px;
-    }
+        &:first-of-type {
+          border-top-right-radius: $ccui-border-radius;
+        }
 
-    &-item {
-      @include tabs-item;
-    }
+        &:last-of-type {
+          border-bottom-right-radius: $ccui-border-radius;
+        }
+      }
 
-    &-item-active {
-      color: #7693f5;
-      background: #ffffff;
-      border-right: 1px solid #e4e7ed;
-      border-left: 1px solid #e4e7ed;
+      &-item-active {
+        border-left-color: $ccui-primary;
+      }
     }
   }
 
-  &--top {
-    margin-bottom: -1px;
-    border-bottom: 1px solid transparent;
-  }
+  .#{$cls-prefix}-tabs-nav-border-card {
+    &--top,
+    &--bottom {
+      position: relative;
+      display: flex;
+      background: $ccui-info-bg;
+      border: 1px solid $ccui-line;
 
-  &--bottom {
-    &-item-active {
-      margin-top: -1px;
-      border-top: 1px solid transparent;
+      &::after {
+        @include tabs-after;
+
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+      }
+
+      &-item {
+        @include tabs-item;
+      }
+
+      &-item-active {
+        color: $ccui-primary;
+        background: $ccui-base-bg;
+        border-right: 1px solid $ccui-line;
+        border-left: 1px solid $ccui-line;
+      }
     }
-  }
 
-  &--left,
-  &--right {
-    position: relative;
-    display: block;
-    height: 100%;
-    background: #f5f7fa;
-    border: 1px solid #e4e7ed;
+    &--top {
+      margin-bottom: -1px;
+      border-bottom: 1px solid transparent;
+    }
 
-    &::after {
-      @include tabs-after;
+    &--bottom {
+      &-item-active {
+        margin-top: -1px;
+        border-top: 1px solid transparent;
+      }
+    }
 
-      top: 0;
-      width: 2px;
+    &--left,
+    &--right {
+      position: relative;
+      display: block;
       height: 100%;
+      background: $ccui-base-bg;
+      border: 1px solid $ccui-line;
+
+      &::after {
+        @include tabs-after;
+
+        top: 0;
+        width: 2px;
+        height: 100%;
+      }
+
+      &-item {
+        @include tabs-item;
+      }
+
+      &-item-active {
+        color: $ccui-primary;
+        background: $ccui-base-bg;
+      }
     }
 
-    &-item {
-      @include tabs-item;
+    &--left {
+      float: left;
+
+      &::after {
+        right: 0;
+      }
+
+      &-item-active {
+        margin-right: -1px;
+        border-top: 1px solid $ccui-line;
+        border-right: 1px solid transparent;
+        border-bottom: 1px solid $ccui-line;
+      }
     }
 
-    &-item-active {
-      color: #7693f5;
-      background: #ffffff;
-    }
-  }
+    &--right {
+      float: right;
 
-  &--left {
-    float: left;
+      &::after {
+        left: 0;
+      }
 
-    &::after {
-      right: 0;
-    }
-
-    &-item-active {
-      margin-right: -1px;
-      border-top: 1px solid #e4e7ed;
-      border-right: 1px solid transparent;
-      border-bottom: 1px solid #e4e7ed;
-    }
-  }
-
-  &--right {
-    float: right;
-
-    &::after {
-      left: 0;
-    }
-
-    &-item-active {
-      margin-left: -1px;
-      border-top: 1px solid #e4e7ed;
-      border-bottom: 1px solid #e4e7ed;
-      border-left: 1px solid transparent;
+      &-item-active {
+        margin-left: -1px;
+        border-top: 1px solid $ccui-line;
+        border-bottom: 1px solid $ccui-line;
+        border-left: 1px solid transparent;
+      }
     }
   }
 }
+

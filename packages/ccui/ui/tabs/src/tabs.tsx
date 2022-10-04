@@ -7,6 +7,7 @@ import {
 } from './tabs-types';
 import './tabs.scss';
 import TabsNav from './components/tabs-nav';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KTabs',
@@ -16,6 +17,8 @@ export default defineComponent({
     TabsNav: defineAsyncComponent(() => import('./components/tabs-nav'))
   },
   setup(props: TabsProps, { slots, emit }) {
+    const ns = useNamespace('tabs');
+
     const state: TabsState = reactive({
       data: [],
       active: props.modelValue,
@@ -46,7 +49,7 @@ export default defineComponent({
     };
 
     return () => {
-      return <div class='okUi-tabs'>{tabsContent()}</div>;
+      return <div class={ns.b()}>{tabsContent()}</div>;
     };
   }
 });

@@ -1,4 +1,7 @@
-.okUi-tab {
+@import '../../../../style-var/index.scss';
+
+.#{$cls-prefix}-tab {
   position: relative;
   overflow: hidden;
+  padding: 4px;
 }

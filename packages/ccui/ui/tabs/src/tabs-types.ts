@@ -6,11 +6,14 @@ import type {
 } from 'vue';
 import { TabProps } from './components/tab/tab-types';
 
-export type Active = string | number | null;
+export type ModelValueType = string | number;
 
 export type ITabsType = '' | 'card' | 'border-card';
 
 export type ITabPositionType = 'top' | 'right' | 'bottom' | 'left';
+
+export type Active = string | number | null;
+export type BeforeChangeType = (id: Active) => boolean;
 
 export interface TabsState {
   data?: TabProps[];
@@ -20,7 +23,7 @@ export interface TabsState {
 
 export const tabsProps = {
   modelValue: {
-    type: [String, Number] as PropType<string | number>,
+    type: [String, Number] as PropType<ModelValueType>,
     default: null
   },
   type: {
@@ -36,7 +39,7 @@ export const tabsProps = {
     default: ''
   },
   beforeChange: {
-    type: Function as PropType<(id: Active) => boolean>,
+    type: Function as PropType<BeforeChangeType>,
     default: null
   },
   tabPosition: {

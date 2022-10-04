@@ -7,19 +7,22 @@ import {
 } from '../../tabs-types';
 import { TabProps } from '../tab/tab-types';
 import './tabs-nav.scss';
+import { useNamespace } from '../../../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KTabs-nav',
   props: tabsProps,
   emits: ['active-tab-change'],
   setup(props: TabsProps, { emit }) {
+    const ns = useNamespace('tabs-nav');
+
     const tabsState = inject<TabsState>(tabsInjectionKey);
 
     const navList = computed(() => tabsState?.data || []);
     const slotsList = computed(() => tabsState?.slots || []);
 
     const containerClass = computed(() => {
-      let cls = 'okUi-tabs-nav';
+      let cls = ns.b();
       if (props.type) {
         cls += `-${props.type}`;
       }

@@ -6,7 +6,7 @@
 
 + 用户需要通过平级的区域将大块内容进行收纳和展现，保持界面整洁。
 
-## Tabs 基本用法
+## Tabs基本用法
 
 :::demo Tabs 基本用法
 
@@ -14,14 +14,18 @@
 
 <template>
   <k-tabs v-model="activeTab" class="my-tabs">
-    <k-tab label="周一" name="1">疲惫的一天</k-tab>
-    <k-tab label="周二" name="2">开心</k-tab>
-    <k-tab label="疯狂星期四" name="3">狂吃</k-tab>
+    <k-tab label="周一" name="1">
+      我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
+    </k-tab>
+    <k-tab label="周二" name="2">
+      人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
+    </k-tab>
+    <k-tab label="疯狂星期四" name="3">V我50</k-tab>
   </k-tabs>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -47,7 +51,7 @@ export default defineComponent({
 
 :::
 
-## Tabs 卡片风格的标签
+## Tabs卡片风格的标签
 
 :::demo Tabs 卡片风格的标签
 
@@ -55,14 +59,18 @@ export default defineComponent({
 
 <template>
   <k-tabs v-model="activeTab" type="card" class="my-tabs">
-    <k-tab label="周一" name="1">疲惫的一天</k-tab>
-    <k-tab label="周二" name="2">开心</k-tab>
-    <k-tab label="疯狂星期四" name="3">狂吃</k-tab>
+    <k-tab label="周一" name="1">
+      我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
+    </k-tab>
+    <k-tab label="周二" name="2">
+      人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
+    </k-tab>
+    <k-tab label="疯狂星期四" name="3">V我100别问为什么，问就是有中间商</k-tab>
   </k-tabs>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -88,7 +96,7 @@ export default defineComponent({
 
 :::
 
-## Tabs 带有边框的卡片风格
+## Tabs带有边框的卡片风格
 
 :::demo Tabs 带有边框的卡片风格
 
@@ -96,14 +104,20 @@ export default defineComponent({
 
 <template>
   <k-tabs v-model="activeTab" type="border-card" class="my-tabs">
-    <k-tab label="周一" name="1">疲惫的一天</k-tab>
-    <k-tab label="周二" name="2">开心</k-tab>
-    <k-tab label="疯狂星期四" name="3">狂吃</k-tab>
+    <k-tab label="周一" name="1">
+      我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
+    </k-tab>
+    <k-tab label="周二" name="2">
+      人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
+    </k-tab>
+    <k-tab label="疯狂星期四" name="3">
+      工厂模式其实就是将创建对象的过程单独封装：比如说点一份西红柿炒蛋，我们不用关心西红柿怎么切、怎么打鸡蛋这些菜品制作过程中的问题，我们只关心摆上桌那道菜。在工厂模式里，我传参这个过程就是点菜，工厂函数里面运转的逻辑就相当于炒菜的厨师和上桌的服务员做掉的那部分工作——这部分工作我们同样不用关心，我们只要能拿到工厂交付给我们的实例结果就行了。
+    </k-tab>
   </k-tabs>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -129,7 +143,7 @@ export default defineComponent({
 
 :::
 
-## Tabs 自定义标签页标题
+## Tabs自定义标签页标题
 
 :::demo Tabs 自定义标签页标题
 
@@ -141,15 +155,19 @@ export default defineComponent({
       <template v-slot:title>
         周一
       </template>
-      疲惫的一天
+      我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
     </k-tab>
-    <k-tab label="周二" name="2">开心</k-tab>
-    <k-tab label="疯狂星期四" name="3">狂吃</k-tab>
+    <k-tab label="周二" name="2">
+      人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
+    </k-tab>
+    <k-tab label="疯狂星期四" name="3">
+      保证一个类仅有一个实例，并提供一个访问它的全局访问点，这样的模式就叫做单例模式。
+    </k-tab>
   </k-tabs>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -175,7 +193,7 @@ export default defineComponent({
 
 :::
 
-## Tabs 标签位置的设置
+## Tabs标签位置的设置
 
 :::demo Tabs 标签位置的设置
 
@@ -197,7 +215,7 @@ export default defineComponent({
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 
 export default defineComponent({
   setup() {
@@ -228,34 +246,73 @@ export default defineComponent({
 
 :::
 
-## Tabs 参数
+## Tabs参数
 
-| 参数 | 类型            | 默认  | 说明 |
-| ---- |---------------|-----|----|
-|  v-model   | string/number | -   |  绑定值，选中选项卡的 name    |
-|   type   | card/border-card        | -   |   风格类型 |
-|   tab-position   | top/right/bottom/left        | top |   选项卡所在位置 |
+| 参数 | 类型                                    | 默认  | 说明 |
+| ---- |---------------------------------------|-----|----|
+|  v-model   | [ModelValueType](#modelvaluetype)     | -   |  绑定值，选中选项卡的 name    |
+|   type   | [TabsType](#itabstype)                | -   |   风格类型 |
+|   tab-position   | [ITabPositionType](#itabpositiontype) | top |   选项卡所在位置 |
 
-## Tabs 事件
+## Tabs事件
 
-| 事件 | 类型 | 说明 |
-| ---- | ---- | ---- |
-|  change    |      |   activeName 改变时触发   |
+| 事件 | 类型                                    | 说明 |
+| ---- |---------------------------------------| ---- |
+|  change    | [BeforeChangeType](#beforechangetype) |   activeName 改变时触发   |
 
-## Tabs 插槽
+## tabs类型定义
 
-| 插槽名 | 说明 |
-|-----|--|
-| - | 默认插槽 |
+### ModelValueType
 
-## Tab 参数
+```ts
+export type ModelValueType = string | number;
+```
 
-| 参数 | 类型            | 默认  | 说明 |
-| --- |---------------|-----|---|
-|  label  | string/number       | -   | 选项卡标题  |
-|   name | string/number | -   |   与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+### ITabsType
 
-## Tab 插槽
+```ts
+export type ITabsType = '' | 'card' | 'border-card';
+```
+
+### ITabPositionType
+
+```ts
+export type ITabPositionType = 'top' | 'right' | 'bottom' | 'left';
+```
+
+### BeforeChangeType
+
+```ts
+export type Active = string | number | null;
+export type BeforeChangeType = (id: Active) => boolean;
+```
+
+## Tabs插槽
+
+默认插槽
+
+## Tab参数
+
+| 参数 | 类型                      | 默认  | 说明 |
+| --- |-------------------------|-----|---|
+|  label  | [LabelType](#labelType) | -   | 选项卡标题  |
+|   name | [NameType](#nameType)   | -   |   与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+
+## tab类型定义
+
+### LabelType
+
+```ts
+export type LabelType = string | number;
+```
+
+### NameType
+
+```ts
+export type NameType = string | number;
+```
+
+## Tab插槽
 
 | 插槽名 | 说明 |
 |--|------|

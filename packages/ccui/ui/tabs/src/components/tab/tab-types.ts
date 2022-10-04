@@ -1,12 +1,15 @@
 import { ExtractPropTypes, PropType } from 'vue';
 
+export type LabelType = string | number;
+export type NameType = string | number;
+
 export const tabProps = {
   label: {
-    type: [String, Number] as PropType<string | number>,
+    type: [String, Number] as PropType<LabelType>,
     default: null
   },
   name: {
-    type: String,
+    type: [String, Number] as PropType<NameType>,
     default: null
   },
   disabled: {
