@@ -41,11 +41,11 @@ export default defineComponent({
 
 :::
 
-## Radio-group基本用法
+## RadioGroup基本用法
 
 + 用于展示一组多个 radio 单选框
 
-:::demo radio-group 示例
+:::demo RadioGroup 示例
 
 ```vue
 
@@ -150,7 +150,7 @@ export type BeforeChangeType = (value: string) => boolean | Promise<boolean>;
 
 默认插槽
 
-## Radio-group参数
+## RadioGroup参数
 
 | 参数 | 类型                                    | 默认  | 说明 |
 | ---- |---------------------------------------|-----| ---- |
@@ -159,7 +159,7 @@ export type BeforeChangeType = (value: string) => boolean | Promise<boolean>;
 | direction | [DirectionType](#directionType)       | 'column' | 可选，设置横向或纵向排列 |
 | before-change | [BeforeChangeType](#beforeChangeType) | -   | 可选，radio 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 radio 切换 |
 
-## Radio-group类型定义
+## RadioGroup类型定义
 
 ### DirectionType
 
@@ -167,12 +167,12 @@ export type BeforeChangeType = (value: string) => boolean | Promise<boolean>;
 export type DirectionType = 'row' | 'column';
 ```
 
-## Radio-group事件
+## RadioGroup事件
 
 | 事件 | 类型 | 说明 |
 | ---- | ---- | ---- |
 | change |      | 单选项值改变时触发，返回选中的值 |
 
-## Radio-group插槽
+## RadioGroup插槽
 
 默认插槽
