@@ -1,5 +1,8 @@
 import type { PropType, ExtractPropTypes, InjectionKey, Ref } from 'vue';
 
+export type BeforeChangeType = (value: string) => boolean | Promise<boolean>;
+export type DirectionType = 'row' | 'column';
+
 export const radioProps = {
   modelValue: {
     type: String,
@@ -18,7 +21,7 @@ export const radioProps = {
     default: false
   },
   beforeChange: {
-    type: Function as PropType<(value: string) => boolean | Promise<boolean>>,
+    type: Function as PropType<BeforeChangeType>,
     default: null
   }
 } as const;
@@ -36,11 +39,11 @@ export const radioGroupProps = {
     default: false
   },
   beforeChange: {
-    type: Function as PropType<(value: string) => boolean | Promise<boolean>>,
+    type: Function as PropType<BeforeChangeType>,
     default: null
   },
   direction: {
-    type: String as PropType<'row' | 'column'>,
+    type: String as PropType<DirectionType>,
     default: 'column'
   }
 } as const;
@@ -51,7 +54,7 @@ export type RadioGroupProps = ExtractPropTypes<typeof radioGroupProps>;
 interface RadioGroupInjection {
   modelValue: Ref<string>;
   disabled: Ref<boolean>;
-  beforeChange: (value: string) => boolean | Promise<boolean>;
+  beforeChange: BeforeChangeType;
   emitChangeValue: (value: string) => void;
 }
 
