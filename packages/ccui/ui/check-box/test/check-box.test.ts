@@ -11,5 +11,7 @@ describe('checkBox', () => {
     const wrapper = shallowMount(CheckBox);
 
     expect(wrapper.find(baseClass).exists()).toBeTruthy();
+
+    wrapper.unmount();
   });
 });

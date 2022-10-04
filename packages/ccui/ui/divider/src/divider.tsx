@@ -1,11 +1,14 @@
 import { defineComponent, computed } from 'vue';
 import { dividerProps, DividerProps } from './divider-types';
 import './divider.scss';
+import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
   name: 'KDivider',
   props: dividerProps,
   setup(props: DividerProps, { slots }) {
+    const ns = useNamespace('divider');
+
     const dividerStyle = computed(() => {
       const borderStyleObj =
         props.direction !== 'horizontal'
@@ -18,9 +21,7 @@ export default defineComponent({
     });
 
     const dividerCls = computed(() => {
-      return props.direction === 'horizontal'
-        ? 'okUi-divider'
-        : 'okUi-divider-vertical';
+      return props.direction === 'horizontal' ? ns.b() : ns.m('vertical');
     });
 
     const dividerTextStyle = computed(() => {
@@ -31,7 +32,7 @@ export default defineComponent({
     });
 
     const dividerTextCls = computed(() => {
-      return `okUi-divider_text is-${props.contentPosition}`;
+      return `${ns.e('text')} is-${props.contentPosition}`;
     });
 
     return () => {
