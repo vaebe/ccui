@@ -1,4 +1,4 @@
-import { defineComponent, toRefs, toRaw } from 'vue';
+import { defineComponent, toRefs } from 'vue';
 import { treeProps, TreeProps, TreeItem } from './tree-types';
 import IconOpen from './components/icon-open';
 import IconClose from './components/icon-close';

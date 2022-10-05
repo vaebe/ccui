@@ -31,12 +31,15 @@
     line-height: 16px;
     vertical-align: middle;
     user-select: none;
-    fill: $ccui-icon-fill;
+    fill: $ccui-text;
   }
 
   &.active {
     color: #7693f5;
-    fill: #7693f5;
+
+    span {
+      fill: #7693f5;
+    }
   }
 
   &.disabled {
