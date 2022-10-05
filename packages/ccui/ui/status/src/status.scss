@@ -1,0 +1,49 @@
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-status {
+
+  &:before {
+    display: inline-block;
+    content: "";
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    border-radius: 100%;
+  }
+
+  span {
+    margin-left: 5px;
+  }
+}
+
+.#{$cls-prefix}-status {
+  &--invalid:before {
+    background: #2c3e50;
+  }
+
+  &--error:before {
+    background: red;
+  }
+
+  &--initial:before {
+    background: #e9edfa;
+  }
+
+  &--warning:before {
+    background: #fac20a;
+  }
+
+  &--waiting:before {
+    background: #beccfa;
+  }
+
+  &--running:before {
+    background: #5e7ce0;
+  }
+
+  &--success:before {
+    background: #50d4ab;
+  }
+}
+
+
