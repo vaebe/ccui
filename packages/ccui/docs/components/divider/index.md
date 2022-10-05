@@ -15,35 +15,35 @@
 <template>
   <div>
     基础用法： 对段落的文本进行分割。
-    <k-divider></k-divider>
+    <c-divider></c-divider>
 
     虚线
-    <k-divider border-style='dashed'></k-divider>
+    <c-divider border-style='dashed'></c-divider>
 
     自定义分割线颜色
-    <k-divider color='#7693f5'></k-divider>
+    <c-divider color='#7693f5'></c-divider>
 
     自定义文案
-    <k-divider>北京</k-divider>
+    <c-divider>北京</c-divider>
 
     在左侧的自定义文案
-    <k-divider content-position='left'>上海</k-divider>
+    <c-divider content-position='left'>上海</c-divider>
 
     在右侧的自定义文案
-    <k-divider content-position='right'>广州</k-divider>
+    <c-divider content-position='right'>广州</c-divider>
 
     文案的颜色
-    <k-divider content-color='#7693f5'>广州</k-divider>
+    <c-divider content-color='#7693f5'>广州</c-divider>
 
     文案的背景颜色
-    <k-divider content-background-color='#7693f5'>广州</k-divider>
+    <c-divider content-background-color='#7693f5'>广州</c-divider>
 
     垂直的分割线
     <div>
       北京
-      <k-divider direction='vertical'></k-divider>
+      <c-divider direction='vertical'></c-divider>
       上海
-      <k-divider direction='vertical' border-style='dashed'></k-divider>
+      <c-divider direction='vertical' border-style='dashed'></c-divider>
       成都
     </div>
   </div>

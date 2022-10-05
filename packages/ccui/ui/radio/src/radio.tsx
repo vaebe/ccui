@@ -6,7 +6,7 @@ import './radio.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KRadio',
+  name: 'CRadio',
   props: radioProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RadioProps, { emit, slots }) {

@@ -13,7 +13,7 @@
 ```vue
 
 <template>
-  <k-calendar v-model="curDate" @change="curDateChange"></k-calendar>
+  <c-calendar v-model="curDate" @change="curDateChange"></c-calendar>
 </template>
 
 <script>
@@ -48,14 +48,14 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-calendar v-model="curDate" @change="curDateChange">
+  <c-calendar v-model="curDate" @change="curDateChange">
     <template #header="date">
       <div class="customize-header">
         当前日期 {{date}}
-        <k-button type="primary" plain @click="addADay">加一天</k-button>
+        <c-button type="primary" plain @click="addADay">加一天</c-button>
       </div>
     </template>
-  </k-calendar>
+  </c-calendar>
 </template>
 
 <script>
@@ -98,11 +98,11 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-calendar @change="curDateChange">
+  <c-calendar @change="curDateChange">
     <template #dateCell="{isSelected, date, day}">
       {{isSelected ? '当前选中日期' : day}}
     </template>
-  </k-calendar>
+  </c-calendar>
 </template>
 
 <script>

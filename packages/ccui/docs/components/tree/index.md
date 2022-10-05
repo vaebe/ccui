@@ -13,7 +13,7 @@
 
 ```vue
 <template>
-  <k-tree :data="data"></k-tree>
+  <c-tree :data="data"></c-tree>
 </template>
 
 <script lang="ts">

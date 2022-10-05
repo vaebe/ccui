@@ -5,7 +5,7 @@ import { useNamespace } from '../../shared/hooks/use-namespace';
 import tree from '../../tree';
 
 export default defineComponent({
-  name: 'KButton',
+  name: 'CButton',
   props: buttonProps,
   emits: ['click'],
   setup(props: ButtonProps, { slots, emit }) {

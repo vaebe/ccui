@@ -5,7 +5,7 @@ import { useNamespace } from '../../shared/hooks/use-namespace';
 import moment from 'moment';
 
 export default defineComponent({
-  name: 'KCalendar',
+  name: 'CCalendar',
   props: calendarProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CalendarProps, { emit, slots }) {
@@ -151,7 +151,7 @@ export default defineComponent({
         <div class={ns.e('header')}>
           <div>{currentMonth.value}</div>
           <div>
-            <k-button
+            <c-button
               type='primary'
               plain={true}
               onClick={() => {
@@ -159,8 +159,8 @@ export default defineComponent({
               }}
             >
               上个月
-            </k-button>
-            <k-button
+            </c-button>
+            <c-button
               type='primary'
               plain={true}
               onClick={() => {
@@ -168,8 +168,8 @@ export default defineComponent({
               }}
             >
               今天
-            </k-button>
-            <k-button
+            </c-button>
+            <c-button
               type='primary'
               plain={true}
               onClick={() => {
@@ -177,7 +177,7 @@ export default defineComponent({
               }}
             >
               下个月
-            </k-button>
+            </c-button>
           </div>
         </div>
       );

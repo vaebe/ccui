@@ -13,14 +13,14 @@
 ```vue
 
 <template>
-  <k-status>Default</k-status>
-  <k-status type="success">Success</k-status>
-  <k-status type="error">Error</k-status>
-  <k-status type="warning">Warning</k-status>
-  <k-status type="initial">Initial</k-status>
-  <k-status type="waiting">Waiting</k-status>
-  <k-status type="running">Running</k-status>
-  <k-status type="invalid">Invalid</k-status>
+  <c-status>Default</c-status>
+  <c-status type="success">Success</c-status>
+  <c-status type="error">Error</c-status>
+  <c-status type="warning">Warning</c-status>
+  <c-status type="initial">Initial</c-status>
+  <c-status type="waiting">Waiting</c-status>
+  <c-status type="running">Running</c-status>
+  <c-status type="invalid">Invalid</c-status>
 </template>
 
 <script>

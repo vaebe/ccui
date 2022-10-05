@@ -57,7 +57,7 @@ export interface UseTabsEvent {
 }
 
 /** KTabs 注入 tab 的 key 值 */
-export const tabsInjectionKey: InjectionKey<TabsState> = Symbol('KTabs');
+export const tabsInjectionKey: InjectionKey<TabsState> = Symbol('CTabs');
 
 export interface UseTabsRender {
   tabsClasses: ComputedRef<Record<string, boolean>>;

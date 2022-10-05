@@ -8,7 +8,7 @@ import { IconImgError } from './components/icon-img-error';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KAvatar',
+  name: 'CAvatar',
   props: avatarProps,
   emits: [],
   setup(props: AvatarProps) {

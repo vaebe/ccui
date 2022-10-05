@@ -60,4 +60,4 @@ interface RadioGroupInjection {
 
 /** radio-group 注入 radio 的 key 值 */
 export const radioGroupInjectionKey: InjectionKey<RadioGroupInjection> =
-  Symbol('KRadioGroup');
+  Symbol('CRadioGroup');

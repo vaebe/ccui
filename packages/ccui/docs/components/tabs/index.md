@@ -13,15 +13,15 @@
 ```vue
 
 <template>
-  <k-tabs v-model="activeTab" class="my-tabs">
-    <k-tab label="周一" name="1">
+  <c-tabs v-model="activeTab" class="my-tabs">
+    <c-tab label="周一" name="1">
       我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
-    </k-tab>
-    <k-tab label="周二" name="2">
+    </c-tab>
+    <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
-    </k-tab>
-    <k-tab label="疯狂星期四" name="3">V我50</k-tab>
-  </k-tabs>
+    </c-tab>
+    <c-tab label="疯狂星期四" name="3">V我50</c-tab>
+  </c-tabs>
 </template>
 
 <script>
@@ -58,15 +58,15 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-tabs v-model="activeTab" type="card" class="my-tabs">
-    <k-tab label="周一" name="1">
+  <c-tabs v-model="activeTab" type="card" class="my-tabs">
+    <c-tab label="周一" name="1">
       我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
-    </k-tab>
-    <k-tab label="周二" name="2">
+    </c-tab>
+    <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
-    </k-tab>
-    <k-tab label="疯狂星期四" name="3">V我100别问为什么，问就是有中间商</k-tab>
-  </k-tabs>
+    </c-tab>
+    <c-tab label="疯狂星期四" name="3">V我100别问为什么，问就是有中间商</c-tab>
+  </c-tabs>
 </template>
 
 <script>
@@ -103,17 +103,17 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-tabs v-model="activeTab" type="border-card" class="my-tabs">
-    <k-tab label="周一" name="1">
+  <c-tabs v-model="activeTab" type="border-card" class="my-tabs">
+    <c-tab label="周一" name="1">
       我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
-    </k-tab>
-    <k-tab label="周二" name="2">
+    </c-tab>
+    <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
-    </k-tab>
-    <k-tab label="疯狂星期四" name="3">
+    </c-tab>
+    <c-tab label="疯狂星期四" name="3">
       工厂模式其实就是将创建对象的过程单独封装：比如说点一份西红柿炒蛋，我们不用关心西红柿怎么切、怎么打鸡蛋这些菜品制作过程中的问题，我们只关心摆上桌那道菜。在工厂模式里，我传参这个过程就是点菜，工厂函数里面运转的逻辑就相当于炒菜的厨师和上桌的服务员做掉的那部分工作——这部分工作我们同样不用关心，我们只要能拿到工厂交付给我们的实例结果就行了。
-    </k-tab>
-  </k-tabs>
+    </c-tab>
+  </c-tabs>
 </template>
 
 <script>
@@ -150,20 +150,20 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-tabs v-model="activeTab" class="my-tabs">
-    <k-tab label="周一" name="1">
+  <c-tabs v-model="activeTab" class="my-tabs">
+    <c-tab label="周一" name="1">
       <template v-slot:title>
         周一
       </template>
       我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
-    </k-tab>
-    <k-tab label="周二" name="2">
+    </c-tab>
+    <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
-    </k-tab>
-    <k-tab label="疯狂星期四" name="3">
+    </c-tab>
+    <c-tab label="疯狂星期四" name="3">
       保证一个类仅有一个实例，并提供一个访问它的全局访问点，这样的模式就叫做单例模式。
-    </k-tab>
-  </k-tabs>
+    </c-tab>
+  </c-tabs>
 </template>
 
 <script>
@@ -200,18 +200,18 @@ export default defineComponent({
 ```vue
 
 <template>
-  <k-radio-group v-model="checkedRadio" direction="row">
-    <k-radio label="top">top</k-radio>
-    <k-radio label="right">right</k-radio>
-    <k-radio label="bottom">bottom</k-radio>
-    <k-radio label="left">left</k-radio>
-  </k-radio-group>
+  <c-radio-group v-model="checkedRadio" direction="row">
+    <c-radio label="top">top</c-radio>
+    <c-radio label="right">right</c-radio>
+    <c-radio label="bottom">bottom</c-radio>
+    <c-radio label="left">left</c-radio>
+  </c-radio-group>
 
-  <k-tabs v-model="activeTab" class="my-tabs" :tab-position="checkedRadio">
-    <k-tab label="周一" name="1">疲惫的一天</k-tab>
-    <k-tab label="周二" name="2">开心</k-tab>
-    <k-tab label="疯狂星期四" name="3">狂吃</k-tab>
-  </k-tabs>
+  <c-tabs v-model="activeTab" class="my-tabs" :tab-position="checkedRadio">
+    <c-tab label="周一" name="1">疲惫的一天</c-tab>
+    <c-tab label="周二" name="2">开心</c-tab>
+    <c-tab label="疯狂星期四" name="3">狂吃</c-tab>
+  </c-tabs>
 </template>
 
 <script>

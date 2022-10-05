@@ -10,7 +10,7 @@ import './check-box.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KCheckBox',
+  name: 'CCheckBox',
   props: checkBoxProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CheckBoxProps, { emit, slots }) {

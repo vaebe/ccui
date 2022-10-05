@@ -16,22 +16,22 @@
 
 <template>
   <div style="display: flex; align-items: center; justify-content: space-between;">
-    <k-avatar name="张三"></k-avatar>
-    <k-avatar :width="24" :height="24" name="张三张三张三张三张三大壮"></k-avatar>
-    <k-avatar :width="32" :height="32" name="lihua"></k-avatar>
-    <k-avatar :width="40" :height="40" name="hua li" :isRound="false"></k-avatar>
-    <k-avatar name="李六" customText="王二"></k-avatar>
-    <k-avatar
+    <c-avatar name="张三"></c-avatar>
+    <c-avatar :width="24" :height="24" name="张三张三张三张三张三大壮"></c-avatar>
+    <c-avatar :width="32" :height="32" name="lihua"></c-avatar>
+    <c-avatar :width="40" :height="40" name="hua li" :isRound="false"></c-avatar>
+    <c-avatar name="李六" customText="王二"></c-avatar>
+    <c-avatar
         name="刘武"
         imgSrc="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-    ></k-avatar>
-    <k-avatar
+    ></c-avatar>
+    <c-avatar
         name="刘武"
         fit="contain"
         imgSrc="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-    ></k-avatar>
-    <k-avatar name="孙六" :isRound="false" imgSrc="https://fuss10.1171jpeg.jpeg"></k-avatar>
-    <k-avatar></k-avatar>
+    ></c-avatar>
+    <c-avatar name="孙六" :isRound="false" imgSrc="https://fuss10.1171jpeg.jpeg"></c-avatar>
+    <c-avatar></c-avatar>
   </div>
 </template>
 

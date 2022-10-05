@@ -66,4 +66,4 @@ interface CheckBoxGroupInjection {
 
 /** check-box-group 注入 checkBox 的 key 值 */
 export const checkBoxGroupInjectionKey: InjectionKey<CheckBoxGroupInjection> =
-  Symbol('KCheckBoxGroup');
+  Symbol('CCheckBoxGroup');

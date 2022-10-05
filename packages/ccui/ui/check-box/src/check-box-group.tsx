@@ -8,7 +8,7 @@ import './check-box-group.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KCheckBoxGroup',
+  name: 'CCheckBoxGroup',
   props: checkBoxGroupProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CheckBoxGroupProps, { emit, slots }) {

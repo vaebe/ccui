@@ -4,7 +4,7 @@ import './divider.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KDivider',
+  name: 'CDivider',
   props: dividerProps,
   setup(props: DividerProps, { slots }) {
     const ns = useNamespace('divider');

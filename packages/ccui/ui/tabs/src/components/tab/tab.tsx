@@ -5,7 +5,7 @@ import './tab.scss';
 import { useNamespace } from '../../../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KTab',
+  name: 'CTab',
   props: tabProps,
   emits: [],
   setup(props: TabProps, { slots }) {

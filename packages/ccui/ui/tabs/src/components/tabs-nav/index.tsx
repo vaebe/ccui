@@ -10,7 +10,7 @@ import './tabs-nav.scss';
 import { useNamespace } from '../../../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KTabs-nav',
+  name: 'CTabs-nav',
   props: tabsProps,
   emits: ['active-tab-change'],
   setup(props: TabsProps, { emit }) {

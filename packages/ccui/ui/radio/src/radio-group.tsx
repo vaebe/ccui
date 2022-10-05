@@ -8,7 +8,7 @@ import './radio-group.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KRadioGroup',
+  name: 'CRadioGroup',
   props: radioGroupProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RadioGroupProps, { emit, slots }) {

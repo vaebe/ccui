@@ -15,38 +15,38 @@
 <template>
   <p>基本使用</p>
   <div>
-    <k-button>北京</k-button>
-    <k-button type='primary'>上海</k-button>
-    <k-button type='success'>深圳</k-button>
-    <k-button type='warning'>河南</k-button>
-    <k-button type='danger'>合肥</k-button>
-    <k-button type='info'>河北</k-button>
-    <k-button type='text'>安徽</k-button>
+    <c-button>北京</c-button>
+    <c-button type='primary'>上海</c-button>
+    <c-button type='success'>深圳</c-button>
+    <c-button type='warning'>河南</c-button>
+    <c-button type='danger'>合肥</c-button>
+    <c-button type='info'>河北</c-button>
+    <c-button type='text'>安徽</c-button>
   </div>
 
   <p>大小 size</p>
   <div>
-    <k-button type='success' size='large'>北京</k-button>
-    <k-button type='warning'>上海</k-button>
-    <k-button type='danger' size='small'>广东</k-button>
+    <c-button type='success' size='large'>北京</c-button>
+    <c-button type='warning'>上海</c-button>
+    <c-button type='danger' size='small'>广东</c-button>
   </div>
 
   <p>禁用</p>
   <div>
-    <k-button type='success' disabled>北京</k-button>
+    <c-button type='success' disabled>北京</c-button>
   </div>
 
   <p>圆角按钮</p>
   <div>
-    <k-button type='success' round>北京</k-button>
-    <k-button type='danger' size='small' round>广东</k-button>
+    <c-button type='success' round>北京</c-button>
+    <c-button type='danger' size='small' round>广东</c-button>
   </div>
 
   <p>圆形按钮 与 icon 插槽</p>
   <div>
-    <k-button type='success' circle>北</k-button>
+    <c-button type='success' circle>北</c-button>
 
-    <k-button type='primary' circle>
+    <c-button type='primary' circle>
       <template #icon>
         <svg t='1649322922975' class='icon' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg'
              p-id='3628' width='16' height='16'>
@@ -58,16 +58,16 @@
               p-id='3630' fill='#ffffff'></path>
         </svg>
       </template>
-    </k-button>
+    </c-button>
   </div>
 
   <p>朴素按钮</p>
   <div>
-    <k-button type='primary' plain>上海</k-button>
-    <k-button type='success' plain>深圳</k-button>
-    <k-button type='warning' plain>河南</k-button>
-    <k-button type='danger' plain>合肥</k-button>
-    <k-button type='info' plain>河北</k-button>
+    <c-button type='primary' plain>上海</c-button>
+    <c-button type='success' plain>深圳</c-button>
+    <c-button type='warning' plain>河南</c-button>
+    <c-button type='danger' plain>合肥</c-button>
+    <c-button type='info' plain>河北</c-button>
   </div>
 </template>
 

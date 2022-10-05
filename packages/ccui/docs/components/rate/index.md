@@ -13,7 +13,7 @@
 ```vue
 
 <template>
-  <k-rate v-model="value1" :read-only="true"/>
+  <c-rate v-model="value1" :read-only="true"/>
 </template>
 <script>
 import {ref} from 'vue'
@@ -38,7 +38,7 @@ export default {
 ```vue
 
 <template>
-  <k-rate v-model="value" icon="star-o"/>
+  <c-rate v-model="value" icon="star-o"/>
 </template>
 <script>
 import {ref} from 'vue'
@@ -63,7 +63,7 @@ export default {
 ```vue
 
 <template>
-  <k-rate color="#ffa500" v-model="value" :count="6">A</k-rate>
+  <c-rate color="#ffa500" v-model="value" :count="6">A</c-rate>
 </template>
 <script>
 import {ref} from 'vue'
@@ -88,11 +88,11 @@ export default {
 ```vue
 
 <template>
-  <k-rate v-model="value" :allow-half="true" @change="change">
+  <c-rate v-model="value" :allow-half="true" @change="change">
     <template v-slot:info="info">
       {{info}}
     </template>
-  </k-rate>
+  </c-rate>
 </template>
 <script>
 import {ref} from 'vue'
@@ -122,7 +122,7 @@ export default {
 
 <template>
   <div class="mb20">
-    <k-rate
+    <c-rate
         v-model="value1"
         :read-only="true"
         color="blue"
@@ -131,7 +131,7 @@ export default {
     />
   </div>
   <div class="mb20">
-    <k-rate
+    <c-rate
         v-model="value2"
         :read-only="true"
         color="orange"
@@ -140,10 +140,10 @@ export default {
     />
   </div>
   <div class="mb20">
-    <k-rate v-model="value3" :read-only="true" color="red" :count="5"/>
+    <c-rate v-model="value3" :read-only="true" color="red" :count="5"/>
   </div>
   <div>
-    <k-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">N</k-rate>
+    <c-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">N</c-rate>
   </div>
 </template>
 <script>

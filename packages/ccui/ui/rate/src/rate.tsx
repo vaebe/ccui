@@ -5,7 +5,7 @@ import './rate.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KRate',
+  name: 'CRate',
   props: rateProps,
   emits: ['change', 'update:modelValue'],
   setup(props: RateProps, { emit, slots }) {

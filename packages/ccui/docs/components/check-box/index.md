@@ -14,16 +14,16 @@
 ```vue
 
 <template>
-  <k-check-box v-model='checked'>{{ msg }}</k-check-box>
-  <k-check-box v-model='checked2' :label='label'></k-check-box>
-  <k-check-box v-model='checked3' :disabled='true'>禁用 check-box</k-check-box>
-  <k-check-box v-model='checked4' color='RGB(255, 193, 7)'>改变 icon 的颜色</k-check-box>
+  <c-check-box v-model='checked'>{{ msg }}</c-check-box>
+  <c-check-box v-model='checked2' :label='label'></c-check-box>
+  <c-check-box v-model='checked3' :disabled='true'>禁用 check-box</c-check-box>
+  <c-check-box v-model='checked4' color='RGB(255, 193, 7)'>改变 icon 的颜色</c-check-box>
 
-  <k-check-box v-model='checked5' @change='checkBoxChange'>checkBoxChange 事件， 关联下方beforeChange的切换状态
-  </k-check-box>
-  <k-check-box v-model='checked6' :beforeChange='checkBoxBeforeChange'>
+  <c-check-box v-model='checked5' @change='checkBoxChange'>checkBoxChange 事件， 关联下方beforeChange的切换状态
+  </c-check-box>
+  <c-check-box v-model='checked6' :beforeChange='checkBoxBeforeChange'>
     beforeChange 返回 {{checked5}} {{checked5 ? '可以' : '不能'}} 切换状态
-  </k-check-box>
+  </c-check-box>
 
 </template>
 
@@ -80,47 +80,47 @@ export default defineComponent({
   <div>
     <div>
       <h4>基础示例</h4>
-      <k-check-box-group v-model='checkedList'>
-        <k-check-box label='beijing'>北京</k-check-box>
-        <k-check-box label='shanghai'>上海</k-check-box>
-        <k-check-box label='guangzhou'>广州</k-check-box>
-      </k-check-box-group>
+      <c-check-box-group v-model='checkedList'>
+        <c-check-box label='beijing'>北京</c-check-box>
+        <c-check-box label='shanghai'>上海</c-check-box>
+        <c-check-box label='guangzhou'>广州</c-check-box>
+      </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>禁用</h4>
-      <k-check-box-group v-model='checkedList' :disabled='true'>
-        <k-check-box label='beijing'>北京</k-check-box>
-        <k-check-box label='shanghai'>上海</k-check-box>
-        <k-check-box label='guangzhou'>广州</k-check-box>
-      </k-check-box-group>
+      <c-check-box-group v-model='checkedList' :disabled='true'>
+        <c-check-box label='beijing'>北京</c-check-box>
+        <c-check-box label='shanghai'>上海</c-check-box>
+        <c-check-box label='guangzhou'>广州</c-check-box>
+      </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>横向排列</h4>
-      <k-check-box-group v-model='checkedList' direction='row'>
-        <k-check-box label='beijing'>北京</k-check-box>
-        <k-check-box label='shanghai'>上海</k-check-box>
-        <k-check-box label='guangzhou'>广州</k-check-box>
-      </k-check-box-group>
+      <c-check-box-group v-model='checkedList' direction='row'>
+        <c-check-box label='beijing'>北京</c-check-box>
+        <c-check-box label='shanghai'>上海</c-check-box>
+        <c-check-box label='guangzhou'>广州</c-check-box>
+      </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>checkBoxChange 和 color 颜色</h4>
-      <k-check-box-group v-model='checkedList' color='RGB(255, 193, 7)' @change='checkBoxChange'>
-        <k-check-box label='beijing'>北京</k-check-box>
-        <k-check-box label='shanghai'>上海</k-check-box>
-        <k-check-box label='guangzhou'>广州</k-check-box>
-      </k-check-box-group>
+      <c-check-box-group v-model='checkedList' color='RGB(255, 193, 7)' @change='checkBoxChange'>
+        <c-check-box label='beijing'>北京</c-check-box>
+        <c-check-box label='shanghai'>上海</c-check-box>
+        <c-check-box label='guangzhou'>广州</c-check-box>
+      </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>beforeChange (选中上海可以切换) {{canChange ? '可以' : '不可以'}}切换</h4>
-      <k-check-box-group v-model='checkedList' :beforeChange='checkBoxBeforeChange'>
-        <k-check-box label='beijing'>北京</k-check-box>
-        <k-check-box label='shanghai'>上海</k-check-box>
-        <k-check-box label='guangzhou'>广州</k-check-box>
-      </k-check-box-group>
+      <c-check-box-group v-model='checkedList' :beforeChange='checkBoxBeforeChange'>
+        <c-check-box label='beijing'>北京</c-check-box>
+        <c-check-box label='shanghai'>上海</c-check-box>
+        <c-check-box label='guangzhou'>广州</c-check-box>
+      </c-check-box-group>
     </div>
   </div>
 </template>

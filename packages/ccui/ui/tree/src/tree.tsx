@@ -7,7 +7,7 @@ import './tree.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KTree',
+  name: 'CTree',
   props: treeProps,
   emits: [],
   setup(props: TreeProps) {

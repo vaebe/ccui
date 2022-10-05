@@ -10,7 +10,7 @@ import TabsNav from './components/tabs-nav';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 
 export default defineComponent({
-  name: 'KTabs',
+  name: 'CTabs',
   props: tabsProps,
   emits: ['change', 'update:modelValue'],
   components: {
