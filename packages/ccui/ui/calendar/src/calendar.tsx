@@ -2,7 +2,7 @@ import { defineComponent, ref, computed, watch, Ref } from 'vue';
 import { calendarProps, CalendarProps, dateItem } from './calendar-types';
 import './calendar.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
-import moment from 'moment';
+import * as moment from 'moment';
 
 export default defineComponent({
   name: 'CCalendar',
