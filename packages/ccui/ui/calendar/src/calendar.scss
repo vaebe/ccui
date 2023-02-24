@@ -17,6 +17,11 @@
     }
   }
 
+  .current-month {
+    color: $ccui-text;
+  }
+
+
   &__day-box {
     display: flex;
     flex-wrap: wrap;
@@ -41,12 +46,10 @@
     }
 
     &--day:hover {
+      color: $ccui-list-item-active-text;
       background: $ccui-list-item-active-hover-bg;
     }
 
-    .current-month {
-      color: $ccui-text;
-    }
 
     .current-date {
       color: $ccui-list-item-active-text;
