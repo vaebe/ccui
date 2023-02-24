@@ -79,6 +79,47 @@ importers:
       vitest: 0.18.1_27a52dd98c8c5351e1862b32c978f11a
       vue-tsc: 0.38.9_typescript@4.7.4
 
+  packages/ccui/build:
+    specifiers:
+      vitepress-theme-demoblock: ^1.4.2
+      vue: ^3.2.37
+    dependencies:
+      vitepress-theme-demoblock: 1.4.2
+      vue: 3.2.37
+
+  packages/ccui/build/avatar:
+    specifiers: {}
+
+  packages/ccui/build/button:
+    specifiers: {}
+
+  packages/ccui/build/calendar:
+    specifiers: {}
+
+  packages/ccui/build/card:
+    specifiers: {}
+
+  packages/ccui/build/check-box:
+    specifiers: {}
+
+  packages/ccui/build/divider:
+    specifiers: {}
+
+  packages/ccui/build/radio:
+    specifiers: {}
+
+  packages/ccui/build/rate:
+    specifiers: {}
+
+  packages/ccui/build/status:
+    specifiers: {}
+
+  packages/ccui/build/tabs:
+    specifiers: {}
+
+  packages/ccui/build/tree:
+    specifiers: {}
+
   packages/cli:
     specifiers:
       '@babel/parser': ^7.17.9
@@ -5854,6 +5895,30 @@ packages:
       svgo: 2.8.0
     dev: true
 
+  /vite/2.9.14:
+    resolution: {integrity: sha512-P/UCjSpSMcE54r4mPak55hWAZPlyfS369svib/gpmz8/01L822lMPOJ/RYW6tLCe1RPvMvOsJ17erf55bKp4Hw==}
+    engines: {node: '>=12.2.0'}
+    hasBin: true
+    peerDependencies:
+      less: '*'
+      sass: '*'
+      stylus: '*'
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+    dependencies:
+      esbuild: 0.14.50
+      postcss: 8.4.14
+      resolve: 1.22.1
+      rollup: 2.77.0
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: false
+
   /vite/2.9.14_sass@1.54.0:
     resolution: {integrity: sha512-P/UCjSpSMcE54r4mPak55hWAZPlyfS369svib/gpmz8/01L822lMPOJ/RYW6tLCe1RPvMvOsJ17erf55bKp4Hw==}
     engines: {node: '>=12.2.0'}
@@ -5932,6 +5997,28 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /vitepress-theme-demoblock/1.4.2:
+    resolution: {integrity: sha512-OMIRg1JJI8NvBVLFu2G0cd+gT5IzXZfTsV7yws7GfRXZE3Q4qLO5cR1+ngNnFZw44ID1oLk+Yu9HZM+AJYtgWA==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+    dependencies:
+      camelcase: 6.3.0
+      globby: 11.1.0
+      kolorist: 1.5.1
+      markdown-it: 12.3.2
+      minimist: 1.2.6
+      prettier: 2.7.1
+      vitepress: 0.16.1
+      yaml: 2.1.1
+    transitivePeerDependencies:
+      - less
+      - react
+      - react-dom
+      - sass
+      - stylus
+      - supports-color
+    dev: false
+
   /vitepress-theme-demoblock/1.4.2_sass@1.55.0:
     resolution: {integrity: sha512-OMIRg1JJI8NvBVLFu2G0cd+gT5IzXZfTsV7yws7GfRXZE3Q4qLO5cR1+ngNnFZw44ID1oLk+Yu9HZM+AJYtgWA==}
     engines: {node: '>=14.0.0'}
@@ -5945,6 +6032,47 @@ packages:
       prettier: 2.7.1
       vitepress: 0.16.1_sass@1.55.0
       yaml: 2.1.1
+    transitivePeerDependencies:
+      - less
+      - react
+      - react-dom
+      - sass
+      - stylus
+      - supports-color
+    dev: false
+
+  /vitepress/0.16.1:
+    resolution: {integrity: sha512-jsgNY+b4mngVHQ1mZZ7ZGJliup/nM0jwdKTGoptwVzSQfkx5i3lF14jRRMb6ulC+9X5xbQ7N/zNcWqVWMFd/cQ==}
+    engines: {node: '>=12.0.0'}
+    hasBin: true
+    dependencies:
+      '@docsearch/css': 1.0.0-alpha.28
+      '@docsearch/js': 1.0.0-alpha.28
+      '@types/markdown-it': 12.2.3
+      '@vitejs/plugin-vue': 1.10.2_vite@2.9.14
+      '@vue/compiler-sfc': 3.2.37
+      '@vue/server-renderer': 3.2.37_vue@3.2.37
+      chalk: 4.1.2
+      compression: 1.7.4
+      debug: 4.3.4
+      diacritics: 1.3.0
+      escape-html: 1.0.3
+      fs-extra: 10.1.0
+      globby: 11.1.0
+      gray-matter: 4.0.3
+      lru-cache: 6.0.0
+      markdown-it: 12.3.2
+      markdown-it-anchor: 7.1.0_markdown-it@12.3.2
+      markdown-it-container: 3.0.0
+      markdown-it-emoji: 2.0.2
+      markdown-it-table-of-contents: 0.5.2
+      minimist: 1.2.6
+      ora: 5.4.1
+      polka: 0.5.2
+      prismjs: 1.28.0
+      sirv: 1.0.19
+      vite: 2.9.14
+      vue: 3.2.37
     transitivePeerDependencies:
       - less
       - react
