@@ -144,5 +144,4 @@ export default defineComponent({
 | 插槽名 | 说明 |
 | ---- | -- |
 | header | 自定义日历头部，参数`date`当前日期 |
-| dateCell | 返回 `data: { isSelected, date, day }` 参数 `isSelected` 是否选中,`date` 是格式化的日期格式为
-YYYY-MM-DD, `day` 单元格的日期 。 |
+| dateCell | 返回 `data: { isSelected, date, day }`;`isSelected` 是否选中、`date` 格式化后的日期、 `day` 单元格的日期 。 |
