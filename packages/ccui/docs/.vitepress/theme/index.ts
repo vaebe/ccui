@@ -1,13 +1,14 @@
-import Theme from 'vitepress/theme';
+import DefaultTheme from 'vitepress/theme';
+import 'vitepress-theme-demoblock/dist/theme/styles/index.css';
 import './styles/index.scss';
-import 'vitepress-theme-demoblock/theme/styles/index.css';
-import { registerComponents } from './register-components.js';
-import vue_ui from '../../../ui/vue-ccui';
+import { useComponents } from './useComponents.js';
+import ccui from '../../../ui/vue-ccui';
 
 export default {
-  ...Theme,
-  enhanceApp({ app }) {
-    app.use(vue_ui);
-    registerComponents(app);
+  ...DefaultTheme,
+  enhanceApp(ctx) {
+    DefaultTheme.enhanceApp(ctx);
+    ctx.app.use(ccui);
+    useComponents(ctx.app);
   }
 };
