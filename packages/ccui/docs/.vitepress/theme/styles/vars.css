@@ -3,7 +3,21 @@
  * -------------------------------------------------------------------------- */
 
 :root {
-    --vp-c-brand: #7693f5;
+    --vp-c-brand: #5e7ce0;
+}
+
+/**
+ * Component: Button
+ * -------------------------------------------------------------------------- */
+.VPButton.brand {
+    border-color: #7693f5 !important;
+    background-color: var(--vp-c-brand);
+
+}
+
+.VPButton.brand:hover {
+    background-color: var(--vp-c-brand) !important;
+    opacity: 0.7;
 }
 
 /**
@@ -45,3 +59,5 @@
 .DocSearch {
     --docsearch-primary-color: var(--vp-c-brand) !important;
 }
+
+
