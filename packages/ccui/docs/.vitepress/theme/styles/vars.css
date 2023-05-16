@@ -60,4 +60,7 @@
     --docsearch-primary-color: var(--vp-c-brand) !important;
 }
 
-
+.vp-doc table {
+    width: 100%;
+    display: table;
+}
