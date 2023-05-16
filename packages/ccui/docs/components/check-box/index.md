@@ -24,7 +24,6 @@
   <c-check-box v-model='checked6' :beforeChange='checkBoxBeforeChange'>
     beforeChange 返回 {{checked5}} {{checked5 ? '可以' : '不能'}} 切换状态
   </c-check-box>
-
 </template>
 
 <script>
