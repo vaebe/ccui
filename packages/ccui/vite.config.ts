@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 
 // jsx 依赖
