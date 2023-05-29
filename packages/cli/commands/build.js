@@ -31,10 +31,11 @@ const buildSingle = async (name) => {
       ...baseConfig,
       build: {
         rollupOptions,
+        emptyOutDir: true,
         lib: {
           entry: path.resolve(entryDir, name),
           name: 'index',
-          fileName: 'index',
+          fileName: (type) => `index.${type}.js`,
           formats: ['es', 'umd']
         },
         outDir: path.resolve(outputDir, name)
@@ -49,10 +50,11 @@ const buildAll = async () => {
       ...baseConfig,
       build: {
         rollupOptions,
+        emptyOutDir: true,
         lib: {
           entry: path.resolve(entryDir, 'vue-ccui.ts'),
           name: 'VueCcui',
-          fileName: 'vue-ccui',
+          fileName: (type) => `vue-ccui.${type}.js`,
           formats: ['es', 'umd']
         },
         outDir: outputDir

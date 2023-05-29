@@ -111,37 +111,6 @@ importers:
         specifier: ^1.6.5
         version: 1.6.5(typescript@5.0.4)
 
-  packages/ccui/build:
-    dependencies:
-      vitepress-theme-demoblock:
-        specifier: ^2.0.2
-        version: 2.0.2(@algolia/client-search@4.17.0)(@types/node@20.1.4)(sass@1.62.1)
-      vue:
-        specifier: ^3.3.2
-        version: 3.3.2
-
-  packages/ccui/build/avatar: {}
-
-  packages/ccui/build/button: {}
-
-  packages/ccui/build/calendar: {}
-
-  packages/ccui/build/card: {}
-
-  packages/ccui/build/check-box: {}
-
-  packages/ccui/build/divider: {}
-
-  packages/ccui/build/radio: {}
-
-  packages/ccui/build/rate: {}
-
-  packages/ccui/build/status: {}
-
-  packages/ccui/build/tabs: {}
-
-  packages/ccui/build/tree: {}
-
   packages/cli:
     dependencies:
       lodash:
