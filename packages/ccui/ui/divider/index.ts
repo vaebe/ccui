@@ -8,7 +8,7 @@ Divider.install = function (app: App): void {
 export { Divider };
 
 export default {
-  title: 'Divider 分割线',
+  title: 'Divider 分隔线',
   category: '布局',
   status: '100%',
   install(app: App): void {

@@ -1,10 +1,10 @@
-# Divider 分割线
+# Divider 分隔线
 
-+ 区隔内容的分割线
++ 区隔内容的分隔线
 
 ## 何时使用
 
-+ 对不同段落的文本进行分割。
++ 对不同段落的文本进行分隔。
 
 ## Divider基本用法
 
@@ -14,13 +14,13 @@
 
 <template>
   <div>
-    基础用法： 对段落的文本进行分割。
+    基础用法： 对段落的文本进行分隔。
     <c-divider></c-divider>
 
     虚线
     <c-divider border-style='dashed'></c-divider>
 
-    自定义分割线颜色
+    自定义分隔线颜色
     <c-divider color='#7693f5'></c-divider>
 
     自定义文案
@@ -38,7 +38,7 @@
     文案的背景颜色
     <c-divider content-background-color='#7693f5'>广州</c-divider>
 
-    垂直的分割线
+    垂直的分隔线
     <div>
       北京
       <c-divider direction='vertical'></c-divider>
@@ -55,7 +55,7 @@ import {defineComponent} from 'vue'
 export default defineComponent({
   setup() {
     return {
-      msg: 'Divider 分割线 组件文档示例'
+      msg: 'Divider 分隔线 组件文档示例'
     }
   }
 })
@@ -72,12 +72,12 @@ export default defineComponent({
 
 | 参数 | 类型                                          | 默认         | 说明           |
 | ---- |---------------------------------------------|------------|--------------|
-| color | string                                      | --| 设置分割线的颜色     |
-| direction | [DirectionType](#directiontype)             | horizontal | 设置分割线方向      |
+| color | string                                      | --| 设置分隔线的颜色     |
+| direction | [DirectionType](#directiontype)             | horizontal | 设置分隔线方向      |
 | border-style | [BorderStyleType](#borderstyletype)         | solid| 设置分隔符样式      |
-| content-position | [ContentPositionType](#Contentpositiontype) | center     | 设置分割线文案的位置   |
-| content-color | string                                      | --     | 设置分割线文案的颜色   |
-| content-background-color | string                                      | --     | 设置分割线文案的背景颜色 |
+| content-position | [ContentPositionType](#Contentpositiontype) | center     | 设置分隔线文案的位置   |
+| content-color | string                                      | --     | 设置分隔线文案的颜色   |
+| content-background-color | string                                      | --     | 设置分隔线文案的背景颜色 |
 
 ## Divider类型定义
 
