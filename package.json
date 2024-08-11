@@ -1,15 +1,13 @@
 {
-  "name": "root",
-  "private": true,
+  "name": "vue-ccui",
   "scripts": {
     "dev": "pnpm --filter vue3-ccui dev",
     "docs:build": "pnpm --filter vue3-ccui predev -- prod && pnpm --filter vue3-ccui docs:build",
-    "lint": "pnpm run lint:script && pnpm run lint:style",
-    "lint:script": "eslint --ext \"packages/**/*.{vue,js,jsx,ts,tsx}\" --fix --quiet ./",
-    "lint:style": "stylelint --fix \"packages/**/*.{css,scss}\"",
+    "lint": "eslint \"packages/**/*.{vue,js,jsx,ts,tsx,scss,css}\" --fix",
     "postinstall": "husky install"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.25.1",
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@ls-lint/ls-lint": "^2.2.3",
@@ -17,26 +15,13 @@
     "@typescript-eslint/parser": "^8.0.1",
     "commitlint": "^19.4.0",
     "eslint": "^9.9.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-format": "^0.1.2",
     "husky": "^9.1.4",
-    "lint-staged": "^15.2.8",
-    "prettier": "^3.3.3",
-    "stylelint": "^16.8.1",
-    "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-recess-order": "^5.0.1",
-    "stylelint-config-standard": "^36.0.1",
-    "stylelint-prettier": "^5.0.2"
+    "lint-staged": "^15.2.8"
   },
   "lint-staged": {
-    "packages/**/*.{vue,js,jsx,ts,tsx}": [
-      "npm run lint:script",
-      "git add ."
-    ],
-    "packages**/*.{css,scss}": [
-      "npm run lint:style",
-      "git add ."
+    "packages/**/*.{vue,js,jsx,ts,tsx,scss,css}": [
+      "eslint --fix"
     ]
   },
   "license": "MIT"
