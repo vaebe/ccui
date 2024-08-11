@@ -18,7 +18,7 @@ export default defineComponent({
 
     // 增加缩进的展位元素
     const Indent = () => {
-      return <span style='display: inline-block; width: 16px; height: 16px;' />;
+      return <span class='ccui-tree__indent' />;
     };
 
     const renderNode = (item: TreeItem) => {

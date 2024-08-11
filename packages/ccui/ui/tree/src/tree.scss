@@ -3,7 +3,18 @@
 .#{$cls-prefix}-tree {
   color: $ccui-text;
 
+  &__indent{
+    display: inline-block;
+    width: 16px;
+     height: 16px;
+  }
+
   &-node__content--value-wrapper {
     display: flex;
+    align-items: center;
+  }
+
+  &-node__title {
+    margin-left: 6px;
   }
 }
