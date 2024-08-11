@@ -21,13 +21,11 @@
     color: $ccui-text;
   }
 
-
   &__day-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     width: 100%;
-
 
     &--day {
       width: calc(100% / 7);
@@ -49,7 +47,6 @@
       color: $ccui-list-item-active-text;
       background: $ccui-list-item-active-hover-bg;
     }
-
 
     .current-date {
       color: $ccui-list-item-active-text;

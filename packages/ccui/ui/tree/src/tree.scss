@@ -3,10 +3,10 @@
 .#{$cls-prefix}-tree {
   color: $ccui-text;
 
-  &__indent{
+  &__indent {
     display: inline-block;
     width: 16px;
-     height: 16px;
+    height: 16px;
   }
 
   &-node__content--value-wrapper {

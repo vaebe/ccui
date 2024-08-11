@@ -3,21 +3,20 @@
  * -------------------------------------------------------------------------- */
 
 :root {
-    --vp-c-brand: #5e7ce0;
+  --vp-c-brand: #5e7ce0;
 }
 
 /**
  * Component: Button
  * -------------------------------------------------------------------------- */
 .VPButton.brand {
-    border-color: #7693f5 !important;
-    background-color: var(--vp-c-brand);
-
+  border-color: #7693f5 !important;
+  background-color: var(--vp-c-brand);
 }
 
 .VPButton.brand:hover {
-    background-color: var(--vp-c-brand) !important;
-    opacity: 0.7;
+  background-color: var(--vp-c-brand) !important;
+  opacity: 0.7;
 }
 
 /**
@@ -25,31 +24,23 @@
  * -------------------------------------------------------------------------- */
 
 :root {
-    --vp-home-hero-name-color: transparent;
-    --vp-home-hero-name-background: -webkit-linear-gradient(
-            120deg,
-            #bd34fe 30%,
-            #41d1ff
-    );
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
 
-    --vp-home-hero-image-background-image: linear-gradient(
-            -45deg,
-            #f56a92 50%,
-            #61c4ec 50%
-    );
-    --vp-home-hero-image-filter: blur(40px);
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, #f56a92 50%, #61c4ec 50%);
+  --vp-home-hero-image-filter: blur(40px);
 }
 
 @media (min-width: 640px) {
-    :root {
-        --vp-home-hero-image-filter: blur(56px);
-    }
+  :root {
+    --vp-home-hero-image-filter: blur(56px);
+  }
 }
 
 @media (min-width: 960px) {
-    :root {
-        --vp-home-hero-image-filter: blur(72px);
-    }
+  :root {
+    --vp-home-hero-image-filter: blur(72px);
+  }
 }
 
 /**
@@ -57,10 +48,10 @@
  * -------------------------------------------------------------------------- */
 
 .DocSearch {
-    --docsearch-primary-color: var(--vp-c-brand) !important;
+  --docsearch-primary-color: var(--vp-c-brand) !important;
 }
 
 .vp-doc table {
-    width: 100%;
-    display: table;
+  width: 100%;
+  display: table;
 }

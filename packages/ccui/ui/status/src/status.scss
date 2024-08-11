@@ -1,10 +1,9 @@
 @import '../../style-var/index.scss';
 
 .#{$cls-prefix}-status {
-
   &:before {
     display: inline-block;
-    content: "";
+    content: '';
     width: 10px;
     height: 10px;
     margin-right: 5px;
@@ -45,5 +44,3 @@
     background: #50d4ab;
   }
 }
-
-
