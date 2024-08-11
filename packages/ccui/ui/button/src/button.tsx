@@ -2,7 +2,6 @@ import { defineComponent, computed } from 'vue';
 import { buttonProps, ButtonProps } from './button-types';
 import './button.scss';
 import { useNamespace } from '../../shared/hooks/use-namespace';
-import tree from '../../tree';
 
 export default defineComponent({
   name: 'CButton',

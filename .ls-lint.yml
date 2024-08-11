@@ -11,6 +11,7 @@ ls:
     .test.ts: kebab-case
     .spec.ts: kebab-case
     .config.ts: kebab-case
+    .d.ts: kebab-case
 
 ignore:
   # ccui
