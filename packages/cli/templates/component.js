@@ -1,16 +1,16 @@
-const { UI_NAMESPACE, CSS_CLASS_PREFIX } = require('../shared/constant');
-const { camelCase } = require('lodash');
-const { bigCamelCase } = require('../shared/utils');
+const { camelCase } = require('lodash')
+const { UI_NAMESPACE, CSS_CLASS_PREFIX } = require('../shared/constant')
+const { bigCamelCase } = require('../shared/utils')
 
 // 创建组件模板
 exports.createComponentTemplate = ({
   styleName,
   componentName,
-  typesName
+  typesName,
 }) => `\
 import { defineComponent } from 'vue'
 import { ${camelCase(componentName)}Props, ${bigCamelCase(
-  componentName
+  componentName,
 )}Props } from './${typesName}'
 import './${styleName}.scss'
 
@@ -24,7 +24,7 @@ export default defineComponent({
     }
   }
 })
-`;
+`
 
 // 创建类型声明模板
 exports.createTypesTemplate = ({ componentName }) => `\
@@ -37,9 +37,9 @@ export const ${camelCase(componentName)}Props = {
 } as const
 
 export type ${bigCamelCase(
-  componentName
+  componentName,
 )}Props = ExtractPropTypes<typeof ${camelCase(componentName)}Props>
-`;
+`
 
 // 创建指令模板
 exports.createDirectiveTemplate = () => `\
@@ -53,12 +53,12 @@ export default {
   beforeUnmount() { },
   unmounted() { }
 }
-`;
+`
 // 创建server模板
 exports.createServiceTemplate = ({
   componentName,
   typesName,
-  serviceName
+  serviceName,
 }) => `\
 import { ${bigCamelCase(componentName)}Props } from './${typesName}'
 
@@ -67,14 +67,14 @@ const ${bigCamelCase(serviceName)} = {
 }
 
 export default ${bigCamelCase(serviceName)}
-`;
+`
 
 // 创建scss模板
 exports.createStyleTemplate = ({ componentName }) => `\
 .${CSS_CLASS_PREFIX}-${componentName} {
   //
 }
-`;
+`
 
 // 创建index模板
 exports.createIndexTemplate = ({
@@ -85,40 +85,40 @@ exports.createIndexTemplate = ({
   hasService,
   componentName,
   directiveName,
-  serviceName
+  serviceName,
 }) => {
   const importComponentStr = `\nimport ${bigCamelCase(
-    componentName
-  )} from './src/${componentName}'`;
+    componentName,
+  )} from './src/${componentName}'`
   const importDirectiveStr = `\nimport ${bigCamelCase(
-    directiveName
-  )} from './src/${directiveName}'`;
+    directiveName,
+  )} from './src/${directiveName}'`
   const importServiceStr = `\nimport ${bigCamelCase(
-    serviceName
-  )} from './src/${serviceName}'`;
+    serviceName,
+  )} from './src/${serviceName}'`
 
   const installComponentStr = `app.component(${bigCamelCase(
-    componentName
-  )}.name, ${bigCamelCase(componentName)});`;
+    componentName,
+  )}.name, ${bigCamelCase(componentName)});`
 
   const installDirectiveStr = `\n    app.directive('${bigCamelCase(
-    componentName
-  )}', ${bigCamelCase(directiveName)})`;
+    componentName,
+  )}', ${bigCamelCase(directiveName)})`
   const installServiceStr = `\n    app.config.globalProperties.$${camelCase(
-    serviceName
-  )} = ${bigCamelCase(serviceName)}`;
+    serviceName,
+  )} = ${bigCamelCase(serviceName)}`
 
-  const getPartStr = (state, str) => (state ? str : '');
+  const getPartStr = (state, str) => (state ? str : '')
 
-  const importStr =
-    getPartStr(hasComponent, importComponentStr) +
-    getPartStr(hasDirective, importDirectiveStr) +
-    getPartStr(hasService, importServiceStr);
+  const importStr
+    = getPartStr(hasComponent, importComponentStr)
+    + getPartStr(hasDirective, importDirectiveStr)
+    + getPartStr(hasService, importServiceStr)
 
-  const installStr =
-    getPartStr(hasComponent, installComponentStr) +
-    getPartStr(hasDirective, installDirectiveStr) +
-    getPartStr(hasService, installServiceStr);
+  const installStr
+    = getPartStr(hasComponent, installComponentStr)
+    + getPartStr(hasDirective, installDirectiveStr)
+    + getPartStr(hasService, installServiceStr)
   return `\
 import type { App } from 'vue'\
 ${importStr}
@@ -126,7 +126,7 @@ ${
   hasComponent
     ? `\n${bigCamelCase(componentName)}.install = function(app: App): void {
   app.component(${bigCamelCase(componentName)}.name, ${bigCamelCase(
-        componentName
+        componentName,
       )})
 }\n`
     : ''
@@ -134,9 +134,9 @@ ${
 export { ${[
     hasComponent ? bigCamelCase(componentName) : null,
     hasDirective ? bigCamelCase(directiveName) : null,
-    hasService ? bigCamelCase(serviceName) : null
+    hasService ? bigCamelCase(serviceName) : null,
   ]
-    .filter((p) => p !== null)
+    .filter(p => p !== null)
     .join(', ')} }
 
 export default {
@@ -147,8 +147,8 @@ export default {
     ${installStr}
   }
 }
-`;
-};
+`
+}
 
 // 创建测试模板
 exports.createTestsTemplate = ({
@@ -157,7 +157,7 @@ exports.createTestsTemplate = ({
   serviceName,
   hasComponent,
   hasDirective,
-  hasService
+  hasService,
 }) => `\
 import { shallowMount } from '@vue/test-utils';
 import { expect, test, it } from 'vitest';
@@ -166,9 +166,9 @@ import { useNamespace } from '../../shared/hooks/use-namespace';
 import { ${[
   hasComponent ? bigCamelCase(componentName) : null,
   hasDirective ? bigCamelCase(directiveName) : null,
-  hasService ? bigCamelCase(serviceName) : null
+  hasService ? bigCamelCase(serviceName) : null,
 ]
-  .filter((p) => p !== null)
+  .filter(p => p !== null)
   .join(', ')} } from '../index';
 
 test('${componentName} test', () => {
@@ -180,7 +180,7 @@ test('${componentName} test', () => {
     expect(wrapper).toBeTruthy();
   });
 });
-`;
+`
 
 // 创建文档模板
 exports.createDocumentTemplate = ({ componentName, title }) => `\
@@ -247,4 +247,4 @@ ${UI_NAMESPACE}-${componentName} 插槽
 |      |      |
 |      |      |
 
-`;
+`

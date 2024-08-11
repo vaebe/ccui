@@ -1,26 +1,26 @@
-const { relative } = require('path');
-const { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } = require('../shared/constant');
+const { relative } = require('node:path')
+const { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } = require('../shared/constant')
 
 exports.createUiTemplate = (exportModules = []) => {
-  const packages = [];
-  const imports = [];
-  const installs = [];
+  const packages = []
+  const imports = []
+  const installs = []
 
   exportModules.forEach((m) => {
-    const { fileInfo } = m;
+    const { fileInfo } = m
     const relativePath = relative(VUE_UI_FILE, fileInfo.path)
       .replace(/\\/g, '/')
       .replace('..', '.')
-      .replace('/' + INDEX_FILE_NAME, '');
+      .replace(`/${INDEX_FILE_NAME}`, '')
 
     const importStr = `import ${m.default}, { ${m.parts.join(
-      ', '
-    )} } from '${relativePath}';`;
+      ', ',
+    )} } from '${relativePath}';`
 
-    packages.push(...m.parts);
-    imports.push(importStr);
-    installs.push(m.default);
-  });
+    packages.push(...m.parts)
+    imports.push(importStr)
+    installs.push(m.default)
+  })
 
   return `\
 import type { App } from 'vue';
@@ -41,5 +41,5 @@ export default {
     installs.forEach((p) => app.use(p));
   }
 };
-`;
-};
+`
+}
