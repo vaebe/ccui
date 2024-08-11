@@ -1,46 +1,45 @@
-import { shallowMount } from '@vue/test-utils';
-import { expect, describe, it } from 'vitest';
-import { Rate } from '../index';
-import { useNamespace } from '../../shared/hooks/use-namespace';
-import { nextTick } from 'vue';
+import { shallowMount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { Rate } from '../index'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 
-const ns = useNamespace('rate', true);
-const baseClass = ns.b();
-const iconClass = ns.e('icon');
+const ns = useNamespace('rate', true)
+const baseClass = ns.b()
+const iconClass = ns.e('icon')
 
 describe('rate', () => {
   it('dom', async () => {
-    const wrapper = shallowMount(Rate);
+    const wrapper = shallowMount(Rate)
 
-    expect(wrapper.find(baseClass).exists()).toBeTruthy();
-    wrapper.unmount();
-  });
+    expect(wrapper.find(baseClass).exists()).toBeTruthy()
+    wrapper.unmount()
+  })
 
   it('props', async () => {
     const wrapper = shallowMount(Rate, {
       props: {
-        count: 10
-      }
-    });
+        count: 10,
+      },
+    })
 
-    expect(wrapper.findAll(iconClass).length).toBe(10);
+    expect(wrapper.findAll(iconClass).length).toBe(10)
 
-    wrapper.unmount();
-  });
+    wrapper.unmount()
+  })
 
   it('event', async () => {
     const wrapper = shallowMount(Rate, {
       props: {
-        count: 10
-      }
-    });
+        count: 10,
+      },
+    })
 
-    expect(wrapper.findAll(iconClass).length).toBe(10);
+    expect(wrapper.findAll(iconClass).length).toBe(10)
 
-    const threeIcon = wrapper.findAll(iconClass)[2];
-    await threeIcon.trigger('click');
+    const threeIcon = wrapper.findAll(iconClass)[2]
+    await threeIcon.trigger('click')
     // change 事件触发,icon 第三个 等于数字3
-    expect(wrapper.emitted('change')[0]).toEqual([3]);
-    wrapper.unmount();
-  });
-});
+    expect(wrapper.emitted('change')[0]).toEqual([3])
+    wrapper.unmount()
+  })
+})
