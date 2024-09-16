@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 import { demoPreviewPlugin } from '@vitepress-code-preview/plugin'
 import nav from './config/nav'
 import sidebar from './config/sidebar'
