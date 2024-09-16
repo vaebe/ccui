@@ -8,7 +8,7 @@
 
 ## 基本用法
 
-:::demo 基本用法
+:::demo
 
 ```vue
 <script>

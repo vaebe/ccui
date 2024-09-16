@@ -1,14 +1,14 @@
 # Tabs 选项卡
 
-- 选项卡切换组件。
+选项卡切换组件。
 
 ## 何时使用
 
-- 用户需要通过平级的区域将大块内容进行收纳和展现，保持界面整洁。
+用户需要通过平级的区域将大块内容进行收纳和展现，保持界面整洁。
 
 ## Tabs基本用法
 
-:::demo Tabs 基本用法
+:::demo
 
 ```vue
 <script>
@@ -53,7 +53,7 @@ export default defineComponent({
 
 ## Tabs卡片风格的标签
 
-:::demo Tabs 卡片风格的标签
+:::demo
 
 ```vue
 <script>
@@ -98,7 +98,7 @@ export default defineComponent({
 
 ## Tabs带有边框的卡片风格
 
-:::demo Tabs 带有边框的卡片风格
+:::demo
 
 ```vue
 <script>
@@ -143,7 +143,7 @@ export default defineComponent({
 
 ## Tabs自定义标签页标题
 
-:::demo Tabs 自定义标签页标题
+:::demo
 
 ```vue
 <script>
@@ -191,7 +191,7 @@ export default defineComponent({
 
 ## Tabs标签位置的设置
 
-:::demo Tabs 标签位置的设置
+:::demo
 
 ```vue
 <script>

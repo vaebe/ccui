@@ -1,4 +1,3 @@
-// src/jsx.d.ts
 import { VNode } from 'vue';
 
 declare global {

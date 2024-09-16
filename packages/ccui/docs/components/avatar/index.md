@@ -1,16 +1,16 @@
 # Avatar 头像
 
-- Avatar 头像组件可以用来代表人物或对象， 支持使用图片、文字作为 Avatar。
+Avatar 头像组件可以用来代表人物或对象， 支持使用图片、文字作为 Avatar。
 
 ## 何时使用
 
-- 展示用户头像
+展示用户头像
 
 ## 基本用法
 
-- 已经提供 `width、height` 属性，所以不在提供 `size` 默认值属性。
+已经提供 `width、height` 属性，所以不在提供 `size` 默认值属性。
 
-:::demo 基本使用示例
+:::demo
 
 ```vue
 <script>

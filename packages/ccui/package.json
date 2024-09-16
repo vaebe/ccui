@@ -3,6 +3,7 @@
   "version": "1.2.2",
   "license": "MIT",
   "description": "vue3-ccui components based on Vite and Vue3",
+  "type": "module",
   "keywords": [
     "frontend",
     "typescript",
@@ -33,7 +34,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "vitepress-theme-demoblock": "^2.0.2",
+    "@vitepress-code-preview/container": "^1.0.8",
+    "@vitepress-code-preview/plugin": "^1.0.6",
     "vue": "^3.5.6"
   },
   "devDependencies": {

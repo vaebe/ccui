@@ -1,14 +1,14 @@
 # Radio 单选框
 
-- 单选框组件
+单选框组件
 
 ## 何时使用
 
-- 用于在多个备选项中选中单个状态。
+用于在多个备选项中选中单个状态。
 
 ## Radio基本用法
 
-:::demo Radio 示例
+:::demo
 
 ```vue
 <script>
@@ -50,9 +50,9 @@ export default defineComponent({
 
 ## RadioGroup基本用法
 
-- 用于展示一组多个 radio 单选框
+用于展示一组多个 radio 单选框
 
-:::demo RadioGroup 示例
+:::demo
 
 ```vue
 <script>

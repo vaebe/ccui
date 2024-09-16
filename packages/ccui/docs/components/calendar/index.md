@@ -1,14 +1,14 @@
 # Calendar 日历
 
-- 日历组件
+日历组件
 
 ## 何时使用
 
-- 显示日期
+显示日期
 
 ## 基本用法
 
-:::demo Calendar 示例
+:::demo
 
 ```vue
 <script>
@@ -42,7 +42,7 @@ export default defineComponent({
 
 ## 自定义header
 
-:::demo Calendar 示例
+:::demo
 
 ```vue
 <script>
@@ -93,7 +93,7 @@ export default defineComponent({
 
 ## 自定义日期内容
 
-:::demo Calendar 示例
+:::demo
 
 ```vue
 <script>

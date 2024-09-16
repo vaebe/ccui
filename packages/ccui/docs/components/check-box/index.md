@@ -1,15 +1,16 @@
 # CheckBox 多选框
 
-- 一组备选项中进行多选
+一组备选项中进行多选
 
 ## 何时使用
 
-- 在一组选项中进行多项选择；
-- 单独使用可以表示两种状态之间的切换，写在标签中的内容为 checkbox 按钮后的介绍。
+在一组选项中进行多项选择；
+
+单独使用可以表示两种状态之间的切换，写在标签中的内容为 checkbox 按钮后的介绍。
 
 ## CheckBox基本用法
 
-:::demo CheckBox示例
+:::demo
 
 ```vue
 <script>
@@ -77,7 +78,7 @@ export default defineComponent({
 
 ## CheckBoxGroup基本用法
 
-:::demo CheckBoxGroup 示例
+:::demo
 
 ```vue
 <script>

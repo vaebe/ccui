@@ -195,7 +195,7 @@ exports.createDocumentTemplate = ({ componentName, title }) => `\
 
 ### 基本用法
 // todo 用法描述
-:::demo // todo 展开代码的内部描述
+:::demo
 
 \`\`\`vue
 <template>
