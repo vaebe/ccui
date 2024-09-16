@@ -20,7 +20,9 @@
     "lint-staged": "^15.2.10"
   },
   "lint-staged": {
-    "packages/**/*.{vue,js,jsx,ts,tsx,scss,css}": []
+    "packages/**/*.{vue,js,jsx,ts,tsx,scss,css}": [
+      "eslint --fix"
+    ]
   },
   "license": "MIT"
 }
