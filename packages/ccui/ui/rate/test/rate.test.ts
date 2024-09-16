@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Rate } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Rate } from '../index'
 
 const ns = useNamespace('rate', true)
 const baseClass = ns.b()
@@ -39,7 +39,7 @@ describe('rate', () => {
     const threeIcon = wrapper.findAll(iconClass)[2]
     await threeIcon.trigger('click')
     // change 事件触发,icon 第三个 等于数字3
-    expect(wrapper.emitted('change')[0]).toEqual([3])
+    expect(wrapper.emitted('change')?.[0]).toEqual([3])
     wrapper.unmount()
   })
 })
