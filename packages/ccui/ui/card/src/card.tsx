@@ -1,22 +1,20 @@
-import { defineComponent, computed } from 'vue';
-import { cardProps, CardProps } from './card-types';
-import './card.scss';
-import { useNamespace } from '../../shared/hooks/use-namespace';
+import { computed, defineComponent } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
+import type { CardProps } from './card-types'
+import { cardProps } from './card-types'
+import './card.scss'
 
 export default defineComponent({
   name: 'CCard',
   props: cardProps,
   setup(props: CardProps, { slots }) {
-    const ns = useNamespace('card');
+    const ns = useNamespace('card')
 
-    // ccui-card ccui-card__nse ccui-card--nsm ccui-card__em--open
-    console.log(ns.b(), ns.e('nse'), ns.m('nsm'), ns.em('em', 'open'));
-
-    const boxClass = `${ns.b()} ${ns.m(props.shadow)}-shadow`;
+    const boxClass = `${ns.b()} ${ns.m(props.shadow)}-shadow`
 
     const isHeader = computed(() => {
-      return props.header || slots.header;
-    });
+      return props.header || slots.header
+    })
 
     return () => (
       <div class={boxClass}>
@@ -27,6 +25,6 @@ export default defineComponent({
           {slots.default && slots.default()}
         </div>
       </div>
-    );
-  }
-});
+    )
+  },
+})

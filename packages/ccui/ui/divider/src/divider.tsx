@@ -1,39 +1,40 @@
-import { defineComponent, computed } from 'vue';
-import { dividerProps, DividerProps } from './divider-types';
-import './divider.scss';
-import { useNamespace } from '../../shared/hooks/use-namespace';
+import type { DividerProps } from './divider-types'
+import { computed, defineComponent } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
+import { dividerProps } from './divider-types'
+import './divider.scss'
 
 export default defineComponent({
   name: 'CDivider',
   props: dividerProps,
   setup(props: DividerProps, { slots }) {
-    const ns = useNamespace('divider');
+    const ns = useNamespace('divider')
 
     const dividerStyle = computed(() => {
-      const borderStyleObj =
-        props.direction !== 'horizontal'
+      const borderStyleObj
+        = props.direction !== 'horizontal'
           ? { 'border-left-style': props.borderStyle }
-          : { 'border-top-style': props.borderStyle };
+          : { 'border-top-style': props.borderStyle }
       return {
         ...borderStyleObj,
-        'border-color': props.color
-      };
-    });
+        'border-color': props.color,
+      }
+    })
 
     const dividerCls = computed(() => {
-      return props.direction === 'horizontal' ? ns.b() : ns.m('vertical');
-    });
+      return props.direction === 'horizontal' ? ns.b() : ns.m('vertical')
+    })
 
     const dividerTextStyle = computed(() => {
       return {
-        color: props.contentColor,
-        'background-color': props.contentBackgroundColor
-      };
-    });
+        'color': props.contentColor,
+        'background-color': props.contentBackgroundColor,
+      }
+    })
 
     const dividerTextCls = computed(() => {
-      return `${ns.e('text')} is-${props.contentPosition}`;
-    });
+      return `${ns.e('text')} is-${props.contentPosition}`
+    })
 
     return () => {
       return (
@@ -42,7 +43,7 @@ export default defineComponent({
             {slots.default && slots.default()}
           </div>
         </div>
-      );
-    };
-  }
-});
+      )
+    }
+  },
+})

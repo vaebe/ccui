@@ -11,12 +11,8 @@
 :::demo
 
 ```vue
-
-<template>
-  <c-rate v-model="value1" :read-only="true"/>
-</template>
 <script>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
@@ -27,6 +23,10 @@ export default {
   },
 }
 </script>
+
+<template>
+  <c-rate v-model="value1" :read-only="true" />
+</template>
 ```
 
 :::
@@ -36,12 +36,8 @@ export default {
 :::demo
 
 ```vue
-
-<template>
-  <c-rate v-model="value" icon="star-o"/>
-</template>
 <script>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
@@ -52,6 +48,10 @@ export default {
   },
 }
 </script>
+
+<template>
+  <c-rate v-model="value" icon="star-o" />
+</template>
 ```
 
 :::
@@ -61,12 +61,8 @@ export default {
 :::demo
 
 ```vue
-
-<template>
-  <c-rate color="#ffa500" v-model="value" :count="6">A</c-rate>
-</template>
 <script>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
@@ -77,6 +73,12 @@ export default {
   },
 }
 </script>
+
+<template>
+  <c-rate v-model="value" color="#ffa500" :count="6">
+    A
+  </c-rate>
+</template>
 ```
 
 :::
@@ -86,16 +88,8 @@ export default {
 :::demo
 
 ```vue
-
-<template>
-  <c-rate v-model="value" :allow-half="true" @change="change">
-    <template v-slot:info="info">
-      {{info}}
-    </template>
-  </c-rate>
-</template>
 <script>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
@@ -110,6 +104,14 @@ export default {
   },
 }
 </script>
+
+<template>
+  <c-rate v-model="value" :allow-half="true" @change="change">
+    <template #info="info">
+      {{ info }}
+    </template>
+  </c-rate>
+</template>
 ```
 
 :::
@@ -119,35 +121,8 @@ export default {
 :::demo
 
 ```vue
-
-<template>
-  <div class="mb20">
-    <c-rate
-        v-model="value1"
-        :read-only="true"
-        color="blue"
-        :count="5"
-        icon="star"
-    />
-  </div>
-  <div class="mb20">
-    <c-rate
-        v-model="value2"
-        :read-only="true"
-        color="orange"
-        :count="5"
-        icon="star"
-    />
-  </div>
-  <div class="mb20">
-    <c-rate v-model="value3" :read-only="true" color="red" :count="5"/>
-  </div>
-  <div>
-    <c-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">N</c-rate>
-  </div>
-</template>
 <script>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
@@ -164,6 +139,36 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="mb20">
+    <c-rate
+      v-model="value1"
+      :read-only="true"
+      color="blue"
+      :count="5"
+      icon="star"
+    />
+  </div>
+  <div class="mb20">
+    <c-rate
+      v-model="value2"
+      :read-only="true"
+      color="orange"
+      :count="5"
+      icon="star"
+    />
+  </div>
+  <div class="mb20">
+    <c-rate v-model="value3" :read-only="true" color="red" :count="5" />
+  </div>
+  <div>
+    <c-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">
+      N
+    </c-rate>
+  </div>
+</template>
+
 <style scoped>
 .mb20 {
   margin-bottom: 20px;
@@ -175,32 +180,31 @@ export default {
 
 ### Rate参数
 
-|   参数    |              类型               | 默认值 | 描述                                                     |
-| :-------: | :-----------------------------: | :----: | :------------------------------------------------------- |
-|   v-model   | `number` | 0  | 必选，评分绑定的值             |
-|   read-only | `boolean` | false  | 可选，设置是否为只读模式，只读模式无法交互               |
-|   count   |  `number` |   5    | 可选，设置总等级数                                       |
-|   color   | `string` |   --   | 可选，星星选中颜色                                           |
-| allow-half | `boolean` | false  | 可选，动态模式下是否允许半选                             |
+|    参数    |   类型    | 默认值 | 描述                                       |
+| :--------: | :-------: | :----: | :----------------------------------------- |
+|  v-model   | `number`  |   0    | 必选，评分绑定的值                         |
+| read-only  | `boolean` | false  | 可选，设置是否为只读模式，只读模式无法交互 |
+|   count    | `number`  |   5    | 可选，设置总等级数                         |
+|   color    | `string`  |   --   | 可选，星星选中颜色                         |
+| allow-half | `boolean` | false  | 可选，动态模式下是否允许半选               |
 
 ## Rate事件
 
-| 参数   | 类型 | 说明           | 回调参数     |
-| ------ |---| -------------- | ------------ |
-| change | `(value: number) => void`  | 分值改变时触发 | 改变后的分值 |
+| 参数   | 类型                      | 说明           | 回调参数     |
+| ------ | ------------------------- | -------------- | ------------ |
+| change | `(value: number) => void` | 分值改变时触发 | 改变后的分值 |
 
 ## Rate类型定义
 
 ### OnTouchedType
 
 ```ts
-export type OnTouchedType = () => void;
-
+export type OnTouchedType = () => void
 ```
 
 ## Rate插槽
 
-| 插槽名 | 说明 |
-| ---- | ---- |
-| default | 支持传入一个文本字符或svg图标（可以被color、fill改变颜色的）|
-| info | 返回当前选中的值 可用于自定义评分描述|
+| 插槽名  | 说明                                                         |
+| ------- | ------------------------------------------------------------ |
+| default | 支持传入一个文本字符或svg图标（可以被color、fill改变颜色的） |
+| info    | 返回当前选中的值 可用于自定义评分描述                        |

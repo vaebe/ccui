@@ -1,4 +1,4 @@
-import type { PropType, ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue'
 
 type IStatusType =
   | 'success'
@@ -7,13 +7,13 @@ type IStatusType =
   | 'warning'
   | 'waiting'
   | 'running'
-  | 'invalid';
+  | 'invalid'
 
 export const statusProps = {
   type: {
     type: String as PropType<IStatusType>,
-    default: 'initial'
-  }
-} as const;
+    default: 'initial',
+  },
+} as const
 
-export type StatusProps = ExtractPropTypes<typeof statusProps>;
+export type StatusProps = ExtractPropTypes<typeof statusProps>

@@ -1,14 +1,15 @@
-import { defineComponent, computed } from 'vue';
-import { buttonProps, ButtonProps } from './button-types';
-import './button.scss';
-import { useNamespace } from '../../shared/hooks/use-namespace';
+import type { ButtonProps } from './button-types'
+import { computed, defineComponent } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
+import { buttonProps } from './button-types'
+import './button.scss'
 
 export default defineComponent({
   name: 'CButton',
   props: buttonProps,
   emits: ['click'],
   setup(props: ButtonProps, { slots, emit }) {
-    const ns = useNamespace('button');
+    const ns = useNamespace('button')
     const butCls = computed(() => {
       return {
         [ns.b()]: true,
@@ -16,13 +17,13 @@ export default defineComponent({
         [ns.m(`plain-${props.type}`)]: !!props.plain,
         [ns.m(props.size)]: !!props.size,
         [ns.m('round')]: props.round,
-        [ns.m('circle')]: props.circle
-      };
-    });
+        [ns.m('circle')]: props.circle,
+      }
+    })
 
     const onClick = (e: MouseEvent) => {
-      emit('click', e);
-    };
+      emit('click', e)
+    }
 
     return () => {
       return (
@@ -36,7 +37,7 @@ export default defineComponent({
           {slots.icon && slots.icon()}
           {slots.default && slots.default()}
         </button>
-      );
-    };
-  }
-});
+      )
+    }
+  },
+})

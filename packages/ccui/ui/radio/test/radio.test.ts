@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Radio } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Radio } from '../index'
 
 const ns = useNamespace('radio', true)
 const baseClass = ns.b()

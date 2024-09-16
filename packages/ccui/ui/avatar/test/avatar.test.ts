@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Avatar } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Avatar } from '../index'
 
 const ns = useNamespace('avatar', true)
 const styleClass = ns.e('style')

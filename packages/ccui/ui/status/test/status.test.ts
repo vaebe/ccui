@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Status } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Status } from '../index'
 
 const ns = useNamespace('status', true)
 const baseClass = ns.b()

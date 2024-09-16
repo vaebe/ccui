@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Calendar } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Calendar } from '../index'
 
 const ns = useNamespace('calendar', true)
 const baseClass = ns.b()

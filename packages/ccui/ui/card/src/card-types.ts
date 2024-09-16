@@ -1,22 +1,22 @@
-import type { PropType, ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue'
 
-export type ShadowType = PropType<'always' | 'hover' | 'never'>;
+export type ShadowType = PropType<'always' | 'hover' | 'never'>
 
 export const cardProps = {
   shadow: {
     type: String as ShadowType,
-    default: 'always'
+    default: 'always',
   },
   header: {
     type: String,
-    default: ''
+    default: '',
   },
   bodyStyle: {
     type: Object,
     default: () => {
-      return { padding: '20px' };
-    }
-  }
-} as const;
+      return { padding: '20px' }
+    },
+  },
+} as const
 
-export type CardProps = ExtractPropTypes<typeof cardProps>;
+export type CardProps = ExtractPropTypes<typeof cardProps>

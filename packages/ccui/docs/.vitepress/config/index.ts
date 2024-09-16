@@ -1,9 +1,9 @@
-import nav from './nav';
-import markdown from './markdown';
-import sidebar from './sidebar';
+import markdown from './markdown'
+import nav from './nav'
+import sidebar from './sidebar'
 
 export default ({ mode }) => {
-  const basePath = mode === 'development' ? '/' : '/ccui/';
+  const basePath = mode === 'development' ? '/' : '/ccui/'
 
   return {
     base: basePath,
@@ -16,15 +16,15 @@ export default ({ mode }) => {
       // 这里的路径没有被自动更改 手动更改路径
       [
         'link',
-        { rel: 'icon', type: 'image/svg+xml', href: `${basePath}logo.svg` }
+        { rel: 'icon', type: 'image/svg+xml', href: `${basePath}logo.svg` },
       ],
       [
         'link',
         {
           rel: 'stylesheet',
-          href: 'https://unpkg.com/vue3-ccui/theme/darkTheme.css'
-        }
-      ]
+          href: 'https://unpkg.com/vue3-ccui/theme/darkTheme.css',
+        },
+      ],
     ],
     markdown,
     themeConfig: {
@@ -34,16 +34,16 @@ export default ({ mode }) => {
       algolia: {
         appId: 'K0NNJA38K6',
         apiKey: '0b6d20552d2073390d2bbb0a84fb49dd',
-        indexName: 'ccui'
+        indexName: 'ccui',
       },
       socialLinks: [
-        { icon: 'github', link: 'https://github.com/vaebe/ccui.git' }
+        { icon: 'github', link: 'https://github.com/vaebe/ccui.git' },
       ],
       outlineTitle: '快速前往',
       footer: {
         message: 'Released under the MIT License.',
-        copyright: 'Copyright © 2022-present vaebe'
-      }
-    }
-  };
-};
+        copyright: 'Copyright © 2022-present vaebe',
+      },
+    },
+  }
+}

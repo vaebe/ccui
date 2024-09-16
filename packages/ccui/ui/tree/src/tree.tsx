@@ -1,63 +1,63 @@
-import { defineComponent, toRefs } from 'vue';
-import { treeProps, TreeProps, TreeItem } from './tree-types';
-import IconOpen from './components/icon-open';
-import IconClose from './components/icon-close';
-import useToggle from './composables/use-toggle';
-import './tree.scss';
-import { useNamespace } from '../../shared/hooks/use-namespace';
+import { computed, defineComponent, toRefs } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
+import type { TreeItem, TreeProps } from './tree-types'
+import IconClose from './components/icon-close'
+import IconOpen from './components/icon-open'
+import useToggle from './composables/use-toggle'
+import { treeProps } from './tree-types'
+import './tree.scss'
 
 export default defineComponent({
   name: 'CTree',
   props: treeProps,
-  emits: [],
   setup(props: TreeProps) {
-    const ns = useNamespace('tree');
+    const ns = useNamespace('tree')
+    const { data } = toRefs(props)
+    const { openedData, toggle } = useToggle(data)
 
-    const { data } = toRefs(props);
-    const { openedData, toggle } = useToggle(data);
-
-    // 增加缩进的展位元素
-    const Indent = () => {
-      return <span class='ccui-tree__indent' />;
-    };
+    const Indent = () => <span class={ns.e('indent')} />
 
     const renderNode = (item: TreeItem) => {
-      const itemLevel = item.level ? item.level : 0;
+      const itemLevel = item.level ?? 0
+      const hasChildren = Boolean(item.children)
+
       return (
         <div
-          class={['ccui-tree-node', item.open && 'ccui-tree-node__open']}
+          class={[ns.e('node'), item.open && ns.em('node', 'open')]}
           style={{ paddingLeft: `${24 * (itemLevel - 1)}px` }}
         >
-          <div class='ccui-tree-node__content'>
-            <div class='ccui-tree-node__content--value-wrapper'>
-              {item.children ? (
-                item.open ? (
-                  <IconOpen
-                    class='mr-xs'
-                    onClick={(e: Event) => toggle(e, item)}
-                  /> // 给节点绑定点击事件
-                ) : (
-                  <IconClose
-                    class='mr-xs'
-                    onClick={(e: Event) => toggle(e, item)}
-                  />
-                ) // 给节点绑定点击事件
-              ) : (
-                <Indent />
-              )}
-              <span class='ccui-tree-node__title'>{item.label}</span>
+          <div class={ns.e('node-content')}>
+            <div class={ns.e('value-wrapper')}>
+              {hasChildren
+                ? (
+                    item.open
+                      ? (
+                          <IconOpen
+                            class={ns.e('icon')}
+                            onClick={(e: Event) => toggle(e, item)}
+                          />
+                        )
+                      : (
+                          <IconClose
+                            class={ns.e('icon')}
+                            onClick={(e: Event) => toggle(e, item)}
+                          />
+                        )
+                  )
+                : (
+                    <Indent />
+                  )}
+              <span class={ns.e('title')}>{item.label}</span>
             </div>
           </div>
         </div>
-      );
-    };
+      )
+    }
 
-    return () => {
-      return (
-        <div class={ns.b()}>
-          {openedData.value.map((item: TreeItem) => renderNode(item))}
-        </div>
-      );
-    };
-  }
-});
+    const treeNodes = computed(() =>
+      openedData.value.map(renderNode),
+    )
+
+    return () => <div class={ns.b()}>{treeNodes.value}</div>
+  },
+})

@@ -1,23 +1,18 @@
 # Calendar 日历
 
-+ 日历组件
+- 日历组件
 
 ## 何时使用
 
-+ 显示日期
+- 显示日期
 
 ## 基本用法
 
 :::demo Calendar 示例
 
 ```vue
-
-<template>
-  <c-calendar v-model="curDate" @change="curDateChange"></c-calendar>
-</template>
-
 <script>
-import {defineComponent, ref} from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -34,6 +29,10 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <c-calendar v-model="curDate" @change="curDateChange" />
+</template>
+
 <style>
 
 </style>
@@ -46,20 +45,8 @@ export default defineComponent({
 :::demo Calendar 示例
 
 ```vue
-
-<template>
-  <c-calendar v-model="curDate" @change="curDateChange">
-    <template #header="date">
-      <div class="customize-header">
-        当前日期 {{date}}
-        <c-button type="primary" plain @click="addADay">加一天</c-button>
-      </div>
-    </template>
-  </c-calendar>
-</template>
-
 <script>
-import {defineComponent, ref} from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -82,6 +69,19 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <c-calendar v-model="curDate" @change="curDateChange">
+    <template #header="date">
+      <div class="customize-header">
+        当前日期 {{ date }}
+        <c-button type="primary" plain @click="addADay">
+          加一天
+        </c-button>
+      </div>
+    </template>
+  </c-calendar>
+</template>
+
 <style scoped>
 .customize-header {
   padding: 10px;
@@ -96,17 +96,8 @@ export default defineComponent({
 :::demo Calendar 示例
 
 ```vue
-
-<template>
-  <c-calendar @change="curDateChange">
-    <template #dateCell="{isSelected, date, day}">
-      {{isSelected ? '当前选中日期' : day}}
-    </template>
-  </c-calendar>
-</template>
-
 <script>
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -120,6 +111,14 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <c-calendar @change="curDateChange">
+    <template #dateCell="{ isSelected, day }">
+      {{ isSelected ? '当前选中日期' : day }}
+    </template>
+  </c-calendar>
+</template>
+
 <style>
 
 </style>
@@ -129,19 +128,19 @@ export default defineComponent({
 
 ## Calendar参数
 
-| 参数 | 类型         | 默认 | 说明 |
-| ---- |------------| ---- | ---- |
-| v-model | `Date` | -- |  必选，组件绑定的值 |
+| 参数    | 类型   | 默认 | 说明               |
+| ------- | ------ | ---- | ------------------ |
+| v-model | `Date` | --   | 必选，组件绑定的值 |
 
 ## Calendar事件
 
-| 事件 | 类型 | 说明 |
-| ---- | ---- | ---- |
-| change |  `string` |   日期改变后的值   |
+| 事件   | 类型     | 说明           |
+| ------ | -------- | -------------- |
+| change | `string` | 日期改变后的值 |
 
 ## Calendar插槽
 
-| 插槽名 | 说明 |
-| ---- | -- |
-| header | 自定义日历头部，参数`date`当前日期 |
+| 插槽名   | 说明                                                                                                        |
+| -------- | ----------------------------------------------------------------------------------------------------------- |
+| header   | 自定义日历头部，参数`date`当前日期                                                                          |
 | dateCell | 返回 `data: { isSelected, date, day }`;`isSelected` 是否选中、`date` 格式化后的日期、 `day` 单元格的日期 。 |

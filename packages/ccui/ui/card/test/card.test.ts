@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
-import { expect, it, it } from 'vitest'
-import { Card } from '../index'
+import { expect, it } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Card } from '../index'
 
 const ns = useNamespace('card')
 

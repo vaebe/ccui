@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { Divider } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Divider } from '../index'
 
 const ns = useNamespace('divider', true)
 const baseClass = ns.b()

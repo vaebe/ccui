@@ -1,9 +1,10 @@
-import { ref, Ref, watch } from 'vue';
-import { TreeData, TreeItem } from '../tree-types';
+import type { Ref } from 'vue'
+import type { TreeData, TreeItem } from '../tree-types'
+import { ref, watch } from 'vue'
 
 interface IUseToggle {
-  openedData: Ref<TreeData>;
-  toggle: (target: Event, item: TreeItem) => void;
+  openedData: Ref<TreeData>
+  toggle: (target: Event, item: TreeItem) => void
 }
 
 export default function useToggle(data: Ref<TreeData>): IUseToggle {
@@ -13,28 +14,28 @@ export default function useToggle(data: Ref<TreeData>): IUseToggle {
         item.open
           ? acc.concat(item, item.children ? openedTree(item.children) : [])
           : acc.concat(item),
-      []
-    );
-  };
+      [],
+    )
+  }
 
-  const openedData = ref(openedTree(data.value));
+  const openedData = ref(openedTree(data.value))
 
   watch(
     () => data.value,
-    (d) => (openedData.value = openedTree(d)),
-    { deep: true }
-  );
+    d => (openedData.value = openedTree(d)),
+    { deep: true },
+  )
   const toggle = (target: Event, item: TreeItem) => {
-    target.stopPropagation();
+    target.stopPropagation()
     if (!item.children) {
-      return;
+      return
     }
-    item.open = !item.open;
-    openedData.value = openedTree(data.value);
-  };
+    item.open = !item.open
+    openedData.value = openedTree(data.value)
+  }
 
   return {
     openedData,
-    toggle
-  };
+    toggle,
+  }
 }

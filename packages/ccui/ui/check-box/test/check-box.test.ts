@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { CheckBox } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { CheckBox } from '../index'
 
 const ns = useNamespace('check-box', true)
 const baseClass = ns.b()

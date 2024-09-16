@@ -1,15 +1,15 @@
-/// <reference types="vitest" />
-import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx';
+import vueJsx from '@vitejs/plugin-vue-jsx'
+/// <reference types="vitest" />
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [vue(),vueJsx()],
+  plugins: [vue(), vueJsx()],
   test: {
     globals: true,
     environment: 'jsdom',
     // transformMode: {
     //   web: [/.[tj]sx$/]
     // }
-  }
-});
+  },
+})

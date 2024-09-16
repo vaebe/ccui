@@ -1,13 +1,13 @@
-import type { App } from 'vue';
-import Card from './src/card';
+import type { App } from 'vue'
+import Card from './src/card'
 
 // 作为插件引入
 Card.install = function (app: App): void {
-  app.component(Card.name, Card);
-};
+  app.component(Card.name, Card)
+}
 
 // 按需
-export { Card };
+export { Card }
 
 // 内部统一注册
 export default {
@@ -15,6 +15,6 @@ export default {
   category: '数据展示',
   status: '100%',
   install(app: App): void {
-    app.component(Card.name, Card);
-  }
-};
+    app.component(Card.name, Card)
+  },
+}

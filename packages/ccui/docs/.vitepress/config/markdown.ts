@@ -1,9 +1,10 @@
+import { demoBlockPlugin } from 'vitepress-theme-demoblock'
+
 const markdown = {
   config: (md) => {
-    const { demoBlockPlugin } = require('vitepress-theme-demoblock')
     md.use(demoBlockPlugin, {
-      cssPreprocessor: 'scss'
+      cssPreprocessor: 'scss',
     })
-  }
+  },
 }
 export default markdown

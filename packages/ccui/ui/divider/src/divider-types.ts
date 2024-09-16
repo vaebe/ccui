@@ -1,34 +1,34 @@
-import type { PropType, ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue'
 
-export type DirectionType = 'horizontal' | 'vertical';
-export type BorderStyleType = 'dashed' | 'solid';
-export type ContentPositionType = 'left' | 'right' | 'center';
+export type DirectionType = 'horizontal' | 'vertical'
+export type BorderStyleType = 'dashed' | 'solid'
+export type ContentPositionType = 'left' | 'right' | 'center'
 
 export const dividerProps = {
   direction: {
     type: String as PropType<DirectionType>,
-    default: 'horizontal'
+    default: 'horizontal',
   },
   color: {
     type: String,
-    default: ''
+    default: '',
   },
   borderStyle: {
     type: String as PropType<BorderStyleType>,
-    default: 'solid'
+    default: 'solid',
   },
   contentPosition: {
     type: String as PropType<ContentPositionType>,
-    default: 'center'
+    default: 'center',
   },
   contentColor: {
     type: String,
-    default: ''
+    default: '',
   },
   contentBackgroundColor: {
     type: String,
-    default: ''
-  }
-} as const;
+    default: '',
+  },
+} as const
 
-export type DividerProps = ExtractPropTypes<typeof dividerProps>;
+export type DividerProps = ExtractPropTypes<typeof dividerProps>

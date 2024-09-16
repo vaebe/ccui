@@ -1,4 +1,4 @@
-import type { PropType, ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue'
 
 export type ButtonType =
   | 'primary'
@@ -6,44 +6,44 @@ export type ButtonType =
   | 'warning'
   | 'danger'
   | 'info'
-  | 'text';
+  | 'text'
 
-export type ButtonSizeType = 'large' | 'default' | 'small';
-export type ButtonNativeType = 'button' | 'submit' | 'reset';
+export type ButtonSizeType = 'large' | 'default' | 'small'
+export type ButtonNativeType = 'button' | 'submit' | 'reset'
 
 export const buttonProps = {
   type: {
     type: String as PropType<ButtonType>,
-    default: ''
+    default: '',
   },
   size: {
     type: String as PropType<ButtonSizeType>,
-    default: ''
+    default: '',
   },
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   plain: {
     type: Boolean,
-    default: false
+    default: false,
   },
   round: {
     type: Boolean,
-    default: false
+    default: false,
   },
   circle: {
     type: Boolean,
-    default: false
+    default: false,
   },
   autofocus: {
     type: Boolean,
-    default: false
+    default: false,
   },
   nativeType: {
     type: String as PropType<ButtonNativeType>,
-    default: 'button'
-  }
-} as const;
+    default: 'button',
+  },
+} as const
 
-export type ButtonProps = ExtractPropTypes<typeof buttonProps>;
+export type ButtonProps = ExtractPropTypes<typeof buttonProps>

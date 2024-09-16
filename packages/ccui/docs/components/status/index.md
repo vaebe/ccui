@@ -11,20 +11,8 @@
 :::demo 基本用法
 
 ```vue
-
-<template>
-  <c-status>Default</c-status>
-  <c-status type="success">Success</c-status>
-  <c-status type="error">Error</c-status>
-  <c-status type="warning">Warning</c-status>
-  <c-status type="initial">Initial</c-status>
-  <c-status type="waiting">Waiting</c-status>
-  <c-status type="running">Running</c-status>
-  <c-status type="invalid">Invalid</c-status>
-</template>
-
 <script>
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -35,6 +23,31 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <c-status>Default</c-status>
+  <c-status type="success">
+    Success
+  </c-status>
+  <c-status type="error">
+    Error
+  </c-status>
+  <c-status type="warning">
+    Warning
+  </c-status>
+  <c-status type="initial">
+    Initial
+  </c-status>
+  <c-status type="waiting">
+    Waiting
+  </c-status>
+  <c-status type="running">
+    Running
+  </c-status>
+  <c-status type="invalid">
+    Invalid
+  </c-status>
+</template>
+
 <style>
 
 </style>
@@ -44,15 +57,15 @@ export default defineComponent({
 
 ## Status参数
 
-| 参数 | 类型 | 默认 | 说明 |
-|------| ---- | ---- | -- |
-| type |   [IStatusType](#istatustype)   | invalid | status的类型 |
+| 参数 | 类型                        | 默认    | 说明         |
+| ---- | --------------------------- | ------- | ------------ |
+| type | [IStatusType](#istatustype) | invalid | status的类型 |
 
 ## Status插槽
 
-| 插槽名 | 说明 |
-|-----|--|
-| - | 默认插槽 |
+| 插槽名 | 说明     |
+| ------ | -------- |
+| -      | 默认插槽 |
 
 ## Status类型定义
 
@@ -66,5 +79,5 @@ type IStatusType =
   | 'warning'
   | 'waiting'
   | 'running'
-  | 'invalid';
+  | 'invalid'
 ```

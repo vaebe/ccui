@@ -1,16 +1,21 @@
 # Card 卡片
 
-+ 将信息聚合在卡片容器中展示。
+- 将信息聚合在卡片容器中展示。
 
 ## 何时使用
 
-+ 基础卡片容器，其中可包含文字，列表，图片，段落，用于概览展示时。
+- 基础卡片容器，其中可包含文字，列表，图片，段落，用于概览展示时。
 
 ## 基本用法
 
 :::demo Card 示例
 
 ```vue
+<script>
+export default {
+  name: 'CardBox'
+}
+</script>
 
 <template>
   <div>
@@ -31,12 +36,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'cardBox'
-};
-</script>
-
 <style lang="scss" scoped>
 </style>
 ```
@@ -45,16 +44,16 @@ export default {
 
 ## Card参数
 
-| 参数 | 类型                        | 默认 | 说明 |
-| ---- |---------------------------| ---- | ---- |
-| header | string                    |  —    | 卡片的标题 可以通过设置 header 来修改标题，也可以通过 slot#header 传入 DOM 节点 |
-| body-style | object                    | '{ padding: '20px' }'| body 的样式  |
-| shadow | [ShadowType](#shadowtype) | always | 设置阴影显示时机  |
+| 参数       | 类型                      | 默认                  | 说明                                                                            |
+| ---------- | ------------------------- | --------------------- | ------------------------------------------------------------------------------- |
+| header     | string                    | —                     | 卡片的标题 可以通过设置 header 来修改标题，也可以通过 slot#header 传入 DOM 节点 |
+| body-style | object                    | '{ padding: '20px' }' | body 的样式                                                                     |
+| shadow     | [ShadowType](#shadowtype) | always                | 设置阴影显示时机                                                                |
 
 ## Card类型定义
 
 ### ShadowType
 
 ```ts
-export type ShadowType = PropType<'always' | 'hover' | 'never'>;
+export type ShadowType = PropType<'always' | 'hover' | 'never'>
 ```

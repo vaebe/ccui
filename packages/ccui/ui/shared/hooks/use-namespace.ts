@@ -1,23 +1,23 @@
-export type UseNamespace = {
-  b: () => string;
-  e: (el: string) => string;
-  m: (mo: string) => string;
-  em: (el: string, mo: string) => string;
-};
+export interface UseNamespace {
+  b: () => string
+  e: (el: string) => string
+  m: (mo: string) => string
+  em: (el: string, mo: string) => string
+}
 
 function createBem(
   namespace: string,
   element?: string,
-  modifier?: string
+  modifier?: string,
 ): string {
-  let cls = namespace;
+  let cls = namespace
   if (element) {
-    cls += `__${element}`;
+    cls += `__${element}`
   }
   if (modifier) {
-    cls += `--${modifier}`;
+    cls += `--${modifier}`
   }
-  return cls;
+  return cls
 }
 
 /**
@@ -28,17 +28,17 @@ function createBem(
  * @returns UseNamespace
  */
 export function useNamespace(block: string, needDot = false): UseNamespace {
-  const namespace = needDot ? `.ccui-${block}` : `ccui-${block}`;
-  const b = () => createBem(namespace);
-  const e = (element: string) => (element ? createBem(namespace, element) : '');
+  const namespace = needDot ? `.ccui-${block}` : `ccui-${block}`
+  const b = () => createBem(namespace)
+  const e = (element: string) => (element ? createBem(namespace, element) : '')
   const m = (modifier: string) =>
-    modifier ? createBem(namespace, '', modifier) : '';
+    modifier ? createBem(namespace, '', modifier) : ''
   const em = (element: string, modifier: string) =>
-    element && modifier ? createBem(namespace, element, modifier) : '';
+    element && modifier ? createBem(namespace, element, modifier) : ''
   return {
     b,
     e,
     m,
-    em
-  };
+    em,
+  }
 }

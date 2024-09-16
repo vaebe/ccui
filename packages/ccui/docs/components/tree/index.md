@@ -1,23 +1,18 @@
 # Tree 树
 
-+ 用清晰的层级结构展示信息，可展开或折叠。
+- 用清晰的层级结构展示信息，可展开或折叠。
 
 ## 何时使用
 
-+ 需要展示层级结构。
+- 需要展示层级结构。
 
 ## 基本用法
-
 
 :::demo 渲染一棵基本树
 
 ```vue
-<template>
-  <c-tree :data="data"></c-tree>
-</template>
-
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
@@ -97,14 +92,18 @@ export default defineComponent({
         label: '一级 4',
         level: 1
       }
-    ]);
+    ])
 
     return {
       data
-    };
+    }
   }
-});
+})
 </script>
+
+<template>
+  <c-tree :data="data" />
+</template>
 ```
 
 :::
