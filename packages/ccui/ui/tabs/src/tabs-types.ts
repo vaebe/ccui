@@ -1,64 +1,64 @@
 import type {
   ComputedRef,
   ExtractPropTypes,
+  InjectionKey,
   PropType,
-  InjectionKey
-} from 'vue';
-import { TabProps } from './components/tab/tab-types';
+} from 'vue'
+import type { TabProps } from './components/tab/tab-types'
 
-export type ModelValueType = string | number;
+export type ModelValueType = string | number
 
-export type ITabsType = '' | 'card' | 'border-card';
+export type ITabsType = '' | 'card' | 'border-card'
 
-export type ITabPositionType = 'top' | 'right' | 'bottom' | 'left';
+export type ITabPositionType = 'top' | 'right' | 'bottom' | 'left'
 
-export type Active = string | number | null;
-export type BeforeChangeType = (id: Active) => boolean;
+export type Active = string | number | null
+export type BeforeChangeType = (id: Active) => boolean
 
 export interface TabsState {
-  data?: TabProps[];
-  active: string | number;
-  slots: any[];
+  data?: TabProps[]
+  active: string | number
+  slots: any[]
 }
 
 export const tabsProps = {
   modelValue: {
     type: [String, Number] as PropType<ModelValueType>,
-    default: null
+    default: null,
   },
   type: {
     type: String as () => ITabsType,
-    default: ''
+    default: '',
   },
   customWidth: {
     type: String,
-    default: ''
+    default: '',
   },
   cssClass: {
     type: String,
-    default: ''
+    default: '',
   },
   beforeChange: {
     type: Function as PropType<BeforeChangeType>,
-    default: null
+    default: null,
   },
   tabPosition: {
     type: String as () => ITabPositionType,
-    default: 'top'
-  }
-} as const;
+    default: 'top',
+  },
+} as const
 
-export type TabsProps = ExtractPropTypes<typeof tabsProps>;
+export type TabsProps = ExtractPropTypes<typeof tabsProps>
 
 export interface UseTabsEvent {
-  onUpdateModelValue: (value: string | number) => void;
-  onActiveTabChange: (value: string) => void;
-  onTabChange: (id: string | undefined, type: string) => void;
+  onUpdateModelValue: (value: string | number) => void
+  onActiveTabChange: (value: string) => void
+  onTabChange: (id: string | undefined, type: string) => void
 }
 
 /** KTabs 注入 tab 的 key 值 */
-export const tabsInjectionKey: InjectionKey<TabsState> = Symbol('CTabs');
+export const tabsInjectionKey: InjectionKey<TabsState> = Symbol('CTabs')
 
 export interface UseTabsRender {
-  tabsClasses: ComputedRef<Record<string, boolean>>;
+  tabsClasses: ComputedRef<Record<string, boolean>>
 }
