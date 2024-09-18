@@ -8,7 +8,7 @@ export default ({ mode }) => {
 
   return {
     base: basePath,
-    lang: 'en-ZH',
+    lang: 'zh-CN',
     title: 'vue3-ccui',
     description: 'vue3-ccui 组件库',
     lastUpdated: true,

@@ -26,11 +26,12 @@ pnpm-debug.log*
 packages/ccui/ui/vue-ccui.ts
 packages/ccui/ui/theme/theme.scss
 packages/ccui/ui/theme/darkTheme.css
-packages/ccui/docs/.vitepress/config/sidebar.ts
-packages/ccui/docs/.vitepress/config/enSidebar.ts
-packages/ccui/docs/.vitepress/config.ts.js
 packages/ccui/build
-packages/ccui/docs/.vitepress/cache
+**/.vitepress/config/sidebar.ts
+**/.vitepress/config/enSidebar.ts
+**/.vitepress/config.ts.js
+**/.vitepress/cache
+
 **CHANGELOG.md
 # test
 packages/ccui/coverage

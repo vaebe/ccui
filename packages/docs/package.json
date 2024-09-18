@@ -1,5 +1,5 @@
 {
-  "name": "vue3-ccui",
+  "name": "docs",
   "version": "1.2.2",
   "license": "MIT",
   "description": "vue3-ccui components based on Vite and Vue3",
@@ -21,29 +21,21 @@
     "type": "git",
     "url": "https://github.com/vaebe/ccui.git"
   },
-  "main": "vue-ccui.umd.js",
-  "module": "vue-ccui.es.js",
-  "style": "style.css",
   "scripts": {
-    "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "predev": "node ../cli/index.js create -t ccui --ignore-parse-error && node ../cli/index.js generate:theme",
+    "dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "dependencies": {
-    "vue": "^3.5.6"
+    "@vitepress-code-preview/container": "^1.0.8",
+    "@vitepress-code-preview/plugin": "^1.0.6"
   },
   "devDependencies": {
-    "@types/node": "^22.5.5",
     "@vitejs/plugin-vue": "^5.1.3",
     "@vitejs/plugin-vue-jsx": "^4.0.1",
-    "@vue/test-utils": "^2.4.6",
-    "c8": "^10.1.2",
-    "jsdom": "^25.0.0",
-    "moment": "^2.30.1",
-    "sass": "^1.78.0",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.5",
-    "vite-svg-loader": "^5.1.0",
-    "vitest": "^2.1.1",
-    "vue-tsc": "^2.1.6"
+    "vitepress": "^1.3.4",
+    "vite": "^5.4.6",
+    "vite-svg-loader": "^5.1.0"
   }
 }
