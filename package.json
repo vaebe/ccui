@@ -2,7 +2,7 @@
   "name": "vue-ccui",
   "scripts": {
     "dev": "pnpm --filter docs dev",
-    "docs:build": "pnpm --filter vue3-ccui predev -- prod && pnpm --filter docs docs:build",
+    "docs:build": "pnpm --filter docs predev -- prod && pnpm --filter docs docs:build",
     "lint": "eslint . --fix",
     "postinstall": "husky install"
   },

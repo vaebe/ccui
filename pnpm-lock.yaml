@@ -154,6 +154,9 @@ importers:
       '@vitepress-code-preview/plugin':
         specifier: ^1.0.6
         version: 1.0.6
+      vue3-ccui:
+        specifier: workspace:*
+        version: link:../ccui
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.1.3
