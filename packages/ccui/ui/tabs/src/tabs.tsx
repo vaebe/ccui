@@ -1,9 +1,9 @@
-import { defineAsyncComponent, defineComponent, provide, reactive } from 'vue'
-import { useNamespace } from '../../shared/hooks/use-namespace'
 import type {
   TabsProps,
   TabsState,
 } from './tabs-types'
+import { defineAsyncComponent, defineComponent, provide, reactive } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import TabsNav from './components/tabs-nav'
 import {
   tabsInjectionKey,
