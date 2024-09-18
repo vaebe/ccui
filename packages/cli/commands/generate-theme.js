@@ -3,8 +3,8 @@ const path = require('node:path')
 const fs = require('fs-extra')
 const logger = require('../shared/logger')
 const { CSS_CLASS_PREFIX } = require('../shared/constant')
-const lightTheme = require('../../ccui/ui/theme/themes/light.ts').default
-const darkTheme = require('../../ccui/ui/theme/themes/dark.ts').default
+const lightTheme = require('theme/themes/light.ts').default
+const darkTheme = require('theme/themes/dark.ts').default
 
 const lightFileStr = Object.entries(lightTheme)
   .map(
@@ -24,13 +24,13 @@ ${darkCssVariablesStr}
 exports.generateTheme = async () => {
   const lightThemeFilePath = path.resolve(
     __dirname,
-    '../../ccui/ui/theme/theme.scss',
+    '../../theme/theme.scss',
   )
 
   // 生成深色主题css文件
   const darkThemeFilePath = path.resolve(
     __dirname,
-    '../../ccui/ui/theme/darkTheme.css',
+    '../../theme/darkTheme.css',
   )
 
   try {

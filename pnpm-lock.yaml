@@ -44,6 +44,9 @@ importers:
 
   packages/ccui:
     dependencies:
+      theme:
+        specifier: workspace:*
+        version: link:../theme
       vue:
         specifier: ^3.5.6
         version: 3.5.6(typescript@5.6.2)
@@ -93,6 +96,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      theme:
+        specifier: workspace:*
+        version: link:../theme
     devDependencies:
       '@babel/parser':
         specifier: ^7.25.3
@@ -173,6 +179,8 @@ importers:
       vitepress:
         specifier: ^1.3.4
         version: 1.3.4(@algolia/client-search@4.24.0)(@types/node@22.5.5)(postcss@8.4.47)(sass@1.78.0)(search-insights@2.16.2)(sugarss@2.0.0)(typescript@5.6.2)
+
+  packages/theme: {}
 
 packages:
 

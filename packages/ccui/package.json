@@ -29,7 +29,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "vue": "^3.5.6"
+    "vue": "^3.5.6",
+    "theme":"workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",

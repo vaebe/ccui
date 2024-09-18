@@ -32,7 +32,8 @@
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "theme":"workspace:*"
   },
   "devDependencies": {
     "@babel/parser": "^7.25.3",

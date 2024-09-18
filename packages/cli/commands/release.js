@@ -41,12 +41,12 @@ exports.release = async ({ version }) => {
   shell.mkdir('-p', 'theme')
   shell.cp(
     '-R',
-    path.resolve(__dirname, '../../ccui/ui/theme/theme.scss'),
+    path.resolve(__dirname, '../../theme/theme.scss'),
     path.resolve(outputDir, 'theme'),
   )
   shell.cp(
     '-R',
-    path.resolve(__dirname, '../../ccui/ui/theme/darkTheme.css'),
+    path.resolve(__dirname, '../../theme/darkTheme.css'),
     path.resolve(outputDir, 'theme'),
   )
   // shell.exec('npm publish');
