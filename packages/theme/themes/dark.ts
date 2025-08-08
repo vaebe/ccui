@@ -76,6 +76,7 @@ export default {
   'primary-active': '#344899',
   'contrast-hover': '#D64A52',
   'contrast-active': '#B12220',
+  'secondary': '#6c757d',
   // 状态
   'danger-line': '#985C5A',
   'danger-bg': '#4B3A39',

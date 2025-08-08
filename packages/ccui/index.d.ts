@@ -1,4 +1,5 @@
 import { VNode } from 'vue';
+import { Button3d } from './ui/button-3d';
 
 declare global {
   namespace JSX {
@@ -11,3 +12,5 @@ declare global {
     }
   }
 }
+
+export const CCButton3d: typeof Button3d;
