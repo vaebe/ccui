@@ -1,0 +1,255 @@
+@import '../../style-var/index.scss';
+
+.#{$cls-prefix}-button-3d {
+  --primary-color: #7693f5;
+  --success-color: #67c23a;
+  --info-color: #909399;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --primary-light-color: rgb(118 147 245 / 10%);
+  --success-light-color: rgb(103 194 58 / 10%);
+  --info-light-color: rgb(144 147 153 / 10%);
+  --warning-light-color: rgb(230 162 60 / 10%);
+  --danger-light-color: rgb(245 108 108 / 10%);
+
+  position: relative;
+  background: transparent;
+  cursor: pointer;
+  transition: filter 250ms;
+  -webkit-tap-highlight-color: transparent;
+  font-size: 14px;
+  border-radius: $ccui-border-radius;
+  outline-offset: 4px;
+  user-select: none;
+  background: transparent;
+
+  .shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: $ccui-border-radius;
+    background: hsl(0deg 0% 0% / 0.25);
+    transform: translateY(4px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+    will-change: transform;
+  }
+
+  .edge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: $ccui-border-radius;
+    background: linear-gradient(
+      to left,
+      hsl(207, 8%, 36%) 0%,
+      hsl(216, 8%, 18%) 8%,
+      hsl(210, 8%, 18%) 92%,
+      hsl(210, 8%, 36%) 100%
+    );
+  }
+
+  .front {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: $ccui-border-radius;
+    will-change: transform;
+    transform: translateY(-4px);
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+    z-index: 1;
+    padding: 8px 15px;
+    height: 32px;
+    color: $ccui-text;
+    background: $ccui-base-bg;
+    border-radius: $ccui-border-radius;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  // 主要按钮类型样式
+  &--primary {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(230, 80%, 32%) 0%,
+        hsl(230, 80%, 16%) 8%,
+        hsl(230, 80%, 16%) 92%,
+        hsl(230, 80%, 32%) 100%
+      );
+    }
+
+    .front {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+  }
+
+  &--success {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(148, 60%, 28%) 0%,
+        hsl(148, 60%, 14%) 8%,
+        hsl(148, 60%, 14%) 92%,
+        hsl(148, 60%, 28%) 100%
+      );
+    }
+
+    .front {
+      background: var(--success-color);
+      color: #ffffff;
+    }
+  }
+
+  &--info {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(220, 8%, 36%) 0%,
+        hsl(220, 8%, 18%) 8%,
+        hsl(220, 8%, 18%) 92%,
+        hsl(220, 8%, 36%) 100%
+      );
+    }
+
+    .front {
+      background: var(--info-color);
+      color: #ffffff;
+    }
+  }
+
+  &--warning {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(32, 80%, 32%) 0%,
+        hsl(32, 80%, 16%) 8%,
+        hsl(32, 80%, 16%) 92%,
+        hsl(32, 80%, 32%) 100%
+      );
+    }
+
+    .front {
+      background: var(--warning-color);
+      color: #ffffff;
+    }
+  }
+
+  &--danger {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(2, 80%, 36%) 0%,
+        hsl(2, 80%, 18%) 8%,
+        hsl(2, 80%, 18%) 92%,
+        hsl(2, 80%, 36%) 100%
+      );
+    }
+
+    .front {
+      background: var(--danger-color);
+      color: white;
+    }
+  }
+
+  // 大小
+  &--large {
+    .front {
+      font-size: 1.25rem;
+      height: 40px;
+      padding: 12px 19px;
+    }
+  }
+
+  &--small {
+    .front {
+      height: 24px;
+      padding: 5px 11px;
+      font-size: 12px;
+    }
+  }
+
+  // 状态样式
+  &:hover {
+    filter: brightness(110%);
+
+    .front {
+      transform: translateY(-6px);
+      transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+    }
+
+    .shadow {
+      transform: translateY(6px);
+    }
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  &:active {
+    .front {
+      transform: translateY(-2px);
+      transition: transform 34ms;
+    }
+
+    .shadow {
+      transform: translateY(1px);
+      transition: transform 34ms;
+    }
+  }
+
+  &.is-disabled {
+    cursor: not-allowed;
+    filter: grayscale(1);
+    opacity: 0.6;
+
+    &:hover,
+    &:active {
+      .front {
+        transform: translateY(-4px);
+      }
+
+      .shadow {
+        transform: translateY(4px);
+      }
+    }
+  }
+
+  // 加载状态
+  &.is-loading {
+    cursor: wait;
+
+    .front {
+      opacity: 0.8;
+    }
+  }
+
+  // 加载动画
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+.#{$cls-prefix}-button-3d + .#{$cls-prefix}-button-3d {
+  margin-left: 6px;
+}

@@ -21,11 +21,15 @@ function generateZhMenus(componentsInfo) {
     (map, cate) => map.set(cate, []),
     new Map(),
   )
+
   componentsInfo.forEach((info) => {
     if (categoryMap.has(info.category)) {
+
+      const componentName = info.name === 'Button3D' ? 'button-3d' : kebabCase(info.name);
+
       categoryMap.get(info.category).push({
         text: info.title,
-        link: `/${SITES_COMPONENTS_DIR_NAME}/${kebabCase(info.name)}/`,
+        link: `/${SITES_COMPONENTS_DIR_NAME}/${componentName}/`,
         status: info.status,
       })
     }

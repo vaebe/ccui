@@ -1,7 +1,6 @@
 const { resolve } = require('node:path')
 const fs = require('fs-extra')
 const { isEmpty, kebabCase } = require('lodash')
-const inquirer = require('inquirer')
 const ora = require('ora')
 const logger = require('../shared/logger')
 const {
@@ -253,10 +252,11 @@ exports.validateCreateType = (type) => {
 
 // TODO: 待优化代码结构
 exports.create = async (cwd) => {
+  const inquirer = await import('inquirer');
   let { type } = cwd
 
   if (isEmpty(type)) {
-    const result = await inquirer.prompt([selectCreateType()])
+    const result = await inquirer.default.prompt([selectCreateType()])
     type = result.type
   }
 
@@ -270,7 +270,7 @@ exports.create = async (cwd) => {
   try {
     switch (type) {
       case CREATE_SUPPORT_TYPE_MAP.component:
-        params = await inquirer.prompt([
+        params = await inquirer.default.prompt([
           typeName(),
           typeTitle(),
           selectCategory(),

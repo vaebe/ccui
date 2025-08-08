@@ -28,7 +28,7 @@
   cursor: pointer;
   user-select: none;
   background-color: $ccui-base-bg;
-  border-radius: 4px;
+  border-radius: $ccui-border-radius;
   outline: none;
   transition: 0.1s;
   appearance: none;
