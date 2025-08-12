@@ -13,13 +13,15 @@
   --danger-light-color: rgb(245 108 108 / 10%);
 
   position: relative;
-  border: none;
   background: transparent;
   cursor: pointer;
   transition: filter 250ms;
   -webkit-tap-highlight-color: transparent;
-  font-weight: bold;
-  border-radius: 12px;
+  font-size: 14px;
+  border-radius: $ccui-border-radius;
+  outline-offset: 4px;
+  user-select: none;
+  background: transparent;
 
   .shadow {
     position: absolute;
@@ -27,7 +29,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+    border-radius: $ccui-border-radius;
     background: hsl(0deg 0% 0% / 0.25);
     transform: translateY(4px);
     transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
@@ -40,11 +42,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+    border-radius: $ccui-border-radius;
     background: linear-gradient(
       to left,
-      hsl(210, 8%, 36%) 0%,
-      hsl(210, 8%, 18%) 8%,
+      hsl(207, 8%, 36%) 0%,
+      hsl(216, 8%, 18%) 8%,
       hsl(210, 8%, 18%) 92%,
       hsl(210, 8%, 36%) 100%
     );
@@ -55,7 +57,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 12px;
+    border-radius: $ccui-border-radius;
     will-change: transform;
     transform: translateY(-4px);
     transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
@@ -63,9 +65,11 @@
     padding: 8px 15px;
     height: 32px;
     color: $ccui-text;
-    background: $ccui-secondary;
-    color: white;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    background: $ccui-base-bg;
+    border-radius: $ccui-border-radius;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
   }
 
   // 主要按钮类型样式
@@ -81,9 +85,8 @@
     }
 
     .front {
-      background: $ccui-primary;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      background: var(--primary-color);
+      color: #ffffff;
     }
   }
 
@@ -99,9 +102,8 @@
     }
 
     .front {
-      background: $ccui-success;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      background: var(--success-color);
+      color: #ffffff;
     }
   }
 
@@ -117,9 +119,8 @@
     }
 
     .front {
-      background: $ccui-info;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      background: var(--info-color);
+      color: #ffffff;
     }
   }
 
@@ -135,9 +136,8 @@
     }
 
     .front {
-      background: $ccui-warning;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      background: var(--warning-color);
+      color: #ffffff;
     }
   }
 
@@ -153,9 +153,8 @@
     }
 
     .front {
-      background: $ccui-danger;
+      background: var(--danger-color);
       color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
     }
   }
 
@@ -190,14 +189,8 @@
     }
   }
 
-  &:focus {
+  &:focus:not(:focus-visible) {
     outline: none;
-
-    .front {
-      box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.5),
-        0 0 0 4px $ccui-primary;
-    }
   }
 
   &:active {

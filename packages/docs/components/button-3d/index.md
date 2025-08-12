@@ -41,10 +41,10 @@
     <c-button-3d size="large">
       大按钮
     </c-button-3d>
-    <c-button-3d>
+    <c-button-3d type="primary">
       默认按钮
     </c-button-3d>
-    <c-button-3d size="small">
+    <c-button-3d size="small" type="success">
       小按钮
     </c-button-3d>
   </div>
