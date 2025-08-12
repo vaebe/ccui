@@ -96,16 +96,35 @@
 
 ### Props
 
-| 参数       | 说明       | 类型                 | 可选值                                                                       | 默认值    |
-| ---------- | ---------- | -------------------- | ---------------------------------------------------------------------------- | --------- |
-| size       | 尺寸       | `Button3DSize`       | `large` / `default` / `small`                                                | `default` |
-| type       | 类型       | `Button3DType`       | `primary` / `success` / `warning` / `danger` / `info` / `secondary` / `text` | `primary` |
-| disabled   | 是否禁用   | `boolean`            | -                                                                            | `false`   |
-| loading    | 是否加载中 | `boolean`            | -                                                                            | `false`   |
-| nativeType | 原生类型   | `Button3DNativeType` | `button` / `submit` / `reset`                                                | `button`  |
+| 参数       | 说明       | 类型                 | 可选值                                    | 默认值    |
+| ---------- | ---------- | -------------------- | ----------------------------------------- | --------- |
+| size       | 尺寸       | `Button3DSize`       | [Button3DSizeType](#button3dsizetype)     | `default` |
+| type       | 类型       | `Button3DType`       | [Button3DType](#button3dtype)             |           |
+| disabled   | 是否禁用   | `boolean`            | -                                         | `false`   |
+| loading    | 是否加载中 | `boolean`            | -                                         | `false`   |
+| nativeType | 原生类型   | `Button3DNativeType` | [Button3DNativeType](#button3dnativetype) | `button`  |
 
-### Events
+## Button-3d 类型定义
 
-| 事件名 | 说明           | 回调参数                  |
-| ------ | -------------- | ------------------------- |
-| click  | 点击按钮时触发 | `(e: MouseEvent) => void` |
+### Button3DType
+
+```ts
+export type Button3DType
+  = 'primary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'info'
+```
+
+### Button3DSizeType
+
+```ts
+export type Button3DSizeType = 'large' | 'default' | 'small'
+```
+
+### Button3DNativeType
+
+```ts
+export type Button3DNativeType = 'button' | 'submit' | 'reset'
+```

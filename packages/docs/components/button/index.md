@@ -149,13 +149,13 @@ export default defineComponent({
 ### ButtonType
 
 ```ts
-export type ButtonType =
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'text'
+export type ButtonType
+  = 'primary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'info'
+    | 'text'
 ```
 
 ### ButtonSizeType
@@ -167,7 +167,7 @@ export type ButtonSizeType = 'large' | 'default' | 'small'
 ### ButtonNativeType
 
 ```ts
-export type ButtonSizeType = 'large' | 'default' | 'small'
+export type ButtonNativeType = 'button' | 'submit' | 'reset'
 ```
 
 ## Button插槽
