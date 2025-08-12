@@ -1,5 +1,6 @@
 import type { Button3dProps } from './button-3d-types'
-import { defineComponent, toRefs } from 'vue'
+import { defineComponent } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import { button3dProps } from './button-3d-types'
 import './button-3d.scss'
 
@@ -8,10 +9,10 @@ export default defineComponent({
   props: button3dProps,
   emits: ['click'],
   setup(props: Button3dProps, { slots, emit }) {
-    const { type, size, disabled, loading } = toRefs(props)
+    const ns = useNamespace('button-3d')
 
     const onClick = (e: MouseEvent) => {
-      if (loading.value) {
+      if (props.loading) {
         return
       }
       emit('click', e)
@@ -20,18 +21,19 @@ export default defineComponent({
     return () => (
       <button
         class={{
-          'cc-button-3d': true,
-          [`cc-button-3d--${type.value}`]: true,
-          [`cc-button-3d--${size.value}`]: true,
-          'is-disabled': disabled.value || loading.value,
+          [ns.b()]: true,
+          [ns.m(props.type)]: !!props.type,
+          [ns.m(props.size)]: !!props.size,
+          'is-disabled': props.disabled || props.loading,
         }}
-        disabled={disabled.value || loading.value}
+        type={props.nativeType}
+        disabled={props.disabled || props.loading}
         onClick={onClick}
       >
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front">
-          {loading.value ? 'Loading...' : slots.default?.()}
+          {props.loading ? 'Loading...' : slots.default?.()}
         </span>
       </button>
     )

@@ -8,15 +8,21 @@
 
 ```vue
 <template>
-  <c-button-3d>默认按钮</c-button-3d>
+  <c-button-3d>北京</c-button-3d>
   <c-button-3d type="primary">
-    主要按钮
+    上海
   </c-button-3d>
-  <c-button-3d type="secondary">
-    次要按钮
+  <c-button-3d type="success">
+    深圳
   </c-button-3d>
-  <c-button-3d type="text">
-    文字按钮
+  <c-button-3d type="warning">
+    河南
+  </c-button-3d>
+  <c-button-3d type="danger">
+    合肥
+  </c-button-3d>
+  <c-button-3d type="info">
+    河北
   </c-button-3d>
 </template>
 ```
