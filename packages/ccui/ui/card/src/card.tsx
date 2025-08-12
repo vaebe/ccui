@@ -1,6 +1,6 @@
+import type { CardProps } from './card-types'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import type { CardProps } from './card-types'
 import { cardProps } from './card-types'
 import './card.scss'
 

@@ -1,6 +1,6 @@
+import type { TreeItem, TreeProps } from './tree-types'
 import { computed, defineComponent, toRefs } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import type { TreeItem, TreeProps } from './tree-types'
 import IconClose from './components/icon-close'
 import IconOpen from './components/icon-open'
 import useToggle from './composables/use-toggle'

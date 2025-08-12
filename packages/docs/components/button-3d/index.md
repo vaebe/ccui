@@ -109,12 +109,11 @@
 ### Button3DType
 
 ```ts
-export type Button3DType
-  = 'primary'
-    | 'success'
-    | 'warning'
-    | 'danger'
-    | 'info'
+export type Button3DType = 'primary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
 ```
 
 ### Button3DSizeType

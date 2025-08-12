@@ -1,8 +1,8 @@
+import type { RateProps } from './rate-types'
 import { computed, defineComponent, ref } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import type { RateProps } from './rate-types'
-import { rateProps } from './rate-types'
 import iconDefault from './components/icon-default'
+import { rateProps } from './rate-types'
 
 import './rate.scss'
 

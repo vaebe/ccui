@@ -1,8 +1,8 @@
-import { defineComponent, inject, onUnmounted } from 'vue'
 import type { TabsState } from '../../tabs-types'
+import type { TabProps } from './tab-types'
+import { defineComponent, inject, onUnmounted } from 'vue'
 import { useNamespace } from '../../../../shared/hooks/use-namespace'
 import { tabsInjectionKey } from '../../tabs-types'
-import type { TabProps } from './tab-types'
 import { tabProps } from './tab-types'
 import './tab.scss'
 

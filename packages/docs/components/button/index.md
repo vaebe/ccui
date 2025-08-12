@@ -149,13 +149,12 @@ export default defineComponent({
 ### ButtonType
 
 ```ts
-export type ButtonType
-  = 'primary'
-    | 'success'
-    | 'warning'
-    | 'danger'
-    | 'info'
-    | 'text'
+export type ButtonType = 'primary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'text'
 ```
 
 ### ButtonSizeType

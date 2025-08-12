@@ -1,6 +1,6 @@
+import type { StatusProps } from './status-types'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import type { StatusProps } from './status-types'
 import { statusProps } from './status-types'
 
 import './status.scss'

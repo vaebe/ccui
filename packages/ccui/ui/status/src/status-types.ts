@@ -1,13 +1,13 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-type IStatusType =
-  | 'success'
-  | 'error'
-  | 'initial'
-  | 'warning'
-  | 'waiting'
-  | 'running'
-  | 'invalid'
+type IStatusType
+  = | 'success'
+    | 'error'
+    | 'initial'
+    | 'warning'
+    | 'waiting'
+    | 'running'
+    | 'invalid'
 
 export const statusProps = {
   type: {

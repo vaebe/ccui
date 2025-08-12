@@ -1,6 +1,6 @@
+import type { RadioProps } from './radio-types'
 import { computed, defineComponent, inject } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import type { RadioProps } from './radio-types'
 import IconActive from './components/icon-active'
 import IconCircle from './components/icon-circle'
 import { radioGroupInjectionKey, radioProps } from './radio-types'
