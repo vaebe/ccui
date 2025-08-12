@@ -15,14 +15,9 @@
   position: relative;
   border: none;
   background: transparent;
-  padding: 0;
   cursor: pointer;
-  outline-offset: 4px;
   transition: filter 250ms;
   -webkit-tap-highlight-color: transparent;
-  font-family:
-    'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans',
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: bold;
   border-radius: 12px;
 
@@ -46,6 +41,13 @@
     width: 100%;
     height: 100%;
     border-radius: 12px;
+    background: linear-gradient(
+      to left,
+      hsl(210, 8%, 36%) 0%,
+      hsl(210, 8%, 18%) 8%,
+      hsl(210, 8%, 18%) 92%,
+      hsl(210, 8%, 36%) 100%
+    );
   }
 
   .front {
@@ -57,8 +59,13 @@
     will-change: transform;
     transform: translateY(-4px);
     transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
-    padding: 12px 32px;
     z-index: 1;
+    padding: 8px 15px;
+    height: 32px;
+    color: $ccui-text;
+    background: $ccui-secondary;
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   }
 
   // 主要按钮类型样式
@@ -152,59 +159,20 @@
     }
   }
 
-  &--secondary {
-    .edge {
-      background: linear-gradient(
-        to left,
-        hsl(210, 8%, 36%) 0%,
-        hsl(210, 8%, 18%) 8%,
-        hsl(210, 8%, 18%) 92%,
-        hsl(210, 8%, 36%) 100%
-      );
-    }
-
-    .front {
-      background: $ccui-secondary;
-      color: white;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-    }
-  }
-
-  &--text {
-    .edge {
-      background: transparent;
-    }
-
-    .front {
-      background: transparent;
-      color: $ccui-primary;
-      text-shadow: none;
-    }
-
-    &:hover .front {
-      background: $ccui-primary-bg;
-    }
-  }
-
   // 大小
   &--large {
     .front {
       font-size: 1.25rem;
-      padding: 16px 42px;
-    }
-  }
-
-  &--default {
-    .front {
-      font-size: 1rem;
-      padding: 12px 32px;
+      height: 40px;
+      padding: 12px 19px;
     }
   }
 
   &--small {
     .front {
-      font-size: 0.875rem;
-      padding: 8px 22px;
+      height: 24px;
+      padding: 5px 11px;
+      font-size: 12px;
     }
   }
 
@@ -287,4 +255,8 @@
       transform: rotate(360deg);
     }
   }
+}
+
+.#{$cls-prefix}-button-3d + .#{$cls-prefix}-button-3d {
+  margin-left: 6px;
 }
