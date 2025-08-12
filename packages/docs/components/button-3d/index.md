@@ -8,10 +8,16 @@
 
 ```vue
 <template>
-  <cc-button-3d>默认按钮</cc-button-3d>
-  <cc-button-3d type="primary">主要按钮</cc-button-3d>
-  <cc-button-3d type="secondary">次要按钮</cc-button-3d>
-  <cc-button-3d type="text">文字按钮</cc-button-3d>
+  <c-button-3d>默认按钮</c-button-3d>
+  <c-button-3d type="primary">
+    主要按钮
+  </c-button-3d>
+  <c-button-3d type="secondary">
+    次要按钮
+  </c-button-3d>
+  <c-button-3d type="text">
+    文字按钮
+  </c-button-3d>
 </template>
 ```
 
@@ -23,9 +29,13 @@
 
 ```vue
 <template>
-  <cc-button-3d size="large">大按钮</cc-button-3d>
-  <cc-button-3d>中按钮</cc-button-3d>
-  <cc-button-3d size="small">小按钮</cc-button-3d>
+  <c-button-3d size="large">
+    大按钮
+  </c-button-3d>
+  <c-button-3d>中按钮</c-button-3d>
+  <c-button-3d size="small">
+    小按钮
+  </c-button-3d>
 </template>
 ```
 
@@ -37,8 +47,12 @@
 
 ```vue
 <template>
-  <cc-button-3d disabled>禁用按钮</cc-button-3d>
-  <cc-button-3d type="primary" disabled>禁用按钮</cc-button-3d>
+  <c-button-3d disabled>
+    禁用按钮
+  </c-button-3d>
+  <c-button-3d type="primary" disabled>
+    禁用按钮
+  </c-button-3d>
 </template>
 ```
 
@@ -50,7 +64,9 @@
 
 ```vue
 <template>
-  <cc-button-3d loading>加载中</cc-button-3d>
+  <c-button-3d loading>
+    加载中
+  </c-button-3d>
 </template>
 ```
 
@@ -60,15 +76,15 @@
 
 ### Props
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-| --- | --- | --- | --- | --- |
-| size | 尺寸 | `IButtonSize` | `large` / `medium` / `small` | `medium` |
-| type | 类型 | `IButtonType` | `primary` / `secondary` / `text` | `primary` |
-| disabled | 是否禁用 | `boolean` | - | `false` |
-| loading | 是否加载中 | `boolean` | - | `false` |
+| 参数     | 说明       | 类型          | 可选值                           | 默认值    |
+| -------- | ---------- | ------------- | -------------------------------- | --------- |
+| size     | 尺寸       | `IButtonSize` | `large` / `medium` / `small`     | `medium`  |
+| type     | 类型       | `IButtonType` | `primary` / `secondary` / `text` | `primary` |
+| disabled | 是否禁用   | `boolean`     | -                                | `false`   |
+| loading  | 是否加载中 | `boolean`     | -                                | `false`   |
 
 ### Events
 
-| 事件名 | 说明 | 回调参数 |
-| --- | --- | --- |
-| click | 点击按钮时触发 | `(e: MouseEvent) => void` |
+| 事件名 | 说明           | 回调参数                  |
+| ------ | -------------- | ------------------------- |
+| click  | 点击按钮时触发 | `(e: MouseEvent) => void` |

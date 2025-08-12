@@ -4,7 +4,7 @@ import { button3dProps } from './button-3d-types'
 import './button-3d.scss'
 
 export default defineComponent({
-  name: 'CCButton3d',
+  name: 'CButton3d',
   props: button3dProps,
   emits: ['click'],
   setup(props: Button3dProps, { slots, emit }) {
