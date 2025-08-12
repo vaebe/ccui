@@ -1,6 +1,17 @@
 @import '../../style-var/index.scss';
 
-.cc-button-3d {
+.#{$cls-prefix}-button-3d {
+  --primary-color: #7693f5;
+  --success-color: #67c23a;
+  --info-color: #909399;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --primary-light-color: rgb(118 147 245 / 10%);
+  --success-light-color: rgb(103 194 58 / 10%);
+  --info-light-color: rgb(144 147 153 / 10%);
+  --warning-light-color: rgb(230 162 60 / 10%);
+  --danger-light-color: rgb(245 108 108 / 10%);
+
   position: relative;
   border: none;
   background: transparent;
@@ -9,6 +20,11 @@
   outline-offset: 4px;
   transition: filter 250ms;
   -webkit-tap-highlight-color: transparent;
+  font-family:
+    'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-weight: bold;
+  border-radius: 12px;
 
   .shadow {
     position: absolute;
@@ -18,8 +34,9 @@
     height: 100%;
     border-radius: 12px;
     background: hsl(0deg 0% 0% / 0.25);
-    transform: translateY(2px);
+    transform: translateY(4px);
     transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+    will-change: transform;
   }
 
   .edge {
@@ -32,94 +49,242 @@
   }
 
   .front {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     border-radius: 12px;
     will-change: transform;
     transform: translateY(-4px);
     transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
     padding: 12px 32px;
+    z-index: 1;
   }
 
-  &.cc-button-3d--primary .edge {
-    background: linear-gradient(
-      to left,
-      hsl(340deg 100% 32%) 0%,
-      hsl(340deg 100% 16%) 8%,
-      hsl(340deg 100% 16%) 92%,
-      hsl(340deg 100% 32%) 100%
-    );
+  // 主要按钮类型样式
+  &--primary {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(230, 80%, 32%) 0%,
+        hsl(230, 80%, 16%) 8%,
+        hsl(230, 80%, 16%) 92%,
+        hsl(230, 80%, 32%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-primary;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
-  &.cc-button-3d--primary .front {
-    background: $ccui-primary;
-    color: white;
+  &--success {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(148, 60%, 28%) 0%,
+        hsl(148, 60%, 14%) 8%,
+        hsl(148, 60%, 14%) 92%,
+        hsl(148, 60%, 28%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-success;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
-  &.cc-button-3d--secondary .edge {
-    background: linear-gradient(
-      to left,
-      hsl(220deg 100% 32%) 0%,
-      hsl(220deg 100% 16%) 8%,
-      hsl(220deg 100% 16%) 92%,
-      hsl(220deg 100% 32%) 100%
-    );
+  &--info {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(220, 8%, 36%) 0%,
+        hsl(220, 8%, 18%) 8%,
+        hsl(220, 8%, 18%) 92%,
+        hsl(220, 8%, 36%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-info;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
-  &.cc-button-3d--secondary .front {
-    background: $ccui-secondary;
-    color: white;
+  &--warning {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(32, 80%, 32%) 0%,
+        hsl(32, 80%, 16%) 8%,
+        hsl(32, 80%, 16%) 92%,
+        hsl(32, 80%, 32%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-warning;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
-  &.cc-button-3d--text .edge {
-    background: transparent;
+  &--danger {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(2, 80%, 36%) 0%,
+        hsl(2, 80%, 18%) 8%,
+        hsl(2, 80%, 18%) 92%,
+        hsl(2, 80%, 36%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-danger;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
-  &.cc-button-3d--text .front {
-    background: transparent;
-    color: $ccui-primary;
+  &--secondary {
+    .edge {
+      background: linear-gradient(
+        to left,
+        hsl(210, 8%, 36%) 0%,
+        hsl(210, 8%, 18%) 8%,
+        hsl(210, 8%, 18%) 92%,
+        hsl(210, 8%, 36%) 100%
+      );
+    }
+
+    .front {
+      background: $ccui-secondary;
+      color: white;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
   }
 
+  &--text {
+    .edge {
+      background: transparent;
+    }
+
+    .front {
+      background: transparent;
+      color: $ccui-primary;
+      text-shadow: none;
+    }
+
+    &:hover .front {
+      background: $ccui-primary-bg;
+    }
+  }
+
+  // 大小
+  &--large {
+    .front {
+      font-size: 1.25rem;
+      padding: 16px 42px;
+    }
+  }
+
+  &--default {
+    .front {
+      font-size: 1rem;
+      padding: 12px 32px;
+    }
+  }
+
+  &--small {
+    .front {
+      font-size: 0.875rem;
+      padding: 8px 22px;
+    }
+  }
+
+  // 状态样式
   &:hover {
     filter: brightness(110%);
+
+    .front {
+      transform: translateY(-6px);
+      transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+    }
+
+    .shadow {
+      transform: translateY(6px);
+    }
   }
 
-  &:hover .front {
-    transform: translateY(-6px);
-    transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
-  }
-
-  &:active .front {
-    transform: translateY(-2px);
-    transition: transform 34ms;
-  }
-
-  &:active .shadow {
-    transform: translateY(1px);
-    transition: transform 34ms;
-  }
-
-  &:focus:not(:focus-visible) {
+  &:focus {
     outline: none;
+
+    .front {
+      box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.5),
+        0 0 0 4px $ccui-primary;
+    }
   }
 
-  &.cc-button-3d--large .front {
-    font-size: 1.25rem;
-    padding: 16px 42px;
-  }
+  &:active {
+    .front {
+      transform: translateY(-2px);
+      transition: transform 34ms;
+    }
 
-  &.cc-button-3d--medium .front {
-    font-size: 1rem;
-    padding: 12px 32px;
-  }
-
-  &.cc-button-3d--small .front {
-    font-size: 0.875rem;
-    padding: 8px 22px;
+    .shadow {
+      transform: translateY(1px);
+      transition: transform 34ms;
+    }
   }
 
   &.is-disabled {
     cursor: not-allowed;
     filter: grayscale(1);
+    opacity: 0.6;
+
+    &:hover,
+    &:active {
+      .front {
+        transform: translateY(-4px);
+      }
+
+      .shadow {
+        transform: translateY(4px);
+      }
+    }
+  }
+
+  // 加载状态
+  &.is-loading {
+    cursor: wait;
+
+    .front {
+      opacity: 0.8;
+    }
+  }
+
+  // 加载动画
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }

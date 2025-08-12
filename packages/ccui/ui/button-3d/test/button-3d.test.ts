@@ -10,7 +10,7 @@ describe('button3d', () => {
       },
     })
     expect(wrapper.text()).toBe('Click me')
-    expect(wrapper.classes()).toContain('cc-button-3d')
+    expect(wrapper.classes()).toContain('ccui-button-3d')
   })
 
   it('should handle click events', async () => {
@@ -36,8 +36,8 @@ describe('button3d', () => {
         loading: true,
       },
     })
-    expect(wrapper.text()).toBe('Loading...')
-    expect(wrapper.attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).toContain('Loading...')
+    expect(wrapper.classes()).toContain('is-loading')
   })
 
   it('should apply size classes', () => {
@@ -46,7 +46,7 @@ describe('button3d', () => {
         size: 'large',
       },
     })
-    expect(wrapper.classes()).toContain('cc-button-3d--large')
+    expect(wrapper.classes()).toContain('ccui-button-3d--large')
   })
 
   it('should apply type classes', () => {
@@ -55,6 +55,6 @@ describe('button3d', () => {
         type: 'secondary',
       },
     })
-    expect(wrapper.classes()).toContain('cc-button-3d--secondary')
+    expect(wrapper.classes()).toContain('ccui-button-3d--secondary')
   })
 })

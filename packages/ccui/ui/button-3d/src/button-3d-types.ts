@@ -1,17 +1,17 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export type Button3DType = | 'primary' | 'success' | 'warning' | 'danger' | 'info'
+export type Button3DType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary' | 'text'
 export type Button3DSizeType = 'large' | 'default' | 'small'
 export type Button3DNativeType = 'button' | 'submit' | 'reset'
 
 export const button3dProps = {
   size: {
     type: String as PropType<Button3DSizeType>,
-    default: '',
+    default: 'default',
   },
   type: {
     type: String as PropType<Button3DType>,
-    default: '',
+    default: 'primary',
   },
   disabled: {
     type: Boolean,

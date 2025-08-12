@@ -12,7 +12,7 @@ export default defineComponent({
     const ns = useNamespace('button-3d')
 
     const onClick = (e: MouseEvent) => {
-      if (props.loading) {
+      if (props.disabled || props.loading) {
         return
       }
       emit('click', e)
@@ -24,16 +24,26 @@ export default defineComponent({
           [ns.b()]: true,
           [ns.m(props.type)]: !!props.type,
           [ns.m(props.size)]: !!props.size,
-          'is-disabled': props.disabled || props.loading,
+          'is-disabled': props.disabled,
+          'is-loading': props.loading,
         }}
         type={props.nativeType}
-        disabled={props.disabled || props.loading}
+        disabled={props.disabled}
         onClick={onClick}
       >
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front">
-          {props.loading ? 'Loading...' : slots.default?.()}
+          {props.loading
+            ? (
+                <>
+                  <span class="loading-spinner"></span>
+                  Loading...
+                </>
+              )
+            : (
+                slots.default?.()
+              )}
         </span>
       </button>
     )
