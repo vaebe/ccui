@@ -1,5 +1,6 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { Button } from '../../button/index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Calendar } from '../index'
 
@@ -8,10 +9,15 @@ const baseClass = ns.b()
 const dayClass = ns.em('day-box', 'day')
 const currentDateClass = '.current-date'
 
-describe('button', () => {
+describe('calendar', () => {
   it('dom', () => {
-    const wrapper = shallowMount(Calendar, {
+    const wrapper = mount(Calendar, {
       props: { modelValue: new Date() },
+      global: {
+        components: {
+          CButton: Button,
+        },
+      },
     })
 
     // 元素是否存在
@@ -24,11 +30,17 @@ describe('button', () => {
   })
 
   it('props', async () => {
-    const wrapper = shallowMount(Calendar, {
+    const wrapper = mount(Calendar, {
       props: { modelValue: new Date() },
+      global: {
+        components: {
+          CButton: Button,
+        },
+      },
     })
 
-    await wrapper.setProps({ modelValue: '2022-10-10' })
+    const testDate = new Date(2022, 9, 10) // 2022-10-10
+    await wrapper.setProps({ modelValue: testDate })
 
     expect(wrapper.find(currentDateClass).text()).toBe('10')
 
@@ -36,12 +48,17 @@ describe('button', () => {
   })
 
   it('slots', async () => {
-    const wrapper = shallowMount(Calendar, {
+    const wrapper = mount(Calendar, {
       props: { modelValue: new Date() },
       slots: {
         dateCell: `<template #dateCell="{isSelected, date, day}">
             {{isSelected ? '当前选中日期' : day}}
           </template>`,
+      },
+      global: {
+        components: {
+          CButton: Button,
+        },
       },
     })
 
@@ -55,8 +72,13 @@ describe('button', () => {
   })
 
   it('event', async () => {
-    const wrapper = shallowMount(Calendar, {
+    const wrapper = mount(Calendar, {
       props: { modelValue: new Date() },
+      global: {
+        components: {
+          CButton: Button,
+        },
+      },
     })
 
     // 断言 change 事件是否正确触发
