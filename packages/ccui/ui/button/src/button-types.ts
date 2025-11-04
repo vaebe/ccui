@@ -38,6 +38,14 @@ export const buttonProps = {
     type: String as PropType<ButtonNativeType>,
     default: 'button',
   },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  icon: {
+    type: String,
+    default: '',
+  },
 } as const
 
 export type ButtonProps = ExtractPropTypes<typeof buttonProps>

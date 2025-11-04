@@ -6,7 +6,7 @@
 
 按钮用于开始一个即时操作。
 
-## 基本用法
+## 基本使用
 
 :::demo
 
@@ -16,108 +16,193 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   setup() {
-    return {
-      msg: 'Button 按钮'
-    }
+    return {}
   }
 })
 </script>
 
 <template>
-  <p>基本使用</p>
   <div>
-    <c-button>北京</c-button>
-    <c-button type="primary">
-      上海
-    </c-button>
-    <c-button type="success">
-      深圳
-    </c-button>
-    <c-button type="warning">
-      河南
-    </c-button>
-    <c-button type="danger">
-      合肥
-    </c-button>
-    <c-button type="info">
-      河北
-    </c-button>
-    <c-button type="text">
-      安徽
-    </c-button>
+    <c-button>默认按钮</c-button>
+    <c-button type="primary">主要按钮</c-button>
+    <c-button type="success">成功按钮</c-button>
+    <c-button type="warning">警告按钮</c-button>
+    <c-button type="danger">危险按钮</c-button>
+    <c-button type="info">信息按钮</c-button>
+    <c-button type="text">文字按钮</c-button>
   </div>
+</template>
 
-  <p>大小 size</p>
+<style>
+.ccui-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+</style>
+```
+
+:::
+
+## 不同尺寸
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
   <div>
-    <c-button type="success" size="large">
-      北京
-    </c-button>
-    <c-button type="warning">
-      上海
-    </c-button>
-    <c-button type="danger" size="small">
-      广东
-    </c-button>
+    <c-button type="primary" size="large">大型按钮</c-button>
+    <c-button type="primary">默认按钮</c-button>
+    <c-button type="primary" size="small">小型按钮</c-button>
   </div>
-
-  <p>禁用</p>
-  <div>
-    <c-button type="success" disabled>
-      北京
-    </c-button>
+  <div style="margin-top: 10px;">
+    <c-button type="success" size="large" round>大型按钮</c-button>
+    <c-button type="success" round>默认按钮</c-button>
+    <c-button type="success" size="small" round>小型按钮</c-button>
   </div>
+</template>
 
-  <p>圆角按钮</p>
+<style>
+.ccui-button {
+  margin-right: 10px;
+}
+</style>
+```
+
+:::
+
+## 禁用状态
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
   <div>
-    <c-button type="success" round>
-      北京
-    </c-button>
-    <c-button type="danger" size="small" round>
-      广东
-    </c-button>
+    <c-button disabled>默认按钮</c-button>
+    <c-button type="primary" disabled>主要按钮</c-button>
+    <c-button type="success" disabled>成功按钮</c-button>
+    <c-button type="warning" disabled>警告按钮</c-button>
+    <c-button type="danger" disabled>危险按钮</c-button>
+    <c-button type="info" disabled>信息按钮</c-button>
+    <c-button type="text" disabled>文字按钮</c-button>
   </div>
+</template>
 
-  <p>圆形按钮 与 icon 插槽</p>
+<style>
+.ccui-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+</style>
+```
+
+:::
+
+## 圆角按钮
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
   <div>
-    <c-button type="success" circle>
-      北
-    </c-button>
+    <c-button type="primary" round>圆角按钮</c-button>
+    <c-button type="success" round>圆角按钮</c-button>
+    <c-button type="warning" size="small" round>小型圆角</c-button>
+  </div>
+</template>
 
+<style>
+.ccui-button {
+  margin-right: 10px;
+}
+</style>
+```
+
+:::
+
+## 圆形按钮
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-button type="primary" circle>A</c-button>
+    <c-button type="success" circle>B</c-button>
+    <c-button type="warning" circle>C</c-button>
+  </div>
+  
+  <div style="margin-top: 10px;">
+    <c-button type="primary" size="large" circle>D</c-button>
+    <c-button type="primary" circle>E</c-button>
+    <c-button type="primary" size="small" circle>F</c-button>
+  </div>
+  
+  <div style="margin-top: 10px;">
     <c-button type="primary" circle>
       <template #icon>
-        <svg
-          t="1649322922975" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          p-id="3628" width="16" height="16"
-        >
-          <path
-            d="M943.273421 506.259252C906.84065 320.247768 724.900901 185.233772 510.685052 185.233772c-214.228129 0-396.154575 135.01502-432.589392 321.025481-0.529049 2.765997-0.529049 5.611811 0 8.376785C114.530476 700.66901 296.457946 835.685054 510.685052 835.685054c84.754313 0 166.926824-21.296025 237.682307-61.551868 10.854209-6.196119 14.542204-19.829628 8.197706-30.479175-6.341429-10.599406-20.225647-14.158465-31.172977-8.006348-63.754023 36.307927-138.010237 55.516408-214.709083 55.516408-190.771905 0-352.71932-117.805056-386.970402-280.715403 34.250058-162.89909 196.22101-280.690844 386.970402-280.690844 190.771905 0 352.71932 117.791753 386.969379 280.690844-12.098549 57.384965-41.084721 111.433952-84.026742 156.599617-8.574283 8.997931-8.032954 23.089881 1.174756 31.464619 9.184173 8.356318 23.608697 7.872295 32.207539-1.147126 49.846268-52.396347 83.111906-115.577319 96.265484-182.739974C943.813726 511.859807 943.813726 509.026272 943.273421 506.259252z"
-            p-id="3629" fill="#ffffff"
-          />
-          <path
-            d="M328.909032 515.482311c0 100.308567 81.792864 181.669596 182.689832 181.669596 100.872409 0 182.665273-81.362053 182.665273-181.669596 0.001023-100.307543-81.791841-181.634804-182.665273-181.634804l0 0C410.701896 333.847507 328.909032 415.174768 328.909032 515.482311zM648.616494 515.482311c0 75.237565-61.337997 136.257314-137.01763 136.257314l0 0c-75.67861 0-137.042189-61.018725-137.042189-136.257314 0-75.211982 61.362556-136.231731 137.042189-136.231731C587.277474 379.25058 648.616494 440.270329 648.616494 515.482311z"
-            p-id="3630" fill="#ffffff"
-          />
+        <svg t="1649322922975" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3628" width="16" height="16">
+          <path d="M943.273421 506.259252C906.84065 320.247768 724.900901 185.233772 510.685052 185.233772c-214.228129 0-396.154575 135.01502-432.589392 321.025481-0.529049 2.765997-0.529049 5.611811 0 8.376785C114.530476 700.66901 296.457946 835.685054 510.685052 835.685054c84.754313 0 166.926824-21.296025 237.682307-61.551868 10.854209-6.196119 14.542204-19.829628 8.197706-30.479175-6.341429-10.599406-20.225647-14.158465-31.172977-8.006348-63.754023 36.307927-138.010237 55.516408-214.709083 55.516408-190.771905 0-352.71932-117.805056-386.970402-280.715403 34.250058-162.89909 196.22101-280.690844 386.970402-280.690844 190.771905 0 352.71932 117.791753 386.969379 280.690844-12.098549 57.384965-41.084721 111.433952-84.026742 156.599617-8.574283 8.997931-8.032954 23.089881 1.174756 31.464619 9.184173 8.356318 23.608697 7.872295 32.207539-1.147126 49.846268-52.396347 83.111906-115.577319 96.265484-182.739974C943.813726 511.859807 943.813726 509.026272 943.273421 506.259252z" p-id="3629" fill="#ffffff"></path>
+          <path d="M328.909032 515.482311c0 100.308567 81.792864 181.669596 182.689832 181.669596 100.872409 0 182.665273-81.362053 182.665273-181.669596 0.001023-100.307543-81.791841-181.634804-182.665273-181.634804l0 0C410.701896 333.847507 328.909032 415.174768 328.909032 515.482311zM648.616494 515.482311c0 75.237565-61.337997 136.257314-137.01763 136.257314l0 0c-75.67861 0-137.042189-61.018725-137.042189-136.257314 0-75.211982 61.362556-136.231731 137.042189-136.231731C587.277474 379.25058 648.616494 440.270329 648.616494 515.482311z" p-id="3630" fill="#ffffff"></path>
         </svg>
       </template>
     </c-button>
-  </div>
-
-  <p>朴素按钮</p>
-  <div>
-    <c-button type="primary" plain>
-      上海
+    
+    <c-button type="success" circle>
+      <template #icon>
+        <svg t="1649322922975" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3628" width="12" height="12">
+          <path d="M943.273421 506.259252C906.84065 320.247768 724.900901 185.233772 510.685052 185.233772c-214.228129 0-396.154575 135.01502-432.589392 321.025481-0.529049 2.765997-0.529049 5.611811 0 8.376785C114.530476 700.66901 296.457946 835.685054 510.685052 835.685054c84.754313 0 166.926824-21.296025 237.682307-61.551868 10.854209-6.196119 14.542204-19.829628 8.197706-30.479175-6.341429-10.599406-20.225647-14.158465-31.172977-8.006348-63.754023 36.307927-138.010237 55.516408-214.709083 55.516408-190.771905 0-352.71932-117.805056-386.970402-280.715403 34.250058-162.89909 196.22101-280.690844 386.970402-280.690844 190.771905 0 352.71932 117.791753 386.969379 280.690844-12.098549 57.384965-41.084721 111.433952-84.026742 156.599617-8.574283 8.997931-8.032954 23.089881 1.174756 31.464619 9.184173 8.356318 23.608697 7.872295 32.207539-1.147126 49.846268-52.396347 83.111906-115.577319 96.265484-182.739974C943.813726 511.859807 943.813726 509.026272 943.273421 506.259252z" p-id="3629" fill="#ffffff"></path>
+          <path d="M328.909032 515.482311c0 100.308567 81.792864 181.669596 182.689832 181.669596 100.872409 0 182.665273-81.362053 182.665273-181.669596 0.001023-100.307543-81.791841-181.634804-182.665273-181.634804l0 0C410.701896 333.847507 328.909032 415.174768 328.909032 515.482311zM648.616494 515.482311c0 75.237565-61.337997 136.257314-137.01763 136.257314l0 0c-75.67861 0-137.042189-61.018725-137.042189-136.257314 0-75.211982 61.362556-136.231731 137.042189-136.231731C587.277474 379.25058 648.616494 440.270329 648.616494 515.482311z" p-id="3630" fill="#ffffff"></path>
+        </svg>
+      </template>
     </c-button>
-    <c-button type="success" plain>
-      深圳
-    </c-button>
-    <c-button type="warning" plain>
-      河南
-    </c-button>
-    <c-button type="danger" plain>
-      合肥
-    </c-button>
-    <c-button type="info" plain>
-      河北
+    
+    <c-button type="warning" size="small" circle>
+      <template #icon>
+        <svg t="1649322922975" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3628" width="10" height="10">
+          <path d="M943.273421 506.259252C906.84065 320.247768 724.900901 185.233772 510.685052 185.233772c-214.228129 0-396.154575 135.01502-432.589392 321.025481-0.529049 2.765997-0.529049 5.611811 0 8.376785C114.530476 700.66901 296.457946 835.685054 510.685052 835.685054c84.754313 0 166.926824-21.296025 237.682307-61.551868 10.854209-6.196119 14.542204-19.829628 8.197706-30.479175-6.341429-10.599406-20.225647-14.158465-31.172977-8.006348-63.754023 36.307927-138.010237 55.516408-214.709083 55.516408-190.771905 0-352.71932-117.805056-386.970402-280.715403 34.250058-162.89909 196.22101-280.690844 386.970402-280.690844 190.771905 0 352.71932 117.791753 386.969379 280.690844-12.098549 57.384965-41.084721 111.433952-84.026742 156.599617-8.574283 8.997931-8.032954 23.089881 1.174756 31.464619 9.184173 8.356318 23.608697 7.872295 32.207539-1.147126 49.846268-52.396347 83.111906-115.577319 96.265484-182.739974C943.813726 511.859807 943.813726 509.026272 943.273421 506.259252z" p-id="3629" fill="#ffffff"></path>
+          <path d="M328.909032 515.482311c0 100.308567 81.792864 181.669596 182.689832 181.669596 100.872409 0 182.665273-81.362053 182.665273-181.669596 0.001023-100.307543-81.791841-181.634804-182.665273-181.634804l0 0C410.701896 333.847507 328.909032 415.174768 328.909032 515.482311zM648.616494 515.482311c0 75.237565-61.337997 136.257314-137.01763 136.257314l0 0c-75.67861 0-137.042189-61.018725-137.042189-136.257314 0-75.211982 61.362556-136.231731 137.042189-136.231731C587.277474 379.25058 648.616494 440.270329 648.616494 515.482311z" p-id="3630" fill="#ffffff"></path>
+        </svg>
+      </template>
     </c-button>
   </div>
 </template>
@@ -125,6 +210,131 @@ export default defineComponent({
 <style>
 .ccui-button {
   margin-right: 10px;
+}
+</style>
+```
+
+:::
+
+## 朴素按钮
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-button type="primary" plain>朴素按钮</c-button>
+    <c-button type="success" plain>朴素按钮</c-button>
+    <c-button type="warning" plain>朴素按钮</c-button>
+    <c-button type="danger" plain>朴素按钮</c-button>
+    <c-button type="info" plain>朴素按钮</c-button>
+  </div>
+</template>
+
+<style>
+.ccui-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+</style>
+```
+
+:::
+
+## 加载状态
+
+:::demo
+
+```vue
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const loading = ref(false)
+    
+    const handleClick = () => {
+      loading.value = true
+      setTimeout(() => {
+        loading.value = false
+      }, 2000)
+    }
+    
+    return {
+      loading,
+      handleClick
+    }
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-button type="primary" loading>加载中</c-button>
+    <c-button type="success" loading>提交中</c-button>
+    <c-button type="primary" :loading="loading" @click="handleClick">点击加载</c-button>
+  </div>
+</template>
+
+<style>
+.ccui-button {
+  margin-right: 10px;
+}
+</style>
+```
+
+:::
+
+## 图标按钮
+
+:::demo
+
+```vue
+<script>
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    return {}
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-button type="primary" icon="cc-icon-search">搜索</c-button>
+    <c-button type="success" icon="cc-icon-edit">编辑</c-button>
+    <c-button type="warning" icon="cc-icon-delete">删除</c-button>
+    <c-button type="danger" icon="cc-icon-plus">添加</c-button>
+  </div>
+  
+  <div style="margin-top: 10px;">
+    <c-button type="primary">
+      <template #icon>
+        <svg t="1649322922975" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3628" width="16" height="16">
+          <path d="M943.273421 506.259252C906.84065 320.247768 724.900901 185.233772 510.685052 185.233772c-214.228129 0-396.154575 135.01502-432.589392 321.025481-0.529049 2.765997-0.529049 5.611811 0 8.376785C114.530476 700.66901 296.457946 835.685054 510.685052 835.685054c84.754313 0 166.926824-21.296025 237.682307-61.551868 10.854209-6.196119 14.542204-19.829628 8.197706-30.479175-6.341429-10.599406-20.225647-14.158465-31.172977-8.006348-63.754023 36.307927-138.010237 55.516408-214.709083 55.516408-190.771905 0-352.71932-117.805056-386.970402-280.715403 34.250058-162.89909 196.22101-280.690844 386.970402-280.690844 190.771905 0 352.71932 117.791753 386.969379 280.690844-12.098549 57.384965-41.084721 111.433952-84.026742 156.599617-8.574283 8.997931-8.032954 23.089881 1.174756 31.464619 9.184173 8.356318 23.608697 7.872295 32.207539-1.147126 49.846268-52.396347 83.111906-115.577319 96.265484-182.739974C943.813726 511.859807 943.813726 509.026272 943.273421 506.259252z" p-id="3629" fill="#ffffff"></path>
+          <path d="M328.909032 515.482311c0 100.308567 81.792864 181.669596 182.689832 181.669596 100.872409 0 182.665273-81.362053 182.665273-181.669596 0.001023-100.307543-81.791841-181.634804-182.665273-181.634804l0 0C410.701896 333.847507 328.909032 415.174768 328.909032 515.482311zM648.616494 515.482311c0 75.237565-61.337997 136.257314-137.01763 136.257314l0 0c-75.67861 0-137.042189-61.018725-137.042189-136.257314 0-75.211982 61.362556-136.231731 137.042189-136.231731C587.277474 379.25058 648.616494 440.270329 648.616494 515.482311z" p-id="3630" fill="#ffffff"></path>
+        </svg>
+      </template>
+      带图标的按钮
+    </c-button>
+  </div>
+</template>
+
+<style>
+.ccui-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 </style>
 ```
@@ -143,6 +353,8 @@ export default defineComponent({
 | disabled    | boolean                               | false  | 是否为禁用状态      |
 | autofocus   | boolean                               | false  | 原生 autofocus 属性 |
 | native-type | [ButtonNativeType](#buttonnativetype) | button | 原生 type 属性      |
+| loading     | boolean                               | false  | 是否为加载状态      |
+| icon        | string                                | --     | 图标类名            |
 
 ## Button类型定义
 
@@ -174,3 +386,12 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset'
 | 插槽名 | 说明           |
 | ------ | -------------- |
 | icon   | 自定义图标组件 |
+
+## 更新日志
+
+### 新增功能
+
+1. 添加 `loading` 属性，用于显示按钮的加载状态
+2. 添加 `icon` 属性，用于设置按钮图标
+3. 在加载状态下，按钮将自动禁用并显示加载指示器
+4. 支持通过 `icon` 属性或 `icon` 插槽设置按钮图标

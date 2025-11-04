@@ -16,6 +16,7 @@ function getSizeClass(type: ButtonSizeType) {
 
 const roundClass = ns.m('round')
 const circleClass = ns.m('circle')
+const loadingClass = ns.m('loading')
 
 describe('button', () => {
   it('dom', () => {
@@ -72,6 +73,10 @@ describe('button', () => {
   it('disabled', async () => {
     const handleClick = vi.fn()
     const wrapper = shallowMount(Button, { props: { disabled: true } })
+
+    // 检查是否应用了禁用样式类
+    const disabledClass = ns.m('disabled').substring(1) // 移除开头的点
+    expect(wrapper.find('button').classes()).toContain(disabledClass)
 
     await wrapper.trigger('click')
     expect(handleClick).not.toBeCalled()
@@ -166,6 +171,70 @@ describe('button', () => {
     })
 
     expect(wrapper.find('button').attributes('autofocus')).toBe('')
+
+    wrapper.unmount()
+  })
+
+  it('shows loading state when loading prop is true', async () => {
+    const wrapper = shallowMount(Button, { props: { loading: true } })
+    expect(wrapper.find(loadingClass).exists()).toBeTruthy()
+    expect(wrapper.find('button').attributes('disabled')).toBe('')
+
+    // 检查是否应用了禁用样式类
+    const disabledClass = ns.m('disabled').substring(1) // 移除开头的点
+    expect(wrapper.find('button').classes()).toContain(disabledClass)
+
+    wrapper.unmount()
+  })
+
+  it('does not emit click event when loading', async () => {
+    const handleClick = vi.fn()
+    const wrapper = mount(Button, {
+      props: {
+        loading: true,
+      },
+      slots: {
+        default: 'Loading',
+      },
+      attrs: {
+        onClick: handleClick,
+      },
+    })
+
+    await wrapper.trigger('click')
+    expect(handleClick).not.toBeCalled()
+
+    wrapper.unmount()
+  })
+
+  it('renders icon when icon prop is provided', () => {
+    const wrapper = mount(Button, {
+      props: {
+        icon: 'cc-icon-star',
+      },
+      slots: {
+        default: 'Star',
+      },
+    })
+
+    expect(wrapper.find('.cc-icon-star').exists()).toBe(true)
+
+    wrapper.unmount()
+  })
+
+  it('renders loading icon when loading is true', () => {
+    const wrapper = mount(Button, {
+      props: {
+        loading: true,
+      },
+      slots: {
+        default: 'Loading',
+      },
+    })
+
+    expect(wrapper.find(ns.e('loading-icon')).exists()).toBe(true)
+    // 验证加载图标是空的span元素
+    expect(wrapper.find(ns.e('loading-icon')).text()).toBe('')
 
     wrapper.unmount()
   })

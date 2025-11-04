@@ -14,7 +14,7 @@
 
   box-sizing: border-box;
   display: inline-flex;
-  align-content: center;
+  align-items: center;
   justify-content: center;
   padding: 8px 15px;
   height: 32px;
@@ -32,6 +32,7 @@
   outline: none;
   transition: 0.1s;
   appearance: none;
+  border: 1px solid transparent;
 
   &:hover {
     opacity: 0.8;
@@ -77,6 +78,8 @@
 
   &--text {
     color: #7693f5;
+    background: transparent;
+    border-color: transparent;
   }
 
   // plain 朴素按钮
@@ -94,6 +97,7 @@
   &--plain-primary {
     color: var(--primary-color);
     background: var(--primary-light-color);
+    border-color: var(--primary-color);
 
     &:focus,
     &:active {
@@ -104,6 +108,7 @@
   &--plain-success {
     color: var(--success-color);
     background: var(--success-light-color);
+    border-color: var(--success-color);
 
     &:focus,
     &:active {
@@ -114,6 +119,7 @@
   &--plain-info {
     color: var(--info-color);
     background: var(--info-light-color);
+    border-color: var(--info-color);
 
     &:focus,
     &:active {
@@ -124,6 +130,7 @@
   &--plain-warning {
     color: var(--warning-color);
     background: var(--warning-light-color);
+    border-color: var(--warning-color);
 
     &:focus,
     &:active {
@@ -134,6 +141,7 @@
   &--plain-danger {
     color: var(--danger-color);
     background: var(--danger-light-color);
+    border-color: var(--danger-color);
 
     &:focus,
     &:active {
@@ -145,12 +153,26 @@
   &--large {
     height: 40px;
     padding: 12px 19px;
+    font-size: 16px;
   }
 
   &--small {
     height: 24px;
     padding: 5px 11px;
     font-size: 12px;
+  }
+
+  // 圆形按钮的不同尺寸
+  &.#{$cls-prefix}-button--large.#{$cls-prefix}-button--circle {
+    width: 40px;
+    height: 40px;
+    padding: 12px;
+  }
+
+  &.#{$cls-prefix}-button--small.#{$cls-prefix}-button--circle {
+    width: 24px;
+    height: 24px;
+    padding: 5px;
   }
 
   // 圆角
@@ -162,5 +184,59 @@
   &--circle {
     padding: 8px;
     border-radius: 50%;
+    width: 32px;
+    height: 32px;
+  }
+
+  // 加载状态
+  &--loading {
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  // 内容区域
+  &__content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // 加载图标
+  &__loading-icon {
+    position: relative;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 5px;
+    vertical-align: middle;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: rotating 0.8s linear infinite;
+    }
+  }
+
+  // 图标
+  i {
+    margin-right: 5px;
+  }
+}
+
+// 旋转动画
+@keyframes rotating {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
