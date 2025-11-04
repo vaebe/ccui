@@ -229,4 +229,45 @@ describe('calendar', () => {
 
     wrapper.unmount()
   })
+
+  it('renders custom header when header slot is provided', () => {
+    const wrapper = mount(Calendar, {
+      props: { modelValue: new Date() },
+      slots: {
+        header: `<template #header="{ currentDate }">
+            <div class="custom-header">Custom Header - {{ currentDate }}</div>
+          </template>`,
+      },
+      global: {
+        components: {
+          CButton: Button,
+        },
+      },
+    })
+
+    // 验证自定义 header 是否正确渲染
+    expect(wrapper.find('.custom-header').exists()).toBeTruthy()
+
+    wrapper.unmount()
+  })
+
+  it('correctly handles month boundaries', () => {
+    // 测试月份切换时的边界情况
+    const testDate = new Date(2022, 0, 15) // 2022-01-15
+    const wrapper = mount(Calendar, {
+      props: { modelValue: testDate },
+      global: {
+        components: {
+          CButton: Button,
+        },
+      },
+    })
+
+    // 2022年1月有31天，应该显示在日历中
+    const days = wrapper.findAll(dayClass)
+    const lastDay = days.find(day => day.text() === '31')
+    expect(lastDay).toBeTruthy()
+
+    wrapper.unmount()
+  })
 })

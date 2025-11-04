@@ -1,5 +1,5 @@
 import type { ButtonSizeType, ButtonType } from '../src/button-types'
-import { shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Button } from '../index'
@@ -75,5 +75,98 @@ describe('button', () => {
 
     await wrapper.trigger('click')
     expect(handleClick).not.toBeCalled()
+  })
+
+  it('emits click event when clicked', async () => {
+    const handleClick = vi.fn()
+    const wrapper = mount(Button, {
+      slots: {
+        default: 'Click me',
+      },
+      attrs: {
+        onClick: handleClick,
+      },
+    })
+
+    await wrapper.trigger('click')
+    expect(handleClick).toBeCalled()
+
+    wrapper.unmount()
+  })
+
+  it('does not emit click event when disabled', async () => {
+    const handleClick = vi.fn()
+    const wrapper = mount(Button, {
+      props: {
+        disabled: true,
+      },
+      slots: {
+        default: 'Click me',
+      },
+      attrs: {
+        onClick: handleClick,
+      },
+    })
+
+    await wrapper.trigger('click')
+    expect(handleClick).not.toBeCalled()
+
+    wrapper.unmount()
+  })
+
+  it('renders icon slot when provided', () => {
+    const wrapper = mount(Button, {
+      slots: {
+        icon: '<i class="cc-icon-heart"></i>',
+        default: 'Like',
+      },
+    })
+
+    expect(wrapper.find('.cc-icon-heart').exists()).toBe(true)
+
+    wrapper.unmount()
+  })
+
+  it('applies plain style when plain prop is true', async () => {
+    const wrapper = shallowMount(Button, {
+      props: {
+        type: 'primary',
+        plain: true,
+      },
+    })
+
+    expect(wrapper.find(ns.m('plain-primary')).exists()).toBeTruthy()
+
+    wrapper.unmount()
+  })
+
+  it('sets nativeType attribute correctly', () => {
+    const wrapper = mount(Button, {
+      props: {
+        nativeType: 'submit',
+      },
+      slots: {
+        default: 'Submit',
+      },
+    })
+
+    expect(wrapper.find('button').attributes('type')).toBe('submit')
+
+    wrapper.unmount()
+  })
+
+  it('sets autofocus attribute when autofocus is true', () => {
+    const wrapper = mount(Button, {
+      props: {
+        autofocus: true,
+      },
+      slots: {
+        default: 'Focus',
+      },
+    })
+
+    expect(wrapper.find('button').attributes('autofocus')).toBe('')
+
+    wrapper.unmount()
   })
 })
