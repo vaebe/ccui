@@ -37,3 +37,4 @@ packages/ccui/build
 packages/ccui/coverage
 packages/ccui/ui/**/__snapshots__
 .pnpm-debug.log
+.claude

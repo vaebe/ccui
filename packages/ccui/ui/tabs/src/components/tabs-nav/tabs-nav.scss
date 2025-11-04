@@ -1,4 +1,4 @@
-@import '../../../../style-var/index.scss';
+@use '../../../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-tabs {
   @mixin tabs-after {

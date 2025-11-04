@@ -2,28 +2,35 @@
   "name": "vue-ccui",
   "scripts": {
     "dev": "pnpm --filter docs dev",
-    "docs:build": "pnpm --filter docs predev -- prod && pnpm --filter docs docs:build",
+    "docs:build": "pnpm --filter docs predev && pnpm --filter docs docs:build",
     "lint": "eslint . --fix",
     "postinstall": "husky install"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.2.0",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
+    "@antfu/eslint-config": "^6.2.0",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@ls-lint/ls-lint": "^2.3.1",
-    "@typescript-eslint/eslint-plugin": "^8.39.0",
-    "@typescript-eslint/parser": "^8.39.0",
-    "bumpp": "^10.2.2",
-    "commitlint": "^19.8.1",
-    "eslint": "^9.32.0",
-    "eslint-plugin-format": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "bumpp": "^10.3.1",
+    "commitlint": "^20.1.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-format": "^1.0.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.4"
+    "lint-staged": "^16.2.6"
   },
   "lint-staged": {
     "packages/**/*.{vue,js,jsx,ts,tsx,scss,css}": [
       "eslint --fix"
     ]
   },
-  "license": "MIT"
+  "license": "MIT",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "vue-demi"
+    ]
+  }
 }

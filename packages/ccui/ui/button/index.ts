@@ -2,7 +2,7 @@ import type { App } from 'vue'
 import Button from './src/button'
 
 Button.install = function (app: App): void {
-  app.component(Button.name, Button)
+  app.component(Button.name!, Button)
 }
 
 export { Button }
@@ -12,6 +12,6 @@ export default {
   category: '通用',
   status: '100%',
   install(app: App): void {
-    app.component(Button.name, Button)
+    app.component(Button.name!, Button)
   },
 }
