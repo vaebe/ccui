@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+/// <reference types="vitest/config" />
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
@@ -8,8 +8,5 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    // transformMode: {
-    //   web: [/.[tj]sx$/]
-    // }
   },
 })
