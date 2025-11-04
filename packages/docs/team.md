@@ -15,7 +15,10 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/52314078?v=4',
     name: 'vaebe',
-    title: 'Creator',
+    title: 'Creator & Lead Developer',
+    org: 'vue3-ccui',
+    orgLink: 'https://github.com/vaebe/ccui',
+    desc: 'Vue.js 爱好者，拥有多年前端开发经验的UI组件库开发者。',
     links: [
       { icon: 'github', link: 'https://github.com/vaebe' },
       { icon: {svg: JuejinSvgIcon  }, link: 'https://juejin.cn/user/712139266339694/posts' }
@@ -27,10 +30,10 @@ const members = [
 <VPTeamPage>
   <VPTeamPageTitle>
     <template #title>
-      项目贡献者
+      贡献者
     </template>
     <template #lead>
-      项目中的贡献者，会在下方进行展示。
+      党会记住你们的!
     </template>
   </VPTeamPageTitle>
   <VPTeamMembers
