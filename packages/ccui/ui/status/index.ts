@@ -2,7 +2,7 @@ import type { App } from 'vue'
 import Status from './src/status'
 
 Status.install = function (app: App): void {
-  app.component(Status.name, Status)
+  app.component(Status.name!, Status)
 }
 
 export { Status }
@@ -12,6 +12,6 @@ export default {
   category: '通用',
   status: '100%',
   install(app: App): void {
-    app.component(Status.name, Status)
+    app.component(Status.name!, Status)
   },
 }
