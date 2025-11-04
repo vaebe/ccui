@@ -21,7 +21,11 @@ export default defineComponent({
     )
 
     // 当前月
-    const currentMonth = ref(dayjs().format('YYYY-MM'))
+    const currentMonth = ref(
+      props.modelValue
+        ? dayjs(props.modelValue).format('YYYY-MM')
+        : dayjs().format('YYYY-MM'),
+    )
 
     // 当前展示的日期列表
     const curDateList: Ref<dateItem[]> = ref([])
