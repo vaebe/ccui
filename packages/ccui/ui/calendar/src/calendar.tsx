@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import type { CalendarProps, dateItem } from './calendar-types'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { calendarProps } from './calendar-types'
@@ -16,12 +16,16 @@ export default defineComponent({
     // 当前天 选中天
     const currentDate = ref(
       props.modelValue
-        ? moment(props.modelValue).format('YYYY-MM-DD')
-        : moment().format('YYYY-MM-DD'),
+        ? dayjs(props.modelValue).format('YYYY-MM-DD')
+        : dayjs().format('YYYY-MM-DD'),
     )
 
     // 当前月
-    const currentMonth = ref(moment().format('YYYY-MM'))
+    const currentMonth = ref(
+      props.modelValue
+        ? dayjs(props.modelValue).format('YYYY-MM')
+        : dayjs().format('YYYY-MM'),
+    )
 
     // 当前展示的日期列表
     const curDateList: Ref<dateItem[]> = ref([])
@@ -30,10 +34,10 @@ export default defineComponent({
     // 根据月份计算当前展示日期的数组
     const generatedDate = (month?: string) => {
       // 获取当月第一天是周几
-      const whichDay = moment(month).startOf('month').weekday()
+      const whichDay = dayjs(month).startOf('month').day()
       // 计算开始开始日期 7 减去当月第一天是周几（获取到的周几是 0123456， 其中0代表周日）
-      const startDate = moment(
-        moment(month).subtract(7 - whichDay, 'days'),
+      const startDate = dayjs(
+        dayjs(month).subtract(7 - whichDay, 'day'),
       ).format('YYYY-MM-DD')
 
       // 整理数据
@@ -42,13 +46,13 @@ export default defineComponent({
         .map((item, index) => index)
         .reduce((acc: Array<dateItem>, index: number) => {
           // 获取展示的日期
-          const date = moment(startDate)
-            .add(index + 1, 'days')
+          const date = dayjs(startDate)
+            .add(index + 1, 'day')
             .format('YYYY-MM-DD')
           // 分割日期 用于获取是 几号 如 123456
           const dateList = date.split('-')
           // 获取周几
-          const week = moment(date).weekday()
+          const week = dayjs(date).day()
 
           // 将需要的数据 放进数组
           acc.push({
@@ -67,10 +71,10 @@ export default defineComponent({
 
     // 设置当前天、选中天， 生成对应月份
     const setCurrentDate = (date: string) => {
-      currentDate.value = moment(date).format('YYYY-MM-DD')
+      currentDate.value = dayjs(date).format('YYYY-MM-DD')
       // 月份不同 重新生成日历
       if (!date.includes(currentMonth.value)) {
-        currentMonth.value = moment(date).format('YYYY-MM')
+        currentMonth.value = dayjs(date).format('YYYY-MM')
         generatedDate(currentMonth.value)
       }
 
@@ -83,12 +87,12 @@ export default defineComponent({
       let month = ''
       // 下个月
       if (type === 'nextMonth') {
-        month = moment(currentMonth.value).add(1, 'month').format('YYYY-MM')
+        month = dayjs(currentMonth.value).add(1, 'month').format('YYYY-MM')
       }
 
       // 上个月
       if (type === 'lastMonth') {
-        month = moment(currentMonth.value)
+        month = dayjs(currentMonth.value)
           .subtract(1, 'month')
           .format('YYYY-MM')
       }
@@ -101,10 +105,10 @@ export default defineComponent({
     watch(
       () => props.modelValue,
       () => {
-        currentDate.value = moment(props.modelValue).format('YYYY-MM-DD')
+        currentDate.value = dayjs(props.modelValue).format('YYYY-MM-DD')
         // 月份不同 重新生成日历
         if (!currentDate.value.includes(currentMonth.value)) {
-          currentMonth.value = moment(props.modelValue).format('YYYY-MM')
+          currentMonth.value = dayjs(props.modelValue).format('YYYY-MM')
           generatedDate(currentMonth.value)
         }
       },
@@ -166,7 +170,7 @@ export default defineComponent({
               type="primary"
               plain={true}
               onClick={() => {
-                setCurrentDate(moment().format('YYYY-MM-DD'))
+                setCurrentDate(dayjs().format('YYYY-MM-DD'))
               }}
             >
               今天
