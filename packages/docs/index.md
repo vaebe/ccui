@@ -1,29 +1,33 @@
 ---
 layout: home
 hero:
-  name: vue3-ccui
-  text: 一个使用 vue3、tsx 的组件库示例
-  tagline: 看过星辰大海，才明白自己渺小如沙
+  name: ccui
+  text: Vue 3 组件库构建示例
+  tagline: 基于 Vue 3、TypeScript 和 Vite 构建的 UI 组件库
   image:
     src: /logo.svg
     alt: cc ui
   actions:
   - theme: brand
-    text: 开始
+    text: 快速开始
     link: /introduce
   - theme: alt
-    text: 掘金主页
-    link: https://juejin.cn/user/712139266339694/posts
+    text: GitHub
+    link: https://github.com/vaebe/ccui
 features:
+  - icon: 🚀
+    title: 高性能
+    details: 基于 Vite 7 构建，提供极致的开发体验和快速的构建速度。
+
+  - icon: 🧩
+    title: 丰富组件
+    details: 提供多种常用UI组件，包括按钮、表单、布局、数据展示等。
+
   - icon: 🛠️
-    title: 丰富的功能
-    details: 内置微脚手架，专注于组件的开发。
+    title: 易于使用
+    details: 完善的 TypeScript 类型支持，详细的文档和示例，开箱即用。
 
-  - icon: ⚡️
-    title: 快速
-    details: vite5不只是快。
-
-  - icon: 💡
-    title: 技术栈
-    details: vite5、vitepress、vitest、vue3、tsx。
+  - icon: 🎨
+    title: 主题定制
+    details: 支持灵活的主题定制，轻松适配品牌风格。
 ---
