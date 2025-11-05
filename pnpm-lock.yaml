@@ -94,6 +94,28 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3(typescript@5.9.3)
 
+  packages/ccui/build/avatar: {}
+
+  packages/ccui/build/button: {}
+
+  packages/ccui/build/calendar: {}
+
+  packages/ccui/build/card: {}
+
+  packages/ccui/build/check-box: {}
+
+  packages/ccui/build/divider: {}
+
+  packages/ccui/build/radio: {}
+
+  packages/ccui/build/rate: {}
+
+  packages/ccui/build/status: {}
+
+  packages/ccui/build/tabs: {}
+
+  packages/ccui/build/tree: {}
+
   packages/cli:
     dependencies:
       lodash:

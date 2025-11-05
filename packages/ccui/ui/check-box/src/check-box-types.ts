@@ -4,7 +4,7 @@ export type LabelType = string | number | boolean
 
 export type BeforeChangeType = (
   isChecked: boolean,
-  v: string
+  v: string,
 ) => boolean | Promise<boolean>
 
 export type DirectionType = 'row' | 'column'
