@@ -22,14 +22,16 @@ exports.createNuxtPlugin = () => {
   fsExtra.outputFile(path.resolve(outputNuxtDir, `index.js`), fileStr, 'utf-8')
 }
 
-exports.createAutoImportedComponent = (dirName) => {
+exports.createAutoImportedComponent = async (dirName) => {
   const importStyle = fsExtra.pathExistsSync(
     path.resolve(outputDir, `${dirName}/style.css`),
   )
     ? `import '../../${dirName}/style.css' \n`
     : ``
 
-  const comps = require(path.resolve(outputDir, `${dirName}/index.es.js`))
+  // 使用动态 import 替代 require 来加载 ES 模块
+  const compsModule = await import(pathToFileURL(path.resolve(outputDir, `${dirName}/index.es.js`)))
+  const comps = compsModule.default || compsModule
 
   Object.keys(comps).forEach((compName) => {
     if (compName !== 'default' && !compName.includes('Directive')) {
@@ -42,4 +44,10 @@ exports.createAutoImportedComponent = (dirName) => {
       )
     }
   })
+}
+
+// 辅助函数：将文件路径转换为 file:// URL
+function pathToFileURL(path) {
+  const { pathToFileURL: _pathToFileURL } = require('url')
+  return _pathToFileURL(path).href
 }

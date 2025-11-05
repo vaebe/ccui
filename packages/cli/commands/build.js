@@ -14,6 +14,15 @@ const baseConfig = defineConfig({
   configFile: false,
   publicDir: false,
   plugins: [vue(), vueJsx()],
+  esbuild: {
+    exclude: ['**/node_modules/**', '**/esbuild-register/**']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    }
+  }
 })
 
 const rollupOptions = {
@@ -22,7 +31,13 @@ const rollupOptions = {
     globals: {
       vue: 'Vue',
     },
+    exports: 'named'
   },
+  onwarn(warning, warn) {
+    // 忽略此特定警告
+    if (warning.code === 'MIXED_EXPORTS') return;
+    warn(warning);
+  }
 }
 
 async function buildSingle(name) {
@@ -94,7 +109,7 @@ exports.build = async () => {
     }
     await buildSingle(name)
     createPackageJson(name)
-    nuxtBuild.createAutoImportedComponent(name)
+    await nuxtBuild.createAutoImportedComponent(name)
   }
 
   nuxtBuild.createNuxtPlugin()
