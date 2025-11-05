@@ -2,7 +2,7 @@ import type {
   TabsProps,
   TabsState,
 } from './tabs-types'
-import { defineAsyncComponent, defineComponent, provide, reactive } from 'vue'
+import { defineComponent, provide, reactive } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import TabsNav from './components/tabs-nav'
 import {
@@ -15,9 +15,6 @@ export default defineComponent({
   name: 'CTabs',
   props: tabsProps,
   emits: ['change', 'update:modelValue'],
-  components: {
-    TabsNav: defineAsyncComponent(() => import('./components/tabs-nav')),
-  },
   setup(props: TabsProps, { slots, emit }) {
     const ns = useNamespace('tabs')
 
