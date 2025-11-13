@@ -10,7 +10,7 @@
 ```vue
 <template>
   <c-popover title="标题" content="这是一段 Popover 内容">
-    <c-button>点击触发</c-button>
+    <c-button type="primary" plain>点击触发</c-button>
   </c-popover>
 </template>
 ```
@@ -23,7 +23,7 @@
 ```vue
 <template>
   <c-popover trigger="hover" content="鼠标悬停显示">
-    <c-button>Hover</c-button>
+    <c-button type="primary" plain>Hover</c-button>
   </c-popover>
 </template>
 ```
@@ -42,10 +42,10 @@
     <template #content>
       <div style="max-width: 240px">
         <p>支持任意插槽内容</p>
-        <c-button size="small">操作</c-button>
+        <c-button type="primary" plain size="small">操作</c-button>
       </div>
     </template>
-    <c-button>自定义内容</c-button>
+    <c-button type="primary" plain>自定义内容</c-button>
   </c-popover>
 </template>
 ```
@@ -58,10 +58,10 @@
 ```vue
 <template>
   <div style="display:flex;gap:12px;flex-wrap:wrap">
-    <c-popover placement="top" effect="light" content="Top"><c-button>Top</c-button></c-popover>
-    <c-popover placement="bottom" effect="dark" content="Bottom"><c-button>Bottom</c-button></c-popover>
-    <c-popover placement="left" content="Left"><c-button>Left</c-button></c-popover>
-    <c-popover placement="right" content="Right"><c-button>Right</c-button></c-popover>
+    <c-popover placement="top" effect="light" content="Top"><c-button type="primary" plain>Top</c-button></c-popover>
+    <c-popover placement="bottom" effect="dark" content="Bottom"><c-button type="primary" plain>Bottom</c-button></c-popover>
+    <c-popover placement="left" content="Left"><c-button type="primary" plain>Left</c-button></c-popover>
+    <c-popover placement="right" content="Right"><c-button type="primary" plain>Right</c-button></c-popover>
   </div>
   
 </template>
@@ -81,7 +81,7 @@ const toggle = () => v.value = !v.value
 
 <template>
   <c-popover :visible="v" title="受控" content="通过 v-model 控制显隐">
-    <c-button @click="toggle">切换显隐</c-button>
+    <c-button type="primary" plain @click="toggle">切换显隐</c-button>
   </c-popover>
 </template>
 ```
