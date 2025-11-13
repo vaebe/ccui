@@ -25,7 +25,8 @@
   "module": "vue-ccui.es.js",
   "style": "style.css",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
