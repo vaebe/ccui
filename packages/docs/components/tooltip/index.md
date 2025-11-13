@@ -36,10 +36,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-basic {
-  text-align: center;
-  padding: 20px;
-}
 </style>
 ```
 
@@ -140,7 +136,7 @@ export default defineComponent({
 <style>
 .demo-tooltip-placement {
   width: 400px;
-  margin: 20px auto;
+  margin: 0 auto;
 }
 
 .demo-tooltip-placement .top {
@@ -213,11 +209,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-theme {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-theme .ccui-button {
   margin: 0 10px;
 }
@@ -268,11 +259,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-content {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-content .ccui-button {
   margin: 0 10px;
 }
@@ -321,11 +307,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-trigger {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-trigger .ccui-button {
   margin: 0 10px;
 }
@@ -368,11 +349,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-delay {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-delay .ccui-button {
   margin: 0 10px;
 }
@@ -417,11 +393,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-disabled {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-disabled .ccui-button {
   margin: 0 10px;
 }
@@ -466,11 +437,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-tooltip-manual {
-  text-align: center;
-  padding: 20px;
-}
-
 .demo-tooltip-manual .ccui-button {
   margin: 0 10px;
 }
