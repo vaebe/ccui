@@ -121,7 +121,7 @@ export const popoverProps = {
   },
   triggerKeys: {
     type: Array as PropType<string[]>,
-    default: () => ['Enter', 'Space'],
+    default: () => ['Enter', ' '],
   },
 } as const
 

@@ -176,15 +176,33 @@ export default defineComponent({
         doHide()
       }
     }
+    const normalizeTriggerKey = (value: string) => {
+      if (!value)
+        return value
+      const lower = value.toLowerCase()
+      if (value === ' ' || lower === 'space' || lower === 'spacebar')
+        return 'Space'
+      return value
+    }
+
     const handleKeydown = (e: KeyboardEvent) => {
-      if (props.trigger === 'focus' && props.triggerKeys.includes(e.key)) {
-        e.preventDefault()
-        if (actualVisible.value) {
-          doHide()
-        }
-        else {
-          doShow()
-        }
+      if (props.trigger !== 'focus')
+        return
+
+      const normalizedEventKey = normalizeTriggerKey(e.key)
+      const matches = props.triggerKeys
+        .map(normalizeTriggerKey)
+        .includes(normalizedEventKey)
+
+      if (!matches)
+        return
+
+      e.preventDefault()
+      if (actualVisible.value) {
+        doHide()
+      }
+      else {
+        doShow()
       }
     }
     const handlePopperMouseEnter = () => {

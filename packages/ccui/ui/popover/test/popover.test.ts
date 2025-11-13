@@ -420,7 +420,7 @@ describe('popover', () => {
 
     it('键盘触发功能', async () => {
       wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', 'Space'] },
+        props: { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', ' '] },
         slots: { default: '<input type="text" />' },
       })
       const trigger = wrapper.find('.ccui-popover__trigger')
@@ -436,8 +436,8 @@ describe('popover', () => {
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
 
-      // 测试 Space 键
-      await trigger.trigger('keydown', { key: 'Space' })
+      // 测试空格键
+      await trigger.trigger('keydown', { key: ' ' })
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
     })
