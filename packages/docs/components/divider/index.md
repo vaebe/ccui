@@ -82,7 +82,7 @@ export default defineComponent({
 | color                    | string                                      | --         | 设置分隔线的颜色         |
 | direction                | [DirectionType](#directiontype)             | horizontal | 设置分隔线方向           |
 | border-style             | [BorderStyleType](#borderstyletype)         | solid      | 设置分隔符样式           |
-| content-position         | [ContentPositionType](#Contentpositiontype) | center     | 设置分隔线文案的位置     |
+| content-position         | [ContentPositionType](#contentpositiontype) | center     | 设置分隔线文案的位置     |
 | content-color            | string                                      | --         | 设置分隔线文案的颜色     |
 | content-background-color | string                                      | --         | 设置分隔线文案的背景颜色 |
 

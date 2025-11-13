@@ -7,6 +7,8 @@ export const timelineProps = {
 
 export type TimelineProps = ExtractPropTypes<typeof timelineProps>
 
+export type TimelineItemType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | ''
+
 // TimelineItem 组件的 props
 export const timelineItemProps = {
   /**
@@ -42,7 +44,7 @@ export const timelineItemProps = {
    * 节点类型
    */
   type: {
-    type: String as PropType<'primary' | 'success' | 'warning' | 'danger' | 'info' | ''>,
+    type: String as PropType<TimelineItemType>,
     default: '',
     validator: (value: string) => ['primary', 'success', 'warning', 'danger', 'info', ''].includes(value),
   },
