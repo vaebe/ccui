@@ -1,0 +1,187 @@
+@use '../../style-var/index.scss' as *;
+
+.ccui-timeline {
+  margin: 0;
+  font-size: $ccui-font-size-lg;
+  list-style: none;
+  padding: 0;
+
+  // 最后一个时间线项目不显示尾部连接线
+  .ccui-timeline-item:last-child {
+    .ccui-timeline-item__tail {
+      display: none;
+    }
+  }
+
+  // 垂直居中的时间线项目
+  .ccui-timeline-item.ccui-timeline-item__center {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+
+    .ccui-timeline-item__wrapper {
+      width: 100%;
+    }
+
+    .ccui-timeline-item__tail {
+      top: 6px;
+      height: calc(100% + 14px);
+    }
+
+    .ccui-timeline-item__node {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .ccui-timeline-item__dot {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  // 第一个垂直居中项目的特殊处理
+  .ccui-timeline-item.ccui-timeline-item__center:first-child {
+    .ccui-timeline-item__tail {
+      top: 50%;
+      height: calc(50% + 20px);
+    }
+  }
+
+  // 最后一个垂直居中项目的特殊处理
+  .ccui-timeline-item.ccui-timeline-item__center:last-child {
+    .ccui-timeline-item__tail {
+      display: block;
+      height: 50%;
+      top: 6px;
+    }
+  }
+}
+
+.ccui-timeline-item {
+  position: relative;
+  padding-bottom: 20px;
+  list-style: none;
+
+  // 确保隐藏所有列表标记
+  &::marker {
+    display: none;
+  }
+
+  &::before {
+    display: none;
+  }
+
+  // 内容包装器
+  &__wrapper {
+    position: relative;
+    padding-left: 28px;
+    top: -3px;
+  }
+
+  // 连接线
+  &__tail {
+    position: absolute;
+    left: 4px;
+    top: 0;
+    height: calc(100% + 20px);
+    border-left: 2px solid $ccui-dividing-line;
+  }
+
+  // 图标样式
+  &__icon {
+    color: $ccui-light-text;
+    font-size: $ccui-font-size-sm;
+  }
+
+  // 节点
+  &__node {
+    position: absolute;
+    background-color: $ccui-dividing-line;
+    border-color: $ccui-dividing-line;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    // 普通尺寸
+    &--normal {
+      left: -1px;
+      top: 0;
+      width: 12px;
+      height: 12px;
+    }
+
+    // 大尺寸
+    &--large {
+      left: -2px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+    }
+
+    // 空心样式
+    &.is-hollow {
+      background: $ccui-base-bg;
+      border-style: solid;
+      border-width: 2px;
+    }
+
+    // 不同类型的颜色
+    &--primary {
+      background-color: $ccui-primary;
+      border-color: $ccui-primary;
+    }
+
+    &--success {
+      background-color: $ccui-success;
+      border-color: $ccui-success;
+    }
+
+    &--warning {
+      background-color: $ccui-warning;
+      border-color: $ccui-warning;
+    }
+
+    &--danger {
+      background-color: $ccui-danger;
+      border-color: $ccui-danger;
+    }
+
+    &--info {
+      background-color: $ccui-info;
+      border-color: $ccui-info;
+    }
+  }
+
+  // 自定义节点
+  &__dot {
+    position: absolute;
+    top: 0;
+    left: -6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // 内容区域
+  &__content {
+    color: $ccui-text;
+  }
+
+  // 时间戳
+  &__timestamp {
+    color: $ccui-aide-text;
+    line-height: $ccui-line-height-base;
+    font-size: $ccui-font-size-sm;
+
+    &.is-top {
+      margin-bottom: 8px;
+      padding-top: 4px;
+    }
+
+    &.is-bottom {
+      margin-top: 8px;
+    }
+  }
+}
