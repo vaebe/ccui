@@ -1,14 +1,28 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export type TooltipPlacement
-  = | 'top' | 'top-start' | 'top-end'
-    | 'bottom' | 'bottom-start' | 'bottom-end'
-    | 'left' | 'left-start' | 'left-end'
-    | 'right' | 'right-start' | 'right-end'
+  = | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
 
 export type TooltipEffect = 'dark' | 'light'
 
 export type TooltipTrigger = 'hover' | 'click' | 'focus' | 'manual'
+
+export interface TooltipEmits {
+  'show': () => void
+  'hide': () => void
+  'update:visible': (visible: boolean) => void
+}
 
 export const tooltipProps = {
   // 基础属性
@@ -83,9 +97,14 @@ export const tooltipProps = {
 export type TooltipProps = ExtractPropTypes<typeof tooltipProps>
 
 export interface TooltipEmits {
+  /** 显示前触发 */
   'before-show': () => void
+  /** 显示时触发 */
   'show': () => void
+  /** 隐藏前触发 */
   'before-hide': () => void
+  /** 隐藏时触发 */
   'hide': () => void
+  /** 当 visible 状态改变时触发 */
   'update:visible': (visible: boolean) => void
 }

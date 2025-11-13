@@ -490,7 +490,7 @@ export default defineComponent({
 | effect                    | 默认提供的主题                             | string  | dark/light                                                                                                | dark   |
 | visible / v-model:visible | 状态是否可见                               | boolean | —                                                                                                         | false  |
 | disabled                  | Tooltip 是否可用                           | boolean | —                                                                                                         | false  |
-| offset                    | 出现位置的偏移量                           | number  | —                                                                                                         | 12     |
+| offset                    | 出现位置的偏移量                           | number  | —                                                                                                         | 8      |
 | show-after                | 延迟出现，单位毫秒                         | number  | —                                                                                                         | 0      |
 | hide-after                | 延迟关闭，单位毫秒                         | number  | —                                                                                                         | 200    |
 | show-arrow                | 是否显示 Tooltip 箭头                      | boolean | —                                                                                                         | true   |

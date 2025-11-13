@@ -85,20 +85,7 @@ export default defineComponent({
 
       clearTimers()
 
-      if (props.showAfter > 0) {
-        showTimer.value = window.setTimeout(() => {
-          emit('before-show')
-          if (!isControlled.value) {
-            visible.value = true
-          }
-          emit('update:visible', true)
-          nextTick(() => {
-            update()
-            emit('show')
-          })
-        }, props.showAfter)
-      }
-      else {
+      const showTooltip = () => {
         emit('before-show')
         if (!isControlled.value) {
           visible.value = true
@@ -109,28 +96,32 @@ export default defineComponent({
           emit('show')
         })
       }
+
+      if (props.showAfter > 0) {
+        showTimer.value = window.setTimeout(showTooltip, props.showAfter)
+      }
+      else {
+        showTooltip()
+      }
     }
 
     const doHide = () => {
       clearTimers()
 
-      if (props.hideAfter > 0 && props.trigger !== 'click') {
-        hideTimer.value = window.setTimeout(() => {
-          emit('before-hide')
-          if (!isControlled.value) {
-            visible.value = false
-          }
-          emit('update:visible', false)
-          emit('hide')
-        }, props.hideAfter)
-      }
-      else {
+      const hideTooltip = () => {
         emit('before-hide')
         if (!isControlled.value) {
           visible.value = false
         }
         emit('update:visible', false)
         emit('hide')
+      }
+
+      if (props.hideAfter > 0 && props.trigger !== 'click') {
+        hideTimer.value = window.setTimeout(hideTooltip, props.hideAfter)
+      }
+      else {
+        hideTooltip()
       }
     }
 

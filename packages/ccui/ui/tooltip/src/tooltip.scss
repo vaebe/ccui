@@ -69,8 +69,10 @@
 
 // 响应式设计
 @media (max-width: 768px) {
-  .ccui-tooltip__popper {
-    font-size: 14px;
-    max-width: calc(100vw - 20px);
+  .ccui-tooltip {
+    &__popper {
+      font-size: 14px;
+      max-width: calc(100vw - 20px);
+    }
   }
 }
