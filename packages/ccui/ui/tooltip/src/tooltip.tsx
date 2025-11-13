@@ -259,6 +259,7 @@ export default defineComponent({
             class={ns.e('trigger')}
             aria-describedby={actualVisible.value ? ns.e('popper') : undefined}
             aria-label={props.ariaLabel}
+            tabindex={props.trigger === 'focus' ? 0 : undefined}
             {...triggerEvents}
           >
             {slots.default?.()}
