@@ -320,4 +320,52 @@ describe('popover', () => {
       expect(popper.attributes('role')).toBe('dialog')
     })
   })
+
+  describe('外部交互', () => {
+    it('点击页面空白处应关闭（默认）', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'click' },
+        slots: { default: '<button>Trigger</button>' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+      window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+
+    it('hideOnClickOutside=false 时点击外部不关闭', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'click', hideOnClickOutside: false },
+        slots: { default: '<button>Trigger</button>' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+      window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
+    it('按下 Escape 应关闭（默认）', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'click' },
+        slots: { default: '<button>Trigger</button>' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+      const escEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+      window.dispatchEvent(escEvent)
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+  })
 })

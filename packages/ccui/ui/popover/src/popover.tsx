@@ -170,9 +170,10 @@ export default defineComponent({
         return
       if (!props.hideOnClickOutside)
         return
-      const target = e.target as Node | null
-      const inTrigger = !!(target && triggerRef.value && triggerRef.value.contains(target as Node))
-      const inPopper = !!(target && popperRef.value && popperRef.value.contains(target as Node))
+      const rawTarget = e.target as any
+      const target: Node | null = rawTarget instanceof Node ? rawTarget : null
+      const inTrigger = !!(target && triggerRef.value && triggerRef.value.contains(target))
+      const inPopper = !!(target && popperRef.value && popperRef.value.contains(target))
       if (!inTrigger && !inPopper) {
         doHide()
       }
@@ -202,9 +203,11 @@ export default defineComponent({
       }
     })
     watch(actualVisible, (newVal) => {
-      if (newVal && triggerRef.value && popperRef.value) {
-        cleanup?.()
-        cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
+      if (newVal) {
+        if (triggerRef.value && popperRef.value) {
+          cleanup?.()
+          cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
+        }
         window.addEventListener('mousedown', onDocumentMouseDown, true)
         window.addEventListener('keydown', onDocumentKeydown, true)
       }
