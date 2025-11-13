@@ -254,7 +254,7 @@ export default defineComponent({
 | default | 自定义内容 |
 | dot | 自定义节点 |
 
-## Divider类型定义
+## Timeline类型定义
 
 ### TimelineItemType
 
