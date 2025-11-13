@@ -137,54 +137,124 @@ export default defineComponent({
 
 <template>
   <div class="demo-popover-placement">
-    <div class="top">
-      <c-popover placement="top" effect="light" content="Top">
-        <c-button type="primary" plain>
-          Top
-        </c-button>
-      </c-popover>
-    </div>
-    <div class="center">
-      <c-popover placement="left" content="Left">
-        <c-button type="primary" plain>
-          Left
-        </c-button>
-      </c-popover>
-      <c-popover placement="right" content="Right">
-        <c-button type="primary" plain>
-          Right
-        </c-button>
-      </c-popover>
-    </div>
-    <div class="bottom">
-      <c-popover placement="bottom" effect="dark" content="Bottom">
-        <c-button type="primary" plain>
-          Bottom
-        </c-button>
-      </c-popover>
+    <div class="placement-container">
+      <!-- 顶部行 -->
+      <div class="top-row">
+        <c-popover placement="top-start" content="Title Top-start Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            top-start
+          </c-button>
+        </c-popover>
+        <c-popover placement="top" content="Title Top Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            top
+          </c-button>
+        </c-popover>
+        <c-popover placement="top-end" content="Title Top-end Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            top-end
+          </c-button>
+        </c-popover>
+      </div>
+
+      <!-- 中间行 -->
+      <div class="middle-row">
+        <div class="left-column">
+          <c-popover placement="left-start" content="Title Left-start Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              left-start
+            </c-button>
+          </c-popover>
+          <c-popover placement="left" content="Title Left Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              left
+            </c-button>
+          </c-popover>
+          <c-popover placement="left-end" content="Title Left-end Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              left-end
+            </c-button>
+          </c-popover>
+        </div>
+
+        <div class="right-column">
+          <c-popover placement="right-start" content="Title Right-start Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              right-start
+            </c-button>
+          </c-popover>
+          <c-popover placement="right" content="Title Right Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              right
+            </c-button>
+          </c-popover>
+          <c-popover placement="right-end" content="Title Right-end Center prompts info" trigger="hover">
+            <c-button type="primary" plain>
+              right-end
+            </c-button>
+          </c-popover>
+        </div>
+      </div>
+
+      <!-- 底部行 -->
+      <div class="bottom-row">
+        <c-popover placement="bottom-start" content="Title Bottom-start Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            bottom-start
+          </c-button>
+        </c-popover>
+        <c-popover placement="bottom" content="Title Bottom Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            bottom
+          </c-button>
+        </c-popover>
+        <c-popover placement="bottom-end" content="Title Bottom-end Center prompts info" trigger="hover">
+          <c-button type="primary" plain>
+            bottom-end
+          </c-button>
+        </c-popover>
+      </div>
     </div>
   </div>
 </template>
 
 <style>
-.demo-popover-placement .top {
-  text-align: center;
-  margin-bottom: 10px;
+.demo-popover-placement {
+  display: flex;
+  justify-content: center;
 }
 
-.demo-popover-placement .center {
+.placement-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 400px;
+}
+
+.top-row,
+.bottom-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.middle-row {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
+  width: 100%;
 }
 
-.demo-popover-placement .bottom {
-  text-align: center;
-  margin-top: 10px;
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .demo-popover-placement .ccui-button {
-  margin: 5px;
+  width: 100px;
+  font-size: 12px;
 }
 </style>
 ```
