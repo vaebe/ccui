@@ -1,4 +1,5 @@
 import type { TooltipProps } from './tooltip-types'
+import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tooltipProps } from './tooltip-types'
@@ -15,6 +16,7 @@ export default defineComponent({
     const visible = ref(false)
     const triggerRef = ref<HTMLElement>()
     const popperRef = ref<HTMLElement>()
+    const arrowRef = ref<HTMLElement>()
     const showTimer = ref<number>()
     const hideTimer = ref<number>()
 
@@ -31,78 +33,39 @@ export default defineComponent({
       ].filter(Boolean).join(' ')
     })
 
-    // 位置计算
-    const calculatePosition = () => {
-      if (!triggerRef.value || !popperRef.value)
-        return
+    // 使用 floating-ui 进行位置计算
+    const { floatingStyles, middlewareData, update } = useFloating(triggerRef, popperRef, {
+      placement: props.placement as any,
+      middleware: [
+        offset(props.offset),
+        flip(),
+        shift({ padding: 8 }),
+        ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
+      ],
+    })
 
-      const triggerRect = triggerRef.value.getBoundingClientRect()
-      const popperRect = popperRef.value.getBoundingClientRect()
-      const [placement, alignment] = props.placement.split('-')
-
-      let top = 0
-      let left = 0
-
-      // 基础位置计算
-      switch (placement) {
-        case 'top':
-          top = triggerRect.top - popperRect.height - props.offset
-          left = triggerRect.left + triggerRect.width / 2 - popperRect.width / 2
-          break
-        case 'bottom':
-          top = triggerRect.bottom + props.offset
-          left = triggerRect.left + triggerRect.width / 2 - popperRect.width / 2
-          break
-        case 'left':
-          top = triggerRect.top + triggerRect.height / 2 - popperRect.height / 2
-          left = triggerRect.left - popperRect.width - props.offset
-          break
-        case 'right':
-          top = triggerRect.top + triggerRect.height / 2 - popperRect.height / 2
-          left = triggerRect.right + props.offset
-          break
+    // 箭头位置计算
+    const arrowStyles = computed(() => {
+      if (!props.showArrow || !middlewareData.value.arrow) {
+        return {}
       }
 
-      // 对齐方式调整
-      if (alignment) {
-        if (placement === 'top' || placement === 'bottom') {
-          if (alignment === 'start') {
-            left = triggerRect.left
-          }
-          else if (alignment === 'end') {
-            left = triggerRect.right - popperRect.width
-          }
-        }
-        else {
-          if (alignment === 'start') {
-            top = triggerRect.top
-          }
-          else if (alignment === 'end') {
-            top = triggerRect.bottom - popperRect.height
-          }
-        }
-      }
+      const { x, y } = middlewareData.value.arrow
+      const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+      }[props.placement.split('-')[0]]
 
-      // 边界检测和调整
-      const viewport = {
-        width: window.innerWidth,
-        height: window.innerHeight,
+      return {
+        left: x != null ? `${x}px` : '',
+        top: y != null ? `${y}px` : '',
+        right: '',
+        bottom: '',
+        [staticSide!]: '-4px',
       }
-
-      if (left < 0)
-        left = 8
-      if (left + popperRect.width > viewport.width) {
-        left = viewport.width - popperRect.width - 8
-      }
-      if (top < 0)
-        top = 8
-      if (top + popperRect.height > viewport.height) {
-        top = viewport.height - popperRect.height - 8
-      }
-
-      popperRef.value.style.top = `${top}px`
-      popperRef.value.style.left = `${left}px`
-    }
+    })
 
     // 显示/隐藏逻辑
     const clearTimers = () => {
@@ -130,7 +93,7 @@ export default defineComponent({
           }
           emit('update:visible', true)
           nextTick(() => {
-            calculatePosition()
+            update()
             emit('show')
           })
         }, props.showAfter)
@@ -142,7 +105,7 @@ export default defineComponent({
         }
         emit('update:visible', true)
         nextTick(() => {
-          calculatePosition()
+          update()
           emit('show')
         })
       }
@@ -219,23 +182,19 @@ export default defineComponent({
       }
     }
 
-    // 监听窗口大小变化
-    const handleResize = () => {
-      if (actualVisible.value) {
-        calculatePosition()
-      }
-    }
+    // 自动更新位置
+    let cleanup: (() => void) | undefined
 
     // 生命周期
     onMounted(() => {
-      window.addEventListener('resize', handleResize)
-      window.addEventListener('scroll', handleResize)
+      if (actualVisible.value && triggerRef.value && popperRef.value) {
+        cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
+      }
     })
 
     onUnmounted(() => {
       clearTimers()
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('scroll', handleResize)
+      cleanup?.()
     })
 
     // 监听 visible prop 变化
@@ -243,9 +202,20 @@ export default defineComponent({
       if (newVal !== undefined) {
         if (newVal) {
           nextTick(() => {
-            calculatePosition()
+            update()
           })
         }
+      }
+    })
+
+    // 监听显示状态变化，设置自动更新
+    watch(actualVisible, (newVal) => {
+      if (newVal && triggerRef.value && popperRef.value) {
+        cleanup?.()
+        cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
+      }
+      else {
+        cleanup?.()
       }
     })
 
@@ -259,7 +229,7 @@ export default defineComponent({
         ns.em('arrow', props.placement.split('-')[0]),
       ].join(' ')
 
-      return <div class={arrowClass}></div>
+      return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
 
     // 渲染弹出层内容
@@ -311,7 +281,7 @@ export default defineComponent({
               role="tooltip"
               id={ns.e('popper')}
               style={{
-                position: 'fixed',
+                ...floatingStyles.value,
                 zIndex: 2000,
                 pointerEvents: props.enterable ? 'auto' : 'none',
               }}

@@ -29,6 +29,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.7.4",
+    "@floating-ui/vue": "^1.1.9",
     "dayjs": "^1.11.19",
     "theme": "workspace:*",
     "vue": "^3.5.22"

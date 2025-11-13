@@ -28,7 +28,9 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-basic">
     <c-tooltip content="这是一段提示文字">
-      <c-button type="primary" plain>鼠标悬停显示</c-button>
+      <c-button type="primary" plain>
+        鼠标悬停显示
+      </c-button>
     </c-tooltip>
   </div>
 </template>
@@ -64,48 +66,72 @@ export default defineComponent({
   <div class="demo-tooltip-placement">
     <div class="top">
       <c-tooltip content="Top Left 提示文字" placement="top-start">
-        <c-button type="primary" plain>上左</c-button>
+        <c-button type="primary" plain>
+          上左
+        </c-button>
       </c-tooltip>
       <c-tooltip content="Top Center 提示文字" placement="top">
-        <c-button type="primary" plain>上边</c-button>
+        <c-button type="primary" plain>
+          上边
+        </c-button>
       </c-tooltip>
       <c-tooltip content="Top Right 提示文字" placement="top-end">
-        <c-button type="primary" plain>上右</c-button>
+        <c-button type="primary" plain>
+          上右
+        </c-button>
       </c-tooltip>
     </div>
     <div class="center">
       <div class="center-left">
         <c-tooltip content="Left Top 提示文字" placement="left-start">
-          <c-button type="primary" plain>左上</c-button>
+          <c-button type="primary" plain>
+            左上
+          </c-button>
         </c-tooltip>
         <c-tooltip content="Left Center 提示文字" placement="left">
-          <c-button type="primary" plain>左边</c-button>
+          <c-button type="primary" plain>
+            左边
+          </c-button>
         </c-tooltip>
         <c-tooltip content="Left Bottom 提示文字" placement="left-end">
-          <c-button type="primary" plain>左下</c-button>
+          <c-button type="primary" plain>
+            左下
+          </c-button>
         </c-tooltip>
       </div>
       <div class="center-right">
         <c-tooltip content="Right Top 提示文字" placement="right-start">
-          <c-button type="primary" plain>右上</c-button>
+          <c-button type="primary" plain>
+            右上
+          </c-button>
         </c-tooltip>
         <c-tooltip content="Right Center 提示文字" placement="right">
-          <c-button type="primary" plain>右边</c-button>
+          <c-button type="primary" plain>
+            右边
+          </c-button>
         </c-tooltip>
         <c-tooltip content="Right Bottom 提示文字" placement="right-end">
-          <c-button type="primary" plain>右下</c-button>
+          <c-button type="primary" plain>
+            右下
+          </c-button>
         </c-tooltip>
       </div>
     </div>
     <div class="bottom">
       <c-tooltip content="Bottom Left 提示文字" placement="bottom-start">
-        <c-button type="primary" plain>下左</c-button>
+        <c-button type="primary" plain>
+          下左
+        </c-button>
       </c-tooltip>
       <c-tooltip content="Bottom Center 提示文字" placement="bottom">
-        <c-button type="primary" plain>下边</c-button>
+        <c-button type="primary" plain>
+          下边
+        </c-button>
       </c-tooltip>
       <c-tooltip content="Bottom Right 提示文字" placement="bottom-end">
-        <c-button type="primary" plain>下右</c-button>
+        <c-button type="primary" plain>
+          下右
+        </c-button>
       </c-tooltip>
     </div>
   </div>
@@ -174,10 +200,14 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-theme">
     <c-tooltip content="Dark 主题" effect="dark">
-      <c-button type="primary" plain>Dark</c-button>
+      <c-button type="primary" plain>
+        Dark
+      </c-button>
     </c-tooltip>
     <c-tooltip content="Light 主题" effect="light">
-      <c-button type="primary" plain>Light</c-button>
+      <c-button type="primary" plain>
+        Light
+      </c-button>
     </c-tooltip>
   </div>
 </template>
@@ -220,7 +250,9 @@ export default defineComponent({
         <div>多行信息</div>
         <div>第二行信息</div>
       </template>
-      <c-button type="primary" plain>多行文本</c-button>
+      <c-button type="primary" plain>
+        多行文本
+      </c-button>
     </c-tooltip>
 
     <c-tooltip
@@ -228,7 +260,9 @@ export default defineComponent({
       :raw-content="true"
       placement="top"
     >
-      <c-button type="primary" plain>HTML 内容</c-button>
+      <c-button type="primary" plain>
+        HTML 内容
+      </c-button>
     </c-tooltip>
   </div>
 </template>
@@ -267,15 +301,21 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-trigger">
     <c-tooltip content="鼠标悬停触发" trigger="hover">
-      <c-button type="primary" plain>Hover</c-button>
+      <c-button type="primary" plain>
+        Hover
+      </c-button>
     </c-tooltip>
-    
+
     <c-tooltip content="点击触发" trigger="click">
-      <c-button type="primary" plain>Click</c-button>
+      <c-button type="primary" plain>
+        Click
+      </c-button>
     </c-tooltip>
-    
+
     <c-tooltip content="聚焦触发" trigger="focus">
-      <c-button type="primary" plain>Focus</c-button>
+      <c-button type="primary" plain>
+        Focus
+      </c-button>
     </c-tooltip>
   </div>
 </template>
@@ -314,11 +354,15 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-delay">
     <c-tooltip content="延迟 1 秒显示" :show-after="1000">
-      <c-button type="primary" plain>延迟显示</c-button>
+      <c-button type="primary" plain>
+        延迟显示
+      </c-button>
     </c-tooltip>
-    
+
     <c-tooltip content="延迟 1 秒隐藏" :hide-after="1000">
-      <c-button type="primary" plain>延迟隐藏</c-button>
+      <c-button type="primary" plain>
+        延迟隐藏
+      </c-button>
     </c-tooltip>
   </div>
 </template>
@@ -361,9 +405,11 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-disabled">
     <c-tooltip content="禁用状态" :disabled="disabled">
-      <c-button type="primary" plain>{{ disabled ? '禁用' : '启用' }}</c-button>
+      <c-button type="primary" plain>
+        {{ disabled ? '禁用' : '启用' }}
+      </c-button>
     </c-tooltip>
-    
+
     <c-button type="primary" plain @click="disabled = !disabled">
       切换状态
     </c-button>
@@ -408,9 +454,11 @@ export default defineComponent({
 <template>
   <div class="demo-tooltip-manual">
     <c-tooltip content="手动控制显示" :visible="visible" trigger="manual">
-      <c-button type="primary" plain>手动控制</c-button>
+      <c-button type="primary" plain>
+        手动控制
+      </c-button>
     </c-tooltip>
-    
+
     <c-button type="primary" plain @click="visible = !visible">
       {{ visible ? '隐藏' : '显示' }}
     </c-button>
