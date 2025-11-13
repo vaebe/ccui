@@ -27,13 +27,13 @@ export default defineComponent({
 <template>
   <div class="demo-timeline-basic">
     <c-timeline>
-      <c-timeline-item timestamp="2018/4/12">
+      <c-timeline-item timestamp="2025/09/09">
         <p>更新 Github 模板</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/3">
+      <c-timeline-item timestamp="2025/09/08">
         <p>更新 Github 模板</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/2">
+      <c-timeline-item timestamp="2025/09/07">
         <p>更新 Github 模板</p>
       </c-timeline-item>
     </c-timeline>
@@ -66,16 +66,16 @@ export default defineComponent({
 <template>
   <div class="demo-timeline-node">
     <c-timeline>
-      <c-timeline-item timestamp="2018/4/12" type="primary">
+      <c-timeline-item timestamp="2025/09/09" type="primary">
         <p>支持使用图标</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/3" color="#0bbd87">
+      <c-timeline-item timestamp="2025/09/08" color="#0bbd87">
         <p>支持自定义颜色</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/2" size="large">
+      <c-timeline-item timestamp="2025/09/07" size="large">
         <p>支持自定义尺寸</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/1" type="warning" hollow>
+      <c-timeline-item timestamp="2025/09/06" type="warning" hollow>
         <p>支持空心点</p>
       </c-timeline-item>
     </c-timeline>
@@ -108,22 +108,22 @@ export default defineComponent({
 <template>
   <div class="demo-timeline-timestamp">
     <c-timeline>
-      <c-timeline-item timestamp="2018/4/12" placement="top">
+      <c-timeline-item timestamp="2025/09/09" placement="top">
         <div>
           <h4>更新 Github 模板</h4>
-          <p>Tom 在 2018/4/12 20:46 提交了更新</p>
+          <p>Tom 在 2025/09/09 20:46 提交了更新</p>
         </div>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/3" placement="top">
+      <c-timeline-item timestamp="2025/09/08" placement="top">
         <div>
           <h4>更新 Github 模板</h4>
-          <p>Tom 在 2018/4/3 20:46 提交了更新</p>
+          <p>Tom 在 2025/09/08 20:46 提交了更新</p>
         </div>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/2" placement="top">
+      <c-timeline-item timestamp="2025/09/07" placement="top">
         <div>
           <h4>更新 Github 模板</h4>
-          <p>Tom 在 2018/4/2 20:46 提交了更新</p>
+          <p>Tom 在 2025/09/07 20:46 提交了更新</p>
         </div>
       </c-timeline-item>
     </c-timeline>
@@ -156,16 +156,16 @@ export default defineComponent({
 <template>
   <div class="demo-timeline-center">
     <c-timeline>
-      <c-timeline-item timestamp="2018/4/12" center>
+      <c-timeline-item timestamp="2025/09/09" center>
         <div>
           <h4>更新 Github 模板</h4>
-          <p>Tom 在 2018/4/12 20:46 提交了更新</p>
+          <p>Tom 在 2025/09/09 20:46 提交了更新</p>
         </div>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/3" center>
+      <c-timeline-item timestamp="2025/09/08" center>
         <div>
           <h4>更新 Github 模板</h4>
-          <p>Tom 在 2018/4/3 20:46 提交了更新</p>
+          <p>Tom 在 2025/09/08 20:46 提交了更新</p>
         </div>
       </c-timeline-item>
     </c-timeline>
@@ -198,7 +198,7 @@ export default defineComponent({
 <template>
   <div class="demo-timeline-dot">
     <c-timeline>
-      <c-timeline-item timestamp="2018/4/12">
+      <c-timeline-item timestamp="2025/09/09">
         <template #dot>
           <div style="width: 16px; height: 16px; background: #409eff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
             <span style="color: white; font-size: 10px;">✓</span>
@@ -206,7 +206,7 @@ export default defineComponent({
         </template>
         <p>自定义节点内容</p>
       </c-timeline-item>
-      <c-timeline-item timestamp="2018/4/3" type="success">
+      <c-timeline-item timestamp="2025/09/08" type="success">
         <p>普通节点</p>
       </c-timeline-item>
     </c-timeline>
@@ -220,18 +220,6 @@ export default defineComponent({
 :::
 
 ## API
-
-### Timeline Props
-
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-| ---- | ---- | ---- | ---- | ---- |
-| — | — | — | — | — |
-
-### Timeline Events
-
-| 事件名 | 说明 | 回调参数 |
-| ---- | ---- | ---- |
-| — | — | — |
 
 ### Timeline Slots
 
