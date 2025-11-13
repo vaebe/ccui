@@ -5,12 +5,15 @@ import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
 
+let popoverIdCounter = 0
+
 export default defineComponent({
   name: 'CPopover',
   props: popoverProps,
   emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'before-enter', 'after-enter', 'before-leave', 'after-leave'],
   setup(props: PopoverProps, { emit, slots, expose }) {
     const ns = useNamespace('popover')
+    const popperId = `${ns.e('popper')}-${++popoverIdCounter}`
 
     const visible = ref(false)
     const triggerRef = ref<HTMLElement>()
@@ -374,7 +377,7 @@ export default defineComponent({
           ref={popperRef}
           class={popperClass.value}
           role="dialog"
-          id={ns.e('popper')}
+          id={popperId}
           style={{
             ...floatingStyles.value,
             zIndex: 2000,
@@ -398,7 +401,7 @@ export default defineComponent({
             <div
               ref={triggerRef}
               class={ns.e('trigger')}
-              aria-describedby={actualVisible.value ? ns.e('popper') : undefined}
+              aria-describedby={actualVisible.value ? popperId : undefined}
               aria-label={props.ariaLabel}
               tabindex={props.trigger === 'focus' ? props.tabindex : undefined}
               {...triggerEvents}
