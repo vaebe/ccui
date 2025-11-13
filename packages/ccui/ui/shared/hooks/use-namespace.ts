@@ -3,6 +3,7 @@ export interface UseNamespace {
   e: (el: string) => string
   m: (mo: string) => string
   em: (el: string, mo: string) => string
+  is: (name: string) => string
 }
 
 function createBem(
@@ -35,10 +36,12 @@ export function useNamespace(block: string, needDot = false): UseNamespace {
     modifier ? createBem(namespace, '', modifier) : ''
   const em = (element: string, modifier: string) =>
     element && modifier ? createBem(namespace, element, modifier) : ''
+  const is = (name: string) => `is-${name}`
   return {
     b,
     e,
     m,
     em,
+    is,
   }
 }

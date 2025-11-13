@@ -1,0 +1,157 @@
+.ccui-timeline {
+  margin: 0;
+  font-size: 14px;
+  list-style: none;
+  padding: 0;
+
+  // 最后一个时间线项目不显示尾部连接线
+  .ccui-timeline-item:last-child {
+    .ccui-timeline-item__tail {
+      display: none;
+    }
+  }
+
+  // 垂直居中的时间线项目
+  .ccui-timeline-item__center {
+    display: flex;
+    align-items: center;
+
+    .ccui-timeline-item__wrapper {
+      width: 100%;
+    }
+
+    .ccui-timeline-item__tail {
+      top: 0;
+    }
+  }
+
+  // 第一个垂直居中项目的特殊处理
+  .ccui-timeline-item__center:first-child {
+    .ccui-timeline-item__tail {
+      height: calc(50% + 10px);
+      top: calc(50% - 10px);
+    }
+  }
+
+  // 最后一个垂直居中项目的特殊处理
+  .ccui-timeline-item__center:last-child {
+    .ccui-timeline-item__tail {
+      display: block;
+      height: calc(50% - 10px);
+    }
+  }
+}
+
+.ccui-timeline-item {
+  position: relative;
+  padding-bottom: 20px;
+
+  // 内容包装器
+  &__wrapper {
+    position: relative;
+    padding-left: 28px;
+    top: -3px;
+  }
+
+  // 连接线
+  &__tail {
+    position: absolute;
+    left: 4px;
+    height: 100%;
+    border-left: 2px solid #e4e7ed;
+  }
+
+  // 图标样式
+  &__icon {
+    color: #ffffff;
+    font-size: 12px;
+  }
+
+  // 节点
+  &__node {
+    position: absolute;
+    background-color: #e4e7ed;
+    border-color: #e4e7ed;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    // 普通尺寸
+    &--normal {
+      left: -1px;
+      width: 12px;
+      height: 12px;
+    }
+
+    // 大尺寸
+    &--large {
+      left: -2px;
+      width: 14px;
+      height: 14px;
+    }
+
+    // 空心样式
+    &.is-hollow {
+      background: #ffffff;
+      border-style: solid;
+      border-width: 2px;
+    }
+
+    // 不同类型的颜色
+    &--primary {
+      background-color: #409eff;
+      border-color: #409eff;
+    }
+
+    &--success {
+      background-color: #67c23a;
+      border-color: #67c23a;
+    }
+
+    &--warning {
+      background-color: #e6a23c;
+      border-color: #e6a23c;
+    }
+
+    &--danger {
+      background-color: #f56c6c;
+      border-color: #f56c6c;
+    }
+
+    &--info {
+      background-color: #909399;
+      border-color: #909399;
+    }
+  }
+
+  // 自定义节点
+  &__dot {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // 内容区域
+  &__content {
+    color: #303133;
+  }
+
+  // 时间戳
+  &__timestamp {
+    color: #909399;
+    line-height: 1;
+    font-size: 12px;
+
+    &.is-top {
+      margin-bottom: 8px;
+      padding-top: 4px;
+    }
+
+    &.is-bottom {
+      margin-top: 8px;
+    }
+  }
+}
