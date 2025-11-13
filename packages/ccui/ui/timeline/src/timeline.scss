@@ -1,6 +1,8 @@
+@use '../../style-var/index.scss' as *;
+
 .ccui-timeline {
   margin: 0;
-  font-size: 14px;
+  font-size: $ccui-font-size-lg;
   list-style: none;
   padding: 0;
 
@@ -58,20 +60,20 @@
     position: absolute;
     left: 4px;
     height: 100%;
-    border-left: 2px solid #e4e7ed;
+    border-left: 2px solid $ccui-dividing-line;
   }
 
   // 图标样式
   &__icon {
-    color: #ffffff;
-    font-size: 12px;
+    color: $ccui-light-text;
+    font-size: $ccui-font-size-sm;
   }
 
   // 节点
   &__node {
     position: absolute;
-    background-color: #e4e7ed;
-    border-color: #e4e7ed;
+    background-color: $ccui-dividing-line;
+    border-color: $ccui-dividing-line;
     border-radius: 50%;
     box-sizing: border-box;
     display: flex;
@@ -94,35 +96,35 @@
 
     // 空心样式
     &.is-hollow {
-      background: #ffffff;
+      background: $ccui-base-bg;
       border-style: solid;
       border-width: 2px;
     }
 
     // 不同类型的颜色
     &--primary {
-      background-color: #409eff;
-      border-color: #409eff;
+      background-color: $ccui-primary;
+      border-color: $ccui-primary;
     }
 
     &--success {
-      background-color: #67c23a;
-      border-color: #67c23a;
+      background-color: $ccui-success;
+      border-color: $ccui-success;
     }
 
     &--warning {
-      background-color: #e6a23c;
-      border-color: #e6a23c;
+      background-color: $ccui-warning;
+      border-color: $ccui-warning;
     }
 
     &--danger {
-      background-color: #f56c6c;
-      border-color: #f56c6c;
+      background-color: $ccui-danger;
+      border-color: $ccui-danger;
     }
 
     &--info {
-      background-color: #909399;
-      border-color: #909399;
+      background-color: $ccui-info;
+      border-color: $ccui-info;
     }
   }
 
@@ -136,14 +138,14 @@
 
   // 内容区域
   &__content {
-    color: #303133;
+    color: $ccui-text;
   }
 
   // 时间戳
   &__timestamp {
-    color: #909399;
-    line-height: 1;
-    font-size: 12px;
+    color: $ccui-aide-text;
+    line-height: $ccui-line-height-base;
+    font-size: $ccui-font-size-sm;
 
     &.is-top {
       margin-bottom: 8px;
