@@ -36,9 +36,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-basic {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -72,9 +69,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-hover {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -119,9 +113,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-custom {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -176,10 +167,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-placement {
-  padding: 20px;
-}
-
 .demo-popover-placement .top {
   text-align: center;
   margin-bottom: 10px;
@@ -243,9 +230,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-manual {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -270,8 +254,8 @@ export default defineComponent({
 
 <template>
   <div class="demo-popover-contextmenu">
-    <c-popover 
-      trigger="contextmenu" 
+    <c-popover
+      trigger="contextmenu"
       title="右键菜单"
       content="右键点击触发弹出框"
     >
@@ -283,9 +267,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-contextmenu {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -327,7 +308,7 @@ export default defineComponent({
 <template>
   <div class="demo-popover-virtual">
     <div class="virtual-trigger-area">
-      <div 
+      <div
         ref="triggerRef"
         class="virtual-trigger"
         @mouseenter="handleShow"
@@ -336,11 +317,11 @@ export default defineComponent({
         虚拟触发区域
       </div>
     </div>
-    
+
     <c-popover
+      v-model:visible="visible"
       :virtual-triggering="true"
       :virtual-ref="triggerRef"
-      v-model:visible="visible"
       trigger="manual"
       content="这是通过虚拟触发显示的内容"
     />
@@ -348,13 +329,9 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-virtual {
-  padding: 20px;
-}
-
 .virtual-trigger-area {
   border: 2px dashed #ddd;
-  padding: 20px;
+  padding: 18px;
   text-align: center;
   border-radius: 4px;
 }
@@ -388,12 +365,12 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   setup() {
     const visible = ref(false)
-    
+
     const handleConfirm = () => {
       console.log('确认操作')
       visible.value = false
     }
-    
+
     const handleCancel = () => {
       console.log('取消操作')
       visible.value = false
@@ -435,10 +412,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-nested {
-  padding: 20px;
-}
-
 .nested-content {
   max-width: 260px;
 }
@@ -478,7 +451,7 @@ export default defineComponent({
 
 <template>
   <div class="demo-popover-autoclose">
-    <c-popover 
+    <c-popover
       trigger="click"
       :auto-close="3000"
       title="自动关闭"
@@ -492,9 +465,6 @@ export default defineComponent({
 </template>
 
 <style>
-.demo-popover-autoclose {
-  padding: 20px;
-}
 </style>
 ```
 
@@ -504,33 +474,33 @@ export default defineComponent({
 
 ### Popover Props
 
-| 参数                      | 说明                                       | 类型           | 可选值                                                                                                    | 默认值 |
-| ------------------------- | ------------------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------- | ------ |
-| title                     | 标题文本，也可以通过 `slot#title` 传入     | string         | —                                                                                                         | —      |
-| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string         | —                                                                                                         | —      |
-| placement                 | Popover 的出现位置                         | string         | top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end | bottom |
-| effect                    | 默认提供的主题                             | string         | dark/light                                                                                                | light  |
-| visible / v-model:visible | 状态是否可见                               | boolean        | —                                                                                                         | false  |
-| disabled                  | Popover 是否可用                           | boolean        | —                                                                                                         | false  |
-| show-arrow                | 是否显示 Popover 箭头                      | boolean        | —                                                                                                         | true   |
-| trigger                   | 触发方式                                   | string         | hover/focus/click/manual/contextmenu                                                                      | click  |
-| show-after                | 延迟出现，单位毫秒                         | number         | —                                                                                                         | 0      |
-| hide-after                | 延迟关闭，单位毫秒                         | number         | —                                                                                                         | 200    |
-| popper-class              | 为 Popover 的 popper 添加类名              | string         | —                                                                                                         | —      |
-| offset                    | 出现位置的偏移量                           | number         | —                                                                                                         | 4      |
-| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean        | —                                                                                                         | false  |
-| enterable                 | 鼠标是否可进入到 popover 中                | boolean        | —                                                                                                         | true   |
-| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean        | —                                                                                                         | true   |
-| close-on-esc              | 是否支持 ESC 键关闭                        | boolean        | —                                                                                                         | true   |
-| aria-label                | 屏幕阅读器标签                             | string         | —                                                                                                         | —      |
-| width                     | 弹层宽度                                   | number\|string | —                                                                                                         | —      |
-| transition                | 定义渐变动画                               | string         | —                                                                                                         | ccui-popover-fade |
-| auto-close                | 自动关闭时间，单位毫秒                     | number         | —                                                                                                         | 0      |
-| tabindex                  | Popover 组件的 tabindex                    | number\|string | —                                                                                                         | 0      |
-| teleported                | 是否将 popover 插入至 body 元素            | boolean        | —                                                                                                         | true   |
-| persistent                | 是否持久化                                 | boolean        | —                                                                                                         | true   |
-| virtual-triggering        | 是否启用虚拟触发器                         | boolean        | —                                                                                                         | false  |
-| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement    | —                                                                                                         | —      |
+| 参数                      | 说明                                       | 类型           | 可选值                                                                                                    | 默认值             |
+| ------------------------- | ------------------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------- | ------------------ |
+| title                     | 标题文本，也可以通过 `slot#title` 传入     | string         | —                                                                                                         | —                  |
+| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string         | —                                                                                                         | —                  |
+| placement                 | Popover 的出现位置                         | string         | top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end | bottom             |
+| effect                    | 默认提供的主题                             | string         | dark/light                                                                                                | light              |
+| visible / v-model:visible | 状态是否可见                               | boolean        | —                                                                                                         | false              |
+| disabled                  | Popover 是否可用                           | boolean        | —                                                                                                         | false              |
+| show-arrow                | 是否显示 Popover 箭头                      | boolean        | —                                                                                                         | true               |
+| trigger                   | 触发方式                                   | string         | hover/focus/click/manual/contextmenu                                                                      | click              |
+| show-after                | 延迟出现，单位毫秒                         | number         | —                                                                                                         | 0                  |
+| hide-after                | 延迟关闭，单位毫秒                         | number         | —                                                                                                         | 200                |
+| popper-class              | 为 Popover 的 popper 添加类名              | string         | —                                                                                                         | —                  |
+| offset                    | 出现位置的偏移量                           | number         | —                                                                                                         | 4                  |
+| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean        | —                                                                                                         | false              |
+| enterable                 | 鼠标是否可进入到 popover 中                | boolean        | —                                                                                                         | true               |
+| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean        | —                                                                                                         | true               |
+| close-on-esc              | 是否支持 ESC 键关闭                        | boolean        | —                                                                                                         | true               |
+| aria-label                | 屏幕阅读器标签                             | string         | —                                                                                                         | —                  |
+| width                     | 弹层宽度                                   | number\|string | —                                                                                                         | —                  |
+| transition                | 定义渐变动画                               | string         | —                                                                                                         | ccui-popover-fade  |
+| auto-close                | 自动关闭时间，单位毫秒                     | number         | —                                                                                                         | 0                  |
+| tabindex                  | Popover 组件的 tabindex                    | number\|string | —                                                                                                         | 0                  |
+| teleported                | 是否将 popover 插入至 body 元素            | boolean        | —                                                                                                         | true               |
+| persistent                | 是否持久化                                 | boolean        | —                                                                                                         | true               |
+| virtual-triggering        | 是否启用虚拟触发器                         | boolean        | —                                                                                                         | false              |
+| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement    | —                                                                                                         | —                  |
 | trigger-keys              | 键盘触发按键                               | string[]       | —                                                                                                         | ['Enter', 'Space'] |
 
 ### Popover Events
