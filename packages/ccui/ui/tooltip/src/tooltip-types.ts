@@ -60,7 +60,7 @@ export const tooltipProps = {
   },
   offset: {
     type: Number,
-    default: 12,
+    default: 8,
   },
 
   // 高级功能
