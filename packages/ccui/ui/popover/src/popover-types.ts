@@ -16,7 +16,7 @@ export type PopoverPlacement
 
 export type PopoverEffect = 'dark' | 'light'
 
-export type PopoverTrigger = 'hover' | 'click' | 'focus' | 'manual'
+export type PopoverTrigger = 'hover' | 'click' | 'focus' | 'manual' | 'contextmenu'
 
 export const popoverProps = {
   title: {
@@ -90,6 +90,38 @@ export const popoverProps = {
   width: {
     type: [Number, String] as PropType<number | string>,
     default: '',
+  },
+  transition: {
+    type: String,
+    default: 'ccui-popover-fade',
+  },
+  autoClose: {
+    type: Number,
+    default: 0,
+  },
+  tabindex: {
+    type: [Number, String] as PropType<number | string>,
+    default: 0,
+  },
+  teleported: {
+    type: Boolean,
+    default: true,
+  },
+  persistent: {
+    type: Boolean,
+    default: true,
+  },
+  virtualTriggering: {
+    type: Boolean,
+    default: false,
+  },
+  virtualRef: {
+    type: Object as PropType<HTMLElement>,
+    default: undefined,
+  },
+  triggerKeys: {
+    type: Array as PropType<string[]>,
+    default: () => ['Enter', 'Space'],
   },
 } as const
 

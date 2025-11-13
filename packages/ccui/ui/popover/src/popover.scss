@@ -9,11 +9,14 @@
   &__popper {
     z-index: 2000;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.4;
     min-width: 10px;
     width: max-content;
+    max-width: 400px;
     word-wrap: break-word;
+    padding: 12px;
+    box-sizing: border-box;
 
     &--dark {
       background: #303133;
@@ -28,18 +31,51 @@
       border: 1px solid #e4e7ed;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
+
+    // 位置相关的箭头样式
+    &--top .ccui-popover__arrow {
+      bottom: -4px;
+      border-top-color: inherit;
+      border-bottom: none;
+    }
+
+    &--bottom .ccui-popover__arrow {
+      top: -4px;
+      border-bottom-color: inherit;
+      border-top: none;
+    }
+
+    &--left .ccui-popover__arrow {
+      right: -4px;
+      border-left-color: inherit;
+      border-right: none;
+    }
+
+    &--right .ccui-popover__arrow {
+      left: -4px;
+      border-right-color: inherit;
+      border-left: none;
+    }
   }
 
   &__header {
-    padding: 8px 12px 0 12px;
+    padding: 0 0 8px 0;
     font-weight: 500;
+    font-size: 16px;
+    color: #303133;
     border-radius: inherit;
+
+    .ccui-popover__popper--dark & {
+      color: #fff;
+    }
   }
 
   &__content {
-    padding: 8px;
+    padding: 0;
     text-align: left;
     border-radius: inherit;
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   &__arrow {
@@ -60,6 +96,17 @@
 
 .ccui-popover-fade-enter-from,
 .ccui-popover-fade-leave-to {
+  opacity: 0;
+}
+
+// Element Plus 兼容的动画
+.el-fade-in-linear-enter-active,
+.el-fade-in-linear-leave-active {
+  transition: opacity 0.2s linear;
+}
+
+.el-fade-in-linear-enter-from,
+.el-fade-in-linear-leave-to {
   opacity: 0;
 }
 

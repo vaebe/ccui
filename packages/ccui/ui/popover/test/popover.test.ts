@@ -368,4 +368,147 @@ describe('popover', () => {
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
     })
   })
+
+  describe('新增功能测试', () => {
+    it('右键菜单触发', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'contextmenu' },
+        slots: { default: '<button>Trigger</button>' },
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('contextmenu')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
+    it('虚拟触发功能', async () => {
+      const virtualElement = document.createElement('div')
+      document.body.appendChild(virtualElement)
+
+      wrapper = mount(Popover, {
+        props: {
+          content: 'Test',
+          virtualTriggering: true,
+          virtualRef: virtualElement,
+          trigger: 'manual',
+          visible: true,
+        },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+      expect(wrapper.find('.ccui-popover__trigger').exists()).toBe(false)
+
+      document.body.removeChild(virtualElement)
+    })
+
+    it('自动关闭功能', async () => {
+      vi.useFakeTimers()
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'click', autoClose: 1000 },
+        slots: { default: '<button>Trigger</button>' },
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+
+      vi.advanceTimersByTime(1000)
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+      vi.useRealTimers()
+    })
+
+    it('键盘触发功能', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', 'Space'] },
+        slots: { default: '<input type="text" />' },
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+
+      // 测试 Enter 键
+      await trigger.trigger('focus')
+      await trigger.trigger('keydown', { key: 'Enter' })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+
+      // 再次按 Enter 键关闭
+      await trigger.trigger('keydown', { key: 'Enter' })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+
+      // 测试 Space 键
+      await trigger.trigger('keydown', { key: 'Space' })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
+    it('teleport 功能', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', visible: true, teleported: true },
+        slots: { default: '<button>Trigger</button>' },
+        attachTo: document.body,
+      })
+      await nextTick()
+
+      // 检查弹出框是否被传送到 body 中
+      const popperInBody = document.body.querySelector('.ccui-popover__popper')
+      expect(popperInBody).toBeTruthy()
+    })
+
+    it('动画事件触发', async () => {
+      const beforeEnter = vi.fn()
+      const afterEnter = vi.fn()
+      const beforeLeave = vi.fn()
+      const afterLeave = vi.fn()
+
+      wrapper = mount(Popover, {
+        props: {
+          'content': 'Test',
+          'trigger': 'click',
+          'onBefore-enter': beforeEnter,
+          'onAfter-enter': afterEnter,
+          'onBefore-leave': beforeLeave,
+          'onAfter-leave': afterLeave,
+        },
+        slots: { default: '<button>Trigger</button>' },
+      })
+
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+
+      // 模拟动画事件
+      const transition = wrapper.findComponent({ name: 'Transition' })
+      if (transition.exists()) {
+        await transition.vm.$emit('before-enter')
+        await transition.vm.$emit('after-enter')
+
+        expect(beforeEnter).toHaveBeenCalled()
+        expect(afterEnter).toHaveBeenCalled()
+
+        await trigger.trigger('click')
+        await nextTick()
+
+        await transition.vm.$emit('before-leave')
+        await transition.vm.$emit('after-leave')
+
+        expect(beforeLeave).toHaveBeenCalled()
+        expect(afterLeave).toHaveBeenCalled()
+      }
+    })
+
+    it('exposes methods', async () => {
+      wrapper = mount(Popover, {
+        props: { content: 'Test', visible: true },
+        slots: { default: '<button>Trigger</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+
+      // 调用暴露的 hide 方法
+      wrapper.vm.hide()
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+  })
 })
