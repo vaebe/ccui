@@ -1,0 +1,81 @@
+.ccui-popover {
+  position: relative;
+  display: inline-block;
+
+  &__trigger {
+    display: inline-block;
+  }
+
+  &__popper {
+    z-index: 2000;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    min-width: 10px;
+    word-wrap: break-word;
+
+    &--dark {
+      background: #303133;
+      color: #fff;
+      border: 1px solid #303133;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    &--light {
+      background: #fff;
+      color: #606266;
+      border: 1px solid #e4e7ed;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__header {
+    padding: 8px 12px 0 12px;
+    font-weight: 500;
+    border-radius: inherit;
+  }
+
+  &__content {
+    padding: 8px 12px 12px 12px;
+    text-align: left;
+    border-radius: inherit;
+  }
+
+  &__arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border: inherit;
+    transform: rotate(45deg);
+    z-index: -1;
+  }
+}
+
+.ccui-popover-fade-enter-active,
+.ccui-popover-fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.ccui-popover-fade-enter-from,
+.ccui-popover-fade-leave-to {
+  opacity: 0;
+}
+
+.ccui-popover--disabled {
+  cursor: not-allowed;
+
+  .ccui-popover__trigger {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 768px) {
+  .ccui-popover {
+    &__popper {
+      font-size: 14px;
+      max-width: calc(100vw - 20px);
+    }
+  }
+}
