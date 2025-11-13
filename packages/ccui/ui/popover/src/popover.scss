@@ -12,6 +12,7 @@
     font-size: 12px;
     line-height: 1.4;
     min-width: 10px;
+    width: max-content;
     word-wrap: break-word;
 
     &--dark {
@@ -36,7 +37,7 @@
   }
 
   &__content {
-    padding: 8px 12px 12px 12px;
+    padding: 8px;
     text-align: left;
     border-radius: inherit;
   }

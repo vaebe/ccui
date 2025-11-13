@@ -65,7 +65,7 @@ export const popoverProps = {
   },
   offset: {
     type: Number,
-    default: 8,
+    default: 4,
   },
   rawContent: {
     type: Boolean,
