@@ -160,9 +160,39 @@ export default defineComponent({
         cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
       }
     })
+    const rootClass = computed(() => {
+      return [ns.b(), props.disabled ? ns.m('disabled') : ''].filter(Boolean).join(' ')
+    })
+    const onDocumentMouseDown = (e: MouseEvent) => {
+      if (!actualVisible.value)
+        return
+      if (props.trigger === 'manual')
+        return
+      if (!props.hideOnClickOutside)
+        return
+      const target = e.target as Node | null
+      const inTrigger = !!(target && triggerRef.value && triggerRef.value.contains(target as Node))
+      const inPopper = !!(target && popperRef.value && popperRef.value.contains(target as Node))
+      if (!inTrigger && !inPopper) {
+        doHide()
+      }
+    }
+    const onDocumentKeydown = (e: KeyboardEvent) => {
+      if (!actualVisible.value)
+        return
+      if (props.trigger === 'manual')
+        return
+      if (!props.closeOnEsc)
+        return
+      if (e.key === 'Escape') {
+        doHide()
+      }
+    }
     onUnmounted(() => {
       clearTimers()
       cleanup?.()
+      window.removeEventListener('mousedown', onDocumentMouseDown, true)
+      window.removeEventListener('keydown', onDocumentKeydown, true)
     })
     watch(() => props.visible, (newVal) => {
       if (newVal !== undefined && newVal) {
@@ -175,9 +205,13 @@ export default defineComponent({
       if (newVal && triggerRef.value && popperRef.value) {
         cleanup?.()
         cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
+        window.addEventListener('mousedown', onDocumentMouseDown, true)
+        window.addEventListener('keydown', onDocumentKeydown, true)
       }
       else {
         cleanup?.()
+        window.removeEventListener('mousedown', onDocumentMouseDown, true)
+        window.removeEventListener('keydown', onDocumentKeydown, true)
       }
     })
 
@@ -225,7 +259,7 @@ export default defineComponent({
       }
 
       return (
-        <div class={ns.b()}>
+        <div class={rootClass.value}>
           <div
             ref={triggerRef}
             class={ns.e('trigger')}

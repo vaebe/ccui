@@ -75,6 +75,14 @@ export const popoverProps = {
     type: Boolean,
     default: true,
   },
+  hideOnClickOutside: {
+    type: Boolean,
+    default: true,
+  },
+  closeOnEsc: {
+    type: Boolean,
+    default: true,
+  },
   ariaLabel: {
     type: String,
     default: '',
