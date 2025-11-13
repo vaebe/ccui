@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 import { Timeline, TimelineItem } from '../index'
 
 describe('timeline', () => {
@@ -12,14 +13,17 @@ describe('timeline', () => {
   it('should render timeline items', () => {
     const wrapper = mount(Timeline, {
       slots: {
-        default: `
-          <c-timeline-item timestamp="2018/4/12">Test content 1</c-timeline-item>
-          <c-timeline-item timestamp="2018/4/3">Test content 2</c-timeline-item>
-        `,
+        default: () => [
+          h(TimelineItem, { timestamp: '2018/4/12' }, () => 'Test content 1'),
+          h(TimelineItem, { timestamp: '2018/4/3' }, () => 'Test content 2'),
+        ],
       },
     })
 
     expect(wrapper.element.tagName).toBe('UL')
+    expect(wrapper.findAll('.ccui-timeline-item')).toHaveLength(2)
+    expect(wrapper.findAll('.ccui-timeline-item__timestamp')[0].text()).toBe('2018/4/12')
+    expect(wrapper.findAll('.ccui-timeline-item__timestamp')[1].text()).toBe('2018/4/3')
   })
 })
 
@@ -137,5 +141,57 @@ describe('timelineItem', () => {
     })
 
     expect(wrapper.classes()).toContain('ccui-timeline-item__center')
+  })
+
+  it('should render with string icon', () => {
+    const wrapper = mount(TimelineItem, {
+      props: {
+        timestamp: '2018/4/12',
+        icon: 'icon-class-name',
+      },
+      slots: {
+        default: 'Test content',
+      },
+    })
+
+    expect(wrapper.find('.ccui-timeline-item__icon').exists()).toBe(true)
+    expect(wrapper.find('.icon-class-name').exists()).toBe(true)
+  })
+
+  it('should render with component icon', () => {
+    const IconComponent = {
+      name: 'TestIcon',
+      render() {
+        return h('span', { class: 'test-icon' }, 'Icon')
+      },
+    }
+
+    const wrapper = mount(TimelineItem, {
+      props: {
+        timestamp: '2018/4/12',
+        icon: IconComponent,
+      },
+      slots: {
+        default: 'Test content',
+      },
+    })
+
+    expect(wrapper.find('.ccui-timeline-item__icon').exists()).toBe(true)
+    expect(wrapper.find('.test-icon').exists()).toBe(true)
+  })
+
+  it('should render with custom dot slot', () => {
+    const wrapper = mount(TimelineItem, {
+      props: {
+        timestamp: '2018/4/12',
+      },
+      slots: {
+        default: 'Test content',
+        dot: '<div class="custom-dot">Custom</div>',
+      },
+    })
+
+    expect(wrapper.find('.ccui-timeline-item__dot').exists()).toBe(true)
+    expect(wrapper.find('.custom-dot').exists()).toBe(true)
   })
 })
