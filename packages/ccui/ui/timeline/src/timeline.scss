@@ -14,32 +14,45 @@
   }
 
   // 垂直居中的时间线项目
-  .ccui-timeline-item__center {
+  .ccui-timeline-item.ccui-timeline-item__center {
     display: flex;
     align-items: center;
+    min-height: 60px;
 
     .ccui-timeline-item__wrapper {
       width: 100%;
     }
 
     .ccui-timeline-item__tail {
-      top: 0;
+      top: 6px;
+      height: calc(100% + 14px);
+    }
+
+    .ccui-timeline-item__node {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .ccui-timeline-item__dot {
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 
   // 第一个垂直居中项目的特殊处理
-  .ccui-timeline-item__center:first-child {
+  .ccui-timeline-item.ccui-timeline-item__center:first-child {
     .ccui-timeline-item__tail {
-      height: calc(50% + 10px);
-      top: calc(50% - 10px);
+      top: 50%;
+      height: calc(50% + 20px);
     }
   }
 
   // 最后一个垂直居中项目的特殊处理
-  .ccui-timeline-item__center:last-child {
+  .ccui-timeline-item.ccui-timeline-item__center:last-child {
     .ccui-timeline-item__tail {
       display: block;
-      height: calc(50% - 10px);
+      height: 50%;
+      top: 6px;
     }
   }
 }
