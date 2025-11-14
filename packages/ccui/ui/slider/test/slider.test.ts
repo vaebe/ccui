@@ -112,6 +112,34 @@ describe('slider', () => {
     wrapper.unmount()
   })
 
+  it('props - showInputControls', () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        showInputControls: true,
+        modelValue: 50,
+      },
+    })
+
+    expect(wrapper.find(ns.e('input-controls')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('input-decrease')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('input-increase')).exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('props - showInputControls false', () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        showInputControls: false,
+        modelValue: 50,
+      },
+    })
+
+    expect(wrapper.find(ns.e('input-controls')).exists()).toBe(false)
+    wrapper.unmount()
+  })
+
   it('props - showInput with range should not show input', () => {
     wrapper = mount(Slider, {
       props: {
@@ -423,7 +451,7 @@ describe('slider', () => {
     wrapper.unmount()
   })
 
-  it('input change with value exceeding max', async () => {
+  it('event - input change with value exceeding max', async () => {
     wrapper = mount(Slider, {
       props: {
         showInput: true,
@@ -433,7 +461,7 @@ describe('slider', () => {
       },
     })
 
-    const input = wrapper.find('.ccui-slider__input-inner')
+    const input = wrapper.find(ns.e('input-inner'))
     await input.setValue('150')
     await input.trigger('input')
 
@@ -454,7 +482,7 @@ describe('slider', () => {
       },
     })
 
-    const input = wrapper.find('.ccui-slider__input-inner')
+    const input = wrapper.find(ns.e('input-inner'))
     await input.setValue('-10')
     await input.trigger('input')
 
@@ -462,6 +490,97 @@ describe('slider', () => {
     // Should clamp to min value
     const emittedValues = wrapper.emitted('update:modelValue') as any[]
     expect(emittedValues[emittedValues.length - 1][0]).toBe(0)
+    wrapper.unmount()
+  })
+
+  it('event - input increase button', async () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        showInputControls: true,
+        modelValue: 50,
+        step: 5,
+        max: 100,
+      },
+    })
+
+    const increaseButton = wrapper.find(ns.e('input-increase'))
+    await increaseButton.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    expect(wrapper.emitted('change')).toBeTruthy()
+    const emittedValues = wrapper.emitted('update:modelValue') as any[]
+    expect(emittedValues[emittedValues.length - 1][0]).toBe(55)
+    wrapper.unmount()
+  })
+
+  it('event - input decrease button', async () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        showInputControls: true,
+        modelValue: 50,
+        step: 5,
+        min: 0,
+      },
+    })
+
+    const decreaseButton = wrapper.find(ns.e('input-decrease'))
+    await decreaseButton.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    expect(wrapper.emitted('change')).toBeTruthy()
+    const emittedValues = wrapper.emitted('update:modelValue') as any[]
+    expect(emittedValues[emittedValues.length - 1][0]).toBe(45)
+    wrapper.unmount()
+  })
+
+  it('event - input buttons disabled at boundaries', async () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        showInputControls: true,
+        modelValue: 0,
+        min: 0,
+        max: 100,
+      },
+    })
+
+    const decreaseButton = wrapper.find(ns.e('input-decrease'))
+    expect(decreaseButton.attributes('disabled')).toBeDefined()
+
+    const increaseButton = wrapper.find(ns.e('input-increase'))
+    expect(increaseButton.attributes('disabled')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('props - aria labels', () => {
+    wrapper = mount(Slider, {
+      props: {
+        ariaLabel: 'Custom slider label',
+        rangeStartLabel: 'Start',
+        rangeEndLabel: 'End',
+        range: true,
+        modelValue: [20, 80],
+      },
+    })
+
+    const sliderWrapper = wrapper.find(ns.e('wrapper'))
+    expect(sliderWrapper.attributes('aria-label')).toBe('Custom slider label')
+    wrapper.unmount()
+  })
+
+  it('props - formatValueText', () => {
+    const formatValueText = (value: number) => `${value} degrees`
+
+    wrapper = mount(Slider, {
+      props: {
+        modelValue: 50,
+        formatValueText,
+      },
+    })
+
+    expect(wrapper.vm.getAriaValueText(50)).toBe('50 degrees')
     wrapper.unmount()
   })
 })

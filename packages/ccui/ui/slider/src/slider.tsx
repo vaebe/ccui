@@ -1,5 +1,6 @@
 import type { SliderMarks, SliderProps } from './slider-types'
 import { computed, defineComponent, onUnmounted, ref } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import { sliderProps } from './slider-types'
 import './slider.scss'
 
@@ -8,6 +9,7 @@ export default defineComponent({
   props: sliderProps,
   emits: ['update:modelValue', 'change', 'input'],
   setup(props: SliderProps, { emit }) {
+    const ns = useNamespace('slider')
     const sliderRef = ref<HTMLElement>()
     const isDragging = ref(false)
     const dragIndex = ref<number | null>(null)
@@ -75,10 +77,14 @@ export default defineComponent({
       if (!rect)
         return 0
 
-      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
-      return props.vertical
-        ? (rect.bottom - clientX) / rect.height * 100
-        : (clientX - rect.left) / rect.width * 100
+      if (props.vertical) {
+        const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
+        return ((rect.bottom - clientY) / rect.height) * 100
+      }
+      else {
+        const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX
+        return ((clientX - rect.left) / rect.width) * 100
+      }
     }
 
     // 处理滑块点击
@@ -259,8 +265,15 @@ export default defineComponent({
     const handleInputChange = (event: Event) => {
       const target = event.target as HTMLInputElement
       const value = target.value
-      const numValue = value === '' ? props.min : Number(value)
 
+      // 如果输入为空，不更新值
+      if (value === '') {
+        return
+      }
+
+      const numValue = Number(value)
+
+      // 如果值不是有效数字，不更新
       if (!Number.isNaN(numValue)) {
         const clampedValue = Math.max(props.min, Math.min(props.max, numValue))
         currentValue.value = clampedValue
@@ -326,6 +339,35 @@ export default defineComponent({
       return props.showTooltip && props.tipsRenderer !== null
     })
 
+    // 处理输入框的增加/减少按钮
+    const handleInputIncrease = () => {
+      if (props.disabled || !props.showInputControls || props.range)
+        return
+
+      const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
+      const newValue = Math.min(props.max, current + props.step)
+      currentValue.value = newValue
+      emit('change', newValue)
+    }
+
+    const handleInputDecrease = () => {
+      if (props.disabled || !props.showInputControls || props.range)
+        return
+
+      const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
+      const newValue = Math.max(props.min, current - props.step)
+      currentValue.value = newValue
+      emit('change', newValue)
+    }
+
+    // 格式化值文本用于无障碍访问
+    const getAriaValueText = (value: number) => {
+      if (props.formatValueText) {
+        return props.formatValueText(value)
+      }
+      return value.toString()
+    }
+
     // 清理事件监听器
     onUnmounted(() => {
       document.removeEventListener('mousemove', handleDragMove)
@@ -335,6 +377,7 @@ export default defineComponent({
     })
 
     return {
+      ns,
       sliderRef,
       isDragging,
       currentValue,
@@ -353,6 +396,9 @@ export default defineComponent({
       handleInputChange,
       getTooltipStyle,
       shouldShowTooltip,
+      handleInputIncrease,
+      handleInputDecrease,
+      getAriaValueText,
     }
   },
   render() {
@@ -363,22 +409,42 @@ export default defineComponent({
     return (
       <div
         class={[
-          'ccui-slider',
+          this.ns.b(),
           {
-            'ccui-slider--disabled': this.disabled,
-            'ccui-slider--vertical': this.vertical,
-            'ccui-slider--with-input': this.showInput && !this.range,
-            [`ccui-slider--${this.size}`]: this.size !== 'default',
+            [this.ns.m('disabled')]: this.disabled,
+            [this.ns.m('vertical')]: this.vertical,
+            [this.ns.m('with-input')]: this.showInput && !this.range,
+            [this.ns.m(this.size)]: this.size !== 'default',
           },
         ]}
         style={this.vertical ? { height: this.height } : {}}
       >
         {/* 输入框 */}
         {this.showInput && !this.range && (
-          <div class="ccui-slider__input">
+          <div class={this.ns.e('input')}>
+            {this.showInputControls && (
+              <div class={this.ns.e('input-controls')}>
+                <button
+                  class={this.ns.e('input-decrease')}
+                  type="button"
+                  disabled={this.disabled || (this.currentValue as number) <= this.min}
+                  onClick={this.handleInputDecrease}
+                >
+                  -
+                </button>
+                <button
+                  class={this.ns.e('input-increase')}
+                  type="button"
+                  disabled={this.disabled || (this.currentValue as number) >= this.max}
+                  onClick={this.handleInputIncrease}
+                >
+                  +
+                </button>
+              </div>
+            )}
             <input
               type="number"
-              class="ccui-slider__input-inner"
+              class={this.ns.e('input-inner')}
               value={this.currentValue as number}
               min={this.min}
               max={this.max}
@@ -386,6 +452,11 @@ export default defineComponent({
               disabled={this.disabled}
               onInput={(e: Event) => this.handleInputChange(e)}
               onChange={(e: Event) => this.handleInputChange(e)}
+              aria-label={this.ariaLabel}
+              aria-valuemin={this.min}
+              aria-valuemax={this.max}
+              aria-valuenow={this.currentValue as number}
+              aria-valuetext={this.getAriaValueText(this.currentValue as number)}
             />
           </div>
         )}
@@ -393,17 +464,22 @@ export default defineComponent({
         {/* 滑块容器 */}
         <div
           ref="sliderRef"
-          class="ccui-slider__wrapper"
+          class={this.ns.e('wrapper')}
           onClick={this.handleSliderClick}
+          role="slider"
+          aria-label={this.ariaLabel || (this.range ? 'range slider' : 'slider')}
+          aria-valuemin={this.min}
+          aria-valuemax={this.max}
+          aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
         >
           {/* 轨道 */}
-          <div class="ccui-slider__track">
-            <div class="ccui-slider__bar" style={this.trackStyle}></div>
+          <div class={this.ns.e('track')}>
+            <div class={this.ns.e('bar')} style={this.trackStyle}></div>
           </div>
 
           {/* 刻度点 */}
           {this.showStops && (
-            <div class="ccui-slider__stops">
+            <div class={this.ns.e('stops')}>
               {Array.from({ length: Math.floor((this.max - this.min) / this.step) + 1 })
                 .map((_, index) => {
                   const stopValue = this.min + index * this.step
@@ -411,7 +487,7 @@ export default defineComponent({
                   return (
                     <div
                       key={index}
-                      class="ccui-slider__stop"
+                      class={this.ns.e('stop')}
                       style={{ [this.vertical ? 'bottom' : 'left']: `${percent}%` }}
                     >
                     </div>
@@ -422,17 +498,17 @@ export default defineComponent({
 
           {/* 标记 */}
           {this.marks && Object.keys(this.marks).length > 0 && (
-            <div class="ccui-slider__marks">
+            <div class={this.ns.e('marks')}>
               {Object.keys(this.marks).map((key) => {
                 const value = Number(key)
                 return (
                   <div
                     key={value}
-                    class="ccui-slider__mark"
+                    class={this.ns.e('mark')}
                     style={this.getMarkStyle(value)}
                   >
-                    <div class="ccui-slider__mark-line"></div>
-                    <span class="ccui-slider__mark-label">
+                    <div class={this.ns.e('mark-line')}></div>
+                    <span class={this.ns.e('mark-label')}>
                       {this.getMarkLabel(value)}
                     </span>
                   </div>
@@ -444,26 +520,33 @@ export default defineComponent({
           {/* 第一个滑块按钮 */}
           <div
             class={[
-              'ccui-slider__button-wrapper',
-              { 'ccui-slider__button-wrapper--first': isRange },
+              this.ns.e('button-wrapper'),
+              { [this.ns.em('button-wrapper', 'first')]: isRange },
             ]}
             style={this.firstButtonStyle}
           >
             <div
               class={[
-                'ccui-slider__button',
-                { 'ccui-slider__button--disabled': this.disabled },
+                this.ns.e('button'),
+                { [this.ns.em('button', 'disabled')]: this.disabled },
               ]}
               tabindex={this.disabled ? -1 : 0}
               onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
               onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
               onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
+              role="slider"
+              aria-label={this.rangeStartLabel || 'start value'}
+              aria-valuemin={this.min}
+              aria-valuemax={this.max}
+              aria-valuenow={firstValue}
+              aria-valuetext={this.getAriaValueText(firstValue)}
+              aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
             >
               {this.shouldShowTooltip && this.formatTooltipText(firstValue) && (
                 <div
                   class={[
-                    'ccui-slider__tooltip',
-                    `ccui-slider__tooltip--${this.placement}`,
+                    this.ns.e('tooltip'),
+                    this.ns.em('tooltip', this.placement),
                     this.tooltipClass,
                   ]}
                   style={this.getTooltipStyle(this.placement)}
@@ -477,24 +560,31 @@ export default defineComponent({
           {/* 第二个滑块按钮（范围模式） */}
           {isRange && (
             <div
-              class="ccui-slider__button-wrapper ccui-slider__button-wrapper--second"
+              class={[this.ns.e('button-wrapper'), this.ns.em('button-wrapper', 'second')]}
               style={this.secondButtonStyle}
             >
               <div
                 class={[
-                  'ccui-slider__button',
-                  { 'ccui-slider__button--disabled': this.disabled },
+                  this.ns.e('button'),
+                  { [this.ns.em('button', 'disabled')]: this.disabled },
                 ]}
                 tabindex={this.disabled ? -1 : 0}
                 onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
                 onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
                 onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
+                role="slider"
+                aria-label={this.rangeEndLabel || 'end value'}
+                aria-valuemin={this.min}
+                aria-valuemax={this.max}
+                aria-valuenow={secondValue}
+                aria-valuetext={this.getAriaValueText(secondValue)}
+                aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
               >
                 {this.shouldShowTooltip && this.formatTooltipText(secondValue) && (
                   <div
                     class={[
-                      'ccui-slider__tooltip',
-                      `ccui-slider__tooltip--${this.placement}`,
+                      this.ns.e('tooltip'),
+                      this.ns.em('tooltip', this.placement),
                       this.tooltipClass,
                     ]}
                     style={this.getTooltipStyle(this.placement)}
