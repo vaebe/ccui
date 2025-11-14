@@ -21,3 +21,4 @@ ignore:
   - packages/ccui/ui/theme
   - packages/cli/node_modules
   - packages/build
+  - node_modules

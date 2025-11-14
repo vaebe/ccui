@@ -1,0 +1,442 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-slider {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  font-size: $ccui-font-size;
+  color: $ccui-text;
+  user-select: none;
+
+  // 禁用状态
+  &--disabled {
+    cursor: not-allowed;
+
+    .#{$cls-prefix}-slider__wrapper {
+      cursor: not-allowed;
+    }
+
+    .#{$cls-prefix}-slider__track {
+      background-color: $ccui-disabled-line;
+    }
+
+    .#{$cls-prefix}-slider__bar {
+      background-color: $ccui-disabled-text;
+    }
+
+    .#{$cls-prefix}-slider__button {
+      cursor: not-allowed;
+      border-color: $ccui-disabled-line;
+      background-color: $ccui-disabled-bg;
+
+      &:hover {
+        transform: none;
+        border-color: $ccui-disabled-line;
+      }
+    }
+  }
+
+  // 垂直模式
+  &--vertical {
+    display: inline-block;
+    width: auto;
+    height: 200px;
+
+    .#{$cls-prefix}-slider__wrapper {
+      width: 6px;
+      height: 100%;
+      margin: 0 auto;
+    }
+
+    .#{$cls-prefix}-slider__track {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .#{$cls-prefix}-slider__bar {
+      width: 100%;
+      height: auto;
+      bottom: 0;
+      top: auto;
+    }
+
+    .#{$cls-prefix}-slider__button-wrapper {
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .#{$cls-prefix}-slider__stops {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+
+      .#{$cls-prefix}-slider__stop {
+        width: 100%;
+        height: 2px;
+        top: auto;
+        left: 0;
+      }
+    }
+
+    .#{$cls-prefix}-slider__marks {
+      top: 0;
+      left: 16px;
+      width: 20px;
+      height: 100%;
+
+      .#{$cls-prefix}-slider__mark {
+        top: auto;
+        left: 0;
+        transform: translateY(50%);
+
+        &-label {
+          top: 50%;
+          left: 8px;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+
+  // 尺寸变体
+  &--large {
+    .#{$cls-prefix}-slider__button {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &--small {
+    .#{$cls-prefix}-slider__button {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  // 输入框
+  &__input {
+    display: inline-block;
+    margin-left: 12px;
+    vertical-align: middle;
+    width: 80px;
+
+    &-inner {
+      width: 100%;
+      height: 32px;
+      padding: 0 8px;
+      font-size: $ccui-font-size;
+      line-height: 1.5;
+      color: $ccui-text;
+      background-color: $ccui-base-bg;
+      border: 1px solid $ccui-form-control-line;
+      border-radius: $ccui-border-radius;
+      outline: none;
+      transition: border-color $ccui-animation-duration-base $ccui-animation-ease-out;
+
+      &:hover {
+        border-color: $ccui-form-control-line-hover;
+      }
+
+      &:focus {
+        border-color: $ccui-primary;
+        box-shadow: 0 0 0 2px rgba($ccui-primary, 0.2);
+      }
+
+      &:disabled {
+        color: $ccui-disabled-text;
+        background-color: $ccui-disabled-bg;
+        border-color: $ccui-disabled-line;
+        cursor: not-allowed;
+      }
+
+      // 隐藏浏览器默认的数字输入框箭头
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      &[type='number'] {
+        appearance: textfield;
+      }
+    }
+  }
+
+  // 滑块包装器
+  &__wrapper {
+    position: relative;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  // 轨道
+  &__track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background-color: $ccui-dividing-line;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  // 进度条
+  &__bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: $ccui-primary;
+    border-radius: 3px;
+    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
+  }
+
+  // 刻度点
+  &__stops {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    margin-top: -3px;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__stop {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: $ccui-base-bg;
+      transform: translateX(-50%);
+    }
+  }
+
+  // 标记
+  &__marks {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 20px;
+    margin-top: 8px;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__mark {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+
+      &-line {
+        width: 2px;
+        height: 6px;
+        background-color: $ccui-dividing-line;
+        margin: 0 auto;
+      }
+
+      &-label {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: $ccui-font-size-sm;
+        color: $ccui-aide-text;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  // 滑块按钮包装器
+  &__button-wrapper {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+
+    &--first {
+      z-index: 3;
+    }
+
+    &--second {
+      z-index: 2;
+    }
+  }
+
+  // 滑块按钮
+  &__button {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $ccui-primary;
+    border-radius: 50%;
+    background-color: $ccui-base-bg;
+    cursor: grab;
+    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
+    box-shadow: $ccui-shadow-length-base $ccui-shadow;
+
+    &:hover {
+      border-color: $ccui-primary-hover;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($ccui-primary, 0.2);
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      border-color: $ccui-disabled-line;
+      background-color: $ccui-disabled-bg;
+
+      &:hover {
+        transform: none;
+        border-color: $ccui-disabled-line;
+      }
+    }
+  }
+
+  // 提示框
+  &__tooltip {
+    position: absolute;
+    padding: 4px 8px;
+    min-width: 24px;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-light-text;
+    text-align: center;
+    background-color: $ccui-feedback-overlay-bg;
+    border-radius: $ccui-border-radius-feedback;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: $ccui-shadow-length-connected-overlay $ccui-shadow;
+
+    // 默认位置（top）
+    &--top {
+      bottom: 100%;
+      left: 50%;
+      margin-bottom: 8px;
+      transform: translateX(-50%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -4px;
+        border: 4px solid transparent;
+        border-top-color: $ccui-feedback-overlay-bg;
+      }
+    }
+
+    // 右侧位置
+    &--right {
+      left: 100%;
+      top: 50%;
+      margin-left: 8px;
+      transform: translateY(-50%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -4px;
+        margin-left: -4px;
+        border: 4px solid transparent;
+        border-right-color: $ccui-feedback-overlay-bg;
+      }
+    }
+
+    // 底部位置
+    &--bottom {
+      top: 100%;
+      left: 50%;
+      margin-top: 8px;
+      transform: translateX(-50%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -4px;
+        border: 4px solid transparent;
+        border-bottom-color: $ccui-feedback-overlay-bg;
+      }
+    }
+
+    // 左侧位置
+    &--left {
+      right: 100%;
+      top: 50%;
+      margin-right: 8px;
+      transform: translateY(-50%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-top: -4px;
+        margin-right: -4px;
+        border: 4px solid transparent;
+        border-left-color: $ccui-feedback-overlay-bg;
+      }
+    }
+  }
+
+  // 垂直模式的提示框调整
+  &--vertical {
+    .#{$cls-prefix}-slider__tooltip {
+      &--top {
+        bottom: auto;
+        left: 100%;
+        top: 50%;
+        margin-left: 8px;
+        margin-bottom: 0;
+        transform: translateY(-50%);
+
+        &::after {
+          top: 50%;
+          left: 0;
+          margin-top: -4px;
+          margin-left: -4px;
+          border-top-color: transparent;
+          border-right-color: $ccui-feedback-overlay-bg;
+        }
+      }
+
+      &--right {
+        left: auto;
+        right: 100%;
+        margin-left: 0;
+        margin-right: 8px;
+
+        &::after {
+          left: auto;
+          right: 0;
+          margin-left: 0;
+          margin-right: -4px;
+          border-right-color: transparent;
+          border-left-color: $ccui-feedback-overlay-bg;
+        }
+      }
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .#{$cls-prefix}-slider__button {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
