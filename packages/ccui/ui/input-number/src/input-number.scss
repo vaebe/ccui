@@ -14,7 +14,8 @@
   }
 }
 
-@mixin focus-glow {
+@mixin focus-state {
+  border-color: $ccui-primary;
   box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
 }
 
@@ -22,6 +23,36 @@
   .#{$cls-prefix}-input-number__increase,
   .#{$cls-prefix}-input-number__decrease {
     display: none;
+  }
+}
+
+@mixin control-button-base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $ccui-text;
+  text-align: center;
+  cursor: pointer;
+  background-color: $ccui-base-bg;
+  transition: all 0.3s;
+  user-select: none;
+
+  &:hover {
+    color: $ccui-primary;
+    background-color: $ccui-list-item-hover-bg;
+  }
+
+  &:active {
+    background-color: $ccui-list-item-active-bg;
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+  }
+
+  svg {
+    fill: currentColor;
   }
 }
 
@@ -78,12 +109,11 @@
   }
 
   &--focused {
-    border-color: $ccui-primary;
-    @include focus-glow;
+    @include focus-state;
   }
 
   &--glow {
-    @include focus-glow;
+    @include focus-state;
   }
 
   &--disabled {
@@ -151,37 +181,14 @@
 
   &__increase,
   &__decrease {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include control-button-base;
     width: 32px;
     height: 100%;
     font-size: 12px;
-    color: $ccui-text;
-    text-align: center;
-    cursor: pointer;
-    background-color: $ccui-base-bg;
-    transition: all 0.3s;
-    user-select: none;
-
-    &:hover {
-      color: $ccui-primary;
-      background-color: $ccui-list-item-hover-bg;
-    }
-
-    &:active {
-      background-color: $ccui-list-item-active-bg;
-    }
 
     svg {
       width: 12px;
       height: 12px;
-      fill: currentColor;
-    }
-
-    &.is-disabled {
-      @include disabled-state;
     }
   }
 

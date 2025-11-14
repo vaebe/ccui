@@ -1,4 +1,8 @@
-import type { InputNumberProps } from './input-number-types'
+import type {
+  InputNumberInstance,
+  InputNumberProps,
+  InputNumberValue,
+} from './input-number-types'
 import { computed, defineComponent, nextTick, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputNumberProps } from './input-number-types'
@@ -13,7 +17,7 @@ export default defineComponent({
     const inputRef = ref<HTMLInputElement>()
 
     // 内部值状态
-    const innerValue = ref<number | undefined>(props.modelValue)
+    const innerValue = ref<InputNumberValue>(props.modelValue)
     const focused = ref(false)
 
     // 计算显示值
@@ -44,7 +48,7 @@ export default defineComponent({
     })
 
     // 数值处理函数
-    const formatValue = (value: number | string | undefined): number | undefined => {
+    const formatValue = (value: number | string | undefined): InputNumberValue => {
       if (value === '' || value === undefined || value === null) {
         return props.allowEmpty ? undefined : 0
       }
@@ -67,7 +71,7 @@ export default defineComponent({
     }
 
     // 更新值
-    const updateValue = (newValue: number | undefined, triggerChange = true) => {
+    const updateValue = (newValue: InputNumberValue, triggerChange = true) => {
       const oldValue = innerValue.value
       innerValue.value = newValue
 
@@ -123,12 +127,12 @@ export default defineComponent({
     }
 
     // 焦点处理
-    const handleFocus = (event: Event) => {
+    const handleFocus = (event: FocusEvent) => {
       focused.value = true
       emit('focus', event)
     }
 
-    const handleBlur = (event: Event) => {
+    const handleBlur = (event: FocusEvent) => {
       focused.value = false
       emit('blur', event)
 
@@ -184,15 +188,17 @@ export default defineComponent({
       inputRef.value?.blur()
     }
 
-    const select = () => {
-      inputRef.value?.select()
-    }
-
-    expose({
+    // 实例方法
+    const instance: InputNumberInstance = {
+      getValue: () => innerValue.value,
+      setValue: (value: InputNumberValue) => updateValue(value),
       focus,
       blur,
-      select,
-    })
+      increase,
+      decrease,
+    }
+
+    expose(instance)
 
     // 监听 modelValue 变化
     watch(

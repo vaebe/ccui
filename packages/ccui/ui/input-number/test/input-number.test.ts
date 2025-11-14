@@ -30,10 +30,11 @@ describe('inputNumber', () => {
 
     const input = wrapper.find('.ccui-input-number__inner')
     await input.setValue('10')
+    await input.trigger('input')
     await input.trigger('change')
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    expect(wrapper.emitted('change')).toBeTruthy()
+    expect(wrapper.emitted('input')).toBeTruthy()
   })
 
   it('should handle increase and decrease', async () => {
@@ -67,13 +68,26 @@ describe('inputNumber', () => {
 
     // Test max limit
     await input.setValue('15')
+    await input.trigger('input')
     await input.trigger('change')
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([10])
 
+    // Reset wrapper to test min limit separately
+    const wrapper2 = mount(InputNumber, {
+      props: {
+        modelValue: 5,
+        min: 0,
+        max: 10,
+      },
+    })
+
+    const input2 = wrapper2.find('.ccui-input-number__inner')
+
     // Test min limit
-    await input.setValue('-5')
-    await input.trigger('change')
-    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([0])
+    await input2.setValue('-5')
+    await input2.trigger('input')
+    await input2.trigger('change')
+    expect(wrapper2.emitted('update:modelValue')?.[0]).toEqual([0])
   })
 
   it('should handle precision', async () => {
@@ -222,8 +236,56 @@ describe('inputNumber', () => {
     const wrapper = mount(InputNumber)
     const vm = wrapper.vm as any
 
+    expect(typeof vm.getValue).toBe('function')
+    expect(typeof vm.setValue).toBe('function')
     expect(typeof vm.focus).toBe('function')
     expect(typeof vm.blur).toBe('function')
-    expect(typeof vm.select).toBe('function')
+    expect(typeof vm.increase).toBe('function')
+    expect(typeof vm.decrease).toBe('function')
+  })
+
+  it('应该正确处理精度设置', async () => {
+    const wrapper = mount(InputNumber, {
+      props: {
+        modelValue: 1.234567,
+        precision: 2,
+      },
+    })
+
+    const input = wrapper.find('input')
+    expect(input.element.value).toBe('1.23')
+  })
+
+  it('应该支持自定义步长', async () => {
+    const wrapper = mount(InputNumber, {
+      props: {
+        modelValue: 0,
+        step: 0.1,
+        precision: 1,
+      },
+    })
+
+    const increaseBtn = wrapper.find('.ccui-input-number__increase')
+    await increaseBtn.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([0.1])
+  })
+
+  it('应该在达到边界值时禁用按钮', async () => {
+    const wrapper = mount(InputNumber, {
+      props: {
+        modelValue: 10,
+        min: 0,
+        max: 10,
+      },
+    })
+
+    const increaseBtn = wrapper.find('.ccui-input-number__increase')
+    const decreaseBtn = wrapper.find('.ccui-input-number__decrease')
+
+    expect(increaseBtn.classes()).toContain('is-disabled')
+
+    await wrapper.setProps({ modelValue: 0 })
+    expect(decreaseBtn.classes()).toContain('is-disabled')
   })
 })
