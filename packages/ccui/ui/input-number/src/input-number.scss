@@ -1,5 +1,64 @@
 @use '../../style-var/index.scss' as *;
 
+// 通用混入
+@mixin disabled-state {
+  cursor: not-allowed;
+  color: $ccui-disabled-text;
+  background-color: $ccui-disabled-bg;
+  border-color: $ccui-disabled-line;
+
+  &:hover {
+    color: $ccui-disabled-text;
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+  }
+}
+
+@mixin focus-glow {
+  box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+}
+
+@mixin hide-controls {
+  .#{$cls-prefix}-input-number__increase,
+  .#{$cls-prefix}-input-number__decrease {
+    display: none;
+  }
+}
+
+@mixin size-variant($width, $height, $font-size, $inner-height, $control-width, $svg-size, $padding: 0 11px) {
+  width: $width;
+  height: $height;
+  font-size: $font-size;
+
+  .#{$cls-prefix}-input-number__inner {
+    height: $inner-height;
+    padding: $padding;
+    font-size: $font-size;
+  }
+
+  .#{$cls-prefix}-input-number__increase,
+  .#{$cls-prefix}-input-number__decrease {
+    width: $control-width;
+
+    svg {
+      width: $svg-size;
+      height: $svg-size;
+    }
+  }
+
+  &.#{$cls-prefix}-input-number--controls-right {
+    .#{$cls-prefix}-input-number__inner {
+      padding-left: 0;
+      padding-right: $control-width;
+    }
+
+    .#{$cls-prefix}-input-number__controls {
+      width: $control-width;
+      height: $inner-height;
+    }
+  }
+}
+
 .#{$cls-prefix}-input-number {
   position: relative;
   display: inline-flex;
@@ -20,18 +79,15 @@
 
   &--focused {
     border-color: $ccui-primary;
-    box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+    @include focus-glow;
   }
 
   &--glow {
-    box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+    @include focus-glow;
   }
 
   &--disabled {
-    cursor: not-allowed;
-    background-color: $ccui-disabled-bg;
-    border-color: $ccui-disabled-line;
-    color: $ccui-disabled-text;
+    @include disabled-state;
 
     .#{$cls-prefix}-input-number__inner {
       cursor: not-allowed;
@@ -41,16 +97,7 @@
 
     .#{$cls-prefix}-input-number__increase,
     .#{$cls-prefix}-input-number__decrease {
-      cursor: not-allowed;
-      color: $ccui-disabled-text;
-      background-color: $ccui-disabled-bg;
-      border-color: $ccui-disabled-line;
-
-      &:hover {
-        color: $ccui-disabled-text;
-        background-color: $ccui-disabled-bg;
-        border-color: $ccui-disabled-line;
-      }
+      @include disabled-state;
     }
   }
 
@@ -59,10 +106,7 @@
       cursor: default;
     }
 
-    .#{$cls-prefix}-input-number__increase,
-    .#{$cls-prefix}-input-number__decrease {
-      display: none;
-    }
+    @include hide-controls;
   }
 
   &__input {
@@ -137,22 +181,14 @@
     }
 
     &.is-disabled {
-      cursor: not-allowed;
-      color: $ccui-disabled-text;
-      background-color: $ccui-disabled-bg;
-      border-color: $ccui-disabled-line;
-
-      &:hover {
-        color: $ccui-disabled-text;
-        background-color: $ccui-disabled-bg;
-        border-color: $ccui-disabled-line;
-      }
+      @include disabled-state;
     }
   }
 
   &__increase {
     border-left: 1px solid $ccui-form-control-line;
   }
+
   &__decrease {
     border-right: 1px solid $ccui-form-control-line;
   }
@@ -163,10 +199,7 @@
       padding: 0 11px;
     }
 
-    .#{$cls-prefix}-input-number__increase,
-    .#{$cls-prefix}-input-number__decrease {
-      display: none;
-    }
+    @include hide-controls;
   }
 
   // 右侧控制按钮样式
@@ -203,72 +236,12 @@
     }
   }
 
-  // 大尺寸
+  // 尺寸变体
   &--lg {
-    width: 200px;
-    height: 40px;
-    font-size: $ccui-font-size-lg;
-
-    .#{$cls-prefix}-input-number__inner {
-      height: 38px;
-      font-size: $ccui-font-size-lg;
-    }
-
-    .#{$cls-prefix}-input-number__increase,
-    .#{$cls-prefix}-input-number__decrease {
-      width: 40px;
-
-      svg {
-        width: 14px;
-        height: 14px;
-      }
-    }
-
-    &.#{$cls-prefix}-input-number--controls-right {
-      .#{$cls-prefix}-input-number__inner {
-        padding-left: 0;
-        padding-right: 40px;
-      }
-
-      .#{$cls-prefix}-input-number__controls {
-        width: 40px;
-        height: 38px;
-      }
-    }
+    @include size-variant(200px, 40px, $ccui-font-size-lg, 38px, 40px, 14px);
   }
 
-  // 小尺寸
   &--sm {
-    width: 100px;
-    height: 24px;
-    font-size: $ccui-font-size-sm;
-
-    .#{$cls-prefix}-input-number__inner {
-      height: 22px;
-      padding: 0 7px;
-      font-size: $ccui-font-size-sm;
-    }
-
-    .#{$cls-prefix}-input-number__increase,
-    .#{$cls-prefix}-input-number__decrease {
-      width: 24px;
-
-      svg {
-        width: 8px;
-        height: 8px;
-      }
-    }
-
-    &.#{$cls-prefix}-input-number--controls-right {
-      .#{$cls-prefix}-input-number__inner {
-        padding-left: 0;
-        padding-right: 24px;
-      }
-
-      .#{$cls-prefix}-input-number__controls {
-        width: 24px;
-        height: 22px;
-      }
-    }
+    @include size-variant(100px, 24px, $ccui-font-size-sm, 22px, 24px, 8px, 0 7px);
   }
 }
