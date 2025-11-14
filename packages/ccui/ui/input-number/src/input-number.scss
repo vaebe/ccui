@@ -1,0 +1,313 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-input-number {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 150px;
+  font-size: $ccui-font-size;
+  line-height: 1.5;
+  color: $ccui-text;
+  background-color: $ccui-base-bg;
+  border: 1px solid $ccui-form-control-line;
+  border-radius: $ccui-border-radius;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: $ccui-primary;
+  }
+
+  &--focused {
+    border-color: $ccui-primary;
+    box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+  }
+
+  &--glow {
+    box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+
+    .#{$cls-prefix}-input-number__inner {
+      cursor: not-allowed;
+      background-color: transparent;
+      color: $ccui-disabled-text;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      cursor: not-allowed;
+      color: $ccui-disabled-text;
+      background-color: $ccui-disabled-bg;
+      border-color: $ccui-disabled-line;
+
+      &:hover {
+        color: $ccui-disabled-text;
+        background-color: $ccui-disabled-bg;
+        border-color: $ccui-disabled-line;
+      }
+    }
+  }
+
+  &--readonly {
+    .#{$cls-prefix}-input-number__inner {
+      cursor: default;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      display: none;
+    }
+  }
+
+  &__input {
+    position: relative;
+    flex: 1;
+    display: inline-block;
+    width: 100%;
+  }
+
+  &__inner {
+    width: 100%;
+    height: 32px;
+    padding: 0 11px;
+    font-size: inherit;
+    line-height: 1.5;
+    color: $ccui-text;
+    background-color: transparent;
+    border: none;
+    border-radius: inherit;
+    outline: none;
+    transition: all 0.3s;
+    appearance: none;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+
+    &[type='number'] {
+      appearance: textfield;
+    }
+
+    &::placeholder {
+      color: $ccui-text-weak;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__increase,
+  &__decrease {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 30px;
+    font-size: 12px;
+    color: $ccui-text;
+    text-align: center;
+    cursor: pointer;
+    background-color: $ccui-base-bg;
+    border: 1px solid $ccui-form-control-line;
+    transition: all 0.3s;
+    user-select: none;
+
+    &:hover {
+      color: $ccui-primary;
+      background-color: $ccui-list-item-hover-bg;
+    }
+
+    &:active {
+      background-color: $ccui-list-item-active-bg;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      color: $ccui-disabled-text;
+      background-color: $ccui-disabled-bg;
+      border-color: $ccui-disabled-line;
+
+      &:hover {
+        color: $ccui-disabled-text;
+        background-color: $ccui-disabled-bg;
+        border-color: $ccui-disabled-line;
+      }
+    }
+  }
+
+  &__decrease {
+    border-right: none;
+    border-radius: $ccui-border-radius 0 0 $ccui-border-radius;
+  }
+
+  &__increase {
+    border-left: none;
+    border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+  }
+
+  // 无控制按钮样式
+  &--without-controls {
+    .#{$cls-prefix}-input-number__inner {
+      padding: 0 11px;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      display: none;
+    }
+  }
+
+  // 右侧控制按钮样式
+  &--controls-right {
+    .#{$cls-prefix}-input-number__inner {
+      padding-right: 50px;
+    }
+
+    .#{$cls-prefix}-input-number__controls {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      display: flex;
+      flex-direction: column;
+      width: 22px;
+      height: 30px;
+      border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      width: 22px;
+      height: 15px;
+      border: none;
+      border-left: 1px solid $ccui-form-control-line;
+      border-radius: 0;
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .#{$cls-prefix}-input-number__increase {
+      border-bottom: 1px solid $ccui-form-control-line;
+      border-radius: 0 $ccui-border-radius 0 0;
+    }
+
+    .#{$cls-prefix}-input-number__decrease {
+      border-radius: 0 0 $ccui-border-radius 0;
+    }
+  }
+
+  // 大尺寸
+  &--lg {
+    width: 200px;
+    font-size: $ccui-font-size-lg;
+
+    .#{$cls-prefix}-input-number__inner {
+      height: 40px;
+      padding: 0 15px;
+      font-size: $ccui-font-size-lg;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      width: 40px;
+      height: 38px;
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &:not(&--without-controls):not(&--controls-right) {
+      .#{$cls-prefix}-input-number__inner {
+        padding-left: 55px;
+        padding-right: 55px;
+      }
+    }
+
+    &.#{$cls-prefix}-input-number--controls-right {
+      .#{$cls-prefix}-input-number__inner {
+        padding-right: 55px;
+      }
+
+      .#{$cls-prefix}-input-number__controls {
+        width: 40px;
+        height: 38px;
+      }
+
+      .#{$cls-prefix}-input-number__increase,
+      .#{$cls-prefix}-input-number__decrease {
+        height: 19px;
+      }
+    }
+  }
+
+  // 小尺寸
+  &--sm {
+    width: 120px;
+    font-size: $ccui-font-size-sm;
+
+    .#{$cls-prefix}-input-number__inner {
+      height: 24px;
+      padding: 0 7px;
+      font-size: $ccui-font-size-sm;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      width: 24px;
+      height: 22px;
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    &:not(&--without-controls):not(&--controls-right) {
+      .#{$cls-prefix}-input-number__inner {
+        padding-left: 31px;
+        padding-right: 31px;
+      }
+    }
+
+    &.#{$cls-prefix}-input-number--controls-right {
+      .#{$cls-prefix}-input-number__inner {
+        padding-right: 31px;
+      }
+
+      .#{$cls-prefix}-input-number__controls {
+        width: 24px;
+        height: 22px;
+      }
+
+      .#{$cls-prefix}-input-number__increase,
+      .#{$cls-prefix}-input-number__decrease {
+        width: 24px;
+        height: 11px;
+
+        svg {
+          width: 8px;
+          height: 8px;
+        }
+      }
+    }
+  }
+}
