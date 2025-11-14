@@ -224,7 +224,13 @@ export default defineComponent({
 <template>
   <div class="input-number-demo">
     <c-input-number v-model="value7" controls-position="both" placeholder="两侧控制" />
-    <c-input-number v-model="value7" controls-position="right" placeholder="右侧控制" />
+    <div>
+      <c-input-number v-model="value7" size="lg" controls-position="right" placeholder="右侧控制" />
+
+      <c-input-number v-model="value7" controls-position="right" placeholder="右侧控制" />
+
+      <c-input-number v-model="value7" size="sm" controls-position="right" placeholder="右侧控制" />
+    </div>
     <c-input-number v-model="value7" :controls="false" placeholder="无控制按钮" />
   </div>
 </template>

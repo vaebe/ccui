@@ -3,8 +3,9 @@
 .#{$cls-prefix}-input-number {
   position: relative;
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
   width: 150px;
+  height: 32px;
   font-size: $ccui-font-size;
   line-height: 1.5;
   color: $ccui-text;
@@ -73,17 +74,17 @@
 
   &__inner {
     width: 100%;
-    height: 32px;
+    height: 30px;
     padding: 0 11px;
     font-size: inherit;
     line-height: 1.5;
     color: $ccui-text;
     background-color: transparent;
     border: none;
-    border-radius: inherit;
     outline: none;
     transition: all 0.3s;
     appearance: none;
+    text-align: center;
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -111,13 +112,12 @@
     align-items: center;
     justify-content: center;
     width: 32px;
-    height: 30px;
+    height: 100%;
     font-size: 12px;
     color: $ccui-text;
     text-align: center;
     cursor: pointer;
     background-color: $ccui-base-bg;
-    border: 1px solid $ccui-form-control-line;
     transition: all 0.3s;
     user-select: none;
 
@@ -150,14 +150,11 @@
     }
   }
 
-  &__decrease {
-    border-right: none;
-    border-radius: $ccui-border-radius 0 0 $ccui-border-radius;
-  }
-
   &__increase {
-    border-left: none;
-    border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+    border-left: 1px solid $ccui-form-control-line;
+  }
+  &__decrease {
+    border-right: 1px solid $ccui-form-control-line;
   }
 
   // 无控制按钮样式
@@ -175,13 +172,13 @@
   // 右侧控制按钮样式
   &--controls-right {
     .#{$cls-prefix}-input-number__inner {
-      padding-right: 50px;
+      padding: 0 20px 0 0;
     }
 
     .#{$cls-prefix}-input-number__controls {
       position: absolute;
-      top: 1px;
-      right: 1px;
+      top: 0;
+      right: 0;
       display: flex;
       flex-direction: column;
       width: 22px;
@@ -192,10 +189,8 @@
     .#{$cls-prefix}-input-number__increase,
     .#{$cls-prefix}-input-number__decrease {
       width: 22px;
-      height: 15px;
-      border: none;
+      border: unset;
       border-left: 1px solid $ccui-form-control-line;
-      border-radius: 0;
 
       svg {
         width: 10px;
@@ -205,29 +200,23 @@
 
     .#{$cls-prefix}-input-number__increase {
       border-bottom: 1px solid $ccui-form-control-line;
-      border-radius: 0 $ccui-border-radius 0 0;
-    }
-
-    .#{$cls-prefix}-input-number__decrease {
-      border-radius: 0 0 $ccui-border-radius 0;
     }
   }
 
   // 大尺寸
   &--lg {
     width: 200px;
+    height: 40px;
     font-size: $ccui-font-size-lg;
 
     .#{$cls-prefix}-input-number__inner {
-      height: 40px;
-      padding: 0 15px;
+      height: 38px;
       font-size: $ccui-font-size-lg;
     }
 
     .#{$cls-prefix}-input-number__increase,
     .#{$cls-prefix}-input-number__decrease {
       width: 40px;
-      height: 38px;
 
       svg {
         width: 14px;
@@ -235,37 +224,27 @@
       }
     }
 
-    &:not(&--without-controls):not(&--controls-right) {
-      .#{$cls-prefix}-input-number__inner {
-        padding-left: 55px;
-        padding-right: 55px;
-      }
-    }
-
     &.#{$cls-prefix}-input-number--controls-right {
       .#{$cls-prefix}-input-number__inner {
-        padding-right: 55px;
+        padding-left: 0;
+        padding-right: 40px;
       }
 
       .#{$cls-prefix}-input-number__controls {
         width: 40px;
         height: 38px;
       }
-
-      .#{$cls-prefix}-input-number__increase,
-      .#{$cls-prefix}-input-number__decrease {
-        height: 19px;
-      }
     }
   }
 
   // 小尺寸
   &--sm {
-    width: 120px;
+    width: 100px;
+    height: 24px;
     font-size: $ccui-font-size-sm;
 
     .#{$cls-prefix}-input-number__inner {
-      height: 24px;
+      height: 22px;
       padding: 0 7px;
       font-size: $ccui-font-size-sm;
     }
@@ -273,40 +252,22 @@
     .#{$cls-prefix}-input-number__increase,
     .#{$cls-prefix}-input-number__decrease {
       width: 24px;
-      height: 22px;
 
       svg {
-        width: 10px;
-        height: 10px;
-      }
-    }
-
-    &:not(&--without-controls):not(&--controls-right) {
-      .#{$cls-prefix}-input-number__inner {
-        padding-left: 31px;
-        padding-right: 31px;
+        width: 8px;
+        height: 8px;
       }
     }
 
     &.#{$cls-prefix}-input-number--controls-right {
       .#{$cls-prefix}-input-number__inner {
-        padding-right: 31px;
+        padding-left: 0;
+        padding-right: 24px;
       }
 
       .#{$cls-prefix}-input-number__controls {
         width: 24px;
         height: 22px;
-      }
-
-      .#{$cls-prefix}-input-number__increase,
-      .#{$cls-prefix}-input-number__decrease {
-        width: 24px;
-        height: 11px;
-
-        svg {
-          width: 8px;
-          height: 8px;
-        }
       }
     }
   }
