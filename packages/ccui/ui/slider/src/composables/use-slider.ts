@@ -22,15 +22,31 @@ export function useSliderValue(
 }
 
 export function useSliderCalculation(props: SliderProps) {
+  const range = props.max - props.min
+
   // 计算百分比位置
   const getPercent = (value: number) => {
-    return Math.max(0, Math.min(100, ((value - props.min) / (props.max - props.min)) * 100))
+    if (range <= 0)
+      return 0
+
+    const percent = ((value - props.min) / range) * 100
+    return Math.max(0, Math.min(100, percent))
   }
 
-  // 根据百分比计算值
+  // 根据百分比计算值（按 step 和 min 对齐）
   const getValueFromPercent = (percent: number) => {
-    const value = props.min + (percent / 100) * (props.max - props.min)
-    return Math.round(value / props.step) * props.step
+    if (range <= 0)
+      return props.min
+
+    const raw = props.min + (percent / 100) * range
+
+    if (props.step <= 0)
+      return Math.max(props.min, Math.min(props.max, raw))
+
+    const stepped
+      = props.min + Math.round((raw - props.min) / props.step) * props.step
+
+    return Math.max(props.min, Math.min(props.max, stepped))
   }
 
   return {

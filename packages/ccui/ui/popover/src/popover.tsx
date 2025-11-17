@@ -222,19 +222,6 @@ export default defineComponent({
       }
     }
 
-    let cleanup: (() => void) | undefined
-
-    onMounted(() => {
-    // 初始化时如果 visible 为 true，确保显示
-      if (props.visible) {
-        nextTick(() => {
-          const triggerElement = actualTriggerRef.value
-          if (triggerElement && popperRef.value) {
-            cleanup = autoUpdate(triggerElement, popperRef.value, update)
-          }
-        })
-      }
-    })
     const rootClass = computed(() => {
       return [ns.b(), props.disabled ? ns.m('disabled') : ''].filter(Boolean).join(' ')
     })
@@ -265,6 +252,22 @@ export default defineComponent({
         doHide()
       }
     }
+
+    let cleanup: (() => void) | undefined
+
+    onMounted(() => {
+    // 初始化时如果 visible 为 true，确保显示并监听文档级事件
+      if (props.visible) {
+        nextTick(() => {
+          const triggerElement = actualTriggerRef.value
+          if (triggerElement && popperRef.value) {
+            cleanup = autoUpdate(triggerElement, popperRef.value, update)
+          }
+          window.addEventListener('mousedown', onDocumentMouseDown, true)
+          window.addEventListener('keydown', onDocumentKeydown, true)
+        })
+      }
+    })
     onUnmounted(() => {
       clearTimers()
       cleanup?.()
