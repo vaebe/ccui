@@ -1,0 +1,234 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  vertical-align: middle;
+  font-size: 14px;
+  line-height: $ccui-line-height-base;
+  border-radius: $ccui-border-radius;
+  transition: $ccui-animation-duration-base;
+  background-color: $ccui-base-bg;
+  border: 1px solid $ccui-line;
+  color: $ccui-text;
+
+  &:hover {
+    border-color: $ccui-brand-hover;
+  }
+
+  &__wrapper {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    border-radius: $ccui-border-radius;
+    transition: $ccui-animation-duration-base;
+    background-color: $ccui-base-bg;
+    border: 1px solid $ccui-line;
+
+    &--disabled {
+      background-color: $ccui-disabled-bg;
+      border-color: $ccui-disabled-line;
+      color: $ccui-disabled-text;
+      cursor: not-allowed;
+
+      &:hover {
+        border-color: $ccui-disabled-line;
+      }
+    }
+
+    &--focus {
+      border-color: $ccui-brand;
+      box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+    }
+
+    &--hover {
+      border-color: $ccui-brand-hover;
+    }
+
+    &--large {
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 12px;
+    }
+
+    &--default {
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 8px;
+    }
+
+    &--small {
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 4px;
+    }
+  }
+
+  &--disabled {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-disabled-line;
+    }
+  }
+
+  &--readonly {
+    cursor: default;
+  }
+
+  &--clearable,
+  &--suffix {
+    padding-right: 30px;
+  }
+
+  &--prefix {
+    padding-left: 30px;
+  }
+
+  &__main {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+  }
+
+  &__prepend,
+  &__append {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    background-color: $ccui-area;
+    border: 1px solid $ccui-line;
+    border-radius: $ccui-border-radius;
+    color: $ccui-text;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  &__prepend {
+    border-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &__append {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &__prefix,
+  &__suffix {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $ccui-placeholder;
+    pointer-events: none;
+  }
+
+  &__prefix {
+    left: 10px;
+  }
+
+  &__suffix {
+    right: 10px;
+  }
+
+  &__clear,
+  &__password-visible,
+  &__password-hidden {
+    cursor: pointer;
+    pointer-events: auto;
+    color: $ccui-placeholder;
+
+    &:hover {
+      color: $ccui-text;
+    }
+  }
+
+  input,
+  textarea {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 0;
+    margin: 0;
+    border-radius: $ccui-border-radius;
+
+    &::placeholder {
+      color: $ccui-placeholder;
+    }
+
+    &:disabled {
+      background: none;
+      cursor: not-allowed;
+      color: $ccui-disabled-text;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    padding: 8px;
+  }
+
+  &--large {
+    font-size: 16px;
+    line-height: 1.5;
+
+    input,
+    textarea {
+      padding: 12px;
+    }
+
+    textarea {
+      padding: 12px;
+    }
+  }
+
+  &--default {
+    font-size: 14px;
+    line-height: 1.5;
+
+    input,
+    textarea {
+      padding: 8px;
+    }
+
+    textarea {
+      padding: 8px;
+    }
+  }
+
+  &--small {
+    font-size: 12px;
+    line-height: 1.5;
+
+    input,
+    textarea {
+      padding: 4px;
+    }
+
+    textarea {
+      padding: 4px;
+    }
+  }
+}
