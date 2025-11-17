@@ -1,5 +1,5 @@
 import type { TimelineItemProps } from './timeline-types'
-import { computed, defineComponent, h } from 'vue'
+import { computed, defineComponent, h, markRaw } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { timelineItemProps } from './timeline-types'
 
@@ -35,8 +35,8 @@ export default defineComponent({
           return <i class={[props.icon, ns.e('icon')]}></i>
         }
         else {
-          // 如果是组件，使用 h 函数渲染
-          return h(props.icon, { class: ns.e('icon') })
+          // 如果是组件，使用 markRaw 避免不必要的响应式转换，然后使用 h 函数渲染
+          return h(markRaw(props.icon), { class: ns.e('icon') })
         }
       }
       return null
