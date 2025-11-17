@@ -388,7 +388,7 @@ export function useSliderInput(
       currentValue.value = clampedValue
     }
 
-    emit('change', clampedValue)
+    emit('change', currentValue.value)
 
     // 触发表单验证
     if (props.validateEvent) {
