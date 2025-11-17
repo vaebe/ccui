@@ -66,7 +66,6 @@
       top: auto;
       left: 50%;
       transform: translateX(-50%);
-      bottom: 0; // 默认从底部开始
 
       // 确保垂直模式下按钮正确定位
       .#{$cls-prefix}-tooltip {
@@ -320,11 +319,10 @@
   // 标记
   &__marks {
     position: absolute;
-    top: 100%;
+    top: 12px;
     left: 0;
     right: 0;
-    height: 40px;
-    margin-top: 8px;
+    height: 100%;
     pointer-events: none;
 
     .#{$cls-prefix}-slider__mark {

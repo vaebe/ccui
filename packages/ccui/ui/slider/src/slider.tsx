@@ -198,7 +198,7 @@ export default defineComponent({
           >
             <Tooltip
               content={this.getTooltipContent(0)}
-              visible={this.showTooltip ? (this.getTooltipVisible(0) || undefined) : false}
+              visible={this.getTooltipVisible(0)}
               placement={this.getTooltipPlacement()}
               disabled={!this.showTooltip}
               effect="dark"
@@ -236,7 +236,7 @@ export default defineComponent({
             >
               <Tooltip
                 content={this.getTooltipContent(1)}
-                visible={this.showTooltip ? (this.getTooltipVisible(1) || undefined) : false}
+                visible={this.getTooltipVisible(1)}
                 placement={this.getTooltipPlacement()}
                 disabled={!this.showTooltip}
                 effect="dark"
