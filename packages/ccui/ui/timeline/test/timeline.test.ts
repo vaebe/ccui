@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { h, markRaw } from 'vue'
 import { Timeline, TimelineItem } from '../index'
 
 describe('timeline', () => {
@@ -159,12 +159,12 @@ describe('timelineItem', () => {
   })
 
   it('should render with component icon', () => {
-    const IconComponent = {
+    const IconComponent = markRaw({
       name: 'TestIcon',
       render() {
         return h('span', { class: 'test-icon' }, 'Icon')
       },
-    }
+    })
 
     const wrapper = mount(TimelineItem, {
       props: {

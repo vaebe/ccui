@@ -223,36 +223,36 @@ export default defineComponent({
 
 ### Timeline Slots
 
-| 插槽名 | 说明 | 子标签 |
-| ---- | ---- | ---- |
+| 插槽名  | 说明                          | 子标签        |
+| ------- | ----------------------------- | ------------- |
 | default | timeline 组件的自定义默认内容 | Timeline-Item |
 
 ### Timeline-Item Props
 
-| 参数 | 说明      | 类型 | 可选值 | 默认值 |
-| ---- | -------- | ---- | ---- | ---- |
-| timestamp | 时间戳 | string | — | '' |
-| hide-timestamp | 是否隐藏时间戳 | boolean | — | false |
-| center | 是否垂直居中 | boolean | — | false |
-| placement | 时间戳位置 | string | top/bottom | bottom |
-| type | 节点类型 | string | [TimelineItemType](#timelineitemtype)  | — |
-| color | 节点颜色 | string | — | — |
-| size | 节点尺寸 | string | normal/large | normal |
-| icon | 自定义图标 | string/Component | — | — |
-| hollow | 是否空心点 | boolean | — | false |
+| 参数           | 说明           | 类型             | 可选值                                | 默认值 |
+| -------------- | -------------- | ---------------- | ------------------------------------- | ------ |
+| timestamp      | 时间戳         | string           | —                                     | ''     |
+| hide-timestamp | 是否隐藏时间戳 | boolean          | —                                     | false  |
+| center         | 是否垂直居中   | boolean          | —                                     | false  |
+| placement      | 时间戳位置     | string           | top/bottom                            | bottom |
+| type           | 节点类型       | string           | [TimelineItemType](#timelineitemtype) | —      |
+| color          | 节点颜色       | string           | —                                     | —      |
+| size           | 节点尺寸       | string           | normal/large                          | normal |
+| icon           | 自定义图标     | string/Component | —                                     | —      |
+| hollow         | 是否空心点     | boolean          | —                                     | false  |
 
 ### Timeline-Item Events
 
 | 事件名 | 说明 | 回调参数 |
-| ---- | ---- | ---- |
-| — | — | — |
+| ------ | ---- | -------- |
+| —      | —    | —        |
 
 ### Timeline-Item Slots
 
-| 插槽名 | 说明 |
-| ---- | ---- |
+| 插槽名  | 说明       |
+| ------- | ---------- |
 | default | 自定义内容 |
-| dot | 自定义节点 |
+| dot     | 自定义节点 |
 
 ## Timeline类型定义
 

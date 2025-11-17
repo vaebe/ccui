@@ -24,7 +24,10 @@ export default defineComponent({
     const autoCloseTimer = ref<number>()
 
     const isControlled = computed(() => props.visible !== undefined)
-    const actualVisible = computed(() => (isControlled.value ? props.visible : visible.value))
+    const actualVisible = computed(() => {
+      const val = isControlled.value ? props.visible : visible.value
+      return Boolean(val)
+    })
 
     // 虚拟触发支持
     const actualTriggerRef = computed(() => {
@@ -219,33 +222,6 @@ export default defineComponent({
       }
     }
 
-    let cleanup: (() => void) | undefined
-
-    onMounted(() => {
-      if (actualVisible.value && actualTriggerRef.value && popperRef.value) {
-        cleanup = autoUpdate(actualTriggerRef.value, popperRef.value, update)
-      }
-
-      // 为虚拟触发元素添加事件监听
-      if (props.virtualTriggering && props.virtualRef) {
-        const virtualEl = props.virtualRef
-        if (props.trigger === 'hover') {
-          virtualEl.addEventListener('mouseenter', handleMouseEnter)
-          virtualEl.addEventListener('mouseleave', handleMouseLeave)
-        }
-        else if (props.trigger === 'click') {
-          virtualEl.addEventListener('click', handleClick)
-        }
-        else if (props.trigger === 'focus') {
-          virtualEl.addEventListener('focus', handleFocus)
-          virtualEl.addEventListener('blur', handleBlur)
-          virtualEl.addEventListener('keydown', handleKeydown)
-        }
-        else if (props.trigger === 'contextmenu') {
-          virtualEl.addEventListener('contextmenu', handleContextMenu)
-        }
-      }
-    })
     const rootClass = computed(() => {
       return [ns.b(), props.disabled ? ns.m('disabled') : ''].filter(Boolean).join(' ')
     })
@@ -276,6 +252,22 @@ export default defineComponent({
         doHide()
       }
     }
+
+    let cleanup: (() => void) | undefined
+
+    onMounted(() => {
+    // 初始化时如果 visible 为 true，确保显示并监听文档级事件
+      if (props.visible) {
+        nextTick(() => {
+          const triggerElement = actualTriggerRef.value
+          if (triggerElement && popperRef.value) {
+            cleanup = autoUpdate(triggerElement, popperRef.value, update)
+          }
+          window.addEventListener('mousedown', onDocumentMouseDown, true)
+          window.addEventListener('keydown', onDocumentKeydown, true)
+        })
+      }
+    })
     onUnmounted(() => {
       clearTimers()
       cleanup?.()
@@ -295,10 +287,16 @@ export default defineComponent({
       }
     })
     watch(() => props.visible, (newVal) => {
-      if (newVal !== undefined && newVal) {
-        nextTick(() => {
-          update()
-        })
+      if (isControlled.value) {
+        const boolVal = Boolean(newVal)
+        if (boolVal !== visible.value) {
+          visible.value = boolVal
+          if (boolVal) {
+            nextTick(() => {
+              update()
+            })
+          }
+        }
       }
     })
     watch(actualVisible, (newVal) => {

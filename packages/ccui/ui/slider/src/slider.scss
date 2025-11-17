@@ -1,0 +1,320 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-slider {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  font-size: $ccui-font-size;
+  color: $ccui-text;
+  user-select: none;
+
+  // 禁用状态
+  &--disabled {
+    cursor: not-allowed;
+
+    .#{$cls-prefix}-slider__wrapper {
+      cursor: not-allowed;
+    }
+
+    .#{$cls-prefix}-slider__track {
+      background-color: $ccui-disabled-line;
+    }
+
+    .#{$cls-prefix}-slider__bar {
+      background-color: $ccui-disabled-text;
+    }
+
+    .#{$cls-prefix}-slider__button {
+      cursor: not-allowed;
+      border-color: $ccui-disabled-line;
+      background-color: $ccui-disabled-bg;
+
+      &:hover {
+        transform: none;
+        border-color: $ccui-disabled-line;
+      }
+    }
+  }
+
+  // 垂直模式
+  &--vertical {
+    display: inline-block;
+    width: auto;
+    height: 200px;
+
+    .#{$cls-prefix}-slider__wrapper {
+      width: 6px;
+      height: 100%;
+      margin: 0 auto;
+    }
+
+    .#{$cls-prefix}-slider__track {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .#{$cls-prefix}-slider__bar {
+      width: 100%;
+      height: auto;
+      bottom: 0;
+      top: auto;
+    }
+
+    .#{$cls-prefix}-slider__button-wrapper {
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%) translateY(50%);
+    }
+
+    .#{$cls-prefix}-slider__stops {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+
+      .#{$cls-prefix}-slider__stop {
+        width: 100%;
+        height: 2px;
+        top: auto;
+        left: 0;
+      }
+    }
+
+    .#{$cls-prefix}-slider__marks {
+      top: 0;
+      left: 16px;
+      width: 20px;
+      height: 100%;
+
+      .#{$cls-prefix}-slider__mark {
+        top: auto;
+        left: 0;
+        transform: translateY(50%);
+
+        &-line {
+          width: 8px;
+          height: 1px;
+          background-color: $ccui-dividing-line;
+
+          &::before {
+            width: 8px;
+            height: 8px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        &-label {
+          top: 50%;
+          left: 12px;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+
+  // 尺寸变体
+  &--large {
+    .#{$cls-prefix}-slider__button {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &--small {
+    .#{$cls-prefix}-slider__button {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  // 带输入框的容器
+  &--with-input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-direction: row-reverse;
+    gap: 16px;
+
+    .#{$cls-prefix}-slider__wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .#{$cls-prefix}-slider__input {
+      flex-shrink: 0;
+      width: 120px;
+    }
+  }
+
+  &__input-number {
+    width: 100%;
+  }
+
+  // 滑块包装器
+  &__wrapper {
+    position: relative;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  // 轨道
+  &__track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background-color: $ccui-dividing-line;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  // 进度条
+  &__bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: $ccui-primary;
+    border-radius: 3px;
+    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
+  }
+
+  // 刻度点
+  &__stops {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    margin-top: -3px;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__stop {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: $ccui-base-bg;
+      transform: translateX(-50%);
+    }
+  }
+
+  // 标记
+  &__marks {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    right: 0;
+    height: 100%;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__mark {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+
+      &-line {
+        width: 1px;
+        height: 8px;
+        background-color: $ccui-dividing-line;
+        margin: 0 auto;
+        position: relative;
+
+        // 标记点
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: $ccui-base-bg;
+          border: 2px solid $ccui-dividing-line;
+        }
+      }
+
+      &-label {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: $ccui-font-size-sm;
+        color: $ccui-aide-text;
+        white-space: nowrap;
+        line-height: 1.2;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  // 滑块按钮包装器
+  &__button-wrapper {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+
+    &--first {
+      z-index: 3;
+    }
+
+    &--second {
+      z-index: 2;
+    }
+
+    // 确保 Tooltip 组件不影响按钮定位
+    .#{$cls-prefix}-tooltip {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .#{$cls-prefix}-tooltip__trigger {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // 滑块按钮
+  &__button {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $ccui-primary;
+    border-radius: 50%;
+    background-color: $ccui-base-bg;
+    cursor: grab;
+    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
+    box-shadow: $ccui-shadow-length-base $ccui-shadow;
+
+    &:hover {
+      border-color: $ccui-primary-hover;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($ccui-primary, 0.2);
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .#{$cls-prefix}-slider__button {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}

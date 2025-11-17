@@ -31,4 +31,4 @@ jobs:
         run: pnpm install
 
       - name: Run tests
-        run: pnpm --filter ccui test
+        run: pnpm --filter vue3-ccui test

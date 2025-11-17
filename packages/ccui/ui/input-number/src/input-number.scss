@@ -1,0 +1,254 @@
+@use '../../style-var/index.scss' as *;
+
+// 通用混入
+@mixin disabled-state {
+  cursor: not-allowed;
+  color: $ccui-disabled-text;
+  background-color: $ccui-disabled-bg;
+  border-color: $ccui-disabled-line;
+
+  &:hover {
+    color: $ccui-disabled-text;
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+  }
+}
+
+@mixin focus-state {
+  border-color: $ccui-primary;
+  box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+}
+
+@mixin hide-controls {
+  .#{$cls-prefix}-input-number__increase,
+  .#{$cls-prefix}-input-number__decrease {
+    display: none;
+  }
+}
+
+@mixin control-button-base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $ccui-text;
+  text-align: center;
+  cursor: pointer;
+  background-color: $ccui-base-bg;
+  transition: all 0.3s;
+  user-select: none;
+
+  &:hover {
+    color: $ccui-primary;
+    background-color: $ccui-list-item-hover-bg;
+  }
+
+  &:active {
+    background-color: $ccui-list-item-active-bg;
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+  }
+
+  svg {
+    fill: currentColor;
+  }
+}
+
+@mixin size-variant($width, $height, $font-size, $inner-height, $control-width, $svg-size, $padding: 0 11px) {
+  width: $width;
+  height: $height;
+  font-size: $font-size;
+
+  .#{$cls-prefix}-input-number__inner {
+    height: $inner-height;
+    padding: $padding;
+    font-size: $font-size;
+  }
+
+  .#{$cls-prefix}-input-number__increase,
+  .#{$cls-prefix}-input-number__decrease {
+    width: $control-width;
+
+    svg {
+      width: $svg-size;
+      height: $svg-size;
+    }
+  }
+
+  &.#{$cls-prefix}-input-number--controls-right {
+    .#{$cls-prefix}-input-number__inner {
+      padding-left: 0;
+      padding-right: $control-width;
+    }
+
+    .#{$cls-prefix}-input-number__controls {
+      width: $control-width;
+      height: $inner-height;
+    }
+  }
+}
+
+.#{$cls-prefix}-input-number {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  width: 150px;
+  height: 32px;
+  font-size: $ccui-font-size;
+  line-height: 1.5;
+  color: $ccui-text;
+  background-color: $ccui-base-bg;
+  border: 1px solid $ccui-form-control-line;
+  border-radius: $ccui-border-radius;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: $ccui-primary;
+  }
+
+  &--focused {
+    @include focus-state;
+  }
+
+  &--glow {
+    @include focus-state;
+  }
+
+  &--disabled {
+    @include disabled-state;
+
+    .#{$cls-prefix}-input-number__inner {
+      cursor: not-allowed;
+      background-color: transparent;
+      color: $ccui-disabled-text;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      @include disabled-state;
+    }
+  }
+
+  &--readonly {
+    .#{$cls-prefix}-input-number__inner {
+      cursor: default;
+    }
+
+    @include hide-controls;
+  }
+
+  &__input {
+    position: relative;
+    flex: 1;
+    display: inline-block;
+    width: 100%;
+  }
+
+  &__inner {
+    width: 100%;
+    height: 30px;
+    padding: 0 11px;
+    font-size: inherit;
+    line-height: 1.5;
+    color: $ccui-text;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    transition: all 0.3s;
+    appearance: none;
+    text-align: center;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+
+    &[type='number'] {
+      appearance: textfield;
+    }
+
+    &::placeholder {
+      color: $ccui-text-weak;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__increase,
+  &__decrease {
+    @include control-button-base;
+    width: 32px;
+    height: 100%;
+    font-size: 12px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  &__increase {
+    border-left: 1px solid $ccui-form-control-line;
+  }
+
+  &__decrease {
+    border-right: 1px solid $ccui-form-control-line;
+  }
+
+  // 无控制按钮样式
+  &--without-controls {
+    .#{$cls-prefix}-input-number__inner {
+      padding: 0 11px;
+    }
+
+    @include hide-controls;
+  }
+
+  // 右侧控制按钮样式
+  &--controls-right {
+    .#{$cls-prefix}-input-number__inner {
+      padding: 0 20px 0 0;
+    }
+
+    .#{$cls-prefix}-input-number__controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      width: 22px;
+      height: 30px;
+      border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+    }
+
+    .#{$cls-prefix}-input-number__increase,
+    .#{$cls-prefix}-input-number__decrease {
+      width: 22px;
+      border: unset;
+      border-left: 1px solid $ccui-form-control-line;
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .#{$cls-prefix}-input-number__increase {
+      border-bottom: 1px solid $ccui-form-control-line;
+    }
+  }
+
+  // 尺寸变体
+  &--lg {
+    @include size-variant(200px, 40px, $ccui-font-size-lg, 38px, 40px, 14px);
+  }
+
+  &--sm {
+    @include size-variant(100px, 24px, $ccui-font-size-sm, 22px, 24px, 8px, 0 7px);
+  }
+}
