@@ -66,6 +66,14 @@
       top: auto;
       left: 50%;
       transform: translateX(-50%);
+      bottom: 0; // 默认从底部开始
+
+      // 确保垂直模式下按钮正确定位
+      .#{$cls-prefix}-tooltip {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
 
     .#{$cls-prefix}-slider__stops {
@@ -375,15 +383,15 @@
       z-index: 2;
     }
 
-    // Tooltip 组件内部结构
+    // 确保 Tooltip 组件不影响按钮定位
     .#{$cls-prefix}-tooltip {
-      display: inline-block;
+      display: block;
       width: 100%;
       height: 100%;
     }
 
     .#{$cls-prefix}-tooltip__trigger {
-      display: inline-block;
+      display: block;
       width: 100%;
       height: 100%;
     }
