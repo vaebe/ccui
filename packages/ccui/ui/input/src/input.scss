@@ -1,32 +1,29 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-input {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  vertical-align: middle;
-  font-size: 14px;
-  line-height: $ccui-line-height-base;
-  border-radius: $ccui-border-radius;
-  transition: $ccui-animation-duration-base;
-  background-color: $ccui-base-bg;
-  border: 1px solid $ccui-line;
-  color: $ccui-text;
-
-  &:hover {
-    border-color: $ccui-brand-hover;
-  }
-
   &__wrapper {
+    position: relative;
     display: inline-flex;
     align-items: center;
     width: 100%;
-    border-radius: $ccui-border-radius;
-    transition: $ccui-animation-duration-base;
+    box-sizing: border-box;
     background-color: $ccui-base-bg;
     border: 1px solid $ccui-line;
+    border-radius: $ccui-border-radius;
+    color: $ccui-text;
+    font-size: 14px;
+    transition:
+      border-color $ccui-animation-duration-base,
+      box-shadow $ccui-animation-duration-base;
+
+    &:hover {
+      border-color: $ccui-brand-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-brand;
+      box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+    }
 
     &--disabled {
       background-color: $ccui-disabled-bg;
@@ -39,64 +36,74 @@
       }
     }
 
-    &--focus {
-      border-color: $ccui-brand;
-      box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
-    }
-
-    &--hover {
-      border-color: $ccui-brand-hover;
-    }
-
     &--large {
-      font-size: 16px;
-      line-height: 1.5;
-      padding: 12px;
+      height: $ccui-size-lg;
+      font-size: $ccui-font-size-lg;
+
+      &.#{$cls-prefix}-input--prefix {
+        input,
+        textarea {
+          padding-left: 24px;
+        }
+      }
+
+      &.#{$cls-prefix}-input--suffix,
+      &.#{$cls-prefix}-input--clearable {
+        input,
+        textarea {
+          padding-right: 24px;
+        }
+      }
     }
 
     &--default {
-      font-size: 14px;
-      line-height: 1.5;
-      padding: 8px;
+      height: $ccui-size-md;
+      font-size: $ccui-font-size-md;
+
+      &.#{$cls-prefix}-input--prefix {
+        input,
+        textarea {
+          padding-left: 24px;
+        }
+      }
+
+      &.#{$cls-prefix}-input--suffix,
+      &.#{$cls-prefix}-input--clearable {
+        input,
+        textarea {
+          padding-right: 24px;
+        }
+      }
     }
 
     &--small {
-      font-size: 12px;
-      line-height: 1.5;
-      padding: 4px;
+      height: $ccui-size-sm;
+      font-size: $ccui-font-size-sm;
+
+      &.#{$cls-prefix}-input--prefix {
+        input,
+        textarea {
+          padding-left: 20px;
+        }
+      }
+
+      &.#{$cls-prefix}-input--suffix,
+      &.#{$cls-prefix}-input--clearable {
+        input,
+        textarea {
+          padding-right: 20px;
+        }
+      }
     }
-  }
-
-  &--disabled {
-    background-color: $ccui-disabled-bg;
-    border-color: $ccui-disabled-line;
-    color: $ccui-disabled-text;
-    cursor: not-allowed;
-
-    &:hover {
-      border-color: $ccui-disabled-line;
-    }
-  }
-
-  &--readonly {
-    cursor: default;
-  }
-
-  &--clearable,
-  &--suffix {
-    padding-right: 30px;
-  }
-
-  &--prefix {
-    padding-left: 30px;
   }
 
   &__main {
     position: relative;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     flex: 1;
     width: 100%;
+    height: 100%;
   }
 
   &__prepend,
@@ -107,11 +114,8 @@
     white-space: nowrap;
     background-color: $ccui-area;
     border: 1px solid $ccui-line;
-    border-radius: $ccui-border-radius;
     color: $ccui-text;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 0 8px;
+    font-size: inherit;
   }
 
   &__prepend {
@@ -136,14 +140,15 @@
     justify-content: center;
     color: $ccui-placeholder;
     pointer-events: none;
+    z-index: 1;
   }
 
   &__prefix {
-    left: 10px;
+    left: 8px;
   }
 
   &__suffix {
-    right: 10px;
+    right: 8px;
   }
 
   &__clear,
@@ -152,6 +157,7 @@
     cursor: pointer;
     pointer-events: auto;
     color: $ccui-placeholder;
+    transition: color $ccui-animation-duration-base;
 
     &:hover {
       color: $ccui-text;
@@ -160,26 +166,23 @@
 
   input,
   textarea {
-    display: inline-block;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
-    background: none;
+    background: transparent;
     border: none;
     outline: none;
     color: inherit;
     font-size: inherit;
-    line-height: inherit;
-    padding: 0;
-    margin: 0;
-    border-radius: $ccui-border-radius;
+    font-family: inherit;
+    position: relative;
+    z-index: 0;
+    box-sizing: border-box;
 
     &::placeholder {
       color: $ccui-placeholder;
     }
 
     &:disabled {
-      background: none;
       cursor: not-allowed;
       color: $ccui-disabled-text;
     }
@@ -187,48 +190,6 @@
 
   textarea {
     resize: vertical;
-    padding: 8px;
-  }
-
-  &--large {
-    font-size: 16px;
-    line-height: 1.5;
-
-    input,
-    textarea {
-      padding: 12px;
-    }
-
-    textarea {
-      padding: 12px;
-    }
-  }
-
-  &--default {
-    font-size: 14px;
-    line-height: 1.5;
-
-    input,
-    textarea {
-      padding: 8px;
-    }
-
-    textarea {
-      padding: 8px;
-    }
-  }
-
-  &--small {
-    font-size: 12px;
-    line-height: 1.5;
-
-    input,
-    textarea {
-      padding: 4px;
-    }
-
-    textarea {
-      padding: 4px;
-    }
+    min-height: $ccui-size-lg;
   }
 }

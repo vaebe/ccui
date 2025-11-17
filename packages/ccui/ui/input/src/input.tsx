@@ -36,8 +36,12 @@ export default defineComponent({
       [ns.m('disabled')]: props.disabled,
       [ns.m('readonly')]: props.readonly,
       [ns.m('clearable')]: props.clearable,
-      [ns.m('suffix')]: props.clearable || showPasswordVisible.value,
+      [ns.m('suffix')]: props.clearable || showPasswordVisible.value || slots.suffix,
+      [ns.m('prefix')]: slots.prefix,
     }))
+
+    // 是否聚焦
+    const isFocused = ref(false)
 
     // 包装器类名
     const wrapperClass = computed(() => ({
@@ -67,11 +71,13 @@ export default defineComponent({
 
     // 处理焦点事件
     const handleFocus = (e: FocusEvent) => {
+      isFocused.value = true
       emit('focus', e)
     }
 
     // 处理失去焦点事件
     const handleBlur = (e: FocusEvent) => {
+      isFocused.value = false
       emit('blur', e)
     }
 

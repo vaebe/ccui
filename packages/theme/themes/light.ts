@@ -133,4 +133,8 @@ export default {
   'z-index-modal': '1050',
   'z-index-drawer': '1040',
   'z-index-framework': '1000',
+  // 组件的size
+  'size-sm': '24px',
+  'size-md': '32px',
+  'size-lg': '40px',
 }
