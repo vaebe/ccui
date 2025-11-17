@@ -64,6 +64,47 @@ export default defineComponent({
       document.removeEventListener('touchend', handleDragEnd)
     })
 
+    // 渲染滑块按钮的函数
+    const renderButton = (index: number, value: number, style: any, ariaLabel: string) => {
+      const buttonProps = {
+        'class': [
+          ns.e('button'),
+          { [ns.em('button', 'disabled')]: props.disabled },
+        ],
+        'tabindex': props.disabled ? -1 : 0,
+        'onMousedown': (e: MouseEvent) => handleDragStart(e, index),
+        'onTouchstart': (e: TouchEvent) => handleDragStart(e, index),
+        'onKeydown': (e: KeyboardEvent) => handleKeydown(e, index),
+        'onMouseenter': () => handleButtonMouseEnter(index),
+        'onMouseleave': handleButtonMouseLeave,
+        'role': 'slider',
+        'aria-label': ariaLabel,
+        'aria-valuemin': props.min,
+        'aria-valuemax': props.max,
+        'aria-valuenow': value,
+        'aria-valuetext': getAriaValueText(value),
+        'aria-orientation': props.vertical ? 'vertical' : 'horizontal',
+      }
+
+      return props.showTooltip
+        ? (
+            <Tooltip
+              content={getTooltipContent(index)}
+              visible={getTooltipVisible(index)}
+              placement={getTooltipPlacement()}
+              effect="dark"
+              showArrow={true}
+              trigger="manual"
+              popperClass={props.tooltipClass}
+            >
+              <div {...buttonProps} />
+            </Tooltip>
+          )
+        : (
+            <div {...buttonProps} />
+          )
+    }
+
     return {
       ns,
       sliderRef,
@@ -92,6 +133,7 @@ export default defineComponent({
       getTooltipContent,
       getTooltipVisible,
       getTooltipPlacement,
+      renderButton,
     }
   },
   render() {
@@ -196,59 +238,7 @@ export default defineComponent({
             ]}
             style={this.firstButtonStyle}
           >
-            {this.showTooltip
-              ? (
-                  <Tooltip
-                    content={this.getTooltipContent(0)}
-                    visible={this.getTooltipVisible(0)}
-                    placement={this.getTooltipPlacement()}
-                    effect="dark"
-                    showArrow={true}
-                    trigger="manual"
-                    popperClass={this.tooltipClass}
-                  >
-                    <div
-                      class={[
-                        this.ns.e('button'),
-                        { [this.ns.em('button', 'disabled')]: this.disabled },
-                      ]}
-                      tabindex={this.disabled ? -1 : 0}
-                      onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
-                      onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
-                      onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
-                      onMouseenter={() => this.handleButtonMouseEnter(0)}
-                      onMouseleave={this.handleButtonMouseLeave}
-                      role="slider"
-                      aria-label={this.rangeStartLabel || 'start value'}
-                      aria-valuemin={this.min}
-                      aria-valuemax={this.max}
-                      aria-valuenow={firstValue}
-                      aria-valuetext={this.getAriaValueText(firstValue)}
-                      aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-                    />
-                  </Tooltip>
-                )
-              : (
-                  <div
-                    class={[
-                      this.ns.e('button'),
-                      { [this.ns.em('button', 'disabled')]: this.disabled },
-                    ]}
-                    tabindex={this.disabled ? -1 : 0}
-                    onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
-                    onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
-                    onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
-                    onMouseenter={() => this.handleButtonMouseEnter(0)}
-                    onMouseleave={this.handleButtonMouseLeave}
-                    role="slider"
-                    aria-label={this.rangeStartLabel || 'start value'}
-                    aria-valuemin={this.min}
-                    aria-valuemax={this.max}
-                    aria-valuenow={firstValue}
-                    aria-valuetext={this.getAriaValueText(firstValue)}
-                    aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-                  />
-                )}
+            {this.renderButton(0, firstValue, this.firstButtonStyle, this.rangeStartLabel || 'start value')}
           </div>
 
           {/* 第二个滑块按钮（范围模式） */}
@@ -257,59 +247,7 @@ export default defineComponent({
               class={[this.ns.e('button-wrapper'), this.ns.em('button-wrapper', 'second')]}
               style={this.secondButtonStyle}
             >
-              {this.showTooltip
-                ? (
-                    <Tooltip
-                      content={this.getTooltipContent(1)}
-                      visible={this.getTooltipVisible(1)}
-                      placement={this.getTooltipPlacement()}
-                      effect="dark"
-                      showArrow={true}
-                      trigger="manual"
-                      popperClass={this.tooltipClass}
-                    >
-                      <div
-                        class={[
-                          this.ns.e('button'),
-                          { [this.ns.em('button', 'disabled')]: this.disabled },
-                        ]}
-                        tabindex={this.disabled ? -1 : 0}
-                        onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
-                        onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
-                        onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
-                        onMouseenter={() => this.handleButtonMouseEnter(1)}
-                        onMouseleave={this.handleButtonMouseLeave}
-                        role="slider"
-                        aria-label={this.rangeEndLabel || 'end value'}
-                        aria-valuemin={this.min}
-                        aria-valuemax={this.max}
-                        aria-valuenow={secondValue}
-                        aria-valuetext={this.getAriaValueText(secondValue)}
-                        aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-                      />
-                    </Tooltip>
-                  )
-                : (
-                    <div
-                      class={[
-                        this.ns.e('button'),
-                        { [this.ns.em('button', 'disabled')]: this.disabled },
-                      ]}
-                      tabindex={this.disabled ? -1 : 0}
-                      onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
-                      onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
-                      onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
-                      onMouseenter={() => this.handleButtonMouseEnter(1)}
-                      onMouseleave={this.handleButtonMouseLeave}
-                      role="slider"
-                      aria-label={this.rangeEndLabel || 'end value'}
-                      aria-valuemin={this.min}
-                      aria-valuemax={this.max}
-                      aria-valuenow={secondValue}
-                      aria-valuetext={this.getAriaValueText(secondValue)}
-                      aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-                    />
-                  )}
+              {this.renderButton(1, secondValue, this.secondButtonStyle, this.rangeEndLabel || 'end value')}
             </div>
           )}
         </div>

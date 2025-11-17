@@ -4,11 +4,6 @@ export type SliderSize = 'large' | 'default' | 'small'
 export type SliderPlacement = 'top' | 'right' | 'bottom' | 'left'
 export type SliderMarks = Record<number, string | { style?: Record<string, any>, label?: any }>
 
-export interface SliderMark {
-  style?: Record<string, any>
-  label?: any
-}
-
 export const sliderProps = {
   modelValue: {
     type: [Number, Array] as PropType<number | number[]>,

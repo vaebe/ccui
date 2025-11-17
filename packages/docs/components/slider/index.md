@@ -345,6 +345,50 @@ export default defineComponent({
 
 :::
 
+## 尺寸变体
+
+Slider 提供三种尺寸：large、default、small。
+
+:::demo
+
+```vue
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const value1 = ref(30)
+    const value2 = ref(50)
+    const value3 = ref(70)
+
+    return {
+      value1,
+      value2,
+      value3
+    }
+  }
+})
+</script>
+
+<template>
+  <div>
+    <h4>大尺寸</h4>
+    <c-slider v-model="value1" size="large" />
+
+    <h4>默认尺寸</h4>
+    <c-slider v-model="value2" />
+
+    <h4>小尺寸</h4>
+    <c-slider v-model="value3" size="small" />
+  </div>
+</template>
+
+<style>
+</style>
+```
+
+:::
+
 ## 禁用状态
 
 通过设置 `disabled` 属性来禁用滑块。
@@ -378,32 +422,82 @@ export default defineComponent({
 
 :::
 
+## 无障碍访问
+
+Slider 组件支持完整的无障碍访问功能。
+
+:::demo
+
+```vue
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const value = ref(50)
+
+    function formatValueText(value) {
+      return `当前值为 ${value}`
+    }
+
+    return {
+      value,
+      formatValueText
+    }
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-slider
+      v-model="value"
+      label="音量控制"
+      :format-value-text="formatValueText"
+    />
+  </div>
+</template>
+
+<style>
+</style>
+```
+
+:::
+
 ## API
 
 ### Slider Props
 
-| 参数                  | 说明                                                                                  | 类型                   | 可选值                      | 默认值  |
-| --------------------- | ------------------------------------------------------------------------------------- | ---------------------- | --------------------------- | ------- |
-| model-value / v-model | 绑定值                                                                                | number / number[]      | —                           | 0       |
-| min                   | 最小值                                                                                | number                 | —                           | 0       |
-| max                   | 最大值                                                                                | number                 | —                           | 100     |
-| disabled              | 是否禁用                                                                              | boolean                | —                           | false   |
-| step                  | 步长                                                                                  | number                 | —                           | 1       |
-| show-input            | 是否显示输入框，仅在非范围选择时有效                                                  | boolean                | —                           | false   |
-| show-input-controls   | 在显示输入框的情况下，是否显示输入框的控制按钮                                        | boolean                | —                           | true    |
-| input-size            | 输入框的尺寸                                                                          | string                 | large / default / small     | default |
-| show-stops            | 是否显示间断点                                                                        | boolean                | —                           | false   |
-| show-tooltip          | 是否显示 tooltip                                                                      | boolean                | —                           | true    |
-| format-tooltip        | 格式化 tooltip message                                                                | function(value)        | —                           | —       |
-| tips-renderer         | 自定义 tooltip 内容                                                                 | function(value) / null | —                           | —       |
-| placement             | Tooltip 显示位置                                                                      | string                 | top / right / bottom / left | top     |
-| range                 | 是否为范围选择                                                                        | boolean                | —                           | false   |
-| vertical              | 是否竖向模式                                                                          | boolean                | —                           | false   |
-| height                | Slider 高度，竖向模式时必填                                                           | string                 | —                           | —       |
-| label                 | 屏幕阅读器标签                                                                        | string                 | —                           | —       |
-| debounce              | 输入时的去抖延迟，毫秒                                                                | number                 | —                           | 300     |
-| tooltip-class         | tooltip 的自定义类名                                                                  | string                 | —                           | —       |
-| marks                 | 标记， key 的类型必须为 number 且取值在闭区间 [min, max] 内，每个标记可以单独设置样式 | object                 | —                           | —       |
+| 参数                  | 说明                                                                                 | 类型                   | 可选值                      | 默认值  |
+| --------------------- | ------------------------------------------------------------------------------------ | ---------------------- | --------------------------- | ------- |
+| model-value / v-model | 绑定值                                                                               | number / number[]      | —                           | 0       |
+| min                   | 最小值                                                                               | number                 | —                           | 0       |
+| max                   | 最大值                                                                               | number                 | —                           | 100     |
+| disabled              | 是否禁用                                                                             | boolean                | —                           | false   |
+| step                  | 步长                                                                                 | number                 | —                           | 1       |
+| show-input            | 是否显示输入框，仅在非范围选择时有效                                                 | boolean                | —                           | false   |
+| show-input-controls   | 在显示输入框的情况下，是否显示输入框的控制按钮                                       | boolean                | —                           | true    |
+| input-size            | 输入框的尺寸                                                                         | string                 | large / default / small     | default |
+| show-stops            | 是否显示间断点                                                                       | boolean                | —                           | false   |
+| show-tooltip          | 是否显示 tooltip                                                                     | boolean                | —                           | true    |
+| format-tooltip        | 格式化 tooltip message                                                               | function(value)        | —                           | —       |
+| tips-renderer         | 自定义 tooltip 内容                                                                  | function(value) / null | —                           | —       |
+| placement             | Tooltip 显示位置                                                                     | string                 | top / right / bottom / left | top     |
+| range                 | 是否为范围选择                                                                       | boolean                | —                           | false   |
+| vertical              | 是否竖向模式                                                                         | boolean                | —                           | false   |
+| height                | Slider 高度，竖向模式时必填                                                          | string                 | —                           | 200px   |
+| size                  | Slider 尺寸                                                                          | string                 | large / default / small     | default |
+| label                 | 屏幕阅读器标签                                                                       | string                 | —                           | —       |
+| aria-label            | 无障碍标签                                                                           | string                 | —                           | —       |
+| range-start-label     | 范围选择起始标签                                                                     | string                 | —                           | —       |
+| range-end-label       | 范围选择结束标签                                                                     | string                 | —                           | —       |
+| format-value-text     | 格式化值文本用于无障碍访问                                                           | function(value)        | —                           | —       |
+| tooltip-class         | tooltip 的自定义类名                                                                 | string                 | —                           | —       |
+| marks                 | 标记，key 的类型必须为 number 且取值在闭区间 [min, max] 内，每个标记可以单独设置样式 | object                 | —                           | —       |
+| validate-event        | 是否触发表单验证                                                                     | boolean                | —                           | true    |
+| persistent            | 是否持久化显示 tooltip                                                               | boolean                | —                           | true    |
+| show-default-tooltip  | 是否显示默认 tooltip（当 tipsRenderer 为 null 时）                                   | boolean                | —                           | false   |
+| precision             | 数值精度                                                                             | number                 | —                           | —       |
 
 ### Slider Events
 

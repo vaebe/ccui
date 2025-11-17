@@ -364,32 +364,3 @@ export function useSliderInput(
     handleInputChange,
   }
 }
-
-export function useSliderTooltip(props: SliderProps) {
-  // 格式化提示文本
-  const formatTooltipText = (value: number) => {
-    if (props.tipsRenderer === null) {
-      return null
-    }
-    if (props.formatTooltip) {
-      return props.formatTooltip(value)
-    }
-    if (props.tipsRenderer) {
-      return props.tipsRenderer(value)
-    }
-    return value.toString()
-  }
-
-  // 格式化值文本用于无障碍访问
-  const getAriaValueText = (value: number) => {
-    if (props.formatValueText) {
-      return props.formatValueText(value)
-    }
-    return value.toString()
-  }
-
-  return {
-    formatTooltipText,
-    getAriaValueText,
-  }
-}
