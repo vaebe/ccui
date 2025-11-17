@@ -242,11 +242,11 @@
     align-items: center;
     width: 100%;
     flex-direction: row-reverse;
+    gap: 16px;
 
     .#{$cls-prefix}-slider__wrapper {
       flex: 1;
       min-width: 0;
-      margin-left: 12px;
     }
 
     .#{$cls-prefix}-slider__input {
@@ -373,6 +373,19 @@
 
     &--second {
       z-index: 2;
+    }
+
+    // Tooltip 组件内部结构
+    .#{$cls-prefix}-tooltip {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .#{$cls-prefix}-tooltip__trigger {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
     }
   }
 

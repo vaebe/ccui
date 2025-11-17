@@ -94,11 +94,19 @@ export function useSliderTooltip(
 
   // 获取 tooltip 可见性
   const getTooltipVisible = (index: number) => {
+    if (!props.showTooltip) {
+      return false
+    }
     return shouldShowTooltipForButton(index) || shouldShowDefaultTooltipForButton(index)
   }
 
   // 获取 tooltip 位置
   const getTooltipPlacement = () => {
+    // 如果用户设置了 placement，则使用用户设置的值
+    if (props.placement && props.placement !== 'top') {
+      return props.placement
+    }
+    // 默认根据垂直/水平模式设置位置
     return props.vertical ? 'right' : 'top'
   }
 

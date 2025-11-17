@@ -215,8 +215,8 @@ describe('slider', () => {
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltipComponent.exists()).toBe(true)
     expect(tooltipComponent.props('visible')).toBe(true)
-    // placement 应该根据 vertical 属性自动设置
-    expect(tooltipComponent.props('placement')).toBe('top') // 默认非垂直模式是 top
+    // placement 应该使用用户设置的值
+    expect(tooltipComponent.props('placement')).toBe('bottom')
     wrapper.unmount()
   })
 
