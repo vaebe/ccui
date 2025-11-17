@@ -1,5 +1,5 @@
 import type { SliderProps } from './slider-types'
-import { defineComponent, onUnmounted, ref } from 'vue'
+import { defineComponent, onBeforeUnmount, onUnmounted, ref } from 'vue'
 import { InputNumber } from '../../input-number'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Tooltip } from '../../tooltip'
@@ -32,7 +32,7 @@ export default defineComponent({
       currentValue,
       getPercent,
     )
-    const { isDragging, handleSliderClick, handleDragStart, handleDragEnd } = useSliderInteraction(
+    const { isDragging, handleSliderClick, handleDragStart, handleDragEnd, cleanup: cleanupInteraction } = useSliderInteraction(
       props,
       currentValue,
       emit,
@@ -57,11 +57,13 @@ export default defineComponent({
     } = useSliderTooltip(props, isDragging, currentValue)
 
     // 清理事件监听器
+    onBeforeUnmount(() => {
+      cleanupInteraction()
+    })
+
     onUnmounted(() => {
-      document.removeEventListener('mousemove', handleDragEnd)
-      document.removeEventListener('mouseup', handleDragEnd)
-      document.removeEventListener('touchmove', handleDragEnd)
-      document.removeEventListener('touchend', handleDragEnd)
+      // Force cleanup of any lingering drag listeners
+      handleDragEnd()
     })
 
     // 渲染滑块按钮的函数

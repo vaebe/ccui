@@ -218,7 +218,9 @@ export default defineComponent({
 
 ## 带输入框
 
-通过设置 `show-input` 属性可以显示输入框，仅在非范围选择时有效。
+通过设置 `show-input` 属性可以显示输入框。支持单值模式和范围模式。
+
+### 单值模式
 
 :::demo
 
@@ -241,6 +243,38 @@ export default defineComponent({
   <div>
     <c-slider v-model="value" show-input />
     <p>当前值: {{ value }}</p>
+  </div>
+</template>
+
+<style>
+</style>
+```
+
+:::
+
+### 范围模式
+
+:::demo
+
+```vue
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const range = ref([20, 80])
+
+    return {
+      range
+    }
+  }
+})
+</script>
+
+<template>
+  <div>
+    <c-slider v-model="range" :range="true" show-input />
+    <p>当前范围: {{ range }}</p>
   </div>
 </template>
 
@@ -475,7 +509,7 @@ export default defineComponent({
 | max                   | 最大值                                                                               | number                 | —                           | 100     |
 | disabled              | 是否禁用                                                                             | boolean                | —                           | false   |
 | step                  | 步长                                                                                 | number                 | —                           | 1       |
-| show-input            | 是否显示输入框，仅在非范围选择时有效                                                 | boolean                | —                           | false   |
+| show-input            | 是否显示输入框，支持单值模式和范围模式                                               | boolean                | —                           | false   |
 | show-input-controls   | 在显示输入框的情况下，是否显示输入框的控制按钮                                       | boolean                | —                           | true    |
 | input-size            | 输入框的尺寸                                                                         | string                 | large / default / small     | default |
 | show-stops            | 是否显示间断点                                                                       | boolean                | —                           | false   |

@@ -231,12 +231,20 @@ export function useSliderInteraction(
     document.addEventListener('touchend', handleDragEnd)
   }
 
+  // Cleanup function
+  const cleanup = () => {
+    if (isDragging.value) {
+      handleDragEnd()
+    }
+  }
+
   return {
     isDragging,
     dragIndex,
     handleSliderClick,
     handleDragStart,
     handleDragEnd,
+    cleanup,
   }
 }
 
@@ -360,13 +368,26 @@ export function useSliderInput(
   emit: (event: 'update:modelValue' | 'input' | 'change', value: number | number[]) => void,
 ) {
   // 处理输入框变化
-  const handleInputChange = (value: number | undefined) => {
+  const handleInputChange = (value: number | undefined, index?: number) => {
     if (value === undefined || value === null) {
       return
     }
 
     const clampedValue = Math.max(props.min, Math.min(props.max, value))
-    currentValue.value = clampedValue
+
+    if (props.range && Array.isArray(currentValue.value)) {
+      const [start, end] = currentValue.value
+      if (index === 0) {
+        currentValue.value = [Math.min(clampedValue, end), end]
+      }
+      else {
+        currentValue.value = [start, Math.max(clampedValue, start)]
+      }
+    }
+    else {
+      currentValue.value = clampedValue
+    }
+
     emit('change', clampedValue)
 
     // 触发表单验证
