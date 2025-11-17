@@ -65,7 +65,7 @@
     .#{$cls-prefix}-slider__button-wrapper {
       top: auto;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(50%);
     }
 
     .#{$cls-prefix}-slider__stops {
