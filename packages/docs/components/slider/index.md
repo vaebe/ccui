@@ -252,7 +252,7 @@ export default defineComponent({
 
 ## 定制 Tooltip 显示内容
 
-通过 `tips-renderer` 属性可以定制 Tooltip 显示内容，设置为 `null` 可以隐藏 Tooltip。
+通过 `tips-renderer` 属性可以定制 Tooltip 显示内容，设置 `show-tooltip="false"` 可以隐藏 Tooltip。
 
 :::demo
 
@@ -285,7 +285,7 @@ export default defineComponent({
     <p>当前值: {{ value1 }}</p>
 
     <h4>隐藏 Tooltip</h4>
-    <c-slider v-model="value2" :tips-renderer="null" />
+    <c-slider v-model="value2" :show-tooltip="false" />
     <p>当前值: {{ value2 }}</p>
   </div>
 </template>
@@ -395,7 +395,7 @@ export default defineComponent({
 | show-stops            | 是否显示间断点                                                                        | boolean                | —                           | false   |
 | show-tooltip          | 是否显示 tooltip                                                                      | boolean                | —                           | true    |
 | format-tooltip        | 格式化 tooltip message                                                                | function(value)        | —                           | —       |
-| tips-renderer         | 自定义 tooltip 内容，设置为 null 可隐藏 tooltip                                       | function(value) / null | —                           | —       |
+| tips-renderer         | 自定义 tooltip 内容                                                                 | function(value) / null | —                           | —       |
 | placement             | Tooltip 显示位置                                                                      | string                 | top / right / bottom / left | top     |
 | range                 | 是否为范围选择                                                                        | boolean                | —                           | false   |
 | vertical              | 是否竖向模式                                                                          | boolean                | —                           | false   |

@@ -196,36 +196,59 @@ export default defineComponent({
             ]}
             style={this.firstButtonStyle}
           >
-            <Tooltip
-              content={this.getTooltipContent(0)}
-              visible={this.showTooltip ? this.getTooltipVisible(0) : undefined}
-              placement={this.getTooltipPlacement()}
-              disabled={!this.showTooltip}
-              effect="dark"
-              showArrow={true}
-              trigger="manual"
-              popperClass={this.tooltipClass}
-            >
-              <div
-                class={[
-                  this.ns.e('button'),
-                  { [this.ns.em('button', 'disabled')]: this.disabled },
-                ]}
-                tabindex={this.disabled ? -1 : 0}
-                onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
-                onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
-                onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
-                onMouseenter={() => this.handleButtonMouseEnter(0)}
-                onMouseleave={this.handleButtonMouseLeave}
-                role="slider"
-                aria-label={this.rangeStartLabel || 'start value'}
-                aria-valuemin={this.min}
-                aria-valuemax={this.max}
-                aria-valuenow={firstValue}
-                aria-valuetext={this.getAriaValueText(firstValue)}
-                aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-              />
-            </Tooltip>
+            {this.showTooltip
+              ? (
+                  <Tooltip
+                    content={this.getTooltipContent(0)}
+                    visible={this.getTooltipVisible(0)}
+                    placement={this.getTooltipPlacement()}
+                    effect="dark"
+                    showArrow={true}
+                    trigger="manual"
+                    popperClass={this.tooltipClass}
+                  >
+                    <div
+                      class={[
+                        this.ns.e('button'),
+                        { [this.ns.em('button', 'disabled')]: this.disabled },
+                      ]}
+                      tabindex={this.disabled ? -1 : 0}
+                      onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
+                      onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
+                      onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
+                      onMouseenter={() => this.handleButtonMouseEnter(0)}
+                      onMouseleave={this.handleButtonMouseLeave}
+                      role="slider"
+                      aria-label={this.rangeStartLabel || 'start value'}
+                      aria-valuemin={this.min}
+                      aria-valuemax={this.max}
+                      aria-valuenow={firstValue}
+                      aria-valuetext={this.getAriaValueText(firstValue)}
+                      aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+                    />
+                  </Tooltip>
+                )
+              : (
+                  <div
+                    class={[
+                      this.ns.e('button'),
+                      { [this.ns.em('button', 'disabled')]: this.disabled },
+                    ]}
+                    tabindex={this.disabled ? -1 : 0}
+                    onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
+                    onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
+                    onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
+                    onMouseenter={() => this.handleButtonMouseEnter(0)}
+                    onMouseleave={this.handleButtonMouseLeave}
+                    role="slider"
+                    aria-label={this.rangeStartLabel || 'start value'}
+                    aria-valuemin={this.min}
+                    aria-valuemax={this.max}
+                    aria-valuenow={firstValue}
+                    aria-valuetext={this.getAriaValueText(firstValue)}
+                    aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+                  />
+                )}
           </div>
 
           {/* 第二个滑块按钮（范围模式） */}
@@ -234,36 +257,59 @@ export default defineComponent({
               class={[this.ns.e('button-wrapper'), this.ns.em('button-wrapper', 'second')]}
               style={this.secondButtonStyle}
             >
-              <Tooltip
-                content={this.getTooltipContent(1)}
-                visible={this.showTooltip ? this.getTooltipVisible(1) : undefined}
-                placement={this.getTooltipPlacement()}
-                disabled={!this.showTooltip}
-                effect="dark"
-                showArrow={true}
-                trigger="manual"
-                popperClass={this.tooltipClass}
-              >
-                <div
-                  class={[
-                    this.ns.e('button'),
-                    { [this.ns.em('button', 'disabled')]: this.disabled },
-                  ]}
-                  tabindex={this.disabled ? -1 : 0}
-                  onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
-                  onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
-                  onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
-                  onMouseenter={() => this.handleButtonMouseEnter(1)}
-                  onMouseleave={this.handleButtonMouseLeave}
-                  role="slider"
-                  aria-label={this.rangeEndLabel || 'end value'}
-                  aria-valuemin={this.min}
-                  aria-valuemax={this.max}
-                  aria-valuenow={secondValue}
-                  aria-valuetext={this.getAriaValueText(secondValue)}
-                  aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-                />
-              </Tooltip>
+              {this.showTooltip
+                ? (
+                    <Tooltip
+                      content={this.getTooltipContent(1)}
+                      visible={this.getTooltipVisible(1)}
+                      placement={this.getTooltipPlacement()}
+                      effect="dark"
+                      showArrow={true}
+                      trigger="manual"
+                      popperClass={this.tooltipClass}
+                    >
+                      <div
+                        class={[
+                          this.ns.e('button'),
+                          { [this.ns.em('button', 'disabled')]: this.disabled },
+                        ]}
+                        tabindex={this.disabled ? -1 : 0}
+                        onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
+                        onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
+                        onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
+                        onMouseenter={() => this.handleButtonMouseEnter(1)}
+                        onMouseleave={this.handleButtonMouseLeave}
+                        role="slider"
+                        aria-label={this.rangeEndLabel || 'end value'}
+                        aria-valuemin={this.min}
+                        aria-valuemax={this.max}
+                        aria-valuenow={secondValue}
+                        aria-valuetext={this.getAriaValueText(secondValue)}
+                        aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+                      />
+                    </Tooltip>
+                  )
+                : (
+                    <div
+                      class={[
+                        this.ns.e('button'),
+                        { [this.ns.em('button', 'disabled')]: this.disabled },
+                      ]}
+                      tabindex={this.disabled ? -1 : 0}
+                      onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
+                      onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
+                      onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
+                      onMouseenter={() => this.handleButtonMouseEnter(1)}
+                      onMouseleave={this.handleButtonMouseLeave}
+                      role="slider"
+                      aria-label={this.rangeEndLabel || 'end value'}
+                      aria-valuemin={this.min}
+                      aria-valuemax={this.max}
+                      aria-valuenow={secondValue}
+                      aria-valuetext={this.getAriaValueText(secondValue)}
+                      aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+                    />
+                  )}
             </div>
           )}
         </div>

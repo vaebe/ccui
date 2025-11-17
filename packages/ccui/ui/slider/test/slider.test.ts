@@ -102,10 +102,9 @@ describe('slider', () => {
       },
     })
 
-    // tooltip 组件应该存在但被禁用
+    // tooltip 组件不应该存在
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('disabled')).toBe(true)
+    expect(tooltipComponent.exists()).toBe(false)
     wrapper.unmount()
   })
 
@@ -657,8 +656,7 @@ describe('slider', () => {
     })
 
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('disabled')).toBe(true)
+    expect(tooltipComponent.exists()).toBe(false)
     wrapper.unmount()
   })
 
