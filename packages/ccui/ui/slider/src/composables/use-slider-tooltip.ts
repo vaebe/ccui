@@ -94,9 +94,6 @@ export function useSliderTooltip(
 
   // 获取 tooltip 可见性
   const getTooltipVisible = (index: number) => {
-    if (!props.showTooltip) {
-      return false
-    }
     return shouldShowTooltipForButton(index) || shouldShowDefaultTooltipForButton(index)
   }
 

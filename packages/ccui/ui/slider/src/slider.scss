@@ -66,13 +66,6 @@
       top: auto;
       left: 50%;
       transform: translateX(-50%);
-
-      // 确保垂直模式下按钮正确定位
-      .#{$cls-prefix}-tooltip {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-      }
     }
 
     .#{$cls-prefix}-slider__stops {
