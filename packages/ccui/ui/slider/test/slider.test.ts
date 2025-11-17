@@ -1,4 +1,4 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Slider } from '../index'
@@ -17,7 +17,7 @@ describe('slider', () => {
   })
 
   it('dom', () => {
-    wrapper = shallowMount(Slider)
+    wrapper = mount(Slider)
 
     expect(wrapper.find(baseClass).exists()).toBe(true)
     expect(wrapper.find(wrapperClass).exists()).toBe(true)
@@ -200,7 +200,7 @@ describe('slider', () => {
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
-    expect(wrapper.find('.ccui-slider__tooltip--bottom').exists()).toBe(true)
+    expect(wrapper.find('.ccui-slider__tooltip').exists()).toBe(true)
     wrapper.unmount()
   })
 

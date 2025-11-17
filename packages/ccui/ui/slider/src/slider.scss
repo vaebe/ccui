@@ -223,6 +223,23 @@
     }
   }
 
+  // 带输入框的容器
+  &--with-input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .#{$cls-prefix}-slider__wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .#{$cls-prefix}-slider__input {
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+  }
+
   &__input-number {
     width: 100%;
   }
@@ -367,7 +384,6 @@
 
   // 提示框
   &__tooltip {
-    position: absolute;
     padding: 4px 8px;
     min-width: 24px;
     font-size: $ccui-font-size-sm;
@@ -378,125 +394,13 @@
     white-space: nowrap;
     z-index: 10;
     box-shadow: $ccui-shadow-length-connected-overlay $ccui-shadow;
-
-    // 默认位置（top）
-    &--top {
-      bottom: 100%;
-      left: 50%;
-      margin-bottom: 8px;
-      transform: translateX(-50%);
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -4px;
-        border: 4px solid transparent;
-        border-top-color: $ccui-feedback-overlay-bg;
-      }
-    }
-
-    // 右侧位置
-    &--right {
-      left: 100%;
-      top: 50%;
-      margin-left: 8px;
-      transform: translateY(-50%);
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        margin-top: -4px;
-        margin-left: -4px;
-        border: 4px solid transparent;
-        border-right-color: $ccui-feedback-overlay-bg;
-      }
-    }
-
-    // 底部位置
-    &--bottom {
-      top: 100%;
-      left: 50%;
-      margin-top: 8px;
-      transform: translateX(-50%);
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -4px;
-        border: 4px solid transparent;
-        border-bottom-color: $ccui-feedback-overlay-bg;
-      }
-    }
-
-    // 左侧位置
-    &--left {
-      right: 100%;
-      top: 50%;
-      margin-right: 8px;
-      transform: translateY(-50%);
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: 0;
-        margin-top: -4px;
-        margin-right: -4px;
-        border: 4px solid transparent;
-        border-left-color: $ccui-feedback-overlay-bg;
-      }
-    }
+    pointer-events: none;
 
     // 持久化提示框
     &--persistent {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-    }
-  }
-
-  // 垂直模式的提示框调整
-  &--vertical {
-    .#{$cls-prefix}-slider__tooltip {
-      &--top {
-        bottom: auto;
-        left: 100%;
-        top: 50%;
-        margin-left: 8px;
-        margin-bottom: 0;
-        transform: translateY(-50%);
-
-        &::after {
-          top: 50%;
-          left: 0;
-          margin-top: -4px;
-          margin-left: -4px;
-          border-top-color: transparent;
-          border-right-color: $ccui-feedback-overlay-bg;
-        }
-      }
-
-      &--right {
-        left: auto;
-        right: 100%;
-        margin-left: 0;
-        margin-right: 8px;
-
-        &::after {
-          left: auto;
-          right: 0;
-          margin-left: 0;
-          margin-right: -4px;
-          border-right-color: transparent;
-          border-left-color: $ccui-feedback-overlay-bg;
-        }
-      }
     }
   }
 
