@@ -1,5 +1,6 @@
 import type { SliderMarks, SliderProps } from './slider-types'
 import { computed, defineComponent, onUnmounted, ref } from 'vue'
+import { InputNumber } from '../../input-number'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { sliderProps } from './slider-types'
 import './slider.scss'
@@ -13,6 +14,8 @@ export default defineComponent({
     const sliderRef = ref<HTMLElement>()
     const isDragging = ref(false)
     const dragIndex = ref<number | null>(null)
+    const isHovering = ref(false)
+    const hoverIndex = ref<number | null>(null)
 
     // 计算当前值
     const currentValue = computed({
@@ -40,15 +43,30 @@ export default defineComponent({
     const trackStyle = computed(() => {
       if (props.range && Array.isArray(currentValue.value)) {
         const [start, end] = currentValue.value
-        return {
-          left: `${getPercent(start)}%`,
-          width: `${getPercent(end) - getPercent(start)}%`,
+        if (props.vertical) {
+          return {
+            bottom: `${getPercent(start)}%`,
+            height: `${getPercent(end) - getPercent(start)}%`,
+          }
+        }
+        else {
+          return {
+            left: `${getPercent(start)}%`,
+            width: `${getPercent(end) - getPercent(start)}%`,
+          }
         }
       }
       else {
         const value = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
-        return {
-          width: `${getPercent(value)}%`,
+        if (props.vertical) {
+          return {
+            height: `${getPercent(value)}%`,
+          }
+        }
+        else {
+          return {
+            width: `${getPercent(value)}%`,
+          }
         }
       }
     })
@@ -56,16 +74,30 @@ export default defineComponent({
     // 计算第一个滑块位置
     const firstButtonStyle = computed(() => {
       const value = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
-      return {
-        left: `${getPercent(value)}%`,
+      if (props.vertical) {
+        return {
+          bottom: `${getPercent(value)}%`,
+        }
+      }
+      else {
+        return {
+          left: `${getPercent(value)}%`,
+        }
       }
     })
 
     // 计算第二个滑块位置
     const secondButtonStyle = computed(() => {
       if (props.range && Array.isArray(currentValue.value)) {
-        return {
-          left: `${getPercent(currentValue.value[1])}%`,
+        if (props.vertical) {
+          return {
+            bottom: `${getPercent(currentValue.value[1])}%`,
+          }
+        }
+        else {
+          return {
+            left: `${getPercent(currentValue.value[1])}%`,
+          }
         }
       }
       return {}
@@ -262,28 +294,19 @@ export default defineComponent({
     }
 
     // 处理输入框变化
-    const handleInputChange = (event: Event) => {
-      const target = event.target as HTMLInputElement
-      const value = target.value
-
-      // 如果输入为空，不更新值
-      if (value === '') {
+    const handleInputChange = (value: number | undefined) => {
+      if (value === undefined || value === null) {
         return
       }
 
-      const numValue = Number(value)
+      const clampedValue = Math.max(props.min, Math.min(props.max, value))
+      currentValue.value = clampedValue
+      emit('change', clampedValue)
 
-      // 如果值不是有效数字，不更新
-      if (!Number.isNaN(numValue)) {
-        const clampedValue = Math.max(props.min, Math.min(props.max, numValue))
-        currentValue.value = clampedValue
-        emit('change', clampedValue)
-
-        // 触发表单验证
-        if (props.validateEvent) {
+      // 触发表单验证
+      if (props.validateEvent) {
         // 这里可以集成表单验证逻辑
         // 例如：formItem?.validate?.('change')
-        }
       }
     }
 
@@ -291,36 +314,62 @@ export default defineComponent({
     const getTooltipStyle = (placement: string) => {
       const baseStyle: Record<string, string> = {}
 
-      switch (placement) {
-        case 'top':
-          baseStyle.bottom = '100%'
-          baseStyle.left = '50%'
-          baseStyle.transform = 'translateX(-50%)'
-          baseStyle.marginBottom = '8px'
-          break
-        case 'right':
-          baseStyle.left = '100%'
-          baseStyle.top = '50%'
-          baseStyle.transform = 'translateY(-50%)'
-          baseStyle.marginLeft = '8px'
-          break
-        case 'bottom':
-          baseStyle.top = '100%'
-          baseStyle.left = '50%'
-          baseStyle.transform = 'translateX(-50%)'
-          baseStyle.marginTop = '8px'
-          break
-        case 'left':
-          baseStyle.right = '100%'
-          baseStyle.top = '50%'
-          baseStyle.transform = 'translateY(-50%)'
-          baseStyle.marginRight = '8px'
-          break
-        default:
-          baseStyle.bottom = '100%'
-          baseStyle.left = '50%'
-          baseStyle.transform = 'translateX(-50%)'
-          baseStyle.marginBottom = '8px'
+      // 垂直模式下调整 tooltip 位置
+      if (props.vertical) {
+        switch (placement) {
+          case 'top':
+          case 'right':
+            baseStyle.left = '100%'
+            baseStyle.top = '50%'
+            baseStyle.transform = 'translateY(-50%)'
+            baseStyle.marginLeft = '8px'
+            break
+          case 'bottom':
+          case 'left':
+            baseStyle.right = '100%'
+            baseStyle.top = '50%'
+            baseStyle.transform = 'translateY(-50%)'
+            baseStyle.marginRight = '8px'
+            break
+          default:
+            baseStyle.left = '100%'
+            baseStyle.top = '50%'
+            baseStyle.transform = 'translateY(-50%)'
+            baseStyle.marginLeft = '8px'
+        }
+      }
+      else {
+        switch (placement) {
+          case 'top':
+            baseStyle.bottom = '100%'
+            baseStyle.left = '50%'
+            baseStyle.transform = 'translateX(-50%)'
+            baseStyle.marginBottom = '8px'
+            break
+          case 'right':
+            baseStyle.left = '100%'
+            baseStyle.top = '50%'
+            baseStyle.transform = 'translateY(-50%)'
+            baseStyle.marginLeft = '8px'
+            break
+          case 'bottom':
+            baseStyle.top = '100%'
+            baseStyle.left = '50%'
+            baseStyle.transform = 'translateX(-50%)'
+            baseStyle.marginTop = '8px'
+            break
+          case 'left':
+            baseStyle.right = '100%'
+            baseStyle.top = '50%'
+            baseStyle.transform = 'translateY(-50%)'
+            baseStyle.marginRight = '8px'
+            break
+          default:
+            baseStyle.bottom = '100%'
+            baseStyle.left = '50%'
+            baseStyle.transform = 'translateX(-50%)'
+            baseStyle.marginBottom = '8px'
+        }
       }
 
       return baseStyle
@@ -350,25 +399,26 @@ export default defineComponent({
       return props.persistent && shouldShowTooltip.value
     })
 
-    // 处理输入框的增加/减少按钮
-    const handleInputIncrease = () => {
-      if (props.disabled || !props.showInputControls || props.range)
-        return
+    // 是否应该显示 Tooltip（考虑悬停和拖拽状态）
+    const shouldDisplayTooltip = computed(() => {
+      if (!shouldShowTooltip.value)
+        return false
+      if (shouldPersistTooltip.value)
+        return true
+      return isDragging.value || isHovering.value
+    })
 
-      const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
-      const newValue = Math.min(props.max, current + props.step)
-      currentValue.value = newValue
-      emit('change', newValue)
+    // 处理按钮悬停
+    const handleButtonMouseEnter = (index: number) => {
+      if (!props.disabled) {
+        isHovering.value = true
+        hoverIndex.value = index
+      }
     }
 
-    const handleInputDecrease = () => {
-      if (props.disabled || !props.showInputControls || props.range)
-        return
-
-      const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
-      const newValue = Math.max(props.min, current - props.step)
-      currentValue.value = newValue
-      emit('change', newValue)
+    const handleButtonMouseLeave = () => {
+      isHovering.value = false
+      hoverIndex.value = null
     }
 
     // 格式化值文本用于无障碍访问
@@ -407,10 +457,13 @@ export default defineComponent({
       handleInputChange,
       getTooltipStyle,
       shouldShowTooltip,
-      handleInputIncrease,
-      handleInputDecrease,
       getAriaValueText,
       shouldPersistTooltip,
+      shouldDisplayTooltip,
+      handleButtonMouseEnter,
+      handleButtonMouseLeave,
+      isHovering,
+      hoverIndex,
     }
   },
   render() {
@@ -435,44 +488,18 @@ export default defineComponent({
         {/* 输入框 */}
         {this.showInput && !this.range && (
           <div class={this.ns.e('input')}>
-            {this.showInputControls && (
-              <div class={this.ns.e('input-controls')}>
-                <button
-                  class={this.ns.e('input-decrease')}
-                  type="button"
-                  disabled={this.disabled || (this.currentValue as number) <= this.min}
-                  onClick={this.handleInputDecrease}
-                >
-                  -
-                </button>
-                <button
-                  class={this.ns.e('input-increase')}
-                  type="button"
-                  disabled={this.disabled || (this.currentValue as number) >= this.max}
-                  onClick={this.handleInputIncrease}
-                >
-                  +
-                </button>
-              </div>
-            )}
-            <input
-              type="number"
-              class={[
-                this.ns.e('input-inner'),
-                this.ns.em('input-inner', this.inputSize),
-              ]}
-              value={this.currentValue as number}
+            <InputNumber
+              modelValue={this.currentValue as number}
               min={this.min}
               max={this.max}
               step={this.step}
               disabled={this.disabled}
-              onInput={(e: Event) => this.handleInputChange(e)}
-              onChange={(e: Event) => this.handleInputChange(e)}
-              aria-label={this.ariaLabel}
-              aria-valuemin={this.min}
-              aria-valuemax={this.max}
-              aria-valuenow={this.currentValue as number}
-              aria-valuetext={this.getAriaValueText(this.currentValue as number)}
+              size={this.inputSize}
+              controls={this.showInputControls}
+              precision={this.precision}
+              onUpdate:modelValue={this.handleInputChange}
+              onChange={this.handleInputChange}
+              class={this.ns.e('input-number')}
             />
           </div>
         )}
@@ -550,6 +577,8 @@ export default defineComponent({
               onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
               onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
               onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
+              onMouseenter={() => this.handleButtonMouseEnter(0)}
+              onMouseleave={this.handleButtonMouseLeave}
               role="slider"
               aria-label={this.rangeStartLabel || 'start value'}
               aria-valuemin={this.min}
@@ -558,7 +587,7 @@ export default defineComponent({
               aria-valuetext={this.getAriaValueText(firstValue)}
               aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
             >
-              {(this.shouldShowTooltip || this.shouldPersistTooltip) && this.formatTooltipText(firstValue) && (
+              {this.shouldDisplayTooltip && (this.hoverIndex === 0 || this.isDragging) && this.formatTooltipText(firstValue) && (
                 <div
                   class={[
                     this.ns.e('tooltip'),
@@ -589,6 +618,8 @@ export default defineComponent({
                 onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
                 onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
                 onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
+                onMouseenter={() => this.handleButtonMouseEnter(1)}
+                onMouseleave={this.handleButtonMouseLeave}
                 role="slider"
                 aria-label={this.rangeEndLabel || 'end value'}
                 aria-valuemin={this.min}
@@ -597,7 +628,7 @@ export default defineComponent({
                 aria-valuetext={this.getAriaValueText(secondValue)}
                 aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
               >
-                {(this.shouldShowTooltip || this.shouldPersistTooltip) && this.formatTooltipText(secondValue) && (
+                {this.shouldDisplayTooltip && (this.hoverIndex === 1 || this.isDragging) && this.formatTooltipText(secondValue) && (
                   <div
                     class={[
                       this.ns.e('tooltip'),

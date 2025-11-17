@@ -49,6 +49,9 @@ export const sliderProps = {
   label: {
     type: String,
   },
+  precision: {
+    type: Number,
+  },
   showStops: {
     type: Boolean,
     default: false,
