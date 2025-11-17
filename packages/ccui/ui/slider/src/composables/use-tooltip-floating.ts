@@ -75,11 +75,9 @@ export function useSliderTooltipWithFloating(
     const buttonRef = ref<HTMLElement | null>(null)
     const tooltipRef = ref<HTMLElement | null>(null)
 
-    const placement = props.vertical && props.placement === 'top'
+    const placement = props.vertical
       ? 'right'
-      : props.vertical && props.placement === 'bottom'
-        ? 'left'
-        : props.placement
+      : 'top'
 
     const { floatingStyles } = useFloating(buttonRef, tooltipRef, {
       placement,
