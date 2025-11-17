@@ -2,6 +2,7 @@ import type { SliderProps } from './slider-types'
 import { defineComponent, onUnmounted, ref } from 'vue'
 import { InputNumber } from '../../input-number'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { Tooltip } from '../../tooltip'
 import {
   useSliderCalculation,
   useSliderInput,
@@ -11,7 +12,7 @@ import {
   useSliderStyle,
   useSliderValue,
 } from './composables/use-slider'
-import { useSliderTooltipWithFloating } from './composables/use-tooltip-floating'
+import { useSliderTooltip } from './composables/use-slider-tooltip'
 import { sliderProps } from './slider-types'
 import './slider.scss'
 
@@ -43,17 +44,17 @@ export default defineComponent({
     const { handleInputChange } = useSliderInput(props, currentValue, emit)
     const {
       formatTooltipText,
+      getDefaultText,
       getAriaValueText,
       handleButtonMouseEnter,
       handleButtonMouseLeave,
       shouldShowTooltipForButton,
+      shouldShowDefaultTooltipForButton,
       getCurrentValue,
-      setupTooltipFloating,
-    } = useSliderTooltipWithFloating(props, isDragging, currentValue)
-
-    // 设置 floating-ui tooltip
-    const { buttonRef: firstButtonRef, tooltipRef: firstTooltipRef, floatingStyles: firstTooltipStyles } = setupTooltipFloating(0)
-    const { buttonRef: secondButtonRef, tooltipRef: secondTooltipRef, floatingStyles: secondTooltipStyles } = setupTooltipFloating(1)
+      getTooltipContent,
+      getTooltipVisible,
+      getTooltipPlacement,
+    } = useSliderTooltip(props, isDragging, currentValue)
 
     // 清理事件监听器
     onUnmounted(() => {
@@ -66,12 +67,6 @@ export default defineComponent({
     return {
       ns,
       sliderRef,
-      firstButtonRef,
-      firstTooltipRef,
-      firstTooltipStyles,
-      secondButtonRef,
-      secondTooltipRef,
-      secondTooltipStyles,
       isDragging,
       currentValue,
       trackStyle,
@@ -84,6 +79,7 @@ export default defineComponent({
       getMarkStyle,
       getMarkLabel,
       formatTooltipText,
+      getDefaultText,
       getPercent,
       getValueFromPercent,
       handleInputChange,
@@ -91,7 +87,11 @@ export default defineComponent({
       handleButtonMouseEnter,
       handleButtonMouseLeave,
       shouldShowTooltipForButton,
+      shouldShowDefaultTooltipForButton,
       getCurrentValue,
+      getTooltipContent,
+      getTooltipVisible,
+      getTooltipPlacement,
     }
   },
   render() {
@@ -196,40 +196,36 @@ export default defineComponent({
             ]}
             style={this.firstButtonStyle}
           >
-            <div
-              ref={this.firstButtonRef}
-              class={[
-                this.ns.e('button'),
-                { [this.ns.em('button', 'disabled')]: this.disabled },
-              ]}
-              tabindex={this.disabled ? -1 : 0}
-              onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
-              onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
-              onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
-              onMouseenter={() => this.handleButtonMouseEnter(0)}
-              onMouseleave={this.handleButtonMouseLeave}
-              role="slider"
-              aria-label={this.rangeStartLabel || 'start value'}
-              aria-valuemin={this.min}
-              aria-valuemax={this.max}
-              aria-valuenow={firstValue}
-              aria-valuetext={this.getAriaValueText(firstValue)}
-              aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+            <Tooltip
+              content={this.getTooltipContent(0)}
+              visible={this.getTooltipVisible(0) || undefined}
+              placement={this.getTooltipPlacement()}
+              disabled={!this.showTooltip}
+              effect="dark"
+              showArrow={true}
+              trigger="manual"
+              popperClass={this.tooltipClass}
             >
-              {this.shouldShowTooltipForButton(0) && this.formatTooltipText(firstValue) && (
-                <div
-                  ref={this.firstTooltipRef}
-                  style={this.firstTooltipStyles}
-                  class={[
-                    this.ns.e('tooltip'),
-                    this.tooltipClass,
-                    { [this.ns.em('tooltip', 'persistent')]: this.persistent },
-                  ]}
-                >
-                  {this.formatTooltipText(firstValue)}
-                </div>
-              )}
-            </div>
+              <div
+                class={[
+                  this.ns.e('button'),
+                  { [this.ns.em('button', 'disabled')]: this.disabled },
+                ]}
+                tabindex={this.disabled ? -1 : 0}
+                onMousedown={(e: MouseEvent) => this.handleDragStart(e, 0)}
+                onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 0)}
+                onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 0)}
+                onMouseenter={() => this.handleButtonMouseEnter(0)}
+                onMouseleave={this.handleButtonMouseLeave}
+                role="slider"
+                aria-label={this.rangeStartLabel || 'start value'}
+                aria-valuemin={this.min}
+                aria-valuemax={this.max}
+                aria-valuenow={firstValue}
+                aria-valuetext={this.getAriaValueText(firstValue)}
+                aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+              />
+            </Tooltip>
           </div>
 
           {/* 第二个滑块按钮（范围模式） */}
@@ -238,40 +234,36 @@ export default defineComponent({
               class={[this.ns.e('button-wrapper'), this.ns.em('button-wrapper', 'second')]}
               style={this.secondButtonStyle}
             >
-              <div
-                ref={this.secondButtonRef}
-                class={[
-                  this.ns.e('button'),
-                  { [this.ns.em('button', 'disabled')]: this.disabled },
-                ]}
-                tabindex={this.disabled ? -1 : 0}
-                onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
-                onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
-                onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
-                onMouseenter={() => this.handleButtonMouseEnter(1)}
-                onMouseleave={this.handleButtonMouseLeave}
-                role="slider"
-                aria-label={this.rangeEndLabel || 'end value'}
-                aria-valuemin={this.min}
-                aria-valuemax={this.max}
-                aria-valuenow={secondValue}
-                aria-valuetext={this.getAriaValueText(secondValue)}
-                aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+              <Tooltip
+                content={this.getTooltipContent(1)}
+                visible={this.getTooltipVisible(1) || undefined}
+                placement={this.getTooltipPlacement()}
+                disabled={!this.showTooltip}
+                effect="dark"
+                showArrow={true}
+                trigger="manual"
+                popperClass={this.tooltipClass}
               >
-                {this.shouldShowTooltipForButton(1) && this.formatTooltipText(secondValue) && (
-                  <div
-                    ref={this.secondTooltipRef}
-                    style={this.secondTooltipStyles}
-                    class={[
-                      this.ns.e('tooltip'),
-                      this.tooltipClass,
-                      { [this.ns.em('tooltip', 'persistent')]: this.persistent },
-                    ]}
-                  >
-                    {this.formatTooltipText(secondValue)}
-                  </div>
-                )}
-              </div>
+                <div
+                  class={[
+                    this.ns.e('button'),
+                    { [this.ns.em('button', 'disabled')]: this.disabled },
+                  ]}
+                  tabindex={this.disabled ? -1 : 0}
+                  onMousedown={(e: MouseEvent) => this.handleDragStart(e, 1)}
+                  onTouchstart={(e: TouchEvent) => this.handleDragStart(e, 1)}
+                  onKeydown={(e: KeyboardEvent) => this.handleKeydown(e, 1)}
+                  onMouseenter={() => this.handleButtonMouseEnter(1)}
+                  onMouseleave={this.handleButtonMouseLeave}
+                  role="slider"
+                  aria-label={this.rangeEndLabel || 'end value'}
+                  aria-valuemin={this.min}
+                  aria-valuemax={this.max}
+                  aria-valuenow={secondValue}
+                  aria-valuetext={this.getAriaValueText(secondValue)}
+                  aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
+                />
+              </Tooltip>
             </div>
           )}
         </div>

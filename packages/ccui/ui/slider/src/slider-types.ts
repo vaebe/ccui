@@ -108,6 +108,10 @@ export const sliderProps = {
   tipsRenderer: {
     type: [Function, null] as PropType<((value: number) => string) | null>,
   },
+  showDefaultTooltip: {
+    type: Boolean,
+    default: false,
+  },
 } as const
 
 export type SliderProps = ExtractPropTypes<typeof sliderProps>

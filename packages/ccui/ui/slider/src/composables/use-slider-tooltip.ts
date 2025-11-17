@@ -1,26 +1,17 @@
 import type { Ref } from 'vue'
 import type { SliderProps } from '../slider-types'
-import { flip, offset, shift } from '@floating-ui/dom'
-import { useFloating } from '@floating-ui/vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
-export function useSliderTooltipWithFloating(
+export function useSliderTooltip(
   props: SliderProps,
   isDragging: Ref<boolean>,
   currentValue: Ref<number | number[]>,
 ) {
   const isHovering = ref(false)
   const hoverIndex = ref<number | null>(null)
-  const buttonRefs = ref<(HTMLElement | null)[]>([])
-  const tooltipRefs = ref<(HTMLElement | null)[]>([])
 
   // 是否显示 Tooltip
-  const shouldShowTooltip = computed(() => props.showTooltip && props.tipsRenderer !== null)
-
-  // 是否应该显示 Tooltip（考虑悬停和拖拽状态）
-  const shouldDisplayTooltip = computed(() => {
-    return shouldShowTooltip.value && (isDragging.value || isHovering.value)
-  })
+  const shouldShowTooltip = computed(() => props.showTooltip)
 
   // 格式化提示文本
   const formatTooltipText = (value: number) => {
@@ -32,6 +23,14 @@ export function useSliderTooltipWithFloating(
     }
     if (props.tipsRenderer) {
       return props.tipsRenderer(value)
+    }
+    return value.toString()
+  }
+
+  // 获取默认文本（用于没有 tipsRenderer 的情况）
+  const getDefaultText = (value: number) => {
+    if (props.formatTooltip) {
+      return props.formatTooltip(value)
     }
     return value.toString()
   }
@@ -67,62 +66,56 @@ export function useSliderTooltipWithFloating(
 
   // 判断是否显示 tooltip
   const shouldShowTooltipForButton = (index: number) => {
-    return shouldDisplayTooltip.value && (hoverIndex.value === index || isDragging.value)
+    return shouldShowTooltip.value && (hoverIndex.value === index || isDragging.value)
   }
 
-  // 设置 floating-ui
-  const setupTooltipFloating = (buttonIndex: number) => {
-    const buttonRef = ref<HTMLElement | null>(null)
-    const tooltipRef = ref<HTMLElement | null>(null)
+  // 判断是否显示默认 tooltip（没有 tipsRenderer 的情况）
+  const shouldShowDefaultTooltipForButton = (index: number) => {
+    return props.showTooltip
+      && props.tipsRenderer === null
+      && props.showDefaultTooltip
+      && (hoverIndex.value === index || isDragging.value || props.persistent)
+  }
 
-    const placement = props.vertical
-      ? 'right'
-      : 'top'
+  // 获取 tooltip 内容
+  const getTooltipContent = (index: number) => {
+    const value = getCurrentValue(index)
 
-    const { floatingStyles } = useFloating(buttonRef, tooltipRef, {
-      placement,
-      middleware: [
-        offset(8),
-        flip(),
-        shift(),
-      ],
-    })
-
-    // 更新 refs
-    watch(buttonRef, (el) => {
-      if (buttonRefs.value.length <= buttonIndex) {
-        buttonRefs.value.length = buttonIndex + 1
-      }
-      buttonRefs.value[buttonIndex] = el
-    })
-
-    watch(tooltipRef, (el) => {
-      if (tooltipRefs.value.length <= buttonIndex) {
-        tooltipRefs.value.length = buttonIndex + 1
-      }
-      tooltipRefs.value[buttonIndex] = el
-    })
-
-    return {
-      buttonRef,
-      tooltipRef,
-      floatingStyles,
+    if (shouldShowTooltipForButton(index) && formatTooltipText(value)) {
+      return formatTooltipText(value)
     }
+
+    if (shouldShowDefaultTooltipForButton(index)) {
+      return getDefaultText(value)
+    }
+
+    return ''
+  }
+
+  // 获取 tooltip 可见性
+  const getTooltipVisible = (index: number) => {
+    return shouldShowTooltipForButton(index) || shouldShowDefaultTooltipForButton(index)
+  }
+
+  // 获取 tooltip 位置
+  const getTooltipPlacement = () => {
+    return props.vertical ? 'right' : 'top'
   }
 
   return {
     isHovering,
     hoverIndex,
-    buttonRefs,
-    tooltipRefs,
     shouldShowTooltip,
-    shouldDisplayTooltip,
     formatTooltipText,
+    getDefaultText,
     getAriaValueText,
     handleButtonMouseEnter,
     handleButtonMouseLeave,
     getCurrentValue,
     shouldShowTooltipForButton,
-    setupTooltipFloating,
+    shouldShowDefaultTooltipForButton,
+    getTooltipContent,
+    getTooltipVisible,
+    getTooltipPlacement,
   }
 }

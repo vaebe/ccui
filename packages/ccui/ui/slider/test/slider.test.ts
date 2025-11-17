@@ -87,8 +87,11 @@ describe('slider', () => {
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
-    expect(wrapper.find(ns.e('tooltip')).exists()).toBe(true)
-    expect(wrapper.find(ns.e('tooltip')).text()).toBe('50')
+    // 使用 CTooltip 组件，检查 tooltip 是否存在
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('visible')).toBe(true)
+    expect(tooltipComponent.props('content')).toBe('50')
     wrapper.unmount()
   })
 
@@ -99,7 +102,10 @@ describe('slider', () => {
       },
     })
 
-    expect(wrapper.find(ns.e('tooltip')).exists()).toBe(false)
+    // tooltip 组件应该存在但被禁用
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('disabled')).toBe(true)
     wrapper.unmount()
   })
 
@@ -164,7 +170,10 @@ describe('slider', () => {
       },
     })
 
-    expect(wrapper.find(ns.e('tooltip')).exists()).toBe(false)
+    // tooltip 组件应该存在但不显示内容
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('content')).toBe('')
     wrapper.unmount()
   })
 
@@ -183,7 +192,10 @@ describe('slider', () => {
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
-    expect(wrapper.find(ns.e('tooltip')).text()).toBe('5 apples')
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('visible')).toBe(true)
+    expect(tooltipComponent.props('content')).toBe('5 apples')
     wrapper.unmount()
   })
 
@@ -200,7 +212,11 @@ describe('slider', () => {
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
-    expect(wrapper.find('.ccui-slider__tooltip').exists()).toBe(true)
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('visible')).toBe(true)
+    // placement 应该根据 vertical 属性自动设置
+    expect(tooltipComponent.props('placement')).toBe('top') // 默认非垂直模式是 top
     wrapper.unmount()
   })
 
@@ -624,8 +640,10 @@ describe('slider', () => {
     const button = wrapper.find('.ccui-slider__button')
     await button.trigger('mouseenter')
 
-    expect(wrapper.find('.ccui-slider__tooltip').exists()).toBe(true)
-    expect(wrapper.find('.ccui-slider__tooltip--persistent').exists()).toBe(true)
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('visible')).toBe(true)
+    expect(tooltipComponent.props('content')).toBe('50')
     wrapper.unmount()
   })
 
@@ -638,7 +656,30 @@ describe('slider', () => {
       },
     })
 
-    expect(wrapper.find('.ccui-slider__tooltip').exists()).toBe(false)
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('disabled')).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('props - showDefaultTooltip true', async () => {
+    wrapper = mount(Slider, {
+      props: {
+        modelValue: 50,
+        tipsRenderer: null,
+        showTooltip: true,
+        showDefaultTooltip: true,
+      },
+    })
+
+    // 需要触发悬停才能显示 tooltip
+    const button = wrapper.find(ns.e('button'))
+    await button.trigger('mouseenter')
+
+    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltipComponent.exists()).toBe(true)
+    expect(tooltipComponent.props('visible')).toBe(true)
+    expect(tooltipComponent.props('content')).toBe('50')
     wrapper.unmount()
   })
 

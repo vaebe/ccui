@@ -93,9 +93,23 @@
         left: 0;
         transform: translateY(50%);
 
+        &-line {
+          width: 8px;
+          height: 1px;
+          background-color: $ccui-dividing-line;
+
+          &::before {
+            width: 8px;
+            height: 8px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+
         &-label {
           top: 50%;
-          left: 8px;
+          left: 12px;
           transform: translateY(-50%);
         }
       }
@@ -302,7 +316,7 @@
     left: 0;
     right: 0;
     height: 40px;
-    margin-top: 12px;
+    margin-top: 8px;
     pointer-events: none;
 
     .#{$cls-prefix}-slider__mark {
@@ -311,11 +325,25 @@
       transform: translateX(-50%);
 
       &-line {
-        width: 2px;
+        width: 1px;
         height: 8px;
         background-color: $ccui-dividing-line;
         margin: 0 auto;
-        border-radius: 1px;
+        position: relative;
+
+        // 标记点
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: $ccui-base-bg;
+          border: 2px solid $ccui-dividing-line;
+        }
       }
 
       &-label {
@@ -327,6 +355,7 @@
         color: $ccui-aide-text;
         white-space: nowrap;
         line-height: 1.2;
+        margin-top: 2px;
       }
     }
   }
@@ -382,28 +411,6 @@
         transform: none;
         border-color: $ccui-disabled-line;
       }
-    }
-  }
-
-  // 提示框
-  &__tooltip {
-    padding: 4px 8px;
-    min-width: 24px;
-    font-size: $ccui-font-size-sm;
-    color: $ccui-light-text;
-    text-align: center;
-    background-color: $ccui-feedback-overlay-bg;
-    border-radius: $ccui-border-radius-feedback;
-    white-space: nowrap;
-    z-index: 10;
-    box-shadow: $ccui-shadow-length-connected-overlay $ccui-shadow;
-    pointer-events: none;
-
-    // 持久化提示框
-    &--persistent {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
     }
   }
 
