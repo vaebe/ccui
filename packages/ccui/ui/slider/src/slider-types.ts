@@ -46,6 +46,9 @@ export const sliderProps = {
     type: String as PropType<SliderSize>,
     default: 'default',
   },
+  label: {
+    type: String,
+  },
   showStops: {
     type: Boolean,
     default: false,

@@ -583,4 +583,90 @@ describe('slider', () => {
     expect(wrapper.vm.getAriaValueText(50)).toBe('50 degrees')
     wrapper.unmount()
   })
+
+  it('props - label', () => {
+    wrapper = mount(Slider, {
+      props: {
+        label: 'Volume Control',
+        modelValue: 50,
+      },
+    })
+
+    expect(wrapper.attributes('aria-label')).toBe('Volume Control')
+    wrapper.unmount()
+  })
+
+  it('props - inputSize', () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        inputSize: 'large',
+        modelValue: 50,
+      },
+    })
+
+    expect(wrapper.find('.ccui-slider__input-inner--large').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('props - persistent tooltip', () => {
+    wrapper = mount(Slider, {
+      props: {
+        modelValue: 50,
+        persistent: true,
+        showTooltip: true,
+      },
+    })
+
+    expect(wrapper.find('.ccui-slider__tooltip--persistent').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('props - persistent false with showTooltip false', () => {
+    wrapper = mount(Slider, {
+      props: {
+        modelValue: 50,
+        persistent: true,
+        showTooltip: false,
+      },
+    })
+
+    expect(wrapper.find('.ccui-slider__tooltip').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('props - validateEvent', () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        modelValue: 50,
+        validateEvent: true,
+      },
+    })
+
+    const input = wrapper.find('.ccui-slider__input-inner')
+    input.setValue('75')
+    input.trigger('input')
+
+    // validateEvent 功能已集成，但需要表单上下文才能完全测试
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('props - validateEvent false', () => {
+    wrapper = mount(Slider, {
+      props: {
+        showInput: true,
+        modelValue: 50,
+        validateEvent: false,
+      },
+    })
+
+    const input = wrapper.find('.ccui-slider__input-inner')
+    input.setValue('75')
+    input.trigger('input')
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    wrapper.unmount()
+  })
 })

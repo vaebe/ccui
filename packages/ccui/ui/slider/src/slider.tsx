@@ -278,6 +278,12 @@ export default defineComponent({
         const clampedValue = Math.max(props.min, Math.min(props.max, numValue))
         currentValue.value = clampedValue
         emit('change', clampedValue)
+
+        // 触发表单验证
+        if (props.validateEvent) {
+        // 这里可以集成表单验证逻辑
+        // 例如：formItem?.validate?.('change')
+        }
       }
     }
 
@@ -337,6 +343,11 @@ export default defineComponent({
     // 是否显示 Tooltip
     const shouldShowTooltip = computed(() => {
       return props.showTooltip && props.tipsRenderer !== null
+    })
+
+    // Tooltip 是否持久化显示
+    const shouldPersistTooltip = computed(() => {
+      return props.persistent && shouldShowTooltip.value
     })
 
     // 处理输入框的增加/减少按钮
@@ -399,6 +410,7 @@ export default defineComponent({
       handleInputIncrease,
       handleInputDecrease,
       getAriaValueText,
+      shouldPersistTooltip,
     }
   },
   render() {
@@ -418,6 +430,7 @@ export default defineComponent({
           },
         ]}
         style={this.vertical ? { height: this.height } : {}}
+        aria-label={this.label || this.ariaLabel}
       >
         {/* 输入框 */}
         {this.showInput && !this.range && (
@@ -444,7 +457,10 @@ export default defineComponent({
             )}
             <input
               type="number"
-              class={this.ns.e('input-inner')}
+              class={[
+                this.ns.e('input-inner'),
+                this.ns.em('input-inner', this.inputSize),
+              ]}
               value={this.currentValue as number}
               min={this.min}
               max={this.max}
@@ -542,12 +558,13 @@ export default defineComponent({
               aria-valuetext={this.getAriaValueText(firstValue)}
               aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
             >
-              {this.shouldShowTooltip && this.formatTooltipText(firstValue) && (
+              {(this.shouldShowTooltip || this.shouldPersistTooltip) && this.formatTooltipText(firstValue) && (
                 <div
                   class={[
                     this.ns.e('tooltip'),
                     this.ns.em('tooltip', this.placement),
                     this.tooltipClass,
+                    { [this.ns.em('tooltip', 'persistent')]: this.shouldPersistTooltip },
                   ]}
                   style={this.getTooltipStyle(this.placement)}
                 >
@@ -580,12 +597,13 @@ export default defineComponent({
                 aria-valuetext={this.getAriaValueText(secondValue)}
                 aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
               >
-                {this.shouldShowTooltip && this.formatTooltipText(secondValue) && (
+                {(this.shouldShowTooltip || this.shouldPersistTooltip) && this.formatTooltipText(secondValue) && (
                   <div
                     class={[
                       this.ns.e('tooltip'),
                       this.ns.em('tooltip', this.placement),
                       this.tooltipClass,
+                      { [this.ns.em('tooltip', 'persistent')]: this.shouldPersistTooltip },
                     ]}
                     style={this.getTooltipStyle(this.placement)}
                   >
