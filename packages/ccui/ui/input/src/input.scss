@@ -1,0 +1,177 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $ccui-base-bg;
+  border: 1px solid $ccui-line;
+  border-radius: $ccui-border-radius;
+  color: $ccui-text;
+  font-size: 14px;
+  transition:
+    border-color $ccui-animation-duration-base,
+    box-shadow $ccui-animation-duration-base;
+
+  &:hover {
+    border-color: $ccui-brand-hover;
+  }
+
+  &:focus-within {
+    border-color: $ccui-brand;
+    box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+  }
+
+  &--disabled {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-disabled-line;
+    }
+  }
+
+  &--large {
+    height: $ccui-size-lg;
+    font-size: $ccui-font-size-lg;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 24px;
+      }
+    }
+
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 24px;
+      }
+    }
+  }
+
+  &--default {
+    height: $ccui-size-md;
+    font-size: $ccui-font-size-md;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 24px;
+      }
+    }
+
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 24px;
+      }
+    }
+  }
+
+  &--small {
+    height: $ccui-size-sm;
+    font-size: $ccui-font-size-sm;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 20px;
+      }
+    }
+
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 20px;
+      }
+    }
+  }
+
+  &__wrapper {
+    position: relative;
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  &__prepend,
+  &__append {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: $ccui-area;
+    color: $ccui-text;
+    font-size: inherit;
+    line-height: 1;
+    height: 100%;
+    padding: 0 10px;
+  }
+
+  &__prepend {
+    border-radius: $ccui-border-radius 0 0 $ccui-border-radius;
+    border-right: 1px solid $ccui-line;
+  }
+
+  &__append {
+    border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+    border-left: 1px solid $ccui-line;
+  }
+
+  &__inner {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    position: relative;
+    z-index: 0;
+    box-sizing: border-box;
+    padding: 4px 0;
+
+    &::placeholder {
+      color: $ccui-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: $ccui-disabled-text;
+    }
+  }
+
+  &__prefix,
+  &__suffix {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $ccui-placeholder;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__prefix {
+    left: 8px;
+  }
+
+  &__suffix {
+    right: 8px;
+  }
+
+  &__clear,
+  &__password-visible,
+  &__password-hidden {
+    cursor: pointer;
+    pointer-events: auto;
+    color: $ccui-placeholder;
+    transition: color $ccui-animation-duration-base;
+
+    &:hover {
+      color: $ccui-text;
+    }
+  }
+}

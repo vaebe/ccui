@@ -106,7 +106,7 @@ export default {
   'font-content-weight': 'normal',
   'line-height-base': '1.5',
   // 圆角
-  'border-radius': '2px',
+  'border-radius': '4px',
   'border-radius-feedback': '4px',
   'border-radius-card': '6px',
   // 阴影
@@ -133,4 +133,8 @@ export default {
   'z-index-modal': '1050',
   'z-index-drawer': '1040',
   'z-index-framework': '1000',
+  // 组件的size
+  'size-sm': '24px',
+  'size-md': '32px',
+  'size-lg': '40px',
 }
