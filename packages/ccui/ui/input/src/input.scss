@@ -12,6 +12,7 @@
     border-radius: $ccui-border-radius;
     color: $ccui-text;
     font-size: 14px;
+    padding: 0 8px;
     transition:
       border-color $ccui-animation-duration-base,
       box-shadow $ccui-animation-duration-base;
@@ -41,16 +42,14 @@
       font-size: $ccui-font-size-lg;
 
       &.#{$cls-prefix}-input--prefix {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-left: 24px;
         }
       }
 
       &.#{$cls-prefix}-input--suffix,
       &.#{$cls-prefix}-input--clearable {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-right: 24px;
         }
       }
@@ -61,16 +60,14 @@
       font-size: $ccui-font-size-md;
 
       &.#{$cls-prefix}-input--prefix {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-left: 24px;
         }
       }
 
       &.#{$cls-prefix}-input--suffix,
       &.#{$cls-prefix}-input--clearable {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-right: 24px;
         }
       }
@@ -81,16 +78,14 @@
       font-size: $ccui-font-size-sm;
 
       &.#{$cls-prefix}-input--prefix {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-left: 20px;
         }
       }
 
       &.#{$cls-prefix}-input--suffix,
       &.#{$cls-prefix}-input--clearable {
-        input,
-        textarea {
+        .#{$cls-prefix}-input__inner {
           padding-right: 20px;
         }
       }
@@ -104,6 +99,30 @@
     flex: 1;
     width: 100%;
     height: 100%;
+  }
+
+  &__inner {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    position: relative;
+    z-index: 0;
+    box-sizing: border-box;
+    padding: 4px 0;
+
+    &::placeholder {
+      color: $ccui-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: $ccui-disabled-text;
+    }
   }
 
   &__prepend,
@@ -161,30 +180,6 @@
 
     &:hover {
       color: $ccui-text;
-    }
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: inherit;
-    font-size: inherit;
-    font-family: inherit;
-    position: relative;
-    z-index: 0;
-    box-sizing: border-box;
-
-    &::placeholder {
-      color: $ccui-placeholder;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      color: $ccui-disabled-text;
     }
   }
 

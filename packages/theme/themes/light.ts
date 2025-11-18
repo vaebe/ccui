@@ -106,7 +106,7 @@ export default {
   'font-content-weight': 'normal',
   'line-height-base': '1.5',
   // 圆角
-  'border-radius': '2px',
+  'border-radius': '4px',
   'border-radius-feedback': '4px',
   'border-radius-card': '6px',
   // 阴影

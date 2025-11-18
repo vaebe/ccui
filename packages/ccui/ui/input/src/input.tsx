@@ -32,6 +32,7 @@ export default defineComponent({
     // 输入框类名
     const inputClass = computed(() => ({
       [ns.b()]: true,
+      [ns.e('inner')]: true,
       [ns.m(props.size)]: !!props.size,
       [ns.m('disabled')]: props.disabled,
       [ns.m('readonly')]: props.readonly,
