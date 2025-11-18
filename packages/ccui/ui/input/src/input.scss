@@ -1,104 +1,122 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-input {
-  &__wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: $ccui-base-bg;
-    border: 1px solid $ccui-line;
-    border-radius: $ccui-border-radius;
-    color: $ccui-text;
-    font-size: 14px;
-    padding: 0 8px;
-    transition:
-      border-color $ccui-animation-duration-base,
-      box-shadow $ccui-animation-duration-base;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $ccui-base-bg;
+  border: 1px solid $ccui-line;
+  border-radius: $ccui-border-radius;
+  color: $ccui-text;
+  font-size: 14px;
+  transition:
+    border-color $ccui-animation-duration-base,
+    box-shadow $ccui-animation-duration-base;
+
+  &:hover {
+    border-color: $ccui-brand-hover;
+  }
+
+  &:focus-within {
+    border-color: $ccui-brand;
+    box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+  }
+
+  &--disabled {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
 
     &:hover {
-      border-color: $ccui-brand-hover;
-    }
-
-    &:focus-within {
-      border-color: $ccui-brand;
-      box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
-    }
-
-    &--disabled {
-      background-color: $ccui-disabled-bg;
       border-color: $ccui-disabled-line;
-      color: $ccui-disabled-text;
-      cursor: not-allowed;
+    }
+  }
 
-      &:hover {
-        border-color: $ccui-disabled-line;
+  &--large {
+    height: $ccui-size-lg;
+    font-size: $ccui-font-size-lg;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 24px;
       }
     }
 
-    &--large {
-      height: $ccui-size-lg;
-      font-size: $ccui-font-size-lg;
-
-      &.#{$cls-prefix}-input--prefix {
-        .#{$cls-prefix}-input__inner {
-          padding-left: 24px;
-        }
-      }
-
-      &.#{$cls-prefix}-input--suffix,
-      &.#{$cls-prefix}-input--clearable {
-        .#{$cls-prefix}-input__inner {
-          padding-right: 24px;
-        }
-      }
-    }
-
-    &--default {
-      height: $ccui-size-md;
-      font-size: $ccui-font-size-md;
-
-      &.#{$cls-prefix}-input--prefix {
-        .#{$cls-prefix}-input__inner {
-          padding-left: 24px;
-        }
-      }
-
-      &.#{$cls-prefix}-input--suffix,
-      &.#{$cls-prefix}-input--clearable {
-        .#{$cls-prefix}-input__inner {
-          padding-right: 24px;
-        }
-      }
-    }
-
-    &--small {
-      height: $ccui-size-sm;
-      font-size: $ccui-font-size-sm;
-
-      &.#{$cls-prefix}-input--prefix {
-        .#{$cls-prefix}-input__inner {
-          padding-left: 20px;
-        }
-      }
-
-      &.#{$cls-prefix}-input--suffix,
-      &.#{$cls-prefix}-input--clearable {
-        .#{$cls-prefix}-input__inner {
-          padding-right: 20px;
-        }
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 24px;
       }
     }
   }
 
-  &__main {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex: 1;
+  &--default {
+    height: $ccui-size-md;
+    font-size: $ccui-font-size-md;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 24px;
+      }
+    }
+
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 24px;
+      }
+    }
+  }
+
+  &--small {
+    height: $ccui-size-sm;
+    font-size: $ccui-font-size-sm;
+
+    &.#{$cls-prefix}-input--prefix {
+      .#{$cls-prefix}-input__inner {
+        padding-left: 20px;
+      }
+    }
+
+    &.#{$cls-prefix}-input--suffix,
+    &.#{$cls-prefix}-input--clearable {
+      .#{$cls-prefix}-input__inner {
+        padding-right: 20px;
+      }
+    }
+  }
+
+  &__wrapper {
     width: 100%;
-    height: 100%;
+    padding: 0 8px;
+  }
+
+  &__prepend,
+  &__append {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    background-color: $ccui-area;
+    border: 1px solid $ccui-line;
+    border-color: inherit;
+    color: $ccui-text;
+    font-size: inherit;
+    line-height: 1.5;
+  }
+
+  &__prepend {
+    border-right: 0;
+    border-top-left-radius: $ccui-border-radius;
+    border-bottom-left-radius: $ccui-border-radius;
+  }
+
+  &__append {
+    border-left: 0;
+    border-top-right-radius: $ccui-border-radius;
+    border-bottom-right-radius: $ccui-border-radius;
   }
 
   &__inner {
@@ -123,30 +141,6 @@
       cursor: not-allowed;
       color: $ccui-disabled-text;
     }
-  }
-
-  &__prepend,
-  &__append {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    background-color: $ccui-area;
-    border: 1px solid $ccui-line;
-    color: $ccui-text;
-    font-size: inherit;
-  }
-
-  &__prepend {
-    border-right: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-
-  &__append {
-    border-left: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
   }
 
   &__prefix,

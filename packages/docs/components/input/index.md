@@ -214,6 +214,7 @@ export default defineComponent({
   <div>
     <c-input v-model="value" prepend="http://" placeholder="请输入网址" />
     <c-input v-model="value" append=".com" placeholder="请输入域名" />
+    <c-input v-model="value" prepend="https://" append=".org" placeholder="请输入网址" />
   </div>
 </template>
 

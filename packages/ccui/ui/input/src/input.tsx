@@ -11,17 +11,13 @@ export default defineComponent({
   setup(props: InputProps, { emit, slots }) {
     const ns = useNamespace('input')
     const inputRef = ref<HTMLInputElement | HTMLTextAreaElement | null>(null)
-
-    // 输入框的值
     const inputValue = ref(props.value)
-
-    // 是否显示密码切换图标
-    const showPasswordVisible = computed(() => props.type === 'password' && props.showPassword)
-
-    // 密码是否可见
+    const isFocused = ref(false)
     const isPasswordVisible = ref(false)
 
-    // 当前输入框类型
+    // 计算属性
+    const showPasswordVisible = computed(() => props.type === 'password' && props.showPassword)
+
     const currentType = computed(() => {
       if (props.type === 'password' && showPasswordVisible.value && isPasswordVisible.value) {
         return 'text'
@@ -29,9 +25,25 @@ export default defineComponent({
       return props.type
     })
 
-    // 输入框类名
+    // 为测试兼容性，保持一致的类名结构
+    const getBaseClass = computed(() => {
+      return {
+        [ns.b()]: true, // 基础类
+        [ns.m(props.size)]: !!props.size, // 尺寸类
+        [ns.m('disabled')]: props.disabled, // 禁用类
+        [ns.m('readonly')]: props.readonly, // 只读类
+      }
+    })
+
+    const getWrapperClass = computed(() => {
+      return {
+        [ns.e('wrapper')]: true, // wrapper类
+        [ns.em('wrapper', props.size)]: !!props.size, // wrapper尺寸类
+        [ns.em('wrapper', 'disabled')]: props.disabled, // wrapper禁用类
+      }
+    })
+
     const inputClass = computed(() => ({
-      [ns.b()]: true,
       [ns.e('inner')]: true,
       [ns.m(props.size)]: !!props.size,
       [ns.m('disabled')]: props.disabled,
@@ -41,54 +53,38 @@ export default defineComponent({
       [ns.m('prefix')]: slots.prefix,
     }))
 
-    // 是否聚焦
-    const isFocused = ref(false)
-
-    // 包装器类名
-    const wrapperClass = computed(() => ({
-      [ns.e('wrapper')]: true,
-      [ns.em('wrapper', props.size)]: !!props.size,
-      [ns.em('wrapper', 'disabled')]: props.disabled,
-    }))
-
-    // 更新输入框的值
+    // 事件处理
     const updateValue = (value: string) => {
       inputValue.value = value
       emit('update:value', value)
       emit('input', value)
     }
 
-    // 处理输入事件
     const handleInput = (e: Event) => {
       const target = e.target as HTMLInputElement
       updateValue(target.value)
     }
 
-    // 处理变化事件
     const handleChange = (e: Event) => {
       const target = e.target as HTMLInputElement
       emit('change', target.value)
     }
 
-    // 处理焦点事件
     const handleFocus = (e: FocusEvent) => {
       isFocused.value = true
       emit('focus', e)
     }
 
-    // 处理失去焦点事件
     const handleBlur = (e: FocusEvent) => {
       isFocused.value = false
       emit('blur', e)
     }
 
-    // 清空输入框
     const clearInput = () => {
       updateValue('')
       emit('clear')
     }
 
-    // 切换密码可见性
     const togglePasswordVisible = () => {
       isPasswordVisible.value = !isPasswordVisible.value
     }
@@ -100,93 +96,103 @@ export default defineComponent({
       }
     })
 
+    // 渲染函数
+    const renderPrepend = () => {
+      if (!props.prepend && !slots.prepend)
+        return null
+      return (
+        <div class={ns.e('prepend')}>
+          {slots.prepend ? slots.prepend() : <span>{props.prepend}</span>}
+        </div>
+      )
+    }
+
+    const renderAppend = () => {
+      if (!props.append && !slots.append)
+        return null
+      return (
+        <div class={ns.e('append')}>
+          {slots.append ? slots.append() : <span>{props.append}</span>}
+        </div>
+      )
+    }
+
+    const renderSuffixIcons = () => {
+      if (!props.clearable && !showPasswordVisible.value && !slots.suffix)
+        return null
+      return (
+        <div class={ns.e('suffix')}>
+          {props.clearable && inputValue.value && (
+            <i class={ns.e('clear')} onClick={clearInput}></i>
+          )}
+          {showPasswordVisible.value && (
+            <i
+              class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
+              onClick={togglePasswordVisible}
+            >
+            </i>
+          )}
+          {slots.suffix && slots.suffix()}
+        </div>
+      )
+    }
+
+    const getInputAttrs = () => ({
+      ref: inputRef,
+      class: inputClass.value,
+      placeholder: props.placeholder,
+      disabled: props.disabled,
+      readonly: props.readonly,
+      value: inputValue.value,
+      onInput: handleInput,
+      onChange: handleChange,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+    })
+
+    // 渲染主体
     return () => {
-      // 前置内容
-      const prependContent = props.prepend || slots.prepend
-        ? (
-            <div class={ns.e('prepend')}>
-              {slots.prepend ? slots.prepend() : <span>{props.prepend}</span>}
-            </div>
-          )
-        : null
+      const prependContent = renderPrepend()
+      const appendContent = renderAppend()
 
-      // 后置内容
-      const appendContent = props.append || slots.append
-        ? (
-            <div class={ns.e('append')}>
-              {slots.append ? slots.append() : <span>{props.append}</span>}
-            </div>
-          )
-        : null
-
-      // 后缀图标内容
-      const suffixIconContent = props.clearable || showPasswordVisible.value || slots.suffix
-        ? (
-            <div class={ns.e('suffix')}>
-              {props.clearable && inputValue.value && (
-                <i class={ns.e('clear')} onClick={clearInput}></i>
-              )}
-              {showPasswordVisible.value && (
-                <i
-                  class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
-                  onClick={togglePasswordVisible}
-                >
-                </i>
-              )}
-              {slots.suffix && slots.suffix()}
-            </div>
-          )
-        : null
-
-      // 输入框属性
-      const baseInputAttrs = {
-        ref: inputRef,
-        class: inputClass.value,
-        placeholder: props.placeholder,
-        disabled: props.disabled,
-        readonly: props.readonly,
-        value: inputValue.value,
-        onInput: handleInput,
-        onChange: handleChange,
-        onFocus: handleFocus,
-        onBlur: handleBlur,
-      }
-
-      // 输入框元素
       const inputElement = props.type === 'textarea'
-        ? (
-            <textarea {...baseInputAttrs} />
-          )
-        : (
-            <input
-              {...baseInputAttrs}
-              type={currentType.value}
-            />
-          )
+        ? <textarea {...getInputAttrs()} />
+        : <input {...getInputAttrs()} type={currentType.value} />
 
-      // 主体内容
       const mainContent = (
         <>
           {slots.prefix && <div class={ns.e('prefix')}>{slots.prefix()}</div>}
           {inputElement}
-          {suffixIconContent}
+          {renderSuffixIcons()}
         </>
       )
 
-      // 如果有前置或后置内容，则需要包装一层
-      return prependContent || appendContent
-        ? (
-            <div class={wrapperClass.value}>
-              {prependContent}
-              <div class={ns.e('main')}>{mainContent}</div>
-              {appendContent}
-            </div>
-          )
-        : (
-            <div class={wrapperClass.value}>
+      // 统一结构：始终确保基础类和wrapper类都正确应用
+      if (prependContent || appendContent) {
+        // 有 prepend 或 append 时，基础类在顶层容器，wrapper类在内部容器
+        return (
+          <div class={getBaseClass.value}>
+            {prependContent}
+            <div class={getWrapperClass.value}>
               {mainContent}
             </div>
-          )
+            {appendContent}
+          </div>
+        )
+      }
+      else {
+        // 没有 prepend 或 append 时，将基础类和wrapper类合并到同一个元素
+        const combinedClass = {
+          ...getBaseClass.value,
+          ...getWrapperClass.value,
+        }
+
+        return (
+          <div class={combinedClass}>
+            {mainContent}
+          </div>
+        )
+      }
     }
   },
 })
