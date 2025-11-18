@@ -10,7 +10,7 @@ export default defineComponent({
   emits: ['update:value', 'input', 'change', 'focus', 'blur', 'clear'],
   setup(props: InputProps, { emit, slots }) {
     const ns = useNamespace('input')
-    const inputRef = ref<HTMLInputElement | HTMLTextAreaElement | null>(null)
+    const inputRef = ref<HTMLInputElement | null>(null)
     const inputValue = ref(props.value)
     const isFocused = ref(false)
     const isPasswordVisible = ref(false)
@@ -155,9 +155,7 @@ export default defineComponent({
       const prependContent = renderPrepend()
       const appendContent = renderAppend()
 
-      const inputElement = props.type === 'textarea'
-        ? <textarea {...getInputAttrs()} />
-        : <input {...getInputAttrs()} type={currentType.value} />
+      const inputElement = <input {...getInputAttrs()} type={currentType.value} />
 
       const mainContent = (
         <>

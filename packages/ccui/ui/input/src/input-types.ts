@@ -1,6 +1,6 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export type InputType = 'text' | 'password' | 'number' | 'textarea'
+export type InputType = 'text' | 'password'
 export type InputSize = 'large' | 'default' | 'small'
 
 export const inputProps = {

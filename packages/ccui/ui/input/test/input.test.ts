@@ -34,12 +34,6 @@ describe('input', () => {
 
     await wrapper.setProps({ type: 'password' })
     expect(wrapper.find('input').attributes('type')).toBe('password')
-
-    await wrapper.setProps({ type: 'number' })
-    expect(wrapper.find('input').attributes('type')).toBe('number')
-
-    await wrapper.setProps({ type: 'textarea' })
-    expect(wrapper.find('textarea').exists()).toBeTruthy()
   })
 
   it('size', async () => {

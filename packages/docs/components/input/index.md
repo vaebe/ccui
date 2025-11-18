@@ -224,65 +224,7 @@ export default defineComponent({
 
 :::
 
-## 文本域
 
-:::demo
-
-```vue
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  setup() {
-    const value = ref('')
-    return {
-      value
-    }
-  }
-})
-</script>
-
-<template>
-  <div>
-    <c-input v-model="value" type="textarea" placeholder="多行文本输入框" />
-  </div>
-</template>
-
-<style>
-</style>
-```
-
-:::
-
-## 数字输入
-
-:::demo
-
-```vue
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  setup() {
-    const value = ref('')
-    return {
-      value
-    }
-  }
-})
-</script>
-
-<template>
-  <div>
-    <c-input v-model="value" type="number" placeholder="数字输入框" />
-  </div>
-</template>
-
-<style>
-</style>
-```
-
-:::
 
 ## Input参数
 
@@ -304,7 +246,7 @@ export default defineComponent({
 ### InputType
 
 ```ts
-export type InputType = 'text' | 'password' | 'number' | 'textarea'
+export type InputType = 'text' | 'password'
 ```
 
 ### InputSize
