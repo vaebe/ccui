@@ -62,8 +62,8 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value1" size="large" placeholder="大号输入框" />
-    <c-input v-model="value2" placeholder="默认输入框" />
+    <c-input v-model="value1" size="large" placeholder="大号输入框" class="mb-10" />
+    <c-input v-model="value2" placeholder="默认输入框" class="mb-10" />
     <c-input v-model="value3" size="small" placeholder="小号输入框" />
   </div>
 </template>
@@ -181,7 +181,7 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" type="password" placeholder="密码输入框" />
+    <c-input v-model="value" type="password" placeholder="密码输入框" class="mb-10" />
     <c-input v-model="value" type="password" show-password placeholder="可切换密码可见性" />
   </div>
 </template>
@@ -212,8 +212,8 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" prepend="http://" placeholder="请输入网址" />
-    <c-input v-model="value" append=".com" placeholder="请输入域名" />
+    <c-input v-model="value" prepend="http://" placeholder="请输入网址" class="mb-10" />
+    <c-input v-model="value" append=".com" placeholder="请输入域名" class="mb-10" />
     <c-input v-model="value" prepend="https://" append=".org" placeholder="请输入网址" />
   </div>
 </template>
@@ -223,8 +223,6 @@ export default defineComponent({
 ```
 
 :::
-
-
 
 ## Input参数
 
