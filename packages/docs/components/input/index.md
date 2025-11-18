@@ -237,7 +237,7 @@ export default defineComponent({
 | show-password | boolean                 | false   | 密码输入时是否可切换可见性 |
 | prepend       | string                  | --      | 前置内容文本               |
 | append        | string                  | --      | 后置内容文本               |
-| value         | string                  | --      | 绑定值                     |
+| modelValue    | string                  | --      | 绑定值                     |
 
 ## Input类型定义
 
@@ -255,14 +255,14 @@ export type InputSize = 'large' | 'default' | 'small'
 
 ## Input事件
 
-| 事件名      | 参数  | 说明                             |
-| ----------- | ----- | -------------------------------- |
-| update:value | value | 绑定值改变时触发（v-model 事件） |
-| input       | value | 输入框值改变时触发               |
-| change      | value | 输入框值改变并失去焦点时触发     |
-| focus       | event | 输入框获得焦点时触发             |
-| blur        | event | 输入框失去焦点时触发             |
-| clear       | --    | 点击清空图标时触发               |
+| 事件名         | 参数  | 说明                             |
+| -------------- | ----- | -------------------------------- |
+| update:modelValue | value | 绑定值改变时触发（v-model 事件） |
+| input          | value | 输入框值改变时触发               |
+| change         | value | 输入框值改变并失去焦点时触发     |
+| focus          | event | 输入框获得焦点时触发             |
+| blur           | event | 输入框失去焦点时触发             |
+| clear          | --    | 点击清空图标时触发               |
 
 ## Input插槽
 

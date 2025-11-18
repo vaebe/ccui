@@ -7,11 +7,11 @@ import './input.scss'
 export default defineComponent({
   name: 'CInput',
   props: inputProps,
-  emits: ['update:value', 'input', 'change', 'focus', 'blur', 'clear'],
+  emits: ['update:modelValue', 'input', 'change', 'focus', 'blur', 'clear'],
   setup(props: InputProps, { emit, slots }) {
     const ns = useNamespace('input')
     const inputRef = ref<HTMLInputElement | null>(null)
-    const inputValue = ref(props.value)
+    const inputValue = ref(props.modelValue)
     const isFocused = ref(false)
     const isPasswordVisible = ref(false)
 
@@ -60,7 +60,7 @@ export default defineComponent({
     // 事件处理
     const updateValue = (value: string) => {
       inputValue.value = value
-      emit('update:value', value)
+      emit('update:modelValue', value)
       emit('input', value)
     }
 
@@ -93,8 +93,8 @@ export default defineComponent({
       isPasswordVisible.value = !isPasswordVisible.value
     }
 
-    // 监听 value 属性变化
-    watch(() => props.value, (newVal) => {
+    // 监听 modelValue 属性变化
+    watch(() => props.modelValue, (newVal) => {
       if (newVal !== inputValue.value) {
         inputValue.value = newVal
       }

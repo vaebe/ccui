@@ -40,7 +40,7 @@ export const inputProps = {
     type: String,
     default: '',
   },
-  value: {
+  modelValue: {
     type: String,
     default: '',
   },

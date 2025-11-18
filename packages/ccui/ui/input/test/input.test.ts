@@ -15,7 +15,7 @@ describe('input', () => {
   it('dom', () => {
     const wrapper = shallowMount(Input, {
       props: {
-        value: 'test',
+        modelValue: 'test',
       },
     })
 
@@ -68,7 +68,7 @@ describe('input', () => {
   })
 
   it('clearable', async () => {
-    const wrapper = shallowMount(Input, { props: { clearable: true, value: 'test' } })
+    const wrapper = shallowMount(Input, { props: { clearable: true, modelValue: 'test' } })
 
     // 检查是否显示清空图标
     expect(wrapper.find(ns.e('clear')).exists()).toBeTruthy()
@@ -157,7 +157,7 @@ describe('input', () => {
     const wrapper = mount(Input, {
       props: {
         clearable: true,
-        value: 'test',
+        modelValue: 'test',
       },
       attrs: {
         onClear: handleClear,
@@ -179,7 +179,7 @@ describe('input', () => {
       props: {
         type: 'password',
         showPassword: true,
-        value: 'test',
+        modelValue: 'test',
       },
     })
 
