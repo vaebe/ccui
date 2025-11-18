@@ -95,28 +95,25 @@
 
   &__prepend,
   &__append {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
     white-space: nowrap;
     background-color: $ccui-area;
-    border: 1px solid $ccui-line;
-    border-color: inherit;
     color: $ccui-text;
     font-size: inherit;
-    line-height: 1.5;
+    line-height: 1;
+    height: 100%;
+    padding: 0 10px;
   }
 
   &__prepend {
-    border-right: 0;
-    border-top-left-radius: $ccui-border-radius;
-    border-bottom-left-radius: $ccui-border-radius;
+    border-radius: $ccui-border-radius 0 0 $ccui-border-radius;
+    border-right: 1px solid $ccui-line;
   }
 
   &__append {
-    border-left: 0;
-    border-top-right-radius: $ccui-border-radius;
-    border-bottom-right-radius: $ccui-border-radius;
+    border-radius: 0 $ccui-border-radius $ccui-border-radius 0;
+    border-left: 1px solid $ccui-line;
   }
 
   &__inner {
