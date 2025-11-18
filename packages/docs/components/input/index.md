@@ -33,11 +33,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -74,11 +69,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -106,11 +96,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -141,11 +126,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -176,11 +156,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -212,11 +187,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -248,11 +218,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -283,11 +248,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
@@ -318,11 +278,6 @@ export default defineComponent({
 </template>
 
 <style>
-.ccui-input {
-  width: 300px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
 </style>
 ```
 
