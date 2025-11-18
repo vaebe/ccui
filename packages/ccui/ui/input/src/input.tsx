@@ -27,11 +27,18 @@ export default defineComponent({
 
     // 为测试兼容性，保持一致的类名结构
     const getBaseClass = computed(() => {
+      const hasInteractiveSuffix = !props.disabled && !props.readonly
+        && (props.clearable || showPasswordVisible.value)
+      const hasSuffix = hasInteractiveSuffix || !!slots.suffix
+
       return {
         [ns.b()]: true, // 基础类
         [ns.m(props.size)]: !!props.size, // 尺寸类
         [ns.m('disabled')]: props.disabled, // 禁用类
         [ns.m('readonly')]: props.readonly, // 只读类
+        [ns.m('clearable')]: props.clearable,
+        [ns.m('suffix')]: hasSuffix,
+        [ns.m('prefix')]: !!slots.prefix,
       }
     })
 
@@ -48,9 +55,6 @@ export default defineComponent({
       [ns.m(props.size)]: !!props.size,
       [ns.m('disabled')]: props.disabled,
       [ns.m('readonly')]: props.readonly,
-      [ns.m('clearable')]: props.clearable,
-      [ns.m('suffix')]: props.clearable || showPasswordVisible.value || slots.suffix,
-      [ns.m('prefix')]: slots.prefix,
     }))
 
     // 事件处理
@@ -118,21 +122,26 @@ export default defineComponent({
     }
 
     const renderSuffixIcons = () => {
-      if (!props.clearable && !showPasswordVisible.value && !slots.suffix)
+      const isInteractive = !props.disabled && !props.readonly
+      const hasClear = isInteractive && props.clearable && inputValue.value
+      const hasPasswordToggle = isInteractive && showPasswordVisible.value
+      const hasSuffixSlot = !!slots.suffix
+
+      if (!hasClear && !hasPasswordToggle && !hasSuffixSlot)
         return null
+
       return (
         <div class={ns.e('suffix')}>
-          {props.clearable && inputValue.value && (
+          {hasClear && (
             <i class={ns.e('clear')} onClick={clearInput}></i>
           )}
-          {showPasswordVisible.value && (
+          {hasPasswordToggle && (
             <i
               class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
               onClick={togglePasswordVisible}
-            >
-            </i>
+            />
           )}
-          {slots.suffix && slots.suffix()}
+          {hasSuffixSlot && slots.suffix!()}
         </div>
       )
     }
