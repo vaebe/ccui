@@ -3,6 +3,33 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { Popover } from '../index'
 
+// 测试辅助函数
+function createWrapper(props = {}, slots = {}) {
+  return mount(Popover, {
+    props: {
+      teleported: false,
+      ...props,
+    },
+    slots: {
+      default: '<button>Trigger</button>',
+      ...slots,
+    },
+  })
+}
+
+function createShallowWrapper(props = {}, slots = {}) {
+  return shallowMount(Popover, {
+    props: {
+      teleported: false,
+      ...props,
+    },
+    slots: {
+      default: '<button>Trigger</button>',
+      ...slots,
+    },
+  })
+}
+
 describe('popover', () => {
   let wrapper: any
 
@@ -28,27 +55,17 @@ describe('popover', () => {
 
   describe('基础功能', () => {
     it('正确渲染组件', () => {
-      wrapper = shallowMount(Popover, {
-        slots: {
-          default: '<button>Trigger</button>',
-        },
-      })
+      wrapper = createShallowWrapper()
       expect(wrapper.exists()).toBe(true)
       expect(wrapper.find('.ccui-popover').exists()).toBe(true)
       expect(wrapper.find('.ccui-popover__trigger').exists()).toBe(true)
     })
 
     it('显示内容与标题', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          title: 'Title',
-          content: 'Popover content',
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
-        },
+      wrapper = createWrapper({
+        title: 'Title',
+        content: 'Popover content',
+        visible: true,
       })
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
@@ -57,148 +74,85 @@ describe('popover', () => {
     })
 
     it('支持插槽内容', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
+      wrapper = createWrapper(
+        { visible: true },
+        {
           title: '<div class="custom-title">Custom Title</div>',
           content: '<div class="custom-content">Custom content</div>',
         },
-      })
+      )
       await nextTick()
       expect(wrapper.find('.custom-title').exists()).toBe(true)
       expect(wrapper.find('.custom-content').exists()).toBe(true)
     })
 
     it('支持 HTML 内容', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: '<strong>Bold</strong>',
-          rawContent: true,
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
-        },
+      wrapper = createWrapper({
+        content: '<strong>Bold</strong>',
+        rawContent: true,
+        visible: true,
       })
       await nextTick()
       expect(wrapper.find('.ccui-popover__content strong').exists()).toBe(true)
     })
 
     it('支持设置宽度', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'W',
-          width: '200px',
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
-        },
+      wrapper = createWrapper({
+        content: 'W',
+        width: '200px',
+        visible: true,
       })
       await nextTick()
-      const popper = wrapper.find('.ccui-popover__popper')
-      expect(popper.element.style.width).toBe('200px')
+      expect(wrapper.find('.ccui-popover__popper').element.style.width).toBe('200px')
     })
   })
 
   describe('主题与样式', () => {
-    it('应用 light 主题', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'Test',
-          effect: 'light',
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
-        },
+    it.each([
+      ['light', 'ccui-popover__popper--light'],
+      ['dark', 'ccui-popover__popper--dark'],
+    ])('应用 %s 主题', async (effect, expectedClass) => {
+      wrapper = createWrapper({
+        content: 'Test',
+        effect: effect as any,
+        visible: true,
       })
       await nextTick()
-      expect(wrapper.find('.ccui-popover__popper--light').exists()).toBe(true)
-    })
-
-    it('应用 dark 主题', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'Test',
-          effect: 'dark',
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: {
-          default: '<button>Trigger</button>',
-        },
-      })
-      await nextTick()
-      expect(wrapper.find('.ccui-popover__popper--dark').exists()).toBe(true)
+      expect(wrapper.find(`.${expectedClass}`).exists()).toBe(true)
     })
 
     it('应用位置样式', async () => {
       const placements = ['top', 'bottom', 'left', 'right']
+      wrapper = createWrapper({
+        content: 'Test',
+        placement: 'top',
+        visible: true,
+      })
+
       for (const placement of placements) {
-        wrapper = mount(Popover, {
-          props: {
-            content: 'Test',
-            placement: placement as any,
-            visible: true,
-            teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-          },
-          slots: {
-            default: '<button>Trigger</button>',
-          },
-        })
+        await wrapper.setProps({ placement: placement as any })
         await nextTick()
         expect(wrapper.find(`.ccui-popover__popper--${placement}`).exists()).toBe(true)
-        wrapper.unmount()
       }
     })
 
-    it('显示箭头', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'Test',
-          showArrow: true,
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: { default: '<button>Trigger</button>' },
+    it.each([
+      [true, true],
+      [false, false],
+    ])('箭头显示状态: showArrow=%s', async (showArrow, shouldExist) => {
+      wrapper = createWrapper({
+        content: 'Test',
+        showArrow,
+        visible: true,
       })
       await nextTick()
-      expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(true)
-    })
-
-    it('隐藏箭头', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'Test',
-          showArrow: false,
-          visible: true,
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: { default: '<button>Trigger</button>' },
-      })
-      await nextTick()
-      expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(false)
+      expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(shouldExist)
     })
   })
 
   describe('交互功能', () => {
     it('点击时切换显示状态', async () => {
-      wrapper = mount(Popover, {
-        props: {
-          content: 'Test',
-          trigger: 'click',
-          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-        },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', trigger: 'click' })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('click')
       await nextTick()
@@ -209,10 +163,7 @@ describe('popover', () => {
     })
 
     it('悬停时显示与隐藏', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'hover', hideAfter: 0, teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', trigger: 'hover', hideAfter: 0 })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('mouseenter')
       await nextTick()
@@ -223,10 +174,10 @@ describe('popover', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'focus', hideAfter: 0, teleported: false },
-        slots: { default: '<input type="text" />' },
-      })
+      wrapper = createWrapper(
+        { content: 'Test', trigger: 'focus', hideAfter: 0 },
+        { default: '<input type="text" />' },
+      )
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('focus')
       await nextTick()
@@ -239,10 +190,7 @@ describe('popover', () => {
 
   describe('禁用与延迟', () => {
     it('禁用时不显示', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', disabled: true, trigger: 'hover', teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', disabled: true, trigger: 'hover' })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('mouseenter')
       await nextTick()
@@ -257,10 +205,7 @@ describe('popover', () => {
         vi.useRealTimers()
       })
       it('延迟显示', async () => {
-        wrapper = mount(Popover, {
-          props: { content: 'Test', trigger: 'hover', showAfter: 100, teleported: false },
-          slots: { default: '<button>Trigger</button>' },
-        })
+        wrapper = createWrapper({ content: 'Test', trigger: 'hover', showAfter: 100 })
         const trigger = wrapper.find('.ccui-popover__trigger')
         await trigger.trigger('mouseenter')
         await nextTick()
@@ -270,10 +215,7 @@ describe('popover', () => {
         expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
       })
       it('延迟隐藏', async () => {
-        wrapper = mount(Popover, {
-          props: { content: 'Test', trigger: 'hover', hideAfter: 100, teleported: false },
-          slots: { default: '<button>Trigger</button>' },
-        })
+        wrapper = createWrapper({ content: 'Test', trigger: 'hover', hideAfter: 100 })
         const trigger = wrapper.find('.ccui-popover__trigger')
         await trigger.trigger('mouseenter')
         await nextTick()
@@ -294,17 +236,14 @@ describe('popover', () => {
       const show = vi.fn()
       const beforeHide = vi.fn()
       const hide = vi.fn()
-      wrapper = mount(Popover, {
-        props: {
-          'content': 'Test',
-          'trigger': 'hover',
-          'hideAfter': 0,
-          'onBefore-show': beforeShow,
-          'onShow': show,
-          'onBefore-hide': beforeHide,
-          'onHide': hide,
-        },
-        slots: { default: '<button>Trigger</button>' },
+      wrapper = createWrapper({
+        'content': 'Test',
+        'trigger': 'hover',
+        'hideAfter': 0,
+        'onBefore-show': beforeShow,
+        'onShow': show,
+        'onBefore-hide': beforeHide,
+        'onHide': hide,
       })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('mouseenter')
@@ -318,10 +257,7 @@ describe('popover', () => {
     })
 
     it('aRIA 属性', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', ariaLabel: 'Test popover', visible: true, teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', ariaLabel: 'Test popover', visible: true })
       await nextTick()
       const trigger = wrapper.find('.ccui-popover__trigger')
       const popper = wrapper.find('.ccui-popover__popper')
@@ -383,10 +319,7 @@ describe('popover', () => {
 
   describe('新增功能测试', () => {
     it('右键菜单触发', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'contextmenu', teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', trigger: 'contextmenu' })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('contextmenu')
       await nextTick()
@@ -416,10 +349,7 @@ describe('popover', () => {
 
     it('自动关闭功能', async () => {
       vi.useFakeTimers()
-      wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'click', autoClose: 1000, teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', trigger: 'click', autoClose: 1000 })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('click')
       await nextTick()
@@ -432,10 +362,10 @@ describe('popover', () => {
     })
 
     it('键盘触发功能', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', ' '], hideAfter: 0, teleported: false },
-        slots: { default: '<input type="text" />' },
-      })
+      wrapper = createWrapper(
+        { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', ' '], hideAfter: 0 },
+        { default: '<input type="text" />' },
+      )
       const trigger = wrapper.find('.ccui-popover__trigger')
 
       // focus 事件会自动显示 popover
@@ -487,17 +417,13 @@ describe('popover', () => {
       const beforeLeave = vi.fn()
       const afterLeave = vi.fn()
 
-      wrapper = mount(Popover, {
-        props: {
-          'content': 'Test',
-          'trigger': 'click',
-          'teleported': false,
-          'onBefore-enter': beforeEnter,
-          'onAfter-enter': afterEnter,
-          'onBefore-leave': beforeLeave,
-          'onAfter-leave': afterLeave,
-        },
-        slots: { default: '<button>Trigger</button>' },
+      wrapper = createWrapper({
+        'content': 'Test',
+        'trigger': 'click',
+        'onBefore-enter': beforeEnter,
+        'onAfter-enter': afterEnter,
+        'onBefore-leave': beforeLeave,
+        'onAfter-leave': afterLeave,
       })
 
       const trigger = wrapper.find('.ccui-popover__trigger')
@@ -525,10 +451,7 @@ describe('popover', () => {
     })
 
     it('exposes methods', async () => {
-      wrapper = mount(Popover, {
-        props: { content: 'Test', visible: true, teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test', visible: true })
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
 
@@ -537,10 +460,7 @@ describe('popover', () => {
       // 所以需要测试非受控模式
       wrapper.unmount()
 
-      wrapper = mount(Popover, {
-        props: { content: 'Test', teleported: false },
-        slots: { default: '<button>Trigger</button>' },
-      })
+      wrapper = createWrapper({ content: 'Test' })
 
       // 手动触发显示
       const trigger = wrapper.find('.ccui-popover__trigger')

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Slider } from '../index'
 
@@ -12,8 +12,14 @@ const buttonClass = ns.e('button')
 describe('slider', () => {
   let wrapper: any
 
-  beforeEach(() => {
-    wrapper = null
+  // Helper function to create mock rect
+  const createMockRect = (width = 100, height = 32) => ({
+    left: 0,
+    width,
+    top: 0,
+    height,
+    right: width,
+    bottom: height,
   })
 
   it('dom', () => {
@@ -27,7 +33,7 @@ describe('slider', () => {
     wrapper.unmount()
   })
 
-  it('props - modelValue', async () => {
+  it('props - modelValue', () => {
     const modelValue = 50
     wrapper = mount(Slider, {
       props: {
@@ -83,11 +89,9 @@ describe('slider', () => {
       },
     })
 
-    // 需要触发悬停才能显示 tooltip
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
-    // 使用 CTooltip 组件，检查 tooltip 是否存在
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltipComponent.exists()).toBe(true)
     expect(tooltipComponent.props('visible')).toBe(true)
@@ -102,7 +106,6 @@ describe('slider', () => {
       },
     })
 
-    // tooltip 组件不应该存在
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltipComponent.exists()).toBe(false)
     wrapper.unmount()
@@ -130,7 +133,6 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件内部有控制按钮
     expect(wrapper.find(ns.e('input-number')).exists()).toBe(true)
     wrapper.unmount()
   })
@@ -169,7 +171,6 @@ describe('slider', () => {
       },
     })
 
-    // tooltip 组件应该存在但不显示内容
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltipComponent.exists()).toBe(true)
     expect(tooltipComponent.props('content')).toBe('')
@@ -187,7 +188,6 @@ describe('slider', () => {
       },
     })
 
-    // 需要触发悬停才能显示 tooltip
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
@@ -207,14 +207,12 @@ describe('slider', () => {
       },
     })
 
-    // 需要触发悬停才能显示 tooltip
     const button = wrapper.find(ns.e('button'))
     await button.trigger('mouseenter')
 
     const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltipComponent.exists()).toBe(true)
     expect(tooltipComponent.props('visible')).toBe(true)
-    // placement 应该使用用户设置的值
     expect(tooltipComponent.props('placement')).toBe('bottom')
     wrapper.unmount()
   })
@@ -248,7 +246,7 @@ describe('slider', () => {
     })
 
     expect(wrapper.find(ns.e('stops')).exists()).toBe(true)
-    expect(wrapper.findAll(ns.e('stop')).length).toBe(11) // 0-100 with step 10
+    expect(wrapper.findAll(ns.e('stop')).length).toBe(11)
     wrapper.unmount()
   })
 
@@ -270,20 +268,8 @@ describe('slider', () => {
       },
     })
 
-    // 模拟点击滑块
     const sliderWrapper = wrapper.find(wrapperClass)
-
-    // 模拟 getBoundingClientRect
-    const mockRect = {
-      left: 0,
-      width: 100,
-      top: 0,
-      height: 32,
-      right: 100,
-      bottom: 32,
-    }
-
-    vi.spyOn(sliderWrapper.element, 'getBoundingClientRect').mockReturnValue(mockRect)
+    vi.spyOn(sliderWrapper.element, 'getBoundingClientRect').mockReturnValue(createMockRect())
 
     await sliderWrapper.trigger('click', { clientX: 50 })
 
@@ -336,18 +322,7 @@ describe('slider', () => {
     })
 
     const button = wrapper.find(buttonClass)
-
-    // Mock getBoundingClientRect
-    const mockRect = {
-      left: 0,
-      width: 100,
-      top: 0,
-      height: 32,
-      right: 100,
-      bottom: 32,
-    }
-
-    vi.spyOn(wrapper.vm.sliderRef, 'getBoundingClientRect').mockReturnValue(mockRect)
+    vi.spyOn(wrapper.vm.sliderRef, 'getBoundingClientRect').mockReturnValue(createMockRect())
 
     await button.trigger('mousedown', { clientX: 50 })
     expect(wrapper.vm.isDragging).toBe(true)
@@ -451,7 +426,6 @@ describe('slider', () => {
       },
     })
 
-    // 使用 InputNumber 组件的事件
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     await inputNumber.vm.$emit('update:modelValue', 75)
 
@@ -460,7 +434,7 @@ describe('slider', () => {
     wrapper.unmount()
   })
 
-  it('input change with invalid value', async () => {
+  it('input change with invalid value', () => {
     wrapper = mount(Slider, {
       props: {
         showInput: true,
@@ -470,7 +444,6 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件内部处理无效值
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
@@ -486,12 +459,10 @@ describe('slider', () => {
       },
     })
 
-    // 使用 InputNumber 组件的事件，测试边界值处理
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     await inputNumber.vm.$emit('update:modelValue', 150)
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    // Should clamp to max value
     const emittedValues = wrapper.emitted('update:modelValue') as any[]
     expect(emittedValues[emittedValues.length - 1][0]).toBe(100)
     wrapper.unmount()
@@ -507,18 +478,16 @@ describe('slider', () => {
       },
     })
 
-    // 使用 InputNumber 组件的事件，测试边界值处理
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     await inputNumber.vm.$emit('update:modelValue', -10)
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    // Should clamp to min value
     const emittedValues = wrapper.emitted('update:modelValue') as any[]
     expect(emittedValues[emittedValues.length - 1][0]).toBe(0)
     wrapper.unmount()
   })
 
-  it('event - input increase button', async () => {
+  it('event - input increase button', () => {
     wrapper = mount(Slider, {
       props: {
         showInput: true,
@@ -529,13 +498,12 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件内部处理增减按钮
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('event - input decrease button', async () => {
+  it('event - input decrease button', () => {
     wrapper = mount(Slider, {
       props: {
         showInput: true,
@@ -546,13 +514,12 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件内部处理增减按钮
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('event - input buttons disabled at boundaries', async () => {
+  it('event - input buttons disabled at boundaries', () => {
     wrapper = mount(Slider, {
       props: {
         showInput: true,
@@ -563,7 +530,6 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件内部处理边界禁用逻辑
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
@@ -690,7 +656,6 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件处理输入
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
@@ -705,7 +670,6 @@ describe('slider', () => {
       },
     })
 
-    // InputNumber 组件处理输入
     const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
     expect(inputNumber.exists()).toBe(true)
     wrapper.unmount()
