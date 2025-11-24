@@ -142,21 +142,22 @@ describe('popover', () => {
 
     it('应用位置样式', async () => {
       const placements = ['top', 'bottom', 'left', 'right']
+      wrapper = mount(Popover, {
+        props: {
+          content: 'Test',
+          placement: 'top',
+          visible: true,
+          teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
+        },
+        slots: {
+          default: '<button>Trigger</button>',
+        },
+      })
+
       for (const placement of placements) {
-        wrapper = mount(Popover, {
-          props: {
-            content: 'Test',
-            placement: placement as any,
-            visible: true,
-            teleported: false, // 测试中禁用 teleport，以便在组件内部查找元素
-          },
-          slots: {
-            default: '<button>Trigger</button>',
-          },
-        })
+        await wrapper.setProps({ placement: placement as any })
         await nextTick()
         expect(wrapper.find(`.ccui-popover__popper--${placement}`).exists()).toBe(true)
-        wrapper.unmount()
       }
     })
 
