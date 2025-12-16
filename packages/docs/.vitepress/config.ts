@@ -5,7 +5,7 @@ import { defineConfig } from 'vitepress'
 import nav from './config/nav'
 import sidebar from './config/sidebar'
 
-const prod = !!process.env.NETLIFY
+const prod = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
   base: prod ? '/ccui/' : '/',
