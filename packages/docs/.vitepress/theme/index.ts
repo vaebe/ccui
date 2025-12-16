@@ -1,3 +1,4 @@
+import type { EnhanceAppContext } from 'vitepress'
 import DemoPreview, { useComponents } from '@vitepress-code-preview/container'
 import DefaultTheme from 'vitepress/theme'
 import ccui from 'vue3-ccui/ui/vue-ccui'
@@ -7,7 +8,7 @@ import 'virtual:uno.css'
 
 export default {
   ...DefaultTheme,
-  enhanceApp(ctx) {
+  enhanceApp(ctx: EnhanceAppContext) {
     DefaultTheme.enhanceApp(ctx)
 
     ctx.app.use(ccui)
