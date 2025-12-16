@@ -13,33 +13,20 @@
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value1 = ref(0)
-
-    return {
-      value1
-    }
-  }
-})
+const value = ref(0)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value1" placeholder="请输入数字" />
-    <p>当前值：{{ value1 }}</p>
+  <div>
+    <c-input-number v-model="value" placeholder="请输入数字" />
+    <p>当前值：{{ value }}</p>
   </div>
 </template>
 
 <style>
-.input-number-demo {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 </style>
 ```
 
@@ -52,24 +39,14 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value2 = ref(10)
-
-    return {
-      value2
-    }
-  }
-})
+const value = ref(10)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value2" disabled />
-  </div>
+  <c-input-number v-model="value" disabled />
 </template>
 ```
 
@@ -82,23 +59,15 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value3 = ref(1)
-
-    return {
-      value3
-    }
-  }
-})
+const value = ref(1)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value3" :min="1" :max="10" />
+  <div>
+    <c-input-number v-model="value" :min="1" :max="10" />
     <p>范围：1 - 10</p>
   </div>
 </template>
@@ -113,23 +82,15 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value4 = ref(0)
-
-    return {
-      value4
-    }
-  }
-})
+const value = ref(0)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value4" :step="2" />
+  <div>
+    <c-input-number v-model="value" :step="2" />
     <p>步长：2</p>
   </div>
 </template>
@@ -144,23 +105,15 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value5 = ref(1.00)
-
-    return {
-      value5
-    }
-  }
-})
+const value = ref(1.00)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value5" :precision="2" :step="0.1" />
+  <div>
+    <c-input-number v-model="value" :precision="2" :step="0.1" />
     <p>精度：2 位小数</p>
   </div>
 </template>
@@ -175,25 +128,17 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value6 = ref(0)
-
-    return {
-      value6
-    }
-  }
-})
+const value = ref(0)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value6" size="lg" placeholder="大尺寸" />
-    <c-input-number v-model="value6" size="md" placeholder="中等尺寸" />
-    <c-input-number v-model="value6" size="sm" placeholder="小尺寸" />
+  <div class="flex flex-col gap-4">
+    <c-input-number v-model="value" size="lg" placeholder="大尺寸" />
+    <c-input-number v-model="value" size="md" placeholder="中等尺寸" />
+    <c-input-number v-model="value" size="sm" placeholder="小尺寸" />
   </div>
 </template>
 ```
@@ -207,31 +152,30 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value7 = ref(0)
-
-    return {
-      value7
-    }
-  }
-})
+const value = ref(0)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value7" controls-position="both" placeholder="两侧控制" />
-    <div>
-      <c-input-number v-model="value7" size="lg" controls-position="right" placeholder="右侧控制" />
+  <div>
+    <p class="mt-0!">
+      两侧控制
+    </p>
+    <c-input-number v-model="value" controls-position="both" placeholder="两侧控制" />
 
-      <c-input-number v-model="value7" controls-position="right" placeholder="右侧控制" />
+    <p>右侧控制</p>
+    <div class="flex gap-4">
+      <c-input-number v-model="value" size="lg" controls-position="right" placeholder="右侧控制" />
 
-      <c-input-number v-model="value7" size="sm" controls-position="right" placeholder="右侧控制" />
+      <c-input-number v-model="value" controls-position="right" placeholder="右侧控制" />
+
+      <c-input-number v-model="value" size="sm" controls-position="right" placeholder="右侧控制" />
     </div>
-    <c-input-number v-model="value7" :controls="false" placeholder="无控制按钮" />
+
+    <p>无控制按钮</p>
+    <c-input-number v-model="value" :controls="false" placeholder="无控制按钮" />
   </div>
 </template>
 ```
@@ -245,24 +189,16 @@ export default defineComponent({
 :::demo
 
 ```vue
-<script>
+<script setup>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const value8 = ref(undefined)
-
-    return {
-      value8
-    }
-  }
-})
+const value = ref(undefined)
 </script>
 
 <template>
-  <div class="input-number-demo">
-    <c-input-number v-model="value8" allow-empty placeholder="允许空值" />
-    <p>当前值：{{ value8 }}</p>
+  <div>
+    <c-input-number v-model="value" allow-empty placeholder="允许空值" />
+    <p>当前值：{{ value }}</p>
   </div>
 </template>
 ```
