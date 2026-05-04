@@ -12,6 +12,16 @@ export default defineConfig({
   lang: 'zh-CN',
   title: 'vue3-ccui',
   description: 'vue3-ccui 组件库',
+  vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^vue3-ccui$/,
+          replacement: fileURLToPath(new URL('../../ccui/ui/vue-ccui.ts', import.meta.url)),
+        },
+      ],
+    },
+  },
   lastUpdated: true,
   ignoreDeadLinks: true, // 忽略死链接
   head: [
