@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { Tooltip } from '../index'
 
@@ -72,10 +72,7 @@ describe('tooltip', () => {
     })
 
     it('支持插槽内容', async () => {
-      wrapper = createWrapper(
-        { visible: true },
-        { content: '<div class="custom-content">Custom content</div>' },
-      )
+      wrapper = createWrapper({ visible: true }, { content: '<div class="custom-content">Custom content</div>' })
       await nextTick()
       expect(wrapper.find('.custom-content').exists()).toBe(true)
       expect(wrapper.find('.custom-content').text()).toBe('Custom content')
@@ -159,10 +156,7 @@ describe('tooltip', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = createWrapper(
-        { content: 'Test', trigger: 'focus', hideAfter: 0 },
-        { default: '<input type="text" />' },
-      )
+      wrapper = createWrapper({ content: 'Test', trigger: 'focus', hideAfter: 0 }, { default: '<input type="text" />' })
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       await trigger.trigger('focus')
       await nextTick()
@@ -225,13 +219,13 @@ describe('tooltip', () => {
       const beforeHide = vi.fn()
       const hide = vi.fn()
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'hover',
-        'hideAfter': 0,
+        content: 'Test',
+        trigger: 'hover',
+        hideAfter: 0,
         'onBefore-show': beforeShow,
-        'onShow': show,
+        onShow: show,
         'onBefore-hide': beforeHide,
-        'onHide': hide,
+        onHide: hide,
       })
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       await trigger.trigger('mouseenter')

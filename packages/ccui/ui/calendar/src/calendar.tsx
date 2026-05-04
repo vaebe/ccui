@@ -15,17 +15,11 @@ export default defineComponent({
 
     // 当前天 选中天
     const currentDate = ref(
-      props.modelValue
-        ? dayjs(props.modelValue).format('YYYY-MM-DD')
-        : dayjs().format('YYYY-MM-DD'),
+      props.modelValue ? dayjs(props.modelValue).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
     )
 
     // 当前月
-    const currentMonth = ref(
-      props.modelValue
-        ? dayjs(props.modelValue).format('YYYY-MM')
-        : dayjs().format('YYYY-MM'),
-    )
+    const currentMonth = ref(props.modelValue ? dayjs(props.modelValue).format('YYYY-MM') : dayjs().format('YYYY-MM'))
 
     // 当前展示的日期列表
     const curDateList: Ref<dateItem[]> = ref([])
@@ -36,15 +30,12 @@ export default defineComponent({
       // 获取当月第一天是周几
       const whichDay = dayjs(month).startOf('month').day()
       // 计算开始开始日期 7 减去当月第一天是周几（获取到的周几是 0123456， 其中0代表周日）
-      const startDate = dayjs(
-        dayjs(month).subtract(7 - whichDay, 'day'),
-      ).format('YYYY-MM-DD')
+      const startDate = dayjs(dayjs(month).subtract(7 - whichDay, 'day')).format('YYYY-MM-DD')
 
       // 整理数据
       // 生成长度42的数组，为什么是42呢？ 因为有的月份是28 或者30 31， 35 会导致某些月份展示不全。
-      curDateList.value = [...Array.from({ length: 42 })]
-        .map((item, index) => index)
-        .reduce((acc: Array<dateItem>, index: number) => {
+      curDateList.value = Array.from({ length: 42 }, (_, index) => index).reduce(
+        (acc: Array<dateItem>, index: number) => {
           // 获取展示的日期
           const date = dayjs(startDate)
             .add(index + 1, 'day')
@@ -63,7 +54,9 @@ export default defineComponent({
           })
           // 返回数组
           return acc
-        }, [])
+        },
+        [],
+      )
     }
 
     // 初始化
@@ -92,9 +85,7 @@ export default defineComponent({
 
       // 上个月
       if (type === 'lastMonth') {
-        month = dayjs(currentMonth.value)
-          .subtract(1, 'month')
-          .format('YYYY-MM')
+        month = dayjs(currentMonth.value).subtract(1, 'month').format('YYYY-MM')
       }
 
       // 传入YYYY-MM 格式的月份 格式化后会获取到当月的第一天

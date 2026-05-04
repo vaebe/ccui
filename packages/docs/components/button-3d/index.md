@@ -10,21 +10,11 @@
 <template>
   <div>
     <c-button-3d>默认按钮</c-button-3d>
-    <c-button-3d type="primary">
-      主要按钮
-    </c-button-3d>
-    <c-button-3d type="success">
-      成功按钮
-    </c-button-3d>
-    <c-button-3d type="warning">
-      警告按钮
-    </c-button-3d>
-    <c-button-3d type="danger">
-      危险按钮
-    </c-button-3d>
-    <c-button-3d type="info">
-      信息按钮
-    </c-button-3d>
+    <c-button-3d type="primary"> 主要按钮 </c-button-3d>
+    <c-button-3d type="success"> 成功按钮 </c-button-3d>
+    <c-button-3d type="warning"> 警告按钮 </c-button-3d>
+    <c-button-3d type="danger"> 危险按钮 </c-button-3d>
+    <c-button-3d type="info"> 信息按钮 </c-button-3d>
   </div>
 </template>
 ```
@@ -38,15 +28,9 @@
 ```vue
 <template>
   <div>
-    <c-button-3d size="large">
-      大按钮
-    </c-button-3d>
-    <c-button-3d type="primary">
-      默认按钮
-    </c-button-3d>
-    <c-button-3d size="small" type="success">
-      小按钮
-    </c-button-3d>
+    <c-button-3d size="large"> 大按钮 </c-button-3d>
+    <c-button-3d type="primary"> 默认按钮 </c-button-3d>
+    <c-button-3d size="small" type="success"> 小按钮 </c-button-3d>
   </div>
 </template>
 ```
@@ -60,13 +44,9 @@
 ```vue
 <template>
   <div>
-    <c-button-3d disabled>
-      禁用按钮
-    </c-button-3d>
+    <c-button-3d disabled> 禁用按钮 </c-button-3d>
 
-    <c-button-3d type="primary" disabled>
-      禁用按钮 primary 状态
-    </c-button-3d>
+    <c-button-3d type="primary" disabled> 禁用按钮 primary 状态 </c-button-3d>
   </div>
 </template>
 ```
@@ -80,12 +60,8 @@
 ```vue
 <template>
   <div>
-    <c-button-3d loading>
-      加载中
-    </c-button-3d>
-    <c-button-3d type="primary" loading>
-      加载中
-    </c-button-3d>
+    <c-button-3d loading> 加载中 </c-button-3d>
+    <c-button-3d type="primary" loading> 加载中 </c-button-3d>
   </div>
 </template>
 ```
@@ -109,11 +85,7 @@
 ### Button3DType
 
 ```ts
-export type Button3DType = 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
+export type Button3DType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 ```
 
 ### Button3DSizeType

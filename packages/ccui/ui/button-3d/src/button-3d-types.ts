@@ -1,6 +1,6 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export type Button3DType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
+export type Button3DType = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
 export type Button3DSizeType = 'large' | 'default' | 'small'
 export type Button3DNativeType = 'button' | 'submit' | 'reset'
 

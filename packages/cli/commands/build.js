@@ -14,15 +14,15 @@ const baseConfig = defineConfig({
   configFile: false,
   publicDir: false,
   plugins: [vue(), vueJsx()],
-  esbuild: {
-    exclude: ['**/node_modules/**', '**/esbuild-register/**']
+  oxc: {
+    exclude: ['**/node_modules/**'],
   },
   build: {
     commonjsOptions: {
       include: [/node_modules/],
-      transformMixedEsModules: true
-    }
-  }
+      transformMixedEsModules: true,
+    },
+  },
 })
 
 const rollupOptions = {
@@ -31,13 +31,13 @@ const rollupOptions = {
     globals: {
       vue: 'Vue',
     },
-    exports: 'named'
+    exports: 'named',
   },
   onwarn(warning, warn) {
     // 忽略此特定警告
-    if (warning.code === 'MIXED_EXPORTS') return;
-    warn(warning);
-  }
+    if (warning.code === 'MIXED_EXPORTS') return
+    warn(warning)
+  },
 }
 
 async function buildSingle(name) {
@@ -50,7 +50,7 @@ async function buildSingle(name) {
         lib: {
           entry: path.resolve(entryDir, name),
           name: 'index',
-          fileName: type => `index.${type}.js`,
+          fileName: (type) => `index.${type}.js`,
           formats: ['es', 'umd'],
         },
         outDir: path.resolve(outputDir, name),
@@ -69,7 +69,7 @@ async function buildAll() {
         lib: {
           entry: path.resolve(entryDir, 'vue-ccui.ts'),
           name: 'VueCcui',
-          fileName: type => `vue-ccui.${type}.js`,
+          fileName: (type) => `vue-ccui.${type}.js`,
           formats: ['es', 'umd'],
         },
         outDir: outputDir,
@@ -87,11 +87,7 @@ function createPackageJson(name) {
   "style": "style.css"
 }`
 
-  fsExtra.outputFile(
-    path.resolve(outputDir, `${name}/package.json`),
-    fileStr,
-    'utf-8',
-  )
+  fsExtra.outputFile(path.resolve(outputDir, `${name}/package.json`), fileStr, 'utf-8')
 }
 
 exports.build = async () => {

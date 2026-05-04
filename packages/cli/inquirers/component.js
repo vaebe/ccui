@@ -1,7 +1,4 @@
-const {
-  COMPONENT_PARTS_MAP,
-  VITEPRESS_SIDEBAR_CATEGORY,
-} = require('../shared/constant')
+const { COMPONENT_PARTS_MAP, VITEPRESS_SIDEBAR_CATEGORY } = require('../shared/constant')
 
 exports.typeName = () => ({
   name: 'name',

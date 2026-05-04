@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export type FitType = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down'
-export type GenderType = 'male' | 'female' | string
+export type GenderType = 'male' | 'female' | (string & {})
 
 export const avatarProps = {
   name: {

@@ -22,7 +22,7 @@ export default defineComponent({
 
     // 计算属性
     const isControlled = computed(() => props.visible !== undefined)
-    const actualVisible = computed(() => isControlled.value ? props.visible : visible.value)
+    const actualVisible = computed(() => (isControlled.value ? props.visible : visible.value))
 
     const popperClass = computed(() => {
       return [
@@ -30,7 +30,9 @@ export default defineComponent({
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
         props.popperClass,
-      ].filter(Boolean).join(' ')
+      ]
+        .filter(Boolean)
+        .join(' ')
     })
 
     // 使用 floating-ui 进行位置计算
@@ -80,8 +82,7 @@ export default defineComponent({
     }
 
     const doShow = () => {
-      if (props.disabled)
-        return
+      if (props.disabled) return
 
       clearTimers()
 
@@ -91,7 +92,7 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
-        nextTick(() => {
+        void nextTick(() => {
           update()
           emit('show')
         })
@@ -99,8 +100,7 @@ export default defineComponent({
 
       if (props.showAfter > 0) {
         showTimer.value = window.setTimeout(showTooltip, props.showAfter)
-      }
-      else {
+      } else {
         showTooltip()
       }
     }
@@ -119,8 +119,7 @@ export default defineComponent({
 
       if (props.hideAfter > 0 && props.trigger !== 'click') {
         hideTimer.value = window.setTimeout(hideTooltip, props.hideAfter)
-      }
-      else {
+      } else {
         hideTooltip()
       }
     }
@@ -142,8 +141,7 @@ export default defineComponent({
       if (props.trigger === 'click') {
         if (actualVisible.value) {
           doHide()
-        }
-        else {
+        } else {
           doShow()
         }
       }
@@ -189,36 +187,34 @@ export default defineComponent({
     })
 
     // 监听 visible prop 变化
-    watch(() => props.visible, (newVal) => {
-      if (newVal !== undefined) {
-        if (newVal) {
-          nextTick(() => {
-            update()
-          })
+    watch(
+      () => props.visible,
+      (newVal) => {
+        if (newVal !== undefined) {
+          if (newVal) {
+            void nextTick(() => {
+              update()
+            })
+          }
         }
-      }
-    })
+      },
+    )
 
     // 监听显示状态变化，设置自动更新
     watch(actualVisible, (newVal) => {
       if (newVal && triggerRef.value && popperRef.value) {
         cleanup?.()
         cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
-      }
-      else {
+      } else {
         cleanup?.()
       }
     })
 
     // 渲染箭头
     const renderArrow = () => {
-      if (!props.showArrow)
-        return null
+      if (!props.showArrow) return null
 
-      const arrowClass = [
-        ns.e('arrow'),
-        ns.em('arrow', props.placement.split('-')[0]),
-      ].join(' ')
+      const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
 
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
@@ -242,11 +238,9 @@ export default defineComponent({
       if (props.trigger === 'hover') {
         triggerEvents.onMouseenter = handleMouseEnter
         triggerEvents.onMouseleave = handleMouseLeave
-      }
-      else if (props.trigger === 'click') {
+      } else if (props.trigger === 'click') {
         triggerEvents.onClick = handleClick
-      }
-      else if (props.trigger === 'focus') {
+      } else if (props.trigger === 'focus') {
         triggerEvents.onFocus = handleFocus
         triggerEvents.onBlur = handleBlur
       }
@@ -281,9 +275,7 @@ export default defineComponent({
               onMouseleave={handlePopperMouseLeave}
             >
               {renderArrow()}
-              <div class={ns.e('content')}>
-                {renderContent()}
-              </div>
+              <div class={ns.e('content')}>{renderContent()}</div>
             </div>
           )}
         </div>

@@ -23,9 +23,7 @@ exports.createNuxtPlugin = () => {
 }
 
 exports.createAutoImportedComponent = async (dirName) => {
-  const importStyle = fsExtra.pathExistsSync(
-    path.resolve(outputDir, `${dirName}/style.css`),
-  )
+  const importStyle = fsExtra.pathExistsSync(path.resolve(outputDir, `${dirName}/style.css`))
     ? `import '../../${dirName}/style.css' \n`
     : ``
 
@@ -37,11 +35,7 @@ exports.createAutoImportedComponent = async (dirName) => {
     if (compName !== 'default' && !compName.includes('Directive')) {
       const fileStr = `${importStyle}\nexport  { ${compName} as default } from '../../${dirName}/index.es.js'`
 
-      fsExtra.outputFile(
-        path.resolve(outputNuxtDir, `components/${compName}.js`),
-        fileStr,
-        'utf-8',
-      )
+      fsExtra.outputFile(path.resolve(outputNuxtDir, `components/${compName}.js`), fileStr, 'utf-8')
     }
   })
 }

@@ -1,6 +1,6 @@
 import type { ButtonSizeType, ButtonType } from '../src/button-types'
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Button } from '../index'
 
@@ -115,10 +115,13 @@ describe('button', () => {
   })
 
   it('renders icon slot when provided', () => {
-    const wrapper = createWrapper({}, {
-      icon: '<i class="cc-icon-heart"></i>',
-      default: 'Like',
-    })
+    const wrapper = createWrapper(
+      {},
+      {
+        icon: '<i class="cc-icon-heart"></i>',
+        default: 'Like',
+      },
+    )
     expect(wrapper.find('.cc-icon-heart').exists()).toBe(true)
     wrapper.unmount()
   })

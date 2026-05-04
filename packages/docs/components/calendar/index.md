@@ -23,9 +23,9 @@ export default defineComponent({
     }
     return {
       curDate,
-      curDateChange
+      curDateChange,
     }
-  }
+  },
 })
 </script>
 
@@ -33,9 +33,7 @@ export default defineComponent({
   <c-calendar v-model="curDate" @change="curDateChange" />
 </template>
 
-<style>
-
-</style>
+<style></style>
 ```
 
 :::
@@ -57,15 +55,15 @@ export default defineComponent({
     const curDate = ref(new Date())
 
     const addADay = () => {
-      const dateTime = new Date(curDate.value).getTime() + (1000 * 60 * 60 * 24)
+      const dateTime = new Date(curDate.value).getTime() + 1000 * 60 * 60 * 24
       curDate.value = new Date(dateTime)
     }
     return {
       curDateChange,
       curDate,
-      addADay
+      addADay,
     }
-  }
+  },
 })
 </script>
 
@@ -74,9 +72,7 @@ export default defineComponent({
     <template #header="date">
       <div class="customize-header">
         当前日期 {{ date }}
-        <c-button type="primary" plain @click="addADay">
-          加一天
-        </c-button>
+        <c-button type="primary" plain @click="addADay"> 加一天 </c-button>
       </div>
     </template>
   </c-calendar>
@@ -105,9 +101,9 @@ export default defineComponent({
       console.log(val)
     }
     return {
-      curDateChange
+      curDateChange,
     }
-  }
+  },
 })
 </script>
 
@@ -119,9 +115,7 @@ export default defineComponent({
   </c-calendar>
 </template>
 
-<style>
-
-</style>
+<style></style>
 ```
 
 :::

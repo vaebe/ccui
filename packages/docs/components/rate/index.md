@@ -75,9 +75,7 @@ export default {
 </script>
 
 <template>
-  <c-rate v-model="value" color="#ffa500" :count="6">
-    A
-  </c-rate>
+  <c-rate v-model="value" color="#ffa500" :count="6"> A </c-rate>
 </template>
 ```
 
@@ -142,30 +140,16 @@ export default {
 
 <template>
   <div class="mb20">
-    <c-rate
-      v-model="value1"
-      :read-only="true"
-      color="blue"
-      :count="5"
-      icon="star"
-    />
+    <c-rate v-model="value1" :read-only="true" color="blue" :count="5" icon="star" />
   </div>
   <div class="mb20">
-    <c-rate
-      v-model="value2"
-      :read-only="true"
-      color="orange"
-      :count="5"
-      icon="star"
-    />
+    <c-rate v-model="value2" :read-only="true" color="orange" :count="5" icon="star" />
   </div>
   <div class="mb20">
     <c-rate v-model="value3" :read-only="true" color="red" :count="5" />
   </div>
   <div>
-    <c-rate v-model="value4" :read-only="true" color="#67c23a" :count="5">
-      N
-    </c-rate>
+    <c-rate v-model="value4" :read-only="true" color="#67c23a" :count="5"> N </c-rate>
   </div>
 </template>
 

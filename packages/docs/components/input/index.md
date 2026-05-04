@@ -20,9 +20,9 @@ export default defineComponent({
   setup() {
     const value = ref('')
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -32,8 +32,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -54,9 +53,9 @@ export default defineComponent({
     return {
       value1,
       value2,
-      value3
+      value3,
     }
-  }
+  },
 })
 </script>
 
@@ -68,8 +67,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -85,7 +83,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -95,8 +93,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -113,9 +110,9 @@ export default defineComponent({
   setup() {
     const value = ref('只读内容')
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -125,8 +122,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -143,9 +139,9 @@ export default defineComponent({
   setup() {
     const value = ref('可以清空的内容')
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -155,8 +151,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -173,9 +168,9 @@ export default defineComponent({
   setup() {
     const value = ref('')
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -186,8 +181,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -204,9 +198,9 @@ export default defineComponent({
   setup() {
     const value = ref('')
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -218,8 +212,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::

@@ -27,11 +27,11 @@ export default defineComponent({
             children: [
               {
                 label: '三级 1-1-1',
-                level: 3
-              }
-            ]
-          }
-        ]
+                level: 3,
+              },
+            ],
+          },
+        ],
       },
       {
         label: '一级 2',
@@ -44,9 +44,9 @@ export default defineComponent({
             children: [
               {
                 label: '三级 2-1-1',
-                level: 3
-              }
-            ]
+                level: 3,
+              },
+            ],
           },
           {
             label: '二级 2-2',
@@ -54,11 +54,11 @@ export default defineComponent({
             children: [
               {
                 label: '三级 2-2-1',
-                level: 3
-              }
-            ]
-          }
-        ]
+                level: 3,
+              },
+            ],
+          },
+        ],
       },
       {
         label: '一级 3',
@@ -71,9 +71,9 @@ export default defineComponent({
             children: [
               {
                 label: '三级 3-1-1',
-                level: 3
-              }
-            ]
+                level: 3,
+              },
+            ],
           },
           {
             label: '二级 3-2',
@@ -82,22 +82,22 @@ export default defineComponent({
             children: [
               {
                 label: '三级 3-2-1',
-                level: 3
-              }
-            ]
-          }
-        ]
+                level: 3,
+              },
+            ],
+          },
+        ],
       },
       {
         label: '一级 4',
-        level: 1
-      }
+        level: 1,
+      },
     ])
 
     return {
-      data
+      data,
     }
-  }
+  },
 })
 </script>
 

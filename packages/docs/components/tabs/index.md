@@ -18,9 +18,9 @@ export default defineComponent({
   setup() {
     const activeTab = ref('1')
     return {
-      activeTab
+      activeTab,
     }
-  }
+  },
 })
 </script>
 
@@ -32,9 +32,7 @@ export default defineComponent({
     <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
     </c-tab>
-    <c-tab label="疯狂星期四" name="3">
-      V我50
-    </c-tab>
+    <c-tab label="疯狂星期四" name="3"> V我50 </c-tab>
   </c-tabs>
 </template>
 
@@ -63,9 +61,9 @@ export default defineComponent({
   setup() {
     const activeTab = ref('1')
     return {
-      activeTab
+      activeTab,
     }
-  }
+  },
 })
 </script>
 
@@ -77,9 +75,7 @@ export default defineComponent({
     <c-tab label="周二" name="2">
       人生就是一辆开往坟墓的列车，路途上会有很多站，很难有人可以自始至终地陪你走完。当陪你的人要下车时，即使不舍也该心存感激，然后挥手道别。人生就是如此，没有谁会一直陪伴谁，我们应该怀着感恩之心，和过去的好友告别。毕竟曾经在我们人生某一个艰难的时刻，她们的确给过我们温暖。
     </c-tab>
-    <c-tab label="疯狂星期四" name="3">
-      V我100别问为什么，问就是有中间商
-    </c-tab>
+    <c-tab label="疯狂星期四" name="3"> V我100别问为什么，问就是有中间商 </c-tab>
   </c-tabs>
 </template>
 
@@ -108,9 +104,9 @@ export default defineComponent({
   setup() {
     const activeTab = ref('1')
     return {
-      activeTab
+      activeTab,
     }
-  }
+  },
 })
 </script>
 
@@ -153,18 +149,16 @@ export default defineComponent({
   setup() {
     const activeTab = ref('1')
     return {
-      activeTab
+      activeTab,
     }
-  }
+  },
 })
 </script>
 
 <template>
   <c-tabs v-model="activeTab" class="my-tabs">
     <c-tab label="周一" name="1">
-      <template #title>
-        周一
-      </template>
+      <template #title> 周一 </template>
       我们终将远行，和过去稚嫩的自己告别。这是一个流行告别的时代，陪你颠沛流离的人越来越少，直至没有。我们也要习惯昔日好友的渐行渐远，因为我们终将长大，长大到可以独自一人抵挡风雨。
     </c-tab>
     <c-tab label="周二" name="2">
@@ -204,38 +198,24 @@ export default defineComponent({
     const checkedRadio = ref('top')
     return {
       activeTab,
-      checkedRadio
+      checkedRadio,
     }
-  }
+  },
 })
 </script>
 
 <template>
   <c-radio-group v-model="checkedRadio" direction="row">
-    <c-radio label="top">
-      top
-    </c-radio>
-    <c-radio label="right">
-      right
-    </c-radio>
-    <c-radio label="bottom">
-      bottom
-    </c-radio>
-    <c-radio label="left">
-      left
-    </c-radio>
+    <c-radio label="top"> top </c-radio>
+    <c-radio label="right"> right </c-radio>
+    <c-radio label="bottom"> bottom </c-radio>
+    <c-radio label="left"> left </c-radio>
   </c-radio-group>
 
   <c-tabs v-model="activeTab" class="my-tabs" :tab-position="checkedRadio">
-    <c-tab label="周一" name="1">
-      疲惫的一天
-    </c-tab>
-    <c-tab label="周二" name="2">
-      开心
-    </c-tab>
-    <c-tab label="疯狂星期四" name="3">
-      狂吃
-    </c-tab>
+    <c-tab label="周一" name="1"> 疲惫的一天 </c-tab>
+    <c-tab label="周二" name="2"> 开心 </c-tab>
+    <c-tab label="疯狂星期四" name="3"> 狂吃 </c-tab>
   </c-tabs>
 </template>
 

@@ -28,25 +28,15 @@ export default defineComponent({
         >
           <div class={ns.e('node-content')}>
             <div class={ns.e('value-wrapper')}>
-              {hasChildren
-                ? (
-                    item.open
-                      ? (
-                          <IconOpen
-                            class={ns.e('icon')}
-                            onClick={(e: Event) => toggle(e, item)}
-                          />
-                        )
-                      : (
-                          <IconClose
-                            class={ns.e('icon')}
-                            onClick={(e: Event) => toggle(e, item)}
-                          />
-                        )
-                  )
-                : (
-                    <Indent />
-                  )}
+              {hasChildren ? (
+                item.open ? (
+                  <IconOpen class={ns.e('icon')} onClick={(e: Event) => toggle(e, item)} />
+                ) : (
+                  <IconClose class={ns.e('icon')} onClick={(e: Event) => toggle(e, item)} />
+                )
+              ) : (
+                <Indent />
+              )}
               <span class={ns.e('title')}>{item.label}</span>
             </div>
           </div>
@@ -54,9 +44,7 @@ export default defineComponent({
       )
     }
 
-    const treeNodes = computed(() =>
-      openedData.value.map(renderNode),
-    )
+    const treeNodes = computed(() => openedData.value.map(renderNode))
 
     return () => <div class={ns.b()}>{treeNodes.value}</div>
   },

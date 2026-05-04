@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM"],
+    "jsx": "preserve"
+  },
+  "include": ["env.d.ts", ".vitepress/**/*.ts", ".vitepress/**/*.vue", "vite.config.ts", "uno.config.ts"]
+}

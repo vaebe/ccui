@@ -1,12 +1,7 @@
-import type {
-  RadioGroupProps,
-} from './radio-types'
+import type { RadioGroupProps } from './radio-types'
 import { computed, defineComponent, provide, toRef } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import {
-  radioGroupInjectionKey,
-  radioGroupProps,
-} from './radio-types'
+import { radioGroupInjectionKey, radioGroupProps } from './radio-types'
 import './radio-group.scss'
 
 export default defineComponent({
@@ -38,11 +33,7 @@ export default defineComponent({
     })
 
     return () => {
-      return (
-        <div class={radioGroupClass.value}>
-          {slots.default && slots.default()}
-        </div>
-      )
+      return <div class={radioGroupClass.value}>{slots.default && slots.default()}</div>
     }
   },
 })

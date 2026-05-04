@@ -1,8 +1,4 @@
-import type {
-  InputNumberInstance,
-  InputNumberProps,
-  InputNumberValue,
-} from './input-number-types'
+import type { InputNumberInstance, InputNumberProps, InputNumberValue } from './input-number-types'
 import { computed, defineComponent, nextTick, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputNumberProps } from './input-number-types'
@@ -35,15 +31,13 @@ export default defineComponent({
 
     // 计算是否禁用增加按钮
     const maxDisabled = computed(() => {
-      if (innerValue.value === undefined)
-        return false
+      if (innerValue.value === undefined) return false
       return innerValue.value >= props.max
     })
 
     // 计算是否禁用减少按钮
     const minDisabled = computed(() => {
-      if (innerValue.value === undefined)
-        return false
+      if (innerValue.value === undefined) return false
       return innerValue.value <= props.min
     })
 
@@ -101,8 +95,7 @@ export default defineComponent({
       if (value === '') {
         if (props.allowEmpty) {
           updateValue(undefined, false)
-        }
-        else {
+        } else {
           target.value = displayValue.value
         }
         return
@@ -119,7 +112,7 @@ export default defineComponent({
       updateValue(numValue)
 
       // 更新显示值
-      nextTick(() => {
+      void nextTick(() => {
         if (inputRef.value) {
           inputRef.value.value = displayValue.value
         }
@@ -144,8 +137,7 @@ export default defineComponent({
 
     // 增加值
     const increase = () => {
-      if (props.disabled || maxDisabled.value)
-        return
+      if (props.disabled || maxDisabled.value) return
 
       const currentValue = innerValue.value ?? 0
       const newValue = formatValue(currentValue + props.step)
@@ -154,8 +146,7 @@ export default defineComponent({
 
     // 减少值
     const decrease = () => {
-      if (props.disabled || minDisabled.value)
-        return
+      if (props.disabled || minDisabled.value) return
 
       const currentValue = innerValue.value ?? 0
       const newValue = formatValue(currentValue - props.step)
@@ -164,8 +155,7 @@ export default defineComponent({
 
     // 键盘事件处理
     const handleKeydown = (event: KeyboardEvent) => {
-      if (props.disabled || props.readonly)
-        return
+      if (props.disabled || props.readonly) return
 
       switch (event.key) {
         case 'ArrowUp':
@@ -232,10 +222,7 @@ export default defineComponent({
           {/* 左侧控制按钮 */}
           {props.controls && !controlsAtRight && (
             <span
-              class={[
-                ns.e('decrease'),
-                { [ns.is('disabled')]: minDisabled.value || props.disabled },
-              ]}
+              class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
               role="button"
               onClick={decrease}
             >
@@ -269,10 +256,7 @@ export default defineComponent({
           {/* 左侧增加按钮 */}
           {props.controls && !controlsAtRight && (
             <span
-              class={[
-                ns.e('increase'),
-                { [ns.is('disabled')]: maxDisabled.value || props.disabled },
-              ]}
+              class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
               role="button"
               onClick={increase}
             >
@@ -286,10 +270,7 @@ export default defineComponent({
           {props.controls && controlsAtRight && (
             <div class={ns.e('controls')}>
               <span
-                class={[
-                  ns.e('increase'),
-                  { [ns.is('disabled')]: maxDisabled.value || props.disabled },
-                ]}
+                class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
                 role="button"
                 onClick={increase}
               >
@@ -298,10 +279,7 @@ export default defineComponent({
                 </svg>
               </span>
               <span
-                class={[
-                  ns.e('decrease'),
-                  { [ns.is('disabled')]: minDisabled.value || props.disabled },
-                ]}
+                class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
                 role="button"
                 onClick={decrease}
               >

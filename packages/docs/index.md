@@ -8,12 +8,12 @@ hero:
     src: /logo.svg
     alt: cc ui
   actions:
-  - theme: brand
-    text: 快速开始
-    link: /introduce
-  - theme: alt
-    text: GitHub
-    link: https://github.com/vaebe/ccui
+    - theme: brand
+      text: 快速开始
+      link: /introduce
+    - theme: alt
+      text: GitHub
+      link: https://github.com/vaebe/ccui
 features:
   - icon: 🚀
     title: 高性能

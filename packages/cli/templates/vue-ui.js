@@ -13,9 +13,7 @@ exports.createUiTemplate = (exportModules = []) => {
       .replace('..', '.')
       .replace(`/${INDEX_FILE_NAME}`, '')
 
-    const importStr = `import ${m.default}, { ${m.parts.join(
-      ', ',
-    )} } from '${relativePath}';`
+    const importStr = `import ${m.default}, { ${m.parts.join(', ')} } from '${relativePath}';`
 
     packages.push(...m.parts)
     imports.push(importStr)

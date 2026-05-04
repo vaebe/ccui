@@ -16,38 +16,15 @@ exports.VUE_UI_FILE = resolve(this.UI_DIR, this.VUE_UI_FILE_NAME)
 exports.SITES_DIR = resolve(this.CWD, '../docs')
 exports.SITES_COMPONENTS_DIR_NAME = 'components'
 exports.SITES_COMPONENTS_DIR_NAME_EN = 'en-US/components'
-exports.SITES_COMPONENTS_DIR = resolve(
-  this.SITES_DIR,
-  this.SITES_COMPONENTS_DIR_NAME,
-)
+exports.SITES_COMPONENTS_DIR = resolve(this.SITES_DIR, this.SITES_COMPONENTS_DIR_NAME)
 exports.VITEPRESS_DIR = resolve(this.SITES_DIR, '.vitepress')
 exports.VITEPRESS_SIDEBAR_FILE_NAME = 'sidebar.ts'
-exports.VITEPRESS_SIDEBAR_FILE = resolve(
-  this.VITEPRESS_DIR,
-  `config/${this.VITEPRESS_SIDEBAR_FILE_NAME}`,
-)
+exports.VITEPRESS_SIDEBAR_FILE = resolve(this.VITEPRESS_DIR, `config/${this.VITEPRESS_SIDEBAR_FILE_NAME}`)
 exports.VITEPRESS_SIDEBAR_FILE_NAME_EN = 'enSidebar.ts'
-exports.VITEPRESS_SIDEBAR_FILE_EN = resolve(
-  this.VITEPRESS_DIR,
-  `config/${this.VITEPRESS_SIDEBAR_FILE_NAME_EN}`,
-)
+exports.VITEPRESS_SIDEBAR_FILE_EN = resolve(this.VITEPRESS_DIR, `config/${this.VITEPRESS_SIDEBAR_FILE_NAME_EN}`)
 // 这里的分类顺序将会影响最终生成的页面侧边栏顺序
-exports.VITEPRESS_SIDEBAR_CATEGORY = [
-  '通用',
-  '导航',
-  '反馈',
-  '数据录入',
-  '数据展示',
-  '布局',
-]
-exports.VITEPRESS_SIDEBAR_CATEGORY_EN = [
-  'General',
-  'Navigation',
-  'Feedback',
-  'Data Entry',
-  'Data Display',
-  'Layout',
-]
+exports.VITEPRESS_SIDEBAR_CATEGORY = ['通用', '导航', '反馈', '数据录入', '数据展示', '布局']
+exports.VITEPRESS_SIDEBAR_CATEGORY_EN = ['General', 'Navigation', 'Feedback', 'Data Entry', 'Data Display', 'Layout']
 exports.VITEPRESS_SIDEBAR_CATEGORY_ZH_TO_EN = {
   通用: 'General',
   导航: 'Navigation',

@@ -45,7 +45,7 @@ export default defineComponent({
       checked6,
       checkBoxBeforeChange,
     }
-  }
+  },
 })
 </script>
 
@@ -54,12 +54,8 @@ export default defineComponent({
     {{ msg }}
   </c-check-box>
   <c-check-box v-model="checked2" :label="label" />
-  <c-check-box v-model="checked3" :disabled="true">
-    禁用 check-box
-  </c-check-box>
-  <c-check-box v-model="checked4" color="RGB(255, 193, 7)">
-    改变 icon 的颜色
-  </c-check-box>
+  <c-check-box v-model="checked3" :disabled="true"> 禁用 check-box </c-check-box>
+  <c-check-box v-model="checked4" color="RGB(255, 193, 7)"> 改变 icon 的颜色 </c-check-box>
 
   <c-check-box v-model="checked5" @change="checkBoxChange">
     checkBoxChange 事件， 关联下方beforeChange的切换状态
@@ -69,9 +65,7 @@ export default defineComponent({
   </c-check-box>
 </template>
 
-<style>
-
-</style>
+<style></style>
 ```
 
 :::
@@ -104,9 +98,9 @@ export default defineComponent({
       checkedList,
       checkBoxChange,
       canChange,
-      checkBoxBeforeChange
+      checkBoxBeforeChange,
     }
-  }
+  },
 })
 </script>
 
@@ -115,75 +109,45 @@ export default defineComponent({
     <div>
       <h4>基础示例</h4>
       <c-check-box-group v-model="checkedList">
-        <c-check-box label="beijing">
-          北京
-        </c-check-box>
-        <c-check-box label="shanghai">
-          上海
-        </c-check-box>
-        <c-check-box label="guangzhou">
-          广州
-        </c-check-box>
+        <c-check-box label="beijing"> 北京 </c-check-box>
+        <c-check-box label="shanghai"> 上海 </c-check-box>
+        <c-check-box label="guangzhou"> 广州 </c-check-box>
       </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>禁用</h4>
       <c-check-box-group v-model="checkedList" :disabled="true">
-        <c-check-box label="beijing">
-          北京
-        </c-check-box>
-        <c-check-box label="shanghai">
-          上海
-        </c-check-box>
-        <c-check-box label="guangzhou">
-          广州
-        </c-check-box>
+        <c-check-box label="beijing"> 北京 </c-check-box>
+        <c-check-box label="shanghai"> 上海 </c-check-box>
+        <c-check-box label="guangzhou"> 广州 </c-check-box>
       </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>横向排列</h4>
       <c-check-box-group v-model="checkedList" direction="row">
-        <c-check-box label="beijing">
-          北京
-        </c-check-box>
-        <c-check-box label="shanghai">
-          上海
-        </c-check-box>
-        <c-check-box label="guangzhou">
-          广州
-        </c-check-box>
+        <c-check-box label="beijing"> 北京 </c-check-box>
+        <c-check-box label="shanghai"> 上海 </c-check-box>
+        <c-check-box label="guangzhou"> 广州 </c-check-box>
       </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>checkBoxChange 和 color 颜色</h4>
       <c-check-box-group v-model="checkedList" color="RGB(255, 193, 7)" @change="checkBoxChange">
-        <c-check-box label="beijing">
-          北京
-        </c-check-box>
-        <c-check-box label="shanghai">
-          上海
-        </c-check-box>
-        <c-check-box label="guangzhou">
-          广州
-        </c-check-box>
+        <c-check-box label="beijing"> 北京 </c-check-box>
+        <c-check-box label="shanghai"> 上海 </c-check-box>
+        <c-check-box label="guangzhou"> 广州 </c-check-box>
       </c-check-box-group>
     </div>
 
     <div class="mt10">
       <h4>beforeChange (选中上海可以切换) {{ canChange ? '可以' : '不可以' }}切换</h4>
       <c-check-box-group v-model="checkedList" :before-change="checkBoxBeforeChange">
-        <c-check-box label="beijing">
-          北京
-        </c-check-box>
-        <c-check-box label="shanghai">
-          上海
-        </c-check-box>
-        <c-check-box label="guangzhou">
-          广州
-        </c-check-box>
+        <c-check-box label="beijing"> 北京 </c-check-box>
+        <c-check-box label="shanghai"> 上海 </c-check-box>
+        <c-check-box label="guangzhou"> 广州 </c-check-box>
       </c-check-box-group>
     </div>
   </div>
@@ -225,10 +189,7 @@ export type LabelType = string | number | boolean
 ### BeforeChangeType
 
 ```ts
-export type BeforeChangeType = (
-  isChecked: boolean,
-  v: string
-) => boolean | Promise<boolean>
+export type BeforeChangeType = (isChecked: boolean, v: string) => boolean | Promise<boolean>
 ```
 
 ## CheckBox插槽

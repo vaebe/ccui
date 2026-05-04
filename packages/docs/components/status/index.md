@@ -17,40 +17,24 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {
-      msg: 'Status 状态 组件文档示例'
+      msg: 'Status 状态 组件文档示例',
     }
-  }
+  },
 })
 </script>
 
 <template>
   <c-status>Default</c-status>
-  <c-status type="success">
-    Success
-  </c-status>
-  <c-status type="error">
-    Error
-  </c-status>
-  <c-status type="warning">
-    Warning
-  </c-status>
-  <c-status type="initial">
-    Initial
-  </c-status>
-  <c-status type="waiting">
-    Waiting
-  </c-status>
-  <c-status type="running">
-    Running
-  </c-status>
-  <c-status type="invalid">
-    Invalid
-  </c-status>
+  <c-status type="success"> Success </c-status>
+  <c-status type="error"> Error </c-status>
+  <c-status type="warning"> Warning </c-status>
+  <c-status type="initial"> Initial </c-status>
+  <c-status type="waiting"> Waiting </c-status>
+  <c-status type="running"> Running </c-status>
+  <c-status type="invalid"> Invalid </c-status>
 </template>
 
-<style>
-
-</style>
+<style></style>
 ```
 
 :::
@@ -72,12 +56,5 @@ export default defineComponent({
 ### IStatusType
 
 ```ts
-type IStatusType
-  = | 'success'
-    | 'error'
-    | 'initial'
-    | 'warning'
-    | 'waiting'
-    | 'running'
-    | 'invalid'
+type IStatusType = 'success' | 'error' | 'initial' | 'warning' | 'waiting' | 'running' | 'invalid'
 ```

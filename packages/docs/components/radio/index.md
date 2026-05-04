@@ -24,25 +24,17 @@ export default defineComponent({
 
     return {
       radioActive,
-      beforeChange
+      beforeChange,
     }
-  }
+  },
 })
 </script>
 
 <template>
-  <c-radio v-model="radioActive" label="1">
-    这是一个单选按钮
-  </c-radio>
-  <c-radio v-model="radioActive" label="2" disabled>
-    禁用
-  </c-radio>
-  <c-radio v-model="radioActive" label="3" :before-change="beforeChange">
-    beforeChange禁止切换
-  </c-radio>
-  <c-radio v-model="radioActive" label="4">
-    这也是个单选按钮
-  </c-radio>
+  <c-radio v-model="radioActive" label="1"> 这是一个单选按钮 </c-radio>
+  <c-radio v-model="radioActive" label="2" disabled> 禁用 </c-radio>
+  <c-radio v-model="radioActive" label="3" :before-change="beforeChange"> beforeChange禁止切换 </c-radio>
+  <c-radio v-model="radioActive" label="4"> 这也是个单选按钮 </c-radio>
 </template>
 ```
 
@@ -72,9 +64,9 @@ export default defineComponent({
       info,
       checkedRadio,
       checkedRadio1,
-      beforeChange
+      beforeChange,
     }
-  }
+  },
 })
 </script>
 
@@ -83,60 +75,36 @@ export default defineComponent({
     <div>
       <h4>基础示例</h4>
       <c-radio-group v-model="checkedRadio" :before-change="beforeChange">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="3">
-          禁止切换
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
+        <c-radio label="1"> 上海 </c-radio>
+        <c-radio label="2"> 北京 </c-radio>
+        <c-radio label="3"> 禁止切换 </c-radio>
+        <c-radio label="4"> 广州 </c-radio>
       </c-radio-group>
     </div>
 
     <div class="mt10">
       <h4>全部禁用</h4>
       <c-radio-group v-model="checkedRadio1" :before-change="beforeChange" disabled>
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
+        <c-radio label="1"> 上海 </c-radio>
+        <c-radio label="2"> 北京 </c-radio>
       </c-radio-group>
     </div>
 
     <div class="mt10">
       <h4>column 排列</h4>
       <c-radio-group v-model="checkedRadio1" direction="column">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
+        <c-radio label="1"> 上海 </c-radio>
+        <c-radio label="2"> 北京 </c-radio>
+        <c-radio label="4"> 广州 </c-radio>
       </c-radio-group>
     </div>
 
     <div class="mt10">
       <h4>row 排列</h4>
       <c-radio-group v-model="checkedRadio1" direction="row">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
+        <c-radio label="1"> 上海 </c-radio>
+        <c-radio label="2"> 北京 </c-radio>
+        <c-radio label="4"> 广州 </c-radio>
       </c-radio-group>
     </div>
 

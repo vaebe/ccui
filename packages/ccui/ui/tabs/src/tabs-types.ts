@@ -1,9 +1,4 @@
-import type {
-  ComputedRef,
-  ExtractPropTypes,
-  InjectionKey,
-  PropType,
-} from 'vue'
+import type { ComputedRef, ExtractPropTypes, InjectionKey, PropType } from 'vue'
 import type { TabProps } from './components/tab/tab-types'
 
 export type ModelValueType = string | number

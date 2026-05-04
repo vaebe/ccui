@@ -22,10 +22,7 @@ export default defineComponent({
 
     // 计算时间戳的样式类名
     const timestampClasses = computed(() => {
-      return [
-        ns.e('timestamp'),
-        ns.is(props.placement),
-      ]
+      return [ns.e('timestamp'), ns.is(props.placement)]
     })
 
     // 渲染图标
@@ -33,8 +30,7 @@ export default defineComponent({
       if (props.icon) {
         if (typeof props.icon === 'string') {
           return <i class={[props.icon, ns.e('icon')]}></i>
-        }
-        else {
+        } else {
           // 如果是组件，使用 markRaw 避免不必要的响应式转换，然后使用 h 函数渲染
           return h(markRaw(props.icon), { class: ns.e('icon') })
         }
@@ -45,11 +41,7 @@ export default defineComponent({
     // 渲染节点
     const renderNode = () => {
       if (slots.dot) {
-        return (
-          <div class={ns.e('dot')}>
-            {slots.dot()}
-          </div>
-        )
+        return <div class={ns.e('dot')}>{slots.dot()}</div>
       }
 
       return (
@@ -64,14 +56,9 @@ export default defineComponent({
 
     // 渲染时间戳
     const renderTimestamp = () => {
-      if (props.hideTimestamp)
-        return null
+      if (props.hideTimestamp) return null
 
-      return (
-        <div class={timestampClasses.value}>
-          {props.timestamp}
-        </div>
-      )
+      return <div class={timestampClasses.value}>{props.timestamp}</div>
     }
 
     return () => {
@@ -89,9 +76,7 @@ export default defineComponent({
             {props.placement === 'top' && renderTimestamp()}
 
             {/* 内容 */}
-            <div class={ns.e('content')}>
-              {slots.default && slots.default()}
-            </div>
+            <div class={ns.e('content')}>{slots.default && slots.default()}</div>
 
             {/* 底部时间戳 */}
             {props.placement === 'bottom' && renderTimestamp()}

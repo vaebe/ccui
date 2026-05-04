@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { Button } from '../../button/index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Calendar } from '../index'
@@ -43,11 +43,14 @@ describe('calendar', () => {
   })
 
   it('slots', async () => {
-    const wrapper = createWrapper({}, {
-      dateCell: `<template #dateCell="{isSelected, date, day}">
+    const wrapper = createWrapper(
+      {},
+      {
+        dateCell: `<template #dateCell="{isSelected, date, day}">
             {{isSelected ? '当前选中日期' : day}}
           </template>`,
-    })
+      },
+    )
     expect(wrapper.find(currentDateClass).exists()).toBeTruthy()
     expect(wrapper.find(currentDateClass).text()).toBe('当前选中日期')
     wrapper.unmount()
@@ -109,21 +112,24 @@ describe('calendar', () => {
     const days = wrapper.findAll(dayClass)
     expect(days.length).toBe(42) // 6周 x 7天
 
-    const firstDay = days.find(day => day.text() === '1')
+    const firstDay = days.find((day) => day.text() === '1')
     expect(firstDay).toBeTruthy()
 
-    const lastDay = days.find(day => day.text() === '31')
+    const lastDay = days.find((day) => day.text() === '31')
     expect(lastDay).toBeTruthy()
 
     wrapper.unmount()
   })
 
   it('renders custom header when header slot is provided', () => {
-    const wrapper = createWrapper({}, {
-      header: `<template #header="{ currentDate }">
+    const wrapper = createWrapper(
+      {},
+      {
+        header: `<template #header="{ currentDate }">
             <div class="custom-header">Custom Header - {{ currentDate }}</div>
           </template>`,
-    })
+      },
+    )
     expect(wrapper.find('.custom-header').exists()).toBeTruthy()
     wrapper.unmount()
   })
@@ -133,7 +139,7 @@ describe('calendar', () => {
     const wrapper = createWrapper({ modelValue: testDate })
 
     const days = wrapper.findAll(dayClass)
-    const lastDay = days.find(day => day.text() === '31')
+    const lastDay = days.find((day) => day.text() === '31')
     expect(lastDay).toBeTruthy()
 
     wrapper.unmount()

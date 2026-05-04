@@ -3,15 +3,9 @@ const { UI_NAMESPACE, CSS_CLASS_PREFIX } = require('../shared/constant')
 const { bigCamelCase } = require('../shared/utils')
 
 // 创建组件模板
-exports.createComponentTemplate = ({
-  styleName,
-  componentName,
-  typesName,
-}) => `\
+exports.createComponentTemplate = ({ styleName, componentName, typesName }) => `\
 import { defineComponent } from 'vue'
-import { ${camelCase(componentName)}Props, ${bigCamelCase(
-  componentName,
-)}Props } from './${typesName}'
+import { ${camelCase(componentName)}Props, ${bigCamelCase(componentName)}Props } from './${typesName}'
 import './${styleName}.scss'
 
 export default defineComponent({
@@ -36,9 +30,7 @@ export const ${camelCase(componentName)}Props = {
   } */
 } as const
 
-export type ${bigCamelCase(
-  componentName,
-)}Props = ExtractPropTypes<typeof ${camelCase(componentName)}Props>
+export type ${bigCamelCase(componentName)}Props = ExtractPropTypes<typeof ${camelCase(componentName)}Props>
 `
 
 // 创建指令模板
@@ -55,11 +47,7 @@ export default {
 }
 `
 // 创建server模板
-exports.createServiceTemplate = ({
-  componentName,
-  typesName,
-  serviceName,
-}) => `\
+exports.createServiceTemplate = ({ componentName, typesName, serviceName }) => `\
 import { ${bigCamelCase(componentName)}Props } from './${typesName}'
 
 const ${bigCamelCase(serviceName)} = {
@@ -87,47 +75,35 @@ exports.createIndexTemplate = ({
   directiveName,
   serviceName,
 }) => {
-  const importComponentStr = `\nimport ${bigCamelCase(
-    componentName,
-  )} from './src/${componentName}'`
-  const importDirectiveStr = `\nimport ${bigCamelCase(
-    directiveName,
-  )} from './src/${directiveName}'`
-  const importServiceStr = `\nimport ${bigCamelCase(
-    serviceName,
-  )} from './src/${serviceName}'`
+  const importComponentStr = `\nimport ${bigCamelCase(componentName)} from './src/${componentName}'`
+  const importDirectiveStr = `\nimport ${bigCamelCase(directiveName)} from './src/${directiveName}'`
+  const importServiceStr = `\nimport ${bigCamelCase(serviceName)} from './src/${serviceName}'`
 
-  const installComponentStr = `app.component(${bigCamelCase(
-    componentName,
-  )}.name, ${bigCamelCase(componentName)});`
+  const installComponentStr = `app.component(${bigCamelCase(componentName)}.name, ${bigCamelCase(componentName)});`
 
-  const installDirectiveStr = `\n    app.directive('${bigCamelCase(
-    componentName,
-  )}', ${bigCamelCase(directiveName)})`
+  const installDirectiveStr = `\n    app.directive('${bigCamelCase(componentName)}', ${bigCamelCase(directiveName)})`
   const installServiceStr = `\n    app.config.globalProperties.$${camelCase(
     serviceName,
   )} = ${bigCamelCase(serviceName)}`
 
   const getPartStr = (state, str) => (state ? str : '')
 
-  const importStr
-    = getPartStr(hasComponent, importComponentStr)
-    + getPartStr(hasDirective, importDirectiveStr)
-    + getPartStr(hasService, importServiceStr)
+  const importStr =
+    getPartStr(hasComponent, importComponentStr) +
+    getPartStr(hasDirective, importDirectiveStr) +
+    getPartStr(hasService, importServiceStr)
 
-  const installStr
-    = getPartStr(hasComponent, installComponentStr)
-    + getPartStr(hasDirective, installDirectiveStr)
-    + getPartStr(hasService, installServiceStr)
+  const installStr =
+    getPartStr(hasComponent, installComponentStr) +
+    getPartStr(hasDirective, installDirectiveStr) +
+    getPartStr(hasService, installServiceStr)
   return `\
 import type { App } from 'vue'\
 ${importStr}
 ${
   hasComponent
     ? `\n${bigCamelCase(componentName)}.install = function(app: App): void {
-  app.component(${bigCamelCase(componentName)}.name, ${bigCamelCase(
-        componentName,
-      )})
+  app.component(${bigCamelCase(componentName)}.name, ${bigCamelCase(componentName)})
 }\n`
     : ''
 }
@@ -136,7 +112,7 @@ export { ${[
     hasDirective ? bigCamelCase(directiveName) : null,
     hasService ? bigCamelCase(serviceName) : null,
   ]
-    .filter(p => p !== null)
+    .filter((p) => p !== null)
     .join(', ')} }
 
 export default {
@@ -168,7 +144,7 @@ import { ${[
   hasDirective ? bigCamelCase(directiveName) : null,
   hasService ? bigCamelCase(serviceName) : null,
 ]
-  .filter(p => p !== null)
+  .filter((p) => p !== null)
   .join(', ')} } from '../index';
 
 test('${componentName} test', () => {
