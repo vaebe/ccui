@@ -26,8 +26,7 @@ export function useSliderCalculation(props: SliderProps) {
 
   // 计算百分比位置
   const getPercent = (value: number) => {
-    if (range <= 0)
-      return 0
+    if (range <= 0) return 0
 
     const percent = ((value - props.min) / range) * 100
     return Math.max(0, Math.min(100, percent))
@@ -35,16 +34,13 @@ export function useSliderCalculation(props: SliderProps) {
 
   // 根据百分比计算值（按 step 和 min 对齐）
   const getValueFromPercent = (percent: number) => {
-    if (range <= 0)
-      return props.min
+    if (range <= 0) return props.min
 
     const raw = props.min + (percent / 100) * range
 
-    if (props.step <= 0)
-      return Math.max(props.min, Math.min(props.max, raw))
+    if (props.step <= 0) return Math.max(props.min, Math.min(props.max, raw))
 
-    const stepped
-      = props.min + Math.round((raw - props.min) / props.step) * props.step
+    const stepped = props.min + Math.round((raw - props.min) / props.step) * props.step
 
     return Math.max(props.min, Math.min(props.max, stepped))
   }
@@ -75,8 +71,7 @@ export function useSliderStyle(
         left: `${getPercent(start)}%`,
         width: `${getPercent(end) - getPercent(start)}%`,
       }
-    }
-    else {
+    } else {
       const value = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
       if (props.vertical) {
         return {
@@ -138,8 +133,7 @@ export function useSliderInteraction(
   // 获取鼠标/触摸位置
   const getPosition = (event: MouseEvent | TouchEvent) => {
     const rect = sliderRef.value?.getBoundingClientRect()
-    if (!rect)
-      return 0
+    if (!rect) return 0
 
     if (props.vertical) {
       const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY
@@ -152,8 +146,7 @@ export function useSliderInteraction(
 
   // 处理滑块点击
   const handleSliderClick = (event: MouseEvent) => {
-    if (props.disabled || isDragging.value)
-      return
+    if (props.disabled || isDragging.value) return
 
     const percent = getPosition(event)
     const newValue = getValueFromPercent(percent)
@@ -164,12 +157,10 @@ export function useSliderInteraction(
 
       if (newValue <= mid) {
         currentValue.value = [Math.max(props.min, Math.min(newValue, end)), end]
-      }
-      else {
+      } else {
         currentValue.value = [start, Math.min(props.max, Math.max(newValue, start))]
       }
-    }
-    else {
+    } else {
       currentValue.value = Math.max(props.min, Math.min(props.max, newValue))
     }
 
@@ -178,8 +169,7 @@ export function useSliderInteraction(
 
   // 拖拽移动
   const handleDragMove = (event: MouseEvent | TouchEvent) => {
-    if (!isDragging.value)
-      return
+    if (!isDragging.value) return
 
     event.preventDefault()
     const percent = getPosition(event as MouseEvent)
@@ -190,20 +180,17 @@ export function useSliderInteraction(
 
       if (dragIndex.value === 0) {
         currentValue.value = [Math.max(props.min, Math.min(newValue, end)), end]
-      }
-      else {
+      } else {
         currentValue.value = [start, Math.min(props.max, Math.max(newValue, start))]
       }
-    }
-    else {
+    } else {
       currentValue.value = Math.max(props.min, Math.min(props.max, newValue))
     }
   }
 
   // 结束拖拽
   const handleDragEnd = () => {
-    if (!isDragging.value)
-      return
+    if (!isDragging.value) return
 
     isDragging.value = false
     dragIndex.value = null
@@ -218,8 +205,7 @@ export function useSliderInteraction(
 
   // 开始拖拽
   const handleDragStart = (event: MouseEvent | TouchEvent, index?: number) => {
-    if (props.disabled)
-      return
+    if (props.disabled) return
 
     event.preventDefault()
     isDragging.value = true
@@ -255,8 +241,7 @@ export function useSliderKeyboard(
 ) {
   // 键盘事件处理
   const handleKeydown = (event: KeyboardEvent, index?: number) => {
-    if (props.disabled)
-      return
+    if (props.disabled) return
 
     let delta = 0
     switch (event.key) {
@@ -269,14 +254,10 @@ export function useSliderKeyboard(
         delta = props.step
         break
       case 'Home':
-        delta = props.min - (Array.isArray(currentValue.value)
-          ? currentValue.value[index ?? 0]
-          : currentValue.value)
+        delta = props.min - (Array.isArray(currentValue.value) ? currentValue.value[index ?? 0] : currentValue.value)
         break
       case 'End':
-        delta = props.max - (Array.isArray(currentValue.value)
-          ? currentValue.value[index ?? 0]
-          : currentValue.value)
+        delta = props.max - (Array.isArray(currentValue.value) ? currentValue.value[index ?? 0] : currentValue.value)
         break
       default:
         return
@@ -290,13 +271,11 @@ export function useSliderKeyboard(
       if (index === 0) {
         const newStart = Math.max(props.min, Math.min(start + delta, end))
         currentValue.value = [newStart, end]
-      }
-      else {
+      } else {
         const newEnd = Math.min(props.max, Math.max(end + delta, start))
         currentValue.value = [start, newEnd]
       }
-    }
-    else {
+    } else {
       const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
       currentValue.value = Math.max(props.min, Math.min(props.max, current + delta))
     }
@@ -309,14 +288,10 @@ export function useSliderKeyboard(
   }
 }
 
-export function useSliderMarks(
-  props: SliderProps,
-  getPercent: (value: number) => number,
-) {
+export function useSliderMarks(props: SliderProps, getPercent: (value: number) => number) {
   // 计算标记
   const marks = computed(() => {
-    if (!props.marks)
-      return {}
+    if (!props.marks) return {}
 
     const result: Record<number, any> = {}
     Object.keys(props.marks).forEach((key) => {
@@ -333,9 +308,7 @@ export function useSliderMarks(
     const percent = getPercent(value)
     const mark = marks.value[value]
 
-    const baseStyle = props.vertical
-      ? { bottom: `${percent}%` }
-      : { left: `${percent}%` }
+    const baseStyle = props.vertical ? { bottom: `${percent}%` } : { left: `${percent}%` }
 
     if (typeof mark === 'object' && mark.style) {
       return { ...baseStyle, ...mark.style }
@@ -348,8 +321,7 @@ export function useSliderMarks(
     const mark = marks.value[value]
     if (typeof mark === 'string') {
       return mark
-    }
-    else if (typeof mark === 'object' && mark.label !== undefined) {
+    } else if (typeof mark === 'object' && mark.label !== undefined) {
       return mark.label
     }
     return value
@@ -379,12 +351,10 @@ export function useSliderInput(
       const [start, end] = currentValue.value
       if (index === 0) {
         currentValue.value = [Math.min(clampedValue, end), end]
-      }
-      else {
+      } else {
         currentValue.value = [start, Math.max(clampedValue, start)]
       }
-    }
-    else {
+    } else {
       currentValue.value = clampedValue
     }
 

@@ -27,8 +27,7 @@ export default defineComponent({
 
     // 为测试兼容性，保持一致的类名结构
     const getBaseClass = computed(() => {
-      const hasInteractiveSuffix = !props.disabled && !props.readonly
-        && (props.clearable || showPasswordVisible.value)
+      const hasInteractiveSuffix = !props.disabled && !props.readonly && (props.clearable || showPasswordVisible.value)
       const hasSuffix = hasInteractiveSuffix || !!slots.suffix
 
       return {
@@ -94,31 +93,24 @@ export default defineComponent({
     }
 
     // 监听 modelValue 属性变化
-    watch(() => props.modelValue, (newVal) => {
-      if (newVal !== inputValue.value) {
-        inputValue.value = newVal
-      }
-    })
+    watch(
+      () => props.modelValue,
+      (newVal) => {
+        if (newVal !== inputValue.value) {
+          inputValue.value = newVal
+        }
+      },
+    )
 
     // 渲染函数
     const renderPrepend = () => {
-      if (!props.prepend && !slots.prepend)
-        return null
-      return (
-        <div class={ns.e('prepend')}>
-          {slots.prepend ? slots.prepend() : <span>{props.prepend}</span>}
-        </div>
-      )
+      if (!props.prepend && !slots.prepend) return null
+      return <div class={ns.e('prepend')}>{slots.prepend ? slots.prepend() : <span>{props.prepend}</span>}</div>
     }
 
     const renderAppend = () => {
-      if (!props.append && !slots.append)
-        return null
-      return (
-        <div class={ns.e('append')}>
-          {slots.append ? slots.append() : <span>{props.append}</span>}
-        </div>
-      )
+      if (!props.append && !slots.append) return null
+      return <div class={ns.e('append')}>{slots.append ? slots.append() : <span>{props.append}</span>}</div>
     }
 
     const renderSuffixIcons = () => {
@@ -127,14 +119,11 @@ export default defineComponent({
       const hasPasswordToggle = isInteractive && showPasswordVisible.value
       const hasSuffixSlot = !!slots.suffix
 
-      if (!hasClear && !hasPasswordToggle && !hasSuffixSlot)
-        return null
+      if (!hasClear && !hasPasswordToggle && !hasSuffixSlot) return null
 
       return (
         <div class={ns.e('suffix')}>
-          {hasClear && (
-            <i class={ns.e('clear')} onClick={clearInput}></i>
-          )}
+          {hasClear && <i class={ns.e('clear')} onClick={clearInput}></i>}
           {hasPasswordToggle && (
             <i
               class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
@@ -180,25 +169,18 @@ export default defineComponent({
         return (
           <div class={getBaseClass.value}>
             {prependContent}
-            <div class={getWrapperClass.value}>
-              {mainContent}
-            </div>
+            <div class={getWrapperClass.value}>{mainContent}</div>
             {appendContent}
           </div>
         )
-      }
-      else {
+      } else {
         // 没有 prepend 或 append 时，将基础类和wrapper类合并到同一个元素
         const combinedClass = {
           ...getBaseClass.value,
           ...getWrapperClass.value,
         }
 
-        return (
-          <div class={combinedClass}>
-            {mainContent}
-          </div>
-        )
+        return <div class={combinedClass}>{mainContent}</div>
       }
     }
   },

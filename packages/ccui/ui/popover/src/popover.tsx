@@ -10,7 +10,17 @@ let popoverIdCounter = 0
 export default defineComponent({
   name: 'CPopover',
   props: popoverProps,
-  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'before-enter', 'after-enter', 'before-leave', 'after-leave'],
+  emits: [
+    'before-show',
+    'show',
+    'before-hide',
+    'hide',
+    'update:visible',
+    'before-enter',
+    'after-enter',
+    'before-leave',
+    'after-leave',
+  ],
   setup(props: PopoverProps, { emit, slots, expose }) {
     const ns = useNamespace('popover')
     const popperId = `${ns.e('popper')}-${++popoverIdCounter}`
@@ -43,7 +53,9 @@ export default defineComponent({
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
         props.popperClass,
-      ].filter(Boolean).join(' ')
+      ]
+        .filter(Boolean)
+        .join(' ')
     })
 
     const { floatingStyles, middlewareData, update } = useFloating(
@@ -61,8 +73,7 @@ export default defineComponent({
     )
 
     const arrowStyles = computed(() => {
-      if (!props.showArrow || !middlewareData.value.arrow)
-        return {}
+      if (!props.showArrow || !middlewareData.value.arrow) return {}
       const { x, y } = middlewareData.value.arrow
       const staticSide = {
         top: 'bottom',
@@ -106,15 +117,13 @@ export default defineComponent({
       }
       if (props.hideAfter > 0 && props.trigger !== 'click') {
         hideTimer.value = window.setTimeout(hidePopover, props.hideAfter)
-      }
-      else {
+      } else {
         hidePopover()
       }
     }
 
     const doShow = () => {
-      if (props.disabled)
-        return
+      if (props.disabled) return
       clearTimers()
       const showPopover = () => {
         emit('before-show')
@@ -122,7 +131,7 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
-        nextTick(() => {
+        void nextTick(() => {
           update()
           emit('show')
           // 设置自动关闭定时器
@@ -135,8 +144,7 @@ export default defineComponent({
       }
       if (props.showAfter > 0) {
         showTimer.value = window.setTimeout(showPopover, props.showAfter)
-      }
-      else {
+      } else {
         showPopover()
       }
     }
@@ -155,8 +163,7 @@ export default defineComponent({
       if (props.trigger === 'click') {
         if (actualVisible.value) {
           doHide()
-        }
-        else {
+        } else {
           doShow()
         }
       }
@@ -166,8 +173,7 @@ export default defineComponent({
         e.preventDefault()
         if (actualVisible.value) {
           doHide()
-        }
-        else {
+        } else {
           doShow()
         }
       }
@@ -183,31 +189,24 @@ export default defineComponent({
       }
     }
     const normalizeTriggerKey = (value: string) => {
-      if (!value)
-        return value
+      if (!value) return value
       const lower = value.toLowerCase()
-      if (value === ' ' || lower === 'space' || lower === 'spacebar')
-        return 'Space'
+      if (value === ' ' || lower === 'space' || lower === 'spacebar') return 'Space'
       return value
     }
 
     const handleKeydown = (e: KeyboardEvent) => {
-      if (props.trigger !== 'focus')
-        return
+      if (props.trigger !== 'focus') return
 
       const normalizedEventKey = normalizeTriggerKey(e.key)
-      const matches = props.triggerKeys
-        .map(normalizeTriggerKey)
-        .includes(normalizedEventKey)
+      const matches = props.triggerKeys.map(normalizeTriggerKey).includes(normalizedEventKey)
 
-      if (!matches)
-        return
+      if (!matches) return
 
       e.preventDefault()
       if (actualVisible.value) {
         doHide()
-      }
-      else {
+      } else {
         doShow()
       }
     }
@@ -226,12 +225,9 @@ export default defineComponent({
       return [ns.b(), props.disabled ? ns.m('disabled') : ''].filter(Boolean).join(' ')
     })
     const onDocumentMouseDown = (e: MouseEvent) => {
-      if (!actualVisible.value)
-        return
-      if (props.trigger === 'manual')
-        return
-      if (!props.hideOnClickOutside)
-        return
+      if (!actualVisible.value) return
+      if (props.trigger === 'manual') return
+      if (!props.hideOnClickOutside) return
       const rawTarget = e.target as any
       const target: Node | null = rawTarget instanceof Node ? rawTarget : null
       const triggerElement = props.virtualTriggering && props.virtualRef ? props.virtualRef : triggerRef.value
@@ -242,12 +238,9 @@ export default defineComponent({
       }
     }
     const onDocumentKeydown = (e: KeyboardEvent) => {
-      if (!actualVisible.value)
-        return
-      if (props.trigger === 'manual')
-        return
-      if (!props.closeOnEsc)
-        return
+      if (!actualVisible.value) return
+      if (props.trigger === 'manual') return
+      if (!props.closeOnEsc) return
       if (e.key === 'Escape') {
         doHide()
       }
@@ -256,9 +249,9 @@ export default defineComponent({
     let cleanup: (() => void) | undefined
 
     onMounted(() => {
-    // 初始化时如果 visible 为 true，确保显示并监听文档级事件
+      // 初始化时如果 visible 为 true，确保显示并监听文档级事件
       if (props.visible) {
-        nextTick(() => {
+        void nextTick(() => {
           const triggerElement = actualTriggerRef.value
           if (triggerElement && popperRef.value) {
             cleanup = autoUpdate(triggerElement, popperRef.value, update)
@@ -286,19 +279,22 @@ export default defineComponent({
         virtualEl.removeEventListener('contextmenu', handleContextMenu)
       }
     })
-    watch(() => props.visible, (newVal) => {
-      if (isControlled.value) {
-        const boolVal = Boolean(newVal)
-        if (boolVal !== visible.value) {
-          visible.value = boolVal
-          if (boolVal) {
-            nextTick(() => {
-              update()
-            })
+    watch(
+      () => props.visible,
+      (newVal) => {
+        if (isControlled.value) {
+          const boolVal = Boolean(newVal)
+          if (boolVal !== visible.value) {
+            visible.value = boolVal
+            if (boolVal) {
+              void nextTick(() => {
+                update()
+              })
+            }
           }
         }
-      }
-    })
+      },
+    )
     watch(actualVisible, (newVal) => {
       if (newVal) {
         const triggerElement = actualTriggerRef.value
@@ -308,8 +304,7 @@ export default defineComponent({
         }
         window.addEventListener('mousedown', onDocumentMouseDown, true)
         window.addEventListener('keydown', onDocumentKeydown, true)
-      }
-      else {
+      } else {
         cleanup?.()
         window.removeEventListener('mousedown', onDocumentMouseDown, true)
         window.removeEventListener('keydown', onDocumentKeydown, true)
@@ -317,8 +312,7 @@ export default defineComponent({
     })
 
     const renderArrow = () => {
-      if (!props.showArrow)
-        return null
+      if (!props.showArrow) return null
       const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
@@ -326,13 +320,8 @@ export default defineComponent({
     const renderHeader = () => {
       const hasTitleSlot = !!slots.title
       const hasTitleProp = !!props.title
-      if (!hasTitleSlot && !hasTitleProp)
-        return null
-      return (
-        <div class={ns.e('header')}>
-          {slots.title ? slots.title() : props.title}
-        </div>
-      )
+      if (!hasTitleSlot && !hasTitleProp) return null
+      return <div class={ns.e('header')}>{slots.title ? slots.title() : props.title}</div>
     }
 
     const renderContent = () => {
@@ -356,16 +345,13 @@ export default defineComponent({
         if (props.trigger === 'hover') {
           triggerEvents.onMouseenter = handleMouseEnter
           triggerEvents.onMouseleave = handleMouseLeave
-        }
-        else if (props.trigger === 'click') {
+        } else if (props.trigger === 'click') {
           triggerEvents.onClick = handleClick
-        }
-        else if (props.trigger === 'focus') {
+        } else if (props.trigger === 'focus') {
           triggerEvents.onFocus = handleFocus
           triggerEvents.onBlur = handleBlur
           triggerEvents.onKeydown = handleKeydown
-        }
-        else if (props.trigger === 'contextmenu') {
+        } else if (props.trigger === 'contextmenu') {
           triggerEvents.onContextmenu = handleContextMenu
         }
       }
@@ -387,9 +373,7 @@ export default defineComponent({
         >
           {renderArrow()}
           {renderHeader()}
-          <div class={ns.e('content')}>
-            {renderContent()}
-          </div>
+          <div class={ns.e('content')}>{renderContent()}</div>
         </div>
       )
 
@@ -417,10 +401,7 @@ export default defineComponent({
             onBeforeLeave={() => emit('before-leave')}
             onAfterLeave={() => emit('after-leave')}
           >
-            {actualVisible.value && (props.teleported
-              ? <Teleport to="body">{popperContent}</Teleport>
-              : popperContent
-            )}
+            {actualVisible.value && (props.teleported ? <Teleport to="body">{popperContent}</Teleport> : popperContent)}
           </Transition>
         </div>
       )

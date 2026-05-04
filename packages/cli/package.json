@@ -5,9 +5,12 @@
   "keywords": [
     "cli"
   ],
-  "author": "cjz",
   "license": "MIT",
-  "main": "lib/ccui-cli.js",
+  "author": "cjz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaebe/ccui.git"
+  },
   "directories": {
     "lib": "lib"
   },
@@ -15,10 +18,7 @@
     "lib",
     "types"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vaebe/ccui.git"
-  },
+  "main": "lib/ccui-cli.js",
   "scripts": {
     "build:docs": "pnpm --filter docs predev && pnpm --filter docs docs:build",
     "build:lib": "pnpm --filter vue3-ccui predev && pnpm build:components && pnpm changelog && pnpm release",
@@ -38,13 +38,11 @@
   "devDependencies": {
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vitejs/plugin-vue-jsx": "^5.1.1",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitejs/plugin-vue-jsx": "^5.1.5",
     "chalk": "^4.1.2",
     "commander": "^14.0.2",
     "conventional-changelog-cli": "^5.0.0",
-    "esbuild": "^0.25.12",
-    "esbuild-register": "^3.6.0",
     "fs-extra": "^11.3.2",
     "inquirer": "^12.10.0",
     "kolorist": "^1.8.0",
@@ -52,6 +50,10 @@
     "rimraf": "^6.1.0",
     "sass": "^1.93.3",
     "shelljs": "^0.10.0",
-    "vite": "^7.1.12"
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.10.0"
   }
 }

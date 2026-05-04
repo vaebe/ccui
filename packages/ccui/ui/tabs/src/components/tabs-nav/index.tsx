@@ -1,14 +1,8 @@
-import type {
-  TabsProps,
-  TabsState,
-} from '../../tabs-types'
+import type { TabsProps, TabsState } from '../../tabs-types'
 import type { TabProps } from '../tab/tab-types'
 import { computed, defineComponent, inject } from 'vue'
 import { useNamespace } from '../../../../shared/hooks/use-namespace'
-import {
-  tabsInjectionKey,
-  tabsProps,
-} from '../../tabs-types'
+import { tabsInjectionKey, tabsProps } from '../../tabs-types'
 import './tabs-nav.scss'
 
 export default defineComponent({
@@ -33,8 +27,7 @@ export default defineComponent({
 
     const getNavItemClass = (item: TabProps) => {
       const itemClass = `${containerClass.value}-item`
-      const itemActiveClass
-        = tabsState?.active === item.name ? `${itemClass}-active` : ''
+      const itemActiveClass = tabsState?.active === item.name ? `${itemClass}-active` : ''
 
       return `${itemClass} ${itemActiveClass}`
     }

@@ -2,11 +2,7 @@ import type { Ref } from 'vue'
 import type { SliderProps } from '../slider-types'
 import { computed, ref } from 'vue'
 
-export function useSliderTooltip(
-  props: SliderProps,
-  isDragging: Ref<boolean>,
-  currentValue: Ref<number | number[]>,
-) {
+export function useSliderTooltip(props: SliderProps, isDragging: Ref<boolean>, currentValue: Ref<number | number[]>) {
   const isHovering = ref(false)
   const hoverIndex = ref<number | null>(null)
 
@@ -71,10 +67,12 @@ export function useSliderTooltip(
 
   // 判断是否显示默认 tooltip（没有 tipsRenderer 的情况）
   const shouldShowDefaultTooltipForButton = (index: number) => {
-    return props.showTooltip
-      && props.tipsRenderer === null
-      && props.showDefaultTooltip
-      && (hoverIndex.value === index || isDragging.value || props.persistent)
+    return (
+      props.showTooltip &&
+      props.tipsRenderer === null &&
+      props.showDefaultTooltip &&
+      (hoverIndex.value === index || isDragging.value || props.persistent)
+    )
   }
 
   // 获取 tooltip 内容

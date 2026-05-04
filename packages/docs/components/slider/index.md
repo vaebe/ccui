@@ -23,9 +23,9 @@ export default defineComponent({
     const value = ref(50)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -36,8 +36,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -57,9 +56,9 @@ export default defineComponent({
     const range = ref([20, 80])
 
     return {
-      range
+      range,
     }
-  }
+  },
 })
 </script>
 
@@ -70,8 +69,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -91,9 +89,9 @@ export default defineComponent({
     const value = ref(30)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -103,8 +101,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -124,9 +121,9 @@ export default defineComponent({
     const value = ref(40)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -137,8 +134,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -158,9 +154,9 @@ export default defineComponent({
     const value = ref(40)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -170,8 +166,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -193,14 +188,14 @@ export default defineComponent({
       0: '0°C',
       26: '26°C',
       37: '37°C',
-      50: '50°C'
+      50: '50°C',
     }
 
     return {
       value,
-      marks
+      marks,
     }
-  }
+  },
 })
 </script>
 
@@ -210,8 +205,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -233,9 +227,9 @@ export default defineComponent({
     const value = ref(50)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -246,8 +240,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -265,9 +258,9 @@ export default defineComponent({
     const range = ref([20, 80])
 
     return {
-      range
+      range,
     }
-  }
+  },
 })
 </script>
 
@@ -278,8 +271,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -306,9 +298,9 @@ export default defineComponent({
     return {
       value1,
       value2,
-      formatTooltip
+      formatTooltip,
     }
-  }
+  },
 })
 </script>
 
@@ -324,8 +316,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -351,9 +342,9 @@ export default defineComponent({
       value1,
       value2,
       value3,
-      value4
+      value4,
     }
-  }
+  },
 })
 </script>
 
@@ -373,8 +364,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -398,9 +388,9 @@ export default defineComponent({
     return {
       value1,
       value2,
-      value3
+      value3,
     }
-  }
+  },
 })
 </script>
 
@@ -417,8 +407,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -438,9 +427,9 @@ export default defineComponent({
     const value = ref(50)
 
     return {
-      value
+      value,
     }
-  }
+  },
 })
 </script>
 
@@ -450,8 +439,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -476,24 +464,19 @@ export default defineComponent({
 
     return {
       value,
-      formatValueText
+      formatValueText,
     }
-  }
+  },
 })
 </script>
 
 <template>
   <div>
-    <c-slider
-      v-model="value"
-      label="音量控制"
-      :format-value-text="formatValueText"
-    />
+    <c-slider v-model="value" label="音量控制" :format-value-text="formatValueText" />
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::

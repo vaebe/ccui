@@ -1,12 +1,7 @@
-import type {
-  CheckBoxGroupProps,
-} from './check-box-types'
+import type { CheckBoxGroupProps, LabelType } from './check-box-types'
 import { computed, defineComponent, provide, toRef } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import {
-  checkBoxGroupInjectionKey,
-  checkBoxGroupProps,
-} from './check-box-types'
+import { checkBoxGroupInjectionKey, checkBoxGroupProps } from './check-box-types'
 import './check-box-group.scss'
 
 export default defineComponent({
@@ -18,10 +13,10 @@ export default defineComponent({
 
     const valueList = toRef(props, 'modelValue')
 
-    const toggleGroupVal = (val: string) => {
+    const toggleGroupVal = (val: LabelType) => {
       // 只限制v-model绑定的值是一个数组 数组里有什么不做限制
       // 查找对应元素在数组的下标
-      const index = valueList.value.findIndex(item => item === val)
+      const index = valueList.value.findIndex((item) => item === val)
 
       // 如果找不到就把元素添加到数组
       if (index === -1) {
@@ -36,7 +31,7 @@ export default defineComponent({
       emit('change', valueList.value)
       emit('update:modelValue', valueList.value)
     }
-    const isItemChecked = (val: string) => {
+    const isItemChecked = (val: LabelType) => {
       // 验证数组中是否存在该项 返回boolean
       return valueList.value.includes(val)
     }
@@ -59,11 +54,7 @@ export default defineComponent({
     })
 
     return () => {
-      return (
-        <div class={checkBoxGroupClass.value}>
-          {slots.default && slots.default()}
-        </div>
-      )
+      return <div class={checkBoxGroupClass.value}>{slots.default && slots.default()}</div>
     }
   },
 })

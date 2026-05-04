@@ -26,8 +26,7 @@ const value = ref(0)
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -108,7 +107,7 @@ const value = ref(0)
 <script setup>
 import { defineComponent, ref } from 'vue'
 
-const value = ref(1.00)
+const value = ref(1.0)
 </script>
 
 <template>
@@ -160,9 +159,7 @@ const value = ref(0)
 
 <template>
   <div>
-    <p class="mt-0!">
-      两侧控制
-    </p>
+    <p class="mt-0!">两侧控制</p>
     <c-input-number v-model="value" controls-position="both" placeholder="两侧控制" />
 
     <p>右侧控制</p>

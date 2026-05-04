@@ -6,11 +6,7 @@ export interface UseNamespace {
   is: (name: string) => string
 }
 
-function createBem(
-  namespace: string,
-  element?: string,
-  modifier?: string,
-): string {
+function createBem(namespace: string, element?: string, modifier?: string): string {
   let cls = namespace
   if (element) {
     cls += `__${element}`
@@ -32,10 +28,8 @@ export function useNamespace(block: string, needDot = false): UseNamespace {
   const namespace = needDot ? `.ccui-${block}` : `ccui-${block}`
   const b = () => createBem(namespace)
   const e = (element: string) => (element ? createBem(namespace, element) : '')
-  const m = (modifier: string) =>
-    modifier ? createBem(namespace, '', modifier) : ''
-  const em = (element: string, modifier: string) =>
-    element && modifier ? createBem(namespace, element, modifier) : ''
+  const m = (modifier: string) => (modifier ? createBem(namespace, '', modifier) : '')
+  const em = (element: string, modifier: string) => (element && modifier ? createBem(namespace, element, modifier) : '')
   const is = (name: string) => `is-${name}`
   return {
     b,

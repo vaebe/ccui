@@ -34,16 +34,14 @@ export default defineComponent({
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front">
-          {props.loading
-            ? (
-                <>
-                  <span class="loading-spinner"></span>
-                  Loading...
-                </>
-              )
-            : (
-                slots.default?.()
-              )}
+          {props.loading ? (
+            <>
+              <span class="loading-spinner"></span>
+              Loading...
+            </>
+          ) : (
+            slots.default?.()
+          )}
         </span>
       </button>
     )

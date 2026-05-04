@@ -27,18 +27,14 @@ export default defineComponent({
     // 使用组合式函数
     const { currentValue } = useSliderValue(props, emit)
     const { getPercent, getValueFromPercent } = useSliderCalculation(props)
-    const { trackStyle, firstButtonStyle, secondButtonStyle } = useSliderStyle(
-      props,
-      currentValue,
-      getPercent,
-    )
-    const { isDragging, handleSliderClick, handleDragStart, handleDragEnd, cleanup: cleanupInteraction } = useSliderInteraction(
-      props,
-      currentValue,
-      emit,
-      sliderRef,
-      getValueFromPercent,
-    )
+    const { trackStyle, firstButtonStyle, secondButtonStyle } = useSliderStyle(props, currentValue, getPercent)
+    const {
+      isDragging,
+      handleSliderClick,
+      handleDragStart,
+      handleDragEnd,
+      cleanup: cleanupInteraction,
+    } = useSliderInteraction(props, currentValue, emit, sliderRef, getValueFromPercent)
     const { handleKeydown } = useSliderKeyboard(props, currentValue, emit)
     const { marks, getMarkStyle, getMarkLabel } = useSliderMarks(props, getPercent)
     const { handleInputChange } = useSliderInput(props, currentValue, emit)
@@ -69,17 +65,14 @@ export default defineComponent({
     // 渲染滑块按钮的函数
     const renderButton = (index: number, value: number, style: any, ariaLabel: string) => {
       const buttonProps = {
-        'class': [
-          ns.e('button'),
-          { [ns.em('button', 'disabled')]: props.disabled },
-        ],
-        'tabindex': props.disabled ? -1 : 0,
-        'onMousedown': (e: MouseEvent) => handleDragStart(e, index),
-        'onTouchstart': (e: TouchEvent) => handleDragStart(e, index),
-        'onKeydown': (e: KeyboardEvent) => handleKeydown(e, index),
-        'onMouseenter': () => handleButtonMouseEnter(index),
-        'onMouseleave': handleButtonMouseLeave,
-        'role': 'slider',
+        class: [ns.e('button'), { [ns.em('button', 'disabled')]: props.disabled }],
+        tabindex: props.disabled ? -1 : 0,
+        onMousedown: (e: MouseEvent) => handleDragStart(e, index),
+        onTouchstart: (e: TouchEvent) => handleDragStart(e, index),
+        onKeydown: (e: KeyboardEvent) => handleKeydown(e, index),
+        onMouseenter: () => handleButtonMouseEnter(index),
+        onMouseleave: handleButtonMouseLeave,
+        role: 'slider',
         'aria-label': ariaLabel,
         'aria-valuemin': props.min,
         'aria-valuemax': props.max,
@@ -88,23 +81,21 @@ export default defineComponent({
         'aria-orientation': props.vertical ? 'vertical' : 'horizontal',
       }
 
-      return props.showTooltip
-        ? (
-            <Tooltip
-              content={getTooltipContent(index)}
-              visible={getTooltipVisible(index)}
-              placement={getTooltipPlacement()}
-              effect="dark"
-              showArrow={true}
-              trigger="manual"
-              popperClass={props.tooltipClass}
-            >
-              <div {...buttonProps} />
-            </Tooltip>
-          )
-        : (
-            <div {...buttonProps} />
-          )
+      return props.showTooltip ? (
+        <Tooltip
+          content={getTooltipContent(index)}
+          visible={getTooltipVisible(index)}
+          placement={getTooltipPlacement()}
+          effect="dark"
+          showArrow={true}
+          trigger="manual"
+          popperClass={props.tooltipClass}
+        >
+          <div {...buttonProps} />
+        </Tooltip>
+      ) : (
+        <div {...buttonProps} />
+      )
     }
 
     return {
@@ -195,19 +186,17 @@ export default defineComponent({
           {/* 刻度点 */}
           {this.showStops && (
             <div class={this.ns.e('stops')}>
-              {Array.from({ length: Math.floor((this.max - this.min) / this.step) + 1 })
-                .map((_, index) => {
-                  const stopValue = this.min + index * this.step
-                  const percent = this.getPercent(stopValue)
-                  return (
-                    <div
-                      key={index}
-                      class={this.ns.e('stop')}
-                      style={{ [this.vertical ? 'bottom' : 'left']: `${percent}%` }}
-                    >
-                    </div>
-                  )
-                })}
+              {Array.from({ length: Math.floor((this.max - this.min) / this.step) + 1 }).map((_, index) => {
+                const stopValue = this.min + index * this.step
+                const percent = this.getPercent(stopValue)
+                return (
+                  <div
+                    key={index}
+                    class={this.ns.e('stop')}
+                    style={{ [this.vertical ? 'bottom' : 'left']: `${percent}%` }}
+                  ></div>
+                )
+              })}
             </div>
           )}
 
@@ -217,15 +206,9 @@ export default defineComponent({
               {Object.keys(this.marks).map((key) => {
                 const value = Number(key)
                 return (
-                  <div
-                    key={value}
-                    class={this.ns.e('mark')}
-                    style={this.getMarkStyle(value)}
-                  >
+                  <div key={value} class={this.ns.e('mark')} style={this.getMarkStyle(value)}>
                     <div class={this.ns.e('mark-line')}></div>
-                    <span class={this.ns.e('mark-label')}>
-                      {this.getMarkLabel(value)}
-                    </span>
+                    <span class={this.ns.e('mark-label')}>{this.getMarkLabel(value)}</span>
                   </div>
                 )
               })}
@@ -234,10 +217,7 @@ export default defineComponent({
 
           {/* 第一个滑块按钮 */}
           <div
-            class={[
-              this.ns.e('button-wrapper'),
-              { [this.ns.em('button-wrapper', 'first')]: isRange },
-            ]}
+            class={[this.ns.e('button-wrapper'), { [this.ns.em('button-wrapper', 'first')]: isRange }]}
             style={this.firstButtonStyle}
           >
             {this.renderButton(0, firstValue, this.firstButtonStyle, this.rangeStartLabel || 'start value')}

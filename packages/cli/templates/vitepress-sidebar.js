@@ -17,23 +17,18 @@ function buildCategoryOptions(text, items = []) {
 }
 
 function generateZhMenus(componentsInfo) {
-  const categoryMap = VITEPRESS_SIDEBAR_CATEGORY.reduce(
-    (map, cate) => map.set(cate, []),
-    new Map(),
-  )
+  const categoryMap = VITEPRESS_SIDEBAR_CATEGORY.reduce((map, cate) => map.set(cate, []), new Map())
 
   componentsInfo.forEach((info) => {
     if (categoryMap.has(info.category)) {
-
-      const componentName = info.name === 'Button3D' ? 'button-3d' : kebabCase(info.name);
+      const componentName = info.name === 'Button3D' ? 'button-3d' : kebabCase(info.name)
 
       categoryMap.get(info.category).push({
         text: info.title,
         link: `/${SITES_COMPONENTS_DIR_NAME}/${componentName}/`,
         status: info.status,
       })
-    }
-    else {
+    } else {
       logger.warning(`组件 ${info.name} 的分类 ${info.category} 不存在！`)
     }
   })
@@ -41,19 +36,14 @@ function generateZhMenus(componentsInfo) {
 }
 
 function generateEnMenus(componentsInfo) {
-  const categoryMapEn = VITEPRESS_SIDEBAR_CATEGORY_EN.reduce(
-    (map, cate) => map.set(cate, []),
-    new Map(),
-  )
+  const categoryMapEn = VITEPRESS_SIDEBAR_CATEGORY_EN.reduce((map, cate) => map.set(cate, []), new Map())
   componentsInfo.forEach((info) => {
     if (categoryMapEn.has(VITEPRESS_SIDEBAR_CATEGORY_ZH_TO_EN[info.category])) {
-      categoryMapEn
-        .get(VITEPRESS_SIDEBAR_CATEGORY_ZH_TO_EN[info.category])
-        .push({
-          text: info.name,
-          link: `/${SITES_COMPONENTS_DIR_NAME_EN}/${kebabCase(info.name)}/`,
-          status: info.status,
-        })
+      categoryMapEn.get(VITEPRESS_SIDEBAR_CATEGORY_ZH_TO_EN[info.category]).push({
+        text: info.name,
+        link: `/${SITES_COMPONENTS_DIR_NAME_EN}/${kebabCase(info.name)}/`,
+        status: info.status,
+      })
     }
   })
   return Array.from(categoryMapEn).map(([k, v]) => buildCategoryOptions(k, v))

@@ -1,14 +1,8 @@
-import type {
-  TabsProps,
-  TabsState,
-} from './tabs-types'
+import type { TabsProps, TabsState } from './tabs-types'
 import { defineComponent, provide, reactive } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import TabsNav from './components/tabs-nav'
-import {
-  tabsInjectionKey,
-  tabsProps,
-} from './tabs-types'
+import { tabsInjectionKey, tabsProps } from './tabs-types'
 import './tabs.scss'
 
 export default defineComponent({
@@ -35,15 +29,12 @@ export default defineComponent({
     }
 
     const tabsContent = () => {
-      const tabsNav = (
-        <TabsNav {...props} onActive-tab-change={setActiveTab}></TabsNav>
-      )
+      const tabsNav = <TabsNav {...props} onActive-tab-change={setActiveTab}></TabsNav>
       const content = slots.default && slots.default()
 
       if (['bottom'].includes(props.tabPosition)) {
         return [content, tabsNav]
-      }
-      else {
+      } else {
         return [tabsNav, content]
       }
     }

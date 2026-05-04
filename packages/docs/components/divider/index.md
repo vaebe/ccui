@@ -17,9 +17,9 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {
-      msg: 'Divider 分隔线 组件文档示例'
+      msg: 'Divider 分隔线 组件文档示例',
     }
-  }
+  },
 })
 </script>
 
@@ -38,24 +38,16 @@ export default defineComponent({
     <c-divider>北京</c-divider>
 
     在左侧的自定义文案
-    <c-divider content-position="left">
-      上海
-    </c-divider>
+    <c-divider content-position="left"> 上海 </c-divider>
 
     在右侧的自定义文案
-    <c-divider content-position="right">
-      广州
-    </c-divider>
+    <c-divider content-position="right"> 广州 </c-divider>
 
     文案的颜色
-    <c-divider content-color="#7693f5">
-      广州
-    </c-divider>
+    <c-divider content-color="#7693f5"> 广州 </c-divider>
 
     文案的背景颜色
-    <c-divider content-background-color="#7693f5">
-      广州
-    </c-divider>
+    <c-divider content-background-color="#7693f5"> 广州 </c-divider>
 
     垂直的分隔线
     <div>
@@ -68,9 +60,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>
 ```
 
 :::

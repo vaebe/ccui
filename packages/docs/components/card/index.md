@@ -13,7 +13,7 @@
 ```vue
 <script>
 export default {
-  name: 'CardBox'
+  name: 'CardBox',
 }
 </script>
 
@@ -36,8 +36,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
 ```
 
 :::

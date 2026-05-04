@@ -16,10 +16,7 @@ export default defineConfig({
   ignoreDeadLinks: true, // 忽略死链接
   head: [
     // 这里的路径没有被自动更改 手动更改路径
-    [
-      'link',
-      { rel: 'icon', type: 'image/svg+xml', href: `${prod ? '/ccui/' : '/'}logo.svg` },
-    ],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${prod ? '/ccui/' : '/'}logo.svg` }],
     [
       'link',
       {
@@ -38,14 +35,15 @@ export default defineConfig({
     sidebar,
     nav,
     logo: '/logo.svg',
-    algolia: {
-      appId: 'K0NNJA38K6',
-      apiKey: '0b6d20552d2073390d2bbb0a84fb49dd',
-      indexName: 'ccui',
+    search: {
+      provider: 'algolia',
+      options: {
+        appId: 'K0NNJA38K6',
+        apiKey: '0b6d20552d2073390d2bbb0a84fb49dd',
+        indexName: 'ccui',
+      },
     },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/vaebe/ccui.git' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/vaebe/ccui.git' }],
     outlineTitle: '快速前往',
     footer: {
       message: 'Released under the MIT License.',

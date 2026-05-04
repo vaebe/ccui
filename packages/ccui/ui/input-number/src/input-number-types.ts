@@ -99,13 +99,13 @@ export interface InputNumberEmits {
   /** 值更新事件 */
   'update:modelValue': [value: InputNumberValue]
   /** 值变化事件 */
-  'change': [currentVal: InputNumberValue, oldVal: InputNumberValue]
+  change: [currentVal: InputNumberValue, oldVal: InputNumberValue]
   /** 失去焦点事件 */
-  'blur': [event: FocusEvent]
+  blur: [event: FocusEvent]
   /** 获得焦点事件 */
-  'focus': [event: FocusEvent]
+  focus: [event: FocusEvent]
   /** 输入事件 */
-  'input': [currentValue: InputNumberValue]
+  input: [currentValue: InputNumberValue]
 }
 
 /**

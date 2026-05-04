@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { Popover } from '../index'
 
@@ -174,10 +174,7 @@ describe('popover', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = createWrapper(
-        { content: 'Test', trigger: 'focus', hideAfter: 0 },
-        { default: '<input type="text" />' },
-      )
+      wrapper = createWrapper({ content: 'Test', trigger: 'focus', hideAfter: 0 }, { default: '<input type="text" />' })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('focus')
       await nextTick()
@@ -237,13 +234,13 @@ describe('popover', () => {
       const beforeHide = vi.fn()
       const hide = vi.fn()
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'hover',
-        'hideAfter': 0,
+        content: 'Test',
+        trigger: 'hover',
+        hideAfter: 0,
         'onBefore-show': beforeShow,
-        'onShow': show,
+        onShow: show,
         'onBefore-hide': beforeHide,
-        'onHide': hide,
+        onHide: hide,
       })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('mouseenter')
@@ -418,8 +415,8 @@ describe('popover', () => {
       const afterLeave = vi.fn()
 
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'click',
+        content: 'Test',
+        trigger: 'click',
         'onBefore-enter': beforeEnter,
         'onAfter-enter': afterEnter,
         'onBefore-leave': beforeLeave,

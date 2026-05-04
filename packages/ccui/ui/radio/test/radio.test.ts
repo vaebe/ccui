@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Radio } from '../index'
 

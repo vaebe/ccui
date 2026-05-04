@@ -13,8 +13,7 @@ export default defineComponent({
   props: avatarProps,
   emits: [],
   setup(props: AvatarProps) {
-    const { name, width, height, customText, gender, imgSrc, isRound, fit }
-      = toRefs(props)
+    const { name, width, height, customText, gender, imgSrc, isRound, fit } = toRefs(props)
 
     // 头像图片加载是否有错误
     const isErrorImg = ref<boolean>(false)
@@ -28,11 +27,7 @@ export default defineComponent({
       const minNum = ref<number>(Math.min(width.value, height.value))
 
       // 获取展示名称
-      nameDisplay.value = useGetDisplayName(
-        name.value,
-        customText.value,
-        minNum.value,
-      )
+      nameDisplay.value = useGetDisplayName(name.value, customText.value, minNum.value)
 
       // 计算展示文本的字体大小
       fontSize.value = minNum.value / 4 + 3
@@ -41,10 +36,7 @@ export default defineComponent({
       isNobody.value = !!name.value && name.value === ''
 
       // 计算背景颜色code
-      BgColorCode.value = useGetBackgroundColor(
-        gender.value,
-        nameDisplay.value.substring(0, 1),
-      )
+      BgColorCode.value = useGetBackgroundColor(gender.value, nameDisplay.value.substring(0, 1))
     }
 
     watch(
@@ -78,10 +70,7 @@ export default defineComponent({
     const styleNs = ns.e('style')
 
     const imgSrcErrElement = (
-      <span
-        class={styleNs}
-        style={{ borderRadius: isRound.value ? '100%' : '0' }}
-      >
+      <span class={styleNs} style={{ borderRadius: isRound.value ? '100%' : '0' }}>
         <IconImgError width={width.value} height={height.value} />
       </span>
     )
@@ -118,10 +107,7 @@ export default defineComponent({
     )
 
     const noNameElement = (
-      <span
-        class={styleNs}
-        style={{ borderRadius: isRound.value ? '100%' : '0' }}
-      >
+      <span class={styleNs} style={{ borderRadius: isRound.value ? '100%' : '0' }}>
         <IconBody width={width.value} height={height.value} />
       </span>
     )
@@ -133,8 +119,7 @@ export default defineComponent({
 
       if (!isNobody.value && nameDisplay.value?.length !== 0) {
         return nameElement
-      }
-      else {
+      } else {
         return noNameElement
       }
     }

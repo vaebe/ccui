@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Avatar } from '../index'
 
@@ -76,7 +76,7 @@ describe('avatar', () => {
 
     // Simulate image error
     const img = wrapper.find('img')
-    img.trigger('error')
+    await img.trigger('error')
     await wrapper.vm.$nextTick()
 
     expect(wrapper.findComponent({ name: 'IconImgError' }).exists()).toBe(true)

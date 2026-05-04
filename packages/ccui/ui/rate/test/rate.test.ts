@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Rate } from '../index'
 
@@ -85,9 +85,12 @@ describe('rate', () => {
   })
 
   it('renders info slot when provided', () => {
-    const wrapper = createWrapper({}, {
-      info: '<div class="info-slot">Info Content</div>',
-    })
+    const wrapper = createWrapper(
+      {},
+      {
+        info: '<div class="info-slot">Info Content</div>',
+      },
+    )
 
     expect(wrapper.find('.info-slot').exists()).toBe(true)
     expect(wrapper.find('.info-slot').text()).toBe('Info Content')

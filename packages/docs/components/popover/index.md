@@ -21,22 +21,19 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-basic">
     <c-popover title="标题" content="这是一段 Popover 内容">
-      <c-button type="primary" plain>
-        点击触发
-      </c-button>
+      <c-button type="primary" plain> 点击触发 </c-button>
     </c-popover>
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -54,22 +51,19 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-hover">
     <c-popover trigger="hover" content="鼠标悬停显示">
-      <c-button type="primary" plain>
-        Hover
-      </c-button>
+      <c-button type="primary" plain> Hover </c-button>
     </c-popover>
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -87,7 +81,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -100,20 +94,15 @@ export default defineComponent({
       <template #content>
         <div style="max-width: 240px">
           <p>支持任意插槽内容</p>
-          <c-button type="primary" plain size="small">
-            操作
-          </c-button>
+          <c-button type="primary" plain size="small"> 操作 </c-button>
         </div>
       </template>
-      <c-button type="primary" plain>
-        自定义内容
-      </c-button>
+      <c-button type="primary" plain> 自定义内容 </c-button>
     </c-popover>
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -131,7 +120,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -141,19 +130,13 @@ export default defineComponent({
       <!-- 顶部行 -->
       <div class="top-row">
         <c-popover placement="top-start" content="Title Top-start Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top-start
-          </c-button>
+          <c-button type="primary" plain> top-start </c-button>
         </c-popover>
         <c-popover placement="top" content="Title Top Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top
-          </c-button>
+          <c-button type="primary" plain> top </c-button>
         </c-popover>
         <c-popover placement="top-end" content="Title Top-end Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top-end
-          </c-button>
+          <c-button type="primary" plain> top-end </c-button>
         </c-popover>
       </div>
 
@@ -161,37 +144,25 @@ export default defineComponent({
       <div class="middle-row">
         <div class="left-column">
           <c-popover placement="left-start" content="Title Left-start Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left-start
-            </c-button>
+            <c-button type="primary" plain> left-start </c-button>
           </c-popover>
           <c-popover placement="left" content="Title Left Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left
-            </c-button>
+            <c-button type="primary" plain> left </c-button>
           </c-popover>
           <c-popover placement="left-end" content="Title Left-end Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left-end
-            </c-button>
+            <c-button type="primary" plain> left-end </c-button>
           </c-popover>
         </div>
 
         <div class="right-column">
           <c-popover placement="right-start" content="Title Right-start Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right-start
-            </c-button>
+            <c-button type="primary" plain> right-start </c-button>
           </c-popover>
           <c-popover placement="right" content="Title Right Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right
-            </c-button>
+            <c-button type="primary" plain> right </c-button>
           </c-popover>
           <c-popover placement="right-end" content="Title Right-end Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right-end
-            </c-button>
+            <c-button type="primary" plain> right-end </c-button>
           </c-popover>
         </div>
       </div>
@@ -199,19 +170,13 @@ export default defineComponent({
       <!-- 底部行 -->
       <div class="bottom-row">
         <c-popover placement="bottom-start" content="Title Bottom-start Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom-start
-          </c-button>
+          <c-button type="primary" plain> bottom-start </c-button>
         </c-popover>
         <c-popover placement="bottom" content="Title Bottom Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom
-          </c-button>
+          <c-button type="primary" plain> bottom </c-button>
         </c-popover>
         <c-popover placement="bottom-end" content="Title Bottom-end Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom-end
-          </c-button>
+          <c-button type="primary" plain> bottom-end </c-button>
         </c-popover>
       </div>
     </div>
@@ -274,24 +239,19 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   setup() {
     const visible = ref(false)
-    const toggle = () => visible.value = !visible.value
+    const toggle = () => (visible.value = !visible.value)
 
     return {
       visible,
-      toggle
+      toggle,
     }
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-manual">
-    <c-popover
-      v-model:visible="visible"
-      title="受控"
-      content="通过 v-model 控制显隐"
-      trigger="manual"
-    >
+    <c-popover v-model:visible="visible" title="受控" content="通过 v-model 控制显隐" trigger="manual">
       <c-button type="primary" plain @click="toggle">
         {{ visible ? '隐藏' : '显示' }}
       </c-button>
@@ -299,8 +259,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -318,26 +277,19 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-contextmenu">
-    <c-popover
-      trigger="contextmenu"
-      title="右键菜单"
-      content="右键点击触发弹出框"
-    >
-      <c-button type="primary" plain>
-        右键点击我
-      </c-button>
+    <c-popover trigger="contextmenu" title="右键菜单" content="右键点击触发弹出框">
+      <c-button type="primary" plain> 右键点击我 </c-button>
     </c-popover>
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -369,23 +321,16 @@ export default defineComponent({
       triggerRef,
       visible,
       handleShow,
-      handleHide
+      handleHide,
     }
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-virtual">
     <div class="virtual-trigger-area">
-      <div
-        ref="triggerRef"
-        class="virtual-trigger"
-        @mouseenter="handleShow"
-        @mouseleave="handleHide"
-      >
-        虚拟触发区域
-      </div>
+      <div ref="triggerRef" class="virtual-trigger" @mouseenter="handleShow" @mouseleave="handleHide">虚拟触发区域</div>
     </div>
 
     <c-popover
@@ -449,9 +394,9 @@ export default defineComponent({
     return {
       visible,
       handleConfirm,
-      handleCancel
+      handleCancel,
     }
-  }
+  },
 })
 </script>
 
@@ -465,18 +410,12 @@ export default defineComponent({
         <div class="nested-content">
           <p>此操作将永久删除该文件，是否继续？</p>
           <div class="action-buttons">
-            <c-button size="small" @click="handleCancel">
-              取消
-            </c-button>
-            <c-button type="primary" size="small" @click="handleConfirm">
-              确定
-            </c-button>
+            <c-button size="small" @click="handleCancel"> 取消 </c-button>
+            <c-button type="primary" size="small" @click="handleConfirm"> 确定 </c-button>
           </div>
         </div>
       </template>
-      <c-button type="danger" plain @click="visible = true">
-        删除文件
-      </c-button>
+      <c-button type="danger" plain @click="visible = true"> 删除文件 </c-button>
     </c-popover>
   </div>
 </template>
@@ -515,27 +454,19 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
 <template>
   <div class="demo-popover-autoclose">
-    <c-popover
-      trigger="click"
-      :auto-close="3000"
-      title="自动关闭"
-      content="这个弹出框将在3秒后自动关闭"
-    >
-      <c-button type="primary" plain>
-        点击我（3秒后自动关闭）
-      </c-button>
+    <c-popover trigger="click" :auto-close="3000" title="自动关闭" content="这个弹出框将在3秒后自动关闭">
+      <c-button type="primary" plain> 点击我（3秒后自动关闭） </c-button>
     </c-popover>
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::

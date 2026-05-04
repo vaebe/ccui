@@ -29,12 +29,7 @@ const {
   isProd,
 } = require('../shared/constant')
 const { selectCreateType } = require('../inquirers/create')
-const {
-  selectCategory,
-  selectParts,
-  typeName,
-  typeTitle,
-} = require('../inquirers/component')
+const { selectCategory, selectParts, typeName, typeTitle } = require('../inquirers/component')
 const {
   createComponentTemplate,
   createStyleTemplate,
@@ -46,9 +41,7 @@ const {
   createDocumentTemplate,
 } = require('../templates/component')
 const { createUiTemplate } = require('../templates/vue-ui')
-const {
-  createVitepressSidebarTemplates,
-} = require('../templates/vitepress-sidebar')
+const { createVitepressSidebarTemplates } = require('../templates/vitepress-sidebar')
 
 async function createComponent(params = {}) {
   const { name, hasComponent, hasDirective, hasService } = params
@@ -91,16 +84,10 @@ async function createComponent(params = {}) {
     process.exit(1)
   }
 
-  const spinner = ora(
-    `开始创建 ${bigCamelCase(componentName)} 组件...`,
-  ).start()
+  const spinner = ora(`开始创建 ${bigCamelCase(componentName)} 组件...`).start()
 
   try {
-    await Promise.all([
-      fs.mkdirs(componentDir),
-      fs.mkdirs(srcDir),
-      fs.mkdirs(testsDir),
-    ])
+    await Promise.all([fs.mkdirs(componentDir), fs.mkdirs(srcDir), fs.mkdirs(testsDir)])
 
     const writeFiles = [
       fs.writeFile(resolve(componentDir, INDEX_FILE_NAME), indexTemplate),
@@ -109,53 +96,35 @@ async function createComponent(params = {}) {
 
     if (!fs.existsSync(docsDir)) {
       fs.mkdirSync(docsDir)
-      writeFiles.push(
-        fs.writeFile(resolve(docsDir, DOCS_FILE_NAME), docTemplate),
-      )
-    }
-    else {
-      logger.warning(
-        `\n${bigCamelCase(componentName)} 组件文档已存在：${resolve(
-          docsDir,
-          DOCS_FILE_NAME,
-        )}`,
-      )
+      writeFiles.push(fs.writeFile(resolve(docsDir, DOCS_FILE_NAME), docTemplate))
+    } else {
+      logger.warning(`\n${bigCamelCase(componentName)} 组件文档已存在：${resolve(docsDir, DOCS_FILE_NAME)}`)
     }
 
     if (hasComponent || hasService) {
-      writeFiles.push(
-        fs.writeFile(resolve(srcDir, `${typesName}.ts`), typesTemplate),
-      )
+      writeFiles.push(fs.writeFile(resolve(srcDir, `${typesName}.ts`), typesTemplate))
     }
 
     if (hasComponent) {
       writeFiles.push(
-        fs.writeFile(
-          resolve(srcDir, `${componentName}.tsx`),
-          componentTemplate,
-        ),
+        fs.writeFile(resolve(srcDir, `${componentName}.tsx`), componentTemplate),
         fs.writeFile(resolve(srcDir, `${styleName}.scss`), styleTemplate),
       )
     }
 
     if (hasDirective) {
-      writeFiles.push(
-        fs.writeFile(resolve(srcDir, `${directiveName}.ts`), directiveTemplate),
-      )
+      writeFiles.push(fs.writeFile(resolve(srcDir, `${directiveName}.ts`), directiveTemplate))
     }
 
     if (hasService) {
-      writeFiles.push(
-        fs.writeFile(resolve(srcDir, `${serviceName}.ts`), serviceTemplate),
-      )
+      writeFiles.push(fs.writeFile(resolve(srcDir, `${serviceName}.ts`), serviceTemplate))
     }
 
     await Promise.all(writeFiles)
 
     spinner.succeed(`${bigCamelCase(componentName)} 组件创建成功！`)
     logger.info(`组件目录：${componentDir}`)
-  }
-  catch (e) {
+  } catch (e) {
     spinner.fail(e.toString())
     process.exit(1)
   }
@@ -163,10 +132,7 @@ async function createComponent(params = {}) {
 
 async function createVueUi(params, { ignoreParseError, env }) {
   const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS).filter(
-    ({ name }) =>
-      (env === 'prod' && isReadyToRelease(kebabCase(name)))
-      || !env
-      || env === 'dev',
+    ({ name }) => (env === 'prod' && isReadyToRelease(kebabCase(name))) || !env || env === 'dev',
   )
 
   const exportModules = []
@@ -190,8 +156,7 @@ async function createVueUi(params, { ignoreParseError, env }) {
 
     spinner.succeed(`${VUE_UI_FILE_NAME} 文件创建成功！`)
     logger.info(`文件地址：${VUE_UI_FILE}`)
-  }
-  catch (e) {
+  } catch (e) {
     spinner.fail(e.toString())
     process.exit(1)
   }
@@ -230,8 +195,7 @@ async function createVitepressSidebar() {
 
       spinner.succeed(`${fileName} 文件创建成功！`)
       logger.info(`文件地址：${location}`)
-    }
-    catch (e) {
+    } catch (e) {
       spinner.fail(e.toString())
       process.exit(1)
     }
@@ -239,20 +203,17 @@ async function createVitepressSidebar() {
 }
 
 exports.validateCreateType = (type) => {
-  const re = new RegExp(
-    `^(${CREATE_SUPPORT_TYPES.map(t => `(${t})`).join('|')})$`,
-  )
+  const re = new RegExp(`^(${CREATE_SUPPORT_TYPES.map((t) => `(${t})`).join('|')})$`)
   const flag = re.test(type)
 
-  !flag
-  && logger.error(`类型错误，可选类型为：${CREATE_SUPPORT_TYPES.join(', ')}`)
+  !flag && logger.error(`类型错误，可选类型为：${CREATE_SUPPORT_TYPES.join(', ')}`)
 
   return flag ? type : null
 }
 
 // TODO: 待优化代码结构
 exports.create = async (cwd) => {
-  const inquirer = await import('inquirer');
+  const inquirer = await import('inquirer')
   let { type } = cwd
 
   if (isEmpty(type)) {
@@ -270,12 +231,7 @@ exports.create = async (cwd) => {
   try {
     switch (type) {
       case CREATE_SUPPORT_TYPE_MAP.component:
-        params = await inquirer.default.prompt([
-          typeName(),
-          typeTitle(),
-          selectCategory(),
-          selectParts(),
-        ])
+        params = await inquirer.default.prompt([typeName(), typeTitle(), selectCategory(), selectParts()])
         params.hasComponent = params.parts.includes('component')
         params.hasDirective = params.parts.includes('directive')
         params.hasService = params.parts.includes('service')
@@ -291,8 +247,7 @@ exports.create = async (cwd) => {
       default:
         break
     }
-  }
-  catch (e) {
+  } catch (e) {
     logger.error(e.toString())
     process.exit(1)
   }

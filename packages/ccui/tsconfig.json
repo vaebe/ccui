@@ -14,11 +14,5 @@
     "skipLibCheck": true
   },
   "references": [{ "path": "./tsconfig.node.json" }],
-  "include": [
-    "ui/**/*.ts",
-    "ui/**/*.d.ts",
-    "ui/**/*.tsx",
-    "ui/**/*.vue",
-    "./index.d.ts"
-  ]
+  "include": ["ui/**/*.ts", "ui/**/*.d.ts", "ui/**/*.tsx", "ui/**/*.vue", "./index.d.ts", "./env.d.ts"]
 }

@@ -11,9 +11,7 @@ export default function useToggle(data: Ref<TreeData>): IUseToggle {
   const openedTree = (tree: TreeData): TreeData => {
     return tree.reduce(
       (acc: TreeData, item: TreeItem) =>
-        item.open
-          ? acc.concat(item, item.children ? openedTree(item.children) : [])
-          : acc.concat(item),
+        item.open ? acc.concat(item, item.children ? openedTree(item.children) : []) : acc.concat(item),
       [],
     )
   }
@@ -22,7 +20,7 @@ export default function useToggle(data: Ref<TreeData>): IUseToggle {
 
   watch(
     () => data.value,
-    d => (openedData.value = openedTree(d)),
+    (d) => (openedData.value = openedTree(d)),
     { deep: true },
   )
   const toggle = (target: Event, item: TreeItem) => {

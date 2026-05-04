@@ -19,9 +19,9 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {
-      msg: 'Avatar 头像 组件文档示例'
+      msg: 'Avatar 头像 组件文档示例',
     }
-  }
+  },
 })
 </script>
 
@@ -32,10 +32,7 @@ export default defineComponent({
     <c-avatar :width="32" :height="32" name="lihua" />
     <c-avatar :width="40" :height="40" name="hua li" :is-round="false" />
     <c-avatar name="李六" custom-text="王二" />
-    <c-avatar
-      name="刘武"
-      img-src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-    />
+    <c-avatar name="刘武" img-src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" />
     <c-avatar
       name="刘武"
       fit="contain"

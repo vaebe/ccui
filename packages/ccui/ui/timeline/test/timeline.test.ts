@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { h, markRaw } from 'vue'
 import { Timeline, TimelineItem } from '../index'
 
@@ -114,9 +114,12 @@ describe('timelineItem', () => {
   })
 
   it('should render with custom dot slot', () => {
-    const wrapper = createItemWrapper({}, {
-      dot: '<div class="custom-dot">Custom</div>',
-    })
+    const wrapper = createItemWrapper(
+      {},
+      {
+        dot: '<div class="custom-dot">Custom</div>',
+      },
+    )
     expect(wrapper.find('.ccui-timeline-item__dot').exists()).toBe(true)
     expect(wrapper.find('.custom-dot').exists()).toBe(true)
   })

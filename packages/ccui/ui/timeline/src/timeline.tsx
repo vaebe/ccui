@@ -12,11 +12,7 @@ export default defineComponent({
     const ns = useNamespace('timeline')
 
     return () => {
-      return (
-        <ul class={ns.b()}>
-          {slots.default && slots.default()}
-        </ul>
-      )
+      return <ul class={ns.b()}>{slots.default && slots.default()}</ul>
     }
   },
 })
