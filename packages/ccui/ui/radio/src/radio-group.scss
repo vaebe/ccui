@@ -15,10 +15,8 @@
   }
 
   .#{$cls-prefix}-radio {
-    line-height: 28px;
-
     &:not(:last-child) {
-      padding-right: 20px;
+      margin-inline-end: 8px;
     }
   }
 }

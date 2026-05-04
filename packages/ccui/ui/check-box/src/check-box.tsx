@@ -31,7 +31,7 @@ export default defineComponent({
 
       const iconColor = computed(() => {
         const color = checkBoxGroupInject?.color.value || props.color
-        return color ? `fill: ${color}` : ''
+        return color ? `color: ${color}; fill: ${color}` : ''
       })
 
       // todo 带测试逻辑

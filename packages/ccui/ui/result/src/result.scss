@@ -5,10 +5,15 @@
   text-align: center;
 
   &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 24px;
     text-align: center;
 
     svg {
+      display: block;
+      flex: none;
       vertical-align: middle;
     }
   }
