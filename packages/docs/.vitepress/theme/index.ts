@@ -11,7 +11,7 @@ export default {
   enhanceApp(ctx: EnhanceAppContext) {
     DefaultTheme.enhanceApp(ctx)
 
-    ctx.app.use(ccui)
+    ctx.app.use(ccui as Parameters<typeof ctx.app.use>[0])
 
     useComponents(ctx.app, DemoPreview)
   },

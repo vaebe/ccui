@@ -14,9 +14,7 @@
 <template>
   <c-result status="success" title="成功提交！" sub-title="订单号 2017182818828182881 提交成功，结果将会在三天内反馈。">
     <template #extra>
-      <c-button type="primary">
-        返回
-      </c-button>
+      <c-button type="primary"> 返回 </c-button>
     </template>
   </c-result>
 </template>
@@ -46,9 +44,7 @@
 <template>
   <c-result status="404">
     <template #extra>
-      <c-button type="primary">
-        Back Home
-      </c-button>
+      <c-button type="primary"> Back Home </c-button>
     </template>
   </c-result>
   <c-result status="500" />

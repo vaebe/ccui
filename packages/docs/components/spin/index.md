@@ -27,7 +27,7 @@
   <c-spin size="small" />
   <c-spin />
   <c-spin size="large" />
-  <br>
+  <br />
   <c-spin tip="Loading..." />
 </template>
 ```
@@ -46,7 +46,7 @@ export default defineComponent({
   setup() {
     const loading = ref(true)
     return { loading }
-  }
+  },
 })
 </script>
 
@@ -57,10 +57,8 @@ export default defineComponent({
       <p>Further details about the context of this alert.</p>
     </div>
   </c-spin>
-  <br>
-  <c-button @click="loading = !loading">
-    Toggle
-  </c-button>
+  <br />
+  <c-button @click="loading = !loading"> Toggle </c-button>
 </template>
 ```
 

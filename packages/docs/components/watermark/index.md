@@ -9,9 +9,7 @@
 ```vue
 <template>
   <c-watermark content="vue3-ccui">
-    <div style="height: 240px; background: #f6f8fa; padding: 16px">
-      水印保护区域
-    </div>
+    <div style="height: 240px; background: #f6f8fa; padding: 16px">水印保护区域</div>
   </c-watermark>
 </template>
 ```

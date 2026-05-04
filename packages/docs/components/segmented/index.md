@@ -19,7 +19,7 @@ export default defineComponent({
   setup() {
     const v = ref('Daily')
     return { v }
-  }
+  },
 })
 </script>
 
@@ -38,7 +38,7 @@ export default defineComponent({
 ```vue
 <template>
   <c-segmented disabled :options="['Map', 'Transit', 'Satellite']" model-value="Map" />
-  <br><br>
+  <br /><br />
   <c-segmented block :options="['Map', 'Transit', 'Satellite']" model-value="Map" />
 </template>
 ```
@@ -52,9 +52,9 @@ export default defineComponent({
 ```vue
 <template>
   <c-segmented size="small" :options="['Daily', 'Weekly', 'Monthly']" model-value="Daily" />
-  <br><br>
+  <br /><br />
   <c-segmented :options="['Daily', 'Weekly', 'Monthly']" model-value="Daily" />
-  <br><br>
+  <br /><br />
   <c-segmented size="large" :options="['Daily', 'Weekly', 'Monthly']" model-value="Daily" />
 </template>
 ```

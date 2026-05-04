@@ -14,14 +14,10 @@
 <template>
   <c-splitter style="height: 200px; border: 1px solid #f0f0f0;">
     <c-splitter-panel :default-size="200" :min="100">
-      <div style="padding: 16px;">
-        Left
-      </div>
+      <div style="padding: 16px;">Left</div>
     </c-splitter-panel>
     <c-splitter-panel :min="100">
-      <div style="padding: 16px;">
-        Right
-      </div>
+      <div style="padding: 16px;">Right</div>
     </c-splitter-panel>
   </c-splitter>
 </template>
@@ -37,14 +33,10 @@
 <template>
   <c-splitter layout="vertical" style="height: 280px; border: 1px solid #f0f0f0;">
     <c-splitter-panel :default-size="100" :min="50">
-      <div style="padding: 16px;">
-        Top
-      </div>
+      <div style="padding: 16px;">Top</div>
     </c-splitter-panel>
     <c-splitter-panel>
-      <div style="padding: 16px;">
-        Bottom
-      </div>
+      <div style="padding: 16px;">Bottom</div>
     </c-splitter-panel>
   </c-splitter>
 </template>

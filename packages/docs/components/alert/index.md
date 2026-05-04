@@ -14,11 +14,11 @@
 ```vue
 <template>
   <c-alert type="success" message="Success Tips" />
-  <br>
+  <br />
   <c-alert type="info" message="Informational Notes" />
-  <br>
+  <br />
   <c-alert type="warning" message="Warning" />
-  <br>
+  <br />
   <c-alert type="error" message="Error" />
 </template>
 ```
@@ -36,7 +36,7 @@
     message="Success Tips"
     description="Detailed description and advice about successful copywriting."
   />
-  <br>
+  <br />
   <c-alert
     type="info"
     message="Informational Notes"
@@ -54,11 +54,11 @@
 ```vue
 <template>
   <c-alert show-icon type="success" message="Success Tips" />
-  <br>
+  <br />
   <c-alert show-icon type="info" message="Informational Notes" />
-  <br>
+  <br />
   <c-alert show-icon type="warning" message="Warning" />
-  <br>
+  <br />
   <c-alert show-icon type="error" message="Error" />
 </template>
 ```
@@ -75,18 +75,13 @@ export default {
   methods: {
     onClose(e) {
       console.log('alert closed', e)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <template>
-  <c-alert
-    closable
-    type="warning"
-    message="Warning Text"
-    @close="onClose"
-  />
+  <c-alert closable type="warning" message="Warning Text" @close="onClose" />
 </template>
 ```
 

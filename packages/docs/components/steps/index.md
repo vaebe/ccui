@@ -27,15 +27,7 @@
 
 ```vue
 <template>
-  <c-steps
-    :current="1"
-    status="error"
-    :items="[
-      { title: '完成' },
-      { title: '失败' },
-      { title: '未开始' },
-    ]"
-  />
+  <c-steps :current="1" status="error" :items="[{ title: '完成' }, { title: '失败' }, { title: '未开始' }]" />
 </template>
 ```
 

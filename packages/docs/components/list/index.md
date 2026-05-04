@@ -8,10 +8,7 @@
 
 ```vue
 <template>
-  <c-list
-    bordered
-    :data-source="['Racing car', 'Japanese printing', 'Lazy dog', 'Quick brown fox']"
-  >
+  <c-list bordered :data-source="['Racing car', 'Japanese printing', 'Lazy dog', 'Quick brown fox']">
     <template #renderItem="{ item }">{{ item }}</template>
   </c-list>
 </template>

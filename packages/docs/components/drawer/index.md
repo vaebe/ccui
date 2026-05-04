@@ -13,7 +13,7 @@ export default {
   setup() {
     const visible = ref(false)
     return { visible }
-  }
+  },
 }
 </script>
 
@@ -41,7 +41,7 @@ export default {
     const left = ref(false)
     const right = ref(false)
     return { top, bottom, left, right }
-  }
+  },
 }
 </script>
 

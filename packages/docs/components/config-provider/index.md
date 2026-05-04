@@ -13,9 +13,7 @@
 ```vue
 <template>
   <c-config-provider :theme="{ token: { colorPrimary: '#52c41a' } }">
-    <c-button type="primary">
-      绿色主题主按钮
-    </c-button>
+    <c-button type="primary"> 绿色主题主按钮 </c-button>
   </c-config-provider>
 </template>
 ```

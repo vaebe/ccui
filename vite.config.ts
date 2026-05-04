@@ -19,6 +19,9 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
+    rules: {
+      'typescript/no-floating-promises': 'off',
+    },
     env: {
       builtin: true,
       es2026: true,

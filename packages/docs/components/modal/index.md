@@ -13,7 +13,7 @@ export default {
   setup() {
     const visible = ref(false)
     return { visible }
-  }
+  },
 }
 </script>
 
@@ -39,15 +39,13 @@ export default {
   setup() {
     const v = ref(false)
     return { v }
-  }
+  },
 }
 </script>
 
 <template>
   <c-button @click="v = true">打开</c-button>
-  <c-modal v-model:visible="v" title="自定义" ok-text="保存" cancel-text="放弃">
-    自定义按钮文字
-  </c-modal>
+  <c-modal v-model:visible="v" title="自定义" ok-text="保存" cancel-text="放弃"> 自定义按钮文字 </c-modal>
 </template>
 ```
 

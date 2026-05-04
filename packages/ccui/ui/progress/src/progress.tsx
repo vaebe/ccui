@@ -6,8 +6,10 @@ import { clampPercent, progressProps } from './progress-types'
 import './progress.scss'
 
 const STATUS_ICONS: Record<ProgressStatus, string | null> = {
-  success: 'M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z',
-  exception: 'M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 0 1-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z',
+  success:
+    'M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z',
+  exception:
+    'M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 0 1-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z',
   normal: null,
   active: null,
 }
@@ -88,9 +90,7 @@ export default defineComponent({
             </div>
           </div>
           {props.showInfo && (
-            <span class={[ns.e('text'), ns.em('text', `status-${finalStatus.value}`)]}>
-              {renderInfo()}
-            </span>
+            <span class={[ns.e('text'), ns.em('text', `status-${finalStatus.value}`)]}>{renderInfo()}</span>
           )}
         </div>
       )
@@ -108,12 +108,13 @@ export default defineComponent({
       const dashRatio = (360 - gapDegree) / 360
       const adjustedDashArray = circumference * dashRatio
       const adjustedDashOffset = circumference * dashRatio * (1 - percent.value / 100)
-      const transform = isDashboard
-        ? `rotate(${gapDegree / 2 + 90}deg)`
-        : 'rotate(-90deg)'
+      const transform = isDashboard ? `rotate(${gapDegree / 2 + 90}deg)` : 'rotate(-90deg)'
 
       return (
-        <div class={[ns.b(), ns.m(props.type), ns.m(`status-${finalStatus.value}`)]} style={{ width: `${size}px`, height: `${size}px` }}>
+        <div
+          class={[ns.b(), ns.m(props.type), ns.m(`status-${finalStatus.value}`)]}
+          style={{ width: `${size}px`, height: `${size}px` }}
+        >
           <svg viewBox="0 0 100 100" class={ns.e('svg')} style={{ transform }}>
             <circle
               cx="50"
@@ -132,7 +133,9 @@ export default defineComponent({
               fill="none"
               stroke={trackColor.value}
               stroke-width={strokeWidth}
-              stroke-dasharray={isDashboard ? `${adjustedDashArray} ${circumference}` : `${circumference} ${circumference}`}
+              stroke-dasharray={
+                isDashboard ? `${adjustedDashArray} ${circumference}` : `${circumference} ${circumference}`
+              }
               stroke-dashoffset={isDashboard ? adjustedDashOffset : dashOffset}
               stroke-linecap="round"
               style={{ transition: 'stroke-dashoffset 0.3s ease 0s, stroke 0.3s' }}

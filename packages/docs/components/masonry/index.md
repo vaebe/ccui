@@ -15,17 +15,15 @@
 export default {
   data() {
     return {
-      heights: [80, 120, 60, 100, 140, 90, 70, 110, 130]
+      heights: [80, 120, 60, 100, 140, 90, 70, 110, 130],
     }
-  }
+  },
 }
 </script>
 
 <template>
   <c-masonry :columns="3" :gutter="16">
-    <div v-for="(h, i) in heights" :key="i" class="mas-item" :style="{ height: `${h}px` }">
-      Item {{ i + 1 }}
-    </div>
+    <div v-for="(h, i) in heights" :key="i" class="mas-item" :style="{ height: `${h}px` }">Item {{ i + 1 }}</div>
   </c-masonry>
 </template>
 
@@ -49,9 +47,7 @@ export default {
 ```vue
 <template>
   <c-masonry :columns="{ xs: 1, sm: 2, md: 3, lg: 4 }" :gutter="[12, 12]">
-    <div v-for="(h, i) in 8" :key="i" class="mas-item" :style="{ height: `${60 + (h * 10)}px` }">
-      Item {{ h }}
-    </div>
+    <div v-for="(h, i) in 8" :key="i" class="mas-item" :style="{ height: `${60 + h * 10}px` }">Item {{ h }}</div>
   </c-masonry>
 </template>
 

@@ -43,11 +43,7 @@ export default defineComponent({
         >
           {props.loading && <span class={ns.e('loading-icon')}></span>}
           {slots.icon ? slots.icon() : props.icon && <i class={props.icon}></i>}
-          {slots.default && (
-            <span class={ns.e('content')}>
-              {slots.default()}
-            </span>
-          )}
+          {slots.default && <span class={ns.e('content')}>{slots.default()}</span>}
         </button>
       )
     }

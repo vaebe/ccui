@@ -32,7 +32,7 @@ export const badgeProps = {
     default: '',
   },
   offset: {
-    type: Array as PropType<[number, number]>,
+    type: Array as unknown as PropType<[number, number]>,
     default: undefined,
   },
 } as const

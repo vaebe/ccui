@@ -28,15 +28,9 @@ export default defineComponent({
     return () => (
       <div class={ns.b()}>
         <div class={ns.e('image')} style={props.imageStyle}>
-          {slots.image
-            ? slots.image()
-            : props.image
-              ? <img src={props.image} alt="empty" />
-              : DEFAULT_IMG}
+          {slots.image ? slots.image() : props.image ? <img src={props.image} alt="empty" /> : DEFAULT_IMG}
         </div>
-        <div class={ns.e('description')}>
-          {slots.description ? slots.description() : props.description}
-        </div>
+        <div class={ns.e('description')}>{slots.description ? slots.description() : props.description}</div>
         {slots.default && <div class={ns.e('footer')}>{slots.default()}</div>}
       </div>
     )

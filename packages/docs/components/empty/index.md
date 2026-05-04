@@ -26,9 +26,7 @@
 ```vue
 <template>
   <c-empty description="自定义提示文案">
-    <c-button type="primary">
-      创建
-    </c-button>
+    <c-button type="primary"> 创建 </c-button>
   </c-empty>
 </template>
 ```

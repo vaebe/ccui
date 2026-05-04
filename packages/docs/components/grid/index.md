@@ -15,24 +15,16 @@
 <template>
   <c-row :gutter="16">
     <c-col :span="6">
-      <div class="demo-block">
-        col-6
-      </div>
+      <div class="demo-block">col-6</div>
     </c-col>
     <c-col :span="6">
-      <div class="demo-block">
-        col-6
-      </div>
+      <div class="demo-block">col-6</div>
     </c-col>
     <c-col :span="6">
-      <div class="demo-block">
-        col-6
-      </div>
+      <div class="demo-block">col-6</div>
     </c-col>
     <c-col :span="6">
-      <div class="demo-block">
-        col-6
-      </div>
+      <div class="demo-block">col-6</div>
     </c-col>
   </c-row>
 </template>
@@ -58,14 +50,10 @@
 <template>
   <c-row :gutter="16" justify="center" align="middle">
     <c-col :span="8" :offset="0">
-      <div class="demo-block">
-        col-8
-      </div>
+      <div class="demo-block">col-8</div>
     </c-col>
     <c-col :span="8" :offset="4">
-      <div class="demo-block">
-        col-8 offset-4
-      </div>
+      <div class="demo-block">col-8 offset-4</div>
     </c-col>
   </c-row>
 </template>
@@ -81,24 +69,16 @@
 <template>
   <c-row :gutter="16">
     <c-col :xs="24" :sm="12" :md="8" :lg="6">
-      <div class="demo-block">
-        xs=24 sm=12 md=8 lg=6
-      </div>
+      <div class="demo-block">xs=24 sm=12 md=8 lg=6</div>
     </c-col>
     <c-col :xs="24" :sm="12" :md="8" :lg="6">
-      <div class="demo-block">
-        xs=24 sm=12 md=8 lg=6
-      </div>
+      <div class="demo-block">xs=24 sm=12 md=8 lg=6</div>
     </c-col>
     <c-col :xs="24" :sm="12" :md="8" :lg="6">
-      <div class="demo-block">
-        xs=24 sm=12 md=8 lg=6
-      </div>
+      <div class="demo-block">xs=24 sm=12 md=8 lg=6</div>
     </c-col>
     <c-col :xs="24" :sm="12" :md="8" :lg="6">
-      <div class="demo-block">
-        xs=24 sm=12 md=8 lg=6
-      </div>
+      <div class="demo-block">xs=24 sm=12 md=8 lg=6</div>
     </c-col>
   </c-row>
 </template>

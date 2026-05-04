@@ -9,10 +9,7 @@
 ```vue
 <template>
   <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button
-      description="?"
-      :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    <c-float-button description="?" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }" />
   </div>
 </template>
 ```

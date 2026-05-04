@@ -16,8 +16,8 @@ export default {
         title: '操作成功',
         description: '您的操作已完成，可以继续下一步。',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -39,8 +39,8 @@ export default {
   methods: {
     open(placement) {
       notification.info({ title: placement, description: '位置示例', placement })
-    }
-  }
+    },
+  },
 }
 </script>
 

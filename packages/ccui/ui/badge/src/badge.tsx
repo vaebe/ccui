@@ -81,20 +81,15 @@ export default defineComponent({
       }
 
       // 包裹模式
-      const sup = hasCount.value
-        ? (
-            <sup
-              class={[ns.e('sup'), props.dot && ns.em('sup', 'dot')]}
-              style={countStyle.value}
-            >
-              {props.dot ? null : displayCount.value}
-            </sup>
-          )
-        : null
+      const sup = hasCount.value ? (
+        <sup class={[ns.e('sup'), props.dot && ns.em('sup', 'dot')]} style={countStyle.value}>
+          {props.dot ? null : displayCount.value}
+        </sup>
+      ) : null
 
       return (
         <span class={ns.b()}>
-          {slots.default()}
+          {slots.default?.()}
           {sup}
         </span>
       )

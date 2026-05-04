@@ -19,10 +19,6 @@ function isWindow(target: HTMLElement | Window): target is Window {
   return target === window
 }
 
-function getScrollTop(container: HTMLElement | Window): number {
-  return isWindow(container) ? container.scrollY : container.scrollTop
-}
-
 function flatLinks(items: AnchorLink[]): AnchorLink[] {
   const out: AnchorLink[] = []
   const walk = (list: AnchorLink[]) => {
@@ -121,10 +117,14 @@ export default defineComponent({
       container?.removeEventListener('scroll', onScroll)
     })
 
-    watch(activeLink, () => nextTick(updateInk))
+    watch(activeLink, () => {
+      nextTick(updateInk)
+    })
     watch(
       () => props.items,
-      () => nextTick(onScroll),
+      () => {
+        nextTick(onScroll)
+      },
     )
 
     const onLinkClick = (e: MouseEvent, link: AnchorLink) => {

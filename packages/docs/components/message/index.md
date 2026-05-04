@@ -11,12 +11,22 @@
 import { message } from 'vue3-ccui'
 export default {
   methods: {
-    showInfo() { message.info('这是一条信息') },
-    showSuccess() { message.success('操作成功') },
-    showWarning() { message.warning('警告') },
-    showError() { message.error('出错了') },
-    showLoading() { message.loading('加载中…') },
-  }
+    showInfo() {
+      message.info('这是一条信息')
+    },
+    showSuccess() {
+      message.success('操作成功')
+    },
+    showWarning() {
+      message.warning('警告')
+    },
+    showError() {
+      message.error('出错了')
+    },
+    showLoading() {
+      message.loading('加载中…')
+    },
+  },
 }
 </script>
 

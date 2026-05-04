@@ -10,8 +10,7 @@ function flatChildren(nodes: VNode[]): VNode[] {
   nodes.forEach((node) => {
     if (node.type === Fragment && Array.isArray(node.children)) {
       list.push(...flatChildren(node.children as VNode[]))
-    }
-    else if (node.type !== Comment) {
+    } else if (node.type !== Comment) {
       list.push(node)
     }
   })
@@ -49,7 +48,11 @@ export default defineComponent({
       return (
         <div class={cls.value} style={style.value}>
           {children.map((child, idx) => {
-            const item = <div class={ns.e('item')} key={idx}>{child}</div>
+            const item = (
+              <div class={ns.e('item')} key={idx}>
+                {child}
+              </div>
+            )
             if (splitContent && idx < total - 1) {
               return (
                 <Fragment key={idx}>

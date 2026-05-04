@@ -1,10 +1,5 @@
 import type { CSSProperties } from 'vue'
-import type {
-  SkeletonAvatarShape,
-  SkeletonParagraphShape,
-  SkeletonProps,
-  SkeletonTitleShape,
-} from './skeleton-types'
+import type { SkeletonAvatarShape, SkeletonParagraphShape, SkeletonProps, SkeletonTitleShape } from './skeleton-types'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { skeletonProps } from './skeleton-types'

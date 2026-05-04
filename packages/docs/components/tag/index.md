@@ -14,21 +14,11 @@
 ```vue
 <template>
   <c-tag>Tag 1</c-tag>
-  <c-tag color="primary">
-    Primary
-  </c-tag>
-  <c-tag color="success">
-    Success
-  </c-tag>
-  <c-tag color="warning">
-    Warning
-  </c-tag>
-  <c-tag color="error">
-    Error
-  </c-tag>
-  <c-tag color="processing">
-    Processing
-  </c-tag>
+  <c-tag color="primary"> Primary </c-tag>
+  <c-tag color="success"> Success </c-tag>
+  <c-tag color="warning"> Warning </c-tag>
+  <c-tag color="error"> Error </c-tag>
+  <c-tag color="processing"> Processing </c-tag>
 </template>
 ```
 
@@ -41,39 +31,17 @@
 ```vue
 <template>
   <div>
-    <c-tag color="magenta">
-      magenta
-    </c-tag>
-    <c-tag color="red">
-      red
-    </c-tag>
-    <c-tag color="volcano">
-      volcano
-    </c-tag>
-    <c-tag color="orange">
-      orange
-    </c-tag>
-    <c-tag color="gold">
-      gold
-    </c-tag>
-    <c-tag color="lime">
-      lime
-    </c-tag>
-    <c-tag color="green">
-      green
-    </c-tag>
-    <c-tag color="cyan">
-      cyan
-    </c-tag>
-    <c-tag color="blue">
-      blue
-    </c-tag>
-    <c-tag color="geekblue">
-      geekblue
-    </c-tag>
-    <c-tag color="purple">
-      purple
-    </c-tag>
+    <c-tag color="magenta"> magenta </c-tag>
+    <c-tag color="red"> red </c-tag>
+    <c-tag color="volcano"> volcano </c-tag>
+    <c-tag color="orange"> orange </c-tag>
+    <c-tag color="gold"> gold </c-tag>
+    <c-tag color="lime"> lime </c-tag>
+    <c-tag color="green"> green </c-tag>
+    <c-tag color="cyan"> cyan </c-tag>
+    <c-tag color="blue"> blue </c-tag>
+    <c-tag color="geekblue"> geekblue </c-tag>
+    <c-tag color="purple"> purple </c-tag>
   </div>
 </template>
 ```
@@ -92,17 +60,13 @@ export default defineComponent({
   setup() {
     const visible = ref(true)
     return { visible }
-  }
+  },
 })
 </script>
 
 <template>
-  <c-tag v-if="visible" closable @close="visible = false">
-    可关闭
-  </c-tag>
-  <c-button v-else size="small" @click="visible = true">
-    重置
-  </c-button>
+  <c-tag v-if="visible" closable @close="visible = false"> 可关闭 </c-tag>
+  <c-button v-else size="small" @click="visible = true"> 重置 </c-button>
 </template>
 ```
 
@@ -114,15 +78,9 @@ export default defineComponent({
 
 ```vue
 <template>
-  <c-tag color="#f50">
-    #f50
-  </c-tag>
-  <c-tag color="#2db7f5">
-    #2db7f5
-  </c-tag>
-  <c-tag color="#87d068">
-    #87d068
-  </c-tag>
+  <c-tag color="#f50"> #f50 </c-tag>
+  <c-tag color="#2db7f5"> #2db7f5 </c-tag>
+  <c-tag color="#87d068"> #87d068 </c-tag>
 </template>
 ```
 

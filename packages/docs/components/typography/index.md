@@ -16,22 +16,18 @@
   <c-typography>
     <c-typography-title>Introduction</c-typography-title>
     <c-typography-paragraph>
-      In the process of internal desktop applications development, many different design specs and implementations would be involved.
+      In the process of internal desktop applications development, many different design specs and implementations would
+      be involved.
     </c-typography-paragraph>
     <c-typography-paragraph>
-      After massive project practice and summaries, Ant Design, a design language for background applications, is refined.
+      After massive project practice and summaries, Ant Design, a design language for background applications, is
+      refined.
     </c-typography-paragraph>
-    <c-typography-title :level="2">
-      Guidelines and Resources
-    </c-typography-title>
+    <c-typography-title :level="2"> Guidelines and Resources </c-typography-title>
     <c-typography-paragraph>
-      <c-typography-link href="#">
-        Ant Design
-      </c-typography-link>
+      <c-typography-link href="#"> Ant Design </c-typography-link>
       <c-typography-text> · </c-typography-text>
-      <c-typography-text type="secondary">
-        A UI design language
-      </c-typography-text>
+      <c-typography-text type="secondary"> A UI design language </c-typography-text>
     </c-typography-paragraph>
   </c-typography>
 </template>
@@ -47,54 +43,30 @@
 <template>
   <div>
     <c-typography-text>Default Text</c-typography-text>
-    <br>
-    <c-typography-text type="secondary">
-      Secondary Text
-    </c-typography-text>
-    <br>
-    <c-typography-text type="success">
-      Success Text
-    </c-typography-text>
-    <br>
-    <c-typography-text type="warning">
-      Warning Text
-    </c-typography-text>
-    <br>
-    <c-typography-text type="danger">
-      Danger Text
-    </c-typography-text>
-    <br>
-    <c-typography-text disabled>
-      Disabled Text
-    </c-typography-text>
-    <br>
-    <c-typography-text mark>
-      Marked Text
-    </c-typography-text>
-    <br>
-    <c-typography-text code>
-      Code Text
-    </c-typography-text>
-    <br>
-    <c-typography-text keyboard>
-      Keyboard
-    </c-typography-text>
-    <br>
-    <c-typography-text underline>
-      Underline
-    </c-typography-text>
-    <br>
-    <c-typography-text delete>
-      Deleted
-    </c-typography-text>
-    <br>
-    <c-typography-text strong>
-      Strong
-    </c-typography-text>
-    <br>
-    <c-typography-text italic>
-      Italic
-    </c-typography-text>
+    <br />
+    <c-typography-text type="secondary"> Secondary Text </c-typography-text>
+    <br />
+    <c-typography-text type="success"> Success Text </c-typography-text>
+    <br />
+    <c-typography-text type="warning"> Warning Text </c-typography-text>
+    <br />
+    <c-typography-text type="danger"> Danger Text </c-typography-text>
+    <br />
+    <c-typography-text disabled> Disabled Text </c-typography-text>
+    <br />
+    <c-typography-text mark> Marked Text </c-typography-text>
+    <br />
+    <c-typography-text code> Code Text </c-typography-text>
+    <br />
+    <c-typography-text keyboard> Keyboard </c-typography-text>
+    <br />
+    <c-typography-text underline> Underline </c-typography-text>
+    <br />
+    <c-typography-text delete> Deleted </c-typography-text>
+    <br />
+    <c-typography-text strong> Strong </c-typography-text>
+    <br />
+    <c-typography-text italic> Italic </c-typography-text>
   </div>
 </template>
 ```
@@ -108,18 +80,10 @@
 ```vue
 <template>
   <c-typography-title>h1. Title</c-typography-title>
-  <c-typography-title :level="2">
-    h2. Title
-  </c-typography-title>
-  <c-typography-title :level="3">
-    h3. Title
-  </c-typography-title>
-  <c-typography-title :level="4">
-    h4. Title
-  </c-typography-title>
-  <c-typography-title :level="5">
-    h5. Title
-  </c-typography-title>
+  <c-typography-title :level="2"> h2. Title </c-typography-title>
+  <c-typography-title :level="3"> h3. Title </c-typography-title>
+  <c-typography-title :level="4"> h4. Title </c-typography-title>
+  <c-typography-title :level="5"> h5. Title </c-typography-title>
 </template>
 ```
 

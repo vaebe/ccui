@@ -46,9 +46,7 @@
         key: 'sub2',
         label: '导航二',
         type: 'submenu',
-        children: [
-          { key: '3', label: '选项三' },
-        ],
+        children: [{ key: '3', label: '选项三' }],
       },
     ]"
   />

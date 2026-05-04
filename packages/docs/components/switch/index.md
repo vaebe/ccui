@@ -19,7 +19,7 @@ export default defineComponent({
   setup() {
     const v = ref(true)
     return { v }
-  }
+  },
 })
 </script>
 

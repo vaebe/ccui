@@ -1,8 +1,16 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export interface SkeletonAvatarShape { shape?: 'circle' | 'square', size?: 'small' | 'default' | 'large' | number }
-export interface SkeletonTitleShape { width?: string | number }
-export interface SkeletonParagraphShape { rows?: number, width?: string | number | (string | number)[] }
+export interface SkeletonAvatarShape {
+  shape?: 'circle' | 'square'
+  size?: 'small' | 'default' | 'large' | number
+}
+export interface SkeletonTitleShape {
+  width?: string | number
+}
+export interface SkeletonParagraphShape {
+  rows?: number
+  width?: string | number | (string | number)[]
+}
 
 export const skeletonProps = {
   active: {

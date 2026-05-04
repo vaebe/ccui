@@ -23,9 +23,13 @@ export const Breadcrumb = defineComponent({
         const link = r.href ?? r.path
         return (
           <span key={idx} class={ns.e('item')}>
-            {isLast || !link
-              ? <span class={ns.e('link')}>{text}</span>
-              : <a class={ns.e('link')} href={link}>{text}</a>}
+            {isLast || !link ? (
+              <span class={ns.e('link')}>{text}</span>
+            ) : (
+              <a class={ns.e('link')} href={link}>
+                {text}
+              </a>
+            )}
             {!isLast && <span class={ns.e('separator')}>{props.separator}</span>}
           </span>
         )
@@ -51,9 +55,13 @@ export const BreadcrumbItem = defineComponent({
       const sep = props.separator || ctx.separator
       return (
         <span class={ns.e('item')}>
-          {props.href
-            ? <a class={ns.e('link')} href={props.href}>{slots.default?.()}</a>
-            : <span class={ns.e('link')}>{slots.default?.()}</span>}
+          {props.href ? (
+            <a class={ns.e('link')} href={props.href}>
+              {slots.default?.()}
+            </a>
+          ) : (
+            <span class={ns.e('link')}>{slots.default?.()}</span>
+          )}
           <span class={ns.e('separator')}>{slots.separator ? slots.separator() : sep}</span>
         </span>
       )

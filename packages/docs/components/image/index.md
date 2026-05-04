@@ -8,10 +8,7 @@
 
 ```vue
 <template>
-  <c-image
-    src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-    width="200"
-  />
+  <c-image src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" width="200" />
 </template>
 ```
 

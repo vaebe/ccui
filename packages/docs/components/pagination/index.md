@@ -14,7 +14,7 @@ export default defineComponent({
   setup() {
     const current = ref(1)
     return { current }
-  }
+  },
 })
 </script>
 
@@ -45,7 +45,7 @@ export default defineComponent({
 ```vue
 <template>
   <c-pagination :total="200" :current="1" simple />
-  <br>
+  <br />
   <c-pagination :total="200" :current="1" show-quick-jumper />
 </template>
 ```

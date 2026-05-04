@@ -45,10 +45,10 @@ export default defineComponent({
       routes: [
         { breadcrumbName: 'Home', href: '/' },
         { breadcrumbName: 'Application List', path: '/list' },
-        { breadcrumbName: 'Detail' }
-      ]
+        { breadcrumbName: 'Detail' },
+      ],
     }
-  }
+  },
 })
 </script>
 

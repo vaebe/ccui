@@ -196,7 +196,9 @@ export default defineComponent({
         props.zIndex,
         props.font,
       ],
-      () => renderWatermark(),
+      () => {
+        renderWatermark()
+      },
       { deep: true },
     )
 

@@ -17,8 +17,7 @@ export default defineComponent({
       if (props.gap !== undefined && props.gap !== null) {
         if (typeof props.gap === 'number') {
           gapValue = `${props.gap}px`
-        }
-        else {
+        } else {
           gapValue = PRESET_GAP[props.gap] ?? props.gap
         }
       }
@@ -32,10 +31,6 @@ export default defineComponent({
       }
     })
 
-    return () => h(
-      props.component || 'div',
-      { class: ns.b(), style: style.value },
-      slots.default?.(),
-    )
+    return () => h(props.component || 'div', { class: ns.b(), style: style.value }, slots.default?.())
   },
 })

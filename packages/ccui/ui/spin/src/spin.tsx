@@ -28,8 +28,7 @@ export default defineComponent({
             visible.value = true
           }, props.delay)
           visible.value = false
-        }
-        else {
+        } else {
           visible.value = val
         }
       },
@@ -69,11 +68,7 @@ export default defineComponent({
         if (!visible.value) {
           return null
         }
-        return (
-          <div class={ns.m('fullscreen')}>
-            {renderSpinner()}
-          </div>
-        )
+        return <div class={ns.m('fullscreen')}>{renderSpinner()}</div>
       }
 
       if (!slots.default) {
@@ -82,14 +77,8 @@ export default defineComponent({
 
       return (
         <div class={[ns.e('nested'), visible.value && ns.is('blur')]}>
-          {visible.value && (
-            <div class={ns.e('overlay')}>
-              {renderSpinner()}
-            </div>
-          )}
-          <div class={[ns.e('container'), visible.value && ns.is('blur')]}>
-            {slots.default()}
-          </div>
+          {visible.value && <div class={ns.e('overlay')}>{renderSpinner()}</div>}
+          <div class={[ns.e('container'), visible.value && ns.is('blur')]}>{slots.default()}</div>
         </div>
       )
     }

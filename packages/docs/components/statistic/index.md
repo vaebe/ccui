@@ -27,7 +27,7 @@ export default {
   setup() {
     const deadline = computed(() => Date.now() + 1000 * 60 * 60 * 24)
     return { deadline }
-  }
+  },
 }
 </script>
 

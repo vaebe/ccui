@@ -93,13 +93,13 @@
 ```vue
 <template>
   <c-badge status="success" text="Success" />
-  <br>
+  <br />
   <c-badge status="error" text="Error" />
-  <br>
+  <br />
   <c-badge status="default" text="Default" />
-  <br>
+  <br />
   <c-badge status="processing" text="Processing" />
-  <br>
+  <br />
   <c-badge status="warning" text="Warning" />
 </template>
 ```

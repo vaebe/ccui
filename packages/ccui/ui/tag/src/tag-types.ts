@@ -1,27 +1,27 @@
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { ExtractPropTypes } from 'vue'
 
-export type TagColor
-  = | 'default'
-    | 'primary'
-    | 'success'
-    | 'processing'
-    | 'error'
-    | 'warning'
-    | 'magenta'
-    | 'red'
-    | 'volcano'
-    | 'orange'
-    | 'gold'
-    | 'lime'
-    | 'green'
-    | 'cyan'
-    | 'blue'
-    | 'geekblue'
-    | 'purple'
+export type TagColor =
+  | 'default'
+  | 'primary'
+  | 'success'
+  | 'processing'
+  | 'error'
+  | 'warning'
+  | 'magenta'
+  | 'red'
+  | 'volcano'
+  | 'orange'
+  | 'gold'
+  | 'lime'
+  | 'green'
+  | 'cyan'
+  | 'blue'
+  | 'geekblue'
+  | 'purple'
 
 export const tagProps = {
   color: {
-    type: String as PropType<TagColor | string>,
+    type: String,
     default: 'default',
   },
   bordered: {

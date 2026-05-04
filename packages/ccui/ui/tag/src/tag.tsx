@@ -37,7 +37,11 @@ export default defineComponent({
 
     return () => (
       <span class={cls.value} style={style.value}>
-        {slots.icon ? <span class={ns.e('icon')}>{slots.icon()}</span> : props.icon && <i class={[ns.e('icon'), props.icon]} />}
+        {slots.icon ? (
+          <span class={ns.e('icon')}>{slots.icon()}</span>
+        ) : (
+          props.icon && <i class={[ns.e('icon'), props.icon]} />
+        )}
         <span class={ns.e('content')}>{slots.default?.()}</span>
         {props.closable && (
           <span class={ns.e('close')} onClick={onClose}>

@@ -49,7 +49,7 @@ function renderInner(slots: Slots, props: TextProps): VNode[] | VNode | string {
   if (children.length === 1) {
     return wrapWithDecorations(children[0], props) as VNode | string
   }
-  return children.map(c => wrapWithDecorations(c, props)) as VNode[]
+  return children.map((c) => wrapWithDecorations(c, props)) as VNode[]
 }
 
 export const Text = defineComponent({
@@ -85,11 +85,8 @@ export const Title = defineComponent({
       [ns.m('title')]: true,
       [ns.m(`title-${props.level}`)]: true,
     }))
-    return () => h(
-      `h${(props as TitleProps).level}`,
-      { class: cls.value },
-      renderInner(slots, props as unknown as TextProps),
-    )
+    return () =>
+      h(`h${(props as TitleProps).level}`, { class: cls.value }, renderInner(slots, props as unknown as TextProps))
   },
 })
 
@@ -101,15 +98,16 @@ export const Link = defineComponent({
       ...buildModifierClasses(props as TextProps),
       [ns.m('link')]: true,
     }))
-    return () => h(
-      'a',
-      {
-        class: cls.value,
-        href: (props as LinkProps).href,
-        target: (props as LinkProps).target,
-      },
-      renderInner(slots, props as TextProps),
-    )
+    return () =>
+      h(
+        'a',
+        {
+          class: cls.value,
+          href: (props as LinkProps).href,
+          target: (props as LinkProps).target,
+        },
+        renderInner(slots, props as TextProps),
+      )
   },
 })
 

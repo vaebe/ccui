@@ -32,7 +32,10 @@ describe('segmented', () => {
     const wrapper = mount(Segmented, {
       props: {
         modelValue: 'a',
-        options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b', disabled: true }],
+        options: [
+          { label: 'A', value: 'a' },
+          { label: 'B', value: 'b', disabled: true },
+        ],
       },
     })
     await wrapper.findAll(ns.e('item'))[1].trigger('click')

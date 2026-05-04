@@ -13,15 +13,9 @@
 ```vue
 <template>
   <c-layout style="min-height: 240px;">
-    <c-layout-header style="background: #1677ff; color: #fff;">
-      Header
-    </c-layout-header>
-    <c-layout-content style="padding: 24px; background: #f5f5f5;">
-      Content
-    </c-layout-content>
-    <c-layout-footer style="text-align: center;">
-      Footer
-    </c-layout-footer>
+    <c-layout-header style="background: #1677ff; color: #fff;"> Header </c-layout-header>
+    <c-layout-content style="padding: 24px; background: #f5f5f5;"> Content </c-layout-content>
+    <c-layout-footer style="text-align: center;"> Footer </c-layout-footer>
   </c-layout>
 </template>
 ```
@@ -38,9 +32,7 @@
     <c-layout-sider>Sider</c-layout-sider>
     <c-layout>
       <c-layout-header style="background: #1677ff;" />
-      <c-layout-content style="padding: 24px;">
-        Main
-      </c-layout-content>
+      <c-layout-content style="padding: 24px;"> Main </c-layout-content>
     </c-layout>
   </c-layout>
 </template>
@@ -60,20 +52,16 @@ export default defineComponent({
   setup() {
     const collapsed = ref(false)
     return { collapsed }
-  }
+  },
 })
 </script>
 
 <template>
   <c-layout style="min-height: 280px;">
-    <c-layout-sider v-model:collapsed="collapsed" collapsible>
-      Sider menu
-    </c-layout-sider>
+    <c-layout-sider v-model:collapsed="collapsed" collapsible> Sider menu </c-layout-sider>
     <c-layout>
       <c-layout-header style="background: #1677ff;" />
-      <c-layout-content style="padding: 24px;">
-        Collapsed: {{ collapsed }}
-      </c-layout-content>
+      <c-layout-content style="padding: 24px;"> Collapsed: {{ collapsed }} </c-layout-content>
     </c-layout>
   </c-layout>
 </template>

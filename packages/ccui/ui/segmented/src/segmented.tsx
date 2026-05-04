@@ -31,7 +31,7 @@ export default defineComponent({
     return () => (
       <div class={cls.value} role="listbox">
         <div class={ns.e('group')}>
-          {list.value.map(opt => (
+          {list.value.map((opt) => (
             <label
               key={String(opt.value)}
               class={[
@@ -49,14 +49,14 @@ export default defineComponent({
                 disabled={props.disabled || opt.disabled}
               />
               <div class={ns.e('label')}>
-                {slots.default
-                  ? slots.default({ option: opt })
-                  : (
-                      <>
-                        {opt.icon && <i class={[ns.e('icon'), opt.icon]} />}
-                        <span>{opt.label}</span>
-                      </>
-                    )}
+                {slots.default ? (
+                  slots.default({ option: opt })
+                ) : (
+                  <>
+                    {opt.icon && <i class={[ns.e('icon'), opt.icon]} />}
+                    <span>{opt.label}</span>
+                  </>
+                )}
               </div>
             </label>
           ))}

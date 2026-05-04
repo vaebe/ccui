@@ -46,8 +46,12 @@ export default defineComponent({
         {props.loading && <span class={ns.e('loading')} />}
         <span class={ns.e('inner')}>
           {checked.value
-            ? (slots.checkedChildren ? slots.checkedChildren() : props.checkedChildren && <span>{props.checkedChildren}</span>)
-            : (slots.uncheckedChildren ? slots.uncheckedChildren() : props.uncheckedChildren && <span>{props.uncheckedChildren}</span>)}
+            ? slots.checkedChildren
+              ? slots.checkedChildren()
+              : props.checkedChildren && <span>{props.checkedChildren}</span>
+            : slots.uncheckedChildren
+              ? slots.uncheckedChildren()
+              : props.uncheckedChildren && <span>{props.uncheckedChildren}</span>}
         </span>
         <span class={ns.e('handle')} />
       </button>

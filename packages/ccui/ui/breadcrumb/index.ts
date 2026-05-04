@@ -1,9 +1,7 @@
 import type { App } from 'vue'
 import { Breadcrumb, BreadcrumbItem } from './src/breadcrumb'
 
-;
-
-(Breadcrumb as any).install = function (app: App): void {
+;(Breadcrumb as any).install = function (app: App): void {
   app.component((Breadcrumb as any).name, Breadcrumb)
   app.component((BreadcrumbItem as any).name, BreadcrumbItem)
 }

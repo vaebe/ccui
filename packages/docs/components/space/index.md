@@ -50,17 +50,17 @@
     <c-button>small</c-button>
     <c-button>small</c-button>
   </c-space>
-  <br><br>
+  <br /><br />
   <c-space size="middle">
     <c-button>middle</c-button>
     <c-button>middle</c-button>
   </c-space>
-  <br><br>
+  <br /><br />
   <c-space size="large">
     <c-button>large</c-button>
     <c-button>large</c-button>
   </c-space>
-  <br><br>
+  <br /><br />
   <c-space :size="40">
     <c-button>40px</c-button>
     <c-button>40px</c-button>
