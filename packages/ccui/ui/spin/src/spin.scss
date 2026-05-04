@@ -1,0 +1,128 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-spin {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  color: $ccui-color-primary;
+  text-align: center;
+  vertical-align: middle;
+
+  &__dot {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    transform: rotate(45deg);
+    animation: ccuiSpinRotate 1.2s infinite linear;
+
+    &--small {
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+    }
+
+    &--large {
+      width: 32px;
+      height: 32px;
+      font-size: 32px;
+    }
+
+    &-item {
+      position: absolute;
+      display: block;
+      width: 9px;
+      height: 9px;
+      background-color: $ccui-color-primary;
+      border-radius: 100%;
+      opacity: 0.3;
+      transform: scale(0.75);
+      transform-origin: 50% 50%;
+      animation: ccuiSpinAnim 1s infinite linear alternate;
+
+      &--1 {
+        top: 0;
+        inset-inline-start: 0;
+      }
+
+      &--2 {
+        top: 0;
+        inset-inline-end: 0;
+        animation-delay: 0.4s;
+      }
+
+      &--3 {
+        inset-inline-end: 0;
+        bottom: 0;
+        animation-delay: 0.8s;
+      }
+
+      &--4 {
+        bottom: 0;
+        inset-inline-start: 0;
+        animation-delay: 1.2s;
+      }
+    }
+  }
+
+  &--small &__dot-item {
+    width: 6px;
+    height: 6px;
+  }
+
+  &--large &__dot-item {
+    width: 14px;
+    height: 14px;
+  }
+
+  &__text {
+    margin-top: 8px;
+    font-size: $ccui-font-size;
+    color: $ccui-color-primary;
+  }
+
+  &--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: $ccui-z-index-modal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+  }
+
+  &__nested {
+    position: relative;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  &__container.is-blur {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+@keyframes ccuiSpinAnim {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ccuiSpinRotate {
+  to {
+    transform: rotate(405deg);
+  }
+}

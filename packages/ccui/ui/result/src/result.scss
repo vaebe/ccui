@@ -1,0 +1,48 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-result {
+  padding: 48px 32px;
+  text-align: center;
+
+  &__icon {
+    margin-bottom: 24px;
+    text-align: center;
+
+    svg {
+      vertical-align: middle;
+    }
+  }
+
+  &__title {
+    color: $ccui-color-text-heading;
+    font-size: 24px;
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  &__subtitle {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+    line-height: 1.6;
+  }
+
+  &__extra {
+    margin-top: 24px;
+
+    > * {
+      margin-inline-end: 8px;
+
+      &:last-child {
+        margin-inline-end: 0;
+      }
+    }
+  }
+
+  &__content {
+    margin-top: 24px;
+    padding: 24px 40px;
+    background-color: $ccui-color-fill-quaternary;
+    border-radius: $ccui-border-radius;
+    text-align: start;
+  }
+}

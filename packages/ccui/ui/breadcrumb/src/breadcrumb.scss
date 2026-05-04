@@ -1,0 +1,50 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  color: $ccui-color-text-secondary;
+  font-size: $ccui-font-size;
+  line-height: $ccui-line-height-base;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__link {
+    color: $ccui-color-text-secondary;
+    text-decoration: none;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+    }
+  }
+
+  a.#{$cls-prefix}-breadcrumb__link {
+    padding: 0 4px;
+    color: $ccui-color-text;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.06);
+      border-radius: $ccui-border-radius-sm;
+    }
+  }
+
+  &__item:last-child &__link {
+    color: $ccui-color-text;
+  }
+
+  &__separator {
+    margin: 0 8px;
+    color: $ccui-color-split;
+    user-select: none;
+  }
+
+  &__item:last-child &__separator {
+    display: none;
+  }
+}

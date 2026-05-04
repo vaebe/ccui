@@ -1,0 +1,113 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-typography {
+  color: $ccui-color-text;
+  word-break: break-word;
+  font-size: $ccui-font-size;
+  line-height: $ccui-line-height-base;
+
+  &--secondary {
+    color: $ccui-color-text-secondary;
+  }
+
+  &--success {
+    color: $ccui-color-success;
+  }
+
+  &--warning {
+    color: $ccui-color-warning;
+  }
+
+  &--danger {
+    color: $ccui-color-error;
+  }
+
+  &--disabled {
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+    user-select: none;
+  }
+
+  &--text {
+    font-size: inherit;
+  }
+
+  &--paragraph {
+    margin-bottom: 1em;
+  }
+
+  &--title {
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    color: $ccui-color-text-heading;
+    font-weight: 600;
+  }
+
+  &--title-1 {
+    margin-top: 0;
+    font-size: $ccui-font-size-heading-1;
+    line-height: $ccui-line-height-heading-1;
+  }
+
+  &--title-2 {
+    font-size: $ccui-font-size-heading-2;
+    line-height: $ccui-line-height-heading-2;
+  }
+
+  &--title-3 {
+    font-size: $ccui-font-size-heading-3;
+    line-height: $ccui-line-height-heading-3;
+  }
+
+  &--title-4 {
+    font-size: $ccui-font-size-heading-4;
+    line-height: $ccui-line-height-heading-4;
+  }
+
+  &--title-5 {
+    font-size: $ccui-font-size-heading-5;
+    line-height: $ccui-line-height-heading-5;
+  }
+
+  &--link {
+    color: $ccui-color-primary;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+      text-decoration: underline;
+    }
+
+    &:active {
+      color: $ccui-color-primary-active;
+    }
+  }
+
+  code {
+    margin: 0 0.2em;
+    padding: 0.2em 0.4em;
+    font-size: 85%;
+    background: rgba(150, 150, 150, 0.1);
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    border-radius: $ccui-border-radius-sm;
+    font-family: $ccui-font-family-code;
+  }
+
+  kbd {
+    margin: 0 0.2em;
+    padding: 0.15em 0.4em 0.1em;
+    font-size: 90%;
+    background: rgba(150, 150, 150, 0.06);
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    border-bottom-width: 2px;
+    border-radius: $ccui-border-radius-sm;
+    font-family: $ccui-font-family-code;
+  }
+
+  mark {
+    background-color: #ffe58f;
+    padding: 0;
+  }
+}

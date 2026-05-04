@@ -5,22 +5,22 @@
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  background-color: $ccui-base-bg;
-  border: 1px solid $ccui-line;
+  background-color: $ccui-color-bg-container;
+  border: 1px solid $ccui-color-border;
   border-radius: $ccui-border-radius;
-  color: $ccui-text;
-  font-size: 14px;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
   transition:
-    border-color $ccui-animation-duration-base,
-    box-shadow $ccui-animation-duration-base;
+    border-color $ccui-motion-duration-mid,
+    box-shadow $ccui-motion-duration-mid;
 
   &:hover {
-    border-color: $ccui-brand-hover;
+    border-color: $ccui-color-primary-hover;
   }
 
   &:focus-within {
-    border-color: $ccui-brand;
-    box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+    border-color: $ccui-color-primary;
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   }
 
   &--disabled {

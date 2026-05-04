@@ -1,0 +1,122 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-tag {
+  display: inline-flex;
+  align-items: center;
+  height: auto;
+  padding-inline: 7px;
+  font-size: $ccui-font-size-sm;
+  line-height: 20px;
+  white-space: nowrap;
+  background: $ccui-color-fill-quaternary;
+  border: 1px solid $ccui-color-border;
+  border-radius: $ccui-border-radius-sm;
+  opacity: 1;
+  transition: all $ccui-motion-duration-mid;
+  color: $ccui-color-text;
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-end: 4px;
+
+    svg,
+    i {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  &__content {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: 6px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 10px;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+    }
+  }
+
+  &--borderless {
+    border-color: transparent;
+  }
+
+  &--has-color {
+    color: $ccui-color-text-light-solid;
+    border-color: transparent;
+
+    .#{$cls-prefix}-tag__close {
+      color: rgba(255, 255, 255, 0.85);
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  }
+
+  // 状态色
+  &--default {
+    background: $ccui-color-fill-quaternary;
+    border-color: $ccui-color-border;
+    color: $ccui-color-text;
+  }
+
+  &--primary,
+  &--processing {
+    background: $ccui-color-primary-bg;
+    border-color: $ccui-color-primary-border;
+    color: $ccui-color-primary;
+  }
+
+  &--success {
+    background: $ccui-color-success-bg;
+    border-color: $ccui-color-success-border;
+    color: $ccui-color-success;
+  }
+
+  &--warning {
+    background: $ccui-color-warning-bg;
+    border-color: $ccui-color-warning-border;
+    color: $ccui-color-warning;
+  }
+
+  &--error {
+    background: $ccui-color-error-bg;
+    border-color: $ccui-color-error-border;
+    color: $ccui-color-error;
+  }
+
+  // 预设色板
+  @each $name, $bg, $border,
+    $text
+      in (
+        (magenta, #fff0f6, #ffadd2, #c41d7f),
+        (red, #fff1f0, #ffa39e, #cf1322),
+        (volcano, #fff2e8, #ffbb96, #d4380d),
+        (orange, #fff7e6, #ffd591, #d46b08),
+        (gold, #fffbe6, #ffe58f, #d48806),
+        (lime, #fcffe6, #eaff8f, #7cb305),
+        (green, #f6ffed, #b7eb8f, #389e0d),
+        (cyan, #e6fffb, #87e8de, #08979c),
+        (blue, #e6f4ff, #91caff, #0958d9),
+        (geekblue, #f0f5ff, #adc6ff, #1d39c4),
+        (purple, #f9f0ff, #d3adf7, #531dab)
+      )
+  {
+    &--#{$name} {
+      background: $bg;
+      border-color: $border;
+      color: $text;
+    }
+  }
+}

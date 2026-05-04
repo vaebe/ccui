@@ -1,28 +1,39 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-card {
+  position: relative;
   overflow: hidden;
-  color: $ccui-text;
-  background: $ccui-global-bg-normal;
-  border: 1px solid $ccui-line;
-  border-radius: $ccui-border-radius-card;
-  transition: 0.3s;
+  color: $ccui-color-text;
+  background: $ccui-color-bg-container;
+  border: 1px solid $ccui-color-border-secondary;
+  border-radius: $ccui-border-radius-lg;
+  font-size: $ccui-font-size;
+  line-height: $ccui-line-height-base;
+  transition:
+    box-shadow $ccui-motion-duration-mid,
+    border-color $ccui-motion-duration-mid;
 
   &__header {
     box-sizing: border-box;
-    padding: 18px 20px;
-    border-bottom: 1px solid $ccui-dividing-line;
+    padding: 0 24px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    color: $ccui-color-text-heading;
+    font-weight: 600;
+    font-size: $ccui-font-size-lg;
+    border-bottom: 1px solid $ccui-color-border-secondary;
   }
 }
 
 .#{$cls-prefix}-card--always-shadow {
-  box-shadow: $ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
+  box-shadow: $ccui-box-shadow-tertiary;
 }
 
 .#{$cls-prefix}-card--hover-shadow {
   &:hover,
   &:focus {
-    box-shadow: $ccui-shadow-length-connected-overlay rgb(0 0 0 / 10%);
+    box-shadow: $ccui-box-shadow;
   }
 }
 

@@ -1,0 +1,78 @@
+@use '../../style-var/index.scss' as *;
+
+$skeleton-bg: rgba(0, 0, 0, 0.06);
+$skeleton-bg-active: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 37%, rgba(0, 0, 0, 0.06) 63%);
+
+.#{$cls-prefix}-skeleton {
+  display: flex;
+  width: 100%;
+
+  &__header {
+    margin-inline-end: 16px;
+  }
+
+  &__avatar {
+    display: inline-block;
+    background: $skeleton-bg;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+
+  &__content {
+    flex: 1;
+    width: 100%;
+  }
+
+  &__title {
+    width: 38%;
+    height: 16px;
+    margin: 0;
+    background: $skeleton-bg;
+    border-radius: $ccui-border-radius-sm;
+  }
+
+  &__paragraph {
+    margin-top: 24px;
+    padding: 0;
+    list-style: none;
+
+    li {
+      width: 100%;
+      height: 16px;
+      margin-top: 16px;
+      background: $skeleton-bg;
+      border-radius: $ccui-border-radius-sm;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+
+  &--round {
+    .#{$cls-prefix}-skeleton__title,
+    .#{$cls-prefix}-skeleton__paragraph li {
+      border-radius: 100px;
+    }
+  }
+
+  &--active {
+    .#{$cls-prefix}-skeleton__avatar,
+    .#{$cls-prefix}-skeleton__title,
+    .#{$cls-prefix}-skeleton__paragraph li {
+      background: $skeleton-bg-active;
+      background-size: 400% 100%;
+      animation: ccuiSkeletonLoading 1.4s ease infinite;
+    }
+  }
+}
+
+@keyframes ccuiSkeletonLoading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

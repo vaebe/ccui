@@ -1,46 +1,49 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-status {
-  &:before {
+  display: inline-flex;
+  align-items: center;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &::before {
     display: inline-block;
     content: '';
-    width: 10px;
-    height: 10px;
-    margin-right: 5px;
-    border-radius: 100%;
+    width: 6px;
+    height: 6px;
+    margin-right: 8px;
+    border-radius: 50%;
   }
 
   span {
-    margin-left: 5px;
-  }
-}
-
-.#{$cls-prefix}-status {
-  &--invalid:before {
-    background: #2c3e50;
+    margin-left: 0;
   }
 
-  &--error:before {
-    background: red;
+  &--invalid::before {
+    background: $ccui-color-text-disabled;
   }
 
-  &--initial:before {
-    background: #e9edfa;
+  &--error::before {
+    background: $ccui-color-error;
   }
 
-  &--warning:before {
-    background: #fac20a;
+  &--initial::before {
+    background: $ccui-color-fill;
   }
 
-  &--waiting:before {
-    background: #beccfa;
+  &--warning::before {
+    background: $ccui-color-warning;
   }
 
-  &--running:before {
-    background: #5e7ce0;
+  &--waiting::before {
+    background: $ccui-color-text-tertiary;
   }
 
-  &--success:before {
-    background: #50d4ab;
+  &--running::before {
+    background: $ccui-color-primary;
+  }
+
+  &--success::before {
+    background: $ccui-color-success;
   }
 }

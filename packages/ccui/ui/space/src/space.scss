@@ -1,0 +1,43 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-space {
+  display: inline-flex;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--align-start {
+    align-items: flex-start;
+  }
+
+  &--align-end {
+    align-items: flex-end;
+  }
+
+  &--align-center {
+    align-items: center;
+  }
+
+  &--align-baseline {
+    align-items: baseline;
+  }
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
+
+  &__item {
+    display: inline-flex;
+  }
+
+  &__split {
+    display: inline-flex;
+    align-items: center;
+    color: $ccui-color-split;
+  }
+}

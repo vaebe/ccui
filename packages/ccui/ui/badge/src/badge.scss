@@ -1,0 +1,124 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-badge {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  color: unset;
+
+  &__sup {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: auto;
+    display: inline-block;
+    height: 20px;
+    min-width: 20px;
+    padding: 0 6px;
+    color: #ffffff;
+    font-weight: normal;
+    font-size: $ccui-font-size-sm;
+    line-height: 20px;
+    white-space: nowrap;
+    text-align: center;
+    background: $ccui-color-error;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px $ccui-color-bg-container;
+    transform: translate(50%, -50%);
+    transform-origin: 100% 0%;
+    transition: background-color $ccui-motion-duration-mid;
+
+    &--dot {
+      width: 6px;
+      height: 6px;
+      min-width: 6px;
+      padding: 0;
+      border-radius: 100%;
+    }
+  }
+
+  &--count-standalone {
+    display: inline-block;
+    height: 20px;
+    min-width: 20px;
+    padding: 0 6px;
+    color: #ffffff;
+    font-size: $ccui-font-size-sm;
+    line-height: 20px;
+    text-align: center;
+    background: $ccui-color-error;
+    border-radius: 10px;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &--dot-standalone {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: $ccui-color-error;
+    border-radius: 100%;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &__status-dot {
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: $ccui-color-text-disabled;
+
+    &--success {
+      background: $ccui-color-success;
+    }
+
+    &--error {
+      background: $ccui-color-error;
+    }
+
+    &--warning {
+      background: $ccui-color-warning;
+    }
+
+    &--default {
+      background: $ccui-color-text-disabled;
+    }
+
+    &--processing {
+      background: $ccui-color-primary;
+
+      &::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid $ccui-color-primary;
+        border-radius: 50%;
+        animation: ccuiBadgeProcessing 1.2s infinite ease-in-out;
+        content: '';
+      }
+    }
+  }
+
+  &__status-text {
+    margin-inline-start: 8px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+  }
+}
+
+@keyframes ccuiBadgeProcessing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}

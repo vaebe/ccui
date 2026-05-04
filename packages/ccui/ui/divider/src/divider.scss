@@ -19,11 +19,11 @@
 
   &__text {
     position: absolute;
-    padding: 0 20px;
-    font-size: 14px;
+    padding: 0 16px;
+    font-size: $ccui-font-size;
     font-weight: 500;
-    color: $ccui-text;
-    background-color: $ccui-base-bg;
+    color: $ccui-color-text-heading;
+    background-color: $ccui-color-bg-container;
   }
 
   .is-left {
