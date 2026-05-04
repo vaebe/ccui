@@ -6,12 +6,23 @@ const { CSS_CLASS_PREFIX } = require('../shared/constant')
 const lightTheme = require('theme/themes/light.ts').default
 const darkTheme = require('theme/themes/dark.ts').default
 
-const lightFileStr = Object.entries(lightTheme)
+const lightScssVars = Object.entries(lightTheme)
   .map(
     ([key, value]) =>
       `$${CSS_CLASS_PREFIX}-${key}: var(--${CSS_CLASS_PREFIX}-${key}, ${value})`,
   )
   .join(';\n')
+
+const lightCssVars = Object.entries(lightTheme)
+  .map(([key, value]) => `  --${CSS_CLASS_PREFIX}-${key}: ${value};`)
+  .join('\n')
+
+const lightFileStr = `${lightScssVars};
+
+:root {
+${lightCssVars}
+}
+`
 
 let darkCssVariablesStr = Object.entries(darkTheme)
   .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)

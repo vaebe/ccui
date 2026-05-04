@@ -30,6 +30,6 @@ describe('skeleton', () => {
 
   it('respects paragraph rows config', () => {
     const wrapper = mount(Skeleton, { props: { paragraph: { rows: 5 } } })
-    expect(wrapper.findAll(`${ns.e('paragraph')} li`).length).toBe(5)
+    expect(wrapper.findAll(ns.e('paragraph-row')).length).toBe(5)
   })
 })

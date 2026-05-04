@@ -12,13 +12,13 @@ const STATUS_ICON: Record<string, string> = {
 }
 
 const ICON_COLOR: Record<ResultStatus, string> = {
-  success: 'var(--ccui-color-success)',
-  error: 'var(--ccui-color-error)',
-  info: 'var(--ccui-color-info)',
-  warning: 'var(--ccui-color-warning)',
-  404: 'var(--ccui-color-info)',
-  403: 'var(--ccui-color-info)',
-  500: 'var(--ccui-color-info)',
+  success: '#52c41a',
+  error: '#ff4d4f',
+  info: '#1677ff',
+  warning: '#faad14',
+  404: '#1677ff',
+  403: '#1677ff',
+  500: '#1677ff',
 }
 
 const STATUS_TEXT: Record<string, { title: string, subTitle: string }> = {

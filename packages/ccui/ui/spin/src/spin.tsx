@@ -49,10 +49,10 @@ export default defineComponent({
       }
       return (
         <span class={indicatorCls.value}>
-          <i class={ns.em('dot-item', '1')} />
-          <i class={ns.em('dot-item', '2')} />
-          <i class={ns.em('dot-item', '3')} />
-          <i class={ns.em('dot-item', '4')} />
+          <i class={[ns.e('dot-item'), ns.em('dot-item', '1')]} />
+          <i class={[ns.e('dot-item'), ns.em('dot-item', '2')]} />
+          <i class={[ns.e('dot-item'), ns.em('dot-item', '3')]} />
+          <i class={[ns.e('dot-item'), ns.em('dot-item', '4')]} />
         </span>
       )
     }

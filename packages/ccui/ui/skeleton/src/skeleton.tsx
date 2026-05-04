@@ -93,11 +93,11 @@ export default defineComponent({
           <div class={ns.e('content')}>
             {props.title && <h3 class={ns.e('title')} style={titleStyle.value} />}
             {total > 0 && (
-              <ul class={ns.e('paragraph')}>
+              <div class={ns.e('paragraph')}>
                 {Array.from({ length: total }).map((_, i) => (
-                  <li key={i} style={paragraphRowStyle(i, total)} />
+                  <div key={i} class={ns.e('paragraph-row')} style={paragraphRowStyle(i, total)} />
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </div>

@@ -15,20 +15,22 @@
 
   &__link {
     color: $ccui-color-text-secondary;
-    text-decoration: none;
+    text-decoration: none !important;
     transition: color $ccui-motion-duration-mid;
 
     &:hover {
       color: $ccui-color-text;
+      text-decoration: none !important;
     }
   }
 
   a.#{$cls-prefix}-breadcrumb__link {
     padding: 0 4px;
-    color: $ccui-color-text;
+    color: $ccui-color-text-secondary;
     cursor: pointer;
 
     &:hover {
+      color: $ccui-color-text;
       background-color: rgba(0, 0, 0, 0.06);
       border-radius: $ccui-border-radius-sm;
     }
@@ -40,7 +42,7 @@
 
   &__separator {
     margin: 0 8px;
-    color: $ccui-color-split;
+    color: $ccui-color-text-quaternary;
     user-select: none;
   }
 
