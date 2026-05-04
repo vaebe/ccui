@@ -1,178 +1,169 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
-> 数据来源：[Ant Design 官方组件总览](https://ant.design/components/overview-cn) — 共 71 个官方组件（基于 v6.3.7）
->
-> 现有组件：**33 个**（含本轮新增 14 个 + `button-3d` 这种非 Ant Design 标准组件）
+> 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
+> 当前项目组件：56 个目录级组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-04 23:30，根据 `2026-05-04-233025-componentsdiffmd.txt` 和当前 `packages/ccui/ui` 目录更新。
 
-## 一、已覆盖组件（30 / 71）
+## 一、已覆盖组件（56 项）
 
-> 🆕 标记为本轮新增。
+| ccui 组件             | Ant Design 对应         | 分类            | 状态   |
+| --------------------- | ----------------------- | --------------- | ------ |
+| Affix                 | Affix 固钉              | 其他            | 已完成 |
+| Alert                 | Alert 警告提示          | 反馈            | 已完成 |
+| Anchor                | Anchor 锚点             | 导航            | 已完成 |
+| Avatar                | Avatar 头像             | 数据展示        | 已完成 |
+| Badge                 | Badge 徽标数            | 数据展示        | 已完成 |
+| Breadcrumb            | Breadcrumb 面包屑       | 导航            | 已完成 |
+| Button                | Button 按钮             | 通用            | 已完成 |
+| Button3D              | 项目特色组件            | 通用            | 已完成 |
+| Calendar              | Calendar 日历           | 数据展示        | 已完成 |
+| Card                  | Card 卡片               | 数据展示        | 已完成 |
+| CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
+| Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
+| ConfigProvider        | ConfigProvider 全局配置 | 其他            | 已完成 |
+| Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
+| Divider               | Divider 分割线          | 布局            | 已完成 |
+| Drawer                | Drawer 抽屉             | 反馈            | 已完成 |
+| Dropdown              | Dropdown 下拉菜单       | 导航            | 已完成 |
+| Empty                 | Empty 空状态            | 数据展示        | 已完成 |
+| Flex                  | Flex 弹性布局           | 布局            | 已完成 |
+| FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成 |
+| Grid                  | Grid 栅格               | 布局            | 已完成 |
+| Image                 | Image 图片              | 数据展示        | 已完成 |
+| Input                 | Input 输入框            | 数据录入        | 已完成 |
+| InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成 |
+| Layout                | Layout 布局             | 布局            | 已完成 |
+| List                  | List 列表               | 数据展示        | 已完成 |
+| Masonry               | 瀑布流布局              | 布局            | 已完成 |
+| Menu                  | Menu 导航菜单           | 导航            | 已完成 |
+| Message               | Message 全局提示        | 反馈            | 已完成 |
+| Modal                 | Modal 对话框            | 反馈            | 已完成 |
+| Notification          | Notification 通知       | 反馈            | 已完成 |
+| Pagination            | Pagination 分页         | 导航            | 已完成 |
+| Popconfirm            | Popconfirm 气泡确认框   | 反馈            | 已完成 |
+| Popover               | Popover 气泡卡片        | 反馈            | 已完成 |
+| Progress              | Progress 进度条         | 反馈            | 已完成 |
+| Radio                 | Radio 单选框            | 数据录入        | 已完成 |
+| Rate                  | Rate 评分               | 数据录入        | 已完成 |
+| Result                | Result 结果             | 反馈            | 已完成 |
+| Segmented             | Segmented 分段控制器    | 数据展示        | 已完成 |
+| Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成 |
+| Slider                | Slider 滑动输入条       | 数据录入        | 已完成 |
+| Space                 | Space 间距              | 布局            | 已完成 |
+| Spin                  | Spin 加载中             | 反馈            | 已完成 |
+| Splitter              | Splitter 分隔面板       | 布局            | 已完成 |
+| Statistic             | Statistic 统计数值      | 数据展示        | 已完成 |
+| Status                | Tag 近似组件            | 通用 / 数据展示 | 已完成 |
+| Steps                 | Steps 步骤条            | 导航            | 已完成 |
+| Switch                | Switch 开关             | 数据录入        | 已完成 |
+| Tabs                  | Tabs 标签页             | 导航            | 已完成 |
+| Tag                   | Tag 标签                | 数据展示        | 已完成 |
+| Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
+| Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
+| Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
+| Typography            | Typography 排版         | 通用            | 已完成 |
+| Util                  | 工具函数集合            | 其他            | 已完成 |
+| Watermark             | Watermark 水印          | 数据展示        | 已完成 |
 
-| ccui 组件         | Ant Design 名称        | 分类            |
-| ----------------- | ---------------------- | --------------- |
-| Button            | Button 按钮            | 通用            |
-| Button3D          | —（项目特色组件）      | 通用            |
-| Status            | Tag 标签（近似）       | 通用 / 数据展示 |
-| **Typography** 🆕 | Typography 排版        | 通用            |
-| Divider           | Divider 分割线         | 布局            |
-| **Flex** 🆕       | Flex 弹性布局          | 布局            |
-| **Space** 🆕      | Space 间距             | 布局            |
-| **Breadcrumb** 🆕 | Breadcrumb 面包屑      | 导航            |
-| Tabs              | Tabs 标签页            | 导航            |
-| CheckBox          | Checkbox 多选框        | 数据录入        |
-| Input             | Input 输入框           | 数据录入        |
-| InputNumber       | InputNumber 数字输入框 | 数据录入        |
-| Radio             | Radio 单选框           | 数据录入        |
-| Rate              | Rate 评分              | 数据录入        |
-| Slider            | Slider 滑动输入条      | 数据录入        |
-| **Switch** 🆕     | Switch 开关            | 数据录入        |
-| Avatar            | Avatar 头像            | 数据展示        |
-| **Badge** 🆕      | Badge 徽标数           | 数据展示        |
-| Calendar          | Calendar 日历          | 数据展示        |
-| Card              | Card 卡片              | 数据展示        |
-| **Empty** 🆕      | Empty 空状态           | 数据展示        |
-| **Segmented** 🆕  | Segmented 分段控制器   | 数据展示        |
-| **Tag** 🆕        | Tag 标签               | 数据展示        |
-| Timeline          | Timeline 时间轴        | 数据展示        |
-| Tree              | Tree 树形控件          | 数据展示        |
-| **Alert** 🆕      | Alert 警告提示         | 反馈            |
-| Popover           | Popover 气泡卡片       | 反馈            |
-| **Progress** 🆕   | Progress 进度条        | 反馈            |
-| **Result** 🆕     | Result 结果            | 反馈            |
-| **Skeleton** 🆕   | Skeleton 骨架屏        | 反馈            |
-| **Spin** 🆕       | Spin 加载中            | 反馈            |
-| Tooltip           | Tooltip 文字提示       | 反馈            |
+> 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
 
-> 备注：Status 组件功能上接近 Ant Design 的 Tag，本轮新增 Tag 组件后，建议未来将 Status 视为 Tag 的别名或废弃。
+## 二、缺失组件清单
 
-## 二、缺失组件清单（41 项）按复杂度分级
+### 中等复杂度剩余（4 项）
 
-分级标准：
+| 组件                   | 分类     | 复杂点                                   | 建议优先级 |
+| ---------------------- | -------- | ---------------------------------------- | ---------- |
+| Icon 图标              | 通用     | SVG 图标体系、按需导出、尺寸/颜色继承    | P1         |
+| Carousel 走马灯        | 数据展示 | 自动播放、手势/键盘、循环与动画状态      | P2         |
+| QRCode 二维码          | 数据展示 | 需要二维码生成库、纠错级别、图标嵌入     | P2         |
+| ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-- **简单**：纯展示或单一交互、无复杂状态机、无外部依赖、单文件即可完成（≈ 50–200 行）
-- **中等**：需要管理状态、定位、动画、滚动监听或 Portal/Teleport
-- **复杂**：嵌套数据结构、表单联动、虚拟列表、键盘交互、与日期/时间库深度耦合
+### 复杂组件（12 项）
 
-### 🟢 简单组件（14 个）— ✅ 本轮已全部完成
+| 组件                  | 分类     | 复杂点                                   | 建议优先级 |
+| --------------------- | -------- | ---------------------------------------- | ---------- |
+| Form 表单             | 数据录入 | 字段管理、校验、联动、与所有录入组件耦合 | P0         |
+| Table 表格            | 数据展示 | 排序、筛选、固定列、展开行、虚拟滚动     | P0         |
+| Select 选择器         | 数据录入 | 搜索、分组、多选、异步、虚拟列表         | P0         |
+| DatePicker 日期选择框 | 数据录入 | 日期面板、范围、时间联动、国际化         | P1         |
+| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项                   | P1         |
+| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                 | P1         |
+| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选           | P1         |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择           | P2         |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理         | P2         |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互        | P2         |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位      | P3         |
+| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随             | P3         |
 
-| 组件                     | 分类     | 状态 | 说明                                          |
-| ------------------------ | -------- | ---- | --------------------------------------------- |
-| **Tag** 标签             | 数据展示 | ✅   | 进行标记和分类的小标签，支持多种预设色/可关闭 |
-| **Badge** 徽标数         | 数据展示 | ✅   | 数字徽标 / 小红点，用于消息提醒               |
-| **Space** 间距           | 布局     | ✅   | 设置组件之间的间距、对齐与方向                |
-| **Flex** 弹性布局        | 布局     | ✅   | Flex 布局简易封装                             |
-| **Typography** 排版      | 通用     | ✅   | 文本（Text/Title/Paragraph/Link）样式统一     |
-| **Alert** 警告提示       | 反馈     | ✅   | 静态展示警告信息，可关闭、带图标              |
-| **Empty** 空状态         | 数据展示 | ✅   | 通用的空状态占位组件                          |
-| **Spin** 加载中          | 反馈     | ✅   | 用于页面/区块异步加载的旋转图标               |
-| **Skeleton** 骨架屏      | 反馈     | ✅   | 加载占位的灰色块/圆/段落组合                  |
-| **Progress** 进度条      | 反馈     | ✅   | 线条 / 圆形进度，支持多种状态                 |
-| **Switch** 开关          | 数据录入 | ✅   | 二选一切换控件                                |
-| **Segmented** 分段控制器 | 数据展示 | ✅   | 一组按钮组成的单选控件                        |
-| **Result** 结果          | 反馈     | ✅   | 用于反馈一系列操作任务的处理结果              |
-| **Breadcrumb** 面包屑    | 导航     | ✅   | 显示当前页面在系统层级中的位置                |
+## 三、本轮交付记录
 
-### 🟡 中等复杂度（22 个）— 已完成 18 / 22
+### Batch 1：主题与简单组件
 
-| 组件                  | 分类     | 复杂点                         | 状态 |
-| --------------------- | -------- | ------------------------------ | ---- |
-| **Pagination** 分页       | 导航     | 页码计算、跳页输入             | ✅   |
-| **Steps** 步骤条          | 导航     | 状态联动 + 横向/纵向           | ✅   |
-| **Dropdown** 下拉菜单     | 导航     | 浮层定位 + 触发方式            | ✅   |
-| **Menu** 导航菜单         | 导航     | 嵌套展开/折叠/SubMenu          | ✅   |
-| **Anchor** 锚点           | 导航     | 滚动监听 + 高亮联动            | ✅   |
-| **FloatButton** 悬浮按钮  | 通用     | 固定定位 + back-top 行为       | ✅   |
-| **Affix** 固钉            | 其他     | 滚动监听 + sticky 兜底         | ✅   |
-| **Statistic** 统计数值    | 数据展示 | 倒计时 + 数字动画              | ✅   |
-| **Image** 图片            | 数据展示 | 预览模式 + 错误兜底            | ✅   |
-| **List** 列表             | 数据展示 | 多种布局 + 加载更多            | ✅   |
-| **Collapse** 折叠面板     | 数据展示 | 展开动画 + 受控/非受控         | ✅   |
-| **Descriptions** 描述列表 | 数据展示 | 栅格行列布局                   | ✅   |
-| **Watermark** 水印        | 数据展示 | Canvas 绘制 + DOM 防篡改       | ✅   |
-| **Drawer** 抽屉           | 反馈     | Portal + 动画                  | ✅   |
-| **Modal** 对话框          | 反馈     | Portal + 命令式 API + 焦点管理 | ✅   |
-| **Message** 全局提示      | 反馈     | 命令式 API + 队列              | ✅   |
-| **Notification** 通知     | 反馈     | 命令式 API + 多角落            | ✅   |
-| **Popconfirm** 气泡确认   | 反馈     | 复用 Popover 的轻封装          | ✅   |
-| Icon 图标             | 通用     | 需要建立 SVG 图标体系          | ⏳   |
-| Carousel 走马灯       | 数据展示 | 自动播放 + 手势                | ⏳   |
-| QRCode 二维码         | 数据展示 | 需引入二维码生成库             | ⏳   |
-| ColorPicker 颜色      | 数据录入 | 色板 + HSV 转换                | ⏳   |
+- 主题 Token 重构：`packages/theme/themes/light.ts` / `dark.ts` 对齐 Ant Design v6.3.7 SeedToken / MapToken 口径。
+- 新增 14 个简单组件，覆盖 Tag、Badge、Space、Flex、Typography、Alert、Empty、Spin、Skeleton、Progress、Switch、Segmented、Result、Breadcrumb。
+- 新增单测和 VitePress 文档，并对既有 Button、Input、Card、Divider、Status、Avatar 做视觉对齐。
 
-### 🔴 复杂组件（20 个）
+### Batch 2：复杂组件零依赖组
 
-| 组件              | 分类     | 复杂点                                          |
-| ----------------- | -------- | ----------------------------------------------- |
-| Form 表单         | 数据录入 | 字段管理 / 校验 / 联动 / 与所有录入组件耦合     |
-| Table 表格        | 数据展示 | 排序 / 筛选 / 分组 / 固定列 / 可展开 / 虚拟滚动 |
-| Select 选择器     | 数据录入 | 搜索 / 分组 / 多选 / 异步 / 虚拟列表            |
-| AutoComplete      | 数据录入 | 与 Select 类似，且与 Input 紧耦合               |
-| Cascader 级联     | 数据录入 | 多级联动 / 异步加载子节点                       |
-| TreeSelect        | 数据录入 | Select + Tree 组合                              |
-| Transfer 穿梭框   | 数据录入 | 双列管理 / 搜索 / 分页                          |
-| Upload 上传       | 数据录入 | 拖拽 / 切片 / 进度 / 预览                       |
-| Mentions 提及     | 数据录入 | contentEditable + 触发解析                      |
-| DatePicker        | 数据录入 | 日历 / 范围 / 时间联动 / 国际化                 |
-| TimePicker        | 数据录入 | 滚轮选择器                                      |
-| Tour 漫游引导     | 数据展示 | 多步定位 + 蒙层裁切                             |
-| Layout 布局       | 布局     | Header/Sider/Content/Footer 协同                |
-| Grid 栅格         | 布局     | 24 栅格响应式 + Gutter                          |
-| Splitter 分隔面板 | 布局     | 拖拽分割 + 嵌套                                 |
-| Masonry 瀑布流    | 布局     | 多列重排 + 响应式                               |
-| ConfigProvider    | 其他     | 全局配置注入 / 多语言 / 主题                    |
-| App 包裹组件      | 其他     | 提供静态方法上下文                              |
-| Util 工具类       | 其他     | 工具函数集合                                    |
+已完成 6 项：Grid、Layout、Splitter、Masonry、ConfigProvider、Util。
 
----
+关键能力：
 
-## 三、本轮交付清单（已完成 ✅）
+- Grid：24 栅格、6 断点响应式、Gutter。
+- Layout：Header / Sider / Content / Footer，Sider 折叠。
+- Splitter：水平/垂直拖拽分隔、min/max 约束。
+- ConfigProvider：prefixCls、componentSize、direction、theme.token。
+- Util：classNames、debounce、throttle、clamp 等工具。
 
-1. ✅ **主题 Token** 重构 `packages/theme/themes/light.ts` / `dark.ts`，按 Ant Design v6.3.7 SeedToken/MapToken 全量对齐
-   - Primary: `#1677ff`、Success: `#52c41a`、Warning: `#faad14`、Error: `#ff4d4f`、Info: `#1677ff`（v6 与 v5 数值一致）
-   - 圆角默认 `6px`、字号 `14px`/行高 `1.5714285714285714`
-   - 文本/边框/背景/阴影/动效曲线全部对齐 Ant Design 默认主题
-   - 新增 `color-border-disabled`（v6 新 Token）
-   - CSS 变量同时挂载 `:root` + SCSS fallback 双轨（修复 JS/TSX 直接消费 `var()` 时无值回退黑色的问题）
-2. ✅ **新增 14 个简单组件**（TSX + SCSS + ccui- 前缀，视觉复刻 Ant Design）
-3. ✅ **Vitest 单测**（60 个新测试，全量 292/292 通过）
-4. ✅ **VitePress 文档**（14 个组件 `index.md`，自动生成 sidebar）
-5. ✅ **既有组件优化**（button、input、card、divider、status、avatar 已对齐 Ant Token）
-6. ✅ **chrome-devtools-mcp 视觉抽查**（修复 Spin 圆点 base 类、Skeleton ul 项目符号、Result SVG var() 颜色、Breadcrumb 链接下划线、Space/Breadcrumb 分隔符颜色等问题）
+### 设计排除项
 
-## 四、Batch 2（复杂组件 · 零依赖）— ✅ 已完成
+- App：Ant Design React 里用于承载静态方法上下文，但 Vue 组件库没有必要额外提供同名包裹组件。全局能力应优先通过 `app.use()`、`ConfigProvider`、组合式 API 或命令式服务自身的挂载机制处理，避免和 Vue 的 `App` 类型/实例概念混淆。
 
-无前置依赖的复杂组件已全部交付（共 7 个）：
+### Batch 3：中等复杂度主体
 
-| 组件 | 分类 | 说明 |
-|---|---|---|
-| **Grid** Row/Col 栅格 🆕 | 布局 | 24 栅格 + 6 断点响应式 + Gutter |
-| **Layout** 布局 🆕 | 布局 | Header/Sider/Content/Footer + Sider 折叠 |
-| **Splitter** 分隔面板 🆕 | 布局 | 水平/垂直拖拽分割 + min/max 约束 |
-| **Masonry** 瀑布流 🆕 | 布局 | 多列均匀分布 + 响应式列数 |
-| **ConfigProvider** 全局配置 🆕 | 通用 | prefixCls / componentSize / direction / theme.token |
-| **App** 包裹组件 🆕 | 通用 | 全局上下文（占位 message/notification/modal） |
-| **Util** 工具集 🆕 | 通用 | classNames / debounce / throttle / clamp 等 |
+已完成 18 项：Pagination、Steps、Statistic、Collapse、Descriptions、Popconfirm、Modal、Drawer、Dropdown、Message、Notification、Image、Menu、Anchor、Affix、List、Watermark、FloatButton / BackTop。
 
-测试覆盖：**369/369 全部通过**（含中等任务方并行合入的 Statistic 等）。
+来源记录中的验证结果：
 
-## 五、Batch 3（中等复杂度 · 主体）— ✅ 已完成 18 个
-
-分三轮交付，全量 56 文件 / 409 测试通过：
-
-**Round 1（6 个 / 30 测试）**：Pagination · Steps · Statistic · Collapse · Descriptions · Popconfirm
-**Round 2（6 个 / 28 测试）**：Modal · Drawer · Dropdown · Message · Notification · Image
-**Round 3（6 个 / 27 测试）**：Menu · Anchor · Affix · List · Watermark · FloatButton（含 BackTop）
+- Batch 3 新增 56 个文件。
+- 全量测试记录为 409 个用例通过。
+- 视觉抽查已覆盖 16 个中等组件；Message / Notification 曾因 VitePress demo 导入路径问题待修，后续提交记录显示已纳入修复。
 
 关键工程决策：
-- Modal/Drawer 使用 `Teleport` + `<Transition>`，Modal 通过 `document.body.dataset.ccuiModalCount` 计数器管理 scroll-lock
-- Message/Notification 采用命令式 API（`createApp` 挂载 portal 容器，Notification 4 角落各一个 Map）
-- Affix/Anchor 在 jsdom 下使用 `target === window` 引用相等替代 `instanceof Window`，并对 `getBoundingClientRect`/`scrollTo` 做 typeof 兜底
-- Watermark MutationObserver 仅监听 `childList`（避免 attribute 变更触发自我递归 OOM），并对 canvas `getContext('2d')` try/catch 兜底返回 null fallback 样式
-- Image 预览使用 `Teleport` + IntersectionObserver 懒加载
 
-## 六、下一轮迭代建议
+- Modal / Drawer 使用 `Teleport` + `<Transition>`。
+- Message / Notification 使用命令式 API 和独立挂载容器。
+- Affix / Anchor 在 jsdom 下避免依赖 `instanceof Window`，改用更稳定的 target 判定，并补充 DOM API 兜底。
+- Watermark 的 MutationObserver 仅监听 `childList`，避免 attributes 变更触发自递归。
+- Image 预览使用 `Teleport`，并对 IntersectionObserver 做兼容兜底。
 
-- 🟡 **中等复杂度剩余（4 个）**：Icon / Carousel / QRCode / ColorPicker
-- 🔴 **复杂（13 个）**：Form / Table / Select / DatePicker / TimePicker / Cascader / TreeSelect / Transfer / Upload / AutoComplete / Mentions / Tour
+## 四、后续任务规划
 
-> 优先级建议：先做 Form、Table、Select、DatePicker（高频核心）→ 再补 Icon 体系与 Carousel/ColorPicker。
+### P0：补齐核心复杂组件
+
+1. Form：先定义字段上下文、校验协议、FormItem 数据流，再接入 Input / Select / Checkbox / Radio / Switch 等录入组件。
+2. Table：先交付基础列渲染、排序、筛选、分页联动，再拆固定列、展开行、虚拟滚动。
+3. Select：先实现单选/多选/搜索/远程 loading，再与 Form 校验状态打通。
+
+### P1：补齐高频录入和基础设施
+
+1. Icon：建立图标注册、按需导出、统一尺寸/颜色继承规则，为后续组件减少内联 SVG。
+2. DatePicker / TimePicker：建议先抽日期时间工具层，再做面板组件。
+3. Cascader / TreeSelect：复用 Tree 和 Select 的已完成能力。
+
+### P2：增强展示与低频录入
+
+1. Carousel：优先基础切换、自动播放、指示器，再补手势和无障碍键盘。
+2. QRCode：评估轻量二维码库，避免把生成算法手写进组件库。
+3. ColorPicker：先完成 HEX/RGB/HSV 转换和基础浮层，再补透明度与预设色。
+4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。
+
+### P3：体验型组件
+
+1. AutoComplete：可在 Select 和 Input 稳定后实现。
+2. Mentions：需要单独处理输入解析和光标定位。
+3. Tour：依赖浮层定位、滚动跟随和遮罩裁切，建议最后做。
+
+## 五、当前已知修复
+
+- `packages/ccui/ui/vue-ccui.ts` 已移除 ccui `App` 组件的导入、安装和命名导出，Vue 安装函数类型保留为 `VueApp`。
