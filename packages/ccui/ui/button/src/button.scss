@@ -1,5 +1,11 @@
 @use '../../style-var/index.scss' as *;
 
+$button-info-color: #909399;
+$button-info-hover-color: #a6a9ad;
+$button-info-active-color: #73767a;
+$button-info-plain-bg: #f4f4f5;
+$button-info-plain-border: #dcdfe6;
+
 .#{$cls-prefix}-button {
   box-sizing: border-box;
   display: inline-flex;
@@ -94,11 +100,16 @@
   }
 
   &--info {
-    background-color: $ccui-color-info;
+    background-color: $button-info-color;
 
     &:hover {
-      background-color: $ccui-color-info-hover;
-      border-color: $ccui-color-info-hover;
+      background-color: $button-info-hover-color;
+      border-color: $button-info-hover-color;
+    }
+
+    &:active {
+      background-color: $button-info-active-color;
+      border-color: $button-info-active-color;
     }
   }
 
@@ -192,9 +203,19 @@
   }
 
   &--plain-info {
-    color: $ccui-color-info;
-    background-color: $ccui-color-info-bg;
-    border-color: $ccui-color-info-border;
+    color: $button-info-color;
+    background-color: $button-info-plain-bg;
+    border-color: $button-info-plain-border;
+
+    &:hover {
+      color: $button-info-hover-color;
+      border-color: $button-info-hover-color;
+    }
+
+    &:active {
+      background-color: $button-info-color;
+      border-color: $button-info-color;
+    }
   }
 
   &--plain-warning {

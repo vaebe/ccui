@@ -1,5 +1,8 @@
 @use '../../style-var/index.scss' as *;
 
+$button-3d-info-color: #909399;
+$button-3d-info-active-color: #73767a;
+
 .#{$cls-prefix}-button-3d {
   position: relative;
   background: transparent;
@@ -100,15 +103,15 @@
     .edge {
       background: linear-gradient(
         to left,
-        $ccui-color-primary-active 0%,
-        $ccui-color-primary-active 8%,
-        $ccui-color-primary-active 92%,
-        $ccui-color-primary-active 100%
+        $button-3d-info-active-color 0%,
+        $button-3d-info-active-color 8%,
+        $button-3d-info-active-color 92%,
+        $button-3d-info-active-color 100%
       );
     }
 
     .front {
-      background: $ccui-color-info;
+      background: $button-3d-info-color;
       color: $ccui-color-text-light-solid;
     }
   }

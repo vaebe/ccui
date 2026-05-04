@@ -7,6 +7,13 @@
   display: table;
 }
 
+.vp-doc
+  [class*='_example-showcase_']
+  :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__'])) {
+  margin-inline-end: 8px;
+  margin-block-end: 8px;
+}
+
 .mt-10 {
   margin-top: 10px;
 }
