@@ -1,0 +1,114 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-popconfirm {
+  &__inner {
+    min-width: 220px;
+    padding: 4px 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  &__icon {
+    flex: 0 0 auto;
+    margin-inline-end: 8px;
+    margin-top: 2px;
+    color: $ccui-color-warning;
+  }
+
+  &__warning {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    background: $ccui-color-warning;
+    border-radius: 50%;
+    line-height: 1;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    font-weight: 500;
+    line-height: $ccui-line-height-base;
+    word-break: break-word;
+  }
+
+  &__description {
+    margin-top: 4px;
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &__btn {
+    height: 24px;
+    padding: 0 12px;
+    font-size: $ccui-font-size-sm;
+    line-height: 22px;
+    color: $ccui-color-text;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius-sm;
+    cursor: pointer;
+    transition: all $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+    }
+
+    &--cancel {
+      // default style
+    }
+
+    &--primary {
+      color: #ffffff;
+      background-color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+
+      &:hover {
+        color: #ffffff;
+        background-color: $ccui-color-primary;
+        border-color: $ccui-color-primary;
+        opacity: 0.85;
+      }
+    }
+
+    &--danger {
+      color: #ffffff;
+      background-color: $ccui-color-error;
+      border-color: $ccui-color-error;
+
+      &:hover {
+        color: #ffffff;
+        background-color: $ccui-color-error;
+        border-color: $ccui-color-error;
+        opacity: 0.85;
+      }
+    }
+
+    &--default {
+      // default
+    }
+  }
+}

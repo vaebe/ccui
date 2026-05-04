@@ -1,0 +1,8 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-app {
+  font-family: $ccui-font-family;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
+  line-height: $ccui-line-height-base;
+}

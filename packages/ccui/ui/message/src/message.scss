@@ -1,0 +1,108 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-message {
+  position: fixed;
+  top: 16px;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 1010;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__item {
+    margin-bottom: 8px;
+    pointer-events: auto;
+  }
+
+  &__inner {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 12px;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow:
+      0 6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    font-size: $ccui-font-size;
+    color: $ccui-color-text;
+    line-height: $ccui-line-height-base;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-inline-end: 8px;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+
+    &--info {
+      background: $ccui-color-primary;
+    }
+
+    &--success {
+      background: $ccui-color-success;
+    }
+
+    &--warning {
+      background: $ccui-color-warning;
+    }
+
+    &--error {
+      background: $ccui-color-error;
+    }
+
+    &--loading {
+      background: $ccui-color-primary;
+      animation: ccuiMessageSpin 1s linear infinite;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    word-wrap: break-word;
+  }
+
+  &__close {
+    margin-inline-start: 12px;
+    padding: 0;
+    color: $ccui-color-text-secondary;
+    background: transparent;
+    border: 0;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+    }
+  }
+}
+
+.#{$cls-prefix}-message-fade-enter-active,
+.#{$cls-prefix}-message-fade-leave-active {
+  transition:
+    opacity $ccui-motion-duration-mid,
+    transform $ccui-motion-duration-mid;
+}
+
+.#{$cls-prefix}-message-fade-enter-from,
+.#{$cls-prefix}-message-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+@keyframes ccuiMessageSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

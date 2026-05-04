@@ -1,0 +1,128 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-collapse {
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid $ccui-color-border;
+  border-radius: $ccui-border-radius;
+  border-bottom: 0;
+
+  &__item {
+    border-bottom: 1px solid $ccui-color-border;
+  }
+
+  &__item:first-child &__header {
+    border-top-left-radius: $ccui-border-radius;
+    border-top-right-radius: $ccui-border-radius;
+  }
+
+  &__header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 12px 16px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color $ccui-motion-duration-mid;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+  }
+
+  &__header-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 12px;
+    font-size: 16px;
+    line-height: 1;
+    color: $ccui-color-text-secondary;
+    transition: transform $ccui-motion-duration-mid;
+
+    &--active {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__wrapper {
+    overflow: hidden;
+    will-change: height;
+    transition: height $ccui-motion-duration-mid ease;
+  }
+
+  &__content {
+    padding: 16px;
+    background-color: $ccui-color-bg-container;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    border-top: 1px solid $ccui-color-border;
+  }
+
+  &__item--disabled &__header {
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  &--icon-end &__header {
+    flex-direction: row;
+  }
+
+  &--icon-end &__arrow {
+    margin-inline-end: 0;
+    margin-inline-start: 12px;
+
+    &--active {
+      transform: rotate(-90deg);
+    }
+  }
+
+  &--borderless {
+    border: 0;
+    border-radius: 0;
+
+    .#{$cls-prefix}-collapse__item:last-child {
+      border-bottom: 1px solid $ccui-color-border;
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    border: 0;
+
+    .#{$cls-prefix}-collapse__item {
+      border-bottom: 0;
+    }
+
+    .#{$cls-prefix}-collapse__content {
+      border-top: 0;
+      background-color: transparent;
+    }
+  }
+}
+
+.#{$cls-prefix}-collapse-enter-active,
+.#{$cls-prefix}-collapse-leave-active {
+  transition: height $ccui-motion-duration-mid ease;
+}
+
+.#{$cls-prefix}-collapse-enter-from,
+.#{$cls-prefix}-collapse-leave-to {
+  height: 0 !important;
+}

@@ -1,0 +1,187 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-modal {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  &__mask {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+  }
+
+  &__wrap {
+    position: fixed;
+    inset: 0;
+    overflow: auto;
+    outline: 0;
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 100px 16px 24px;
+  }
+
+  &--centered &__wrap {
+    align-items: center;
+    padding: 16px;
+  }
+
+  &__content {
+    position: relative;
+    width: 520px;
+    max-width: 100%;
+    padding: 0;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow:
+      0 6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &__close {
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: $ccui-color-text-secondary;
+    background: transparent;
+    border: 0;
+    border-radius: $ccui-border-radius-sm;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &__header {
+    padding: 16px 24px 0;
+  }
+
+  &__title {
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: 600;
+    line-height: $ccui-line-height-lg;
+  }
+
+  &__body {
+    padding: 16px 24px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    word-wrap: break-word;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px 24px 16px;
+  }
+
+  &__btn {
+    height: 32px;
+    padding: 4px 15px;
+    font-size: $ccui-font-size;
+    line-height: 1.5714285714285714;
+    color: $ccui-color-text;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    cursor: pointer;
+    transition: all $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+    }
+
+    &--cancel {
+      // default
+    }
+
+    &--primary {
+      color: #ffffff;
+      background-color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+
+      &:hover {
+        opacity: 0.85;
+        color: #ffffff;
+      }
+    }
+
+    &--danger {
+      color: #ffffff;
+      background-color: $ccui-color-error;
+      border-color: $ccui-color-error;
+
+      &:hover {
+        opacity: 0.85;
+        color: #ffffff;
+      }
+    }
+
+    &--default {
+      // default
+    }
+
+    &.is-loading {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-inline-end: 8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: ccuiModalSpin 0.8s linear infinite;
+    vertical-align: -2px;
+  }
+}
+
+.#{$cls-prefix}-modal-mask-fade-enter-active,
+.#{$cls-prefix}-modal-mask-fade-leave-active {
+  transition: opacity $ccui-motion-duration-mid;
+}
+
+.#{$cls-prefix}-modal-mask-fade-enter-from,
+.#{$cls-prefix}-modal-mask-fade-leave-to {
+  opacity: 0;
+}
+
+.#{$cls-prefix}-modal-zoom-enter-active,
+.#{$cls-prefix}-modal-zoom-leave-active {
+  transition:
+    transform $ccui-motion-duration-mid cubic-bezier(0.08, 0.82, 0.17, 1),
+    opacity $ccui-motion-duration-mid;
+}
+
+.#{$cls-prefix}-modal-zoom-enter-from,
+.#{$cls-prefix}-modal-zoom-leave-to {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+@keyframes ccuiModalSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

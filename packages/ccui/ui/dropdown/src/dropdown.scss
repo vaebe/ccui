@@ -1,0 +1,62 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-dropdown {
+  &__menu {
+    min-width: 100px;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 5px 12px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    cursor: pointer;
+    transition:
+      background-color $ccui-motion-duration-mid,
+      color $ccui-motion-duration-mid;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &--disabled {
+      color: $ccui-color-text-disabled;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &--danger {
+      color: $ccui-color-error;
+
+      &:hover {
+        color: #ffffff;
+        background-color: $ccui-color-error;
+      }
+    }
+
+    &--divided {
+      border-top: 1px solid $ccui-color-border;
+      margin-top: 4px;
+      padding-top: 9px;
+    }
+  }
+
+  &__icon {
+    margin-inline-end: 8px;
+    font-size: 14px;
+  }
+
+  &__label {
+    flex: 1;
+  }
+}

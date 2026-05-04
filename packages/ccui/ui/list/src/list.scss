@@ -1,0 +1,145 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-list {
+  position: relative;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__header,
+  &__footer {
+    padding: 12px 0;
+  }
+
+  &__container {
+    position: relative;
+  }
+
+  &__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    padding: 12px 0;
+  }
+
+  &__item-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  &__item-avatar {
+    flex: 0 0 auto;
+  }
+
+  &__item-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__item-meta {
+    margin-bottom: 4px;
+  }
+
+  &__item-title {
+    margin: 0;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    font-weight: 500;
+    line-height: $ccui-line-height-base;
+  }
+
+  &__item-desc {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+  }
+
+  &__item-content {
+    color: $ccui-color-text;
+  }
+
+  &__item-actions {
+    display: flex;
+    gap: 16px;
+    flex: 0 0 auto;
+    margin-inline-start: 16px;
+    color: $ccui-color-text-secondary;
+  }
+
+  &__item-extra {
+    flex: 0 0 auto;
+    margin-inline-start: 24px;
+  }
+
+  &__empty {
+    padding: 32px 0;
+    text-align: center;
+    color: $ccui-color-text-disabled;
+  }
+
+  &__loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 1;
+  }
+
+  &__loading-dot {
+    width: 16px;
+    height: 16px;
+    border: 2px solid $ccui-color-primary;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: ccuiListSpin 0.8s linear infinite;
+  }
+
+  &--split {
+    .#{$cls-prefix}-list__item + .#{$cls-prefix}-list__item {
+      border-top: 1px solid $ccui-color-border;
+    }
+  }
+
+  &--bordered {
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+
+    .#{$cls-prefix}-list__header,
+    .#{$cls-prefix}-list__footer {
+      padding-inline: 24px;
+    }
+
+    .#{$cls-prefix}-list__item {
+      padding-inline: 24px;
+    }
+  }
+
+  &--small &__item {
+    padding: 8px 0;
+  }
+
+  &--large &__item {
+    padding: 16px 0;
+  }
+
+  &--layout-vertical {
+    .#{$cls-prefix}-list__item-inner {
+      flex-direction: column;
+    }
+  }
+
+  &--item-vertical &__item-inner {
+    flex-direction: column;
+  }
+}
+
+@keyframes ccuiListSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,118 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-row {
+  display: flex;
+  flex-flow: row wrap;
+  min-width: 0;
+
+  &--justify-start {
+    justify-content: flex-start;
+  }
+
+  &--justify-end {
+    justify-content: flex-end;
+  }
+
+  &--justify-center {
+    justify-content: center;
+  }
+
+  &--justify-space-around {
+    justify-content: space-around;
+  }
+
+  &--justify-space-between {
+    justify-content: space-between;
+  }
+
+  &--justify-space-evenly {
+    justify-content: space-evenly;
+  }
+
+  &--align-top {
+    align-items: flex-start;
+  }
+
+  &--align-middle {
+    align-items: center;
+  }
+
+  &--align-bottom {
+    align-items: flex-end;
+  }
+
+  &--align-stretch {
+    align-items: stretch;
+  }
+
+  &--no-wrap {
+    flex-wrap: nowrap;
+  }
+}
+
+.#{$cls-prefix}-col {
+  position: relative;
+  max-width: 100%;
+  min-height: 1px;
+  box-sizing: border-box;
+}
+
+@for $i from 0 through 24 {
+  .#{$cls-prefix}-col--span-#{$i} {
+    @if $i == 0 {
+      display: none;
+    } @else {
+      flex: 0 0 percentage($i / 24);
+      max-width: percentage($i / 24);
+    }
+  }
+
+  .#{$cls-prefix}-col--offset-#{$i} {
+    margin-inline-start: percentage($i / 24);
+  }
+
+  .#{$cls-prefix}-col--push-#{$i} {
+    inset-inline-start: percentage($i / 24);
+  }
+
+  .#{$cls-prefix}-col--pull-#{$i} {
+    inset-inline-end: percentage($i / 24);
+  }
+
+  .#{$cls-prefix}-col--order-#{$i} {
+    order: $i;
+  }
+}
+
+@mixin generate-bp($bp, $min-width) {
+  @media (min-width: #{$min-width}px) {
+    @for $i from 0 through 24 {
+      .#{$cls-prefix}-col--#{$bp}-#{$i} {
+        @if $i == 0 {
+          display: none;
+        } @else {
+          flex: 0 0 percentage($i / 24);
+          max-width: percentage($i / 24);
+        }
+      }
+      .#{$cls-prefix}-col--#{$bp}-offset-#{$i} {
+        margin-inline-start: percentage($i / 24);
+      }
+      .#{$cls-prefix}-col--#{$bp}-push-#{$i} {
+        inset-inline-start: percentage($i / 24);
+      }
+      .#{$cls-prefix}-col--#{$bp}-pull-#{$i} {
+        inset-inline-end: percentage($i / 24);
+      }
+      .#{$cls-prefix}-col--#{$bp}-order-#{$i} {
+        order: $i;
+      }
+    }
+  }
+}
+
+@include generate-bp(sm, 576);
+@include generate-bp(md, 768);
+@include generate-bp(lg, 992);
+@include generate-bp(xl, 1200);
+@include generate-bp(xxl, 1600);

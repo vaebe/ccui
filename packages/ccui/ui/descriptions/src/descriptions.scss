@@ -1,0 +1,121 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-descriptions {
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: 500;
+    line-height: $ccui-line-height-lg;
+  }
+
+  &__extra {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+  }
+
+  &__view {
+    width: 100%;
+    border-radius: $ccui-border-radius;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+  }
+
+  &__row {
+    border: 0;
+  }
+
+  &__cell {
+    padding: 12px 0;
+    vertical-align: top;
+    text-align: start;
+  }
+
+  &__label {
+    display: inline-block;
+    margin-inline-end: 8px;
+    color: $ccui-color-text-secondary;
+    font-weight: normal;
+    line-height: $ccui-line-height-base;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  &__content {
+    display: inline-block;
+    color: $ccui-color-text;
+    line-height: $ccui-line-height-base;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  &--small &__cell {
+    padding: 8px 0;
+  }
+
+  &--bordered {
+    .#{$cls-prefix}-descriptions__view {
+      border: 1px solid $ccui-color-border;
+      border-radius: $ccui-border-radius;
+      overflow: hidden;
+    }
+
+    .#{$cls-prefix}-descriptions__label,
+    .#{$cls-prefix}-descriptions__content {
+      display: table-cell;
+      padding: 16px 24px;
+      border-inline-end: 1px solid $ccui-color-border;
+      border-bottom: 1px solid $ccui-color-border;
+    }
+
+    .#{$cls-prefix}-descriptions__label {
+      background-color: rgba(0, 0, 0, 0.02);
+      font-weight: 500;
+      width: auto;
+    }
+
+    .#{$cls-prefix}-descriptions__row:last-child {
+      .#{$cls-prefix}-descriptions__label,
+      .#{$cls-prefix}-descriptions__content {
+        border-bottom: 0;
+      }
+    }
+
+    table tr > *:last-child {
+      border-inline-end: 0;
+    }
+  }
+
+  &--small.#{$cls-prefix}-descriptions--bordered {
+    .#{$cls-prefix}-descriptions__label,
+    .#{$cls-prefix}-descriptions__content {
+      padding: 8px 16px;
+    }
+  }
+
+  &--middle.#{$cls-prefix}-descriptions--bordered {
+    .#{$cls-prefix}-descriptions__label,
+    .#{$cls-prefix}-descriptions__content {
+      padding: 12px 24px;
+    }
+  }
+
+  &--vertical {
+    .#{$cls-prefix}-descriptions__label {
+      padding-bottom: 8px;
+    }
+  }
+}

@@ -95,42 +95,6 @@ importers:
         specifier: ^3.2.7
         version: 3.2.7(typescript@5.9.3)
 
-  packages/ccui/build/avatar: {}
-
-  packages/ccui/build/button: {}
-
-  packages/ccui/build/button-3d: {}
-
-  packages/ccui/build/calendar: {}
-
-  packages/ccui/build/card: {}
-
-  packages/ccui/build/check-box: {}
-
-  packages/ccui/build/divider: {}
-
-  packages/ccui/build/input: {}
-
-  packages/ccui/build/input-number: {}
-
-  packages/ccui/build/popover: {}
-
-  packages/ccui/build/radio: {}
-
-  packages/ccui/build/rate: {}
-
-  packages/ccui/build/slider: {}
-
-  packages/ccui/build/status: {}
-
-  packages/ccui/build/tabs: {}
-
-  packages/ccui/build/timeline: {}
-
-  packages/ccui/build/tooltip: {}
-
-  packages/ccui/build/tree: {}
-
   packages/cli:
     dependencies:
       lodash:
@@ -5843,7 +5807,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.0)(@vitest/coverage-v8@4.1.5)(@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1))(jsdom@27.1.0)
+      vitest: 4.1.5(@types/node@22.19.0)(@vitest/coverage-v8@4.1.5)(jsdom@27.1.0)(vite@8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
     optional: true
 
   '@vitest/expect@4.1.5':
@@ -5856,13 +5820,13 @@ snapshots:
       tinyrainbow: 3.1.0
     optional: true
 
-  '@vitest/mocker@4.1.5(@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1))':
+  '@vitest/mocker@4.1.5(vite@8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))':
     dependencies:
       '@vitest/spy': 4.1.5
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: '@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1)'
+      vite: 8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1)
     optional: true
 
   '@vitest/pretty-format@4.1.5':
@@ -8694,10 +8658,10 @@ snapshots:
       - unplugin-unused
       - yaml
 
-  vitest@4.1.5(@types/node@22.19.0)(@vitest/coverage-v8@4.1.5)(@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1))(jsdom@27.1.0):
+  vitest@4.1.5(@types/node@22.19.0)(@vitest/coverage-v8@4.1.5)(jsdom@27.1.0)(vite@8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1)):
     dependencies:
       '@vitest/expect': 4.1.5
-      '@vitest/mocker': 4.1.5(@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1))
+      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
       '@vitest/pretty-format': 4.1.5
       '@vitest/runner': 4.1.5
       '@vitest/snapshot': 4.1.5
@@ -8714,7 +8678,7 @@ snapshots:
       tinyexec: 1.1.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vite: '@voidzero-dev/vite-plus-core@0.1.20(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(typescript@5.9.3)(yaml@2.8.1)'
+      vite: 8.0.10(@types/node@22.19.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.19.0

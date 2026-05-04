@@ -1,0 +1,155 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-drawer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  &__mask {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+  }
+
+  &__content {
+    position: fixed;
+    background-color: $ccui-color-bg-elevated;
+    box-shadow:
+      -6px 0 16px 0 rgba(0, 0, 0, 0.08),
+      -3px 0 6px -4px rgba(0, 0, 0, 0.12),
+      -9px 0 28px 8px rgba(0, 0, 0, 0.05);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid $ccui-color-border;
+  }
+
+  &__title {
+    flex: 1;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: 600;
+    line-height: $ccui-line-height-lg;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-inline-start: 8px;
+    padding: 0;
+    color: $ccui-color-text-secondary;
+    background: transparent;
+    border: 0;
+    border-radius: $ccui-border-radius-sm;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+  }
+
+  &__footer {
+    padding: 12px 24px;
+    border-top: 1px solid $ccui-color-border;
+    text-align: end;
+  }
+
+  &--right &__content {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+  }
+
+  &--left &__content {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+
+    box-shadow:
+      6px 0 16px 0 rgba(0, 0, 0, 0.08),
+      3px 0 6px -4px rgba(0, 0, 0, 0.12),
+      9px 0 28px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &--top &__content {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+
+    box-shadow:
+      0 6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &--bottom &__content {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+
+    box-shadow:
+      0 -6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 -3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 -9px 28px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.#{$cls-prefix}-drawer-fade-enter-active,
+.#{$cls-prefix}-drawer-fade-leave-active {
+  transition: opacity $ccui-motion-duration-mid;
+}
+
+.#{$cls-prefix}-drawer-fade-enter-from,
+.#{$cls-prefix}-drawer-fade-leave-to {
+  opacity: 0;
+}
+
+@mixin drawer-slide($name, $from) {
+  .#{$cls-prefix}-drawer-#{$name}-enter-active,
+  .#{$cls-prefix}-drawer-#{$name}-leave-active {
+    transition: transform $ccui-motion-duration-mid cubic-bezier(0.7, 0.3, 0.1, 1);
+  }
+  .#{$cls-prefix}-drawer-#{$name}-enter-from,
+  .#{$cls-prefix}-drawer-#{$name}-leave-to {
+    transform: $from;
+  }
+}
+
+@include drawer-slide(right, translateX(100%));
+@include drawer-slide(left, translateX(-100%));
+@include drawer-slide(top, translateY(-100%));
+@include drawer-slide(bottom, translateY(100%));
