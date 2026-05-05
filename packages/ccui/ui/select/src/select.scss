@@ -1,0 +1,208 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-select {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &--disabled {
+    cursor: not-allowed;
+  }
+
+  &__selector {
+    display: flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 4px;
+    box-sizing: border-box;
+    padding: 4px 28px 4px 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background: $ccui-color-bg-container;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  &__selector:hover,
+  &--open &__selector {
+    border-color: $ccui-primary;
+  }
+
+  &--open &__selector {
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12);
+  }
+
+  &--disabled &__selector {
+    border-color: $ccui-color-border;
+    background: $ccui-disabled-bg;
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &--large &__selector {
+    min-height: 40px;
+  }
+
+  &--small &__selector {
+    min-height: 24px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__selection {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  &__placeholder {
+    color: $ccui-color-text-placeholder;
+  }
+
+  &__single {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__search {
+    width: 100%;
+    min-width: 24px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  &__tags {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__tag {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    border-radius: 2px;
+    background: $ccui-color-fill-quaternary;
+    line-height: 22px;
+  }
+
+  &__tag-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__tag-close {
+    color: $ccui-color-text-tertiary;
+    cursor: pointer;
+  }
+
+  &__tag-close:hover {
+    color: $ccui-text;
+  }
+
+  &__arrow,
+  &__clear {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    color: $ccui-color-text-tertiary;
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+
+  &__arrow {
+    transition: transform 0.2s;
+  }
+
+  &--open &__arrow {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  &__clear {
+    cursor: pointer;
+  }
+
+  &__dropdown {
+    position: absolute;
+    z-index: 1000;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid $ccui-color-border-secondary;
+    border-radius: $ccui-border-radius;
+    background: $ccui-color-bg-elevated;
+    box-shadow: $ccui-box-shadow-secondary;
+  }
+
+  &__list {
+    max-height: 240px;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    list-style: none;
+  }
+
+  &__option {
+    display: flex;
+    min-height: 32px;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  &__option:hover,
+  &__option--active {
+    background: $ccui-color-fill-tertiary;
+  }
+
+  &__option--selected {
+    color: $ccui-primary;
+    font-weight: 600;
+  }
+
+  &__option--disabled {
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+  }
+
+  &__option--disabled:hover {
+    background: transparent;
+  }
+
+  &__empty,
+  &__loading {
+    padding: 8px;
+    color: $ccui-color-text-tertiary;
+    text-align: center;
+  }
+
+  &__check {
+    margin-left: 8px;
+    color: $ccui-primary;
+  }
+}

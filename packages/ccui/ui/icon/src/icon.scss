@@ -1,0 +1,37 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  fill: currentColor;
+  line-height: 0;
+  transform: rotate(var(--ccui-icon-rotate, 0deg));
+  transform-origin: center;
+  vertical-align: -0.125em;
+
+  svg,
+  i {
+    display: block;
+    width: 1em;
+    height: 1em;
+    flex: none;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  &--spin {
+    animation: ccui-icon-spin 1s linear infinite;
+  }
+}
+
+@keyframes ccui-icon-spin {
+  from {
+    transform: rotate(var(--ccui-icon-rotate, 0deg));
+  }
+
+  to {
+    transform: rotate(calc(var(--ccui-icon-rotate, 0deg) + 1turn));
+  }
+}
