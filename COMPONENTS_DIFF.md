@@ -1,7 +1,8 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目组件：59 个目录级组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 当前项目目录：`packages/ccui/ui` 下共 61 个一级目录，其中 59 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：59 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
 > 更新时间：2026-05-06，根据当前 `packages/ccui/ui` 目录、Form 基础版新增实现和验证结果更新。
 
 ## 一、已覆盖组件（59 项）
@@ -28,7 +29,7 @@
 | Empty                 | Empty 空状态            | 数据展示        | 已完成   |
 | Flex                  | Flex 弹性布局           | 布局            | 已完成   |
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成   |
-| Form                  | Form 表单               | 数据录入        | 基础完成 |
+| Form                  | Form 表单               | 数据录入        | 80% 完成 |
 | Grid                  | Grid 栅格               | 布局            | 已完成   |
 | Icon                  | Icon 图标               | 通用            | 基础完成 |
 | Image                 | Image 图片              | 数据展示        | 已完成   |
@@ -70,7 +71,7 @@
 
 > 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
 > `Select` 当前为基础可用版本，已覆盖单选、多选、搜索、清空、禁用、loading、空状态、tag 限制和基础键盘交互；尚未达到 Ant Design Select 的完整能力。
-> `Form` 当前为基础可用版本，已覆盖字段注册、规则校验、字段级校验、重置、清理校验和 submit 校验流程；尚未达到 Ant Design Form 的完整能力。
+> `Form` 当前为 80% 覆盖版本，已覆盖字段注册、规则校验、字段级校验、初始值、依赖联动、滚动到错误字段、复杂 name path、重置、清理校验和 submit 校验流程；尚未包含 Form.List、Provider、preserve 等完整高级能力。
 
 ## 二、缺失组件清单
 
@@ -162,16 +163,16 @@ Select 剩余非完整对齐项：
 
 - 尚未支持 option group、自定义 option/tag render、remote search 约定、popup container / placement、fieldNames、虚拟列表、tags / allowCreate 模式、完整 ARIA 和 Form 校验状态集成。
 
-### Batch 5：Form 基础版
+### Batch 5：Form 80% 覆盖版
 
 已完成 1 项：Form。
 
 关键能力：
 
-- Form：支持 `model` / `rules`、字段注册与卸载、`validate` / `validateField` / `resetFields` / `clearValidate` 暴露方法、submit 自动校验、字段校验事件和失败事件。
-- FormItem：支持 `label`、`prop`、`required`、字段级 `rules`、`help`、`validateStatus`、label 宽度/位置、必填标记、错误/成功/校验中状态样式。
-- 校验规则：支持 required、type、min / max / len、pattern、同步/异步自定义 validator，并支持 blur / change / submit 触发规则过滤。
-- 已补充 7 个 Form 定向测试，覆盖布局渲染、必填/正则/长度校验、异步 validator、字段级校验、清理校验、重置字段、触发器过滤和 submit。
+- Form：支持 `model` / `rules` / `initialValues` / `validateMessages`、字段注册与卸载、`validate` / `validateField` / `resetFields` / `clearValidate` / `scrollToField` 暴露方法、submit 自动校验、字段校验事件、失败事件和 `scrollToFirstError`。
+- FormItem：支持 `label`、`name` / `prop`、`required`、字段级 `rules`、`help`、`extra`、`validateStatus`、`dependencies`、`htmlFor`、`colon`、`hidden`、`noStyle`、label 宽度/位置、必填/可选标记、错误/成功/校验中状态样式。
+- 校验规则：支持 required、type、email、url、enum、whitespace、min / max / len、pattern、同步/异步自定义 validator，并支持 blur / change / submit 触发规则过滤和消息模板。
+- 已补充 32 个 Form 定向测试，覆盖布局渲染、必填/正则/长度校验、异步 validator、字段级校验、清理校验、重置字段、触发器过滤、submit、数组 name path、初始值、消息模板、依赖联动、隐藏/noStyle 字段、类型校验和滚动到错误字段。
 
 验证结果：
 
@@ -181,7 +182,7 @@ Select 剩余非完整对齐项：
 
 Form 剩余非完整对齐项：
 
-- 尚未支持动态 Form.List、依赖联动、scrollToField / scrollToFirstError、复杂 name path 数组语法、状态图标、完整 ARIA、与所有录入组件的校验状态深度联动，以及 Ant Design Form 的完整 validateMessages / preserve 等高级配置。
+- 尚未支持动态 `Form.List`、`Form.Provider`、`preserve`、`validateDebounce`、`normalize`、`getValueProps`、`shouldUpdate` / render props、状态图标、完整 ARIA、与所有录入组件的校验状态深度联动，以及更完整的滚动容器定位和国际化包级默认文案。
 
 ## 四、后续任务规划
 
