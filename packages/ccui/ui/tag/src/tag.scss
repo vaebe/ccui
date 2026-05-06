@@ -100,17 +100,17 @@
   @each $name, $bg, $border,
     $text
       in (
-        (magenta, #fff0f6, #ffadd2, #c41d7f),
-        (red, #fff1f0, #ffa39e, #cf1322),
-        (volcano, #fff2e8, #ffbb96, #d4380d),
-        (orange, #fff7e6, #ffd591, #d46b08),
-        (gold, #fffbe6, #ffe58f, #d48806),
-        (lime, #fcffe6, #eaff8f, #7cb305),
-        (green, #f6ffed, #b7eb8f, #389e0d),
-        (cyan, #e6fffb, #87e8de, #08979c),
-        (blue, #e6f4ff, #91caff, #0958d9),
-        (geekblue, #f0f5ff, #adc6ff, #1d39c4),
-        (purple, #f9f0ff, #d3adf7, #531dab)
+        ('magenta', #fff0f6, #ffadd2, #c41d7f),
+        ('red', #fff1f0, #ffa39e, #cf1322),
+        ('volcano', #fff2e8, #ffbb96, #d4380d),
+        ('orange', #fff7e6, #ffd591, #d46b08),
+        ('gold', #fffbe6, #ffe58f, #d48806),
+        ('lime', #fcffe6, #eaff8f, #7cb305),
+        ('green', #f6ffed, #b7eb8f, #389e0d),
+        ('cyan', #e6fffb, #87e8de, #08979c),
+        ('blue', #e6f4ff, #91caff, #0958d9),
+        ('geekblue', #f0f5ff, #adc6ff, #1d39c4),
+        ('purple', #f9f0ff, #d3adf7, #531dab)
       )
   {
     &--#{$name} {

@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-row {
@@ -62,21 +63,21 @@
     @if $i == 0 {
       display: none;
     } @else {
-      flex: 0 0 percentage($i / 24);
-      max-width: percentage($i / 24);
+      flex: 0 0 math.percentage(math.div($i, 24));
+      max-width: math.percentage(math.div($i, 24));
     }
   }
 
   .#{$cls-prefix}-col--offset-#{$i} {
-    margin-inline-start: percentage($i / 24);
+    margin-inline-start: math.percentage(math.div($i, 24));
   }
 
   .#{$cls-prefix}-col--push-#{$i} {
-    inset-inline-start: percentage($i / 24);
+    inset-inline-start: math.percentage(math.div($i, 24));
   }
 
   .#{$cls-prefix}-col--pull-#{$i} {
-    inset-inline-end: percentage($i / 24);
+    inset-inline-end: math.percentage(math.div($i, 24));
   }
 
   .#{$cls-prefix}-col--order-#{$i} {
@@ -91,18 +92,18 @@
         @if $i == 0 {
           display: none;
         } @else {
-          flex: 0 0 percentage($i / 24);
-          max-width: percentage($i / 24);
+          flex: 0 0 math.percentage(math.div($i, 24));
+          max-width: math.percentage(math.div($i, 24));
         }
       }
       .#{$cls-prefix}-col--#{$bp}-offset-#{$i} {
-        margin-inline-start: percentage($i / 24);
+        margin-inline-start: math.percentage(math.div($i, 24));
       }
       .#{$cls-prefix}-col--#{$bp}-push-#{$i} {
-        inset-inline-start: percentage($i / 24);
+        inset-inline-start: math.percentage(math.div($i, 24));
       }
       .#{$cls-prefix}-col--#{$bp}-pull-#{$i} {
-        inset-inline-end: percentage($i / 24);
+        inset-inline-end: math.percentage(math.div($i, 24));
       }
       .#{$cls-prefix}-col--#{$bp}-order-#{$i} {
         order: $i;
