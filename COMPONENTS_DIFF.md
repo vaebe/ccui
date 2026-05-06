@@ -1,10 +1,10 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目组件：58 个目录级组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-05 13:10，根据当前 `packages/ccui/ui` 目录、Icon / Select 新增实现和验证结果更新。
+> 当前项目组件：59 个目录级组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-06，根据当前 `packages/ccui/ui` 目录、Form 基础版新增实现和验证结果更新。
 
-## 一、已覆盖组件（58 项）
+## 一、已覆盖组件（59 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态     |
 | --------------------- | ----------------------- | --------------- | -------- |
@@ -28,6 +28,7 @@
 | Empty                 | Empty 空状态            | 数据展示        | 已完成   |
 | Flex                  | Flex 弹性布局           | 布局            | 已完成   |
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成   |
+| Form                  | Form 表单               | 数据录入        | 基础完成 |
 | Grid                  | Grid 栅格               | 布局            | 已完成   |
 | Icon                  | Icon 图标               | 通用            | 基础完成 |
 | Image                 | Image 图片              | 数据展示        | 已完成   |
@@ -69,6 +70,7 @@
 
 > 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
 > `Select` 当前为基础可用版本，已覆盖单选、多选、搜索、清空、禁用、loading、空状态、tag 限制和基础键盘交互；尚未达到 Ant Design Select 的完整能力。
+> `Form` 当前为基础可用版本，已覆盖字段注册、规则校验、字段级校验、重置、清理校验和 submit 校验流程；尚未达到 Ant Design Form 的完整能力。
 
 ## 二、缺失组件清单
 
@@ -80,21 +82,20 @@
 | QRCode 二维码          | 数据展示 | 需要二维码生成库、纠错级别、图标嵌入     | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（11 项）
+### 复杂组件（10 项）
 
-| 组件                  | 分类     | 复杂点                                   | 建议优先级 |
-| --------------------- | -------- | ---------------------------------------- | ---------- |
-| Form 表单             | 数据录入 | 字段管理、校验、联动、与所有录入组件耦合 | P0         |
-| Table 表格            | 数据展示 | 排序、筛选、固定列、展开行、虚拟滚动     | P0         |
-| DatePicker 日期选择框 | 数据录入 | 日期面板、范围、时间联动、国际化         | P1         |
-| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项                   | P1         |
-| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                 | P1         |
-| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选           | P1         |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择           | P2         |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理         | P2         |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互        | P2         |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位      | P3         |
-| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随             | P3         |
+| 组件                  | 分类     | 复杂点                               | 建议优先级 |
+| --------------------- | -------- | ------------------------------------ | ---------- |
+| Table 表格            | 数据展示 | 排序、筛选、固定列、展开行、虚拟滚动 | P0         |
+| DatePicker 日期选择框 | 数据录入 | 日期面板、范围、时间联动、国际化     | P1         |
+| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项               | P1         |
+| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索             | P1         |
+| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选       | P1         |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择       | P2         |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理     | P2         |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互    | P2         |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位  | P3         |
+| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随         | P3         |
 
 ## 三、本轮交付记录
 
@@ -161,12 +162,33 @@ Select 剩余非完整对齐项：
 
 - 尚未支持 option group、自定义 option/tag render、remote search 约定、popup container / placement、fieldNames、虚拟列表、tags / allowCreate 模式、完整 ARIA 和 Form 校验状态集成。
 
+### Batch 5：Form 基础版
+
+已完成 1 项：Form。
+
+关键能力：
+
+- Form：支持 `model` / `rules`、字段注册与卸载、`validate` / `validateField` / `resetFields` / `clearValidate` 暴露方法、submit 自动校验、字段校验事件和失败事件。
+- FormItem：支持 `label`、`prop`、`required`、字段级 `rules`、`help`、`validateStatus`、label 宽度/位置、必填标记、错误/成功/校验中状态样式。
+- 校验规则：支持 required、type、min / max / len、pattern、同步/异步自定义 validator，并支持 blur / change / submit 触发规则过滤。
+- 已补充 7 个 Form 定向测试，覆盖布局渲染、必填/正则/长度校验、异步 validator、字段级校验、清理校验、重置字段、触发器过滤和 submit。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/form/test/form.test.ts --environment jsdom` 通过，7 个用例通过。
+- `vp run --filter docs docs:build` 通过；仍有 Grid / Tag 既有 Sass deprecation warning。
+
+Form 剩余非完整对齐项：
+
+- 尚未支持动态 Form.List、依赖联动、scrollToField / scrollToFirstError、复杂 name path 数组语法、状态图标、完整 ARIA、与所有录入组件的校验状态深度联动，以及 Ant Design Form 的完整 validateMessages / preserve 等高级配置。
+
 ## 四、后续任务规划
 
 ### P0：补齐核心复杂组件
 
-1. Form：先定义字段上下文、校验协议、FormItem 数据流，再接入 Input / Select / Checkbox / Radio / Switch 等录入组件。
-2. Table：先交付基础列渲染、排序、筛选、分页联动，再拆固定列、展开行、虚拟滚动。
+1. Table：先交付基础列渲染、排序、筛选、分页联动，再拆固定列、展开行、虚拟滚动。
+2. Form：在基础版上继续补动态列表、依赖联动、滚动到错误字段、复杂 name path、校验状态图标和录入组件深度联动。
 3. Select：在基础版上继续补 option group、自定义渲染、远程搜索协议、虚拟列表、popup 定位和 Form 校验状态集成。
 
 ### P1：补齐高频录入和基础设施
