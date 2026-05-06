@@ -4,6 +4,7 @@ import type {
   TableFilters,
   TablePaginationConfig,
   TableProps,
+  TableSelectionKey,
   TableSorter,
   TableSortOrder,
 } from './table-types'
@@ -71,13 +72,14 @@ function normalizePagination(pagination: TableProps['pagination']): TablePaginat
 export default defineComponent({
   name: 'CTable',
   props: tableProps,
-  emits: ['change', 'update:pagination', 'update:filters', 'update:sorter'],
+  emits: ['change', 'update:pagination', 'update:filters', 'update:sorter', 'update:selectedRowKeys'],
   setup(props: TableProps, { emit, slots }) {
     const ns = useNamespace('table')
     const innerCurrent = ref(1)
     const innerPageSize = ref(10)
     const innerFilters = ref<TableFilters>({})
     const innerSorter = ref<TableSorter>({ order: null })
+    const innerSelectedRowKeys = ref<TableSelectionKey[]>([])
 
     watch(
       () => props.pagination,
@@ -88,6 +90,20 @@ export default defineComponent({
         }
         if (config?.pageSize) {
           innerPageSize.value = config.pageSize
+        }
+      },
+      { immediate: true, deep: true },
+    )
+
+    watch(
+      () => props.rowSelection,
+      (rowSelection) => {
+        if (rowSelection?.selectedRowKeys) {
+          innerSelectedRowKeys.value = [...rowSelection.selectedRowKeys]
+          return
+        }
+        if (rowSelection?.defaultSelectedRowKeys) {
+          innerSelectedRowKeys.value = [...rowSelection.defaultSelectedRowKeys]
         }
       },
       { immediate: true, deep: true },
@@ -170,6 +186,87 @@ export default defineComponent({
       return sortedData.value.slice(start, start + pageSize)
     })
 
+    const isSelectionEnabled = computed(() => Boolean(props.rowSelection))
+
+    const selectedRowKeySet = computed(() => new Set(props.rowSelection?.selectedRowKeys ?? innerSelectedRowKeys.value))
+
+    const getSelectionRows = (selectedKeys: TableSelectionKey[]) => {
+      const keySet = new Set(selectedKeys)
+      return sortedData.value.filter((record, index) => keySet.has(getRowKey(record, index, props.rowKey)))
+    }
+
+    const getRowSelectionProps = (record: any) => props.rowSelection?.getCheckboxProps?.(record) ?? {}
+
+    const isRowSelectionDisabled = (record: any) => Boolean(getRowSelectionProps(record).disabled)
+
+    const selectableDisplayRows = computed(() =>
+      displayData.value
+        .map((record, index) => ({ record, index, key: getRowKey(record, index, props.rowKey) }))
+        .filter(({ record }) => !isRowSelectionDisabled(record)),
+    )
+
+    const selectedDisplayRowKeys = computed(() =>
+      selectableDisplayRows.value.map(({ key }) => key).filter((key) => selectedRowKeySet.value.has(key)),
+    )
+
+    const isAllDisplayRowsSelected = computed(
+      () =>
+        selectableDisplayRows.value.length > 0 &&
+        selectedDisplayRowKeys.value.length === selectableDisplayRows.value.length,
+    )
+
+    const isSomeDisplayRowsSelected = computed(
+      () => selectedDisplayRowKeys.value.length > 0 && !isAllDisplayRowsSelected.value,
+    )
+
+    const updateSelectedRowKeys = (nextKeys: TableSelectionKey[], selectedRows: any[], callback?: () => void) => {
+      if (!props.rowSelection?.selectedRowKeys) {
+        innerSelectedRowKeys.value = nextKeys
+      }
+      emit('update:selectedRowKeys', nextKeys)
+      props.rowSelection?.onChange?.(nextKeys, selectedRows)
+      callback?.()
+    }
+
+    const handleSelectRow = (record: any, rowIndex: number, checked: boolean) => {
+      if (!props.rowSelection || isRowSelectionDisabled(record)) {
+        return
+      }
+      const key = getRowKey(record, rowIndex, props.rowKey)
+      const selectedKeys = selectedRowKeySet.value
+      const nextKeys =
+        props.rowSelection.type === 'radio'
+          ? checked
+            ? [key]
+            : []
+          : checked
+            ? [...selectedKeys, key]
+            : [...selectedKeys].filter((selectedKey) => selectedKey !== key)
+      const selectedRows = getSelectionRows(nextKeys)
+      updateSelectedRowKeys(nextKeys, selectedRows, () => {
+        props.rowSelection?.onSelect?.(record, checked, selectedRows)
+      })
+    }
+
+    const handleSelectAll = (checked: boolean) => {
+      if (!props.rowSelection || props.rowSelection.type === 'radio') {
+        return
+      }
+      const changeableKeys = selectableDisplayRows.value.map(({ key }) => key)
+      const currentKeys = selectedRowKeySet.value
+      const nextKeys = checked
+        ? Array.from(new Set([...currentKeys, ...changeableKeys]))
+        : [...currentKeys].filter((key) => !changeableKeys.includes(key))
+      const selectedRows = getSelectionRows(nextKeys)
+      updateSelectedRowKeys(nextKeys, selectedRows, () => {
+        props.rowSelection?.onSelectAll?.(
+          checked,
+          selectedRows,
+          selectableDisplayRows.value.map(({ record }) => record),
+        )
+      })
+    }
+
     const emitChange = () => {
       emit('change', paginationState.value, activeFilters.value, activeSorter.value, sortedData.value)
     }
@@ -224,6 +321,55 @@ export default defineComponent({
       return text
     }
 
+    const renderSelectionHeader = () => {
+      if (!isSelectionEnabled.value) {
+        return null
+      }
+      const { columnWidth, hideSelectAll, type } = props.rowSelection!
+      return h(
+        'th',
+        {
+          key: '__selection__',
+          class: [ns.e('th'), ns.e('selection-cell')],
+          style: { width: typeof columnWidth === 'number' ? `${columnWidth}px` : columnWidth },
+        },
+        type === 'radio' || hideSelectAll
+          ? undefined
+          : h('input', {
+              class: [ns.e('selection-input'), isSomeDisplayRowsSelected.value && ns.em('selection-input', 'mixed')],
+              type: 'checkbox',
+              checked: isAllDisplayRowsSelected.value,
+              disabled: selectableDisplayRows.value.length === 0,
+              'aria-label': 'Select all rows',
+              onClick: (event: MouseEvent) => event.stopPropagation(),
+              onChange: (event: Event) => handleSelectAll((event.target as HTMLInputElement).checked),
+            }),
+      )
+    }
+
+    const renderSelectionCell = (record: any, rowIndex: number) => {
+      if (!isSelectionEnabled.value) {
+        return null
+      }
+      const rowSelection = props.rowSelection!
+      const key = getRowKey(record, rowIndex, props.rowKey)
+      const checkboxProps = getRowSelectionProps(record)
+      return h(
+        'td',
+        { key: '__selection__', class: [ns.e('td'), ns.e('selection-cell')] },
+        h('input', {
+          ...checkboxProps,
+          class: ns.e('selection-input'),
+          type: rowSelection.type === 'radio' ? 'radio' : 'checkbox',
+          checked: selectedRowKeySet.value.has(key),
+          disabled: checkboxProps.disabled,
+          'aria-label': 'Select row',
+          onClick: (event: MouseEvent) => event.stopPropagation(),
+          onChange: (event: Event) => handleSelectRow(record, rowIndex, (event.target as HTMLInputElement).checked),
+        }),
+      )
+    }
+
     const renderFilter = (column: TableColumn, index: number) => {
       if (!column.filters?.length) {
         return null
@@ -273,10 +419,9 @@ export default defineComponent({
       return h(
         'thead',
         { class: ns.e('thead') },
-        h(
-          'tr',
-          null,
-          props.columns.map((column, index) => {
+        h('tr', null, [
+          renderSelectionHeader(),
+          ...props.columns.map((column, index) => {
             const key = columnKeys.value[index]
             const sortOrder = activeSorter.value.columnKey === key ? activeSorter.value.order : null
             const headerContent = slots.headerCell ? slots.headerCell({ column, index }) : column.title
@@ -302,7 +447,7 @@ export default defineComponent({
               ],
             )
           }),
-        ),
+        ]),
       )
     }
 
@@ -312,7 +457,7 @@ export default defineComponent({
           'td',
           {
             class: ns.e('empty'),
-            colspan: Math.max(1, props.columns.length),
+            colspan: Math.max(1, props.columns.length + (isSelectionEnabled.value ? 1 : 0)),
           },
           slots.empty ? slots.empty() : 'No data',
         ),
@@ -391,17 +536,27 @@ export default defineComponent({
                 ? displayData.value.map((record, rowIndex) =>
                     h(
                       'tr',
-                      { key: getRowKey(record, rowIndex, props.rowKey), class: ns.e('tr') },
-                      props.columns.map((column, columnIndex) =>
-                        h(
-                          'td',
-                          {
-                            key: columnKeys.value[columnIndex],
-                            class: [ns.e('td'), column.align && ns.em('td', column.align)],
-                          },
-                          renderCell(record, rowIndex, column),
+                      {
+                        key: getRowKey(record, rowIndex, props.rowKey),
+                        class: [
+                          ns.e('tr'),
+                          selectedRowKeySet.value.has(getRowKey(record, rowIndex, props.rowKey)) &&
+                            ns.em('tr', 'selected'),
+                        ],
+                      },
+                      [
+                        renderSelectionCell(record, rowIndex),
+                        ...props.columns.map((column, columnIndex) =>
+                          h(
+                            'td',
+                            {
+                              key: columnKeys.value[columnIndex],
+                              class: [ns.e('td'), column.align && ns.em('td', column.align)],
+                            },
+                            renderCell(record, rowIndex, column),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   )
                 : renderEmpty(),

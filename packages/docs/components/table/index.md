@@ -87,3 +87,41 @@ const dataSource = [
 ```
 
 :::
+
+## Row Selection
+
+:::demo
+
+```vue
+<template>
+  <c-table :columns="columns" :data-source="dataSource" row-key="id" :row-selection="rowSelection"></c-table>
+</template>
+
+<script setup>
+import { computed, ref } from 'vue'
+
+const selectedRowKeys = ref([2])
+
+const columns = [
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'Role', dataIndex: 'role', key: 'role' },
+  { title: 'Age', dataIndex: 'age', key: 'age', align: 'right' },
+]
+
+const dataSource = [
+  { id: 1, name: 'Alice', role: 'Admin', age: 32 },
+  { id: 2, name: 'Tom', role: 'Member', age: 28 },
+  { id: 3, name: 'Bob', role: 'Member', age: 24, disabled: true },
+]
+
+const rowSelection = computed(() => ({
+  selectedRowKeys: selectedRowKeys.value,
+  getCheckboxProps: (record) => ({ disabled: record.disabled }),
+  onChange: (keys) => {
+    selectedRowKeys.value = keys
+  },
+}))
+</script>
+```
+
+:::

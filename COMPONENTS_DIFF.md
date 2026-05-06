@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-06，根据当前 `packages/ccui/ui` 目录、Form 80% 覆盖版、Table 高频 80% 版、32 个 Form 定向测试、46 个 Table 定向测试和 Grid/Tag Sass warning 修复结果更新。
+> 更新时间：2026-05-06，根据当前 `packages/ccui/ui` 目录、Form 80% 覆盖版、Table 高频 85% 版、32 个 Form 定向测试、52 个 Table 定向测试和 Grid/Tag Sass warning 修复结果更新。
 
 ## 零、交付完整度口径
 
@@ -70,7 +70,7 @@
 | Steps                 | Steps 步骤条            | 导航            | 已完成       |
 | Switch                | Switch 开关             | 数据录入        | 已完成       |
 | Tabs                  | Tabs 标签页             | 导航            | 已完成       |
-| Table                 | Table 表格              | 数据展示        | 80% 高频完成 |
+| Table                 | Table 表格              | 数据展示        | 85% 高频完成 |
 | Tag                   | Tag 标签                | 数据展示        | 已完成       |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
@@ -223,13 +223,29 @@ Form 剩余非完整对齐项：
 
 Table 剩余非完整对齐项：
 
-- 尚未支持固定列、展开行、行选择、合并单元格、树形数据、虚拟滚动、远程数据协议、复杂筛选浮层、完整 ARIA 和横向滚动固定表头。
+- 尚未支持固定列、展开行、合并单元格、树形数据、虚拟滚动、远程数据协议、复杂筛选浮层、完整 ARIA 和横向滚动固定表头。
+
+### Batch 8：Table 行选择增强
+
+已完成 1 项：Table rowSelection。
+
+关键能力：
+
+- Table：新增 `rowSelection` 配置，支持 checkbox / radio 行选择、受控 `selectedRowKeys`、非受控 `defaultSelectedRowKeys`、禁用行、选择列宽度、隐藏全选、选中行样式和 `update:selectedRowKeys`。
+- 事件协议：支持 `rowSelection.onChange`、`onSelect`、`onSelectAll`，回传 selected keys、selected rows 与本次可变更行。
+- 文档：Table 文档补充 Row Selection 示例，覆盖受控选择和禁用行。
+- 测试：Table 定向测试从 46 个扩展到 52 个，新增 checkbox 单行选择、受控选择、radio 单选、全选跳过禁用行、取消全选和分页下保留非当前页选中项。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
 
 ## 四、后续任务规划
 
 ### P0：补齐核心复杂组件
 
-1. Table：在基础版上继续拆固定列、展开行、行选择、合并单元格、树形数据、虚拟滚动和远程数据协议。
+1. Table：在基础版上继续拆固定列、展开行、合并单元格、树形数据、虚拟滚动和远程数据协议。
 2. Form：在 80% 覆盖版上继续补动态 `Form.List`、`Form.Provider`、`preserve`、状态图标、完整 ARIA 和录入组件深度联动。
 3. Select：在基础版上继续补 option group、自定义渲染、远程搜索协议、虚拟列表、popup 定位和 Form 校验状态集成。
 

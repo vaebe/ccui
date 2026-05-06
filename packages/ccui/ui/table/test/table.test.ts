@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Table } from '../index'
 
@@ -29,6 +29,10 @@ const dataSource = [
 
 function rowTexts(wrapper: ReturnType<typeof mount>): string[] {
   return wrapper.findAll('tbody tr').map((row) => row.text())
+}
+
+function asInput(element: Element): HTMLInputElement {
+  return element as HTMLInputElement
 }
 
 describe('table', () => {
@@ -684,5 +688,117 @@ describe('table', () => {
 
     expect(wrapper.find('thead').exists()).toBe(false)
     expect(wrapper.findAll('tbody tr')).toHaveLength(3)
+  })
+
+  it('renders row selection column and selects a checkbox row', async () => {
+    const onChange = vi.fn()
+    const onSelect = vi.fn()
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: { onChange, onSelect },
+      },
+    })
+
+    expect(wrapper.findAll('th')).toHaveLength(4)
+
+    await wrapper.findAll('tbody input[type="checkbox"]')[1].setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['2'])
+    expect(onChange).toHaveBeenCalledWith(['2'], [dataSource[1]])
+    expect(onSelect).toHaveBeenCalledWith(dataSource[1], true, [dataSource[1]])
+    expect(wrapper.findAll('tbody tr')[1].classes()).toContain('ccui-table__tr--selected')
+  })
+
+  it('supports controlled selectedRowKeys and responds to prop changes', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: { selectedRowKeys: ['1'] },
+      },
+    })
+
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[0].element).checked).toBe(true)
+
+    await wrapper.setProps({ rowSelection: { selectedRowKeys: ['3'] } })
+
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[0].element).checked).toBe(false)
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[2].element).checked).toBe(true)
+  })
+
+  it('uses radio row selection as a single selected row', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: { type: 'radio' },
+      },
+    })
+
+    expect(wrapper.find('thead input').exists()).toBe(false)
+
+    await wrapper.findAll('tbody input[type="radio"]')[0].setValue(true)
+    await wrapper.findAll('tbody input[type="radio"]')[2].setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[1][0]).toEqual(['3'])
+    expect(asInput(wrapper.findAll('tbody input[type="radio"]')[0].element).checked).toBe(false)
+    expect(asInput(wrapper.findAll('tbody input[type="radio"]')[2].element).checked).toBe(true)
+  })
+
+  it('selects all enabled display rows from the header checkbox', async () => {
+    const onSelectAll = vi.fn()
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: {
+          onSelectAll,
+          getCheckboxProps: (record: any) => ({ disabled: record.key === '2' }),
+        },
+      },
+    })
+
+    await wrapper.find('thead input[type="checkbox"]').setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['1', '3'])
+    expect(onSelectAll).toHaveBeenCalledWith(true, [dataSource[0], dataSource[2]], [dataSource[0], dataSource[2]])
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[1].element).disabled).toBe(true)
+  })
+
+  it('clears selected display rows from the header checkbox', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: { defaultSelectedRowKeys: ['1', '2', '3'] },
+      },
+    })
+
+    await wrapper.find('thead input[type="checkbox"]').setValue(false)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual([])
+    expect(wrapper.findAll('tbody input[type="checkbox"]').every((input) => !asInput(input.element).checked)).toBe(true)
+  })
+
+  it('keeps selected row keys outside the current page when selecting all visible rows', async () => {
+    const rows = [
+      { key: '1', name: 'Alice', role: 'admin', age: 32 },
+      { key: '2', name: 'Tom', role: 'user', age: 28 },
+      { key: '3', name: 'Bob', role: 'user', age: 24 },
+    ]
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource: rows,
+        pagination: { current: 1, pageSize: 2 },
+        rowSelection: { defaultSelectedRowKeys: ['3'] },
+      },
+    })
+
+    await wrapper.find('thead input[type="checkbox"]').setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['3', '1', '2'])
   })
 })

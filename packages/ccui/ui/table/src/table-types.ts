@@ -5,6 +5,8 @@ export type TableSize = 'small' | 'middle' | 'default'
 export type TableAlign = 'left' | 'center' | 'right'
 export type TableSortOrder = 'ascend' | 'descend' | null
 export type TableFilterValue = string | number | boolean
+export type TableSelectionType = 'checkbox' | 'radio'
+export type TableSelectionKey = string | number
 
 export interface TableFilterOption {
   text: string
@@ -42,6 +44,21 @@ export interface TableSorter {
 
 export type TableFilters = Record<string, TableFilterValue[]>
 
+export interface TableRowSelection {
+  type?: TableSelectionType
+  selectedRowKeys?: TableSelectionKey[]
+  defaultSelectedRowKeys?: TableSelectionKey[]
+  columnWidth?: string | number
+  hideSelectAll?: boolean
+  getCheckboxProps?: (record: any) => {
+    disabled?: boolean
+    name?: string
+  }
+  onChange?: (selectedRowKeys: TableSelectionKey[], selectedRows: any[]) => void
+  onSelect?: (record: any, selected: boolean, selectedRows: any[]) => void
+  onSelectAll?: (selected: boolean, selectedRows: any[], changedRows: any[]) => void
+}
+
 export const tableProps = {
   columns: {
     type: Array as PropType<TableColumn[]>,
@@ -74,6 +91,10 @@ export const tableProps = {
   pagination: {
     type: [Boolean, Object] as PropType<boolean | TablePaginationConfig>,
     default: false,
+  },
+  rowSelection: {
+    type: Object as PropType<TableRowSelection>,
+    default: undefined,
   },
 } as const
 
