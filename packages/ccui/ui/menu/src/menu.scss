@@ -9,13 +9,20 @@
   font-size: $ccui-font-size;
   line-height: $ccui-line-height-base;
   border-inline-end: 1px solid $ccui-color-border;
+  outline: none;
+  user-select: none;
 
   &__item,
   &__submenu-title {
+    position: relative;
     display: flex;
     align-items: center;
+    gap: 10px;
     height: 40px;
     padding: 0 20px;
+    margin: 4px;
+    border-radius: $ccui-border-radius;
+    color: inherit;
     cursor: pointer;
     transition:
       background-color $ccui-motion-duration-mid,
@@ -23,12 +30,33 @@
 
     &:hover {
       color: $ccui-color-primary;
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(22, 119, 255, 0.35);
+      outline-offset: 1px;
     }
   }
 
   &__item--selected {
     color: $ccui-color-primary;
     background-color: rgba(22, 119, 255, 0.1);
+
+    &::after {
+      position: absolute;
+      inset-block: 6px;
+      inset-inline-end: -5px;
+      width: 3px;
+      background-color: $ccui-color-primary;
+      border-radius: 3px 0 0 3px;
+      content: '';
+    }
+  }
+
+  &__item--active,
+  &__submenu-title--active {
+    background-color: rgba(0, 0, 0, 0.04);
   }
 
   &__item--disabled,
@@ -42,9 +70,18 @@
     }
   }
 
+  &__item--danger,
+  &__submenu-title--danger {
+    color: $ccui-color-error;
+
+    &:hover {
+      color: $ccui-color-error;
+      background-color: rgba(255, 77, 79, 0.08);
+    }
+  }
+
   &__icon {
     flex: 0 0 auto;
-    margin-inline-end: 10px;
     font-size: 14px;
   }
 
@@ -55,9 +92,14 @@
     white-space: nowrap;
   }
 
+  &__extra {
+    flex: 0 0 auto;
+    color: $ccui-color-text-secondary;
+    font-size: 12px;
+  }
+
   &__arrow {
     flex: 0 0 auto;
-    margin-inline-start: 8px;
     font-size: 14px;
     color: $ccui-color-text-secondary;
     transition: transform $ccui-motion-duration-mid;
@@ -73,10 +115,33 @@
     list-style: none;
   }
 
+  &__sub--hidden {
+    display: none;
+  }
+
   &__divider {
     height: 1px;
-    margin: 4px 0;
+    margin: 8px 16px;
     background-color: $ccui-color-border;
+  }
+
+  &__group {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__group-title {
+    padding: 8px 20px 4px;
+    color: $ccui-color-text-secondary;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  &__group-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   &--horizontal {
@@ -90,9 +155,35 @@
       border-bottom: 2px solid transparent;
     }
 
+    .#{$cls-prefix}-menu__item,
+    .#{$cls-prefix}-menu__submenu-title {
+      margin-block: 0;
+      border-radius: 0;
+      background-color: transparent;
+    }
+
     .#{$cls-prefix}-menu__item--selected {
       background-color: transparent;
       border-bottom-color: $ccui-color-primary;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    .#{$cls-prefix}-menu__sub {
+      position: absolute;
+      z-index: 1000;
+      min-width: 160px;
+      padding: 4px 0;
+      background-color: $ccui-color-bg-elevated;
+      border: 1px solid $ccui-color-border;
+      border-radius: $ccui-border-radius;
+      box-shadow: $ccui-box-shadow-secondary;
+    }
+
+    .#{$cls-prefix}-menu__submenu {
+      position: relative;
     }
   }
 
@@ -109,6 +200,7 @@
     .#{$cls-prefix}-menu__item:hover,
     .#{$cls-prefix}-menu__submenu-title:hover {
       color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.08);
     }
 
     .#{$cls-prefix}-menu__item--selected {
@@ -123,12 +215,36 @@
     .#{$cls-prefix}-menu__divider {
       background-color: rgba(255, 255, 255, 0.12);
     }
+
+    .#{$cls-prefix}-menu__group-title,
+    .#{$cls-prefix}-menu__extra,
+    .#{$cls-prefix}-menu__arrow {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .#{$cls-prefix}-menu__item--danger,
+    .#{$cls-prefix}-menu__submenu-title--danger {
+      color: #ff7875;
+    }
   }
 
   &--collapsed {
+    width: 80px;
+
+    .#{$cls-prefix}-menu__item,
+    .#{$cls-prefix}-menu__submenu-title {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
     .#{$cls-prefix}-menu__label,
-    .#{$cls-prefix}-menu__arrow {
+    .#{$cls-prefix}-menu__arrow,
+    .#{$cls-prefix}-menu__extra {
       display: none;
     }
+  }
+
+  &--disabled {
+    cursor: not-allowed;
   }
 }
