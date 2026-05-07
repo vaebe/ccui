@@ -30,4 +30,33 @@ describe('result', () => {
     const wrapper = mount(Result, { props: { status: 'success', title: 'ok' } })
     expect(wrapper.find(ns.m('success')).exists()).toBe(true)
   })
+
+  it('renders 403 and 500 default texts', () => {
+    const forbidden = mount(Result, { props: { status: '403' } })
+    const error = mount(Result, { props: { status: '500' } })
+
+    expect(forbidden.find(ns.e('title')).text()).toBe('403')
+    expect(forbidden.find(ns.e('subtitle')).text()).toContain('not authorized')
+    expect(error.find(ns.e('title')).text()).toBe('500')
+    expect(error.find(ns.e('subtitle')).text()).toContain('something went wrong')
+  })
+
+  it('renders custom icon and default content slots', () => {
+    const wrapper = mount(Result, {
+      props: { status: 'info' },
+      slots: {
+        icon: '<span class="custom-icon">i</span>',
+        default: '<div class="content">Details</div>',
+      },
+    })
+
+    expect(wrapper.find('.custom-icon').exists()).toBe(true)
+    expect(wrapper.find(ns.e('content')).text()).toBe('Details')
+  })
+
+  it('does not render title or subtitle when absent', () => {
+    const wrapper = mount(Result, { props: { status: 'info' } })
+    expect(wrapper.find(ns.e('title')).exists()).toBe(false)
+    expect(wrapper.find(ns.e('subtitle')).exists()).toBe(false)
+  })
 })

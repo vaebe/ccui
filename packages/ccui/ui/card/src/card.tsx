@@ -18,7 +18,7 @@ export default defineComponent({
 
     return () => (
       <div class={boxClass}>
-        <div class={ns.e('header')} v-show={isHeader}>
+        <div class={ns.e('header')} v-show={isHeader.value}>
           {(slots.header && slots.header()) || props.header}
         </div>
         <div class={ns.e('body')} style={props.bodyStyle}>

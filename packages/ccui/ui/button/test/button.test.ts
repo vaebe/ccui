@@ -156,4 +156,25 @@ describe('button', () => {
     expect(wrapper.find(ns.e('loading-icon')).text()).toBe('')
     wrapper.unmount()
   })
+
+  it('emits component click event when enabled', async () => {
+    const wrapper = createWrapper()
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')?.length).toBe(1)
+  })
+
+  it('does not emit component click event when disabled or loading', async () => {
+    const disabled = createWrapper({ disabled: true })
+    await disabled.trigger('click')
+    expect(disabled.emitted('click')).toBeUndefined()
+
+    const loading = createWrapper({ loading: true })
+    await loading.trigger('click')
+    expect(loading.emitted('click')).toBeUndefined()
+  })
+
+  it('renders button without default content', () => {
+    const wrapper = mount(Button)
+    expect(wrapper.find(ns.e('content')).exists()).toBe(false)
+  })
 })

@@ -36,4 +36,37 @@ describe('badge', () => {
     const wrapper = mount(Badge, { props: { dot: true }, slots: { default: '<a>link</a>' } })
     expect(wrapper.find(ns.em('sup', 'dot')).exists()).toBe(true)
   })
+
+  it('renders standalone dot and custom color', () => {
+    const wrapper = mount(Badge, { props: { dot: true, color: '#f00' } })
+    expect(wrapper.find(ns.m('dot-standalone')).exists()).toBe(true)
+    expect(wrapper.find(ns.b()).attributes('style')).toContain('background-color: rgb(255, 0, 0)')
+  })
+
+  it('renders status with custom color and no text', () => {
+    const wrapper = mount(Badge, { props: { color: '#00ff00' } })
+    expect(wrapper.find(ns.e('status-dot')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('status-text')).exists()).toBe(false)
+  })
+
+  it('renders string count and offset in wrapped mode', () => {
+    const wrapper = mount(Badge, {
+      props: { count: 'new', offset: [4, 8] },
+      slots: { default: '<button>Inbox</button>' },
+    })
+    const sup = wrapper.find(ns.e('sup'))
+
+    expect(sup.text()).toBe('new')
+    expect(sup.attributes('style')).toContain('translate')
+  })
+
+  it('hides empty count in wrapped mode', () => {
+    const wrapper = mount(Badge, {
+      props: { count: '' },
+      slots: { default: '<button>Inbox</button>' },
+    })
+
+    expect(wrapper.find(ns.e('sup')).exists()).toBe(false)
+    expect(wrapper.text()).toBe('Inbox')
+  })
 })

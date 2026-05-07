@@ -1,5 +1,6 @@
 import { mount, shallowMount } from '@vue/test-utils'
 import { describe, expect, it } from 'vite-plus/test'
+import { h, nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Tab, Tabs } from '../index'
 
@@ -117,5 +118,66 @@ describe('tabs', () => {
 
     // 验证未激活的tab内容是否隐藏
     expect(wrapper.find('.inactive-content').exists()).toBeFalsy()
+  })
+
+  it('emits change and update:modelValue when clicking another tab', async () => {
+    const wrapper = mount(Tabs, {
+      props: {
+        modelValue: 'tab1',
+      },
+      slots: {
+        default: () => [
+          h(Tab, { name: 'tab1', label: 'Tab 1' }, () => h('div', 'Content 1')),
+          h(Tab, { name: 'tab2', label: 'Tab 2' }, () => h('div', 'Content 2')),
+        ],
+      },
+    })
+
+    await nextTick()
+    const navItems = wrapper.findAll('p')
+    await navItems[1].trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab2'])
+    expect(wrapper.emitted('change')?.[0]).toEqual(['tab2'])
+  })
+
+  it('does not emit when clicking active tab', async () => {
+    const wrapper = mount(Tabs, {
+      props: {
+        modelValue: 'tab1',
+      },
+      slots: {
+        default: () => h(Tab, { name: 'tab1', label: 'Tab 1' }, () => h('div', 'Content 1')),
+      },
+    })
+
+    await nextTick()
+    await wrapper.find('p').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  it('renders card and left nav classes plus title slot', async () => {
+    const wrapper = mount(Tabs, {
+      props: {
+        modelValue: 'tab1',
+        type: 'card',
+        tabPosition: 'left',
+      },
+      slots: {
+        default: () =>
+          h(
+            Tab,
+            { name: 'tab1' },
+            {
+              title: () => h('span', { class: 'title-slot' }, 'Custom'),
+              default: () => h('div', 'Content'),
+            },
+          ),
+      },
+    })
+
+    await nextTick()
+    expect(wrapper.find('.ccui-tabs-nav-card--left').exists()).toBe(true)
+    expect(wrapper.find('.title-slot').text()).toBe('Custom')
   })
 })

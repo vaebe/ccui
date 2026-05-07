@@ -109,4 +109,25 @@ describe('card', () => {
     expect(wrapper.find(ns.e('header')).exists()).toBeTruthy()
     expect(wrapper.find(ns.e('header')).text()).toBe('Header Slot')
   })
+
+  it('keeps header hidden when no header content exists', () => {
+    const wrapper = mount(Card)
+    const header = wrapper.find(ns.e('header'))
+
+    expect(header.exists()).toBe(true)
+    expect(header.isVisible()).toBe(false)
+  })
+
+  it('prefers header slot over header prop', () => {
+    const wrapper = mount(Card, {
+      props: {
+        header: 'Prop Header',
+      },
+      slots: {
+        header: '<span>Slot Header</span>',
+      },
+    })
+
+    expect(wrapper.find(ns.e('header')).text()).toBe('Slot Header')
+  })
 })

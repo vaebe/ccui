@@ -1,6 +1,6 @@
 import type { CSSProperties, VNode } from 'vue'
 import type { SpaceProps } from './space-types'
-import { computed, defineComponent, Fragment } from 'vue'
+import { Comment, computed, defineComponent, Fragment } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { resolveSize, spaceProps } from './space-types'
 import './space.scss'
