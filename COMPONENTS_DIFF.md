@@ -243,6 +243,17 @@ Table 剩余非完整对齐项：
 
 ## 四、后续任务规划
 
+### 测试覆盖率后续原则
+
+当前覆盖率基线为 Statements `93.76%`、Branches `84.26%`、Functions `94.10%`、Lines `94.08%`。后续不建议为了数字硬追 `95%`；应优先补能证明真实用户行为、Vue 状态协议、事件协议和副作用清理的测试。
+
+建议新任务从以下方向继续：
+
+1. 审查新增测试质量，移除或改写过度依赖 DOM 细节、Transition 时序、内部实现变量的低价值断言。
+2. 补高价值剩余缺口：`statistic/countdown`、`collapse-item`、`slider/use-slider`、`float-button/back-top`、`popover/tooltip`。
+3. 清理 coverage 输出噪声：Vitest/coverage mixed versions 提示，以及 jsdom `window.scrollTo` not implemented 噪声。
+4. 每次推进后重新记录覆盖率基线，并明确说明覆盖率目标服从真实行为测试质量。
+
 ### P0：补齐核心复杂组件
 
 1. Table：在基础版上继续拆固定列、展开行、合并单元格、树形数据、虚拟滚动和远程数据协议。

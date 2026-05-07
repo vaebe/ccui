@@ -119,4 +119,21 @@ describe('backTop', () => {
     await wrapper.find(ns.b()).trigger('click')
     expect(target.scrollTop).toBe(0)
   })
+
+  it('uses window as the default target when scroll APIs are mocked', async () => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation(rafNow)
+    const scrollToSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    vi.spyOn(window, 'scrollY', 'get').mockReturnValue(160)
+
+    const wrapper = mount(BackTop, {
+      props: { visibilityHeight: 100, duration: 0 },
+      attachTo: document.body,
+    })
+    window.dispatchEvent(new Event('scroll'))
+    await nextTick()
+
+    expect(wrapper.find(ns.b()).exists()).toBe(true)
+    await wrapper.find(ns.b()).trigger('click')
+    expect(scrollToSpy).toHaveBeenCalledWith(0, 0)
+  })
 })

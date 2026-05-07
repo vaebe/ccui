@@ -1,5 +1,5 @@
 import type { StatisticCountdownProps } from './statistic-types'
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { statisticCountdownProps } from './statistic-types'
 import './statistic.scss'
@@ -49,31 +49,41 @@ export default defineComponent({
     const diff = computed(() => Math.max(0, targetTs.value - now.value))
     const display = computed(() => formatDuration(diff.value, props.format))
 
+    const stopTimer = () => {
+      if (timer !== null) {
+        clearInterval(timer)
+        timer = null
+      }
+    }
+
     const tick = () => {
       now.value = Date.now()
       const remaining = targetTs.value - now.value
       emit('change', remaining)
       if (remaining <= 0) {
-        if (timer !== null) {
-          clearInterval(timer)
-          timer = null
-        }
+        stopTimer()
         emit('finish')
       }
     }
 
-    onMounted(() => {
+    const startTimer = () => {
+      stopTimer()
       now.value = Date.now()
       if (targetTs.value > now.value) {
         timer = window.setInterval(tick, 1000 / 30)
       }
+    }
+
+    onMounted(() => {
+      startTimer()
+    })
+
+    watch(targetTs, () => {
+      startTimer()
     })
 
     onBeforeUnmount(() => {
-      if (timer !== null) {
-        clearInterval(timer)
-        timer = null
-      }
+      stopTimer()
     })
 
     return () => (

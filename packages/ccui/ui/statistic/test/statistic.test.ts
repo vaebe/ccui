@@ -116,4 +116,50 @@ describe('statistic countdown', () => {
     expect(wrapper.find('.count-prefix').text()).toBe('T-')
     expect(wrapper.find('.count-suffix').text()).toBe('done')
   })
+
+  it('formats date values and invalid date strings safely', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+    const dateWrapper = mount(StatisticCountdown, {
+      props: {
+        value: new Date('2026-01-02T01:02:03.004Z'),
+        format: 'DD HH mm ss SSS',
+      },
+    })
+    expect(dateWrapper.find(ns.e('value')).text()).toBe('01 01 02 03 004')
+
+    const invalidWrapper = mount(StatisticCountdown, {
+      props: {
+        value: 'not a date',
+        format: 'D H m s SSS',
+      },
+    })
+    expect(invalidWrapper.find(ns.e('value')).text()).toBe('0 0 0 0 000')
+  })
+
+  it('restarts when value changes from past to future and clears timer on unmount', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+    const clearIntervalSpy = vi.spyOn(window, 'clearInterval')
+
+    const wrapper = mount(StatisticCountdown, {
+      props: {
+        value: Date.now() - 1000,
+        format: 'ss SSS',
+      },
+    })
+    expect(wrapper.find(ns.e('value')).text()).toBe('00 000')
+
+    await wrapper.setProps({ value: Date.now() + 2000 })
+    expect(wrapper.find(ns.e('value')).text()).toBe('02 000')
+
+    await vi.advanceTimersByTimeAsync(1100)
+    await nextTick()
+    expect(wrapper.emitted('change')?.length).toBeGreaterThan(0)
+    expect(wrapper.find(ns.e('value')).text()).toBe('00 900')
+
+    wrapper.unmount()
+    expect(clearIntervalSpy).toHaveBeenCalled()
+  })
 })

@@ -51,6 +51,21 @@ describe('collapse', () => {
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
 
+  it('exposes aria state and keeps disabled headers out of keyboard flow', async () => {
+    const wrapper = makeWrapper({ modelValue: ['1'] })
+    const headers = wrapper.findAll(ns.e('header'))
+
+    expect(headers[0].attributes('role')).toBe('tab')
+    expect(headers[0].attributes('aria-expanded')).toBe('true')
+    expect(headers[0].attributes('tabindex')).toBe('0')
+    expect(headers[1].attributes('aria-expanded')).toBe('false')
+    expect(headers[2].attributes('tabindex')).toBe('-1')
+
+    await headers[2].trigger('keydown', { key: 'Enter' })
+    await headers[2].trigger('keydown', { key: ' ' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
   it('emits change when toggling an active item closed', async () => {
     const wrapper = makeWrapper({ modelValue: ['1', '2'] })
     await wrapper.findAll(ns.e('header'))[0].trigger('click')
