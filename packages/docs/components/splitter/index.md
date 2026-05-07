@@ -60,10 +60,10 @@
 
 ## SplitterPanel 参数
 
-| 参数        | 类型            | 默认值 | 说明       |
-| ----------- | --------------- | ------ | ---------- |
-| size        | number / string | --     | 受控尺寸   |
-| defaultSize | number / string | --     | 初始尺寸   |
-| min         | number / string | 0      | 最小尺寸   |
-| max         | number / string | --     | 最大尺寸   |
-| resizable   | boolean         | true   | 是否可拖拽 |
+| 参数        | 类型            | 默认值 | 说明                 |
+| ----------- | --------------- | ------ | -------------------- |
+| size        | number / string | --     | 由外部状态接管的尺寸 |
+| defaultSize | number / string | --     | 初始尺寸             |
+| min         | number / string | 0      | 最小尺寸             |
+| max         | number / string | --     | 最大尺寸             |
+| resizable   | boolean         | true   | 是否可拖拽           |

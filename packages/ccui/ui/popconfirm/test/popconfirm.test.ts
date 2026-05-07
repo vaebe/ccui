@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Popconfirm } from '../index'
 
@@ -90,5 +90,73 @@ describe('popconfirm', () => {
     expect(document.body.querySelector('.slot-title')?.textContent).toBe('Custom Title')
     expect(document.body.innerHTML).not.toContain('fallback')
     wrapper.unmount()
+  })
+
+  it('renders description and actions slots', async () => {
+    const wrapper = mount(Popconfirm, {
+      props: { title: 'fallback', visible: true },
+      slots: {
+        default: '<button>Trigger</button>',
+        description: '<span class="slot-desc">Slot description</span>',
+        actions: ({ confirm, cancel }: any) => [
+          h('button', { class: 'slot-confirm', onClick: confirm }, 'Yes'),
+          h('button', { class: 'slot-cancel', onClick: cancel }, 'No'),
+        ],
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    expect(document.body.querySelector('.slot-desc')?.textContent).toBe('Slot description')
+    ;(document.body.querySelector('.slot-confirm') as HTMLElement).click()
+    expect(wrapper.emitted('confirm')).toBeTruthy()
+    expect(wrapper.emitted('update:visible')?.[0]).toEqual([false])
+
+    ;(document.body.querySelector('.slot-cancel') as HTMLElement).click()
+    expect(wrapper.emitted('cancel')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('renders custom icon color width and placement', async () => {
+    const wrapper = makeWrapper({
+      icon: 'icon-alert',
+      iconColor: 'rgb(255, 0, 0)',
+      width: '220px',
+      placement: 'bottom',
+    })
+    await nextTick()
+
+    const icon = document.body.querySelector(ns.e('icon')) as HTMLElement
+    const popper = document.body.querySelector('.ccui-popover__popper') as HTMLElement
+    expect(document.body.querySelector('.icon-alert')).not.toBeNull()
+    expect(icon.style.color).toBe('rgb(255, 0, 0)')
+    expect(popper.style.width).toBe('220px')
+    expect(popper.className).toContain('ccui-popover__popper--bottom')
+    wrapper.unmount()
+  })
+
+  it('opens from internal state in click mode and respects disabled state', async () => {
+    const wrapper = mount(Popconfirm, {
+      props: { title: 'Open me', visible: undefined },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+
+    expect(document.body.innerHTML).toContain('Open me')
+    expect(wrapper.emitted('update:visible')?.[0]).toEqual([true])
+    wrapper.unmount()
+
+    const disabled = mount(Popconfirm, {
+      props: { title: 'Disabled', disabled: true, visible: undefined },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+    await disabled.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    expect(document.body.innerHTML).not.toContain('Disabled')
+    disabled.unmount()
   })
 })

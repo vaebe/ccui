@@ -226,7 +226,7 @@ export default defineComponent({
 
 :::
 
-## 受控显示
+## v-model 显隐控制
 
 通过 `v-model` 或 `visible` 属性手动控制弹出框的显示状态。
 
@@ -251,7 +251,7 @@ export default defineComponent({
 
 <template>
   <div class="demo-popover-manual">
-    <c-popover v-model:visible="visible" title="受控" content="通过 v-model 控制显隐" trigger="manual">
+    <c-popover v-model:visible="visible" title="v-model" content="通过 v-model 接管显隐状态" trigger="manual">
       <c-button type="primary" plain @click="toggle">
         {{ visible ? '隐藏' : '显示' }}
       </c-button>
@@ -470,6 +470,14 @@ export default defineComponent({
 ```
 
 :::
+
+## Vue 状态语义
+
+Popover 的显隐状态说明以 Vue API 为准：
+
+- 需要业务状态接管时，使用 `v-model:visible` 或监听 `update:visible`。
+- 由触发方式自行管理显隐时，使用 `trigger="click"`、`trigger="hover"`、`trigger="focus"` 等内部状态路径。
+- 文档中避免使用 React 语境的 controlled / uncontrolled 作为主要说明。
 
 ## API
 

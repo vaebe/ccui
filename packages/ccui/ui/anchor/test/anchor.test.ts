@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Anchor } from '../index'
@@ -7,6 +7,7 @@ import { Anchor } from '../index'
 const ns = useNamespace('anchor', true)
 
 afterEach(() => {
+  vi.restoreAllMocks()
   document.body.innerHTML = ''
 })
 
@@ -40,6 +41,7 @@ describe('anchor', () => {
   })
 
   it('emits click on link click', async () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     document.body.innerHTML = '<div id="x" style="height: 100px;"></div>'
     const wrapper = mount(Anchor, {
       props: { items: [{ href: '#x', title: 'X' }] },
@@ -96,5 +98,79 @@ describe('anchor', () => {
     // initial onScroll runs in onMounted; should emit change at least once with the first matched href
     const events = wrapper.emitted('change') ?? []
     expect(events.length).toBeGreaterThan(0)
+  })
+
+  it('scrolls an element container using targetOffset and updates active link', async () => {
+    const container = document.createElement('div')
+    container.id = 'scroll-box'
+    container.scrollTop = 20
+    const target = document.createElement('div')
+    target.id = 'inside'
+    document.body.append(container)
+    container.append(target)
+    const scrollTo = vi.fn()
+    Object.defineProperty(container, 'scrollTo', { value: scrollTo, configurable: true })
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+      top: 10,
+      bottom: 310,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 300,
+      x: 0,
+      y: 10,
+      toJSON: () => ({}),
+    })
+    vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({
+      top: 80,
+      bottom: 100,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 20,
+      x: 0,
+      y: 80,
+      toJSON: () => ({}),
+    })
+
+    const wrapper = mount(Anchor, {
+      props: {
+        scrollContainer: '#scroll-box',
+        targetOffset: 12,
+        items: [{ href: '#inside', title: 'Inside' }],
+      },
+    })
+    await nextTick()
+
+    await wrapper.find('a').trigger('click')
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 78, behavior: 'smooth' })
+    expect(wrapper.find(ns.em('link-title', 'active')).exists()).toBe(true)
+  })
+
+  it('updates active link when items prop changes', async () => {
+    const section = document.createElement('div')
+    section.id = 'new-section'
+    document.body.append(section)
+    vi.spyOn(section, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 20,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 20,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    })
+    const wrapper = mount(Anchor, {
+      props: { items: [] },
+    })
+
+    await wrapper.setProps({ items: [{ href: '#new-section', title: 'New' }] })
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.emitted('change')?.at(-1)?.[0]).toBe('#new-section')
   })
 })

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Dropdown } from '../index'
@@ -7,6 +7,7 @@ import { Dropdown } from '../index'
 const ns = useNamespace('dropdown', true)
 
 afterEach(() => {
+  vi.restoreAllMocks()
   document.body.innerHTML = ''
 })
 
@@ -150,6 +151,82 @@ describe('dropdown', () => {
     expect(document.body.querySelector('.custom-menu-item')).not.toBeNull()
     // built-in items should NOT render when menu slot is provided
     expect(document.body.querySelector(ns.e('item'))).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('opens and closes from internal state in click mode', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        trigger: 'click',
+        items: [{ key: '1', label: 'A' }],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    expect(document.body.querySelector(ns.e('item'))).not.toBeNull()
+    expect(wrapper.emitted('update:visible')?.[0]?.[0]).toBe(true)
+
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    expect(wrapper.emitted('update:visible')?.[1]?.[0]).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('does not open when disabled', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        trigger: 'click',
+        disabled: true,
+        items: [{ key: '1', label: 'A' }],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector(ns.e('item'))).toBeNull()
+    expect(wrapper.emitted('update:visible')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('passes placement and width through to popover content', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        visible: true,
+        placement: 'top-start',
+        width: '180px',
+        items: [{ key: '1', label: 'A' }],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    const popper = document.body.querySelector('.ccui-popover__popper') as HTMLElement
+    expect(popper.className).toContain('ccui-popover__popper--top')
+    expect(popper.style.width).toBe('180px')
+    wrapper.unmount()
+  })
+
+  it('updates visible state from v-model prop changes', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        visible: false,
+        items: [{ key: '1', label: 'A' }],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    expect(document.body.querySelector(ns.e('item'))).toBeNull()
+    await wrapper.setProps({ visible: true })
+    await nextTick()
+    expect(document.body.querySelector(ns.e('item'))).not.toBeNull()
     wrapper.unmount()
   })
 })

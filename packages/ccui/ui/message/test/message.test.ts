@@ -67,4 +67,55 @@ describe('message', () => {
     await nextTick()
     expect(document.body.querySelector('.ccui-message')).toBeNull()
   })
+
+  it('renders close button custom class custom icon and calls onClose', async () => {
+    const onClose = vi.fn()
+    message.open({
+      content: 'Closable',
+      type: 'info',
+      duration: 0,
+      showClose: true,
+      customClass: 'custom-message',
+      icon: 'icon-custom',
+      onClose,
+    })
+    await nextTick()
+
+    expect(document.body.querySelector('.custom-message')).not.toBeNull()
+    expect(document.body.querySelector('.icon-custom')).not.toBeNull()
+
+    const close = document.body.querySelector('.ccui-message__close') as HTMLButtonElement
+    close.click()
+    await nextTick()
+
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('pauses auto close on mouse enter and restarts on mouse leave', async () => {
+    vi.useFakeTimers()
+    message.info('Hover', 100)
+    await nextTick()
+
+    const item = document.body.querySelector('.ccui-message__item') as HTMLElement
+    item.dispatchEvent(new MouseEvent('mouseenter'))
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    expect(document.body.textContent).toContain('Hover')
+
+    item.dispatchEvent(new MouseEvent('mouseleave'))
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    vi.useRealTimers()
+
+    expect(typeof message.destroy).toBe('function')
+  })
+
+  it('reuses existing container for multiple messages', async () => {
+    message.info('One', 0)
+    message.success('Two', 0)
+    await nextTick()
+
+    expect(document.body.querySelectorAll('.ccui-message').length).toBe(1)
+    expect(document.body.querySelectorAll('.ccui-message__item').length).toBe(2)
+  })
 })

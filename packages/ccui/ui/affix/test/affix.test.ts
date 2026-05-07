@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Affix } from '../index'
 
@@ -63,5 +64,80 @@ describe('affix', () => {
     // resize + scroll listeners should be removed
     expect(removeSpy).toHaveBeenCalled()
     removeSpy.mockRestore()
+  })
+
+  it('becomes fixed in top mode and emits change', async () => {
+    const wrapper = mount(Affix, {
+      props: { offsetTop: 10, zIndex: 99 },
+      slots: { default: '<span>Fixed</span>' },
+    })
+    const root = wrapper.find(ns.b()).element as HTMLElement
+    vi.spyOn(root, 'getBoundingClientRect').mockReturnValue({
+      top: 5,
+      bottom: 25,
+      height: 20,
+      width: 120,
+      left: 30,
+      right: 150,
+      x: 30,
+      y: 5,
+      toJSON: () => ({}),
+    })
+
+    window.dispatchEvent(new Event('scroll'))
+    await nextTick()
+
+    const inner = wrapper.find(ns.e('inner'))
+    expect(inner.classes()).toContain(ns.em('inner', 'fixed').slice(1))
+    expect(inner.attributes('style')).toContain('position: fixed')
+    expect(inner.attributes('style')).toContain('top: 10px')
+    expect(inner.attributes('style')).toContain('z-index: 99')
+    expect(wrapper.emitted('change')?.[0]).toEqual([true])
+  })
+
+  it('becomes fixed in bottom mode', async () => {
+    const wrapper = mount(Affix, {
+      props: { offsetBottom: 10 },
+      slots: { default: '<span>Bottom</span>' },
+    })
+    const root = wrapper.find(ns.b()).element as HTMLElement
+    vi.spyOn(root, 'getBoundingClientRect').mockReturnValue({
+      top: 760,
+      bottom: 770,
+      height: 10,
+      width: 80,
+      left: 0,
+      right: 80,
+      x: 0,
+      y: 760,
+      toJSON: () => ({}),
+    })
+
+    window.dispatchEvent(new Event('scroll'))
+    await nextTick()
+
+    expect(wrapper.find(ns.e('inner')).attributes('style')).toContain('bottom: 10px')
+  })
+
+  it('uses element target and updates when target prop changes', async () => {
+    const first = document.createElement('div')
+    const second = document.createElement('div')
+    document.body.append(first, second)
+    const firstAdd = vi.spyOn(first, 'addEventListener')
+    const firstRemove = vi.spyOn(first, 'removeEventListener')
+    const secondAdd = vi.spyOn(second, 'addEventListener')
+
+    const wrapper = mount(Affix, {
+      props: { target: first },
+      slots: { default: '<span>X</span>' },
+    })
+    await nextTick()
+    expect(firstAdd).toHaveBeenCalledWith('scroll', expect.any(Function), { passive: true })
+
+    await wrapper.setProps({ target: second })
+    await nextTick()
+
+    expect(firstRemove).toHaveBeenCalledWith('scroll', expect.any(Function))
+    expect(secondAdd).toHaveBeenCalledWith('scroll', expect.any(Function), { passive: true })
   })
 })

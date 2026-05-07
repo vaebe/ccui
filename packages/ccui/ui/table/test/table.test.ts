@@ -208,7 +208,7 @@ describe('table', () => {
     expect(rowTexts(wrapper)[0]).toContain('Alice')
   })
 
-  it('uses controlled sortOrder from columns', () => {
+  it('uses externally provided sortOrder from columns', () => {
     const wrapper = mount(Table, {
       props: {
         columns: [
@@ -223,7 +223,7 @@ describe('table', () => {
     expect(wrapper.find(ns.em('th', 'descend')).exists()).toBe(true)
   })
 
-  it('responds to controlled sortOrder prop changes', async () => {
+  it('responds to externally provided sortOrder prop changes', async () => {
     const wrapper = mount(Table, {
       props: {
         columns: [{ title: 'Name', dataIndex: 'name', key: 'name', sorter: true }],
@@ -387,7 +387,7 @@ describe('table', () => {
     expect(rowTexts(wrapper)).toEqual(['user24'])
   })
 
-  it('uses controlled filteredValue from columns', () => {
+  it('uses externally provided filteredValue from columns', () => {
     const wrapper = mount(Table, {
       props: {
         columns: [
@@ -402,7 +402,7 @@ describe('table', () => {
     expect(wrapper.text()).toContain('Alice')
   })
 
-  it('responds to controlled filteredValue prop changes', async () => {
+  it('responds to externally provided filteredValue prop changes', async () => {
     const wrapper = mount(Table, {
       props: {
         columns: [
@@ -574,7 +574,7 @@ describe('table', () => {
     expect(wrapper.emitted('update:pagination')?.[0][0]).toMatchObject({ current: 1, pageSize: 4, total: 8 })
   })
 
-  it('responds to controlled pagination prop changes', async () => {
+  it('responds to externally provided pagination prop changes', async () => {
     const wrapper = mount(Table, {
       props: { columns, dataSource, pagination: { current: 1, pageSize: 2 } },
     })
@@ -585,7 +585,7 @@ describe('table', () => {
     expect(rowTexts(wrapper)[0]).toContain('Bob')
   })
 
-  it('responds to controlled pageSize prop changes', async () => {
+  it('responds to externally provided pageSize prop changes', async () => {
     const rows = Array.from({ length: 6 }, (_, index) => ({
       key: index,
       name: `Row ${index}`,
@@ -711,7 +711,7 @@ describe('table', () => {
     expect(wrapper.findAll('tbody tr')[1].classes()).toContain('ccui-table__tr--selected')
   })
 
-  it('supports controlled selectedRowKeys and responds to prop changes', async () => {
+  it('supports externally provided selectedRowKeys and responds to prop changes', async () => {
     const wrapper = mount(Table, {
       props: {
         columns,

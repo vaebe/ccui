@@ -71,15 +71,15 @@ export default defineComponent({
 
 ## Sider 参数
 
-| 参数             | 类型             | 默认值 | 说明                 |
-| ---------------- | ---------------- | ------ | -------------------- |
-| width            | number / string  | 200    | 宽度                 |
-| collapsedWidth   | number / string  | 80     | 折叠后的宽度         |
-| collapsed        | boolean          | --     | 当前折叠状态（受控） |
-| defaultCollapsed | boolean          | false  | 初始折叠状态         |
-| collapsible      | boolean          | false  | 是否可折叠           |
-| reverseArrow     | boolean          | false  | 反转箭头方向         |
-| theme            | 'light' / 'dark' | 'dark' | 主题色               |
+| 参数             | 类型             | 默认值 | 说明                                   |
+| ---------------- | ---------------- | ------ | -------------------------------------- |
+| width            | number / string  | 200    | 宽度                                   |
+| collapsedWidth   | number / string  | 80     | 折叠后的宽度                           |
+| collapsed        | boolean          | --     | 当前折叠状态，支持 `v-model:collapsed` |
+| defaultCollapsed | boolean          | false  | 初始折叠状态                           |
+| collapsible      | boolean          | false  | 是否可折叠                             |
+| reverseArrow     | boolean          | false  | 反转箭头方向                           |
+| theme            | 'light' / 'dark' | 'dark' | 主题色                                 |
 
 ## Sider 事件
 

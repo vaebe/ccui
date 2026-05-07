@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Menu } from '../index'
 
@@ -115,5 +116,150 @@ describe('menu', () => {
 
     await wrapper.find(ns.b()).trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('select')?.[0][0]).toMatchObject({ key: '1' })
+  })
+
+  it('applies mode theme collapsed disabled and multiple modifiers', () => {
+    const wrapper = mount(Menu, {
+      props: {
+        items,
+        mode: 'horizontal',
+        theme: 'dark',
+        collapsed: true,
+        disabled: true,
+        multiple: true,
+      },
+    })
+
+    expect(wrapper.find(ns.m('horizontal')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('dark')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('collapsed')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('disabled')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('multiple')).exists()).toBe(true)
+    expect(wrapper.find(ns.b()).attributes('aria-orientation')).toBe('horizontal')
+    expect(wrapper.find(ns.b()).attributes('tabindex')).toBeUndefined()
+  })
+
+  it('does not select or open when menu is disabled', async () => {
+    const wrapper = mount(Menu, {
+      props: { items, disabled: true },
+    })
+
+    await wrapper.findAll(ns.e('item'))[0].trigger('click')
+    await wrapper.find(ns.e('submenu-title')).trigger('click')
+
+    expect(wrapper.emitted('select')).toBeUndefined()
+    expect(wrapper.emitted('open-change')).toBeUndefined()
+  })
+
+  it('updates selected and open states from v-model prop changes', async () => {
+    const wrapper = mount(Menu, {
+      props: { items, selectedKeys: [], openKeys: [] },
+    })
+
+    expect(wrapper.find(ns.e('sub')).exists()).toBe(false)
+    await wrapper.setProps({ selectedKeys: ['3'], openKeys: ['2'] })
+    await nextTick()
+
+    expect(wrapper.find(ns.e('sub')).exists()).toBe(true)
+    expect(wrapper.findAll(ns.em('item', 'selected')).length).toBe(1)
+    expect(wrapper.find(ns.em('item', 'selected')).text()).toContain('About')
+  })
+
+  it('uses inlineCollapsed over collapsed and hides inline submenu content', () => {
+    const wrapper = mount(Menu, {
+      props: { items, mode: 'inline', collapsed: false, inlineCollapsed: true, defaultOpenKeys: ['2'] },
+    })
+
+    expect(wrapper.find(ns.m('collapsed')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('sub')).exists()).toBe(false)
+  })
+
+  it('force renders hidden submenu content', () => {
+    const wrapper = mount(Menu, {
+      props: { items, forceSubMenuRender: true },
+    })
+
+    expect(wrapper.find(ns.e('sub')).exists()).toBe(true)
+    expect(wrapper.find(ns.em('sub', 'hidden')).exists()).toBe(true)
+  })
+
+  it('closes hover submenu on mouse leave in non-inline mode', async () => {
+    const wrapper = mount(Menu, {
+      props: { items, mode: 'vertical', triggerSubMenuAction: 'hover', defaultOpenKeys: ['2'] },
+    })
+
+    await wrapper.find(ns.e('submenu')).trigger('mouseleave')
+
+    expect(wrapper.emitted('open-change')?.[0]?.[0]).toEqual([])
+    expect(wrapper.emitted('open-change')?.[0]?.[1]).toMatchObject({ key: '2', open: false, openKeys: [] })
+  })
+
+  it('keeps hover submenu open on mouse leave in inline mode', async () => {
+    const wrapper = mount(Menu, {
+      props: { items, mode: 'inline', triggerSubMenuAction: 'hover', defaultOpenKeys: ['2'] },
+    })
+
+    await wrapper.find(ns.e('submenu')).trigger('mouseleave')
+
+    expect(wrapper.emitted('open-change')).toBeUndefined()
+  })
+
+  it('supports accordion submenu opening among siblings', async () => {
+    const accordionItems = [
+      { key: 'a', label: 'A', children: [{ key: 'a-1', label: 'A1' }] },
+      { key: 'b', label: 'B', children: [{ key: 'b-1', label: 'B1' }] },
+    ]
+    const wrapper = mount(Menu, {
+      props: { items: accordionItems, accordion: true, defaultOpenKeys: ['a'] },
+    })
+
+    await wrapper.findAll(ns.e('submenu-title'))[1].trigger('click')
+
+    expect(wrapper.emitted('open-change')?.[0]?.[0]).toEqual(['b'])
+  })
+
+  it('moves active item with keyboard arrows and selects focused item', async () => {
+    const wrapper = mount(Menu, { props: { items } })
+
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'ArrowDown' })
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('select')?.[0][0]).toMatchObject({ key: '3', keyPath: ['3'] })
+  })
+
+  it('opens and closes submenu from keyboard arrows', async () => {
+    const wrapper = mount(Menu, { props: { items } })
+
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'ArrowDown' })
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('open-change')?.[0]?.[0]).toEqual(['2'])
+
+    await wrapper.find(ns.b()).trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('open-change')?.[1]?.[0]).toEqual([])
+  })
+
+  it('renders icon title and inline indent style', () => {
+    const wrapper = mount(Menu, {
+      props: {
+        mode: 'inline',
+        inlineIndent: 32,
+        items: [{ key: 'with-icon', label: 'With icon', title: 'Custom title', icon: 'icon-home' }],
+      },
+    })
+
+    const item = wrapper.find(ns.e('item'))
+    expect(wrapper.find('.icon-home').exists()).toBe(true)
+    expect(item.attributes('title')).toBe('Custom title')
+    expect(item.attributes('style')).toContain('padding-inline-start: 32px')
+  })
+
+  it('renders default slot when items are empty', () => {
+    const wrapper = mount(Menu, {
+      slots: { default: '<li class="slot-item">Slot item</li>' },
+    })
+
+    expect(wrapper.find('.slot-item').text()).toBe('Slot item')
   })
 })

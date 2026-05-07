@@ -181,4 +181,87 @@ describe('inputNumber', () => {
     expect(typeof vm.increase).toBe('function')
     expect(typeof vm.decrease).toBe('function')
   })
+
+  it('should reject invalid input by regexp string', async () => {
+    const wrapper = createWrapper({ modelValue: 12, reg: '^\\d*$' })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('abc')
+    await input.trigger('input')
+
+    expect((input.element as HTMLInputElement).value).toBe('12')
+  })
+
+  it('should reject invalid input by regexp object', async () => {
+    const wrapper = createWrapper({ modelValue: 3, reg: /^\d+$/ })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('3.5')
+    await input.trigger('input')
+
+    expect((input.element as HTMLInputElement).value).toBe('3')
+  })
+
+  it('should restore empty input when allowEmpty is false', async () => {
+    const wrapper = createWrapper({ modelValue: 5 })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('')
+    await input.trigger('input')
+    expect((input.element as HTMLInputElement).value).toBe('5')
+  })
+
+  it('should ignore keyboard changes when readonly', async () => {
+    const wrapper = createWrapper({ modelValue: 5, readonly: true })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.trigger('keydown', { key: 'ArrowUp' })
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('should render input attributes and glow focus state', async () => {
+    const wrapper = createWrapper({
+      modelValue: 2,
+      min: 1,
+      max: 9,
+      step: 0.5,
+      placeholder: 'Amount',
+      showGlowStyle: true,
+    })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    expect(input.attributes('placeholder')).toBe('Amount')
+    expect(input.attributes('min')).toBe('1')
+    expect(input.attributes('max')).toBe('9')
+    expect(input.attributes('step')).toBe('0.5')
+
+    await input.trigger('focus')
+    expect(wrapper.classes()).toContain('ccui-input-number--glow')
+  })
+
+  it('should omit glow class when showGlowStyle is false', async () => {
+    const wrapper = createWrapper({ showGlowStyle: false })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.trigger('focus')
+
+    expect(wrapper.classes()).toContain('ccui-input-number--focused')
+    expect(wrapper.classes()).not.toContain('ccui-input-number--glow')
+  })
+
+  it('should update from exposed methods', async () => {
+    const wrapper = createWrapper({ modelValue: 1 })
+    const vm = wrapper.vm as any
+
+    vm.setValue(4)
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([4])
+    expect(vm.getValue()).toBe(4)
+
+    vm.increase()
+    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([5])
+
+    vm.decrease()
+    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([4])
+  })
 })

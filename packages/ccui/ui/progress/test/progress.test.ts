@@ -34,4 +34,64 @@ describe('progress', () => {
     const wrapper = mount(Progress, { props: { percent: 50, status: 'exception' } })
     expect(wrapper.find(ns.m('status-exception')).exists()).toBe(true)
   })
+
+  it('renders success icon automatically at 100 percent', () => {
+    const wrapper = mount(Progress, { props: { percent: 100 } })
+    expect(wrapper.find(ns.m('status-success')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('status-icon')).exists()).toBe(true)
+  })
+
+  it('clamps NaN and negative percent to zero', () => {
+    const wrapper = mount(Progress, {
+      props: { percent: Number.NaN, format: (p: number) => `value:${p}` },
+    })
+    expect(wrapper.text()).toContain('value:0')
+
+    const negative = mount(Progress, {
+      props: { percent: -10, format: (p: number) => `value:${p}` },
+    })
+    expect(negative.text()).toContain('value:0')
+  })
+
+  it('applies small size stroke colors and custom stroke width on line progress', () => {
+    const wrapper = mount(Progress, {
+      props: {
+        percent: 40,
+        size: 'small',
+        strokeColor: 'red',
+        trailColor: 'blue',
+        strokeWidth: 12,
+      },
+    })
+    const inner = wrapper.find(ns.e('inner'))
+    const bg = wrapper.find(ns.e('bg'))
+
+    expect(wrapper.find(ns.m('small')).exists()).toBe(true)
+    expect(inner.attributes('style')).toContain('height: 12px')
+    expect(inner.attributes('style')).toContain('background-color: blue')
+    expect(bg.attributes('style')).toContain('width: 40%')
+    expect(bg.attributes('style')).toContain('background-color: red')
+    expect(bg.attributes('style')).toContain('height: 12px')
+  })
+
+  it('renders dashboard progress with custom width and slot formatter', () => {
+    const wrapper = mount(Progress, {
+      props: { type: 'dashboard', percent: 25, width: 80, strokeWidth: 10, trailColor: 'gray' },
+      slots: {
+        format: ({ percent }: { percent: number }) => `${percent} done`,
+      },
+    })
+
+    expect(wrapper.find(ns.m('dashboard')).exists()).toBe(true)
+    expect(wrapper.attributes('style')).toContain('width: 80px')
+    expect(wrapper.find(ns.e('inner-text')).text()).toBe('25 done')
+    expect(wrapper.findAll('circle')[0].attributes('stroke')).toBe('gray')
+  })
+
+  it('renders explicit active status without status icon', () => {
+    const wrapper = mount(Progress, { props: { percent: 50, status: 'active' } })
+    expect(wrapper.find(ns.m('status-active')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('status-icon')).exists()).toBe(false)
+    expect(wrapper.text()).toContain('50%')
+  })
 })

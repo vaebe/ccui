@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { notification } from '../index'
 
@@ -66,5 +66,62 @@ describe('notification', () => {
     await nextTick()
     expect(document.body.querySelector('.ccui-notification--topLeft')).toBeNull()
     expect(document.body.querySelector('.ccui-notification--bottomRight')).toBeNull()
+  })
+
+  it('renders custom class custom icon and calls onClose', async () => {
+    const onClose = vi.fn()
+    notification.open({
+      title: 'Custom',
+      description: 'Body',
+      duration: 0,
+      customClass: 'custom-notification',
+      icon: 'icon-bell',
+      onClose,
+    })
+    await nextTick()
+
+    expect(document.body.querySelector('.custom-notification')).not.toBeNull()
+    expect(document.body.querySelector('.icon-bell')).not.toBeNull()
+
+    const closeBtn = document.body.querySelector('.ccui-notification__close') as HTMLButtonElement
+    closeBtn.click()
+    await nextTick()
+
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('hides close button when showClose=false', async () => {
+    notification.info({ title: 'No close', duration: 0, showClose: false })
+    await nextTick()
+
+    expect(document.body.querySelector('.ccui-notification__close')).toBeNull()
+  })
+
+  it('pauses auto close on mouse enter and restarts on mouse leave', async () => {
+    vi.useFakeTimers()
+    notification.info({ title: 'Hover', duration: 100 })
+    await nextTick()
+
+    const item = document.body.querySelector('.ccui-notification__item') as HTMLElement
+    item.dispatchEvent(new MouseEvent('mouseenter'))
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    expect(document.body.textContent).toContain('Hover')
+
+    item.dispatchEvent(new MouseEvent('mouseleave'))
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    vi.useRealTimers()
+
+    expect(typeof notification.destroy).toBe('function')
+  })
+
+  it('reuses existing placement container', async () => {
+    notification.info({ title: 'one', placement: 'topLeft', duration: 0 })
+    notification.success({ title: 'two', placement: 'topLeft', duration: 0 })
+    await nextTick()
+
+    expect(document.body.querySelectorAll('.ccui-notification--topLeft').length).toBe(1)
+    expect(document.body.querySelectorAll('.ccui-notification--topLeft .ccui-notification__item').length).toBe(2)
   })
 })

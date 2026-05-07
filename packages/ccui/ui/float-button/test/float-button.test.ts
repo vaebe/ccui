@@ -1,9 +1,15 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { BackTop, FloatButton } from '../index'
 
 const ns = useNamespace('float-button', true)
+
+function rafNow(callback: FrameRequestCallback) {
+  callback(0)
+  return 1
+}
 
 describe('floatButton', () => {
   it('renders as button by default', () => {
@@ -46,10 +52,71 @@ describe('floatButton', () => {
 })
 
 describe('backTop', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    document.body.innerHTML = ''
+  })
+
   it('hidden initially when scroll is below threshold', () => {
     const wrapper = mount(BackTop, {
       props: { visibilityHeight: 400 },
     })
     expect(wrapper.find(ns.b()).exists()).toBe(false)
+  })
+
+  it('shows when element target scrolls past threshold and scrolls back to top', async () => {
+    const target = document.createElement('div')
+    target.className = 'scroll-target'
+    document.body.appendChild(target)
+    target.scrollTop = 120
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation(rafNow)
+
+    const wrapper = mount(BackTop, {
+      props: { visibilityHeight: 100, duration: 0, target },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    expect(wrapper.find(ns.b()).exists()).toBe(true)
+    await wrapper.find(ns.b()).trigger('click')
+
+    expect(wrapper.emitted('click')).toBeTruthy()
+    expect(target.scrollTop).toBe(0)
+  })
+
+  it('resolves string target and updates visibility on scroll', async () => {
+    const target = document.createElement('div')
+    target.id = 'scroll-root'
+    document.body.appendChild(target)
+
+    const wrapper = mount(BackTop, {
+      props: { visibilityHeight: 10, target: '#scroll-root' },
+      attachTo: document.body,
+    })
+
+    target.scrollTop = 11
+    target.dispatchEvent(new Event('scroll'))
+    await nextTick()
+    expect(wrapper.find(ns.b()).exists()).toBe(true)
+
+    target.scrollTop = 0
+    target.dispatchEvent(new Event('scroll'))
+    await nextTick()
+    expect(wrapper.find(ns.b()).exists()).toBe(false)
+  })
+
+  it('resolves function target and scrolls it back to top', async () => {
+    const target = document.createElement('div')
+    target.scrollTop = 160
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation(rafNow)
+
+    const wrapper = mount(BackTop, {
+      props: { visibilityHeight: 100, duration: 0, target: () => target },
+    })
+    await nextTick()
+
+    expect(wrapper.find(ns.b()).exists()).toBe(true)
+    await wrapper.find(ns.b()).trigger('click')
+    expect(target.scrollTop).toBe(0)
   })
 })

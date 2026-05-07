@@ -7,11 +7,11 @@
 
 ## 零、交付完整度口径
 
-后续组件交付按复杂度分层验收，优先覆盖用户高频功能、受控/非受控状态、事件联动、空/禁用/loading 状态、文档示例和定向测试：
+后续组件交付按复杂度分层验收，优先覆盖用户高频功能、Vue 状态协议（`v-model:*` / `update:*` / `default*` / 内部状态）、事件联动、空/禁用/loading 状态、文档示例和定向测试：
 
 - 简单组件：功能完整度 100%，定向测试完整度 100%，文档覆盖基础用法、常用变体和状态。
 - 中等难度组件：功能完整度 90%，定向测试完整度 90%，允许仅延后低频边界能力，但必须在文档中列明。
-- 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、受控状态、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
+- 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
 ## 一、已覆盖组件（60 项）
@@ -217,9 +217,9 @@ Form 剩余非完整对齐项：
 
 - Table：支持基础列渲染、`dataIndex` 路径取值、`rowKey`、空状态、loading 遮罩、bordered、size、header/body 自定义插槽和列级 `customRender`。
 - 排序：支持 `sorter: true` 默认值排序和函数排序，按 ascend / descend / none 循环，并通过 `update:sorter` 与 `change` 暴露状态。
-- 筛选：支持列级 filters、单选/多选筛选和受控 `filteredValue`，通过 `update:filters` 与 `change` 暴露状态。
+- 筛选：支持列级 filters、单选/多选筛选和由外部状态接管的 `filteredValue`，通过 `update:filters` 与 `change` 暴露状态。
 - 分页：复用 Pagination 样式类，内置轻量分页渲染，支持本地分页、pageSize 切换和 `update:pagination` 联动。
-- 测试：Table 定向测试从 6 个扩展到 46 个，覆盖渲染、嵌套路径取值、缺失路径兜底、rowKey 字符串/函数/回退、customRender、header/body 插槽、非排序列点击、筛选点击不误触排序、排序三态、函数排序、受控排序、columnKey 推导、单选/多选/多列/受控筛选、数字/布尔筛选值保持、change payload、筛选后排序、排序/筛选重置分页、分页 true/object/false、上一页/下一页/边界禁用、外部 total、pageSize 切换、受控分页更新、empty/loading、自定义 empty、空列 colspan、宽度/对齐/尺寸样式和隐藏表头。
+- 测试：Table 定向测试从 6 个扩展到 46 个，覆盖渲染、嵌套路径取值、缺失路径兜底、rowKey 字符串/函数/回退、customRender、header/body 插槽、非排序列点击、筛选点击不误触排序、排序三态、函数排序、外部状态接管排序、columnKey 推导、单选/多选/多列/外部状态接管筛选、数字/布尔筛选值保持、change payload、筛选后排序、排序/筛选重置分页、分页 true/object/false、上一页/下一页/边界禁用、外部 total、pageSize 切换、外部状态接管分页更新、empty/loading、自定义 empty、空列 colspan、宽度/对齐/尺寸样式和隐藏表头。
 
 Table 剩余非完整对齐项：
 
@@ -231,10 +231,10 @@ Table 剩余非完整对齐项：
 
 关键能力：
 
-- Table：新增 `rowSelection` 配置，支持 checkbox / radio 行选择、受控 `selectedRowKeys`、非受控 `defaultSelectedRowKeys`、禁用行、选择列宽度、隐藏全选、选中行样式和 `update:selectedRowKeys`。
+- Table：新增 `rowSelection` 配置，支持 checkbox / radio 行选择、由外部状态接管的 `selectedRowKeys`、用于初始化内部状态的 `defaultSelectedRowKeys`、禁用行、选择列宽度、隐藏全选、选中行样式和 `update:selectedRowKeys`。
 - 事件协议：支持 `rowSelection.onChange`、`onSelect`、`onSelectAll`，回传 selected keys、selected rows 与本次可变更行。
-- 文档：Table 文档补充 Row Selection 示例，覆盖受控选择和禁用行。
-- 测试：Table 定向测试从 46 个扩展到 52 个，新增 checkbox 单行选择、受控选择、radio 单选、全选跳过禁用行、取消全选和分页下保留非当前页选中项。
+- 文档：Table 文档补充 Row Selection 示例，覆盖 `v-model`/外部状态接管选择和禁用行。
+- 测试：Table 定向测试从 46 个扩展到 52 个，新增 checkbox 单行选择、外部状态接管选择、radio 单选、全选跳过禁用行、取消全选和分页下保留非当前页选中项。
 
 验证结果：
 

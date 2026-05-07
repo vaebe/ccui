@@ -74,7 +74,7 @@ const items = [
 
 ## 默认展开与默认选中
 
-适合非受控场景。需要由业务状态接管时，使用 `v-model:selected-keys` 和 `v-model:open-keys`。
+适合只需要初始化状态的场景，后续由组件内部状态维护。需要由业务状态接管时，使用 `v-model:selected-keys` 和 `v-model:open-keys`。
 
 :::demo
 
@@ -184,36 +184,44 @@ const items = [
 
 :::
 
+## Vue 状态语义
+
+Menu 的状态说明以 Vue API 为准：
+
+- 需要业务状态接管时，使用 `v-model:selected-keys` 和 `v-model:open-keys`。
+- 只需要初始化状态时，使用 `default-selected-keys` 和 `default-open-keys`，后续由组件内部状态维护。
+- 文档中避免使用 React 语境的 controlled / uncontrolled 作为主要说明。
+
 ## API 对齐说明
 
 Menu 的功能参考 Ant Design Menu 的常用能力：`items`、`mode`、`theme`、`selectedKeys`、`openKeys`、`defaultSelectedKeys`、`defaultOpenKeys`、`inlineCollapsed`、`multiple`、`selectable`、`forceSubMenuRender`、`triggerSubMenuAction` 等。
 
 Vue 项目优先使用：
 
-- `v-model:selected-keys` 替代受控 `selectedKeys + onSelect` 的 React 写法。
-- `v-model:open-keys` 替代受控 `openKeys + onOpenChange` 的 React 写法。
+- `v-model:selected-keys` 替代 React 语境里的 `selectedKeys + onSelect` 写法。
+- `v-model:open-keys` 替代 React 语境里的 `openKeys + onOpenChange` 写法。
 - `items` 支持普通对象、分组和分割线；复杂节点建议用 Vue 插槽或 VNode，不要求 ReactNode。
 
 ## Menu Props
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| mode | `vertical` / `horizontal` / `inline` | `vertical` | 菜单类型 |
-| theme | `light` / `dark` | `light` | 主题 |
-| items | `MenuItem[]` | `[]` | 菜单数据 |
-| selectedKeys | `(string \| number)[]` | `[]` | 当前选中的菜单项，支持 `v-model:selected-keys` |
-| defaultSelectedKeys | `(string \| number)[]` | `[]` | 默认选中的菜单项 |
-| openKeys | `(string \| number)[]` | `[]` | 当前展开的子菜单，支持 `v-model:open-keys` |
-| defaultOpenKeys | `(string \| number)[]` | `[]` | 默认展开的子菜单 |
-| inlineIndent | `number` | `24` | inline 模式下每级缩进 |
-| collapsed | `boolean` | `false` | 收起菜单，保留兼容属性 |
-| inlineCollapsed | `boolean` | `undefined` | inline 模式收起状态，优先级高于 `collapsed` |
-| multiple | `boolean` | `false` | 是否允许多选 |
-| selectable | `boolean` | `true` | 是否允许选中菜单项 |
-| disabled | `boolean` | `false` | 是否禁用整个菜单 |
-| accordion | `boolean` | `false` | 是否只展开一个顶层子菜单 |
-| forceSubMenuRender | `boolean` | `false` | 是否强制渲染未展开的子菜单 DOM |
-| triggerSubMenuAction | `click` / `hover` | `click` | 子菜单展开触发方式 |
+| 参数                 | 类型                                 | 默认值      | 说明                                           |
+| -------------------- | ------------------------------------ | ----------- | ---------------------------------------------- |
+| mode                 | `vertical` / `horizontal` / `inline` | `vertical`  | 菜单类型                                       |
+| theme                | `light` / `dark`                     | `light`     | 主题                                           |
+| items                | `MenuItem[]`                         | `[]`        | 菜单数据                                       |
+| selectedKeys         | `(string \| number)[]`               | `[]`        | 当前选中的菜单项，支持 `v-model:selected-keys` |
+| defaultSelectedKeys  | `(string \| number)[]`               | `[]`        | 默认选中的菜单项                               |
+| openKeys             | `(string \| number)[]`               | `[]`        | 当前展开的子菜单，支持 `v-model:open-keys`     |
+| defaultOpenKeys      | `(string \| number)[]`               | `[]`        | 默认展开的子菜单                               |
+| inlineIndent         | `number`                             | `24`        | inline 模式下每级缩进                          |
+| collapsed            | `boolean`                            | `false`     | 收起菜单，保留兼容属性                         |
+| inlineCollapsed      | `boolean`                            | `undefined` | inline 模式收起状态，优先级高于 `collapsed`    |
+| multiple             | `boolean`                            | `false`     | 是否允许多选                                   |
+| selectable           | `boolean`                            | `true`      | 是否允许选中菜单项                             |
+| disabled             | `boolean`                            | `false`     | 是否禁用整个菜单                               |
+| accordion            | `boolean`                            | `false`     | 是否只展开一个顶层子菜单                       |
+| forceSubMenuRender   | `boolean`                            | `false`     | 是否强制渲染未展开的子菜单 DOM                 |
+| triggerSubMenuAction | `click` / `hover`                    | `click`     | 子菜单展开触发方式                             |
 
 ## MenuItem
 
@@ -233,15 +241,15 @@ interface MenuItem {
 
 ## Events
 
-| 事件 | 说明 |
-| --- | --- |
-| update:selectedKeys | 选中项变化，用于 `v-model:selected-keys` |
-| update:openKeys | 展开项变化，用于 `v-model:open-keys` |
-| click | 点击菜单项，参数为 `MenuInfo` |
-| select | 选中菜单项，参数为 `MenuInfo` |
-| deselect | 多选模式下取消选中，参数为 `MenuInfo` |
-| open-change | 子菜单展开状态变化，参数为 `(openKeys, MenuOpenInfo)` |
-| openChange | `open-change` 的 camelCase 事件别名 |
+| 事件                | 说明                                                  |
+| ------------------- | ----------------------------------------------------- |
+| update:selectedKeys | 选中项变化，用于 `v-model:selected-keys`              |
+| update:openKeys     | 展开项变化，用于 `v-model:open-keys`                  |
+| click               | 点击菜单项，参数为 `MenuInfo`                         |
+| select              | 选中菜单项，参数为 `MenuInfo`                         |
+| deselect            | 多选模式下取消选中，参数为 `MenuInfo`                 |
+| open-change         | 子菜单展开状态变化，参数为 `(openKeys, MenuOpenInfo)` |
+| openChange          | `open-change` 的 camelCase 事件别名                   |
 
 ## 键盘交互
 

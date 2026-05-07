@@ -1,12 +1,26 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Watermark } from '../index'
 
 const ns = useNamespace('watermark', true)
 
+async function waitWatermarkRender() {
+  await nextTick()
+  await new Promise((r) => setTimeout(r, 0))
+}
+
 describe('watermark', () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
   it('renders default container with slot content', () => {
     const wrapper = mount(Watermark, {
       props: { content: 'demo' },
@@ -20,8 +34,7 @@ describe('watermark', () => {
     const wrapper = mount(Watermark, {
       props: { content: 'mark' },
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
     expect(wm).not.toBeNull()
     // canvas may not be available in jsdom — fallback style still has pointer-events
@@ -32,11 +45,9 @@ describe('watermark', () => {
     const wrapper = mount(Watermark, {
       props: { content: 'first' },
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     await wrapper.setProps({ content: 'second' })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
     expect(wm).not.toBeNull()
   })
@@ -45,8 +56,7 @@ describe('watermark', () => {
     const wrapper = mount(Watermark, {
       props: { content: ['line1', 'line2'] },
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     expect(wrapper.element.querySelector('[data-ccui-watermark]')).not.toBeNull()
   })
 
@@ -54,8 +64,7 @@ describe('watermark', () => {
     const wrapper = mount(Watermark, {
       props: { content: 'demo', rotate: 0, zIndex: 100, gap: [50, 50] },
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
     expect(wm?.getAttribute('style')).toContain('z-index: 100')
   })
@@ -65,14 +74,12 @@ describe('watermark', () => {
       props: { content: 'guard' },
       attachTo: document.body,
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     const first = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement
     expect(first).not.toBeNull()
     first.remove()
     await new Promise((r) => setTimeout(r, 0))
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     const after = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
     expect(after).not.toBeNull()
     wrapper.unmount()
@@ -83,10 +90,79 @@ describe('watermark', () => {
       props: { content: 'bye' },
       attachTo: document.body,
     })
-    await nextTick()
-    await new Promise((r) => setTimeout(r, 0))
+    await waitWatermarkRender()
     expect(document.body.querySelector('[data-ccui-watermark]')).not.toBeNull()
     wrapper.unmount()
     expect(document.body.querySelector('[data-ccui-watermark]')).toBeNull()
+  })
+
+  it('draws text watermark on canvas with resolved font options', async () => {
+    const translate = vi.fn()
+    const rotate = vi.fn()
+    const scale = vi.fn()
+    const fillText = vi.fn()
+    const drawImage = vi.fn()
+    const ctx = {
+      translate,
+      rotate,
+      scale,
+      fillText,
+      drawImage,
+    } as unknown as CanvasRenderingContext2D
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx)
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,watermark')
+
+    const wrapper = mount(Watermark, {
+      props: {
+        content: ['first', 'second'],
+        font: { color: 'red', fontSize: 20, fontWeight: 700 },
+        width: 120,
+        height: 80,
+        rotate: 15,
+        offset: [4, 8],
+      },
+    })
+    await waitWatermarkRender()
+
+    const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
+    expect(fillText).toHaveBeenCalledTimes(2)
+    expect(wm?.getAttribute('style')).toContain("background-image: url('data:image/png;base64,watermark')")
+    expect(wm?.getAttribute('style')).toContain('background-position: 4px 8px')
+  })
+
+  it('falls back to text when watermark image fails to load', async () => {
+    const translate = vi.fn()
+    const rotate = vi.fn()
+    const scale = vi.fn()
+    const fillText = vi.fn()
+    const drawImage = vi.fn()
+    const ctx = {
+      translate,
+      rotate,
+      scale,
+      fillText,
+      drawImage,
+    } as unknown as CanvasRenderingContext2D
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx)
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,error')
+
+    class ErrorImage {
+      onload: (() => void) | null = null
+      onerror: (() => void) | null = null
+      crossOrigin = ''
+
+      set src(_value: string) {
+        this.onerror?.()
+      }
+    }
+    vi.stubGlobal('Image', ErrorImage)
+
+    mount(Watermark, {
+      props: { image: '/bad.png', content: 'fallback text' },
+    })
+    await waitWatermarkRender()
+
+    expect(drawImage).not.toHaveBeenCalled()
+    expect(fillText).toHaveBeenCalledWith('fallback text', 60, 32)
   })
 })

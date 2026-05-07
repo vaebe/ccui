@@ -453,8 +453,8 @@ describe('popover', () => {
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
 
       // 调用暴露的 hide 方法
-      // 注意：在受控模式下（有 visible 属性），hide 方法不会直接修改 visible
-      // 所以需要测试非受控模式
+      // 注意：当 visible 由外部状态接管时，hide 方法不会直接修改 visible
+      // 所以这里改测组件内部状态路径
       wrapper.unmount()
 
       wrapper = createWrapper({ content: 'Test' })
