@@ -190,7 +190,7 @@ export default {
         {
           text: 'Select 选择器',
           link: '/components/select/',
-          status: '95%',
+          status: '100%',
         },
         {
           text: 'Slider 滑块',

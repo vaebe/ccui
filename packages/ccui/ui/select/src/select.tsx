@@ -14,6 +14,7 @@ import {
   ref,
   shallowRef,
   Teleport,
+  Transition,
   watch,
 } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
@@ -68,9 +69,11 @@ export default defineComponent({
     const {
       addTagValue,
       clearValue,
+      displayLabelOf,
       isMultiple,
       mode,
       removeValue,
+      reorderTagValue,
       selectOption,
       selectedLabel,
       selectedOptions,
@@ -78,11 +81,14 @@ export default defineComponent({
       visibleFlatOptions,
       visibleOptions,
     } = useSelect(props, searchText, emit)
+    const draggingTagValue = shallowRef<string | number | null>(null)
+    const dragOverTagValue = shallowRef<string | number | null>(null)
 
     const hasValue = computed(() => selectedOptions.value.length > 0)
     const visibleTags = computed(() => selectedOptions.value.slice(0, props.maxTagCount))
     const hiddenTagCount = computed(() => Math.max(selectedOptions.value.length - visibleTags.value.length, 0))
-    const showsSearchInput = computed(() => props.filterable || mode.value === 'tags')
+    const filteringEnabled = computed(() => props.filterable || props.showSearch)
+    const showsSearchInput = computed(() => filteringEnabled.value || mode.value === 'tags')
 
     const placement = computed(() => (props.placement === 'auto' ? 'bottom-start' : `${props.placement}-start`))
 
@@ -397,6 +403,37 @@ export default defineComponent({
       )
     }
 
+    const onTagDragStart = (event: DragEvent, option: ResolvedSelectOption) => {
+      if (!props.tagsDraggable || option.disabled) {
+        event.preventDefault()
+        return
+      }
+      draggingTagValue.value = option.value
+      event.dataTransfer?.setData('text/plain', String(option.value))
+    }
+
+    const onTagDragOver = (event: DragEvent, option: ResolvedSelectOption) => {
+      if (!props.tagsDraggable || draggingTagValue.value === null) return
+      event.preventDefault()
+      dragOverTagValue.value = option.value
+    }
+
+    const onTagDrop = (event: DragEvent, option: ResolvedSelectOption) => {
+      if (!props.tagsDraggable || draggingTagValue.value === null) return
+      event.preventDefault()
+      const fromValue = draggingTagValue.value
+      if (fromValue !== option.value) {
+        reorderTagValue(fromValue, option.value)
+      }
+      draggingTagValue.value = null
+      dragOverTagValue.value = null
+    }
+
+    const onTagDragEnd = () => {
+      draggingTagValue.value = null
+      dragOverTagValue.value = null
+    }
+
     const renderTag = (option: ResolvedSelectOption) => {
       if (slots.tag) {
         return slots.tag({
@@ -404,17 +441,35 @@ export default defineComponent({
           onClose: (event: MouseEvent) => onRemoveTag(option.value, event),
         })
       }
-      return h('span', { class: ns.e('tag'), key: option.value }, [
-        h('span', { class: ns.e('tag-label') }, option.label as never),
-        h(
-          'span',
-          {
-            class: ns.e('tag-close'),
-            onClick: (event: MouseEvent) => onRemoveTag(option.value, event),
-          },
-          'x',
-        ),
-      ])
+      const tagLabel = displayLabelOf(option)
+      return h(
+        'span',
+        {
+          class: [
+            ns.e('tag'),
+            props.tagsDraggable && ns.em('tag', 'draggable'),
+            dragOverTagValue.value === option.value && ns.em('tag', 'drop-over'),
+            draggingTagValue.value === option.value && ns.em('tag', 'dragging'),
+          ],
+          key: option.value,
+          draggable: props.tagsDraggable && !option.disabled ? true : undefined,
+          onDragstart: (event: DragEvent) => onTagDragStart(event, option),
+          onDragover: (event: DragEvent) => onTagDragOver(event, option),
+          onDrop: (event: DragEvent) => onTagDrop(event, option),
+          onDragend: onTagDragEnd,
+        },
+        [
+          h('span', { class: ns.e('tag-label') }, tagLabel as never),
+          h(
+            'span',
+            {
+              class: ns.e('tag-close'),
+              onClick: (event: MouseEvent) => onRemoveTag(option.value, event),
+            },
+            'x',
+          ),
+        ],
+      )
     }
 
     const renderTags = (extraChildren: VNode[] = []) =>
@@ -579,32 +634,37 @@ export default defineComponent({
       )
     }
 
-    const renderDropdown = () => {
-      if (!open.value) {
-        return null
-      }
+    const buildPopup = (): VNode => {
       const popupCls = [ns.e('dropdown'), props.popupClassName].filter(Boolean)
-      let inner: VNode
       if (props.loading) {
-        inner = h(
+        return h(
           'div',
           { ref: popupRef, class: popupCls, style: floatingStyles.value },
           h('div', { class: ns.e('loading') }, props.loadingText),
         )
-      } else if (visibleOptions.value.length === 0) {
+      }
+      if (visibleOptions.value.length === 0) {
         const emptyContent = slots.empty ? slots.empty() : props.noDataText
-        inner = h(
+        return h(
           'div',
           { ref: popupRef, class: popupCls, style: floatingStyles.value },
           h('div', { class: ns.e('empty') }, emptyContent as never),
         )
-      } else {
-        inner = h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value }, renderListContent())
       }
+      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value }, renderListContent())
+    }
+
+    const renderDropdown = () => {
+      const popup = open.value ? buildPopup() : null
+      const transitioned = h(
+        Transition as never,
+        { name: props.transitionName, appear: true },
+        { default: () => popup },
+      )
       if (teleported.value && popupContainer.value) {
-        return h(Teleport, { to: popupContainer.value }, [inner])
+        return h(Teleport, { to: popupContainer.value }, [transitioned])
       }
-      return inner
+      return transitioned
     }
 
     const activeDescendant = computed(() => {

@@ -197,12 +197,26 @@ export function useSelect(
     })
   })
 
-  const selectedLabel = computed(() => selectedOptions.value[0]?.label ?? '')
+  const displayLabelOf = (option: ResolvedSelectOption): unknown => {
+    if (props.optionLabelProp) {
+      const fromRaw = (option.raw as Record<string, unknown>)[props.optionLabelProp]
+      if (fromRaw !== undefined) {
+        return fromRaw
+      }
+    }
+    return option.label
+  }
+
+  const selectedLabel = computed(() => {
+    const first = selectedOptions.value[0]
+    return first ? displayLabelOf(first) : ''
+  })
 
   const visibleFlatOptions = computed<FlattenedItem[]>(() => {
     const names = fieldNames.value
     const keyword = searchText.value.trim()
-    const filterOption: SelectFilterOption = props.filterable ? props.filterOption : false
+    const filtering = props.filterable || props.showSearch
+    const filterOption: SelectFilterOption = filtering ? props.filterOption : false
     const items: FlattenedItem[] = []
     flattenVisible(props.options, names, keyword, filterOption, 0, items)
     return items
@@ -276,6 +290,17 @@ export function useSelect(
     }
   }
 
+  const reorderTagValue = (fromValue: SelectRawValue, toValue: SelectRawValue) => {
+    if (!isMultiple.value) return
+    const order = [...selectedValues.value]
+    const fromIndex = order.indexOf(fromValue)
+    const toIndex = order.indexOf(toValue)
+    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return
+    order.splice(fromIndex, 1)
+    order.splice(toIndex, 0, fromValue)
+    updateValue(order)
+  }
+
   const addTagValue = (value: string) => {
     if (mode.value !== 'tags') {
       return false
@@ -297,10 +322,12 @@ export function useSelect(
   return {
     addTagValue,
     clearValue,
+    displayLabelOf,
     fieldNames,
     isMultiple,
     mode,
     removeValue,
+    reorderTagValue,
     selectOption,
     selectedLabel,
     selectedOptions,

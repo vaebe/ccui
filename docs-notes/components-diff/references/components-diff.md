@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 已完成（在 95% 基础上补 loading / disabled / themePrefixMap + 33 个定向测试）、Select 95% 版（虚拟列表 / 嵌套分组 / 完整 ARIA / Home-End-PageUp-PageDown / Teleport / labelInValue / maxCount / 命中高亮 + 49 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，Icon 已完成（loading / disabled / themePrefixMap + 33 个定向测试）、Select 已完成（optionLabelProp / showSearch / transitionName / tagsDraggable + 59 个定向测试）、Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -59,7 +59,7 @@
 | Rate                  | Rate 评分               | 数据录入        | 已完成       |
 | Result                | Result 结果             | 反馈            | 已完成       |
 | Segmented             | Segmented 分段控制器    | 数据展示        | 已完成       |
-| Select                | Select 选择器           | 数据录入        | 95% 完成     |
+| Select                | Select 选择器           | 数据录入        | 已完成       |
 | Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成       |
 | Slider                | Slider 滑动输入条       | 数据录入        | 已完成       |
 | Space                 | Space 间距              | 布局            | 已完成       |
@@ -240,6 +240,31 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 15：Select 100% 完成
+
+已完成 1 项：Select。
+
+关键能力：
+
+- `optionLabelProp`：已选展示用独立字段，下拉项仍按 `label` 渲染。字段缺失时回退到 `label`。多选 / tags 模式下也作用于 tag 文本。
+- `showSearch`：`filterable` 别名，与社区 API 对齐；`filterOption=false` 同样适用，可作为远程搜索语义糖。
+- `transitionName`：浮层用 Vue `<Transition>` 包裹，默认 `ccui-select-fade`（淡入 + 4px 上滑），可换任意 transition 名搭配自定义 CSS。
+- `tagsDraggable`：多选 / tags 模式下用户可以拖拽 tag 调整顺序，被拖中的 tag 降透明，drop 目标高亮边框，松开后 `update:modelValue` 直接给出新顺序；新增 `reorderTagValue` 内部 helper。
+- 文档：新增 optionLabelProp、showSearch 别名、自定义浮层动画、拖拽排序已选 tag 共 4 个章节，Props 表加 4 个新字段。
+- 测试：从 49 个扩展到 59 个，新增 optionLabelProp 单选展示、字段缺失回退、多选 tag 显示、showSearch 启用搜索框、showSearch+filterOption=false 不过滤、transitionName 不破坏 dropdown、tagsDraggable 挂 draggable+grab 类、拖拽 reorder modelValue、同 tag drop noop、tagsDraggable=false 不挂 draggable。
+- 状态：components-diff.md / sidebar.ts / select/index.ts 全部 95% -> 100% / 已完成。
+
+工程决策：
+
+- `displayLabelOf` 抽到 useSelect 内统一处理 optionLabelProp 字段映射，selectedLabel 和 renderTag 共享。
+- 浮层 Transition 通过 `appear: true` 让初次打开也走 enter 动画，配合 Teleport 时仍能正确触发。
+- tag 拖拽用 HTML5 native dragstart/dragover/drop，不引入第三方库；`reorderTagValue` 在 useSelect 内做数组重排，对外只暴露最终 modelValue。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/select/test/select.test.ts --environment jsdom` 通过，59 个用例。
 
 ### Batch 14：Icon 100% 完成
 

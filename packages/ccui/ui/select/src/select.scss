@@ -233,4 +233,34 @@
     margin-left: 8px;
     color: $ccui-primary;
   }
+
+  &__highlight {
+    background: rgba(250, 173, 20, 0.18);
+    color: $ccui-color-warning;
+  }
+
+  &__tag--draggable {
+    cursor: grab;
+  }
+
+  &__tag--dragging {
+    opacity: 0.4;
+  }
+
+  &__tag--drop-over {
+    box-shadow: inset 0 0 0 2px $ccui-primary;
+  }
+}
+
+.ccui-select-fade-enter-active,
+.ccui-select-fade-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.ccui-select-fade-enter-from,
+.ccui-select-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }

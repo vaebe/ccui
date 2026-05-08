@@ -654,4 +654,131 @@ describe('select', () => {
     await wrapper.trigger('blur')
     expect(wrapper.emitted('blur')).toBeDefined()
   })
+
+  it('optionLabelProp uses a different field for selected display while keeping label for filtering', async () => {
+    const data = [
+      { label: 'Alpha (long description)', value: 'alpha', short: 'A' },
+      { label: 'Beta (long description)', value: 'beta', short: 'B' },
+    ]
+    const wrapper = mountSelect({
+      options: data,
+      modelValue: 'alpha',
+      optionLabelProp: 'short',
+    })
+
+    expect(wrapper.find(ns.e('single')).text()).toBe('A')
+
+    await wrapper.trigger('click')
+    expect(wrapper.findAll(ns.e('option'))[0].text()).toContain('Alpha (long description)')
+  })
+
+  it('optionLabelProp falls back to label when the field is missing', () => {
+    const data = [{ label: 'Alpha', value: 'alpha' }]
+    const wrapper = mountSelect({
+      options: data,
+      modelValue: 'alpha',
+      optionLabelProp: 'nonExistent',
+    })
+
+    expect(wrapper.find(ns.e('single')).text()).toBe('Alpha')
+  })
+
+  it('optionLabelProp also drives multiple-mode tag display', () => {
+    const data = [
+      { label: 'Alpha (long)', value: 'alpha', short: 'α' },
+      { label: 'Beta (long)', value: 'beta', short: 'β' },
+    ]
+    const wrapper = mountSelect({
+      options: data,
+      mode: 'multiple',
+      modelValue: ['alpha', 'beta'],
+      optionLabelProp: 'short',
+    })
+
+    const tags = wrapper.findAll(ns.e('tag-label'))
+    expect(tags[0].text()).toBe('α')
+    expect(tags[1].text()).toBe('β')
+  })
+
+  it('showSearch is treated as a filterable alias and reveals search input', async () => {
+    const wrapper = mountSelect({ options: manyOptions, showSearch: true })
+
+    await wrapper.trigger('click')
+    expect(wrapper.find('input').exists()).toBe(true)
+    await wrapper.find('input').setValue('bet')
+    expect(wrapper.findAll(ns.e('option')).length).toBe(1)
+  })
+
+  it('showSearch + filterOption=false does not filter (remote search alias)', async () => {
+    const wrapper = mountSelect({ options, showSearch: true, filterOption: false })
+
+    await wrapper.trigger('click')
+    await wrapper.find('input').setValue('zzz')
+    expect(wrapper.findAll(ns.e('option')).length).toBe(3)
+  })
+
+  it('transitionName overrides the default popup transition', async () => {
+    // Default transition wraps the popup, only animation class differs. Just verify
+    // that overriding the prop does not break the dropdown render path.
+    const wrapper = mountSelect({ options, transitionName: 'my-fade' })
+    await wrapper.trigger('click')
+    await nextTick()
+    expect(wrapper.find(ns.e('dropdown')).exists()).toBe(true)
+  })
+
+  it('tagsDraggable adds draggable=true and grab cursor class to tags', () => {
+    const wrapper = mountSelect({
+      options,
+      mode: 'multiple',
+      modelValue: ['alpha', 'beta'],
+      tagsDraggable: true,
+    })
+
+    const tag = wrapper.find(ns.e('tag'))
+    expect(tag.attributes('draggable')).toBe('true')
+    expect(tag.classes()).toContain(ns.em('tag', 'draggable').slice(1))
+  })
+
+  it('tagsDraggable: dropping one tag onto another reorders the modelValue', async () => {
+    const wrapper = mountSelect({
+      options,
+      mode: 'multiple',
+      modelValue: ['alpha', 'beta'],
+      tagsDraggable: true,
+    })
+
+    const tags = wrapper.findAll(ns.e('tag'))
+    await tags[0].trigger('dragstart')
+    await tags[1].trigger('dragover')
+    await tags[1].trigger('drop')
+
+    const events = wrapper.emitted('update:modelValue') as Array<unknown[]>
+    expect(events?.[0]?.[0]).toEqual(['beta', 'alpha'])
+  })
+
+  it('tagsDraggable: dropping on the same tag is a no-op', async () => {
+    const wrapper = mountSelect({
+      options,
+      mode: 'multiple',
+      modelValue: ['alpha', 'beta'],
+      tagsDraggable: true,
+    })
+
+    const tags = wrapper.findAll(ns.e('tag'))
+    await tags[0].trigger('dragstart')
+    await tags[0].trigger('dragover')
+    await tags[0].trigger('drop')
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('tagsDraggable=false does not set draggable on tags', () => {
+    const wrapper = mountSelect({
+      options,
+      mode: 'multiple',
+      modelValue: ['alpha'],
+    })
+
+    expect(wrapper.find(ns.e('tag')).attributes('draggable')).toBeUndefined()
+  })
 })

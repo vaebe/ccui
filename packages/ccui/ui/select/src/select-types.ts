@@ -164,6 +164,22 @@ export const selectProps = {
     type: Number,
     default: 240,
   },
+  optionLabelProp: {
+    type: String,
+    default: '',
+  },
+  showSearch: {
+    type: Boolean,
+    default: false,
+  },
+  transitionName: {
+    type: String,
+    default: 'ccui-select-fade',
+  },
+  tagsDraggable: {
+    type: Boolean,
+    default: false,
+  },
 } as const
 
 export type SelectProps = ExtractPropTypes<typeof selectProps>
