@@ -101,7 +101,7 @@ app.mount('#app')
 ### 数据录入
 
 - **CheckBox** - 多选框
-- **Form** - 表单（80%；Form.List / Form.Provider / preserve 等待补）
+- **Form** - 表单（Form.List 动态字段 / Form.Provider 跨表单 / preserve 卸载策略均已补齐）
 - **Input** - 输入框
 - **InputNumber** - 数字输入框
 - **Radio** - 单选框
@@ -123,7 +123,7 @@ app.mount('#app')
 - **Rate** - 评分
 - **Segmented** - 分段控制器
 - **Statistic** - 统计数值（含 Countdown）
-- **Table** - 表格（85%；固定列 / 展开行 / 合并单元格等待补）
+- **Table** - 表格（固定列 / 展开行 / 合并单元格 / 行选择 / 排序过滤 / 分页全部已交付）
 - **Tag** - 标签
 - **Timeline** - 时间线
 - **Tree** - 树形控件（受控选中/勾选/展开 / 异步 loadData / 搜索高亮 / 拖拽 / 键盘导航 / 虚拟滚动 / showLine）

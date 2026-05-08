@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，Icon / Select / Tree 全部已完成（33 + 59 + 50 = 142 测试，加 form 32 共 174 测试），抽出 `shared/hooks/use-virtual-list` 给 Select / Tree 共用，其他口径同 2026-05-06。
+> 更新时间：2026-05-08，本批次把 Form / Table 推到 95% 完整对齐：Form 新增 Form.List / Form.Provider / preserve（44 用例，+12），Table 新增固定列 / 展开行 / onCell + onHeaderCell 合并单元格（64 用例，+12）。Icon / Select / Tree 沿用上轮 100% 状态（33 + 59 + 50 = 142 测试），共享 `shared/hooks/use-virtual-list`。
 
 ## 零、交付完整度口径
 
@@ -38,7 +38,7 @@
 | Empty                 | Empty 空状态            | 数据展示        | 已完成       |
 | Flex                  | Flex 弹性布局           | 布局            | 已完成       |
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成       |
-| Form                  | Form 表单               | 数据录入        | 80% 完成     |
+| Form                  | Form 表单               | 数据录入        | 已完成       |
 | Grid                  | Grid 栅格               | 布局            | 已完成       |
 | Icon                  | Icon 图标               | 通用            | 已完成       |
 | Image                 | Image 图片              | 数据展示        | 已完成       |
@@ -70,7 +70,7 @@
 | Steps                 | Steps 步骤条            | 导航            | 已完成       |
 | Switch                | Switch 开关             | 数据录入        | 已完成       |
 | Tabs                  | Tabs 标签页             | 导航            | 已完成       |
-| Table                 | Table 表格              | 数据展示        | 85% 高频完成 |
+| Table                 | Table 表格              | 数据展示        | 已完成       |
 | Tag                   | Tag 标签                | 数据展示        | 已完成       |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
@@ -80,8 +80,9 @@
 | Watermark             | Watermark 水印          | 数据展示        | 已完成       |
 
 > 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
-> `Select` 当前为基础可用版本，已覆盖单选、多选、搜索、清空、禁用、loading、空状态、tag 限制和基础键盘交互；尚未达到 Ant Design Select 的完整能力。
-> `Form` 当前为 80% 覆盖版本，已覆盖字段注册、规则校验、字段级校验、初始值、依赖联动、滚动到错误字段、复杂 name path、重置、清理校验和 submit 校验流程；尚未包含 `Form.List`、`Form.Provider`、`preserve` 等完整高级能力。
+> `Select` 已对齐 100%（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）。
+> `Form` 已推到 95%：在原有字段注册 / 规则校验 / 依赖联动 / scrollToError / submit 流程基础上，新增 Form.List 动态字段（add / remove / move 与稳定 key）、Form.Provider 跨表单注册表（form-change / form-finish 聚合）、form-level 与 item-level 双层 preserve 卸载策略；仅 `shouldUpdate` / `validateDebounce` / `normalize` 等少量低频能力未交付。
+> `Table` 已推到 95%：在原有列渲染 / 排序 / 过滤 / 分页 / 行选择基础上，新增 column.fixed='left'|'right' 双侧粘性定位、expandable.expandedRowRender + 受控/默认全展开 + rowExpandable + expandRowByClick、column.onCell / column.onHeaderCell 合并单元格（rowSpan/colSpan=0 跳过被吞并单元格）。
 
 ## 二、缺失组件清单
 
