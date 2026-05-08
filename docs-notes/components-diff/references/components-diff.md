@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，Icon 已完成（loading / disabled / themePrefixMap + 33 个定向测试）、Select 已完成（optionLabelProp / showSearch / transitionName / tagsDraggable + 59 个定向测试）、Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，Icon 已完成（33 测试）、Select 已完成（59 测试）、Tree 95% 版（键盘导航 + 虚拟滚动 + roving tabindex + focusedKey 受控 + 43 测试），共抽出 `shared/hooks/use-virtual-list` 给 Select / Tree 共用，其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -74,7 +74,7 @@
 | Tag                   | Tag 标签                | 数据展示        | 已完成       |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
-| Tree                  | Tree 树形控件           | 数据展示        | 80% 完成     |
+| Tree                  | Tree 树形控件           | 数据展示        | 95% 完成     |
 | Typography            | Typography 排版         | 通用            | 已完成       |
 | Util                  | 工具函数集合            | 其他            | 已完成       |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成       |
@@ -240,6 +240,42 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 16：Tree 95% 完成（键盘导航 + 虚拟滚动）
+
+已完成 1 项：Tree。
+
+关键能力：
+
+- **键盘导航**：`onKeydown` 处理 ↑/↓ 上下移动焦点、→ 展开或进入第一个子节点、← 折叠或回到父节点、Home/End 跳到首末可见节点、Enter / Space 触发 `triggerSelect`（或 `triggerCheck` 当 `checkable=true`）。
+- **roving tabindex**：聚焦节点 `tabindex=0`，其它节点 `tabindex=-1`；未聚焦时根容器可 Tab 进入。
+- **`focusedKey` 受控**：支持 `v-model:focused-key` 接管，新增 `update:focusedKey` 和 `focus-change` 事件；prop 受控时内部 ref 不写。
+- **虚拟滚动**：`virtualScroll` 启用后只渲染可视区 + 缓冲，每个节点用 `position: absolute` 摆放；新增 `virtualItemHeight` / `virtualMaxHeight` props。
+- **autoScroll**：聚焦变化后自动滚到可见区——虚拟滚动用 `virtual.scrollToIndex`，非虚拟用 `el.focus({ preventScroll: false })`，对 jsdom 没有 `CSS.escape` 做兜底。
+- **抽公共 hook**：把 `composables/use-virtual-list.ts` 从 select 移到 `shared/hooks/use-virtual-list.ts`，Select 和 Tree 共用，后续 TreeSelect / Cascader 也能直接复用。
+- 文档：新增键盘导航、虚拟滚动两个章节；Props 表加 4 个新字段（virtualScroll / virtualItemHeight / virtualMaxHeight / focusedKey），事件表加 update:focused-key 和 focus-change。
+- 测试：从 31 个扩展到 43 个，新增 ↑/↓ 移焦点、→ 展开折叠节点、→ 已展开移子节点、← 折叠展开节点、← 移父节点、Enter 选中、Space + checkable 勾选、Home/End 跳首末、roving tabindex、虚拟滚动只渲染可视区、disabled 阻止键盘、focusedKey 受控行为。
+- 状态：components-diff.md / sidebar.ts / tree/index.ts 全部 80% -> 95%。
+
+工程决策：
+
+- `escapeAttrValue` 在 `CSS.escape` 不可用（jsdom）时退化到手动转义双引号和反斜杠，避免测试报错。
+- `setFocusedKey` 同时 emit `update:focusedKey` 和 `focus-change`，对应受控 / 非受控两种集成方式。
+- 键盘 Enter / Space 在 checkable 模式下走 check，否则走 select；Space 同 Enter 行为统一。
+- 拆 `use-virtual-list` 到 shared 的同时，select 端只需改 import 路径（一行），保持向前兼容。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/{form,select,icon,tree} --environment jsdom` 通过，167 个用例（form 32 + select 59 + icon 33 + tree 43）通过。
+
+Tree 剩余 5% 项：
+
+- 拖拽自动滚动（dragover 边缘自动 scroll）。
+- 拖拽 auto-expand 父节点（hover 一段时间后自动展开）。
+- showLine 默认连接线 SVG（当前仅 prop 钩子）。
+- 异步 loadData 失败重试 / 错误状态。
+- 节点 connectorIcon 自定义。
 
 ### Batch 15：Select 100% 完成
 

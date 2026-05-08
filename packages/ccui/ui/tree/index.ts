@@ -12,7 +12,7 @@ export { Tree }
 export default {
   title: 'Tree 树',
   category: '数据展示',
-  status: '80%',
+  status: '95%',
   install(app: App): void {
     app.component(Tree.name!, Tree)
   },

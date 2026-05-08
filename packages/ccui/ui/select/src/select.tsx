@@ -19,8 +19,8 @@ import {
 } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { useVirtualList } from '../../shared/hooks/use-virtual-list'
 import { useSelect } from './composables/use-select'
-import { useVirtualList } from './composables/use-virtual-list'
 import { selectProps } from './select-types'
 import './select.scss'
 

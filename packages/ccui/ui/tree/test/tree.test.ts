@@ -351,6 +351,126 @@ describe('tree', () => {
     expect(disabled.find(ns.e('node')).attributes('aria-disabled')).toBe('true')
   })
 
+  it('keyboard ArrowDown / ArrowUp moves focus through visible nodes', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'] })
+
+    await wrapper.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.emitted('update:focusedKey')?.[0]).toEqual(['root-1'])
+
+    await wrapper.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.emitted('update:focusedKey')?.[1]).toEqual(['child-1-1'])
+
+    await wrapper.trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:focusedKey')?.[2]).toEqual(['root-1'])
+  })
+
+  it('keyboard ArrowRight expands a collapsed node', async () => {
+    const wrapper = mountTree({ focusedKey: 'root-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:expandedKeys')?.[0]).toEqual([['root-1']])
+  })
+
+  it('keyboard ArrowRight on already expanded node moves focus to first child', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'], focusedKey: 'root-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:focusedKey')?.[0]).toEqual(['child-1-1'])
+  })
+
+  it('keyboard ArrowLeft collapses an expanded node', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'], focusedKey: 'root-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:expandedKeys')?.[0]).toEqual([[]])
+  })
+
+  it('keyboard ArrowLeft on a collapsed child moves focus to parent', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'], focusedKey: 'child-1-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:focusedKey')?.[0]).toEqual(['root-1'])
+  })
+
+  it('keyboard Enter triggers select on focused node', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'], focusedKey: 'child-1-1' })
+
+    await wrapper.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:selectedKeys')?.[0]).toEqual([['child-1-1']])
+  })
+
+  it('keyboard Space triggers check when checkable=true (instead of select)', async () => {
+    const wrapper = mountTree({
+      checkable: true,
+      defaultExpandedKeys: ['root-1', 'child-1-2'],
+      focusedKey: 'leaf-1-2-1',
+    })
+
+    await wrapper.trigger('keydown', { key: ' ' })
+    // child-1-2 also flips checked because its only checkable child is leaf-1-2-1
+    // (leaf-1-2-2 is disabled, excluded from propagation)
+    const checked = wrapper.emitted('update:checkedKeys')?.[0]?.[0] as string[]
+    expect(checked).toContain('leaf-1-2-1')
+  })
+
+  it('keyboard Home / End jump to first / last visible node', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1', 'child-1-2'], focusedKey: 'child-1-1' })
+
+    await wrapper.trigger('keydown', { key: 'End' })
+    expect(wrapper.emitted('update:focusedKey')?.[0]).toEqual(['root-2'])
+
+    await wrapper.trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:focusedKey')?.[1]).toEqual(['root-1'])
+  })
+
+  it('focused node carries roving tabindex=0, others -1', () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'], focusedKey: 'child-1-1' })
+
+    const nodes = wrapper.findAll(ns.e('node'))
+    const focused = nodes.find((node) => node.attributes('data-key') === 'child-1-1')!
+    expect(focused.attributes('tabindex')).toBe('0')
+    const others = nodes.filter((node) => node.attributes('data-key') !== 'child-1-1')
+    others.forEach((node) => expect(node.attributes('tabindex')).toBe('-1'))
+  })
+
+  it('virtualScroll renders only the visible window with absolute positioning', async () => {
+    const big = Array.from({ length: 200 }, (_, i) => ({ key: `n-${i}`, title: `Node ${i}` }))
+    const wrapper = mountTree({
+      data: big,
+      virtualScroll: true,
+      virtualItemHeight: 32,
+      virtualMaxHeight: 96,
+    })
+
+    await nextTick()
+    const virtualContainer = wrapper.find(ns.e('virtual'))
+    expect(virtualContainer.exists()).toBe(true)
+    const renderedNodes = wrapper.findAll(ns.e('node'))
+    expect(renderedNodes.length).toBeLessThan(200)
+    expect(renderedNodes.length).toBeGreaterThan(0)
+
+    // each rendered node has absolute positioning
+    expect(renderedNodes[0].attributes('style')).toContain('position: absolute')
+  })
+
+  it('disabled tree blocks keyboard navigation', async () => {
+    const wrapper = mountTree({ disabled: true, focusedKey: 'root-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.emitted('update:focusedKey')).toBeUndefined()
+  })
+
+  it('focusedKey prop is controlled: internal state mirrors only when prop is undefined', async () => {
+    const wrapper = mountTree({ focusedKey: 'root-1' })
+
+    await wrapper.trigger('keydown', { key: 'ArrowDown' })
+    // emit fires but rendered state still reflects prop, not internal value
+    expect(wrapper.emitted('update:focusedKey')?.[0]).toEqual(['root-2'])
+    const nodes = wrapper.findAll(ns.e('node'))
+    const focused = nodes.find((node) => node.attributes('data-key') === 'root-1')
+    expect(focused?.attributes('tabindex')).toBe('0')
+  })
+
   it('checkable: parent flips from half-checked to fully checked when all enabled descendants are checked', async () => {
     const wrapper = mountTree({
       checkable: true,

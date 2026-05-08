@@ -223,6 +223,31 @@ const data = [
 
 :::
 
+## 键盘导航
+
+将焦点设到 Tree 上后，可以用键盘漫游：
+
+| 按键       | 行为                                        |
+| ---------- | ------------------------------------------- |
+| ↑ / ↓      | 上一个 / 下一个可见节点                     |
+| →          | 折叠节点 → 展开；已展开 → 移到第一个子节点  |
+| ←          | 已展开 → 折叠；已折叠 → 移到父节点          |
+| Home / End | 首个 / 最后一个可见节点                     |
+| Enter      | 选中聚焦节点（或勾选，若 `checkable=true`） |
+| Space      | 同 Enter                                    |
+
+`focusedKey` 支持受控（`v-model:focused-key`），事件 `focus-change` 同步外部状态。聚焦节点用 roving tabindex（仅它是 `tabindex=0`，其它都是 `-1`），保证 Tab 进入只到一个位置。
+
+## 虚拟滚动
+
+数据量大（数百 / 数千节点）时启用 `virtualScroll`，组件只渲染可视区 + 缓冲区：
+
+```vue
+<c-tree :data="hugeData" default-expand-all virtual-scroll :virtual-item-height="32" :virtual-max-height="400" />
+```
+
+键盘导航触发的焦点变化会自动滚到可见区。
+
 ## 拖拽排序
 
 `draggable` 开启后，`drop` 事件回调里给出 `{ event, node, dragNode, dropPosition }`。组件**不会**自动改写 `data`——业务侧根据 `dropPosition` 改造数据结构。
@@ -269,6 +294,10 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 | searchValue         | `string`                                          | `''`    | 搜索关键字（默认按 title 子串匹配）            |
 | filterTreeNode      | `(node, parentKeys) => boolean`                   | --      | 自定义过滤谓词，返回 true 命中                 |
 | indentSize          | `number`                                          | `24`    | 每级缩进像素                                   |
+| virtualScroll       | `boolean`                                         | `false` | 启用虚拟滚动                                   |
+| virtualItemHeight   | `number`                                          | `32`    | 虚拟滚动单项高度（px）                         |
+| virtualMaxHeight    | `number`                                          | `320`   | 虚拟滚动可视高度（px）                         |
+| focusedKey          | `string \| number`                                | --      | 聚焦节点 key，配 `v-model:focused-key` 接管    |
 
 ## 事件
 
@@ -277,6 +306,8 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 | update:selected-keys                         | `(keys)`                                                                                        | 选中变化（v-model）  |
 | update:checked-keys                          | `(keys)`                                                                                        | 勾选变化（v-model）  |
 | update:expanded-keys                         | `(keys)`                                                                                        | 展开变化（v-model）  |
+| update:focused-key                           | `(key)`                                                                                         | 聚焦变化（v-model）  |
+| focus-change                                 | `(key)`                                                                                         | 聚焦节点变化         |
 | select                                       | `(keys, { selectedKeys, selected, node, event })`                                               | 选中变化             |
 | check                                        | `(keys, { checkedKeys, halfCheckedKeys, checked, node, event })`                                | 勾选变化             |
 | expand                                       | `(keys, { expanded, node })`                                                                    | 展开变化             |

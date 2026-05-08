@@ -1,7 +1,8 @@
 import type { CSSProperties, VNode } from 'vue'
 import type { FlattenedTreeNode, TreeDropInfo, TreeDropPosition, TreeNodeKey, TreeProps } from './tree-types'
-import { computed, defineComponent, h, ref, shallowRef, toRef } from 'vue'
+import { computed, defineComponent, h, nextTick, ref, shallowRef, toRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { useVirtualList } from '../../shared/hooks/use-virtual-list'
 import { computeNextCheckedKeys, useCheckedDerived } from './composables/use-tree-check'
 import { resolveFieldNames, useTreeFlattenAll, useTreeVisible } from './composables/use-tree-flatten'
 import { useTreeState } from './composables/use-tree-state'
@@ -44,6 +45,7 @@ export default defineComponent({
     'update:selectedKeys',
     'update:checkedKeys',
     'update:expandedKeys',
+    'update:focusedKey',
     'select',
     'check',
     'expand',
@@ -53,6 +55,7 @@ export default defineComponent({
     'dragenter',
     'dragover',
     'dragleave',
+    'focus-change',
   ],
   setup(props: TreeProps, { emit, slots }) {
     const ns = useNamespace('tree')
@@ -83,6 +86,33 @@ export default defineComponent({
     const loadedKeys = ref(new Set<TreeNodeKey>())
     const dragState = shallowRef<{ key: TreeNodeKey; position: TreeDropPosition } | null>(null)
     const draggingKey = shallowRef<TreeNodeKey | null>(null)
+
+    const internalFocusedKey = ref<TreeNodeKey | undefined>(props.focusedKey)
+    const focusedKey = computed<TreeNodeKey | undefined>(() => {
+      if (props.focusedKey !== undefined) return props.focusedKey
+      return internalFocusedKey.value
+    })
+    const setFocusedKey = (key: TreeNodeKey | undefined) => {
+      if (props.focusedKey === undefined) {
+        internalFocusedKey.value = key
+      }
+      emit('update:focusedKey', key)
+      emit('focus-change', key)
+    }
+    const treeRootRef = ref<HTMLElement | null>(null)
+    const scrollContainerRef = ref<HTMLElement | null>(null)
+
+    const visibleKeyToIndex = computed(() => {
+      const map = new Map<TreeNodeKey, number>()
+      visibleNodes.value.forEach((node, idx) => map.set(node.key, idx))
+      return map
+    })
+
+    const virtualEnabled = computed(() => props.virtualScroll && visibleNodes.value.length > 0)
+    const virtual = useVirtualList(visibleNodes, {
+      itemHeight: props.virtualItemHeight,
+      maxHeight: props.virtualMaxHeight,
+    })
 
     const triggerExpand = async (node: FlattenedTreeNode, event?: Event) => {
       if (props.disabled) return
@@ -267,9 +297,13 @@ export default defineComponent({
       return null
     }
 
-    const renderNode = (node: FlattenedTreeNode) => {
-      const indentStyle: CSSProperties = { paddingLeft: `${props.indentSize * node.level}px` }
+    const renderNode = (node: FlattenedTreeNode, extraStyle?: CSSProperties) => {
+      const indentStyle: CSSProperties = {
+        paddingLeft: `${props.indentSize * node.level}px`,
+        ...extraStyle,
+      }
       const isSelected = selectedKeys.value.has(node.key)
+      const isFocused = focusedKey.value === node.key
       const dropOver = dragState.value?.key === node.key
       const dropPos = dropOver ? dragState.value!.position : null
 
@@ -280,6 +314,7 @@ export default defineComponent({
           class: [
             ns.e('node'),
             isSelected && ns.em('node', 'selected'),
+            isFocused && ns.em('node', 'focused'),
             node.disabled && ns.em('node', 'disabled'),
             dropOver && dropPos === 'inside' && ns.em('node', 'drop-inside'),
             dropOver && dropPos === 'before' && ns.em('node', 'drop-before'),
@@ -287,6 +322,7 @@ export default defineComponent({
             props.blockNode && ns.em('node', 'block'),
           ],
           role: 'treeitem',
+          tabindex: isFocused ? 0 : -1,
           'aria-selected': isSelected,
           'aria-expanded': node.hasChildren ? expandedKeys.value.has(node.key) : undefined,
           'aria-disabled': node.disabled || undefined,
@@ -298,6 +334,11 @@ export default defineComponent({
           onDragenter: (event: DragEvent) => onDragEnter(event, node),
           onDragleave: (event: DragEvent) => onDragLeave(event, node),
           onDrop: (event: DragEvent) => onDrop(event, node),
+          onFocus: () => {
+            if (focusedKey.value !== node.key) {
+              setFocusedKey(node.key)
+            }
+          },
         },
         [
           h(
@@ -326,6 +367,110 @@ export default defineComponent({
       )
     }
 
+    const moveFocus = (delta: number) => {
+      const items = visibleNodes.value
+      if (items.length === 0) return
+      const currentKey = focusedKey.value
+      const currentIdx = currentKey !== undefined ? (visibleKeyToIndex.value.get(currentKey) ?? -1) : -1
+      const nextIdx = Math.max(0, Math.min(items.length - 1, currentIdx + delta))
+      if (currentIdx === nextIdx && currentKey !== undefined) return
+      const nextKey = items[nextIdx].key
+      setFocusedKey(nextKey)
+    }
+
+    const moveFocusToEdge = (direction: 1 | -1) => {
+      const items = visibleNodes.value
+      if (items.length === 0) return
+      const idx = direction === 1 ? items.length - 1 : 0
+      setFocusedKey(items[idx].key)
+    }
+
+    const onKeydown = (event: KeyboardEvent) => {
+      if (props.disabled) return
+      const items = visibleNodes.value
+      if (items.length === 0) return
+      const currentKey = focusedKey.value ?? items[0].key
+      const currentIdx = visibleKeyToIndex.value.get(currentKey) ?? 0
+      const node = items[currentIdx]
+
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault()
+          moveFocus(1)
+          break
+        case 'ArrowUp':
+          event.preventDefault()
+          moveFocus(-1)
+          break
+        case 'ArrowRight':
+          event.preventDefault()
+          if (node.hasChildren && !expandedKeys.value.has(node.key)) {
+            void triggerExpand(node, event)
+          } else if (node.hasChildren) {
+            // already expanded: move into first child
+            const firstChild = items[currentIdx + 1]
+            if (firstChild && firstChild.parentKeys.includes(node.key)) {
+              setFocusedKey(firstChild.key)
+            }
+          } else if (props.loadData && !node.isLeaf && !loadedKeys.value.has(node.key)) {
+            void triggerExpand(node, event)
+          }
+          break
+        case 'ArrowLeft':
+          event.preventDefault()
+          if (node.hasChildren && expandedKeys.value.has(node.key)) {
+            void triggerExpand(node, event)
+          } else if (node.parentKeys.length > 0) {
+            const parentKey = node.parentKeys[node.parentKeys.length - 1]
+            setFocusedKey(parentKey)
+          }
+          break
+        case 'Home':
+          event.preventDefault()
+          moveFocusToEdge(-1)
+          break
+        case 'End':
+          event.preventDefault()
+          moveFocusToEdge(1)
+          break
+        case 'Enter':
+        case ' ': {
+          event.preventDefault()
+          const mouseEvent = new MouseEvent('click') as MouseEvent
+          if (props.checkable) {
+            triggerCheck(node, mouseEvent)
+          } else {
+            triggerSelect(node, mouseEvent)
+          }
+          break
+        }
+      }
+    }
+
+    const escapeAttrValue = (value: string): string => {
+      if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+        return CSS.escape(value)
+      }
+      return value.replace(/(["\\])/g, '\\$1')
+    }
+
+    const scrollFocusedIntoView = () => {
+      const key = focusedKey.value
+      if (key === undefined) return
+      const idx = visibleKeyToIndex.value.get(key)
+      if (idx === undefined) return
+      if (virtualEnabled.value) {
+        virtual.scrollToIndex(idx, scrollContainerRef.value)
+      } else if (treeRootRef.value) {
+        const el = treeRootRef.value.querySelector<HTMLElement>(`[data-key="${escapeAttrValue(String(key))}"]`)
+        el?.focus({ preventScroll: false })
+      }
+    }
+
+    watch(focusedKey, () => {
+      void nextTick(scrollFocusedIntoView)
+    })
+
     return () => {
       const cls = [
         ns.b(),
@@ -335,10 +480,53 @@ export default defineComponent({
       ]
 
       if (visibleNodes.value.length === 0) {
-        return h('div', { class: cls, role: 'tree' }, h('div', { class: ns.e('empty') }, 'No data'))
+        return h(
+          'div',
+          { ref: treeRootRef, class: cls, role: 'tree', onKeydown },
+          h('div', { class: ns.e('empty') }, 'No data'),
+        )
       }
 
-      return h('div', { class: cls, role: 'tree' }, visibleNodes.value.map(renderNode))
+      if (virtualEnabled.value) {
+        const renderedItems = virtual.visible.value.map(({ data, top }) =>
+          renderNode(data, {
+            position: 'absolute',
+            top: `${top}px`,
+            left: 0,
+            right: 0,
+            height: `${props.virtualItemHeight}px`,
+          }),
+        )
+        return h(
+          'div',
+          {
+            ref: treeRootRef,
+            class: cls,
+            role: 'tree',
+            onKeydown,
+          },
+          h(
+            'div',
+            {
+              ref: scrollContainerRef,
+              class: ns.e('virtual'),
+              style: {
+                height: `${virtual.containerHeight.value}px`,
+                overflow: 'auto',
+                position: 'relative',
+              },
+              onScroll: virtual.onScroll,
+            },
+            h('div', { style: { height: `${virtual.totalHeight.value}px`, position: 'relative' } }, renderedItems),
+          ),
+        )
+      }
+
+      return h(
+        'div',
+        { ref: treeRootRef, class: cls, role: 'tree', onKeydown, tabindex: focusedKey.value === undefined ? 0 : -1 },
+        visibleNodes.value.map((node) => renderNode(node)),
+      )
     }
   },
 })

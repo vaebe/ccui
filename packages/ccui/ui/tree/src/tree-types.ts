@@ -157,6 +157,22 @@ export const treeProps = {
     type: Number,
     default: 24,
   },
+  virtualScroll: {
+    type: Boolean,
+    default: false,
+  },
+  virtualItemHeight: {
+    type: Number,
+    default: 32,
+  },
+  virtualMaxHeight: {
+    type: Number,
+    default: 320,
+  },
+  focusedKey: {
+    type: [String, Number] as PropType<TreeNodeKey>,
+    default: undefined,
+  },
 } as const
 
 export type TreeProps = ExtractPropTypes<typeof treeProps>
