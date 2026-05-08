@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试）和 Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -59,7 +59,7 @@
 | Rate                  | Rate 评分               | 数据录入        | 已完成       |
 | Result                | Result 结果             | 反馈            | 已完成       |
 | Segmented             | Segmented 分段控制器    | 数据展示        | 已完成       |
-| Select                | Select 选择器           | 数据录入        | 基础完成     |
+| Select                | Select 选择器           | 数据录入        | 80% 完成     |
 | Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成       |
 | Slider                | Slider 滑动输入条       | 数据录入        | 已完成       |
 | Space                 | Space 间距              | 布局            | 已完成       |
@@ -240,6 +240,41 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 10：Select 80% 完成
+
+已完成 1 项：Select。
+
+关键能力：
+
+- 选项分组：`options` 中含 `options` 数组的节点视为 group，渲染分组标题；搜索时空 group 自动隐藏。
+- `fieldNames` 字段名映射：支持把任意字段（label/value/disabled/options）映射到自定义键，不影响 `modelValue` 协议。
+- `mode: 'default' / 'multiple' / 'tags'`：`tags` 模式允许 Enter 创建新值，空白和重复值自动忽略；保留旧的 `multiple` 兼容。
+- 远程搜索：`filterOption=false` 关掉前端过滤，监听 `search` 事件做异步加载，配合 `loading`；`filterOption` 也接受函数自定义谓词。
+- Popup 定位：`placement='bottom' / 'top' / 'auto'`，基于 `@floating-ui/vue` 自动 flip / shift。
+- 自定义渲染：`option`、`tag`、`selected`、`empty`、`prefix`、`suffix` 全套插槽。
+- FormItem 联动：通过新增的 `formItemInjectionKey` 注入校验上下文，error / warning 边框自动同步，`modelValue` 改动触发 `validate('change')`、下拉关闭触发 `validate('blur')`；也提供 `status` prop 显式覆盖。
+- Backspace 在多选 + 搜索为空时删除最后一个 tag。
+- 文档：基本用法、多选、tags、远程搜索、自定义谓词、分组、fieldNames、自定义渲染、placement、FormItem 联动 共 10 块示例。
+- 测试：Select 定向测试从 15 个扩展到 31 个，新增分组渲染、分组过滤、fieldNames、filterOption=false、filterOption 函数、tags Enter 创建、tags 空白/重复忽略、mode=multiple 兼容、Backspace 删 tag、自定义 option/tag/empty 插槽、status 错误/警告类、FormItem 注入 validateStatus、FormItem validate('change'/'blur')、placement 应用、popupClassName 透传。
+
+工程决策：
+
+- 在 `packages/ccui/ui/form/src/form-types.ts` 新增 `formItemInjectionKey` 和 `FormItemInjectedContext`，FormItem 通过 `provide` 暴露 `validateStatus` / `validate`，让任意录入组件都能可选注入。Select 是第一个对接的录入组件。
+- Select 浮层基于既有依赖 `@floating-ui/vue`，无需新增 popup 容器实现。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/form packages/ccui/ui/select packages/ccui/ui/icon --environment jsdom` 通过，77 个用例（form 32 + select 31 + icon 14）通过。
+
+Select 剩余非完整对齐项：
+
+- 虚拟列表（按规划单独拆后续）。
+- 树形 / 级联选择器（属于 TreeSelect / Cascader 单独组件）。
+- option group 嵌套（当前只支持一层 group）。
+- popup 自定义容器（getPopupContainer）。
+- ARIA 完整支持（aria-activedescendant 部分覆盖）。
 
 ### Batch 9：Icon 80% 完成（Iconify 适配）
 

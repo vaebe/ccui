@@ -1,13 +1,41 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export type SelectRawValue = string | number
-export type SelectModelValue = SelectRawValue | SelectRawValue[] | undefined
+export type SelectModelValue = SelectRawValue | SelectRawValue[] | null | undefined
 export type SelectSize = 'large' | 'default' | 'small'
+export type SelectMode = 'default' | 'multiple' | 'tags'
+export type SelectPlacement = 'bottom' | 'top' | 'auto'
+
+export interface SelectFieldNames {
+  label?: string
+  value?: string
+  disabled?: string
+  options?: string
+}
 
 export interface SelectOption {
-  label: string
-  value: SelectRawValue
+  label?: unknown
+  value?: SelectRawValue
   disabled?: boolean
+  [key: string]: unknown
+}
+
+export interface SelectGroupOption {
+  label?: unknown
+  options: SelectOption[]
+  [key: string]: unknown
+}
+
+export type SelectRawOption = SelectOption | SelectGroupOption
+
+export type SelectFilterOption = boolean | ((input: string, option: SelectOption) => boolean)
+
+export interface ResolvedSelectOption {
+  raw: SelectOption
+  label: unknown
+  value: SelectRawValue
+  disabled: boolean
+  groupLabel?: unknown
 }
 
 export const selectProps = {
@@ -16,8 +44,28 @@ export const selectProps = {
     default: undefined,
   },
   options: {
-    type: Array as PropType<SelectOption[]>,
+    type: Array as PropType<SelectRawOption[]>,
     default: () => [],
+  },
+  fieldNames: {
+    type: Object as PropType<SelectFieldNames>,
+    default: () => ({}),
+  },
+  mode: {
+    type: String as PropType<SelectMode>,
+    default: undefined,
+  },
+  placement: {
+    type: String as PropType<SelectPlacement>,
+    default: 'bottom',
+  },
+  filterOption: {
+    type: [Boolean, Function] as PropType<SelectFilterOption>,
+    default: true,
+  },
+  popupClassName: {
+    type: String,
+    default: '',
   },
   placeholder: {
     type: String,
@@ -58,6 +106,10 @@ export const selectProps = {
   maxTagCount: {
     type: Number,
     default: 3,
+  },
+  status: {
+    type: String as PropType<'' | 'error' | 'warning' | 'success' | 'validating'>,
+    default: '',
   },
 } as const
 

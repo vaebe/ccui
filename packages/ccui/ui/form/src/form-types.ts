@@ -90,6 +90,14 @@ export interface FormContext {
 
 export const formInjectionKey: InjectionKey<FormContext> = Symbol('ccuiForm')
 
+export interface FormItemInjectedContext {
+  validateStatus: Ref<FormValidateStatus>
+  isInsideForm: boolean
+  validate: (trigger?: FormValidateTrigger) => Promise<boolean>
+}
+
+export const formItemInjectionKey: InjectionKey<FormItemInjectedContext> = Symbol('ccuiFormItem')
+
 export const formProps = {
   model: {
     type: Object as PropType<FormModel>,

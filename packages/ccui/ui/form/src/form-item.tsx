@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'vue'
 import type { FormItemContext, FormItemProps, FormRule, FormValidateTrigger } from './form-types'
-import { computed, defineComponent, h, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { formInjectionKey, formItemProps } from './form-types'
+import { formInjectionKey, formItemInjectionKey, formItemProps } from './form-types'
 import {
   cloneValue,
   getPathKey,
@@ -160,6 +160,12 @@ export default defineComponent({
       validate,
       resetField,
       clearValidate,
+    })
+
+    provide(formItemInjectionKey, {
+      validateStatus: currentStatus,
+      isInsideForm: !!form,
+      validate,
     })
 
     watch(
