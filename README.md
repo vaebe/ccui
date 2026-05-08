@@ -60,33 +60,52 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **60 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
 - **Button** - 按钮
-- **Button3D** - 3D 按钮
+- **Button3D** - 3D 按钮（项目特色）
+- **ConfigProvider** - 全局配置
+- **FloatButton** / **BackTop** - 悬浮按钮
+- **Icon** - 图标（内置 [Iconify](https://iconify.design/) 200+ 图标集适配）
 - **Status** - 状态
 - **Typography** - 排版（Text / Title / Paragraph / Link）
-
-### 布局
-
-- **Divider** - 分割线
-- **Flex** - 弹性布局
-- **Space** - 间距
+- **Util** - 工具集（classNames / debounce / throttle / clamp 等）
 
 ### 导航
 
+- **Anchor** - 锚点
 - **Breadcrumb** - 面包屑
+- **Dropdown** - 下拉菜单
+- **Menu** - 导航菜单
+- **Pagination** - 分页
+- **Steps** - 步骤条
 - **Tabs** - 标签页
+
+### 反馈
+
+- **Alert** - 警告提示
+- **Drawer** - 抽屉
+- **Message** - 全局提示
+- **Modal** - 对话框
+- **Notification** - 通知
+- **Popconfirm** - 气泡确认框
+- **Popover** - 气泡卡片
+- **Progress** - 进度条
+- **Result** - 结果
+- **Skeleton** - 骨架屏
+- **Spin** - 加载中
+- **Tooltip** - 文字提示
 
 ### 数据录入
 
-- **CheckBox** - 复选框
+- **CheckBox** - 多选框
+- **Form** - 表单（80%；Form.List / Form.Provider / preserve 等待补）
 - **Input** - 输入框
 - **InputNumber** - 数字输入框
 - **Radio** - 单选框
-- **Rate** - 评分
+- **Select** - 选择器（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）
 - **Slider** - 滑块
 - **Switch** - 开关
 
@@ -96,21 +115,44 @@ app.mount('#app')
 - **Badge** - 徽标数
 - **Calendar** - 日历
 - **Card** - 卡片
+- **Collapse** - 折叠面板
+- **Descriptions** - 描述列表
 - **Empty** - 空状态
+- **Image** - 图片
+- **List** - 列表
+- **Rate** - 评分
 - **Segmented** - 分段控制器
+- **Statistic** - 统计数值（含 Countdown）
+- **Table** - 表格（85%；固定列 / 展开行 / 合并单元格等待补）
 - **Tag** - 标签
 - **Timeline** - 时间线
-- **Tree** - 树形控件
+- **Tree** - 树形控件（受控选中/勾选/展开 / 异步 loadData / 搜索高亮 / 拖拽 / 键盘导航 / 虚拟滚动 / showLine）
+- **Watermark** - 水印
 
-### 反馈
+### 布局
 
-- **Alert** - 警告提示
-- **Popover** - 气泡卡片
-- **Progress** - 进度条
-- **Result** - 结果
-- **Skeleton** - 骨架屏
-- **Spin** - 加载中
-- **Tooltip** - 文字提示
+- **Divider** - 分割线
+- **Flex** - 弹性布局
+- **Grid** - 栅格（24 列 / 5 断点响应式）
+- **Layout** - 布局（Header / Sider / Content / Footer）
+- **Masonry** - 瀑布流
+- **Space** - 间距
+- **Splitter** - 分隔面板
+
+### 其他
+
+- **Affix** - 固钉
+
+### 还没交付的常见组件
+
+| 组件                            | 复杂度 | 备注                     |
+| ------------------------------- | ------ | ------------------------ |
+| DatePicker / TimePicker         | 复杂   | 需要先抽日期时间工具层   |
+| Cascader / TreeSelect           | 复杂   | 复用 Tree + Select       |
+| Transfer / Upload               | 复杂   | 独立大任务               |
+| AutoComplete                    | 中等   | 依赖 Select / Input 稳定 |
+| Carousel / QRCode / ColorPicker | 中等   | 见路线图                 |
+| Mentions / Tour                 | 体验型 | 见路线图                 |
 
 ## 📖 文档
 
