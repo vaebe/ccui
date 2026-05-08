@@ -50,6 +50,28 @@ export function setValueByPath(model: FormModel, path: FormNamePath, value: any)
   target[lastKey] = value
 }
 
+export function deleteValueByPath(model: FormModel, path: FormNamePath): void {
+  const keys = normalizeNamePath(path)
+  if (keys.length === 0) {
+    return
+  }
+  const lastKey = keys.pop()!
+  let target = model
+  for (const key of keys) {
+    if (target?.[key] === undefined || target[key] === null) {
+      return
+    }
+    target = target[key]
+  }
+  if (target && typeof target === 'object') {
+    if (Array.isArray(target) && typeof lastKey === 'number') {
+      target.splice(lastKey, 1)
+    } else {
+      delete (target as Record<string | number, any>)[lastKey]
+    }
+  }
+}
+
 export function cloneValue<T>(value: T): T {
   if (value === undefined || value === null) {
     return value

@@ -1,8 +1,8 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { h, nextTick, reactive } from 'vue'
-import { Form, FormItem } from '../index'
+import { defineComponent, h, nextTick, reactive } from 'vue'
+import { Form, FormItem, FormList, FormProvider } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const formNs = useNamespace('form', true)
@@ -710,5 +710,406 @@ describe('form', () => {
     await nextTick()
     getFormVm(wrapper).scrollToField('name')
     expect(scrollIntoView).toHaveBeenCalled()
+  })
+})
+
+describe('formList', () => {
+  it('initializes from initialValue and registers nested fields under the list path', async () => {
+    const model = reactive<{ users?: Array<{ name?: string }> }>({})
+    const wrapper = mount(Form, {
+      props: { model },
+      slots: {
+        default: () =>
+          h(
+            FormList,
+            { name: 'users', initialValue: [{ name: 'Alice' }, { name: 'Bob' }] },
+            {
+              default: (fields: Array<{ key: number; name: number }>) =>
+                fields.map((field) =>
+                  h(
+                    FormItem,
+                    { key: field.key, name: [field.name, 'name'], rules: { required: true, message: 'Missing' } },
+                    () => h('input'),
+                  ),
+                ),
+            },
+          ),
+      },
+    })
+
+    await nextTick()
+    expect(model.users).toEqual([{ name: 'Alice' }, { name: 'Bob' }])
+    expect(wrapper.findAll('input')).toHaveLength(2)
+
+    model.users![0].name = ''
+    await expect(getFormVm(wrapper).validateField('users.0.name')).resolves.toBe(false)
+    expect(wrapper.find(itemNs.e('message')).text()).toBe('Missing')
+  })
+
+  it('supports add / remove / move operations', async () => {
+    const model = reactive<{ items: any[] }>({ items: [] })
+
+    let captured: { add: any; remove: any; move: any } | null = null
+    const Wrapper = defineComponent({
+      setup() {
+        return () =>
+          h(
+            Form,
+            { model },
+            {
+              default: () =>
+                h(
+                  FormList,
+                  { name: 'items' },
+                  {
+                    default: (
+                      fields: Array<{ key: number; name: number }>,
+                      op: { add: any; remove: any; move: any },
+                    ) => {
+                      captured = op
+                      return fields.map((field) =>
+                        h(FormItem, { key: field.key, name: [field.name, 'value'] }, () => h('input')),
+                      )
+                    },
+                  },
+                ),
+            },
+          )
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    await nextTick()
+    expect(model.items).toEqual([])
+
+    captured!.add({ value: 'a' })
+    captured!.add({ value: 'b' })
+    captured!.add({ value: 'c' })
+    await nextTick()
+    expect(model.items.map((item) => item.value)).toEqual(['a', 'b', 'c'])
+    expect(wrapper.findAll('input')).toHaveLength(3)
+
+    captured!.move(0, 2)
+    await nextTick()
+    expect(model.items.map((item) => item.value)).toEqual(['b', 'c', 'a'])
+
+    captured!.remove(1)
+    await nextTick()
+    expect(model.items.map((item) => item.value)).toEqual(['b', 'a'])
+    expect(wrapper.findAll('input')).toHaveLength(2)
+
+    captured!.add({ value: 'x' }, 0)
+    await nextTick()
+    expect(model.items.map((item) => item.value)).toEqual(['x', 'b', 'a'])
+  })
+
+  it('preserves child key identity when moving rows', async () => {
+    const model = reactive<{ rows: Array<{ value: string }> }>({ rows: [] })
+    let captured: { add: any; move: any } | null = null
+    const seenKeys: number[][] = []
+
+    const Wrapper = defineComponent({
+      setup() {
+        return () =>
+          h(
+            Form,
+            { model },
+            {
+              default: () =>
+                h(
+                  FormList,
+                  { name: 'rows' },
+                  {
+                    default: (
+                      fields: Array<{ key: number; name: number }>,
+                      op: { add: any; move: any; remove: any },
+                    ) => {
+                      captured = op
+                      seenKeys.push(fields.map((f) => f.key))
+                      return fields.map((field) => h(FormItem, { key: field.key, name: [field.name, 'value'] }))
+                    },
+                  },
+                ),
+            },
+          )
+      },
+    })
+
+    mount(Wrapper)
+    await nextTick()
+
+    captured!.add({ value: 'a' })
+    await nextTick()
+    captured!.add({ value: 'b' })
+    await nextTick()
+    const before = seenKeys[seenKeys.length - 1]
+    captured!.move(0, 1)
+    await nextTick()
+    const after = seenKeys[seenKeys.length - 1]
+    expect(after).toEqual([before[1], before[0]])
+  })
+
+  it('removes multiple indices at once', async () => {
+    const model = reactive<{ rows: Array<{ value: string }> }>({ rows: [] })
+    let captured: { add: any; remove: any } | null = null
+
+    const Wrapper = defineComponent({
+      setup() {
+        return () =>
+          h(
+            Form,
+            { model },
+            {
+              default: () =>
+                h(
+                  FormList,
+                  { name: 'rows' },
+                  {
+                    default: (
+                      fields: Array<{ key: number; name: number }>,
+                      op: { add: any; remove: any; move: any },
+                    ) => {
+                      captured = op
+                      return fields.map((field) => h(FormItem, { key: field.key, name: [field.name, 'value'] }))
+                    },
+                  },
+                ),
+            },
+          )
+      },
+    })
+
+    mount(Wrapper)
+    await nextTick()
+    captured!.add({ value: 'a' })
+    captured!.add({ value: 'b' })
+    captured!.add({ value: 'c' })
+    captured!.add({ value: 'd' })
+    await nextTick()
+    captured!.remove([0, 2])
+    await nextTick()
+    expect(model.rows.map((row) => row.value)).toEqual(['b', 'd'])
+  })
+})
+
+describe('form preserve', () => {
+  it('keeps unmounted field values when preserve is true (default)', async () => {
+    const model = reactive<{ name: string; draft?: string }>({ name: '', draft: 'kept' })
+    const Wrapper = defineComponent({
+      props: { showDraft: { type: Boolean, default: true } },
+      setup(props) {
+        return () =>
+          h(
+            Form,
+            { model },
+            {
+              default: () => [
+                h(FormItem, { prop: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { prop: 'draft' }, () => h('input')) : null,
+              ],
+            },
+          )
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    await nextTick()
+    await wrapper.setProps({ showDraft: false })
+    await nextTick()
+    expect(model.draft).toBe('kept')
+  })
+
+  it('clears unmounted field value when item-level preserve is false', async () => {
+    const model = reactive<{ name: string; draft?: string }>({ name: '', draft: 'temp' })
+    const Wrapper = defineComponent({
+      props: { showDraft: { type: Boolean, default: true } },
+      setup(props) {
+        return () =>
+          h(
+            Form,
+            { model },
+            {
+              default: () => [
+                h(FormItem, { prop: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { prop: 'draft', preserve: false }, () => h('input')) : null,
+              ],
+            },
+          )
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    await nextTick()
+    await wrapper.setProps({ showDraft: false })
+    await nextTick()
+    expect(model.draft).toBeUndefined()
+  })
+
+  it('respects form-level preserve=false when item does not override', async () => {
+    const model = reactive<{ name: string; draft?: string }>({ name: '', draft: 'temp' })
+    const Wrapper = defineComponent({
+      props: { showDraft: { type: Boolean, default: true } },
+      setup(props) {
+        return () =>
+          h(
+            Form,
+            { model, preserve: false },
+            {
+              default: () => [
+                h(FormItem, { prop: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { prop: 'draft' }, () => h('input')) : null,
+              ],
+            },
+          )
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    await nextTick()
+    await wrapper.setProps({ showDraft: false })
+    await nextTick()
+    expect(model.draft).toBeUndefined()
+  })
+
+  it('item-level preserve=true overrides form-level preserve=false', async () => {
+    const model = reactive<{ name: string; draft?: string }>({ name: '', draft: 'kept' })
+    const Wrapper = defineComponent({
+      props: { showDraft: { type: Boolean, default: true } },
+      setup(props) {
+        return () =>
+          h(
+            Form,
+            { model, preserve: false },
+            {
+              default: () => [
+                h(FormItem, { prop: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { prop: 'draft', preserve: true }, () => h('input')) : null,
+              ],
+            },
+          )
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    await nextTick()
+    await wrapper.setProps({ showDraft: false })
+    await nextTick()
+    expect(model.draft).toBe('kept')
+  })
+})
+
+describe('form provider', () => {
+  it('triggers onFormFinish when a named child form submits successfully', async () => {
+    const finishHandler = vi.fn()
+    const model = reactive({ name: 'Ready' })
+
+    const wrapper = mount(FormProvider, {
+      attrs: { onFormFinish: finishHandler },
+      slots: {
+        default: () =>
+          h(
+            Form,
+            {
+              name: 'profile',
+              model,
+              rules: { name: { required: true, message: 'Missing name' } },
+            },
+            { default: () => h(FormItem, { prop: 'name' }, () => h('input')) },
+          ),
+      },
+    })
+
+    await wrapper.find('form').trigger('submit')
+    await nextTick()
+    expect(finishHandler).toHaveBeenCalledTimes(1)
+    expect(finishHandler).toHaveBeenCalledWith('profile', expect.objectContaining({ values: model }))
+  })
+
+  it('does not trigger formFinish on validation failure', async () => {
+    const finishHandler = vi.fn()
+    const model = reactive({ name: '' })
+
+    const wrapper = mount(FormProvider, {
+      attrs: { onFormFinish: finishHandler },
+      slots: {
+        default: () =>
+          h(
+            Form,
+            {
+              name: 'profile',
+              model,
+              rules: { name: { required: true, message: 'Missing name' } },
+            },
+            { default: () => h(FormItem, { prop: 'name' }, () => h('input')) },
+          ),
+      },
+    })
+
+    await wrapper.find('form').trigger('submit')
+    await nextTick()
+    expect(finishHandler).not.toHaveBeenCalled()
+  })
+
+  it('exposes the named form via the forms registry', async () => {
+    const finishHandler = vi.fn()
+    const modelA = reactive({ value: 'a' })
+    const modelB = reactive({ value: 'b' })
+
+    const wrapper = mount(FormProvider, {
+      attrs: { onFormFinish: finishHandler },
+      slots: {
+        default: () => [
+          h(
+            Form,
+            { name: 'one', model: modelA },
+            {
+              default: () => h(FormItem, { prop: 'value' }, () => h('input')),
+            },
+          ),
+          h(
+            Form,
+            { name: 'two', model: modelB },
+            {
+              default: () => h(FormItem, { prop: 'value' }, () => h('input')),
+            },
+          ),
+        ],
+      },
+    })
+
+    await wrapper.findAll('form')[0].trigger('submit')
+    await nextTick()
+
+    const [, info] = finishHandler.mock.calls[0]
+    expect(Object.keys(info.forms).sort()).toEqual(['one', 'two'])
+    expect(info.forms.two.getFieldsValue()).toBe(modelB)
+  })
+
+  it('triggers onFormChange when a field reports a change', async () => {
+    const changeHandler = vi.fn()
+    const model = reactive({ name: '' })
+
+    const wrapper = mount(FormProvider, {
+      attrs: { onFormChange: changeHandler },
+      slots: {
+        default: () =>
+          h(
+            Form,
+            { name: 'profile', model },
+            {
+              default: () => h(FormItem, { prop: 'name' }, () => h('input')),
+            },
+          ),
+      },
+    })
+
+    await nextTick()
+    model.name = 'Tom'
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    expect(changeHandler).toHaveBeenCalled()
+    const [name, info] = changeHandler.mock.calls.at(-1)!
+    expect(name).toBe('profile')
+    expect(info.changedFields[0].value).toBe('Tom')
   })
 })

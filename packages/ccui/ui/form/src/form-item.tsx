@@ -1,13 +1,15 @@
 import type { CSSProperties } from 'vue'
-import type { FormItemContext, FormItemProps, FormRule, FormValidateTrigger } from './form-types'
+import type { FormItemContext, FormItemProps, FormNamePath, FormRule, FormValidateTrigger } from './form-types'
 import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { formInjectionKey, formItemInjectionKey, formItemProps } from './form-types'
+import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
 import {
   cloneValue,
+  deleteValueByPath,
   getPathKey,
   getTriggeredRules,
   getValueByPath,
+  normalizeNamePath,
   normalizeRules,
   setValueByPath,
   validateRule,
@@ -20,10 +22,22 @@ export default defineComponent({
   setup(props: FormItemProps, { expose, slots }) {
     const ns = useNamespace('form-item')
     const form = inject(formInjectionKey, null)
+    const formList = inject(formListInjectionKey, null)
     const validateState = ref<'validating' | 'success' | 'error' | ''>('')
     const validateMessage = ref('')
     const itemRef = ref<HTMLElement | null>(null)
-    const fieldName = computed(() => props.name ?? props.prop)
+    const rawName = computed<FormNamePath | undefined>(() => props.name ?? props.prop)
+    const fieldName = computed<FormNamePath | undefined>(() => {
+      const raw = rawName.value
+      if (!formList) {
+        return raw
+      }
+      const prefix = formList.prefixName.value
+      if (raw === undefined || raw === null || raw === '') {
+        return prefix.length ? [...prefix] : undefined
+      }
+      return [...prefix, ...normalizeNamePath(raw)]
+    })
     const fieldKey = computed(() => getPathKey(fieldName.value))
     const labelText = computed(() => props.label || fieldKey.value)
     const initialValue = ref()
@@ -123,18 +137,29 @@ export default defineComponent({
     }
 
     const fieldContext: FormItemContext = {
-      prop: fieldName.value,
-      field: fieldKey.value,
-      dependencies: props.dependencies,
+      get prop() {
+        return fieldName.value
+      },
+      get field() {
+        return fieldKey.value
+      },
+      get dependencies() {
+        return props.dependencies
+      },
       validate,
       resetField,
       clearValidate,
       getValidateMessage: () => validateMessage.value,
       getElement: () => itemRef.value,
-    }
+    } as FormItemContext
 
-    const onChangeCapture = () => {
+    const onChangeCapture = (event: Event) => {
       void validate('change')
+      if (form && fieldName.value !== undefined) {
+        const next = getValueByPath(form.model.value, fieldName.value)
+        form.notifyFieldChange(fieldName.value, next)
+        void event
+      }
     }
 
     const onFocusoutCapture = () => {
@@ -154,6 +179,12 @@ export default defineComponent({
 
     onUnmounted(() => {
       form?.removeField(fieldContext)
+      const itemPreserve = props.preserve
+      const formPreserve = form?.preserve.value ?? true
+      const shouldPreserve = itemPreserve === undefined ? formPreserve : itemPreserve
+      if (!shouldPreserve && form && fieldName.value !== undefined) {
+        deleteValueByPath(form.model.value, fieldName.value)
+      }
     })
 
     expose({

@@ -1,6 +1,6 @@
 # Form 表单
 
-用于收集、校验和提交一组输入项。当前版本目标覆盖 Ant Design Form 约 80% 的高频能力，保留少量大型高级能力后续迭代。
+用于收集、校验和提交一组输入项。当前版本目标覆盖 Ant Design Form 约 95% 的高频能力，仅保留 `shouldUpdate` / `validateDebounce` / `normalize` 等少量边角能力后续迭代。
 
 ## 基本用法
 
@@ -113,6 +113,89 @@ const confirmRule = {
 
 :::
 
+## 动态字段 Form.List
+
+通过 `<c-form-list>` 管理一组同构字段。默认作用域插槽提供 `(fields, { add, remove, move })`，每个 `field` 包含 `key`（稳定 key，移动后保持）和 `name`（当前下标，参与 name path 拼接）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { reactive } from 'vue'
+
+const model = reactive<{ users: Array<{ name: string, email: string }> }>({
+  users: [{ name: 'Alice', email: 'alice@example.com' }],
+})
+</script>
+
+<template>
+  <c-form :model="model" layout="vertical">
+    <c-form-list name="users">
+      <template #default="{ fields, add, remove, move }">
+        <div v-for="field in fields" :key="field.key" style="display: flex; gap: 8px;">
+          <c-form-item :name="[field.name, 'name']" :rules="{ required: true, message: 'Name required' }">
+            <c-input v-model="model.users[field.name].name" placeholder="name" />
+          </c-form-item>
+          <c-form-item :name="[field.name, 'email']" :rules="{ type: 'email' }">
+            <c-input v-model="model.users[field.name].email" placeholder="email" />
+          </c-form-item>
+          <c-button @click="move(field.name, Math.max(0, field.name - 1))">↑</c-button>
+          <c-button @click="remove(field.name)">remove</c-button>
+        </div>
+        <c-button @click="add({ name: '', email: '' })">add user</c-button>
+      </template>
+    </c-form-list>
+  </c-form>
+</template>
+```
+
+:::
+
+## 跨表单联动 Form.Provider
+
+`<c-form-provider>` 包裹多个具名 `<c-form>`，在子表单提交成功后通过 `form-finish` 事件聚合 `forms` 注册表，常用于「同一页面里 A 表单提交后用 B 表单的当前值做联动」的场景。
+
+```vue
+<script setup lang="ts">
+import { reactive } from 'vue'
+
+const profile = reactive({ name: '' })
+const billing = reactive({ address: '' })
+
+function onFinish(name: string, info: { values: any, forms: Record<string, any> }) {
+  if (name === 'profile') {
+    billing.address = info.forms.billing.getFieldsValue().address
+  }
+}
+</script>
+
+<template>
+  <c-form-provider @form-finish="onFinish">
+    <c-form name="profile" :model="profile">
+      <c-form-item prop="name"><c-input v-model="profile.name" /></c-form-item>
+      <c-button html-type="submit">Save</c-button>
+    </c-form>
+    <c-form name="billing" :model="billing">
+      <c-form-item prop="address"><c-input v-model="billing.address" /></c-form-item>
+    </c-form>
+  </c-form-provider>
+</template>
+```
+
+`form-change` 在任意字段值变化时触发，回调签名同 `form-finish`。
+
+## 字段保留策略 preserve
+
+Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把 `preserve=false` 配置在表单上则全表单字段卸载即清理，单个 `c-form-item` 上的 `preserve` 优先于表单级配置：
+
+```vue
+<c-form :model="model" :preserve="false">
+  <c-form-item v-if="advanced" prop="apiKey" :preserve="true">
+    <c-input v-model="model.apiKey" />
+  </c-form-item>
+</c-form>
+```
+
 ## 参数
 
 ### Form
@@ -131,6 +214,8 @@ const confirmRule = {
 | validateMessages     | FormValidateMessages            | {}         | 校验消息模板                 |
 | validateOnRuleChange | boolean                         | true       | 规则变化时清理校验状态       |
 | scrollToFirstError   | boolean / ScrollIntoViewOptions | false      | 校验失败时滚动到首个错误字段 |
+| name                 | string                          | --         | 表单名（接入 FormProvider）  |
+| preserve             | boolean                         | true       | 字段卸载时是否保留 model 值  |
 
 ### FormItem
 
@@ -150,6 +235,27 @@ const confirmRule = {
 | colon          | boolean                      | 跟随 Form | 是否显示当前项冒号           |
 | hidden         | boolean                      | false     | 隐藏字段但保留注册           |
 | noStyle        | boolean                      | false     | 不显示标准表单项样式         |
+| preserve       | boolean                      | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置 |
+
+### FormList
+
+| 参数         | 类型                    | 默认值 | 说明                       |
+| ------------ | ----------------------- | ------ | -------------------------- |
+| name         | string / number / array | --     | 列表字段路径               |
+| initialValue | any[]                   | --     | 列表初始值（model 中无值时使用） |
+
+默认作用域插槽签名：`(fields: { key, name }[], { add, remove, move })`。`add(value?, insertIndex?)` / `remove(index | indices)` / `move(from, to)` 直接修改 `model[name]` 数组并维持稳定 key。
+
+### FormProvider
+
+无 props。事件：
+
+| 事件        | 回调签名                                                         | 说明                       |
+| ----------- | ---------------------------------------------------------------- | -------------------------- |
+| form-change | (name, { changedFields, forms })                                 | 任意字段变化触发            |
+| form-finish | (name, { values, forms })                                        | 子表单 submit 校验通过触发  |
+
+`forms` 是 `Record<string, FormInstance>`，`FormInstance` 暴露 `validate / validateField / resetFields / clearValidate / scrollToField / getFieldsValue`。
 
 ## 方法
 
@@ -168,6 +274,7 @@ const confirmRule = {
 | submit          | 表单提交后触发     |
 | validate        | 字段校验完成后触发 |
 | validate-failed | 表单校验失败后触发 |
+| values-change   | 字段触发原生 change 时携带 `{ name, value }` 抛出 |
 
 ## 已完成功能
 
@@ -179,13 +286,14 @@ const confirmRule = {
 - blur/change/submit 触发器过滤。
 - horizontal/vertical/inline 布局、label 宽度/位置、冒号、必填/可选标记。
 - FormItem 的 help、extra、validateStatus、htmlFor、hidden、noStyle、dependencies。
+- `Form.List` 动态字段增删/移动、稳定 key、initialValue、与父级 name path 自动拼接。
+- `Form.Provider` 跨表单注册表与 `form-change` / `form-finish` 聚合。
+- form-level 与 item-level 双层 `preserve` 控制字段卸载值。
 - 基础 ARIA 错误状态和错误消息 `role="alert"`。
 
 ## 缺失功能
 
-- `Form.List` 动态列表的完整字段增删、移动和错误聚合。
 - `shouldUpdate`、render props 级别的复杂条件渲染。
-- `preserve`、`validateDebounce`、`normalize`、`getValueProps` 等高级字段配置。
-- `Form.Provider` 跨表单联动。
+- `validateDebounce`、`normalize`、`getValueProps` 等少量高级字段配置。
 - 完整无障碍实现和与所有录入组件的深度状态联动。
 - 更完整的滚动容器定位、复杂错误聚合展示和国际化包级别默认文案。

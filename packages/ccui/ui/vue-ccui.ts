@@ -20,7 +20,7 @@ import DropdownInstall, { Dropdown } from './dropdown'
 import EmptyInstall, { Empty } from './empty'
 import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
-import FormInstall, { Form, FormItem } from './form'
+import FormInstall, { Form, FormItem, FormList, FormProvider } from './form'
 import GridInstall, { Col, Row } from './grid'
 import IconInstall, { clearIconRegistry, Icon, registerIcon, resolveIcon, unregisterIcon } from './icon'
 import ImageInstall, { Image } from './image'
@@ -166,6 +166,8 @@ export {
   FloatButton,
   Form,
   FormItem,
+  FormList,
+  FormProvider,
   Col,
   Row,
   clearIconRegistry,

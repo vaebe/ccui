@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue'
+import type { ComputedRef, ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue'
 
 export type FormNamePath = string | number | Array<string | number>
 export type FormLabelPosition = 'left' | 'right' | 'top'
@@ -82,10 +82,12 @@ export interface FormContext {
   layout: Ref<FormLayout>
   colon: Ref<boolean>
   requiredMark: Ref<FormRequiredMark>
+  preserve: Ref<boolean>
   addField: (field: FormItemContext) => void
   removeField: (field: FormItemContext) => void
   emitValidate: (field: string, valid: boolean, message: string) => void
   validateField: (propsToValidate: FormNamePath | FormNamePath[], trigger?: FormValidateTrigger) => Promise<boolean>
+  notifyFieldChange: (field: FormNamePath, value: any) => void
 }
 
 export const formInjectionKey: InjectionKey<FormContext> = Symbol('ccuiForm')
@@ -97,6 +99,51 @@ export interface FormItemInjectedContext {
 }
 
 export const formItemInjectionKey: InjectionKey<FormItemInjectedContext> = Symbol('ccuiFormItem')
+
+export interface FormListField {
+  key: number
+  name: number
+}
+
+export interface FormListOperation {
+  add: (defaultValue?: any, insertIndex?: number) => void
+  remove: (index: number | number[]) => void
+  move: (from: number, to: number) => void
+}
+
+export interface FormListContext {
+  prefixName: ComputedRef<Array<string | number>>
+}
+
+export const formListInjectionKey: InjectionKey<FormListContext> = Symbol('ccuiFormList')
+
+export interface FormInstance {
+  validate: (callback?: (valid: boolean, errors: FormValidateError[]) => void) => Promise<boolean>
+  validateField: (propsToValidate: FormNamePath | FormNamePath[], trigger?: FormValidateTrigger) => Promise<boolean>
+  resetFields: (propsToReset?: FormNamePath | FormNamePath[]) => void
+  clearValidate: (propsToClear?: FormNamePath | FormNamePath[]) => void
+  scrollToField: (name: FormNamePath, options?: ScrollIntoViewOptions) => void
+  getFieldsValue: () => FormModel
+}
+
+export interface FormChangeInfo {
+  changedFields: Array<{ name: FormNamePath; value: any }>
+  forms: Record<string, FormInstance>
+}
+
+export interface FormFinishInfo {
+  values: FormModel
+  forms: Record<string, FormInstance>
+}
+
+export interface FormProviderContext {
+  registerForm: (name: string, instance: FormInstance) => void
+  unregisterForm: (name: string) => void
+  triggerFormChange: (name: string, changedFields: Array<{ name: FormNamePath; value: any }>) => void
+  triggerFormFinish: (name: string, values: FormModel) => void
+}
+
+export const formProviderInjectionKey: InjectionKey<FormProviderContext> = Symbol('ccuiFormProvider')
 
 export const formProps = {
   model: {
@@ -146,6 +193,14 @@ export const formProps = {
   scrollToFirstError: {
     type: [Boolean, Object] as PropType<boolean | ScrollIntoViewOptions>,
     default: false,
+  },
+  name: {
+    type: String,
+    default: '',
+  },
+  preserve: {
+    type: Boolean,
+    default: true,
   },
 } as const
 
@@ -206,7 +261,25 @@ export const formItemProps = {
     type: Array as PropType<FormNamePath[]>,
     default: () => [],
   },
+  preserve: {
+    type: Boolean,
+    default: undefined,
+  },
 } as const
+
+export const formListProps = {
+  name: {
+    type: [String, Number, Array] as PropType<FormNamePath>,
+    required: true,
+  },
+  initialValue: {
+    type: Array as PropType<any[]>,
+    default: undefined,
+  },
+} as const
+
+export const formProviderProps = {} as const
 
 export type FormProps = ExtractPropTypes<typeof formProps>
 export type FormItemProps = ExtractPropTypes<typeof formItemProps>
+export type FormListProps = ExtractPropTypes<typeof formListProps>

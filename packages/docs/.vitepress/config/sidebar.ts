@@ -170,7 +170,7 @@ export default {
         {
           text: 'Form 表单',
           link: '/components/form/',
-          status: '80%',
+          status: '95%',
         },
         {
           text: 'Input 输入框',

@@ -1,18 +1,25 @@
-import type { FormItemContext, FormNamePath, FormValidateError, FormValidateTrigger } from './form-types'
-import type { FormProps } from './form-types'
-import { computed, defineComponent, h, provide, ref, toRef, watch } from 'vue'
+import type {
+  FormInstance,
+  FormItemContext,
+  FormNamePath,
+  FormProps,
+  FormValidateError,
+  FormValidateTrigger,
+} from './form-types'
+import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, toRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { formInjectionKey, formProps } from './form-types'
+import { formInjectionKey, formProps, formProviderInjectionKey } from './form-types'
 import { getPathKey } from './utils'
 import './form.scss'
 
 export default defineComponent({
   name: 'CForm',
   props: formProps,
-  emits: ['submit', 'validate', 'validate-failed'],
+  emits: ['submit', 'validate', 'validate-failed', 'values-change'],
   setup(props: FormProps, { emit, expose, slots }) {
     const ns = useNamespace('form')
     const fields = ref<FormItemContext[]>([])
+    const provider = inject(formProviderInjectionKey, null)
 
     const getFieldList = (propsToHandle?: FormNamePath | FormNamePath[]) => {
       if (propsToHandle === undefined) {
@@ -44,6 +51,13 @@ export default defineComponent({
 
     const emitValidate = (field: string, valid: boolean, message: string) => {
       emit('validate', field, valid, message)
+    }
+
+    const notifyFieldChange = (field: FormNamePath, value: any) => {
+      emit('values-change', { name: field, value }, props.model)
+      if (props.name && provider) {
+        provider.triggerFormChange(props.name, [{ name: field, value }])
+      }
     }
 
     const cls = computed(() => ({
@@ -93,10 +107,15 @@ export default defineComponent({
       field?.getElement()?.scrollIntoView(options ?? { block: 'nearest' })
     }
 
+    const getFieldsValue = () => props.model
+
     const handleSubmit = async (event: Event) => {
       event.preventDefault()
       const valid = await validate()
       emit('submit', valid, event)
+      if (valid && props.name && provider) {
+        provider.triggerFormFinish(props.name, props.model)
+      }
     }
 
     watch(
@@ -120,12 +139,27 @@ export default defineComponent({
       { deep: true },
     )
 
-    expose({
+    const exposed: FormInstance = {
       validate,
       validateField,
       resetFields,
       clearValidate,
       scrollToField,
+      getFieldsValue,
+    }
+
+    expose(exposed)
+
+    onMounted(() => {
+      if (props.name && provider) {
+        provider.registerForm(props.name, exposed)
+      }
+    })
+
+    onUnmounted(() => {
+      if (props.name && provider) {
+        provider.unregisterForm(props.name)
+      }
     })
 
     provide(formInjectionKey, {
@@ -139,10 +173,12 @@ export default defineComponent({
       layout: toRef(props, 'layout'),
       colon: toRef(props, 'colon'),
       requiredMark: toRef(props, 'requiredMark'),
+      preserve: toRef(props, 'preserve'),
       addField,
       removeField,
       emitValidate,
       validateField,
+      notifyFieldChange,
     })
 
     return () =>
