@@ -113,6 +113,62 @@ function handleClick() {
 
 :::
 
+## 加载状态
+
+`loading` 启用后图标内容被 spinner 替换，自动开 spin 动画并挂 `aria-busy="true"`，常用于异步操作中按钮的图标占位。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <c-icon name="mdi:cloud-upload" loading :size="24" />
+    <c-icon name="mdi:reload" loading :size="24" color="#1677ff" />
+  </div>
+</template>
+```
+
+:::
+
+## 禁用状态
+
+`disabled` 仅对 `clickable=true` 生效：自动阻止 click 和键盘激活，挂 `aria-disabled="true"` + `tabindex="-1"`，外观降透明 + `cursor: not-allowed`。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <c-icon name="mdi:bell" :size="24" clickable aria-label="通知" />
+    <c-icon name="mdi:bell" :size="24" clickable disabled aria-label="通知（禁用）" />
+  </div>
+</template>
+```
+
+:::
+
+## 主题 → Iconify 前缀映射
+
+`themePrefixMap` 让 `theme` 切换时自动选用不同的 Iconify 图标集，常用于「同一图标的 outlined / filled 走不同图标包」：
+
+```vue
+<script setup lang="ts">
+const themeMap = {
+  outlined: 'material-symbols',
+  filled: 'mdi',
+}
+</script>
+
+<template>
+  <!-- name="home" + theme="outlined" -> material-symbols:home -->
+  <c-icon name="home" theme="outlined" :theme-prefix-map="themeMap" />
+  <!-- name="home" + theme="filled" -> mdi:home -->
+  <c-icon name="home" theme="filled" :theme-prefix-map="themeMap" />
+</template>
+```
+
+优先级：`name` 含 `:` > `themePrefixMap` 命中当前 theme > `iconifyPrefix`。
+
 ## 旋转方向
 
 `spinDirection` 控制 spin 动画方向：`cw`（默认顺时针）或 `ccw`（逆时针）。
@@ -283,22 +339,25 @@ const groups: Array<{ title: string; icons: string[] }> = [
 
 ## Props
 
-| 参数          | 类型                                                  | 默认值 | 说明                                                      |
-| ------------- | ----------------------------------------------------- | ------ | --------------------------------------------------------- |
-| name          | `string`                                              | --     | 图标名。含 `:` 时走 Iconify，否则查注册表，再退化到字体类 |
-| component     | `Component`                                           | --     | 直接传图标组件，优先级最高                                |
-| size          | `'small' \| 'default' \| 'large' \| number \| string` | --     | 尺寸，预设/数字 px/任意 CSS 长度                          |
-| color         | `string`                                              | --     | 主色，作用于 `color` / `fill` / `stroke`                  |
-| theme         | `'outlined' \| 'filled' \| 'two-tone'`                | --     | 主题类名挂载，便于样式钩子                                |
-| twoToneColor  | `string`                                              | --     | 次色，配合 `theme="two-tone"`                             |
-| rotate        | `number`                                              | 0      | 旋转角度（deg）                                           |
-| spin          | `boolean`                                             | false  | 是否旋转动画                                              |
-| spinDirection | `'cw' \| 'ccw'`                                       | `'cw'` | 旋转方向，`ccw` 反向                                      |
-| clickable     | `boolean`                                             | false  | 渲染为按钮：`role="button"` + `tabindex="0"` + 键盘激活   |
-| iconifyPrefix | `string`                                              | --     | 当 `name` 不含 `:` 时自动拼成 `${prefix}:${name}`         |
-| title         | `string`                                              | --     | 可访问标题（同时设置 `role="img"`）                       |
-| ariaLabel     | `string`                                              | --     | 可访问标签                                                |
-| prefixCls     | `string`                                              | --     | 字体类名前缀，默认读 ConfigProvider 的 `iconPrefixCls`    |
+| 参数           | 类型                                                  | 默认值 | 说明                                                      |
+| -------------- | ----------------------------------------------------- | ------ | --------------------------------------------------------- |
+| name           | `string`                                              | --     | 图标名。含 `:` 时走 Iconify，否则查注册表，再退化到字体类 |
+| component      | `Component`                                           | --     | 直接传图标组件，优先级最高                                |
+| size           | `'small' \| 'default' \| 'large' \| number \| string` | --     | 尺寸，预设/数字 px/任意 CSS 长度                          |
+| color          | `string`                                              | --     | 主色，作用于 `color` / `fill` / `stroke`                  |
+| theme          | `'outlined' \| 'filled' \| 'two-tone'`                | --     | 主题类名挂载，便于样式钩子                                |
+| twoToneColor   | `string`                                              | --     | 次色，配合 `theme="two-tone"`                             |
+| rotate         | `number`                                              | 0      | 旋转角度（deg）                                           |
+| spin           | `boolean`                                             | false  | 是否旋转动画                                              |
+| spinDirection  | `'cw' \| 'ccw'`                                       | `'cw'` | 旋转方向，`ccw` 反向                                      |
+| loading        | `boolean`                                             | false  | 加载态：替换为 spinner，自动 spin + `aria-busy`           |
+| clickable      | `boolean`                                             | false  | 渲染为按钮：`role="button"` + `tabindex="0"` + 键盘激活   |
+| disabled       | `boolean`                                             | false  | 仅对 `clickable` 有效：阻止 click/键盘 + `aria-disabled`  |
+| themePrefixMap | `Partial<Record<IconTheme, string>>`                  | --     | 按 theme 自动映射 Iconify 前缀，比 `iconifyPrefix` 优先   |
+| iconifyPrefix  | `string`                                              | --     | 当 `name` 不含 `:` 时自动拼成 `${prefix}:${name}`         |
+| title          | `string`                                              | --     | 可访问标题（同时设置 `role="img"`）                       |
+| ariaLabel      | `string`                                              | --     | 可访问标签                                                |
+| prefixCls      | `string`                                              | --     | 字体类名前缀，默认读 ConfigProvider 的 `iconPrefixCls`    |
 
 ## 解析优先级
 

@@ -5,6 +5,7 @@ export type IconSizePreset = 'small' | 'default' | 'large'
 export type IconSize = IconSizePreset | number | (string & {})
 export type IconTheme = 'outlined' | 'filled' | 'two-tone'
 export type IconSpinDirection = 'cw' | 'ccw'
+export type IconThemePrefixMap = Partial<Record<IconTheme, string>>
 
 export interface IconProps {
   name?: string
@@ -13,10 +14,13 @@ export interface IconProps {
   color?: string
   twoToneColor?: string
   theme?: IconTheme
+  themePrefixMap?: IconThemePrefixMap
   rotate?: number
   spin?: boolean
   spinDirection?: IconSpinDirection
+  loading?: boolean
   clickable?: boolean
+  disabled?: boolean
   iconifyPrefix?: string
   title?: string
   ariaLabel?: string
@@ -48,6 +52,10 @@ export const iconProps = {
     type: String as PropType<IconTheme>,
     default: undefined,
   },
+  themePrefixMap: {
+    type: Object as PropType<IconThemePrefixMap>,
+    default: undefined,
+  },
   rotate: {
     type: Number,
     default: 0,
@@ -60,7 +68,15 @@ export const iconProps = {
     type: String as PropType<IconSpinDirection>,
     default: 'cw',
   },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
   clickable: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
     type: Boolean,
     default: false,
   },

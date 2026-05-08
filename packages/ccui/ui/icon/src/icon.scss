@@ -43,6 +43,22 @@
     outline-offset: 2px;
   }
 
+  &--disabled {
+    cursor: not-allowed;
+    color: $ccui-color-text-disabled;
+    opacity: 0.5;
+  }
+
+  &--loading {
+    color: $ccui-color-text-tertiary;
+  }
+
+  &__loading-spinner {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+
   &--two-tone {
     color: var(--ccui-icon-two-tone-color, $ccui-color-primary);
   }

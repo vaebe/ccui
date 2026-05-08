@@ -57,9 +57,14 @@ export default defineComponent({
     const config = inject<ConfigContext>(CONFIG_INJECT_KEY, DEFAULT_CONFIG)
 
     const iconPrefixCls = computed(() => props.prefixCls || config.iconPrefixCls || 'ccui-icon')
+    const themePrefix = computed(() => {
+      if (!props.theme || !props.themePrefixMap) return undefined
+      return props.themePrefixMap[props.theme]
+    })
     const resolvedName = computed(() => {
       if (!props.name) return ''
       if (props.name.includes(':')) return props.name
+      if (themePrefix.value) return `${themePrefix.value}:${props.name}`
       if (props.iconifyPrefix) return `${props.iconifyPrefix}:${props.name}`
       return props.name
     })
@@ -97,21 +102,28 @@ export default defineComponent({
 
     const iconCls = computed(() => ({
       [ns.b()]: true,
-      [ns.m('spin')]: props.spin,
-      [ns.m('spin-ccw')]: props.spin && props.spinDirection === 'ccw',
+      [ns.m('spin')]: props.spin || props.loading,
+      [ns.m('spin-ccw')]: (props.spin || props.loading) && props.spinDirection === 'ccw',
       [ns.m('font')]: hasNamedFontIcon.value,
       [ns.m('svg')]: !!registryIcon.value || !!iconifyName.value || !!slots.default,
       [ns.m('iconify')]: !!iconifyName.value,
       [ns.m(props.theme!)]: !!props.theme,
-      [ns.m('clickable')]: props.clickable,
+      [ns.m('clickable')]: props.clickable && !props.disabled,
+      [ns.m('disabled')]: props.clickable && props.disabled,
+      [ns.m('loading')]: props.loading,
     }))
 
     const onClick = (event: MouseEvent) => {
+      if (props.clickable && props.disabled) {
+        event.preventDefault()
+        event.stopPropagation()
+        return
+      }
       emit('click', event)
     }
 
     const onKeydown = (event: KeyboardEvent) => {
-      if (!props.clickable) return
+      if (!props.clickable || props.disabled) return
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
         ;(event.currentTarget as HTMLElement).click()
@@ -122,7 +134,22 @@ export default defineComponent({
       const { class: attrClass, style: attrStyle, ...restAttrs } = attrs as Record<string, unknown>
 
       let content
-      if (registryIcon.value) {
+      if (props.loading) {
+        content = h(
+          'svg',
+          { viewBox: '0 0 24 24', class: ns.e('loading-spinner'), 'aria-hidden': 'true' },
+          h('circle', {
+            cx: '12',
+            cy: '12',
+            r: '9',
+            fill: 'none',
+            stroke: 'currentColor',
+            'stroke-width': '2.5',
+            'stroke-linecap': 'round',
+            'stroke-dasharray': '40 18',
+          }),
+        )
+      } else if (registryIcon.value) {
         content = h(registryIcon.value as never)
       } else if (iconifyName.value) {
         content = h(IconifyIcon, { icon: iconifyName.value })
@@ -134,7 +161,7 @@ export default defineComponent({
 
       const interactive = props.clickable
       const role = interactive ? 'button' : props.title || props.ariaLabel ? 'img' : undefined
-      const tabindex = interactive ? 0 : undefined
+      const tabindex = interactive ? (props.disabled ? -1 : 0) : undefined
 
       return h(
         'span',
@@ -146,7 +173,8 @@ export default defineComponent({
           tabindex,
           'aria-hidden': interactive ? undefined : props.title || props.ariaLabel ? undefined : 'true',
           'aria-label': props.ariaLabel || props.title || undefined,
-          'aria-disabled': interactive && (attrs as Record<string, unknown>).disabled ? 'true' : undefined,
+          'aria-disabled': interactive && props.disabled ? 'true' : undefined,
+          'aria-busy': props.loading ? 'true' : undefined,
           title: props.title || undefined,
           onClick,
           onKeydown,

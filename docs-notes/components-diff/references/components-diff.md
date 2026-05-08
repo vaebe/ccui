@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 95% 版（clickable / spinDirection / iconifyPrefix / ConfigProvider 集成 / Iconify 离线 API + 26 个定向测试）、Select 95% 版（虚拟列表 / 嵌套分组 / 完整 ARIA / Home-End-PageUp-PageDown / Teleport / labelInValue / maxCount / 命中高亮 + 49 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，新增 Icon 已完成（在 95% 基础上补 loading / disabled / themePrefixMap + 33 个定向测试）、Select 95% 版（虚拟列表 / 嵌套分组 / 完整 ARIA / Home-End-PageUp-PageDown / Teleport / labelInValue / maxCount / 命中高亮 + 49 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -40,7 +40,7 @@
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成       |
 | Form                  | Form 表单               | 数据录入        | 80% 完成     |
 | Grid                  | Grid 栅格               | 布局            | 已完成       |
-| Icon                  | Icon 图标               | 通用            | 95% 完成     |
+| Icon                  | Icon 图标               | 通用            | 已完成       |
 | Image                 | Image 图片              | 数据展示        | 已完成       |
 | Input                 | Input 输入框            | 数据录入        | 已完成       |
 | InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成       |
@@ -240,6 +240,24 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 14：Icon 100% 完成
+
+已完成 1 项：Icon。
+
+关键能力：
+
+- `loading` 状态：开启后图标内容被 spinner SVG 替换，自动开 spin 动画并挂 `aria-busy="true"`，常用于异步操作中按钮的图标占位。
+- `disabled` 状态：仅对 `clickable=true` 生效，自动阻止 click 和键盘激活，挂 `aria-disabled="true"` + `tabindex="-1"`，外观降透明 + `cursor: not-allowed`。
+- `themePrefixMap`：按 theme 自动映射 Iconify 前缀，比 `iconifyPrefix` 优先。`name` 含 `:` 时仍跳过该映射。
+- 文档：新增 加载状态、禁用状态、主题→Iconify 前缀映射 共 3 个章节，Props 表加 3 个新字段。
+- 测试：从 26 个扩展到 33 个，新增 loading 替换内容 + spin 类 + aria-busy、disabled 阻止 click 和键盘、disabled 不挂在非 clickable、themePrefixMap 命中前缀、themePrefixMap 命中失败时回退 iconifyPrefix、含冒号时忽略两个映射、loading + spinDirection=ccw。
+- 状态：components-diff.md / sidebar.ts / icon/index.ts 全部 95% -> 100% / 已完成。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/icon/test/icon.test.ts --environment jsdom` 通过，33 个用例。
 
 ### Batch 13：Select 95% 完成
 

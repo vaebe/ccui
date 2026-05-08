@@ -328,6 +328,87 @@ describe('icon', () => {
     expect(typeof loadIcon).toBe('function')
   })
 
+  it('loading state replaces content with spinner SVG and sets aria-busy', () => {
+    registerIcon('search', SearchIcon)
+    const wrapper = mount(Icon, {
+      props: { name: 'search', loading: true },
+    })
+
+    expect(wrapper.classes()).toContain(ns.m('loading').substring(1))
+    expect(wrapper.classes()).toContain(ns.m('spin').substring(1))
+    expect(wrapper.attributes('aria-busy')).toBe('true')
+    expect(wrapper.find(ns.e('loading-spinner')).exists()).toBe(true)
+  })
+
+  it('disabled clickable icon blocks click and keyboard activation', async () => {
+    const onClick = vi.fn()
+    const wrapper = mount(Icon, {
+      props: { name: 'mdi:home', clickable: true, disabled: true, onClick },
+    })
+
+    expect(wrapper.classes()).toContain(ns.m('disabled').substring(1))
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    expect(wrapper.attributes('tabindex')).toBe('-1')
+
+    await wrapper.trigger('click')
+    expect(onClick).not.toHaveBeenCalled()
+
+    await wrapper.trigger('keydown', { key: 'Enter' })
+    await wrapper.trigger('keydown', { key: ' ' })
+    expect(onClick).not.toHaveBeenCalled()
+  })
+
+  it('disabled does not apply when not clickable', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'mdi:home', disabled: true },
+    })
+    expect(wrapper.classes()).not.toContain(ns.m('disabled').substring(1))
+    expect(wrapper.attributes('aria-disabled')).toBeUndefined()
+  })
+
+  it('themePrefixMap auto-prefixes bare names with theme-mapped Iconify prefix', () => {
+    const wrapper = mount(Icon, {
+      props: {
+        name: 'home',
+        theme: 'outlined',
+        themePrefixMap: { outlined: 'material-symbols', filled: 'mdi', 'two-tone': 'twemoji' },
+      },
+    })
+    expect(wrapper.classes()).toContain(ns.m('iconify').substring(1))
+  })
+
+  it('themePrefixMap defers to iconifyPrefix when no entry for current theme', () => {
+    const wrapper = mount(Icon, {
+      props: {
+        name: 'home',
+        theme: 'outlined',
+        themePrefixMap: { filled: 'mdi' },
+        iconifyPrefix: 'fluent',
+      },
+    })
+    expect(wrapper.classes()).toContain(ns.m('iconify').substring(1))
+  })
+
+  it('explicit Iconify name (with colon) ignores both themePrefixMap and iconifyPrefix', () => {
+    const wrapper = mount(Icon, {
+      props: {
+        name: 'mdi:custom-icon',
+        theme: 'outlined',
+        themePrefixMap: { outlined: 'should-be-ignored' },
+        iconifyPrefix: 'also-ignored',
+      },
+    })
+    expect(wrapper.classes()).toContain(ns.m('iconify').substring(1))
+  })
+
+  it('loading state still spins counter-clockwise when spinDirection=ccw', () => {
+    const wrapper = mount(Icon, {
+      props: { loading: true, spinDirection: 'ccw' },
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+    })
+    expect(wrapper.classes()).toContain(ns.m('spin-ccw').substring(1))
+  })
+
   it('attaches role="img" and aria-label when title or ariaLabel is provided', () => {
     const titled = mount(Icon, {
       props: { title: 'home' },
