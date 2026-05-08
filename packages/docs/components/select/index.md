@@ -1,6 +1,6 @@
 # Select 选择器
 
-从一组选项中选择一个或多个值，支持分组、字段名映射、自定义渲染、远程搜索、tags、popup 定位和 FormItem 校验联动。
+从一组选项中选择一个或多个值，支持分组（含嵌套）、字段名映射、自定义渲染、远程搜索、tags、popup 定位、Teleport 容器、虚拟列表、完整 ARIA、键盘导航、labelInValue、maxCount、命中高亮和 FormItem 校验联动。
 
 ## 基本用法
 
@@ -251,6 +251,125 @@ const options = [
 <c-select v-model="value" :options="options" placement="top" popup-class-name="my-select-popup" />
 ```
 
+## 虚拟列表（大数据量）
+
+`virtualScroll` 启用后下拉框只渲染可视区域 + 缓冲区，能流畅承载几千上万条选项。`virtualItemHeight` 控制单项高度（默认 32px），`virtualMaxHeight` 控制下拉最大高度（默认 240px）。键盘 PageUp/PageDown/Home/End 自动滚到对应位置。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref()
+const options = Array.from({ length: 5000 }, (_, i) => ({ label: `Option ${i}`, value: i }))
+</script>
+
+<template>
+  <c-select
+    v-model="value"
+    filterable
+    :options="options"
+    virtual-scroll
+    :virtual-item-height="32"
+    :virtual-max-height="320"
+  />
+</template>
+```
+
+## 嵌套分组
+
+`options` 数组里的 group 节点可以再嵌套 group：
+
+```vue
+<c-select
+  :options="[
+    {
+      label: '前端',
+      options: [
+        {
+          label: '框架',
+          options: [
+            { label: 'Vue', value: 'vue' },
+            { label: 'React', value: 'react' },
+          ],
+        },
+        {
+          label: '工具链',
+          options: [
+            { label: 'Vite', value: 'vite' },
+            { label: 'Webpack', value: 'webpack' },
+          ],
+        },
+      ],
+    },
+  ]"
+/>
+```
+
+## 命中高亮
+
+`highlightMatch` 让 filterable 模式下命中的子串包在 `<mark class="ccui-select__highlight">` 里：
+
+```vue
+<c-select v-model="value" filterable highlight-match :options="options" />
+```
+
+## Teleport 浮层
+
+默认浮层渲染在组件内部 DOM。需要把浮层挂到指定容器（避免被父级 `overflow:hidden` 截断）时：
+
+```vue
+<!-- 挂到 body -->
+<c-select v-model="value" :options="options" popup-append-to-body />
+
+<!-- 挂到自定义容器 -->
+<c-select v-model="value" :options="options" :get-popup-container="() => myRef" />
+```
+
+## labelInValue 模式
+
+默认 `modelValue` 只是 value。某些场景下需要同时拿到 label（比如展示已选项的额外字段、避免再去 options 里查找）。设置 `labelInValue` 后绑定值变成 `{ value, label }` 形态：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// 单选：{ value: 'jack', label: 'Jack' }
+const single = ref()
+// 多选：[{ value: 'jack', label: 'Jack' }, ...]
+const multi = ref([])
+</script>
+
+<template>
+  <c-select v-model="single" label-in-value :options="options" />
+  <c-select v-model="multi" mode="multiple" label-in-value :options="options" />
+</template>
+```
+
+## 选择数量上限
+
+`maxCount` 限制 multiple / tags 模式下最多可选数：
+
+```vue
+<c-select v-model="value" mode="multiple" :max-count="3" :options="options" />
+```
+
+到达上限后再点选项或按 Enter 创建 tag 都不会触发 update。
+
+## ARIA 与键盘导航
+
+放在 `<c-form-item>` 里时自动注入校验上下文，同时本组件内置：
+
+| 按键        | 行为                             |
+| ----------- | -------------------------------- |
+| Enter       | 打开下拉 / 选中当前项 / 创建 tag |
+| Esc         | 关闭下拉                         |
+| ↑ / ↓       | 上一项 / 下一项（跳过 disabled） |
+| Home / End  | 首项 / 末项                      |
+| PageUp/Down | 翻页                             |
+| Backspace   | 多选 + 搜索为空时删最后一个 tag  |
+
+ARIA 已挂：`role="combobox"` + `aria-expanded` + `aria-controls` + `aria-haspopup="listbox"` + `aria-activedescendant`，每个选项有独立 `id` + `role="option"` + `aria-selected` + `aria-disabled`。
+
 ## FormItem 联动
 
 放在 `<c-form-item>` 里时自动注入校验上下文：
@@ -263,36 +382,48 @@ const options = [
 
 ## Props
 
-| 参数           | 类型                                                  | 默认值      | 说明                                            |
-| -------------- | ----------------------------------------------------- | ----------- | ----------------------------------------------- |
-| modelValue     | `string / number / array`                             | --          | 绑定值                                          |
-| options        | `Array<SelectOption \| SelectGroupOption>`            | `[]`        | 选项列表，含 `options` 数组的节点视为分组       |
-| fieldNames     | `{ label?, value?, disabled?, options? }`             | --          | 字段名映射                                      |
-| mode           | `'default' / 'multiple' / 'tags'`                     | `'default'` | 模式；`tags` 允许 Enter 输入新值                |
-| multiple       | `boolean`                                             | `false`     | 兼容旧 prop，等价于 `mode="multiple"`           |
-| filterable     | `boolean`                                             | `false`     | 显示搜索框                                      |
-| filterOption   | `boolean / (input, option) => boolean`                | `true`      | 过滤策略；`false` 走远程搜索；函数自定义谓词    |
-| placement      | `'bottom' / 'top' / 'auto'`                           | `'bottom'`  | 浮层位置（基于 floating-ui，自动 flip / shift） |
-| popupClassName | `string`                                              | `''`        | 浮层附加类                                      |
-| placeholder    | `string`                                              | --          | 占位文本                                        |
-| disabled       | `boolean`                                             | `false`     | 是否禁用                                        |
-| clearable      | `boolean`                                             | `false`     | 是否可清空                                      |
-| loading        | `boolean`                                             | `false`     | 加载中                                          |
-| size           | `'large' / 'default' / 'small'`                       | `'default'` | 尺寸                                            |
-| noDataText     | `string`                                              | `No data`   | 空状态文本                                      |
-| loadingText    | `string`                                              | `Loading`   | 加载文本                                        |
-| maxTagCount    | `number`                                              | `3`         | 多选最多直接展示的标签数                        |
-| status         | `'' / 'error' / 'warning' / 'success' / 'validating'` | `''`        | 显式校验状态，覆盖 FormItem 注入                |
+| 参数                     | 类型                                                  | 默认值      | 说明                                            |
+| ------------------------ | ----------------------------------------------------- | ----------- | ----------------------------------------------- |
+| modelValue               | `string / number / array`                             | --          | 绑定值                                          |
+| options                  | `Array<SelectOption \| SelectGroupOption>`            | `[]`        | 选项列表，含 `options` 数组的节点视为分组       |
+| fieldNames               | `{ label?, value?, disabled?, options? }`             | --          | 字段名映射                                      |
+| mode                     | `'default' / 'multiple' / 'tags'`                     | `'default'` | 模式；`tags` 允许 Enter 输入新值                |
+| multiple                 | `boolean`                                             | `false`     | 兼容旧 prop，等价于 `mode="multiple"`           |
+| filterable               | `boolean`                                             | `false`     | 显示搜索框                                      |
+| filterOption             | `boolean / (input, option) => boolean`                | `true`      | 过滤策略；`false` 走远程搜索；函数自定义谓词    |
+| placement                | `'bottom' / 'top' / 'auto'`                           | `'bottom'`  | 浮层位置（基于 floating-ui，自动 flip / shift） |
+| popupClassName           | `string`                                              | `''`        | 浮层附加类                                      |
+| placeholder              | `string`                                              | --          | 占位文本                                        |
+| disabled                 | `boolean`                                             | `false`     | 是否禁用                                        |
+| clearable                | `boolean`                                             | `false`     | 是否可清空                                      |
+| loading                  | `boolean`                                             | `false`     | 加载中                                          |
+| size                     | `'large' / 'default' / 'small'`                       | `'default'` | 尺寸                                            |
+| noDataText               | `string`                                              | `No data`   | 空状态文本                                      |
+| loadingText              | `string`                                              | `Loading`   | 加载文本                                        |
+| maxTagCount              | `number`                                              | `3`         | 多选最多直接展示的标签数                        |
+| status                   | `'' / 'error' / 'warning' / 'success' / 'validating'` | `''`        | 显式校验状态，覆盖 FormItem 注入                |
+| labelInValue             | `boolean`                                             | `false`     | 启用后 modelValue 变成 `{ value, label }` 形态  |
+| autoFocus                | `boolean`                                             | `false`     | 挂载后自动聚焦                                  |
+| defaultActiveFirstOption | `boolean`                                             | `true`      | 打开下拉时是否预选第一个非禁用项                |
+| highlightMatch           | `boolean`                                             | `false`     | 搜索命中子串包 `<mark>`                         |
+| maxCount                 | `number`                                              | `0`         | 多选/tags 最大可选数，0 表示不限                |
+| getPopupContainer        | `(triggerNode) => HTMLElement \| null`                | --          | 自定义浮层挂载点（自动 Teleport 到该容器）      |
+| popupAppendToBody        | `boolean`                                             | `false`     | 等价于 `getPopupContainer: () => document.body` |
+| virtualScroll            | `boolean`                                             | `false`     | 启用虚拟列表                                    |
+| virtualItemHeight        | `number`                                              | `32`        | 虚拟列表单项高度（px）                          |
+| virtualMaxHeight         | `number`                                              | `240`       | 虚拟列表最大可视高度（px）                      |
 
 ## 事件
 
-| 事件              | 回调签名             | 说明                          |
-| ----------------- | -------------------- | ----------------------------- |
-| update:modelValue | `(value)`            | 选中值变化                    |
-| change            | `(value)`            | 选中值变化（与 v-model 同步） |
-| search            | `(input: string)`    | 搜索文本变化                  |
-| visible-change    | `(visible: boolean)` | 下拉显示状态变化              |
-| clear             | `()`                 | 点击清除按钮                  |
+| 事件              | 回调签名              | 说明                          |
+| ----------------- | --------------------- | ----------------------------- |
+| update:modelValue | `(value)`             | 选中值变化                    |
+| change            | `(value)`             | 选中值变化（与 v-model 同步） |
+| search            | `(input: string)`     | 搜索文本变化                  |
+| visible-change    | `(visible: boolean)`  | 下拉显示状态变化              |
+| clear             | `()`                  | 点击清除按钮                  |
+| focus             | `(event: FocusEvent)` | 根元素获得焦点                |
+| blur              | `(event: FocusEvent)` | 根元素失去焦点                |
 
 ## 插槽
 

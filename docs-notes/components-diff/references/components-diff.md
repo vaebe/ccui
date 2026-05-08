@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 95% 版（clickable / spinDirection / iconifyPrefix / ConfigProvider 集成 / Iconify 离线 API + 26 个定向测试）、Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，新增 Icon 95% 版（clickable / spinDirection / iconifyPrefix / ConfigProvider 集成 / Iconify 离线 API + 26 个定向测试）、Select 95% 版（虚拟列表 / 嵌套分组 / 完整 ARIA / Home-End-PageUp-PageDown / Teleport / labelInValue / maxCount / 命中高亮 + 49 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -59,7 +59,7 @@
 | Rate                  | Rate 评分               | 数据录入        | 已完成       |
 | Result                | Result 结果             | 反馈            | 已完成       |
 | Segmented             | Segmented 分段控制器    | 数据展示        | 已完成       |
-| Select                | Select 选择器           | 数据录入        | 80% 完成     |
+| Select                | Select 选择器           | 数据录入        | 95% 完成     |
 | Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成       |
 | Slider                | Slider 滑动输入条       | 数据录入        | 已完成       |
 | Space                 | Space 间距              | 布局            | 已完成       |
@@ -240,6 +240,47 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 13：Select 95% 完成
+
+已完成 1 项：Select。
+
+关键能力：
+
+- **虚拟列表**：`virtualScroll` 启用后下拉框只渲染可视区 + 缓冲区，`virtualItemHeight` / `virtualMaxHeight` 可调，能流畅承载数千上万选项。键盘导航自动滚动到当前 active 项。
+- **嵌套分组**：`options` 中的 group 节点可以再嵌套 group，命中过滤会逐层折叠空 group。
+- **完整 ARIA**：根元素 `role="combobox"` + `aria-expanded` + `aria-controls` + `aria-haspopup="listbox"` + `aria-activedescendant`；每项独立 `id` + `role="option"` + `aria-selected` + `aria-disabled`；listbox 容器有 `role="listbox"` + `id`。
+- **键盘导航**：Home / End 跳到首/末非禁用项，PageUp / PageDown 按 `virtualMaxHeight / virtualItemHeight` 翻页，原有的 ↑ / ↓ / Enter / Escape / Backspace 全部保留。
+- **Teleport 浮层**：`getPopupContainer(triggerNode)` 自定义挂载点；`popupAppendToBody` 等价于挂到 body；浮层穿出后 floating-ui 自动切 fixed strategy。
+- **`labelInValue` 模式**：modelValue 变成 `{ value, label }` 单值或数组形态，读写两侧都按形态处理；从已有 options 命中标签，未命中（tags 模式）回退到 value 自身做 label。
+- **`maxCount` 限制**：multiple / tags 模式下到达上限后再点选项或回车创建 tag 不触发 update。
+- **`highlightMatch` 命中高亮**：option 标签里命中子串包 `<mark class="ccui-select__highlight">`。
+- **`defaultActiveFirstOption`** 显式 prop（默认 true，关掉后开下拉时 activeIndex 留在 0 不寻 enabled）。
+- **`autoFocus`** 挂载后聚焦根元素。
+- **`focus` / `blur` 事件**：从根元素回传 FocusEvent。
+- 文档：新增虚拟列表、嵌套分组、命中高亮、Teleport 浮层、labelInValue、maxCount、ARIA & 键盘导航 共 7 个章节，Props 表加 11 个新字段，事件表新增 focus / blur。
+- 测试：从 31 个扩展到 49 个，新增 ARIA combobox 语义、option id+role+aria-selected、Home/End 跳转、PageDown/PageUp 翻页、嵌套 group 递归、嵌套 group 命中过滤、命中高亮 mark 标签、popupAppendToBody Teleport、getPopupContainer 自定义挂载、labelInValue 单值/数组/读取、maxCount 多选阻断、maxCount tags 阻断、autoFocus、defaultActiveFirstOption=false、virtualScroll 渲染窗口缩减、focus/blur emit。
+
+工程决策：
+
+- 新增 `composables/use-virtual-list.ts`：通用虚拟列表 hook，支持 buffer、totalHeight、containerHeight、scrollToIndex；与具体 Select 解耦，后续 TreeSelect / Cascader 可复用。
+- 通过 `setOpen` 同步赋值 `firstEnabledIndex` 替代异步 watch，确保 Home/End/PageUp/PageDown 在打开下拉的同一帧能正确覆盖 activeIndex。
+- 浮层 Teleport 使用 `<Teleport :to="container">`，`computePopupContainer` 同时考虑 `getPopupContainer` 和 `popupAppendToBody`，并把 floating-ui strategy 切到 fixed 防止滚动错位。
+- `labelInValue` 在 `useSelect` 内统一处理读（`extractRawValue`）和写（`wrapForEmit`），调用方无感。
+- 嵌套 group 用递归 `flattenVisible`，按需挂 `depth` 字段控制缩进；空 group 在递归出来后回滚。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/{form,select,icon,tree} --environment jsdom` 通过，138 个用例（form 32 + select 49 + icon 26 + tree 31）通过。
+
+Select 剩余 5% 项：
+
+- 树形 / 级联选择器（属于 TreeSelect / Cascader 单独组件）。
+- 自定义浮层动画 transition / 渲染时机控制。
+- 拖拽排序已选 tag。
+- showSearch 与 filterable 的语义合并（当前只有 filterable）。
+- 选项的 `optionLabelProp` 单独配置已选展示字段（当前用 label 字段）。
 
 ### Batch 12：Icon 95% 完成
 

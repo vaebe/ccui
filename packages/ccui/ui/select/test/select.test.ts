@@ -420,4 +420,238 @@ describe('select', () => {
     await wrapper.trigger('click')
     expect(wrapper.find('.my-popup').exists()).toBe(true)
   })
+
+  it('exposes ARIA combobox semantics on the root element', async () => {
+    const wrapper = mountSelect({ options })
+
+    expect(wrapper.attributes('role')).toBe('combobox')
+    expect(wrapper.attributes('aria-haspopup')).toBe('listbox')
+    expect(wrapper.attributes('aria-expanded')).toBe('false')
+    expect(wrapper.attributes('aria-controls')).toMatch(/^ccui-select-listbox-/)
+
+    await wrapper.trigger('click')
+    expect(wrapper.attributes('aria-expanded')).toBe('true')
+    expect(wrapper.attributes('aria-activedescendant')).toMatch(/^ccui-select-option-/)
+  })
+
+  it('options carry id, role, and aria-selected attributes', async () => {
+    const wrapper = mountSelect({ options, modelValue: 'alpha' })
+
+    await wrapper.trigger('click')
+    const opts = wrapper.findAll(ns.e('option'))
+    expect(opts[0].attributes('role')).toBe('option')
+    expect(opts[0].attributes('id')).toMatch(/^ccui-select-option-/)
+    expect(opts[0].attributes('aria-selected')).toBe('true')
+    expect(opts[2].attributes('aria-disabled')).toBe('true')
+  })
+
+  it('Home / End jump to the first / last enabled option', async () => {
+    const wrapper = mountSelect({ options: manyOptions })
+
+    await wrapper.trigger('keydown', { key: 'End' })
+    expect(wrapper.findAll(ns.e('option'))[3].classes()).toContain(ns.em('option', 'active').slice(1))
+
+    await wrapper.trigger('keydown', { key: 'Home' })
+    expect(wrapper.findAll(ns.e('option'))[0].classes()).toContain(ns.em('option', 'active').slice(1))
+  })
+
+  it('PageDown / PageUp move by virtualMaxHeight / itemHeight steps', async () => {
+    const big = Array.from({ length: 20 }, (_, i) => ({ label: `O${i}`, value: i }))
+    const wrapper = mountSelect({ options: big, virtualMaxHeight: 96, virtualItemHeight: 32 })
+
+    await wrapper.trigger('keydown', { key: 'PageDown' })
+    // pageStep = 96/32 = 3
+    expect(wrapper.findAll(ns.e('option'))[3].classes()).toContain(ns.em('option', 'active').slice(1))
+
+    await wrapper.trigger('keydown', { key: 'PageUp' })
+    expect(wrapper.findAll(ns.e('option'))[0].classes()).toContain(ns.em('option', 'active').slice(1))
+  })
+
+  it('renders nested option groups recursively', async () => {
+    const nested = [
+      {
+        label: 'Outer',
+        options: [
+          {
+            label: 'Inner',
+            options: [{ label: 'Deep', value: 'deep' }],
+          },
+        ],
+      },
+    ]
+    const wrapper = mountSelect({ options: nested })
+
+    await wrapper.trigger('click')
+    const groupLabels = wrapper.findAll(ns.e('group-label'))
+    expect(groupLabels).toHaveLength(2)
+    expect(groupLabels[0].text()).toBe('Outer')
+    expect(groupLabels[1].text()).toBe('Inner')
+    expect(wrapper.findAll(ns.e('option'))).toHaveLength(1)
+    expect(wrapper.find(ns.e('option')).text()).toContain('Deep')
+  })
+
+  it('hides parent group when nested matches are filtered out', async () => {
+    const nested = [
+      {
+        label: 'Outer',
+        options: [
+          {
+            label: 'Inner',
+            options: [{ label: 'Apple', value: 'a' }],
+          },
+        ],
+      },
+      {
+        label: 'Other',
+        options: [{ label: 'Banana', value: 'b' }],
+      },
+    ]
+    const wrapper = mountSelect({ options: nested, filterable: true })
+
+    await wrapper.trigger('click')
+    await wrapper.find('input').setValue('app')
+    expect(wrapper.findAll(ns.e('group-label'))).toHaveLength(2) // Outer + Inner
+    expect(wrapper.findAll(ns.e('option'))).toHaveLength(1)
+  })
+
+  it('highlightMatch wraps matched substring in <mark>', async () => {
+    const wrapper = mountSelect({ options: manyOptions, filterable: true, highlightMatch: true })
+
+    await wrapper.trigger('click')
+    await wrapper.find('input').setValue('et')
+    const mark = wrapper.find('.ccui-select__highlight')
+    expect(mark.exists()).toBe(true)
+    expect(mark.text()).toBe('et')
+  })
+
+  it('teleports popup to body when popupAppendToBody=true', async () => {
+    const wrapper = mountSelect({ options, popupAppendToBody: true }, {})
+    await wrapper.trigger('click')
+    await nextTick()
+    // Dropdown should be in document.body, not inside the wrapper root
+    expect(wrapper.find(ns.e('dropdown')).exists()).toBe(false)
+    const dropdown = document.body.querySelector('.ccui-select__dropdown')
+    expect(dropdown).toBeTruthy()
+    dropdown?.parentElement?.removeChild(dropdown)
+  })
+
+  it('getPopupContainer overrides default popup target', async () => {
+    const target = document.createElement('div')
+    target.id = 'custom-popup-target'
+    document.body.appendChild(target)
+
+    const wrapper = mountSelect({ options, getPopupContainer: () => target })
+    await wrapper.trigger('click')
+    await nextTick()
+    expect(target.querySelector('.ccui-select__dropdown')).toBeTruthy()
+    document.body.removeChild(target)
+  })
+
+  it('labelInValue emits { value, label } payload for single mode', async () => {
+    const wrapper = mountSelect({ options, labelInValue: true })
+
+    await wrapper.trigger('click')
+    await wrapper.findAll(ns.e('option'))[0].trigger('click')
+
+    const events = wrapper.emitted('update:modelValue') as Array<unknown[]>
+    expect(events[0][0]).toEqual({ value: 'alpha', label: 'Alpha' })
+  })
+
+  it('labelInValue handles array payload for multiple mode', async () => {
+    const wrapper = mountSelect({ options, mode: 'multiple', labelInValue: true })
+
+    await wrapper.trigger('click')
+    await wrapper.findAll(ns.e('option'))[0].trigger('click')
+
+    const events = wrapper.emitted('update:modelValue') as Array<unknown[]>
+    expect(events[0][0]).toEqual([{ value: 'alpha', label: 'Alpha' }])
+  })
+
+  it('reads modelValue in labelInValue payload form for selection state', () => {
+    const wrapper = mountSelect({
+      options,
+      labelInValue: true,
+      modelValue: { value: 'alpha', label: 'Custom Alpha' },
+    })
+
+    expect(wrapper.find(ns.e('single')).text()).toBe('Alpha')
+  })
+
+  it('maxCount blocks adding beyond the limit in multiple mode', async () => {
+    const wrapper = mountSelect({ options, mode: 'multiple', maxCount: 1 })
+
+    await wrapper.trigger('click')
+    await wrapper.findAll(ns.e('option'))[0].trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['alpha']])
+
+    await wrapper.setProps({ modelValue: ['alpha'] })
+    await wrapper.findAll(ns.e('option'))[1].trigger('click')
+    // second click should not produce a new emission
+    expect(wrapper.emitted('update:modelValue')?.length).toBe(1)
+  })
+
+  it('maxCount blocks tag creation in tags mode at limit', async () => {
+    const wrapper = mountSelect({
+      options: [],
+      mode: 'tags',
+      filterable: true,
+      maxCount: 1,
+      modelValue: ['existing'],
+    })
+
+    await wrapper.trigger('click')
+    await wrapper.find('input').setValue('newtag')
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('autoFocus focuses the root on mount', async () => {
+    const wrapper = mount(Select, {
+      props: { options, autoFocus: true },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+
+    await nextTick()
+    expect(document.activeElement).toBe(wrapper.element)
+  })
+
+  it('defaultActiveFirstOption=false starts activeIndex at 0 without seeking enabled', async () => {
+    const lead = [
+      { label: 'A', value: 'a', disabled: true },
+      { label: 'B', value: 'b' },
+    ]
+    const wrapper = mountSelect({ options: lead, defaultActiveFirstOption: false })
+
+    await wrapper.trigger('click')
+    expect(wrapper.findAll(ns.e('option'))[0].classes()).toContain(ns.em('option', 'active').slice(1))
+  })
+
+  it('virtualScroll renders only visible window when enabled', async () => {
+    const big = Array.from({ length: 200 }, (_, i) => ({ label: `Opt ${i}`, value: i }))
+    const wrapper = mountSelect({
+      options: big,
+      virtualScroll: true,
+      virtualItemHeight: 32,
+      virtualMaxHeight: 128,
+    })
+
+    await wrapper.trigger('click')
+    await nextTick()
+    expect(wrapper.find(ns.e('virtual')).exists()).toBe(true)
+    // visible window: ceil(128/32) + 2*4 buffer ≈ 12 items, NOT 200
+    const rendered = wrapper.findAll(ns.e('option'))
+    expect(rendered.length).toBeLessThan(200)
+    expect(rendered.length).toBeGreaterThan(0)
+  })
+
+  it('emits focus and blur events from root', async () => {
+    const wrapper = mountSelect({ options })
+
+    await wrapper.trigger('focus')
+    expect(wrapper.emitted('focus')).toBeDefined()
+
+    await wrapper.trigger('blur')
+    expect(wrapper.emitted('blur')).toBeDefined()
+  })
 })

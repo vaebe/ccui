@@ -10,7 +10,7 @@ export { Select }
 export default {
   title: 'Select 选择器',
   category: '数据录入',
-  status: '80%',
+  status: '95%',
   install(app: App): void {
     app.component(Select.name!, Select)
   },

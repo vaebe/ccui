@@ -1,26 +1,69 @@
 import type { VNode } from 'vue'
+import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { ResolvedSelectOption, SelectProps } from './select-types'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, h, inject, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
-import { useNamespace } from '../../shared/hooks/use-namespace'
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+  Teleport,
+  watch,
+} from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import { useSelect } from './composables/use-select'
+import { useVirtualList } from './composables/use-virtual-list'
 import { selectProps } from './select-types'
 import './select.scss'
+
+let uniqueIdCounter = 0
+
+function highlightLabel(label: unknown, keyword: string): VNode | string {
+  if (!keyword) return labelAsString(label)
+  const str = labelAsString(label)
+  const idx = str.toLowerCase().indexOf(keyword.toLowerCase())
+  if (idx < 0) return str
+  return h('span', null, [
+    str.slice(0, idx),
+    h('mark', { class: 'ccui-select__highlight' }, str.slice(idx, idx + keyword.length)),
+    str.slice(idx + keyword.length),
+  ])
+}
+
+function labelAsString(value: unknown): string {
+  if (value === null || value === undefined) return ''
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  return ''
+}
 
 export default defineComponent({
   name: 'CSelect',
   props: selectProps,
-  emits: ['update:modelValue', 'change', 'search', 'visible-change', 'clear'],
+  emits: ['update:modelValue', 'change', 'search', 'visible-change', 'clear', 'focus', 'blur'],
   setup(props: SelectProps, { emit, slots }) {
     const ns = useNamespace('select')
+    const instance = getCurrentInstance()
+    uniqueIdCounter += 1
+    const uid = `${instance?.uid ?? uniqueIdCounter}-${uniqueIdCounter}`
+    const listboxId = `ccui-select-listbox-${uid}`
+    const optionId = (index: number) => `ccui-select-option-${uid}-${index}`
+
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
+    const listRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
     const open = shallowRef(false)
     const activeIndex = shallowRef(0)
     const searchText = shallowRef('')
-    const formItem = inject(formItemInjectionKey, null)
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const {
       addTagValue,
@@ -43,11 +86,25 @@ export default defineComponent({
 
     const placement = computed(() => (props.placement === 'auto' ? 'bottom-start' : `${props.placement}-start`))
 
+    const popupContainer = computed<HTMLElement | null>(() => {
+      if (typeof document === 'undefined') return null
+      if (props.getPopupContainer) {
+        return props.getPopupContainer(rootRef.value)
+      }
+      if (props.popupAppendToBody) {
+        return document.body
+      }
+      return null
+    })
+
+    const teleported = computed(() => popupContainer.value !== null)
+
     const { floatingStyles } = useFloating(rootRef, popupRef, {
       placement: placement as never,
       open,
       whileElementsMounted: autoUpdate,
       middleware: [offset(4), flip(), shift({ padding: 8 })],
+      strategy: computed(() => (teleported.value ? 'fixed' : 'absolute')) as never,
     })
 
     const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
@@ -63,14 +120,29 @@ export default defineComponent({
       [ns.m(mergedStatus.value)]: !!mergedStatus.value,
     }))
 
+    const virtualEnabled = computed(
+      () => props.virtualScroll && visibleFlatOptions.value.filter((item) => item.type === 'option').length > 0,
+    )
+
+    const virtualItems = computed(() => visibleFlatOptions.value)
+    const virtual = useVirtualList(virtualItems, {
+      itemHeight: props.virtualItemHeight,
+      maxHeight: props.virtualMaxHeight,
+    })
+
     const setOpen = (value: boolean) => {
       if (props.disabled || open.value === value) {
         return
       }
       open.value = value
       emit('visible-change', value)
-      if (value && showsSearchInput.value) {
-        setTimeout(() => inputRef.value?.focus())
+      if (value) {
+        if (props.defaultActiveFirstOption) {
+          activeIndex.value = firstEnabledIndex()
+        }
+        if (showsSearchInput.value) {
+          nextTick(() => inputRef.value?.focus())
+        }
       }
       if (!value) {
         searchText.value = ''
@@ -81,13 +153,17 @@ export default defineComponent({
     }
 
     const onDocumentClick = (event: MouseEvent) => {
-      if (!rootRef.value?.contains(event.target as Node) && !popupRef.value?.contains(event.target as Node)) {
-        setOpen(false)
-      }
+      const target = event.target as Node
+      if (rootRef.value?.contains(target)) return
+      if (popupRef.value?.contains(target)) return
+      setOpen(false)
     }
 
     onMounted(() => {
       document.addEventListener('mousedown', onDocumentClick)
+      if (props.autoFocus) {
+        nextTick(() => rootRef.value?.focus())
+      }
     })
 
     onUnmounted(() => {
@@ -95,14 +171,18 @@ export default defineComponent({
     })
 
     const firstEnabledIndex = () => {
-      const index = visibleOptions.value.findIndex((option) => !option.disabled)
-      return index < 0 ? 0 : index
+      const idx = visibleOptions.value.findIndex((option) => !option.disabled)
+      return idx < 0 ? 0 : idx
     }
 
     watch(
       () => visibleOptions.value.length,
       () => {
-        activeIndex.value = firstEnabledIndex()
+        if (props.defaultActiveFirstOption) {
+          activeIndex.value = firstEnabledIndex()
+        } else {
+          activeIndex.value = 0
+        }
       },
     )
 
@@ -132,6 +212,56 @@ export default defineComponent({
       return start
     }
 
+    const getEdgeEnabledIndex = (direction: 1 | -1) => {
+      const options = visibleOptions.value
+      if (options.length === 0) return 0
+      if (direction === 1) {
+        for (let i = options.length - 1; i >= 0; i -= 1) {
+          if (!options[i].disabled) return i
+        }
+      } else {
+        for (let i = 0; i < options.length; i += 1) {
+          if (!options[i].disabled) return i
+        }
+      }
+      return activeIndex.value
+    }
+
+    const movePage = (direction: 1 | -1) => {
+      const pageStep = Math.max(1, Math.floor(props.virtualMaxHeight / props.virtualItemHeight))
+      const options = visibleOptions.value
+      if (options.length === 0) return activeIndex.value
+      let target = activeIndex.value + direction * pageStep
+      target = Math.max(0, Math.min(options.length - 1, target))
+      while (target >= 0 && target < options.length && options[target].disabled) {
+        target += direction
+      }
+      if (target < 0 || target >= options.length) target = activeIndex.value
+      return target
+    }
+
+    const scrollActiveIntoView = () => {
+      if (!virtualEnabled.value || !listRef.value) return
+      // map activeIndex (which is into visibleOptions) to position in flat items
+      const flat = visibleFlatOptions.value
+      let optCounter = -1
+      let flatIdx = 0
+      for (let i = 0; i < flat.length; i += 1) {
+        if (flat[i].type === 'option') {
+          optCounter += 1
+          if (optCounter === activeIndex.value) {
+            flatIdx = i
+            break
+          }
+        }
+      }
+      virtual.scrollToIndex(flatIdx, listRef.value)
+    }
+
+    watch(activeIndex, () => {
+      void nextTick(scrollActiveIntoView)
+    })
+
     const onSearchInput = (event: Event) => {
       const value = (event.target as HTMLInputElement).value
       searchText.value = value
@@ -143,7 +273,6 @@ export default defineComponent({
       if (option.disabled) {
         return
       }
-
       selectOption(option)
       if (!isMultiple.value) {
         setOpen(false)
@@ -206,6 +335,18 @@ export default defineComponent({
         }
         return
       }
+      if (event.key === 'Home' || event.key === 'End') {
+        event.preventDefault()
+        setOpen(true)
+        activeIndex.value = getEdgeEnabledIndex(event.key === 'Home' ? -1 : 1)
+        return
+      }
+      if (event.key === 'PageUp' || event.key === 'PageDown') {
+        event.preventDefault()
+        setOpen(true)
+        activeIndex.value = movePage(event.key === 'PageDown' ? 1 : -1)
+        return
+      }
       if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
         return
       }
@@ -217,6 +358,13 @@ export default defineComponent({
       activeIndex.value = getNextEnabledIndex(event.key === 'ArrowDown' ? 1 : -1)
     }
 
+    const onFocus = (event: FocusEvent) => {
+      emit('focus', event)
+    }
+    const onBlur = (event: FocusEvent) => {
+      emit('blur', event)
+    }
+
     const renderSearchInput = (placeholder: string) =>
       h('input', {
         ref: inputRef,
@@ -224,22 +372,11 @@ export default defineComponent({
         value: searchText.value,
         placeholder,
         disabled: props.disabled,
+        'aria-autocomplete': 'list',
+        'aria-controls': listboxId,
         onInput: onSearchInput,
         onKeydown,
       })
-
-    const labelAsString = (value: unknown) => {
-      if (value === null || value === undefined) {
-        return ''
-      }
-      if (typeof value === 'string') {
-        return value
-      }
-      if (typeof value === 'number' || typeof value === 'boolean') {
-        return String(value)
-      }
-      return ''
-    }
 
     const renderSingleSelection = () => {
       if (showsSearchInput.value && open.value) {
@@ -301,14 +438,18 @@ export default defineComponent({
 
     const renderOption = (option: ResolvedSelectOption, index: number) => {
       const selected = selectedValueSet.value.has(option.value)
+      const labelContent = props.highlightMatch
+        ? highlightLabel(option.label, searchText.value.trim())
+        : (option.label as VNode | string)
       const optionContent = slots.option
         ? slots.option({ option, selected })
-        : [h('span', null, option.label as never), selected ? h('span', { class: ns.e('check') }, '*') : null]
+        : [h('span', null, labelContent as never), selected ? h('span', { class: ns.e('check') }, '*') : null]
 
       return h(
         'li',
         {
           key: option.value,
+          id: optionId(index),
           class: [
             ns.e('option'),
             index === activeIndex.value && ns.em('option', 'active'),
@@ -317,6 +458,7 @@ export default defineComponent({
           ],
           role: 'option',
           'aria-selected': selected,
+          'aria-disabled': option.disabled || undefined,
           onMouseenter: () => {
             if (!option.disabled) {
               activeIndex.value = index
@@ -338,10 +480,16 @@ export default defineComponent({
       for (let i = 0; i < items.length; i += 1) {
         const item = items[i]
         if (item.type === 'group' && item.group) {
+          const indent = item.group.depth * 12
           nodes.push(
             h(
               'li',
-              { class: ns.e('group-label'), key: `__group_${i}`, role: 'presentation' },
+              {
+                class: ns.e('group-label'),
+                key: `__group_${i}`,
+                role: 'presentation',
+                style: indent > 0 ? { paddingLeft: `${indent}px` } : undefined,
+              },
               item.group.label as never,
             ),
           )
@@ -353,32 +501,116 @@ export default defineComponent({
       return nodes
     }
 
+    const renderVirtualItems = () => {
+      const flat = visibleFlatOptions.value
+      let optionIndex = -1
+      // pre-compute optionIndex offsets for each flat index
+      const optionIndexByFlat: number[] = []
+      for (const item of flat) {
+        optionIndex += item.type === 'option' ? 1 : 0
+        optionIndexByFlat.push(item.type === 'option' ? optionIndex : -1)
+      }
+
+      return virtual.visible.value.map(({ index, data, top }) => {
+        const style = {
+          position: 'absolute' as const,
+          left: 0,
+          right: 0,
+          top: `${top}px`,
+          height: `${props.virtualItemHeight}px`,
+        }
+        if (data.type === 'group' && data.group) {
+          const indent = data.group.depth * 12
+          return h(
+            'li',
+            {
+              key: `__group_${index}`,
+              class: ns.e('group-label'),
+              role: 'presentation',
+              style: indent > 0 ? { ...style, paddingLeft: `${indent}px` } : style,
+            },
+            data.group.label as never,
+          )
+        }
+        if (data.type === 'option' && data.option) {
+          const optIdx = optionIndexByFlat[index]
+          const optNode = renderOption(data.option, optIdx)
+          // wrap with absolute positioning style on the rendered <li>
+          if (optNode.props) {
+            optNode.props.style = style
+          }
+          return optNode
+        }
+        return null
+      })
+    }
+
+    const renderListContent = () => {
+      if (virtualEnabled.value) {
+        return h(
+          'div',
+          {
+            ref: listRef,
+            class: ns.e('virtual'),
+            style: { height: `${virtual.containerHeight.value}px`, overflow: 'auto', position: 'relative' },
+            onScroll: virtual.onScroll,
+          },
+          h(
+            'ul',
+            {
+              id: listboxId,
+              class: ns.e('list'),
+              role: 'listbox',
+              style: { height: `${virtual.totalHeight.value}px`, position: 'relative' },
+            },
+            renderVirtualItems(),
+          ),
+        )
+      }
+      return h(
+        'ul',
+        {
+          id: listboxId,
+          class: ns.e('list'),
+          role: 'listbox',
+          ref: listRef,
+        },
+        renderListItems(),
+      )
+    }
+
     const renderDropdown = () => {
       if (!open.value) {
         return null
       }
       const popupCls = [ns.e('dropdown'), props.popupClassName].filter(Boolean)
+      let inner: VNode
       if (props.loading) {
-        return h(
+        inner = h(
           'div',
           { ref: popupRef, class: popupCls, style: floatingStyles.value },
           h('div', { class: ns.e('loading') }, props.loadingText),
         )
-      }
-      if (visibleOptions.value.length === 0) {
+      } else if (visibleOptions.value.length === 0) {
         const emptyContent = slots.empty ? slots.empty() : props.noDataText
-        return h(
+        inner = h(
           'div',
           { ref: popupRef, class: popupCls, style: floatingStyles.value },
           h('div', { class: ns.e('empty') }, emptyContent as never),
         )
+      } else {
+        inner = h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value }, renderListContent())
       }
-      return h(
-        'div',
-        { ref: popupRef, class: popupCls, style: floatingStyles.value },
-        h('ul', { class: ns.e('list'), role: 'listbox' }, renderListItems()),
-      )
+      if (teleported.value && popupContainer.value) {
+        return h(Teleport, { to: popupContainer.value }, [inner])
+      }
+      return inner
     }
+
+    const activeDescendant = computed(() => {
+      if (!open.value || visibleOptions.value.length === 0) return undefined
+      return optionId(activeIndex.value)
+    })
 
     return () =>
       h(
@@ -387,8 +619,16 @@ export default defineComponent({
           ref: rootRef,
           class: cls.value,
           tabindex: props.disabled ? undefined : 0,
+          role: 'combobox',
+          'aria-expanded': open.value,
+          'aria-haspopup': 'listbox',
+          'aria-controls': listboxId,
+          'aria-disabled': props.disabled || undefined,
+          'aria-activedescendant': activeDescendant.value,
           onClick: () => setOpen(true),
           onKeydown,
+          onFocus,
+          onBlur,
         },
         [
           slots.prefix ? h('span', { class: ns.e('prefix') }, slots.prefix()) : null,

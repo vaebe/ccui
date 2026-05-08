@@ -1,5 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import type {
+  LabelInValuePayload,
   ResolvedSelectOption,
   SelectFieldNames,
   SelectFilterOption,
@@ -20,21 +21,6 @@ const DEFAULT_FIELD_NAMES: Required<SelectFieldNames> = {
   options: 'options',
 }
 
-function toValueArray(value: SelectModelValue): SelectRawValue[] {
-  if (Array.isArray(value)) {
-    return value
-  }
-  if (value === undefined || value === null || value === '') {
-    return []
-  }
-  return [value]
-}
-
-function isGroup(option: SelectRawOption, optionsKey: string): option is SelectGroupOption {
-  const candidate = (option as Record<string, unknown>)[optionsKey]
-  return Array.isArray(candidate)
-}
-
 function primitiveString(value: unknown): string {
   if (value === null || value === undefined) {
     return ''
@@ -48,9 +34,39 @@ function primitiveString(value: unknown): string {
   return ''
 }
 
+function isLabelInValuePayload(value: unknown): value is LabelInValuePayload {
+  return typeof value === 'object' && value !== null && 'value' in (value as Record<string, unknown>)
+}
+
+function extractRawValue(value: unknown): SelectRawValue | undefined {
+  if (isLabelInValuePayload(value)) {
+    return value.value
+  }
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value
+  }
+  return undefined
+}
+
+function toValueArray(value: SelectModelValue): SelectRawValue[] {
+  if (Array.isArray(value)) {
+    return value.map(extractRawValue).filter((v): v is SelectRawValue => v !== undefined)
+  }
+  if (value === undefined || value === null || value === '') {
+    return []
+  }
+  const single = extractRawValue(value)
+  return single === undefined ? [] : [single]
+}
+
+function isGroup(option: SelectRawOption, optionsKey: string): option is SelectGroupOption {
+  const candidate = (option as Record<string, unknown>)[optionsKey]
+  return Array.isArray(candidate)
+}
+
 interface FlattenedItem {
   type: 'group' | 'option'
-  group?: { label: unknown }
+  group?: { label: unknown; depth: number }
   option?: ResolvedSelectOption
 }
 
@@ -64,14 +80,14 @@ export function effectiveMode(props: SelectProps): SelectMode {
 function buildResolvedOption(
   raw: SelectOption,
   names: Required<SelectFieldNames>,
-  groupLabel?: unknown,
+  groupPath: unknown[],
 ): ResolvedSelectOption {
   return {
     raw,
     label: raw[names.label],
     value: raw[names.value] as SelectRawValue,
     disabled: !!raw[names.disabled],
-    groupLabel,
+    groupPath,
   }
 }
 
@@ -94,6 +110,55 @@ function applyFilter(
   )
 }
 
+function flattenAll(
+  options: SelectRawOption[],
+  names: Required<SelectFieldNames>,
+  groupPath: unknown[] = [],
+  acc: ResolvedSelectOption[] = [],
+): ResolvedSelectOption[] {
+  for (const raw of options) {
+    if (isGroup(raw, names.options)) {
+      const nestedPath = [...groupPath, raw[names.label]]
+      flattenAll((raw as Record<string, unknown>)[names.options] as SelectRawOption[], names, nestedPath, acc)
+    } else {
+      acc.push(buildResolvedOption(raw as SelectOption, names, groupPath))
+    }
+  }
+  return acc
+}
+
+function flattenVisible(
+  options: SelectRawOption[],
+  names: Required<SelectFieldNames>,
+  keyword: string,
+  filterOption: SelectFilterOption,
+  depth: number,
+  out: FlattenedItem[],
+): boolean {
+  let appended = false
+  for (const raw of options) {
+    if (isGroup(raw, names.options)) {
+      const groupChildren = (raw as Record<string, unknown>)[names.options] as SelectRawOption[]
+      const before = out.length
+      out.push({ type: 'group', group: { label: raw[names.label], depth } })
+      const nestedAppended = flattenVisible(groupChildren, names, keyword, filterOption, depth + 1, out)
+      if (!nestedAppended) {
+        out.splice(before, out.length - before)
+      } else {
+        appended = true
+      }
+    } else {
+      const resolved = [buildResolvedOption(raw as SelectOption, names, [])]
+      const filtered = applyFilter(resolved, keyword, filterOption)
+      for (const opt of filtered) {
+        out.push({ type: 'option', option: opt })
+        appended = true
+      }
+    }
+  }
+  return appended
+}
+
 export function useSelect(
   props: SelectProps,
   searchText: Ref<string>,
@@ -107,21 +172,7 @@ export function useSelect(
   const mode = computed<SelectMode>(() => effectiveMode(props))
   const isMultiple = computed(() => mode.value === 'multiple' || mode.value === 'tags')
 
-  const flattenedAllOptions = computed<ResolvedSelectOption[]>(() => {
-    const names = fieldNames.value
-    const result: ResolvedSelectOption[] = []
-    for (const raw of props.options) {
-      if (isGroup(raw, names.options)) {
-        const children = (raw as Record<string, unknown>)[names.options] as SelectOption[]
-        for (const child of children) {
-          result.push(buildResolvedOption(child, names, raw[names.label]))
-        }
-      } else {
-        result.push(buildResolvedOption(raw as SelectOption, names))
-      }
-    }
-    return result
-  })
+  const flattenedAllOptions = computed<ResolvedSelectOption[]>(() => flattenAll(props.options, fieldNames.value))
 
   const selectedValues = computed(() => toValueArray(props.modelValue))
 
@@ -141,6 +192,7 @@ export function useSelect(
         label: value,
         value,
         disabled: false,
+        groupPath: [],
       }
     })
   })
@@ -150,30 +202,9 @@ export function useSelect(
   const visibleFlatOptions = computed<FlattenedItem[]>(() => {
     const names = fieldNames.value
     const keyword = searchText.value.trim()
-    const filterOption = props.filterable ? props.filterOption : false
+    const filterOption: SelectFilterOption = props.filterable ? props.filterOption : false
     const items: FlattenedItem[] = []
-
-    for (const raw of props.options) {
-      if (isGroup(raw, names.options)) {
-        const children = (raw as Record<string, unknown>)[names.options] as SelectOption[]
-        const groupResolved = children.map((child) => buildResolvedOption(child, names, raw[names.label]))
-        const filtered = applyFilter(groupResolved, keyword, filterOption)
-        if (filtered.length === 0) {
-          continue
-        }
-        items.push({ type: 'group', group: { label: raw[names.label] } })
-        for (const opt of filtered) {
-          items.push({ type: 'option', option: opt })
-        }
-      } else {
-        const resolved = [buildResolvedOption(raw as SelectOption, names)]
-        const filtered = applyFilter(resolved, keyword, filterOption)
-        for (const opt of filtered) {
-          items.push({ type: 'option', option: opt })
-        }
-      }
-    }
-
+    flattenVisible(props.options, names, keyword, filterOption, 0, items)
     return items
   })
 
@@ -185,9 +216,29 @@ export function useSelect(
 
   const selectedValueSet: ComputedRef<Set<SelectRawValue>> = computed(() => new Set(selectedValues.value))
 
-  const updateValue = (value: SelectModelValue) => {
-    emit('update:modelValue', value)
-    emit('change', value)
+  const wrapForEmit = (value: SelectRawValue | undefined): SelectRawValue | LabelInValuePayload | undefined => {
+    if (value === undefined) return undefined
+    if (!props.labelInValue) return value
+    const found = flattenedAllOptions.value.find((opt) => opt.value === value)
+    return { value, label: found?.label ?? value }
+  }
+
+  const updateValue = (value: SelectRawValue | undefined | SelectRawValue[]) => {
+    let payload: SelectModelValue
+    if (value === undefined) {
+      payload = undefined
+    } else if (Array.isArray(value)) {
+      payload = props.labelInValue ? value.map((v) => wrapForEmit(v) as LabelInValuePayload) : value
+    } else {
+      payload = props.labelInValue ? (wrapForEmit(value) as LabelInValuePayload) : value
+    }
+    emit('update:modelValue', payload)
+    emit('change', payload)
+  }
+
+  const isAtMaxCount = (): boolean => {
+    if (!isMultiple.value || !props.maxCount || props.maxCount <= 0) return false
+    return selectedValues.value.length >= props.maxCount
   }
 
   const selectOption = (option: ResolvedSelectOption) => {
@@ -199,7 +250,12 @@ export function useSelect(
       return
     }
 
-    const next = selectedValues.value.includes(option.value)
+    const already = selectedValues.value.includes(option.value)
+    if (!already && isAtMaxCount()) {
+      return
+    }
+
+    const next = already
       ? selectedValues.value.filter((value) => value !== option.value)
       : selectedValues.value.concat(option.value)
     updateValue(next)
@@ -213,7 +269,11 @@ export function useSelect(
   }
 
   const clearValue = () => {
-    updateValue(isMultiple.value ? [] : undefined)
+    if (isMultiple.value) {
+      updateValue([])
+    } else {
+      updateValue(undefined)
+    }
   }
 
   const addTagValue = (value: string) => {
@@ -225,6 +285,9 @@ export function useSelect(
       return false
     }
     if (selectedValues.value.includes(trimmed)) {
+      return false
+    }
+    if (isAtMaxCount()) {
       return false
     }
     updateValue(selectedValues.value.concat(trimmed))
