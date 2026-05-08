@@ -170,7 +170,7 @@ export default {
         {
           text: 'Form 表单',
           link: '/components/form/',
-          status: '35%',
+          status: '80%',
         },
         {
           text: 'Input 输入框',
@@ -270,7 +270,7 @@ export default {
         {
           text: 'Table 表格',
           link: '/components/table/',
-          status: '50%',
+          status: '85%',
         },
         {
           text: 'Tag 标签',

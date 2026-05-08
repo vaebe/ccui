@@ -41,8 +41,16 @@ exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
 
   traverse(ast, {
     ExportNamedDeclaration({ node }) {
+      if (node.exportKind === 'type') {
+        return
+      }
+
       if (node.specifiers.length) {
         node.specifiers.forEach((specifier) => {
+          if (specifier.exportKind === 'type') {
+            return
+          }
+
           exportName.push(specifier.local.name)
         })
       } else if (node.declaration) {

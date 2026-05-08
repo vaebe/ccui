@@ -12,6 +12,10 @@
   outline: none;
   user-select: none;
 
+  li {
+    list-style: none;
+  }
+
   &__item,
   &__submenu-title {
     position: relative;
