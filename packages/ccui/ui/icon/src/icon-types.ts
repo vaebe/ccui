@@ -1,12 +1,17 @@
 import type { Component, PropType } from 'vue'
 
-export type IconSize = number | string
+export type IconSizePreset = 'small' | 'default' | 'large'
+// Use `(string & {})` to keep IconSizePreset literal autocomplete without lint absorbing them into string.
+export type IconSize = IconSizePreset | number | (string & {})
+export type IconTheme = 'outlined' | 'filled' | 'two-tone'
 
 export interface IconProps {
   name?: string
   component?: Component
   size?: IconSize
   color?: string
+  twoToneColor?: string
+  theme?: IconTheme
   rotate?: number
   spin?: boolean
   title?: string
@@ -30,6 +35,14 @@ export const iconProps = {
   color: {
     type: String,
     default: '',
+  },
+  twoToneColor: {
+    type: String,
+    default: '',
+  },
+  theme: {
+    type: String as PropType<IconTheme>,
+    default: undefined,
   },
   rotate: {
     type: Number,

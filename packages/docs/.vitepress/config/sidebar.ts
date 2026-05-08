@@ -36,7 +36,7 @@ export default {
         {
           text: 'Icon 图标',
           link: '/components/icon/',
-          status: '20%',
+          status: '80%',
         },
         {
           text: 'Status 状态',

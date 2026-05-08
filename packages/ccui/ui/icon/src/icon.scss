@@ -24,6 +24,10 @@
   &--spin {
     animation: ccui-icon-spin 1s linear infinite;
   }
+
+  &--two-tone {
+    color: var(--ccui-icon-two-tone-color, $ccui-color-primary);
+  }
 }
 
 @keyframes ccui-icon-spin {

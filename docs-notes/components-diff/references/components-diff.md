@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-06，根据当前 `packages/ccui/ui` 目录、Form 80% 覆盖版、Table 高频 85% 版、32 个 Form 定向测试、52 个 Table 定向测试和 Grid/Tag Sass warning 修复结果更新。
+> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -40,7 +40,7 @@
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成       |
 | Form                  | Form 表单               | 数据录入        | 80% 完成     |
 | Grid                  | Grid 栅格               | 布局            | 已完成       |
-| Icon                  | Icon 图标               | 通用            | 基础完成     |
+| Icon                  | Icon 图标               | 通用            | 80% 完成     |
 | Image                 | Image 图片              | 数据展示        | 已完成       |
 | Input                 | Input 输入框            | 数据录入        | 已完成       |
 | InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成       |
@@ -240,6 +240,30 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 9：Icon 80% 完成（Iconify 适配）
+
+已完成 1 项：Icon。
+
+关键能力：
+
+- Icon：集成 [`@iconify/vue`](https://iconify.design/)，`name` 含 `:` 时（如 `mdi:home`）自动走 Iconify 渲染，可直接消费 200+ 图标集。
+- 解析优先级明确：`component` > Iconify 命名 > 注册表命中 > 字体图标类名（`<i class="ccui-icon-{name}">`） > 默认插槽。
+- `size` 支持 `small / default / large` 预设和数字 px / 任意 CSS 长度，`default` 不写内联字号以便父级 `font-size` 级联。
+- 新增 `theme: 'outlined' | 'filled' | 'two-tone'` 类名钩子和 `twoToneColor` 副色（通过 `--ccui-icon-two-tone-color` 暴露）。
+- 文档：基本用法、尺寸预设、主题、注册表、插槽 SVG、~40 个高频 Iconify 图标分组速览（通用 / 账号 / 操作 / 导航 / 反馈 / 文件&媒体）。
+- 测试：Icon 定向测试从 4 个扩展到 14 个，新增 Iconify 检测、Iconify 优先于注册表、size 预设、CSS 单位字符串、`size="default"` 不写 inline、theme 类名、twoToneColor CSS 变量、组件优先级、registry API 暴露、ARIA 属性。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/icon/test/icon.test.ts --environment jsdom` 通过，14 个用例通过。
+
+Icon 剩余非完整对齐项：
+
+- 没有自带预置 SVG 集（按设计走 Iconify 适配，不向仓库塞 svg 文件）。
+- 没做按需 / 懒加载图标包级别拆分（Iconify 自身按图标 lazy fetch）。
+- twoTone / outlined / filled 仅作为 CSS 钩子暴露，没有自动按主题映射 Iconify 不同前缀。
 
 ## 四、后续任务规划
 
