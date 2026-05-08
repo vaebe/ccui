@@ -270,7 +270,7 @@ export default {
         {
           text: 'Table 表格',
           link: '/components/table/',
-          status: '85%',
+          status: '95%',
         },
         {
           text: 'Tag 标签',

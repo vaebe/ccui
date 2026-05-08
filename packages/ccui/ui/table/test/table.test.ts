@@ -801,4 +801,263 @@ describe('table', () => {
 
     expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['3', '1', '2'])
   })
+
+  it('reorders columns so left-fixed appear first and right-fixed last', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          { title: 'Mid', dataIndex: 'mid', key: 'mid', width: 100 },
+          { title: 'Left', dataIndex: 'left', key: 'left', width: 80, fixed: 'left' },
+          { title: 'Right', dataIndex: 'right', key: 'right', width: 90, fixed: 'right' },
+        ],
+        dataSource: [{ key: '1', mid: 'M', left: 'L', right: 'R' }],
+      },
+    })
+
+    const headers = wrapper.findAll('th')
+    expect(headers.map((th) => th.text())).toEqual(['Left', 'Mid', 'Right'])
+    expect(wrapper.classes()).toContain('ccui-table--has-fixed-left')
+    expect(wrapper.classes()).toContain('ccui-table--has-fixed-right')
+  })
+
+  it('positions left-fixed columns with cumulative left offsets', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          { title: 'A', dataIndex: 'a', key: 'a', width: 80, fixed: 'left' },
+          { title: 'B', dataIndex: 'b', key: 'b', width: 120, fixed: 'left' },
+          { title: 'C', dataIndex: 'c', key: 'c', width: 100 },
+        ],
+        dataSource: [{ key: '1', a: 'A', b: 'B', c: 'C' }],
+      },
+    })
+
+    const headers = wrapper.findAll('th')
+    expect(headers[0].attributes('style')).toContain('left: 0px')
+    expect(headers[1].attributes('style')).toContain('left: 80px')
+    expect(headers[0].classes()).toContain('ccui-table__cell--fixed-left')
+  })
+
+  it('positions right-fixed columns with cumulative right offsets', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          { title: 'A', dataIndex: 'a', key: 'a', width: 100 },
+          { title: 'B', dataIndex: 'b', key: 'b', width: 80, fixed: 'right' },
+          { title: 'C', dataIndex: 'c', key: 'c', width: 120, fixed: 'right' },
+        ],
+        dataSource: [{ key: '1', a: 'A', b: 'B', c: 'C' }],
+      },
+    })
+
+    const headers = wrapper.findAll('th')
+    expect(headers[1].attributes('style')).toContain('right: 120px')
+    expect(headers[2].attributes('style')).toContain('right: 0px')
+    expect(headers[2].classes()).toContain('ccui-table__cell--fixed-right')
+  })
+
+  it('shifts the selection column to the left when any column is left-fixed', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          { title: 'Pin', dataIndex: 'name', key: 'name', width: 100, fixed: 'left' },
+          { title: 'Role', dataIndex: 'role', key: 'role' },
+        ],
+        dataSource,
+        rowSelection: { columnWidth: 60 },
+      },
+    })
+
+    const selectionTh = wrapper.findAll('th')[0]
+    expect(selectionTh.attributes('style')).toContain('left: 0px')
+    const pinTh = wrapper.findAll('th')[1]
+    expect(pinTh.attributes('style')).toContain('left: 60px')
+  })
+
+  it('renders an expanded row when expandedRowRender returns content', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [
+          { key: '1', name: 'Alice', detail: 'Profile A' },
+          { key: '2', name: 'Bob', detail: 'Profile B' },
+        ],
+        expandable: {
+          expandedRowRender: (record: any) => `Details: ${record.detail}`,
+        },
+      },
+    })
+
+    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+    await wrapper.findAll(`${ns.e('expand-icon')}`)[0].trigger('click')
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows).toHaveLength(3)
+    expect(rows[1].classes()).toContain('ccui-table__expanded-row')
+    expect(rows[1].text()).toContain('Profile A')
+    expect(wrapper.emitted('update:expandedRowKeys')?.[0][0]).toEqual(['1'])
+    expect(wrapper.emitted('expand')?.[0]).toEqual([true, expect.objectContaining({ key: '1' })])
+  })
+
+  it('honors controlled expandedRowKeys', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [
+          { key: '1', name: 'Alice', detail: 'Profile A' },
+          { key: '2', name: 'Bob', detail: 'Profile B' },
+        ],
+        expandable: {
+          expandedRowKeys: ['2'],
+          expandedRowRender: (record: any) => record.detail,
+        },
+      },
+    })
+
+    expect(wrapper.findAll('tbody tr')).toHaveLength(3)
+    expect(wrapper.findAll('tbody tr')[2].text()).toContain('Profile B')
+
+    await wrapper.setProps({
+      expandable: {
+        expandedRowKeys: ['1'],
+        expandedRowRender: (record: any) => record.detail,
+      },
+    })
+    expect(wrapper.findAll('tbody tr')[1].text()).toContain('Profile A')
+  })
+
+  it('expands all rows by default when defaultExpandAllRows is true', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [
+          { key: '1', name: 'Alice', detail: 'A' },
+          { key: '2', name: 'Bob', detail: 'B' },
+        ],
+        expandable: {
+          defaultExpandAllRows: true,
+          expandedRowRender: (record: any) => record.detail,
+        },
+      },
+    })
+
+    expect(wrapper.findAll('tbody tr')).toHaveLength(4)
+  })
+
+  it('hides the expand icon when rowExpandable returns false', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [
+          { key: '1', name: 'Alice' },
+          { key: '2', name: 'Bob' },
+        ],
+        expandable: {
+          rowExpandable: (record: any) => record.key === '1',
+          expandedRowRender: () => 'detail',
+        },
+      },
+    })
+
+    const icons = wrapper.findAll(ns.e('expand-icon'))
+    expect(icons).toHaveLength(1)
+  })
+
+  it('toggles the row when expandRowByClick is enabled', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [{ key: '1', name: 'Alice', detail: 'A' }],
+        expandable: {
+          expandRowByClick: true,
+          expandedRowRender: (record: any) => record.detail,
+        },
+      },
+    })
+
+    await wrapper.find('tbody tr').trigger('click')
+    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+    expect(wrapper.emitted('expand')?.[0]).toEqual([true, expect.objectContaining({ key: '1' })])
+  })
+
+  it('skips cells where onCell returns rowSpan or colSpan of 0', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          {
+            title: 'Group',
+            dataIndex: 'group',
+            key: 'group',
+            onCell: (_record: any, index: number) => (index === 0 ? { rowSpan: 2 } : { rowSpan: 0 }),
+          },
+          { title: 'Name', dataIndex: 'name', key: 'name' },
+        ],
+        dataSource: [
+          { key: '1', group: 'Team A', name: 'Alice' },
+          { key: '2', group: 'Team A', name: 'Bob' },
+        ],
+      },
+    })
+
+    const firstRowCells = wrapper.findAll('tbody tr')[0].findAll('td')
+    const secondRowCells = wrapper.findAll('tbody tr')[1].findAll('td')
+
+    expect(firstRowCells).toHaveLength(2)
+    expect(firstRowCells[0].attributes('rowspan')).toBe('2')
+    expect(secondRowCells).toHaveLength(1)
+    expect(secondRowCells[0].text()).toBe('Bob')
+  })
+
+  it('honors colSpan from onCell', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          {
+            title: 'A',
+            dataIndex: 'a',
+            key: 'a',
+            onCell: () => ({ colSpan: 2 }),
+          },
+          {
+            title: 'B',
+            dataIndex: 'b',
+            key: 'b',
+            onCell: () => ({ colSpan: 0 }),
+          },
+        ],
+        dataSource: [{ key: '1', a: 'merged', b: 'hidden' }],
+      },
+    })
+
+    const cells = wrapper.findAll('tbody tr')[0].findAll('td')
+    expect(cells).toHaveLength(1)
+    expect(cells[0].attributes('colspan')).toBe('2')
+    expect(cells[0].text()).toBe('merged')
+  })
+
+  it('applies onHeaderCell rowSpan/colSpan output', () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          {
+            title: 'A',
+            dataIndex: 'a',
+            key: 'a',
+            onHeaderCell: () => ({ colSpan: 2, class: 'ccui-table__th--merged' }),
+          },
+          {
+            title: 'B',
+            dataIndex: 'b',
+            key: 'b',
+            onHeaderCell: () => ({ colSpan: 0 }),
+          },
+        ],
+        dataSource: [{ key: '1', a: 'A', b: 'B' }],
+      },
+    })
+
+    const headers = wrapper.findAll('th')
+    expect(headers).toHaveLength(1)
+    expect(headers[0].attributes('colspan')).toBe('2')
+    expect(headers[0].classes()).toContain('ccui-table__th--merged')
+  })
 })

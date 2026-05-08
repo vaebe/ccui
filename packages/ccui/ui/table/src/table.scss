@@ -143,6 +143,61 @@
     text-align: center;
   }
 
+  &__cell--fixed-left,
+  &__cell--fixed-right {
+    background-color: $ccui-color-bg-container;
+  }
+
+  &__tbody > tr:hover > .#{$cls-prefix}-table__cell--fixed-left,
+  &__tbody > tr:hover > .#{$cls-prefix}-table__cell--fixed-right {
+    background-color: $ccui-color-fill-quaternary;
+  }
+
+  &__tbody > tr.#{$cls-prefix}-table__tr--selected > .#{$cls-prefix}-table__cell--fixed-left,
+  &__tbody > tr.#{$cls-prefix}-table__tr--selected > .#{$cls-prefix}-table__cell--fixed-right {
+    background-color: $ccui-color-primary-bg;
+  }
+
+  &--has-fixed-left .#{$cls-prefix}-table__cell--fixed-left:last-of-type {
+    box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  &--has-fixed-right .#{$cls-prefix}-table__cell--fixed-right:first-of-type {
+    box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  &__expand-cell {
+    width: 48px;
+    text-align: center;
+  }
+
+  &__expand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    color: $ccui-color-text;
+    font-size: 14px;
+    line-height: 1;
+    background-color: transparent;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius-sm;
+    cursor: pointer;
+    transition: all $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  &__expanded-row > td {
+    padding: 12px 16px;
+    background-color: $ccui-color-fill-quaternary;
+  }
+
   &__loading {
     position: absolute;
     inset: 0;

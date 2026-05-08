@@ -7,7 +7,9 @@ Table.install = function (app: App): void {
 
 export { Table }
 export type {
+  TableCellRenderProps,
   TableColumn,
+  TableExpandable,
   TableFilterOption,
   TableFilters,
   TablePaginationConfig,
@@ -21,7 +23,7 @@ export type {
 export default {
   title: 'Table 表格',
   category: '数据展示',
-  status: '85%',
+  status: '95%',
   install(app: App): void {
     app.component(Table.name!, Table)
   },
