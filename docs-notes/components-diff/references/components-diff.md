@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试）和 Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试）、Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -74,7 +74,7 @@
 | Tag                   | Tag 标签                | 数据展示        | 已完成       |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
-| Tree                  | Tree 树形控件           | 数据展示        | 已完成       |
+| Tree                  | Tree 树形控件           | 数据展示        | 80% 完成     |
 | Typography            | Typography 排版         | 通用            | 已完成       |
 | Util                  | 工具函数集合            | 其他            | 已完成       |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成       |
@@ -240,6 +240,46 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 11：Tree 80% 完成（API 推翻重写）
+
+已完成 1 项：Tree。
+
+关键能力：
+
+- **推翻重写**：旧实现仅有 `data` + `level` + `open` 字段渲染，约 50 行。新实现按 Ant Design Tree 的协议重新设计 props / 事件 / 插槽，新旧 API 不兼容（旧 `level` / `open` 字段不再使用）。
+- 选中：`selectable` + `selectedKeys` / `defaultSelectedKeys` / `v-model:selected-keys`，单选 / 多选（`multiple`）。
+- 勾选：`checkable` + `checkedKeys` / `defaultCheckedKeys` / `v-model:checked-keys`，自动父子半选联动；`checkStrictly` 关闭联动；`disableCheckbox` 锁勾选不锁选中。
+- 展开：`expandedKeys` / `defaultExpandedKeys` / `v-model:expanded-keys`，`defaultExpandAll` 一键全开。
+- 字段名映射：`fieldNames`（key / title / children / disabled / disableCheckbox / isLeaf / selectable）。
+- 异步加载：`loadData(node)`，展开非叶子未加载节点时调用，loading 期间 switcher 显示动画。
+- 搜索：`searchValue` 默认按 title 子串匹配并保留命中节点的祖先；命中片段用 `__highlight` span 包裹；`filterTreeNode` 函数自定义谓词。
+- 拖拽：`draggable` 启用，emit `drop` 事件并回传 `{ dragNode, node, dropPosition }`，`dropPosition` 三态 `before/inside/after`，组件不直接改 `data`，业务侧自行处理。
+- 自定义渲染：`title` / `switcher` / `icon` 三个插槽。
+- ARIA：`role="treeitem"` + `aria-selected` / `aria-expanded` / `aria-disabled` / 复选框 `aria-checked='mixed'`。
+- 文档：基本用法、受控/非受控、多选、勾选+联动、fieldNames、异步加载、搜索高亮、自定义渲染、拖拽 共 8 块示例 + 完整 props/事件/插槽/类型表。
+- 测试：从 0 个补到 31 个定向测试，覆盖默认折叠 / switcher 展开 / 折叠 / defaultExpandAll / 受控 expandedKeys / 单选 / 多选 / disabled 不可选 / selectable=false / 受控 selectedKeys / 父勾选传播 / 半选父级 / checkStrictly / disabled checkbox / disableCheckbox / fieldNames / 搜索过滤 + 高亮 / 自定义谓词 / 自定义 title / switcher / icon 插槽 / loadData / 拖拽 emit drop / draggable=false / 空状态 / disabled 整树 / data 响应 / blockNode / ARIA / 半选→全选切换。
+
+工程决策：
+
+- 拆三个 composables：`use-tree-flatten`（含 fieldNames 解析、扁平化、可见过滤+ancestors 保留）、`use-tree-state`（受控/非受控通用模式）、`use-tree-check`（衍生 checked / halfChecked + 计算下一步勾选 keys）。
+- 选中 / 勾选 / 展开三组 keys 都走同一个 `useControllableSet` 抽象，避免重复实现受控 / 非受控分发。
+- 删除旧的 `components/icon-close.tsx` / `icon-open.tsx` / `composables/use-toggle.ts`，留下空目录由本次新增的 `composables/` 替代。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/form packages/ccui/ui/select packages/ccui/ui/icon packages/ccui/ui/tree --environment jsdom` 通过，108 个用例（form 32 + select 31 + icon 14 + tree 31）通过。
+
+Tree 剩余非完整对齐项：
+
+- 虚拟滚动（数据量大时性能不足）。
+- 节点级 `dragOver` / `dragInto` 区分判定的更细化交互（当前用 25% / 75% 分界）。
+- 连接线 `showLine` 仅作为 prop 钩子，未提供默认连接线 SVG。
+- 异步 loadData 失败时的重试 / 错误状态。
+- 大数据量下的可见区只渲染（virtual list）。
+- 键盘导航（Up/Down/Left/Right/Enter）。
+- 拖拽时的 auto-scroll。
 
 ### Batch 10：Select 80% 完成
 
