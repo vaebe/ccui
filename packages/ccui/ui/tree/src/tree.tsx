@@ -1,6 +1,6 @@
 import type { CSSProperties, VNode } from 'vue'
 import type { FlattenedTreeNode, TreeDropInfo, TreeDropPosition, TreeNodeKey, TreeProps } from './tree-types'
-import { computed, defineComponent, h, nextTick, ref, shallowRef, toRef, watch } from 'vue'
+import { computed, defineComponent, h, nextTick, onUnmounted, ref, shallowRef, toRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { useVirtualList } from '../../shared/hooks/use-virtual-list'
 import { computeNextCheckedKeys, useCheckedDerived } from './composables/use-tree-check'
@@ -56,8 +56,9 @@ export default defineComponent({
     'dragover',
     'dragleave',
     'focus-change',
+    'load-error',
   ],
-  setup(props: TreeProps, { emit, slots }) {
+  setup(props: TreeProps, { emit, expose, slots }) {
     const ns = useNamespace('tree')
     const fieldNames = computed(() => resolveFieldNames(props.fieldNames))
     const data = toRef(props, 'data')
@@ -84,8 +85,13 @@ export default defineComponent({
 
     const loadingKeys = ref(new Set<TreeNodeKey>())
     const loadedKeys = ref(new Set<TreeNodeKey>())
+    const loadErrorKeys = ref(new Set<TreeNodeKey>())
     const dragState = shallowRef<{ key: TreeNodeKey; position: TreeDropPosition } | null>(null)
     const draggingKey = shallowRef<TreeNodeKey | null>(null)
+    const dragHoverTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
+    const dragHoverKey = shallowRef<TreeNodeKey | null>(null)
+    const autoScrollFrame = shallowRef<number | null>(null)
+    const autoScrollDelta = shallowRef(0)
 
     const internalFocusedKey = ref<TreeNodeKey | undefined>(props.focusedKey)
     const focusedKey = computed<TreeNodeKey | undefined>(() => {
@@ -114,6 +120,27 @@ export default defineComponent({
       maxHeight: props.virtualMaxHeight,
     })
 
+    const runLoadData = async (node: FlattenedTreeNode, event?: Event) => {
+      if (!props.loadData) return
+      loadErrorKeys.value.delete(node.key)
+      loadErrorKeys.value = new Set(loadErrorKeys.value)
+      loadingKeys.value.add(node.key)
+      loadingKeys.value = new Set(loadingKeys.value)
+      try {
+        await props.loadData(node.raw)
+        loadedKeys.value.add(node.key)
+        loadedKeys.value = new Set(loadedKeys.value)
+        emit('load', Array.from(loadedKeys.value), { event, node })
+      } catch (error) {
+        loadErrorKeys.value.add(node.key)
+        loadErrorKeys.value = new Set(loadErrorKeys.value)
+        emit('load-error', { error, node })
+      } finally {
+        loadingKeys.value.delete(node.key)
+        loadingKeys.value = new Set(loadingKeys.value)
+      }
+    }
+
     const triggerExpand = async (node: FlattenedTreeNode, event?: Event) => {
       if (props.disabled) return
       const isExpanded = expandedKeys.value.has(node.key)
@@ -123,20 +150,18 @@ export default defineComponent({
       } else {
         next.add(node.key)
         if (props.loadData && !node.hasChildren && !node.isLeaf && !loadedKeys.value.has(node.key)) {
-          loadingKeys.value.add(node.key)
-          try {
-            await props.loadData(node.raw)
-            loadedKeys.value.add(node.key)
-            emit('load', Array.from(loadedKeys.value), { event, node })
-          } finally {
-            loadingKeys.value.delete(node.key)
-            loadingKeys.value = new Set(loadingKeys.value)
-          }
+          await runLoadData(node, event)
         }
       }
       const nextArray = Array.from(next)
       setExpandedKeys(nextArray)
       emit('expand', nextArray, { expanded: !isExpanded, node })
+    }
+
+    const retryLoad = async (key: TreeNodeKey) => {
+      const node = flatAll.value.byKey.get(key)
+      if (!node || !props.loadData) return
+      await runLoadData(node)
     }
 
     const triggerSelect = (node: FlattenedTreeNode, event: MouseEvent) => {
@@ -194,6 +219,7 @@ export default defineComponent({
 
     const computePosition = (event: DragEvent, target: HTMLElement): TreeDropPosition => {
       const rect = target.getBoundingClientRect()
+      if (!rect.height) return 'inside'
       const offsetY = event.clientY - rect.top
       const ratio = offsetY / rect.height
       if (ratio < 0.25) return 'before'
@@ -201,11 +227,86 @@ export default defineComponent({
       return 'inside'
     }
 
+    const clearHoverExpandTimer = () => {
+      if (dragHoverTimer.value) {
+        clearTimeout(dragHoverTimer.value)
+        dragHoverTimer.value = null
+      }
+      dragHoverKey.value = null
+    }
+
+    const scheduleHoverExpand = (node: FlattenedTreeNode, event: DragEvent) => {
+      if (!props.dragHoverExpandDelay || props.dragHoverExpandDelay <= 0) return
+      if (!node.hasChildren && (!props.loadData || node.isLeaf)) return
+      if (expandedKeys.value.has(node.key)) return
+      if (dragHoverKey.value === node.key) return
+      clearHoverExpandTimer()
+      dragHoverKey.value = node.key
+      dragHoverTimer.value = setTimeout(() => {
+        if (draggingKey.value !== null && dragHoverKey.value === node.key) {
+          void triggerExpand(node, event)
+        }
+        dragHoverTimer.value = null
+      }, props.dragHoverExpandDelay)
+    }
+
+    const stopAutoScroll = () => {
+      autoScrollDelta.value = 0
+      if (autoScrollFrame.value !== null && typeof cancelAnimationFrame === 'function') {
+        cancelAnimationFrame(autoScrollFrame.value)
+      }
+      autoScrollFrame.value = null
+    }
+
+    const stepAutoScroll = () => {
+      const container = scrollContainerRef.value
+      if (!container || autoScrollDelta.value === 0) {
+        autoScrollFrame.value = null
+        return
+      }
+      container.scrollTop += autoScrollDelta.value
+      if (typeof requestAnimationFrame === 'function') {
+        autoScrollFrame.value = requestAnimationFrame(stepAutoScroll)
+      } else {
+        autoScrollFrame.value = null
+      }
+    }
+
+    const updateAutoScroll = (event: DragEvent) => {
+      if (!props.dragAutoScroll) return
+      const container = scrollContainerRef.value
+      if (!container) return
+      const rect = container.getBoundingClientRect()
+      const edge = props.dragAutoScrollEdge
+      const speed = props.dragAutoScrollSpeed
+      const distanceFromTop = event.clientY - rect.top
+      const distanceFromBottom = rect.bottom - event.clientY
+      let delta = 0
+      if (distanceFromTop < edge && distanceFromTop > 0) {
+        delta = -speed
+      } else if (distanceFromBottom < edge && distanceFromBottom > 0) {
+        delta = speed
+      }
+      const wasZero = autoScrollDelta.value === 0
+      autoScrollDelta.value = delta
+      if (delta !== 0 && wasZero && typeof requestAnimationFrame === 'function') {
+        autoScrollFrame.value = requestAnimationFrame(stepAutoScroll)
+      } else if (delta === 0) {
+        stopAutoScroll()
+      }
+    }
+
     const onDragOver = (event: DragEvent, node: FlattenedTreeNode) => {
       if (!props.draggable || draggingKey.value === null) return
       event.preventDefault()
       const position = computePosition(event, event.currentTarget as HTMLElement)
       dragState.value = { key: node.key, position }
+      if (position === 'inside') {
+        scheduleHoverExpand(node, event)
+      } else if (dragHoverKey.value !== null) {
+        clearHoverExpandTimer()
+      }
+      updateAutoScroll(event)
       emit('dragover', { event, node })
     }
 
@@ -216,12 +317,17 @@ export default defineComponent({
 
     const onDragLeave = (event: DragEvent, node: FlattenedTreeNode) => {
       if (!props.draggable) return
+      if (dragHoverKey.value === node.key) {
+        clearHoverExpandTimer()
+      }
       emit('dragleave', { event, node })
     }
 
     const onDrop = (event: DragEvent, node: FlattenedTreeNode) => {
       if (!props.draggable || draggingKey.value === null) return
       event.preventDefault()
+      clearHoverExpandTimer()
+      stopAutoScroll()
       const dragNode = flatAll.value.byKey.get(draggingKey.value)
       if (!dragNode || dragNode.key === node.key) {
         draggingKey.value = null
@@ -237,12 +343,33 @@ export default defineComponent({
 
     const renderSwitcher = (node: FlattenedTreeNode) => {
       if (slots.switcher) {
-        return slots.switcher({ expanded: expandedKeys.value.has(node.key), node })
+        return slots.switcher({
+          expanded: expandedKeys.value.has(node.key),
+          node,
+          loading: loadingKeys.value.has(node.key),
+          loadFailed: loadErrorKeys.value.has(node.key),
+        })
       }
       const expanded = expandedKeys.value.has(node.key)
       const loading = loadingKeys.value.has(node.key)
+      const failed = loadErrorKeys.value.has(node.key)
       if (loading) {
         return h('span', { class: ns.e('switcher-loading') }, '○')
+      }
+      if (failed) {
+        return h(
+          'span',
+          {
+            class: ns.e('switcher-error'),
+            role: 'button',
+            title: 'Click to retry',
+            onClick: (event: MouseEvent) => {
+              event.stopPropagation()
+              void retryLoad(node.key)
+            },
+          },
+          '!',
+        )
       }
       if (node.isLeaf && !node.hasChildren) {
         return h('span', { class: ns.e('switcher-leaf') })
@@ -297,6 +424,42 @@ export default defineComponent({
       return null
     }
 
+    const renderGuides = (node: FlattenedTreeNode) => {
+      if (!props.showLine || node.level === 0) return null
+      const guides: VNode[] = []
+      for (let i = 0; i < node.level; i += 1) {
+        if (slots.connector) {
+          guides.push(
+            h(
+              'span',
+              {
+                key: `guide-${i}`,
+                class: ns.e('guide'),
+                style: { left: `${i * props.indentSize + props.indentSize / 2}px` },
+              },
+              slots.connector({ depth: i, node }) as never,
+            ),
+          )
+        } else {
+          guides.push(
+            h('span', {
+              key: `guide-${i}`,
+              class: ns.e('guide'),
+              style: { left: `${i * props.indentSize + props.indentSize / 2}px` },
+            }),
+          )
+        }
+      }
+      return guides
+    }
+
+    const onDragEnd = () => {
+      clearHoverExpandTimer()
+      stopAutoScroll()
+      draggingKey.value = null
+      dragState.value = null
+    }
+
     const renderNode = (node: FlattenedTreeNode, extraStyle?: CSSProperties) => {
       const indentStyle: CSSProperties = {
         paddingLeft: `${props.indentSize * node.level}px`,
@@ -306,6 +469,7 @@ export default defineComponent({
       const isFocused = focusedKey.value === node.key
       const dropOver = dragState.value?.key === node.key
       const dropPos = dropOver ? dragState.value!.position : null
+      const isHoverExpand = dragHoverKey.value === node.key
 
       return h(
         'div',
@@ -320,6 +484,7 @@ export default defineComponent({
             dropOver && dropPos === 'before' && ns.em('node', 'drop-before'),
             dropOver && dropPos === 'after' && ns.em('node', 'drop-after'),
             props.blockNode && ns.em('node', 'block'),
+            isHoverExpand && ns.em('node', 'hover-expand'),
           ],
           role: 'treeitem',
           tabindex: isFocused ? 0 : -1,
@@ -334,6 +499,7 @@ export default defineComponent({
           onDragenter: (event: DragEvent) => onDragEnter(event, node),
           onDragleave: (event: DragEvent) => onDragLeave(event, node),
           onDrop: (event: DragEvent) => onDrop(event, node),
+          onDragend: onDragEnd,
           onFocus: () => {
             if (focusedKey.value !== node.key) {
               setFocusedKey(node.key)
@@ -341,6 +507,7 @@ export default defineComponent({
           },
         },
         [
+          ...(renderGuides(node) || []),
           h(
             'span',
             {
@@ -469,6 +636,17 @@ export default defineComponent({
 
     watch(focusedKey, () => {
       void nextTick(scrollFocusedIntoView)
+    })
+
+    onUnmounted(() => {
+      clearHoverExpandTimer()
+      stopAutoScroll()
+    })
+
+    expose({
+      retryLoad,
+      isNodeLoading: (key: TreeNodeKey) => loadingKeys.value.has(key),
+      hasLoadError: (key: TreeNodeKey) => loadErrorKeys.value.has(key),
     })
 
     return () => {

@@ -248,6 +248,107 @@ const data = [
 
 键盘导航触发的焦点变化会自动滚到可见区。
 
+## showLine 连接线
+
+`showLine` 启用后，每个节点按祖先深度自动渲染垂直连接线。`connector` 插槽可以替换默认渲染：
+
+:::demo
+
+```vue
+<script setup lang="ts">
+const data = [
+  {
+    key: 'a',
+    title: 'A',
+    children: [
+      { key: 'a1', title: 'A-1' },
+      {
+        key: 'a2',
+        title: 'A-2',
+        children: [{ key: 'a2-1', title: 'A-2-1' }],
+      },
+    ],
+  },
+]
+</script>
+
+<template>
+  <c-tree :data="data" default-expand-all show-line />
+</template>
+```
+
+:::
+
+```vue
+<!-- 自定义 connector 内容 -->
+<c-tree :data="data" show-line>
+  <template #connector="{ depth }">
+    <span style="color: #d9d9d9;">·</span>
+  </template>
+</c-tree>
+```
+
+## 拖拽 hover 自动展开
+
+启用 `draggable` 后，把节点拖到一个折叠节点上停留 `dragHoverExpandDelay`（默认 600ms）会自动展开它，方便把节点拖入深层目录。设为 0 关闭该行为。
+
+```vue
+<c-tree :data="data" draggable :drag-hover-expand-delay="800" />
+```
+
+## 拖拽 auto-scroll
+
+启用虚拟滚动或自定义滚动容器后，拖到顶/底边缘 `dragAutoScrollEdge`（默认 32px）以内时容器按 `dragAutoScrollSpeed`（默认 12px/帧）滚动。`dragAutoScroll=false` 关闭。
+
+```vue
+<c-tree
+  :data="big"
+  draggable
+  virtual-scroll
+  :virtual-max-height="240"
+  :drag-auto-scroll-edge="48"
+  :drag-auto-scroll-speed="20"
+/>
+```
+
+## 异步加载错误重试
+
+`loadData` 抛错时，对应节点的 switcher 切换成红色感叹号按钮，点击触发重试；同时 emit `load-error` 携带 `{ error, node }`。
+
+```vue
+<script setup lang="ts">
+async function loadData(node: any) {
+  if (Math.random() < 0.5) throw new Error('mock fail')
+  node.children = [{ key: `${node.key}-1`, title: 'Loaded' }]
+}
+function onLoadError(info: { error: Error; node: any }) {
+  console.warn('failed to load', info.node.key, info.error)
+}
+</script>
+
+<template>
+  <c-tree :data="data" :load-data="loadData" @load-error="onLoadError" />
+</template>
+```
+
+或编程式重试 / 查询状态：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+const treeRef = ref<any>(null)
+
+function retry(key: string) {
+  treeRef.value?.retryLoad(key)
+}
+</script>
+
+<template>
+  <c-tree ref="treeRef" :data="data" :load-data="loadData" />
+  <button @click="retry('lazy-1')">手动重试</button>
+</template>
+```
+
 ## 拖拽排序
 
 `draggable` 开启后，`drop` 事件回调里给出 `{ event, node, dragNode, dropPosition }`。组件**不会**自动改写 `data`——业务侧根据 `dropPosition` 改造数据结构。
@@ -271,33 +372,37 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 
 ## Props
 
-| 参数                | 类型                                              | 默认值  | 说明                                           |
-| ------------------- | ------------------------------------------------- | ------- | ---------------------------------------------- |
-| data                | `TreeNodeData[]`                                  | `[]`    | 树数据                                         |
-| fieldNames          | `{ key?, title?, children?, disabled?, isLeaf? }` | --      | 字段名映射                                     |
-| selectable          | `boolean`                                         | `true`  | 是否允许选中                                   |
-| multiple            | `boolean`                                         | `false` | 是否允许多选                                   |
-| selectedKeys        | `(string \| number)[]`                            | --      | 选中 key，配 `v-model:selected-keys` 接管      |
-| defaultSelectedKeys | `(string \| number)[]`                            | `[]`    | 初始选中 key                                   |
-| checkable           | `boolean`                                         | `false` | 是否显示勾选框                                 |
-| checkedKeys         | `(string \| number)[]`                            | --      | 勾选 key，配 `v-model:checked-keys` 接管       |
-| defaultCheckedKeys  | `(string \| number)[]`                            | `[]`    | 初始勾选 key                                   |
-| checkStrictly       | `boolean`                                         | `false` | 关闭父子勾选联动                               |
-| expandedKeys        | `(string \| number)[]`                            | --      | 展开 key，配 `v-model:expanded-keys` 接管      |
-| defaultExpandedKeys | `(string \| number)[]`                            | `[]`    | 初始展开 key                                   |
-| defaultExpandAll    | `boolean`                                         | `false` | 初始展开所有节点                               |
-| disabled            | `boolean`                                         | `false` | 整树禁用                                       |
-| loadData            | `(node) => Promise<void>`                         | --      | 异步加载子节点；展开未加载节点时调用           |
-| draggable           | `boolean`                                         | `false` | 是否允许拖拽                                   |
-| showLine            | `boolean`                                         | `false` | 是否显示连接线（保留接口，样式可由消费者扩展） |
-| blockNode           | `boolean`                                         | `false` | 是否独占整行                                   |
-| searchValue         | `string`                                          | `''`    | 搜索关键字（默认按 title 子串匹配）            |
-| filterTreeNode      | `(node, parentKeys) => boolean`                   | --      | 自定义过滤谓词，返回 true 命中                 |
-| indentSize          | `number`                                          | `24`    | 每级缩进像素                                   |
-| virtualScroll       | `boolean`                                         | `false` | 启用虚拟滚动                                   |
-| virtualItemHeight   | `number`                                          | `32`    | 虚拟滚动单项高度（px）                         |
-| virtualMaxHeight    | `number`                                          | `320`   | 虚拟滚动可视高度（px）                         |
-| focusedKey          | `string \| number`                                | --      | 聚焦节点 key，配 `v-model:focused-key` 接管    |
+| 参数                 | 类型                                              | 默认值  | 说明                                           |
+| -------------------- | ------------------------------------------------- | ------- | ---------------------------------------------- |
+| data                 | `TreeNodeData[]`                                  | `[]`    | 树数据                                         |
+| fieldNames           | `{ key?, title?, children?, disabled?, isLeaf? }` | --      | 字段名映射                                     |
+| selectable           | `boolean`                                         | `true`  | 是否允许选中                                   |
+| multiple             | `boolean`                                         | `false` | 是否允许多选                                   |
+| selectedKeys         | `(string \| number)[]`                            | --      | 选中 key，配 `v-model:selected-keys` 接管      |
+| defaultSelectedKeys  | `(string \| number)[]`                            | `[]`    | 初始选中 key                                   |
+| checkable            | `boolean`                                         | `false` | 是否显示勾选框                                 |
+| checkedKeys          | `(string \| number)[]`                            | --      | 勾选 key，配 `v-model:checked-keys` 接管       |
+| defaultCheckedKeys   | `(string \| number)[]`                            | `[]`    | 初始勾选 key                                   |
+| checkStrictly        | `boolean`                                         | `false` | 关闭父子勾选联动                               |
+| expandedKeys         | `(string \| number)[]`                            | --      | 展开 key，配 `v-model:expanded-keys` 接管      |
+| defaultExpandedKeys  | `(string \| number)[]`                            | `[]`    | 初始展开 key                                   |
+| defaultExpandAll     | `boolean`                                         | `false` | 初始展开所有节点                               |
+| disabled             | `boolean`                                         | `false` | 整树禁用                                       |
+| loadData             | `(node) => Promise<void>`                         | --      | 异步加载子节点；展开未加载节点时调用           |
+| draggable            | `boolean`                                         | `false` | 是否允许拖拽                                   |
+| showLine             | `boolean`                                         | `false` | 是否显示连接线（保留接口，样式可由消费者扩展） |
+| blockNode            | `boolean`                                         | `false` | 是否独占整行                                   |
+| searchValue          | `string`                                          | `''`    | 搜索关键字（默认按 title 子串匹配）            |
+| filterTreeNode       | `(node, parentKeys) => boolean`                   | --      | 自定义过滤谓词，返回 true 命中                 |
+| indentSize           | `number`                                          | `24`    | 每级缩进像素                                   |
+| virtualScroll        | `boolean`                                         | `false` | 启用虚拟滚动                                   |
+| virtualItemHeight    | `number`                                          | `32`    | 虚拟滚动单项高度（px）                         |
+| virtualMaxHeight     | `number`                                          | `320`   | 虚拟滚动可视高度（px）                         |
+| focusedKey           | `string \| number`                                | --      | 聚焦节点 key，配 `v-model:focused-key` 接管    |
+| dragHoverExpandDelay | `number`                                          | `600`   | 拖到 inside 区停留多少 ms 后自动展开，0 关闭   |
+| dragAutoScroll       | `boolean`                                         | `true`  | 拖到滚动容器边缘自动滚动                       |
+| dragAutoScrollEdge   | `number`                                          | `32`    | 触发 auto-scroll 的边缘范围（px）              |
+| dragAutoScrollSpeed  | `number`                                          | `12`    | auto-scroll 每帧滚动距离（px）                 |
 
 ## 事件
 
@@ -308,6 +413,7 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 | update:expanded-keys                         | `(keys)`                                                                                        | 展开变化（v-model）  |
 | update:focused-key                           | `(key)`                                                                                         | 聚焦变化（v-model）  |
 | focus-change                                 | `(key)`                                                                                         | 聚焦节点变化         |
+| load-error                                   | `({ error, node })`                                                                             | 异步加载失败         |
 | select                                       | `(keys, { selectedKeys, selected, node, event })`                                               | 选中变化             |
 | check                                        | `(keys, { checkedKeys, halfCheckedKeys, checked, node, event })`                                | 勾选变化             |
 | expand                                       | `(keys, { expanded, node })`                                                                    | 展开变化             |
@@ -317,11 +423,20 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 
 ## 插槽
 
-| 插槽     | 参数                       | 说明                  |
-| -------- | -------------------------- | --------------------- |
-| title    | `{ node, data, expanded }` | 自定义节点标题        |
-| switcher | `{ expanded, node }`       | 自定义展开 / 折叠箭头 |
-| icon     | `{ node, expanded }`       | 自定义节点前缀图标    |
+| 插槽      | 参数                                      | 说明                                           |
+| --------- | ----------------------------------------- | ---------------------------------------------- |
+| title     | `{ node, data, expanded }`                | 自定义节点标题                                 |
+| switcher  | `{ expanded, node, loading, loadFailed }` | 自定义展开 / 折叠箭头（含 loading / 错误状态） |
+| icon      | `{ node, expanded }`                      | 自定义节点前缀图标                             |
+| connector | `{ depth, node }`                         | `showLine` 时每根连接线的内容                  |
+
+## 组件方法（通过 ref 调用）
+
+| 方法                 | 签名                     | 说明                                  |
+| -------------------- | ------------------------ | ------------------------------------- |
+| `retryLoad(key)`     | `(key) => Promise<void>` | 重试 `loadData`，常用于错误后手动恢复 |
+| `isNodeLoading(key)` | `(key) => boolean`       | 节点是否正在异步加载                  |
+| `hasLoadError(key)`  | `(key) => boolean`       | 节点最近一次 `loadData` 是否失败      |
 
 ## 类型
 

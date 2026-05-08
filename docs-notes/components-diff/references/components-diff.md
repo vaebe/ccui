@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，Icon 已完成（33 测试）、Select 已完成（59 测试）、Tree 95% 版（键盘导航 + 虚拟滚动 + roving tabindex + focusedKey 受控 + 43 测试），共抽出 `shared/hooks/use-virtual-list` 给 Select / Tree 共用，其他口径同 2026-05-06。
+> 更新时间：2026-05-08，Icon / Select / Tree 全部已完成（33 + 59 + 50 = 142 测试，加 form 32 共 174 测试），抽出 `shared/hooks/use-virtual-list` 给 Select / Tree 共用，其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -74,7 +74,7 @@
 | Tag                   | Tag 标签                | 数据展示        | 已完成       |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
-| Tree                  | Tree 树形控件           | 数据展示        | 95% 完成     |
+| Tree                  | Tree 树形控件           | 数据展示        | 已完成       |
 | Typography            | Typography 排版         | 通用            | 已完成       |
 | Util                  | 工具函数集合            | 其他            | 已完成       |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成       |
@@ -240,6 +240,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 17：Tree 100% 完成
+
+已完成 1 项：Tree。
+
+关键能力：
+
+- **showLine**：默认连接线由 CSS 渲染——每个节点 N 个 `__guide` 绝对定位 span，按 ancestor 深度铺出垂直线。新增 `connector` 插槽允许消费者完全替换每条 guide 的内容。
+- **拖拽 hover 自动展开**：dragover 在节点 inside 区超过 `dragHoverExpandDelay`（默认 600ms）后自动 `triggerExpand`，drop / dragend / 离开 inside 都会清掉计时器。视觉上聚焦节点挂 `--hover-expand` 类。
+- **拖拽 auto-scroll**：`dragAutoScroll` 启用时（默认 true），dragover 接近滚动容器顶/底 `dragAutoScrollEdge`（默认 32px）以内时按 `dragAutoScrollSpeed`（默认 12px/帧）滚动；用 `requestAnimationFrame` 持续推进，drop / dragend / 离开边缘自动停。
+- **loadData 错误状态 + retryLoad**：`runLoadData` 抽出错误 try/catch，失败的节点进 `loadErrorKeys` 集合并 emit `load-error`；switcher 渲染为红色感叹号按钮，点击直接 retry。`expose({ retryLoad, isNodeLoading, hasLoadError })` 让父组件可以编程式重试或读取状态。
+- **switcher slot payload 扩展**：除了 `expanded` / `node`，新增 `loading` / `loadFailed`，让自定义 switcher 也能展示 loading 与错误状态。
+- **drop position 对 jsdom 友好**：`computePosition` 在 `rect.height === 0`（jsdom 默认）时直接返回 `'inside'`，避免 NaN 比较推到 `'after'` 导致的测试假阴性。
+- **onUnmounted 清理**：组件卸载时 `clearHoverExpandTimer` + `stopAutoScroll`，避免计时器或 RAF 泄漏。
+- 文档：新增 showLine（含 connector slot）、拖拽 hover 自动展开、拖拽 auto-scroll、loadData 错误重试 共 4 个章节；Props 表加 4 个新字段，事件表加 `load-error`，新增"组件方法"小节列出 expose 的 3 个 API。
+- 测试：从 43 个扩展到 50 个，新增 showLine 渲染 N 个 guide、connector slot 自定义渲染、drag hover-expand 在 delay 后展开、drop / dragend 取消 hover 计时器、loadData 失败 emit load-error 并显示错误 switcher、点击错误 switcher 触发 retry、expose retryLoad / isNodeLoading / hasLoadError。
+- 状态：components-diff.md / sidebar.ts / tree/index.ts 全部 95% -> 100% / 已完成。
+
+工程决策：
+
+- `runLoadData` 提取为独立函数，让 `triggerExpand`（首次展开）和 `retryLoad`（手动重试）共用一份错误处理路径。
+- `dragHoverTimer` / `autoScrollFrame` 都用 `shallowRef` 存原生 timer / RAF id，配合 `onUnmounted` 兜底清理；`autoScrollDelta = 0` 时退出 RAF 循环。
+- showLine 的连接线刻意避开了 antd 那种 ::before/::after 多边复合 SVG 路径——绝对定位 span 在虚拟列表 + auto-scroll 场景下渲染开销更可控。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/{form,select,icon,tree} --environment jsdom` 通过，174 个用例（form 32 + select 59 + icon 33 + tree 50）通过。
 
 ### Batch 16：Tree 95% 完成（键盘导航 + 虚拟滚动）
 

@@ -471,6 +471,129 @@ describe('tree', () => {
     expect(focused?.attributes('tabindex')).toBe('0')
   })
 
+  it('showLine renders an indent guide span per ancestor depth', () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1', 'child-1-2'], showLine: true })
+
+    expect(wrapper.classes()).toContain(ns.m('show-line').substring(1))
+    const leaf = wrapper.findAll(ns.e('node')).find((node) => node.attributes('data-key') === 'leaf-1-2-1')!
+    // leaf is at level 2 → 2 guide spans
+    expect(leaf.findAll(ns.e('guide'))).toHaveLength(2)
+  })
+
+  it('showLine connector slot lets consumers render custom guide content per depth', () => {
+    const wrapper = mountTree(
+      { defaultExpandedKeys: ['root-1'], showLine: true },
+      {
+        connector: ({ depth }: { depth: number }) => h('span', { class: 'guide-tag' }, `d${depth}`),
+      },
+    )
+    const guides = wrapper.findAll('.guide-tag')
+    expect(guides.length).toBeGreaterThan(0)
+    expect(guides[0].text()).toBe('d0')
+  })
+
+  it('drag hover on a collapsed node auto-expands after dragHoverExpandDelay', async () => {
+    vi.useFakeTimers()
+    try {
+      const wrapper = mountTree({ draggable: true, dragHoverExpandDelay: 200 })
+      const nodes = wrapper.findAll(ns.e('node'))
+
+      await nodes[1].trigger('dragstart') // drag root-2
+      await nodes[0].trigger('dragover', { clientY: 14 }) // hover middle of root-1 -> 'inside'
+
+      expect(wrapper.emitted('update:expandedKeys')).toBeUndefined()
+      vi.advanceTimersByTime(220)
+      await nextTick()
+
+      const expandEmits = wrapper.emitted('update:expandedKeys') as Array<unknown[]>
+      expect(expandEmits[0][0]).toEqual(['root-1'])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('drag hover-expand timer cleared on drop and dragend', async () => {
+    vi.useFakeTimers()
+    try {
+      const wrapper = mountTree({ draggable: true, dragHoverExpandDelay: 200 })
+      const nodes = wrapper.findAll(ns.e('node'))
+
+      await nodes[1].trigger('dragstart')
+      await nodes[0].trigger('dragover', { clientY: 14 })
+      await nodes[0].trigger('drop', { clientY: 14 })
+      vi.advanceTimersByTime(220)
+      await nextTick()
+
+      // drop fires reorder via emit('drop'), but expandedKeys should not have been
+      // mutated by the cancelled hover timer
+      expect(wrapper.emitted('update:expandedKeys')).toBeUndefined()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('loadData failure flips switcher to error state and emits load-error', async () => {
+    const error = new Error('boom')
+    const loadData = vi.fn(() => Promise.reject(error))
+    const data = [{ key: 'lazy', title: 'Lazy', isLeaf: false }]
+    const wrapper = mountTree({ data, loadData })
+
+    await wrapper.find(ns.e('switcher-wrap')).trigger('click')
+    // wait for the failure microtask
+    await nextTick()
+    await nextTick()
+    await nextTick()
+
+    expect(loadData).toHaveBeenCalledTimes(1)
+    const loadErrorEvents = wrapper.emitted('load-error') as Array<unknown[]>
+    expect(loadErrorEvents).toBeDefined()
+    expect((loadErrorEvents[0][0] as { error: Error }).error).toBe(error)
+    expect(wrapper.find(ns.e('switcher-error')).exists()).toBe(true)
+  })
+
+  it('clicking the error switcher retries the load', async () => {
+    let attempt = 0
+    const loadData = vi.fn(async (node: { key?: string; children?: unknown[] }) => {
+      attempt += 1
+      if (attempt === 1) throw new Error('first try fails')
+      node.children = [{ key: `${node.key}-c`, title: 'Recovered' }]
+    })
+    const data = [{ key: 'lazy', title: 'Lazy', isLeaf: false }]
+    const wrapper = mountTree({ data, loadData })
+
+    await wrapper.find(ns.e('switcher-wrap')).trigger('click')
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find(ns.e('switcher-error')).exists()).toBe(true)
+
+    await wrapper.find(ns.e('switcher-error')).trigger('click')
+    await nextTick()
+    await nextTick()
+
+    expect(loadData).toHaveBeenCalledTimes(2)
+    expect(wrapper.find(ns.e('switcher-error')).exists()).toBe(false)
+  })
+
+  it('exposes retryLoad / isNodeLoading / hasLoadError on the component instance', async () => {
+    const error = new Error('fail')
+    const loadData = vi.fn(() => Promise.reject(error))
+    const data = [{ key: 'lazy', title: 'Lazy', isLeaf: false }]
+    const wrapper = mountTree({ data, loadData })
+
+    await wrapper.find(ns.e('switcher-wrap')).trigger('click')
+    await nextTick()
+    await nextTick()
+
+    const vm = wrapper.vm as unknown as {
+      hasLoadError: (key: string) => boolean
+      isNodeLoading: (key: string) => boolean
+      retryLoad: (key: string) => Promise<void>
+    }
+    expect(vm.hasLoadError('lazy')).toBe(true)
+    expect(vm.isNodeLoading('lazy')).toBe(false)
+    expect(typeof vm.retryLoad).toBe('function')
+  })
+
   it('checkable: parent flips from half-checked to fully checked when all enabled descendants are checked', async () => {
     const wrapper = mountTree({
       checkable: true,

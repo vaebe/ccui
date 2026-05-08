@@ -38,6 +38,34 @@
     width: 100%;
   }
 
+  &__guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: $ccui-color-border-secondary;
+    pointer-events: none;
+  }
+
+  &__node--hover-expand {
+    background: rgba(22, 119, 255, 0.06);
+  }
+
+  &__switcher-error {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: $ccui-color-error-bg;
+    color: $ccui-color-error;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+  }
+
   &__node--disabled {
     color: $ccui-color-text-disabled;
     cursor: not-allowed;

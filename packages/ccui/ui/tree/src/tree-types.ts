@@ -173,6 +173,22 @@ export const treeProps = {
     type: [String, Number] as PropType<TreeNodeKey>,
     default: undefined,
   },
+  dragHoverExpandDelay: {
+    type: Number,
+    default: 600,
+  },
+  dragAutoScroll: {
+    type: Boolean,
+    default: true,
+  },
+  dragAutoScrollEdge: {
+    type: Number,
+    default: 32,
+  },
+  dragAutoScrollSpeed: {
+    type: Number,
+    default: 12,
+  },
 } as const
 
 export type TreeProps = ExtractPropTypes<typeof treeProps>

@@ -285,7 +285,7 @@ export default {
         {
           text: 'Tree 树',
           link: '/components/tree/',
-          status: '95%',
+          status: '100%',
         },
         {
           text: 'Watermark 水印',
