@@ -1,7 +1,17 @@
 import { defineComponent, h } from 'vue'
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vite-plus/test'
-import { clearIconRegistry, Icon, registerIcon, resolveIcon, unregisterIcon } from '../index'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import {
+  addCollection,
+  addIcon,
+  clearIconRegistry,
+  Icon,
+  loadIcon,
+  registerIcon,
+  resolveIcon,
+  unregisterIcon,
+} from '../index'
+import { CONFIG_INJECT_KEY } from '../../config-provider/src/config-provider-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const ns = useNamespace('icon', true)
@@ -160,6 +170,162 @@ describe('icon', () => {
     expect(resolveIcon('search')).toBe(SearchIcon)
     unregisterIcon('search')
     expect(resolveIcon('search')).toBeUndefined()
+  })
+
+  it('clickable adds button semantics, tabindex, and emits click', async () => {
+    const onClick = vi.fn()
+    const wrapper = mount(Icon, {
+      props: { name: 'mdi:home', clickable: true, onClick },
+    })
+
+    expect(wrapper.attributes('role')).toBe('button')
+    expect(wrapper.attributes('tabindex')).toBe('0')
+    expect(wrapper.classes()).toContain(ns.m('clickable').substring(1))
+
+    await wrapper.trigger('click')
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('clickable activates on Enter and Space via keyboard', async () => {
+    const onClick = vi.fn()
+    const wrapper = mount(Icon, {
+      props: { name: 'mdi:home', clickable: true, onClick },
+      attachTo: document.body,
+    })
+
+    await wrapper.trigger('keydown', { key: 'Enter' })
+    expect(onClick).toHaveBeenCalledTimes(1)
+
+    await wrapper.trigger('keydown', { key: ' ' })
+    expect(onClick).toHaveBeenCalledTimes(2)
+
+    await wrapper.trigger('keydown', { key: 'Tab' })
+    expect(onClick).toHaveBeenCalledTimes(2)
+  })
+
+  it('non-clickable icon does not pick up button role or tabindex', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'mdi:home' },
+    })
+    expect(wrapper.attributes('role')).toBeUndefined()
+    expect(wrapper.attributes('tabindex')).toBeUndefined()
+  })
+
+  it('spinDirection="ccw" applies the spin-ccw modifier class', () => {
+    const wrapper = mount(Icon, {
+      props: { spin: true, spinDirection: 'ccw' },
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+    })
+    expect(wrapper.classes()).toContain(ns.m('spin').substring(1))
+    expect(wrapper.classes()).toContain(ns.m('spin-ccw').substring(1))
+  })
+
+  it('spinDirection="cw" (default) does not apply the spin-ccw class', () => {
+    const wrapper = mount(Icon, {
+      props: { spin: true },
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+    })
+    expect(wrapper.classes()).not.toContain(ns.m('spin-ccw').substring(1))
+  })
+
+  it('iconifyPrefix prepends bare names with the prefix', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'home', iconifyPrefix: 'mdi' },
+    })
+    expect(wrapper.classes()).toContain(ns.m('iconify').substring(1))
+  })
+
+  it('iconifyPrefix is ignored when name already contains a colon', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'material-symbols:home-outline', iconifyPrefix: 'mdi' },
+    })
+    expect(wrapper.classes()).toContain(ns.m('iconify').substring(1))
+  })
+
+  it('reads default componentSize from ConfigProvider context', () => {
+    const wrapper = mount(Icon, {
+      props: {},
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+      global: {
+        provide: {
+          [CONFIG_INJECT_KEY as symbol]: {
+            prefixCls: 'ccui',
+            componentSize: 'small',
+            locale: undefined,
+            direction: 'ltr',
+            theme: undefined,
+            iconPrefixCls: 'ccui-icon',
+          },
+        },
+      },
+    })
+    expect(wrapper.attributes('style')).toContain('font-size: 14px')
+  })
+
+  it('explicit size prop overrides ConfigProvider componentSize', () => {
+    const wrapper = mount(Icon, {
+      props: { size: 24 },
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+      global: {
+        provide: {
+          [CONFIG_INJECT_KEY as symbol]: {
+            prefixCls: 'ccui',
+            componentSize: 'small',
+            locale: undefined,
+            direction: 'ltr',
+            theme: undefined,
+            iconPrefixCls: 'ccui-icon',
+          },
+        },
+      },
+    })
+    expect(wrapper.attributes('style')).toContain('font-size: 24px')
+  })
+
+  it('reads iconPrefixCls from ConfigProvider for font-icon fallback', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'edit' },
+      global: {
+        provide: {
+          [CONFIG_INJECT_KEY as symbol]: {
+            prefixCls: 'ccui',
+            componentSize: 'middle',
+            locale: undefined,
+            direction: 'ltr',
+            theme: undefined,
+            iconPrefixCls: 'my-iconfont',
+          },
+        },
+      },
+    })
+    const fontIcon = wrapper.find('i')
+    expect(fontIcon.classes()).toContain('my-iconfont')
+    expect(fontIcon.classes()).toContain('my-iconfont-edit')
+  })
+
+  it('explicit prefixCls prop wins over ConfigProvider iconPrefixCls', () => {
+    const wrapper = mount(Icon, {
+      props: { name: 'edit', prefixCls: 'explicit-prefix' },
+      global: {
+        provide: {
+          [CONFIG_INJECT_KEY as symbol]: {
+            prefixCls: 'ccui',
+            componentSize: 'middle',
+            locale: undefined,
+            direction: 'ltr',
+            theme: undefined,
+            iconPrefixCls: 'config-prefix',
+          },
+        },
+      },
+    })
+    expect(wrapper.find('i').classes()).toContain('explicit-prefix')
+  })
+
+  it('re-exports Iconify offline API addCollection / addIcon / loadIcon', () => {
+    expect(typeof addCollection).toBe('function')
+    expect(typeof addIcon).toBe('function')
+    expect(typeof loadIcon).toBe('function')
   })
 
   it('attaches role="img" and aria-label when title or ariaLabel is provided', () => {

@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，新增 Icon 80% 版（Iconify 适配 + 14 个定向测试）、Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
+> 更新时间：2026-05-08，新增 Icon 95% 版（clickable / spinDirection / iconifyPrefix / ConfigProvider 集成 / Iconify 离线 API + 26 个定向测试）、Select 80% 版（分组 / fieldNames / tags / 远程搜索 / FormItem 联动 + 31 个定向测试）和 Tree 80% 版（推翻重写，受控/checkable/loadData/搜索/拖拽 + 31 个定向测试），其他口径同 2026-05-06。
 
 ## 零、交付完整度口径
 
@@ -40,7 +40,7 @@
 | FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成       |
 | Form                  | Form 表单               | 数据录入        | 80% 完成     |
 | Grid                  | Grid 栅格               | 布局            | 已完成       |
-| Icon                  | Icon 图标               | 通用            | 80% 完成     |
+| Icon                  | Icon 图标               | 通用            | 95% 完成     |
 | Image                 | Image 图片              | 数据展示        | 已完成       |
 | Input                 | Input 输入框            | 数据录入        | 已完成       |
 | InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成       |
@@ -240,6 +240,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 12：Icon 95% 完成
+
+已完成 1 项：Icon。
+
+关键能力：
+
+- `clickable` 让图标变成无障碍按钮：`role="button"` + `tabindex="0"` + Enter / Space 键盘激活，hover 自动降透明度，`focus-visible` 显示 outline。
+- `spinDirection: 'cw' | 'ccw'`：spin 动画反向。
+- `iconifyPrefix`：`name` 不含 `:` 时自动拼成 `${prefix}:${name}`，常用一组 Iconify 图标时少写一遍前缀。
+- ConfigProvider 集成：自动读取 `iconPrefixCls`（字体 fallback 类前缀）和 `componentSize`（small=14、middle=级联、large=20），显式 prop 仍优先。
+- 透传 Iconify 离线 API：`addCollection` / `addIcon` / `loadIcon` / `loadIcons` / `addAPIProvider` 直接从 `vue3-ccui` 导出，方便预注入图标集或切自建 API 服务。
+- 文档：新增可点击、旋转方向、Iconify 前缀简化、ConfigProvider、离线 API 共 5 个新章节，加 Props 表新增三个字段、新增"事件"和"Iconify 透传 API"两个表。
+- 测试：从 14 个扩展到 26 个，新增 clickable role+tabindex+点击、Enter/Space 激活、非 clickable 不挂 role、spinDirection ccw 类、spinDirection cw 不挂、iconifyPrefix 拼接、含冒号时忽略 prefix、ConfigProvider componentSize=small 默认尺寸、显式 size 覆盖 ConfigProvider、ConfigProvider iconPrefixCls 字体 fallback、显式 prefixCls 覆盖、Iconify 透传 API 函数性导出。
+
+工程决策：
+
+- Icon 不直接 `import { useConfig }` 自 ConfigProvider（会触发 jsdom 下的 vite TSX import-analysis bug），改为直接 `inject(CONFIG_INJECT_KEY, DEFAULT_CONFIG)`，从 types 文件单独导入 key。
+- ConfigProvider 的 `componentSize` 是 `'small' | 'middle' | 'large'`、Icon 的 `IconSizePreset` 是 `'small' | 'default' | 'large'`，通过 `mapConfigSize`（`'middle'` → `'default'`）跨过该差异。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test packages/ccui/ui/icon/test/icon.test.ts --environment jsdom` 通过，26 个用例。
+
+Icon 剩余 5% 项：
+
+- 没有自带预置 SVG 集（按设计走 Iconify，不向仓库塞 svg 文件）。
+- `theme` 当前仅作为 CSS 类钩子，没有自动按主题切换 Iconify 不同前缀（社区做法差异较大，留给消费者自行映射）。
+- `loading` 状态下的 skeleton 占位（异步加载时图标尚未到位）。
 
 ### Batch 11：Tree 80% 完成（API 推翻重写）
 

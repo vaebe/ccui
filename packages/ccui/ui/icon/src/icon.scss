@@ -25,6 +25,24 @@
     animation: ccui-icon-spin 1s linear infinite;
   }
 
+  &--spin-ccw {
+    animation-direction: reverse;
+  }
+
+  &--clickable {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  &--clickable:hover {
+    opacity: 0.7;
+  }
+
+  &--clickable:focus-visible {
+    outline: 2px solid $ccui-primary;
+    outline-offset: 2px;
+  }
+
   &--two-tone {
     color: var(--ccui-icon-two-tone-color, $ccui-color-primary);
   }

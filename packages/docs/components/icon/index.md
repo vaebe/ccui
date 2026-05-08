@@ -93,6 +93,94 @@ registerIcon('app-logo', Logo)
 
 :::
 
+## 可点击图标（按钮语义）
+
+`clickable` 让图标变成无障碍按钮：自动挂 `role="button"` + `tabindex="0"`，支持 Enter / Space 键盘激活，hover 状态下自动降透明度。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+function handleClick() {
+  alert('clicked')
+}
+</script>
+
+<template>
+  <c-icon name="mdi:bell" :size="24" clickable aria-label="通知" @click="handleClick" />
+</template>
+```
+
+:::
+
+## 旋转方向
+
+`spinDirection` 控制 spin 动画方向：`cw`（默认顺时针）或 `ccw`（逆时针）。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px;">
+    <c-icon name="mdi:loading" spin :size="24" />
+    <c-icon name="mdi:loading" spin spin-direction="ccw" :size="24" />
+  </div>
+</template>
+```
+
+:::
+
+## Iconify 前缀简化
+
+`iconifyPrefix` 让你少写一遍 `:`。常用一组图标时设置一次前缀，后续用裸名称：
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px;">
+    <c-icon iconify-prefix="mdi" name="home" :size="20" />
+    <c-icon iconify-prefix="mdi" name="cog" :size="20" />
+    <c-icon iconify-prefix="mdi" name="account" :size="20" />
+    <!-- 已含冒号时 prefix 失效 -->
+    <c-icon iconify-prefix="mdi" name="material-symbols:menu" :size="20" />
+  </div>
+</template>
+```
+
+:::
+
+## 全局默认（ConfigProvider）
+
+外层套 `<c-config-provider :component-size="..." :icon-prefix-cls="...">` 时，Icon 自动读取：
+
+- `componentSize`：`small`/`middle`/`large` 映射为 14px / 默认级联 / 20px。`size` prop 显式覆盖。
+- `iconPrefixCls`：作为字体图标兜底类名前缀（默认 `ccui-icon`）。`prefixCls` prop 显式覆盖。
+
+```vue
+<c-config-provider component-size="small" icon-prefix-cls="my-iconfont">
+  <c-icon name="edit" />  <!-- 渲染 <i class="my-iconfont my-iconfont-edit"/>，14px -->
+</c-config-provider>
+```
+
+## 离线 / 自带图标包
+
+Iconify 默认按图标懒加载，需要离线场景时使用透传出的 API 把图标数据预先注入：
+
+```ts
+import { addCollection, addIcon } from 'vue3-ccui'
+import mdiHome from '@iconify-icons/mdi/home'
+
+// 单图标
+addIcon('mdi:home', mdiHome)
+
+// 整个图标集（@iconify-json/mdi）
+import mdiSet from '@iconify-json/mdi/icons.json'
+addCollection(mdiSet)
+```
+
+注入后即使无网络也能正常渲染对应 `<c-icon name="mdi:home" />`。
+
 ## 直接传入插槽 SVG
 
 需要一次性渲染某个 SVG 时，直接放在默认插槽里——尺寸、颜色、旋转、spin 一样有效。
@@ -195,19 +283,22 @@ const groups: Array<{ title: string; icons: string[] }> = [
 
 ## Props
 
-| 参数         | 类型                                                  | 默认值 | 说明                                                      |
-| ------------ | ----------------------------------------------------- | ------ | --------------------------------------------------------- |
-| name         | `string`                                              | --     | 图标名。含 `:` 时走 Iconify，否则查注册表，再退化到字体类 |
-| component    | `Component`                                           | --     | 直接传图标组件，优先级最高                                |
-| size         | `'small' \| 'default' \| 'large' \| number \| string` | --     | 尺寸，预设/数字 px/任意 CSS 长度                          |
-| color        | `string`                                              | --     | 主色，作用于 `color` / `fill` / `stroke`                  |
-| theme        | `'outlined' \| 'filled' \| 'two-tone'`                | --     | 主题类名挂载，便于样式钩子                                |
-| twoToneColor | `string`                                              | --     | 次色，配合 `theme="two-tone"`                             |
-| rotate       | `number`                                              | 0      | 旋转角度（deg）                                           |
-| spin         | `boolean`                                             | false  | 是否旋转动画                                              |
-| title        | `string`                                              | --     | 可访问标题（同时设置 `role="img"`）                       |
-| ariaLabel    | `string`                                              | --     | 可访问标签                                                |
-| prefixCls    | `string`                                              | --     | 字体类名前缀，默认 `ccui-icon`                            |
+| 参数          | 类型                                                  | 默认值 | 说明                                                      |
+| ------------- | ----------------------------------------------------- | ------ | --------------------------------------------------------- |
+| name          | `string`                                              | --     | 图标名。含 `:` 时走 Iconify，否则查注册表，再退化到字体类 |
+| component     | `Component`                                           | --     | 直接传图标组件，优先级最高                                |
+| size          | `'small' \| 'default' \| 'large' \| number \| string` | --     | 尺寸，预设/数字 px/任意 CSS 长度                          |
+| color         | `string`                                              | --     | 主色，作用于 `color` / `fill` / `stroke`                  |
+| theme         | `'outlined' \| 'filled' \| 'two-tone'`                | --     | 主题类名挂载，便于样式钩子                                |
+| twoToneColor  | `string`                                              | --     | 次色，配合 `theme="two-tone"`                             |
+| rotate        | `number`                                              | 0      | 旋转角度（deg）                                           |
+| spin          | `boolean`                                             | false  | 是否旋转动画                                              |
+| spinDirection | `'cw' \| 'ccw'`                                       | `'cw'` | 旋转方向，`ccw` 反向                                      |
+| clickable     | `boolean`                                             | false  | 渲染为按钮：`role="button"` + `tabindex="0"` + 键盘激活   |
+| iconifyPrefix | `string`                                              | --     | 当 `name` 不含 `:` 时自动拼成 `${prefix}:${name}`         |
+| title         | `string`                                              | --     | 可访问标题（同时设置 `role="img"`）                       |
+| ariaLabel     | `string`                                              | --     | 可访问标签                                                |
+| prefixCls     | `string`                                              | --     | 字体类名前缀，默认读 ConfigProvider 的 `iconPrefixCls`    |
 
 ## 解析优先级
 
@@ -221,3 +312,21 @@ const groups: Array<{ title: string; icons: string[] }> = [
 | `resolveIcon(name)`             | 读取已注册图标，未命中返回 `undefined` |
 | `unregisterIcon(name)`          | 移除已注册图标                         |
 | `clearIconRegistry()`           | 清空注册表，常用于测试 setup           |
+
+## Iconify 透传 API
+
+直接 `import` 自 `vue3-ccui`：
+
+| 方法                             | 说明                                       |
+| -------------------------------- | ------------------------------------------ |
+| `addCollection(collection)`      | 注入整个图标集（如 `@iconify-json/mdi`）   |
+| `addIcon(name, data)`            | 注入单个图标                               |
+| `loadIcon(name)`                 | 显式预加载某个图标，返回 Promise           |
+| `loadIcons(names)`               | 批量预加载                                 |
+| `addAPIProvider(provider, host)` | 自定义 Iconify API 服务器（私有部署/镜像） |
+
+## 事件
+
+| 事件  | 回调签名              | 说明                                              |
+| ----- | --------------------- | ------------------------------------------------- |
+| click | `(event: MouseEvent)` | 点击事件，`clickable=true` 时也响应 Enter / Space |

@@ -4,6 +4,7 @@ export type IconSizePreset = 'small' | 'default' | 'large'
 // Use `(string & {})` to keep IconSizePreset literal autocomplete without lint absorbing them into string.
 export type IconSize = IconSizePreset | number | (string & {})
 export type IconTheme = 'outlined' | 'filled' | 'two-tone'
+export type IconSpinDirection = 'cw' | 'ccw'
 
 export interface IconProps {
   name?: string
@@ -14,6 +15,9 @@ export interface IconProps {
   theme?: IconTheme
   rotate?: number
   spin?: boolean
+  spinDirection?: IconSpinDirection
+  clickable?: boolean
+  iconifyPrefix?: string
   title?: string
   ariaLabel?: string
   prefixCls?: string
@@ -51,6 +55,18 @@ export const iconProps = {
   spin: {
     type: Boolean,
     default: false,
+  },
+  spinDirection: {
+    type: String as PropType<IconSpinDirection>,
+    default: 'cw',
+  },
+  clickable: {
+    type: Boolean,
+    default: false,
+  },
+  iconifyPrefix: {
+    type: String,
+    default: '',
   },
   title: {
     type: String,
