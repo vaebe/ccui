@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 73 个一级目录，其中 71 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：71 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P3 体验组件推进 / Tour 80% 首次交付**：19 用例，多步骤导览 + 4 块 mask 围 target 镂空 + floating-ui 12 方位浮层定位 + 全局/单步 mask 三态 + Esc 关闭 + 末步 finish emit + 受控双 v-model（open / current）。剩 Upload / Mentions 两项大件待推。Transfer (Batch 29) / AutoComplete (Batch 28) / P2 中等复杂度三件套维持。
+> 当前项目目录：`packages/ccui/ui` 下共 74 个一级目录，其中 72 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：72 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P2 大件 / Upload 80% 首次交付**：22 用例，文件选择 + 拖拽接收 + maxCount/maxSize/beforeUpload 三层守门 + 状态四态（uploading/done/error/removed）+ 列表渲染（含 `KB/MB` 格式化）+ 受控/非受控 v-model:fileList + reject emit。组件**不内置 HTTP 上传**，业务侧通过监听 change + 操作 fileList 做真实上传。剩 Mentions 一项 P3 体验组件待推。
 
 ## 零、交付完整度口径
 
@@ -86,6 +86,7 @@
 | Transfer              | Transfer 穿梭框         | 数据录入        | 80%    |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
 | TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
+| Upload                | Upload 上传             | 数据录入        | 80%    |
 | Typography            | Typography 排版         | 通用            | 已完成 |
 | Util                  | 工具函数集合            | 通用            | 已完成 |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成 |
@@ -111,7 +112,7 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 | Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）           | P1（推进中） |
 | TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly） | P1（推进中） |
 | Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动 | P2（已交付）  |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                          | P2           |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传 | P2（已交付）  |
 | AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
 | Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
 | Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model       | P3（已交付）  |
@@ -249,6 +250,37 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 31：Upload 80% 首次交付（P2 大件第二项 / 不内置 HTTP）
+
+已完成 1 项：Upload（80% 首次交付）。P2 独立大任务的第二项，至此 P2 大件只剩 Mentions 一项。22 个用例。
+
+关键能力：
+
+- **核心定位 — 不内置 HTTP 上传**：80% 切片明确不做 fetch / xhr / customRequest 默认实现。组件提供 UI（按钮 / 拖拽区 / 文件列表）+ 状态机（uploading / done / error / removed）+ 三层守门，**真实上传由业务侧监听 `change` 事件、自己发请求、回写 fileList 状态**。原因：HTTP 协议、错误重试、CSRF、进度上报、token 注入这些业务诉求差异极大，强行内置 customRequest 会导致 80% 用户都要覆盖默认实现，反而把组件搞复杂。下一批 95% 时再补 customRequest 默认形态。
+- **三层守门 — maxSize → maxCount → beforeUpload**：在 `pickFiles` 内按这个顺序逐个文件检查：超 maxSize → reject('maxSize')；累计已超 maxCount → reject('maxCount')；beforeUpload 返回 false → reject('beforeUpload')。三种 rejection 都 emit `reject(file, reason)`，业务可以做统一 toast。**maxCount 是「剩余槽位」语义**：`remainingSlots = maxCount - 当前列表长度`，只允许填满，超出的丢弃 + reject。
+- **input.value = '' 重置技巧**：选完文件后立刻 `target.value = ''`，让用户能重复选同一个文件（否则浏览器认为相同 value 不触发 change）。这是 `<input type="file">` 的经典坑。
+- **defaultStatus 控制初始状态**：默认 `done`（被动列表，直接显示打勾）；业务想要「持续显示加载态等回写」就传 `defaultStatus="uploading"`，新加的文件 status='uploading' percent=0，业务回写为 'done' / 'error'。
+- **拖拽事件四件套**：`dragenter` / `dragover` 都需要 `e.preventDefault()` 才能让 drop 生效（HTML5 标准）；同时切 `dragOver.value = true` 加 `is-dragover` 视觉。`dragleave` 切回 false。`drop` 阻止默认 + 关 dragOver + 读 `e.dataTransfer.files` 走同一个 `pickFiles`（共用三层守门）。`disabled` 时四个 handler 全部短路。
+- **触发器三态**：drag=true → 拖拽区；drag=false + default slot → 自定义按钮（slot 内容）；drag=false 无 slot → 默认按钮（triggerText）。这意味着 drag 与 default slot 互斥，文档明确说明。
+- **隐藏 input 设计**：`<input type="file">` `position: absolute; w/h:0; opacity:0; tabindex=-1; aria-hidden`。点击触发器 → `inputRef.click()` 走原生选文件对话框。这是 Upload 组件的标准实现，与 AntD / Element Plus / Naive UI 都一致。
+- **受控 / 非受控双模**：`v-model:fileList` 受控；非受控时内部 `innerList = ref(defaultFileList)`。`commitList` 函数统一写 inner state（非受控时）+ emit `update:fileList`（永远 emit）。
+- **size 格式化**：`< 1KB` 显示字节；`< 1MB` 显示 KB（1 位小数）；其它显示 MB（1 位小数）。简单实用，不引入第三方库。
+
+工程决策：
+
+- **不抽 useUpload hook**：状态简单，组件就一个 setup 内联完成。没有跨组件复用诉求。
+- **不复用 c-checkbox / c-button**：触发按钮和 × 按钮都是 native `<button>`。c-button 引入会带来 size / type / loading 等 props 冲突。
+- **不引入 c-progress**：80% 的 percent 字段先用文字渲染（`30%`）。要彩色进度条建议下一批接入 c-progress，避免一次引入多组件依赖。
+- **maxCount=0 表示"不限"**：与 maxSize=0 同款语义，避免业务必须传一个魔法大数（如 `Infinity`）。`if (props.maxCount > 0)` 短路。
+- **beforeUpload 同步**：80% 不接 Promise。AntD beforeUpload 支持返回 Promise 但很多业务场景下用户体验是"卡顿等待"，反而劝退 80%。同步过滤足够覆盖文件名、扩展名、客户端校验等场景。
+- **默认 status='done' 而不是 'success'**：与 AntD 的 status 枚举一致（done/uploading/error），不引入 success/info 等状态。
+
+测试：22 个用例。jsdom 没 `DataTransfer` / `FileList` 构造函数，写了一个 `makeFileList(files)` 工具用 spread + `length` + `item()` + Symbol.iterator 伪造 FileList。`mockSelectFiles` 通过 `Object.defineProperty(input, 'files', ...)` + dispatch `change` 模拟用户选文件；`dispatchDrop` 通过 `Object.defineProperty(dropEvent, 'dataTransfer', ...)` 伪造 dataTransfer。覆盖：触发器渲染（默认 / drag / 自定义 slot / disabled / accept+multiple 透传）；选择（emit + render、maxSize/maxCount/beforeUpload 三层 reject、input.value 重置、defaultStatus）；删除（× emit / disabled 隐藏 ×）；列表（showUploadList=false 隐藏、status 三态 modifier、size 格式化 B/KB/MB、itemRender slot）；拖拽（dragover class 切换、drop 走 dataTransfer、disabled 屏蔽 drop）；v-model:fileList 受控双向。
+
+验证结果：
+
+- `vp test run ui/upload`（packages/ccui 内）通过 22/22。
 
 ### Batch 30：Tour 80% 首次交付（P3 体验组件第一项）
 
@@ -956,7 +988,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 2. QRCode：80% 已交付（Batch 26）。剩余 toCanvas / toDataURL expose、圆角点阵 / 渐变前景、SSR 集成测试推到 95%。
 3. ColorPicker：80% 已交付（Batch 27）。剩余 RGB / HSV 三联输入控件、trigger slot、EyeDropper API、键盘导航、modelValue=null 清空状态推到 95%。
 4. Transfer：80% 已交付（Batch 29）。剩余分页、虚拟滚动、拖拽排序、selectAllLabels slot 推到 95%。
-5. Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。Transfer 收口后下一站。
+5. Upload：80% 已交付（Batch 31）。剩余 customRequest / 默认 action POST、listType=picture/picture-card、c-progress 进度条、preview/download、async beforeUpload、chunk 分片推到 95%。
 
 ### P3：体验型组件
 

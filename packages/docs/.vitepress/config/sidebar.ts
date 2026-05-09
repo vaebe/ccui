@@ -252,6 +252,11 @@ export default {
           link: '/components/tree-select/',
           status: '80%',
         },
+        {
+          text: 'Upload 上传',
+          link: '/components/upload/',
+          status: '80%',
+        },
       ],
     },
     {

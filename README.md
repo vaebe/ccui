@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **71 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **72 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -118,6 +118,7 @@ app.mount('#app')
 - **TimePicker** - 时间选择框（80%，含 hourStep / disabledHours / showHour-Minute-Second / now+ok / Form 联动 / Teleport）
 - **Transfer** - 穿梭框（80%，双列 + 全选 + 双向移动 + 搜索 + render slot + Form 联动）
 - **TreeSelect** - 树选择（80%，单选 / 多选 checkable / treeCheckStrictly / fieldNames / Form 联动 / Teleport）
+- **Upload** - 上传（80%，文件选择 + 拖拽 + maxCount/maxSize/beforeUpload + 列表 + 状态四态）
 
 ### 数据展示
 
@@ -153,10 +154,9 @@ app.mount('#app')
 
 ### 还没交付的常见组件
 
-| 组件     | 复杂度 | 备注       |
-| -------- | ------ | ---------- |
-| Upload   | 复杂   | 独立大任务 |
-| Mentions | 体验型 | 见路线图   |
+| 组件     | 复杂度 | 备注     |
+| -------- | ------ | -------- |
+| Mentions | 体验型 | 见路线图 |
 
 ## 📖 文档
 

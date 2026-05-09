@@ -69,6 +69,7 @@ import TransferInstall, { Transfer } from './transfer'
 import TreeInstall, { Tree } from './tree'
 import TreeSelectInstall, { TreeSelect } from './tree-select'
 import TypographyInstall, { Link, Paragraph, Text, Title, Typography } from './typography'
+import UploadInstall, { Upload } from './upload'
 import UtilInstall, {
   canUseDom,
   clamp,
@@ -156,6 +157,7 @@ const installs = [
   TreeInstall,
   TreeSelectInstall,
   TypographyInstall,
+  UploadInstall,
   UtilInstall,
   WatermarkInstall,
 ]
@@ -259,6 +261,7 @@ export {
   Text,
   Title,
   Typography,
+  Upload,
   canUseDom,
   clamp,
   classNames,
