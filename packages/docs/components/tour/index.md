@@ -137,6 +137,9 @@ const steps = [
 | finishText  | string                                                                                                | `完成`     | 末步按钮文案                               |
 | panelWidth  | number                                                                                                | `320`      | 浮层最大宽度（px）                         |
 | closeOnEsc  | boolean                                                                                               | `true`     | Esc 是否关闭                               |
+| type        | `'default' \| 'primary'`                                                                             | `'default'`| 主题类型；`primary` 蓝底白字               |
+| arrow       | boolean                                                                                               | `true`     | 是否显示箭头（仅有 target 时渲染）         |
+| scrollIntoViewIfNeeded | boolean                                                                                  | `true`     | target 在视口外时是否自动滚动到目标        |
 
 ### TourStep
 
@@ -147,6 +150,7 @@ const steps = [
 | description | `string \| VNode`                                   | 描述                                  |
 | placement   | TourPlacement                                       | 单步方位，覆盖全局 `placement`        |
 | mask        | boolean                                             | 单步蒙层，覆盖全局 `mask`             |
+| cover       | `string \| VNode`                                   | 封面图（string 渲染为 img，VNode 直接渲染） |
 
 ### Events
 
@@ -160,9 +164,5 @@ const steps = [
 
 ## 已知限制（未交付）
 
-- **type='primary' 主题变体**：当前固定为白底浮层；AntD 的 primary 主题（蓝底白字）下一批做。
-- **arrow 指向箭头**：浮层与 target 之间的小三角箭头暂未渲染；浮层只是出现在合适方位。
-- **scrollIntoView**：target 在视口外时不会自动滚动到目标位置；业务侧需要自己 `el.scrollIntoView()` 之后再开 Tour。
 - **per-step nextButtonProps / prevButtonProps**：每步独立的按钮自定义（loading / disabled / 自定义点击 hook）暂不支持。
-- **cover slot**：浮层顶部加图片 / 视频 cover 暂不支持。
 - **onPrev / onNext per-step async hooks**：单步切换前后的 hook 暂未提供。

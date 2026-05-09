@@ -140,6 +140,8 @@ function startsWith(input: string, opt: { value: string }) {
 | notFoundContent | string                                            | `暂无数据`   | 空数据占位                                                    |
 | placement       | `'top' \| 'bottom'`                               | `'bottom'`   | 浮层方位（基于 textarea）                                     |
 | popupMaxHeight  | number                                            | `256`        | 浮层最大高度（px）                                            |
+| autoSize        | `boolean \| { minRows?: number, maxRows?: number }` | `false`     | 自适应 textarea 高度；`true` 无限制，对象指定范围             |
+| searchDebounce  | number                                            | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                              |
 
 ### Events
 
@@ -161,8 +163,5 @@ function startsWith(input: string, opt: { value: string }) {
 ## 已知限制（未交付）
 
 - **光标精确定位**：浮层固定在 textarea 下方左侧，不会跟随光标位置精确浮动（需要 mirror div 测量字符宽度，工程量较大）。
-- **autoSize**：当前 textarea 用固定 `rows`，不自动按内容调整高度。
 - **彩色 token 渲染**：textarea 不支持富文本，`@user` 在编辑态保持纯文本。要彩色高亮需要切到 contenteditable，留到独立体验型组件 RichMentions。
-- **异步 loadData / debounce**：`search` 事件已 emit，业务自行 debounce 后再喂 `options`；下一批考虑组件层提供 `searchDebounce`。
 - **trigger slot**：textarea 不支持替换为 input 或自定义触发器。
-- **键盘 Tab 选中**：当前只支持 Enter 选中。

@@ -203,6 +203,9 @@ const v = ref('')
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                           | 自定义浮层挂载点，优先级高于 `popupAppendToBody`              |
 | transitionName    | string                                                     | `ccui-auto-complete-fade`    | 浮层过渡名                                                    |
 | popupMaxHeight    | number                                                     | `256`                        | 浮层最大高度（px）                                            |
+| defaultActiveFirstOption | boolean                                           | `false`                      | 打开浮层时是否默认高亮第一项                                  |
+| backfill          | boolean                                                    | `false`                      | 键盘导航时是否把高亮项 label 写回 input                       |
+| searchDebounce    | number                                                     | `0`                          | 搜索防抖延迟（毫秒），`0` 不防抖                              |
 
 ### Events
 
@@ -220,12 +223,9 @@ const v = ref('')
 
 | 名称   | 参数                                  | 说明                  |
 | ------ | ------------------------------------- | --------------------- |
-| option | `{ option: AutoCompleteOption, index: number }` | 自定义单项渲染 |
+| option  | `{ option: AutoCompleteOption, index: number }` | 自定义单项渲染 |
+| trigger | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
 
 ## 已知限制（未交付）
 
-- **defaultActiveFirstOption**：当前打开浮层 active=-1，键盘 Down 才高亮第一项；下一批补 prop 控制是否默认高亮第一项。
-- **backfill**：键盘高亮时把 active 项写回 input value（盲选体验）暂未实现。
-- **远程搜索 / loadData / debounce**：业务侧自己 debounce 后再喂 `options`；下一批考虑组件层提供 `searchDebounce`。
-- **自定义 trigger slot**：当前 trigger 永远是 native input，不支持自定义触发元素（如把 input 换成 textarea）。
 - **virtual list（候选项虚拟滚动）**：选项 > 1000 时性能未优化，复用 Tree/Select 的 use-virtual-list 留后续。

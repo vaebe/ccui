@@ -213,14 +213,16 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 | disabled         | boolean                                       | `false`         | 是否禁用                                                      |
 | maxCount         | number                                        | `0`             | 最大文件数；`0` 表示不限                                      |
 | maxSize          | number                                        | `0`             | 单文件最大字节数；`0` 表示不限                                |
-| beforeUpload     | `(file: File, fileList: File[]) => boolean`   | --              | 同步过滤函数；返回 false 拒收                                 |
+| beforeUpload     | `(file: File, fileList: File[]) => boolean \| Promise<boolean>` | -- | 过滤函数（同步/异步）；返回 false 拒收                    |
 | drag             | boolean                                       | `false`         | 是否渲染拖拽区域代替按钮                                      |
 | showUploadList   | boolean                                       | `true`          | 是否渲染文件列表                                              |
-| listType         | `'text' \| 'picture'`                         | `'text'`        | 列表展示形态（`picture` 留待 95%）                            |
+| listType         | `'text' \| 'picture'`                         | `'text'`        | 列表展示形态；`picture` 显示缩略图（thumbUrl/url）            |
 | defaultStatus    | `'uploading' \| 'done' \| 'error'`            | `'done'`        | 新加文件的初始 status；业务可改为 'uploading' 让组件持续显示加载态 |
 | triggerText      | string                                        | `点击上传`      | 默认按钮文案                                                  |
 | dragText         | string                                        | `点击或拖拽文件到此区域上传` | 拖拽区文案                                              |
 | removeText       | string                                        | `删除`          | 列表项 × 按钮的 aria-label                                    |
+| customRequest    | `(options: CustomRequestOptions) => void`     | --              | 自定义上传函数（onProgress/onSuccess/onError）                |
+| action           | string                                        | `''`            | 上传地址；未传 customRequest 时用默认 XHR POST                |
 
 ### UploadFile
 
@@ -245,6 +247,7 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 | remove             | `(file: UploadFile)`                                        | 用户点 × 移除                     |
 | reject             | `(file: File, reason: 'maxSize' \| 'maxCount' \| 'beforeUpload')` | 文件被拒收                        |
 | drop               | `(e: DragEvent)`                                            | 拖拽放下（仅 `drag=true`）        |
+| preview            | `(file: UploadFile)`                                        | 点击文件名时触发                  |
 
 ### Slots
 
@@ -255,10 +258,7 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 
 ## 已知限制（未交付）
 
-- **HTTP 上传 / customRequest / action**：80% 不内置 fetch / xhr 上传。业务通过监听 `change` + 操作 `fileList` 做真实上传。下一批补 `customRequest` 与默认 `action` POST。
-- **listType='picture' / 'picture-card'**：当前固定文本列表；图片列表（带预览缩略图）留 95%。
-- **进度条**：`percent` 字段已支持渲染百分比文字，但没有彩色进度条 UI；下一批接入 `c-progress`。
-- **预览（preview）/ 下载（download）**：业务侧自己渲染（用 itemRender slot）。
+- **picture-card 样式**：`listType='picture'` 已支持缩略图，但 picture-card 卡片网格布局留后续。
+- **进度条**：`percent` 字段已支持渲染百分比文字，但没有彩色进度条 UI；后续接入 `c-progress`。
 - **chunk 分片上传 / 断点续传**：复杂场景，留长尾。
-- **async beforeUpload (Promise)**：当前只支持同步返回 boolean。
 - **directory 目录选择**：input.webkitdirectory 暂未透传。
