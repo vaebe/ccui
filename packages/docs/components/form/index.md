@@ -123,7 +123,7 @@ const confirmRule = {
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-const model = reactive<{ users: Array<{ name: string, email: string }> }>({
+const model = reactive<{ users: Array<{ name: string; email: string }> }>({
   users: [{ name: 'Alice', email: 'alice@example.com' }],
 })
 </script>
@@ -162,7 +162,7 @@ import { reactive } from 'vue'
 const profile = reactive({ name: '' })
 const billing = reactive({ address: '' })
 
-function onFinish(name: string, info: { values: any, forms: Record<string, any> }) {
+function onFinish(name: string, info: { values: any; forms: Record<string, any> }) {
   if (name === 'profile') {
     billing.address = info.forms.billing.getFieldsValue().address
   }
@@ -219,29 +219,29 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ### FormItem
 
-| 参数           | 类型                         | 默认值    | 说明                         |
-| -------------- | ---------------------------- | --------- | ---------------------------- |
-| name           | string / number / array      | --        | 字段路径，支持数组路径       |
-| prop           | string / number / array      | --        | 字段路径，兼容旧 API         |
-| label          | string                       | --        | 标签文本                     |
-| initialValue   | any                          | --        | 字段初始值                   |
-| required       | boolean                      | false     | 是否必填                     |
-| rules          | FormRule / array             | --        | 字段校验规则                 |
-| help           | string                       | --        | 帮助或外部错误文案           |
-| extra          | string                       | --        | 额外提示文案                 |
-| validateStatus | success / error / validating | --        | 外部校验状态                 |
-| dependencies   | FormNamePath[]               | []        | 依赖字段变化后重新校验当前项 |
-| htmlFor        | string                       | --        | label 的 for 属性            |
-| colon          | boolean                      | 跟随 Form | 是否显示当前项冒号           |
-| hidden         | boolean                      | false     | 隐藏字段但保留注册           |
-| noStyle        | boolean                      | false     | 不显示标准表单项样式         |
+| 参数           | 类型                         | 默认值    | 说明                               |
+| -------------- | ---------------------------- | --------- | ---------------------------------- |
+| name           | string / number / array      | --        | 字段路径，支持数组路径             |
+| prop           | string / number / array      | --        | 字段路径，兼容旧 API               |
+| label          | string                       | --        | 标签文本                           |
+| initialValue   | any                          | --        | 字段初始值                         |
+| required       | boolean                      | false     | 是否必填                           |
+| rules          | FormRule / array             | --        | 字段校验规则                       |
+| help           | string                       | --        | 帮助或外部错误文案                 |
+| extra          | string                       | --        | 额外提示文案                       |
+| validateStatus | success / error / validating | --        | 外部校验状态                       |
+| dependencies   | FormNamePath[]               | []        | 依赖字段变化后重新校验当前项       |
+| htmlFor        | string                       | --        | label 的 for 属性                  |
+| colon          | boolean                      | 跟随 Form | 是否显示当前项冒号                 |
+| hidden         | boolean                      | false     | 隐藏字段但保留注册                 |
+| noStyle        | boolean                      | false     | 不显示标准表单项样式               |
 | preserve       | boolean                      | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置 |
 
 ### FormList
 
-| 参数         | 类型                    | 默认值 | 说明                       |
-| ------------ | ----------------------- | ------ | -------------------------- |
-| name         | string / number / array | --     | 列表字段路径               |
+| 参数         | 类型                    | 默认值 | 说明                             |
+| ------------ | ----------------------- | ------ | -------------------------------- |
+| name         | string / number / array | --     | 列表字段路径                     |
 | initialValue | any[]                   | --     | 列表初始值（model 中无值时使用） |
 
 默认作用域插槽签名：`(fields: { key, name }[], { add, remove, move })`。`add(value?, insertIndex?)` / `remove(index | indices)` / `move(from, to)` 直接修改 `model[name]` 数组并维持稳定 key。
@@ -250,10 +250,10 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 无 props。事件：
 
-| 事件        | 回调签名                                                         | 说明                       |
-| ----------- | ---------------------------------------------------------------- | -------------------------- |
-| form-change | (name, { changedFields, forms })                                 | 任意字段变化触发            |
-| form-finish | (name, { values, forms })                                        | 子表单 submit 校验通过触发  |
+| 事件        | 回调签名                         | 说明                       |
+| ----------- | -------------------------------- | -------------------------- |
+| form-change | (name, { changedFields, forms }) | 任意字段变化触发           |
+| form-finish | (name, { values, forms })        | 子表单 submit 校验通过触发 |
 
 `forms` 是 `Record<string, FormInstance>`，`FormInstance` 暴露 `validate / validateField / resetFields / clearValidate / scrollToField / getFieldsValue`。
 
@@ -269,11 +269,11 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ## 事件
 
-| 事件            | 说明               |
-| --------------- | ------------------ |
-| submit          | 表单提交后触发     |
-| validate        | 字段校验完成后触发 |
-| validate-failed | 表单校验失败后触发 |
+| 事件            | 说明                                              |
+| --------------- | ------------------------------------------------- |
+| submit          | 表单提交后触发                                    |
+| validate        | 字段校验完成后触发                                |
+| validate-failed | 表单校验失败后触发                                |
 | values-change   | 字段触发原生 change 时携带 `{ name, value }` 抛出 |
 
 ## 已完成功能

@@ -221,62 +221,62 @@ const rowSelection = computed(() => ({
 
 ### Table
 
-| 参数         | 类型                                  | 默认值 | 说明                                       |
-| ------------ | ------------------------------------- | ------ | ------------------------------------------ |
-| columns      | TableColumn[]                         | []     | 列配置                                     |
-| dataSource   | any[]                                 | []     | 行数据                                     |
-| rowKey       | string / (record, index) => string|number | 'key'  | 行唯一标识                              |
-| bordered     | boolean                               | false  | 是否带边框                                 |
-| loading      | boolean                               | false  | 是否显示加载遮罩                           |
-| showHeader   | boolean                               | true   | 是否显示表头                               |
-| size         | small / middle / default              | default | 紧凑度                                    |
-| pagination   | boolean / TablePaginationConfig       | false  | 分页配置，false 关闭                       |
-| rowSelection | TableRowSelection                     | --     | 行选择配置                                 |
-| expandable   | TableExpandable                       | --     | 展开行配置                                 |
-| scroll       | { x?, y? }                            | --     | 横/纵向滚动；横向滚动通常配合 fixed 使用    |
+| 参数         | 类型                               | 默认值  | 说明                                     |
+| ------------ | ---------------------------------- | ------- | ---------------------------------------- | ---------- |
+| columns      | TableColumn[]                      | []      | 列配置                                   |
+| dataSource   | any[]                              | []      | 行数据                                   |
+| rowKey       | string / (record, index) => string | number  | 'key'                                    | 行唯一标识 |
+| bordered     | boolean                            | false   | 是否带边框                               |
+| loading      | boolean                            | false   | 是否显示加载遮罩                         |
+| showHeader   | boolean                            | true    | 是否显示表头                             |
+| size         | small / middle / default           | default | 紧凑度                                   |
+| pagination   | boolean / TablePaginationConfig    | false   | 分页配置，false 关闭                     |
+| rowSelection | TableRowSelection                  | --      | 行选择配置                               |
+| expandable   | TableExpandable                    | --      | 展开行配置                               |
+| scroll       | { x?, y? }                         | --      | 横/纵向滚动；横向滚动通常配合 fixed 使用 |
 
 ### TableColumn
 
-| 字段           | 类型                                                 | 说明                          |
-| -------------- | ---------------------------------------------------- | ----------------------------- |
-| title          | string                                               | 表头标题                      |
-| dataIndex      | string / Array<string \| number>                     | 取值路径                      |
-| key            | string                                               | 列唯一标识                    |
-| width          | string / number                                      | 列宽（固定列必须给数值）      |
-| align          | left / center / right                                | 对齐方式                      |
-| fixed          | left / right                                         | 固定列方向                    |
-| sorter         | boolean / (a, b) => number                           | 排序                          |
-| sortOrder      | ascend / descend / null                              | 受控排序顺序                  |
-| filters        | TableFilterOption[]                                  | 过滤项                        |
-| filteredValue  | TableFilterValue[]                                   | 受控过滤值                    |
-| filterMultiple | boolean                                              | 是否多选过滤                  |
-| customRender   | (scope) => VNodeChild                                | 单元格自定义渲染              |
+| 字段           | 类型                                                      | 说明                        |
+| -------------- | --------------------------------------------------------- | --------------------------- |
+| title          | string                                                    | 表头标题                    |
+| dataIndex      | string / Array<string \| number>                          | 取值路径                    |
+| key            | string                                                    | 列唯一标识                  |
+| width          | string / number                                           | 列宽（固定列必须给数值）    |
+| align          | left / center / right                                     | 对齐方式                    |
+| fixed          | left / right                                              | 固定列方向                  |
+| sorter         | boolean / (a, b) => number                                | 排序                        |
+| sortOrder      | ascend / descend / null                                   | 受控排序顺序                |
+| filters        | TableFilterOption[]                                       | 过滤项                      |
+| filteredValue  | TableFilterValue[]                                        | 受控过滤值                  |
+| filterMultiple | boolean                                                   | 是否多选过滤                |
+| customRender   | (scope) => VNodeChild                                     | 单元格自定义渲染            |
 | onCell         | (record, index) => { rowSpan?, colSpan?, style?, class? } | 合并单元格 / 单元格属性扩展 |
-| onHeaderCell   | (column) => { rowSpan?, colSpan?, style?, class? }   | 表头单元格属性扩展            |
+| onHeaderCell   | (column) => { rowSpan?, colSpan?, style?, class? }        | 表头单元格属性扩展          |
 
 ### TableExpandable
 
-| 字段                   | 类型                                | 说明                                  |
-| ---------------------- | ----------------------------------- | ------------------------------------- |
-| expandedRowKeys        | TableSelectionKey[]                 | 受控展开行 key                         |
-| defaultExpandedRowKeys | TableSelectionKey[]                 | 非受控初始展开                          |
-| defaultExpandAllRows   | boolean                             | 是否默认全部展开                        |
-| expandedRowRender      | (record, index) => VNodeChild       | 展开行内容                              |
-| rowExpandable          | (record) => boolean                 | 行是否可展开                            |
-| columnWidth            | string / number                     | 展开图标列宽，默认 48                   |
-| fixed                  | boolean                             | 是否固定展开图标列到左侧                |
-| expandRowByClick       | boolean                             | 是否点击行触发展开                      |
-| onExpand               | (expanded, record) => void          | 单行展开/收起回调                       |
-| onChange               | (expandedRowKeys) => void           | 展开 key 集合变化回调                   |
+| 字段                   | 类型                          | 说明                     |
+| ---------------------- | ----------------------------- | ------------------------ |
+| expandedRowKeys        | TableSelectionKey[]           | 受控展开行 key           |
+| defaultExpandedRowKeys | TableSelectionKey[]           | 非受控初始展开           |
+| defaultExpandAllRows   | boolean                       | 是否默认全部展开         |
+| expandedRowRender      | (record, index) => VNodeChild | 展开行内容               |
+| rowExpandable          | (record) => boolean           | 行是否可展开             |
+| columnWidth            | string / number               | 展开图标列宽，默认 48    |
+| fixed                  | boolean                       | 是否固定展开图标列到左侧 |
+| expandRowByClick       | boolean                       | 是否点击行触发展开       |
+| onExpand               | (expanded, record) => void    | 单行展开/收起回调        |
+| onChange               | (expandedRowKeys) => void     | 展开 key 集合变化回调    |
 
 ## 事件
 
-| 事件                    | 说明                                            |
-| ----------------------- | ----------------------------------------------- |
-| change                  | (pagination, filters, sorter, currentData)      |
-| update:pagination       | 分页变化                                        |
-| update:filters          | 过滤变化                                        |
-| update:sorter           | 排序变化                                        |
-| update:selectedRowKeys  | 行选择变化                                      |
-| update:expandedRowKeys  | 展开行变化                                      |
-| expand                  | (expanded, record) — 单行展开/收起               |
+| 事件                   | 说明                                       |
+| ---------------------- | ------------------------------------------ |
+| change                 | (pagination, filters, sorter, currentData) |
+| update:pagination      | 分页变化                                   |
+| update:filters         | 过滤变化                                   |
+| update:sorter          | 排序变化                                   |
+| update:selectedRowKeys | 行选择变化                                 |
+| update:expandedRowKeys | 展开行变化                                 |
+| expand                 | (expanded, record) — 单行展开/收起         |
