@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **72 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **73 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -110,6 +110,7 @@ app.mount('#app')
 - **Form** - 表单（Form.List 动态字段 / Form.Provider 跨表单 / preserve 卸载策略均已补齐）
 - **Input** - 输入框
 - **InputNumber** - 数字输入框
+- **Mentions** - 提及（80%，textarea + @ 触发 + 多 prefix + 键盘导航 + 自定义过滤）
 - **Radio** - 单选框
 - **RangePicker** - 日期范围（80%，双面板 + hover 预览 + 自动调换 + Form 联动 + Teleport）
 - **Select** - 选择器（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）
@@ -154,9 +155,7 @@ app.mount('#app')
 
 ### 还没交付的常见组件
 
-| 组件     | 复杂度 | 备注     |
-| -------- | ------ | -------- |
-| Mentions | 体验型 | 见路线图 |
+> Ant Design v6.3.7 的常见组件已 **全量 80% 起步交付**。后续工作集中在长尾打磨（80% → 95%）与测试质量审查，详见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md) 「四、后续任务规划」。
 
 ## 📖 文档
 

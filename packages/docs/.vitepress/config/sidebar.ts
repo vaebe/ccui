@@ -213,6 +213,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'Mentions 提及',
+          link: '/components/mentions/',
+          status: '80%',
+        },
+        {
           text: 'Radio 单选框',
           link: '/components/radio/',
           status: '100%',

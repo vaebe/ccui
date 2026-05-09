@@ -34,6 +34,7 @@ import InputNumberInstall, { InputNumber } from './input-number'
 import LayoutInstall, { Content, Footer, Header, Layout, Sider } from './layout'
 import ListInstall, { List, ListItem } from './list'
 import MasonryInstall, { Masonry } from './masonry'
+import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
 import MessageInstall, { message, Message } from './message'
 import ModalInstall, { Modal } from './modal'
@@ -122,6 +123,7 @@ const installs = [
   LayoutInstall,
   ListInstall,
   MasonryInstall,
+  MentionsInstall,
   MenuInstall,
   MessageInstall,
   ModalInstall,
@@ -215,6 +217,7 @@ export {
   List,
   ListItem,
   Masonry,
+  Mentions,
   Menu,
   message,
   Message,

@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 74 个一级目录，其中 72 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：72 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P2 大件 / Upload 80% 首次交付**：22 用例，文件选择 + 拖拽接收 + maxCount/maxSize/beforeUpload 三层守门 + 状态四态（uploading/done/error/removed）+ 列表渲染（含 `KB/MB` 格式化）+ 受控/非受控 v-model:fileList + reject emit。组件**不内置 HTTP 上传**，业务侧通过监听 change + 操作 fileList 做真实上传。剩 Mentions 一项 P3 体验组件待推。
+> 当前项目目录：`packages/ccui/ui` 下共 75 个一级目录，其中 73 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：73 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
 
 ## 零、交付完整度口径
 
@@ -52,6 +52,7 @@
 | Layout                | Layout 布局             | 布局            | 已完成 |
 | List                  | List 列表               | 数据展示        | 已完成 |
 | Masonry               | 瀑布流布局              | 布局            | 已完成 |
+| Mentions              | Mentions 提及           | 数据录入        | 80%    |
 | Menu                  | Menu 导航菜单           | 导航            | 已完成 |
 | Message               | Message 全局提示        | 反馈            | 已完成 |
 | Modal                 | Modal 对话框            | 反馈            | 已完成 |
@@ -114,7 +115,7 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 | Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动 | P2（已交付）  |
 | Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传 | P2（已交付）  |
 | AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 — 已交付 80%（Batch 32）：textarea + findActiveMention 纯函数 + 多 prefix + 键盘 + 选中插入 prefix+value+split | P3（已交付）  |
 | Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model       | P3（已交付）  |
 
 ## 三、本轮交付记录
@@ -250,6 +251,35 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 32：Mentions 80% 首次交付（P3 体验组件收口）
+
+已完成 1 项：Mentions（80% 首次交付）。**P2 大件 + P3 体验型组件全部 80% 收口**。31 个用例，含 7 个 `findActiveMention` 纯函数测例。
+
+关键能力：
+
+- **findActiveMention 纯函数**：把「在 cursor 位置之前找最近一个有效 prefix」的逻辑拆成独立纯函数，可独立单测。规则：在 `text.slice(0, cursor)` 里找 prefix 的最后出现位置；prefix 之前必须是字符串开头或空白（防 `me@x` 邮箱误触发）；prefix 到 cursor 之间不能有空白（用户输入空格意味着 mention 结束）；多 prefix 时选 start 最大的（最近的）。这是 Mentions 的核心算法，独立测试 7 个 case 覆盖了所有边界。
+- **textarea 而非 contenteditable**：80% 选择 textarea + 浮层。优点：纯文本一致、SSR 友好、所有浏览器一致行为、简单可调试。缺点：`@user` 无法渲染成彩色 token（业务能接受，因为大部分 IM/评论场景都是 textarea）。下一批要彩色高亮再切到 contenteditable。
+- **refreshMatch 双触发点**：`onInput`（用户输入文本）+ `onKeyup`（光标移动但没改文本，如方向键）+ `onClick`（点击改光标位置）。三个触发点共用 `refreshMatch()`，统一调 `findActiveMention`，open / close 浮层 + emit search。
+- **selectOption 字符串拼接 + setSelectionRange**：`before = value.slice(0, match.start)`，`after = value.slice(cursor)`，`inserted = prefix + value + split`，三段拼接。`nextTick` 后调 `setSelectionRange(newCursor, newCursor)` 把光标定位到 inserted 末尾，让用户能继续输入。
+- **mousedown.preventDefault() 防 textarea blur**：与 AutoComplete 同款技巧。option 的 onMousedown 阻止默认 → textarea 不失焦 → click outside 处理器不会先触发 close → 选中正常完成。
+- **多 prefix 同时支持**：`prefix` 接受 `string | string[]`。computed `prefixList` 统一规范成数组喂给 `findActiveMention`。文档示例里 `['@', '#']` 同时识别 @ 提人和 # 关联标签。
+- **filterOption 三态 + caseSensitive**：与 AutoComplete 同套设计，`filterOption=true`（默认 includes）/ `false`（不过滤）/ 函数。函数模式接收原始 `option.raw`，方便业务按 value 而非 label 过滤。
+- **Form 联动**：`change` 事件触发 `formItem?.validate('change')`，`blur` 触发 `formItem?.validate('blur')`。
+
+工程决策：
+
+- **不抽 useMentionTrigger hook**：核心算法已经拆到 findActiveMention 纯函数（pure，独立测试），refreshMatch 在组件内部调度。再抽 hook 反而模糊责任边界。
+- **不复用 AutoComplete**：AutoComplete 的核心是「输入框值就是选中值」，Mentions 是「输入框值是文本，里面嵌套了 mention token」。语义对立，强行复用会让 Mentions 的 selection 协议变形。
+- **不实现光标精确定位**：浮层固定贴 textarea 底部左侧。要让浮层跟随光标位置精确浮动，需要建一个不可见的 mirror div 复制 textarea 样式 + 计算每个字符宽度，工程量大且 jsdom 测试无法验证。文档里明确说明限制。
+- **不用 mirror div 测量**：上面同理。如果要做，应该单独抽一个 use-cursor-position hook，独立体验型组件。
+- **多 prefix 选 latest**：`hi @x and @y` 光标在末尾时选 `@y`。这个语义符合用户认知（最后一次提及就是当前编辑的）。
+
+测试：31 个用例。findActiveMention 纯函数 7：`@a` 起始、空白后 `hi @bo`、邮箱 `me@x` 不触发、空白阻断 `@bo  end`、多 prefix 选最近、prefix 数组、无 prefix 返回 null。组件 24：渲染（textarea placeholder/rows/disabled/modelValue）；popup 触发（无 prefix 不开、`@` 开、空白后 `hi @` 开、邮箱 `me@x` 不开、`@a` → `@a ` 关、emit search）；过滤（默认 / false / 自定义 function / notFoundContent）；选中（mousedown 插入 + emit、value !== label 用 value 插入、disabled 不响应、自定义 split、中间插入保留尾部）；键盘（ArrowDown 切 active、Enter 选中、Esc 关无插入）；多 prefix（数组形态 + emit search 带 prefix）；v-model（uncontrolled defaultValue / controlled emit + 父级写回）。
+
+验证结果：
+
+- `vp test run ui/mentions`（packages/ccui 内）通过 31/31。
 
 ### Batch 31：Upload 80% 首次交付（P2 大件第二项 / 不内置 HTTP）
 
@@ -993,7 +1023,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 ### P3：体验型组件
 
 1. AutoComplete：80% 已交付（Batch 28）。剩余 defaultActiveFirstOption / backfill / 远程搜索 debounce / 自定义 trigger slot / 虚拟滚动推到 95%。
-2. Mentions：需要单独处理输入解析和光标定位。
+2. Mentions：80% 已交付（Batch 32）。剩余光标精确定位、autoSize、彩色 token（contenteditable）、async loadData、Tab 选中推到 95%。
 3. Tour：80% 已交付（Batch 30）。剩余 type='primary' 主题、arrow 箭头、scrollIntoView、cover slot、per-step async hooks 推到 95%。
 
 ## 五、当前已知修复
