@@ -42,6 +42,16 @@ export default defineComponent({
 
     const leftSearch = shallowRef('')
     const rightSearch = shallowRef('')
+    const leftPage = shallowRef(1)
+    const rightPage = shallowRef(1)
+    const dragKey = shallowRef<string | null>(null)
+    const dragOverKey = shallowRef<string | null>(null)
+
+    const pageSize = computed(() => {
+      if (props.pagination === false) return 0
+      if (props.pagination === true) return 10
+      return Math.max(1, props.pagination as number)
+    })
 
     const partitioned = computed(() => partition(props.dataSource, props.targetKeys))
 
@@ -62,6 +72,20 @@ export default defineComponent({
 
     const filteredLeft = computed(() => applyFilter(partitioned.value.left, leftSearch.value))
     const filteredRight = computed(() => applyFilter(partitioned.value.right, rightSearch.value))
+
+    function paginateItems(items: TransferItem[], page: number): TransferItem[] {
+      if (pageSize.value <= 0) return items
+      const start = (page - 1) * pageSize.value
+      return items.slice(start, start + pageSize.value)
+    }
+
+    const pagedLeft = computed(() => paginateItems(filteredLeft.value, leftPage.value))
+    const pagedRight = computed(() => paginateItems(filteredRight.value, rightPage.value))
+
+    function totalPages(items: TransferItem[]): number {
+      if (pageSize.value <= 0) return 1
+      return Math.max(1, Math.ceil(items.length / pageSize.value))
+    }
 
     const selectedSet = computed(() => new Set(props.selectedKeys))
 
@@ -131,9 +155,38 @@ export default defineComponent({
     }
 
     function onSearch(direction: TransferDirection, value: string): void {
-      if (direction === 'left') leftSearch.value = value
-      else rightSearch.value = value
+      if (direction === 'left') {
+        leftSearch.value = value
+        leftPage.value = 1
+      } else {
+        rightSearch.value = value
+        rightPage.value = 1
+      }
       emit('search', direction, value)
+    }
+
+    // ---- 右列拖拽排序 ----
+    function onDragStart(key: string): void {
+      dragKey.value = key
+    }
+    function onDragOver(key: string, e: DragEvent): void {
+      e.preventDefault()
+      dragOverKey.value = key
+    }
+    function onDragEnd(): void {
+      if (dragKey.value && dragOverKey.value && dragKey.value !== dragOverKey.value) {
+        const keys = [...props.targetKeys]
+        const fromIdx = keys.indexOf(dragKey.value)
+        const toIdx = keys.indexOf(dragOverKey.value)
+        if (fromIdx >= 0 && toIdx >= 0) {
+          keys.splice(fromIdx, 1)
+          keys.splice(toIdx, 0, dragKey.value)
+          emit('update:targetKeys', keys)
+          emit('change', keys, 'right' as TransferDirection, [dragKey.value])
+        }
+      }
+      dragKey.value = null
+      dragOverKey.value = null
     }
 
     function renderItem(item: TransferItem): unknown {
@@ -163,7 +216,11 @@ export default defineComponent({
             }}
             onChange={(e: Event) => toggleAll(direction, (e.target as HTMLInputElement).checked)}
           />
-          <span class={ns.e('header-count')}>{countText}</span>
+          {slots.selectAllLabels ? (
+            slots.selectAllLabels({ direction, selectedCount, totalCount: total })
+          ) : (
+            <span class={ns.e('header-count')}>{countText}</span>
+          )}
           {title && <span class={ns.e('header-title')}>{title}</span>}
         </div>
       )
@@ -186,13 +243,44 @@ export default defineComponent({
       )
     }
 
+    function renderPagination(direction: TransferDirection, totalItems: TransferItem[]): VNode | null {
+      if (pageSize.value <= 0) return null
+      const pages = totalPages(totalItems)
+      if (pages <= 1) return null
+      const current = direction === 'left' ? leftPage.value : rightPage.value
+      const setPage = (p: number) => {
+        if (direction === 'left') leftPage.value = p
+        else rightPage.value = p
+      }
+      return (
+        <div class={ns.e('pagination')}>
+          <button type="button" class={ns.e('page-btn')} disabled={current <= 1} onClick={() => setPage(current - 1)}>
+            ‹
+          </button>
+          <span class={ns.e('page-info')}>
+            {current} / {pages}
+          </span>
+          <button
+            type="button"
+            class={ns.e('page-btn')}
+            disabled={current >= pages}
+            onClick={() => setPage(current + 1)}
+          >
+            ›
+          </button>
+        </div>
+      )
+    }
+
     function renderList(direction: TransferDirection): VNode {
-      const items = direction === 'left' ? filteredLeft.value : filteredRight.value
+      const allItems = direction === 'left' ? filteredLeft.value : filteredRight.value
+      const items = direction === 'left' ? pagedLeft.value : pagedRight.value
+      const isDraggableColumn = direction === 'right' && props.draggable
       return (
         <div class={ns.e('column')}>
-          {renderListHeader(direction, items)}
+          {renderListHeader(direction, allItems)}
           {renderSearchBox(direction)}
-          {items.length === 0 ? (
+          {allItems.length === 0 ? (
             <div class={ns.e('empty')}>{locale.value.notFoundContent}</div>
           ) : (
             <ul class={ns.e('list')} role="listbox" aria-multiselectable="true">
@@ -206,7 +294,11 @@ export default defineComponent({
                     role="option"
                     aria-selected={checked}
                     aria-disabled={isDisabled}
+                    draggable={isDraggableColumn && !isDisabled}
                     onClick={() => toggleItem(item.key, isDisabled)}
+                    onDragstart={() => isDraggableColumn && onDragStart(item.key)}
+                    onDragover={(e: DragEvent) => isDraggableColumn && onDragOver(item.key, e)}
+                    onDragend={() => isDraggableColumn && onDragEnd()}
                   >
                     <input
                       type="checkbox"
@@ -222,6 +314,7 @@ export default defineComponent({
               })}
             </ul>
           )}
+          {renderPagination(direction, allItems)}
         </div>
       )
     }

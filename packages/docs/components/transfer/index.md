@@ -177,6 +177,8 @@ const selected = ref<string[]>([])
 | disabled     | boolean                                           | `false`       | 整体禁用                                          |
 | render       | `(item: TransferItem) => string \| VNode`         | --            | 自定义单项渲染                                    |
 | locale       | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --            | 自定义文案                                        |
+| pagination   | `boolean \| number`                               | `false`       | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize |
+| draggable    | boolean                                           | `false`       | 是否允许右侧列表拖拽排序                          |
 
 ### Events
 
@@ -192,12 +194,10 @@ const selected = ref<string[]>([])
 
 | 名称   | 参数            | 说明              |
 | ------ | --------------- | ----------------- |
-| render | `{ item }`      | 自定义单项渲染    |
+| render          | `{ item }`                                            | 自定义单项渲染                  |
+| selectAllLabels | `{ direction, selectedCount, totalCount }`            | 自定义每列头部全选区标签内容    |
 
 ## 已知限制（未交付）
 
-- **分页**：单列项目数较多时（>500）建议业务侧自己分页或滚动加载；下一批考虑组件层提供 `pagination` 配置。
-- **拖拽排序**：右侧列表内部目前不支持拖拽改顺序，靠 `targetKeys` 数组顺序决定显示顺序。
 - **虚拟滚动**：列表项 > 1000 时滚动不优化，复用 `use-virtual-list` 留后续。
-- **selectAllLabels**：每列头部勾选区的左右两行（全选 + 计数）暂不支持插槽自定义。
 - **direction='rtl'**：阿语等 RTL 语言下左右布局未做反转。

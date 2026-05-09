@@ -261,3 +261,74 @@ describe('transfer v-model patterns', () => {
     expect(selected.value).toEqual([])
   })
 })
+
+describe('transfer pagination', () => {
+  const LARGE = Array.from({ length: 15 }, (_, i) => ({ key: `k${i}`, title: `Item ${i}` }))
+
+  it('shows pagination controls when pagination=true and items > pageSize', () => {
+    const wrapper = mountT({ dataSource: LARGE, pagination: true })
+    expect(wrapper.find(ns.e('pagination')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('page-info')).text()).toBe('1 / 2')
+  })
+
+  it('does not show pagination when disabled', () => {
+    const wrapper = mountT({ dataSource: LARGE, pagination: false })
+    expect(wrapper.find(ns.e('pagination')).exists()).toBe(false)
+  })
+
+  it('clicking next page shows remaining items', async () => {
+    const wrapper = mountT({ dataSource: LARGE, pagination: true })
+    // 默认 pageSize=10，第 1 页显示 10 项
+    expect(wrapper.findAll(ns.e('item'))).toHaveLength(10)
+    // 点击下一页
+    const nextBtn = wrapper.findAll(ns.e('page-btn'))[1]
+    await nextBtn.trigger('click')
+    await nextTick()
+    expect(wrapper.findAll(ns.e('item'))).toHaveLength(5)
+    expect(wrapper.find(ns.e('page-info')).text()).toBe('2 / 2')
+  })
+
+  it('supports custom pageSize via number', () => {
+    const wrapper = mountT({ dataSource: LARGE, pagination: 5 })
+    expect(wrapper.findAll(ns.e('item'))).toHaveLength(5)
+    expect(wrapper.find(ns.e('page-info')).text()).toBe('1 / 3')
+  })
+})
+
+describe('transfer selectAllLabels slot', () => {
+  it('renders custom selectAllLabels slot content', () => {
+    const wrapper = mount(Transfer, {
+      props: { dataSource: SAMPLE },
+      slots: {
+        selectAllLabels: ({ direction, selectedCount, totalCount }: any) =>
+          h('span', { class: 'custom-label' }, `${direction}: ${selectedCount}/${totalCount}`),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    const labels = wrapper.findAll('.custom-label')
+    expect(labels).toHaveLength(2)
+    expect(labels[0].text()).toBe('left: 0/5')
+    expect(labels[1].text()).toBe('right: 0/0')
+  })
+})
+
+describe('transfer draggable', () => {
+  it('right column items have draggable attribute when draggable=true', () => {
+    const wrapper = mountT({ targetKeys: ['1', '2'], draggable: true })
+    const columns = wrapper.findAll(ns.e('column'))
+    // 左列不可拖
+    const leftItems = columns[0].findAll(ns.e('item'))
+    expect(leftItems[0].attributes('draggable')).not.toBe('true')
+    // 右列可拖
+    const rightItems = columns[1].findAll(ns.e('item'))
+    expect(rightItems[0].attributes('draggable')).toBe('true')
+  })
+
+  it('right column items are not draggable by default', () => {
+    const wrapper = mountT({ targetKeys: ['1', '2'] })
+    const columns = wrapper.findAll(ns.e('column'))
+    const rightItems = columns[1].findAll(ns.e('item'))
+    expect(rightItems[0].attributes('draggable')).not.toBe('true')
+  })
+})

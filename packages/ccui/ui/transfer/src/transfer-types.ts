@@ -63,6 +63,16 @@ export const transferProps = {
     type: Object as PropType<TransferLocale>,
     default: () => ({}),
   },
+  // 分页配置：传 true 用默认 pageSize=10，传数字指定 pageSize
+  pagination: {
+    type: [Boolean, Number] as PropType<boolean | number>,
+    default: false,
+  },
+  // 是否允许右侧列表拖拽排序
+  draggable: {
+    type: Boolean,
+    default: false,
+  },
 } as const
 
 export type TransferProps = ExtractPropTypes<typeof transferProps>
