@@ -49,6 +49,8 @@ export default defineComponent({
       })
     })
 
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
     function setValue(next: string) {
       if (!isControlled.value) {
         innerValue.value = next
@@ -56,6 +58,20 @@ export default defineComponent({
       emit('update:modelValue', next)
       emit('change', next)
       formItem?.validate('change')
+    }
+
+    // autoSize 逻辑
+    function adjustHeight(): void {
+      const ta = textareaRef.value
+      if (!ta || !props.autoSize) return
+      ta.style.height = 'auto'
+      const lineHeight = Number.parseInt(getComputedStyle(ta).lineHeight) || 20
+      const config = typeof props.autoSize === 'object' ? props.autoSize : {}
+      const minH = config.minRows ? config.minRows * lineHeight : 0
+      const maxH = config.maxRows ? config.maxRows * lineHeight : Infinity
+      const scrollH = ta.scrollHeight
+      ta.style.height = `${Math.min(Math.max(scrollH, minH), maxH)}px`
+      if (maxH < Infinity) ta.style.overflowY = scrollH > maxH ? 'auto' : 'hidden'
     }
 
     function refreshMatch(): void {
@@ -69,7 +85,12 @@ export default defineComponent({
           open.value = true
           activeIndex.value = 0
         }
-        emit('search', match.search, match.prefix)
+        if (props.searchDebounce > 0) {
+          if (debounceTimer) clearTimeout(debounceTimer)
+          debounceTimer = setTimeout(() => emit('search', match.search, match.prefix), props.searchDebounce)
+        } else {
+          emit('search', match.search, match.prefix)
+        }
       } else if (open.value) {
         open.value = false
       }
@@ -78,8 +99,10 @@ export default defineComponent({
     function onInput(e: Event): void {
       const next = (e.target as HTMLTextAreaElement).value
       setValue(next)
-      // 等 DOM 更新后再读 cursor
-      nextTick(() => refreshMatch())
+      nextTick(() => {
+        refreshMatch()
+        adjustHeight()
+      })
     }
 
     function onKeyup(): void {
@@ -131,7 +154,7 @@ export default defineComponent({
         const idx = enabled.findIndex((o) => o === list[activeIndex.value])
         const prev = idx <= 0 ? enabled[enabled.length - 1] : enabled[idx - 1]
         activeIndex.value = list.indexOf(prev)
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' || e.key === 'Tab') {
         if (list[activeIndex.value]) {
           e.preventDefault()
           selectOption(list[activeIndex.value])
@@ -161,6 +184,7 @@ export default defineComponent({
 
     onMounted(() => {
       document.addEventListener('mousedown', onClickOutside, true)
+      adjustHeight()
     })
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)

@@ -68,6 +68,16 @@ export const mentionsProps = {
     type: Number,
     default: 256,
   },
+  // 自动调整 textarea 高度。true = 无限制；{ minRows, maxRows } = 范围限制
+  autoSize: {
+    type: [Boolean, Object] as PropType<boolean | { minRows?: number; maxRows?: number }>,
+    default: false,
+  },
+  // 搜索防抖延迟（毫秒），0 = 不防抖
+  searchDebounce: {
+    type: Number,
+    default: 0,
+  },
 } as const
 
 export type MentionsProps = ExtractPropTypes<typeof mentionsProps>

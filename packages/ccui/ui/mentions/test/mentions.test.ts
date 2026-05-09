@@ -294,3 +294,34 @@ describe('mentions v-model', () => {
     expect(value.value).toBe('start @al')
   })
 })
+
+describe('mentions Tab selection', () => {
+  it('Tab key selects active option like Enter', async () => {
+    const wrapper = mountM({ options: SAMPLE })
+    const ta = wrapper.find('textarea')
+    await ta.setValue('@')
+    ta.element.setSelectionRange(1, 1)
+    ta.element.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    // Tab 选中第一项
+    await ta.trigger('keydown', { key: 'Tab' })
+    await nextTick()
+    expect(wrapper.emitted('select')).toBeDefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+})
+
+describe('mentions autoSize', () => {
+  it('renders textarea without fixed rows when autoSize=true', () => {
+    const wrapper = mountM({ autoSize: true })
+    // autoSize 模式下组件仍渲染 textarea
+    expect(wrapper.find('textarea').exists()).toBe(true)
+  })
+
+  it('accepts object { minRows, maxRows } config', () => {
+    const wrapper = mountM({ autoSize: { minRows: 2, maxRows: 6 } })
+    expect(wrapper.find('textarea').exists()).toBe(true)
+  })
+})
