@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 65 个一级目录，其中 63 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：63 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，本批次 P1 推进至第 3 项：新增独立 RangePicker 80%（38 用例），双面板（左 N / 右 N+1）+ start-end 状态机 + hover in-range 预览 + end<start 自动调换。复用 DatePicker 同款 dayjs 工具层与 `valueFormat` 三档。DatePicker 80% / TimePicker 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用前批状态。
+> 当前项目目录：`packages/ccui/ui` 下共 66 个一级目录，其中 64 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：64 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，本批次 P1 推进至第 4 项：新增 Cascader 80%（39 用例），多列联动面板 + 路径数组 v-model + fieldNames 字段映射 + changeOnSelect 中间节点提交。复用 DatePicker / RangePicker 同款 popup + Form 联动 + Teleport 模式。DatePicker / TimePicker / RangePicker 各 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用前批状态。
 
 ## 零、交付完整度口径
 
@@ -14,7 +14,7 @@
 - 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
-## 一、已覆盖组件（63 项）
+## 一、已覆盖组件（64 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态   |
 | --------------------- | ----------------------- | --------------- | ------ |
@@ -28,6 +28,7 @@
 | Button3D              | 项目特色组件            | 通用            | 已完成 |
 | Calendar              | Calendar 日历           | 数据展示        | 已完成 |
 | Card                  | Card 卡片               | 数据展示        | 已完成 |
+| Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
 | ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
@@ -97,14 +98,14 @@
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（7 项剩余 + 3 项推进中）
+### 复杂组件（6 项剩余 + 4 项推进中）
 
 | 组件                  | 分类     | 复杂点                                                                                                                           | 建议优先级   |
 | --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------ |
 | DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付 | P1（推进中） |
 | RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）           | P1（推进中） |
 | TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                     | P1（推进中） |
-| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                                                                                                         | P1           |
+| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）  | P1（推进中） |
 | TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                                                   | P1           |
 | Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                   | P2           |
 | Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                 | P2           |
@@ -245,6 +246,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 23：Cascader 80% 首次交付（多列联动 + 路径数组 v-model）
+
+已完成 1 项：Cascader（单选 80%）。复用 DatePicker / RangePicker / TimePicker 三个 P1 组件已经验证过的 popup 模式（`@floating-ui/vue` + Teleport + `formItemInjectionKey` 联动 + click outside），不抽公共 hook（参考 Batch 21、22 的同款决策）。
+
+关键能力：
+
+- **数据结构与 fieldNames**：`options` 是递归 `children` 的树。`fieldNames: { label?, value?, children?, disabled? }` 把字段名映射到任意业务字段（默认 `'label' / 'value' / 'children' / 'disabled'`）。组件内统一通过 `getOptionLabel` / `getOptionValue` / `getOptionChildren` / `isOptionDisabled` 4 个 helper 读字段，所有渲染分支共用。
+- **路径数组 v-model**：`v-model` 永远是 `(string | number)[] | null`。受控值传进来时，`findOptionPath` 沿 options 一级一级查匹配 value 的节点，构造 `selectedPath: CascaderOption[]`；任一级 value 在 options 中找不到则降级为空路径（input 显示空）——避免外部脏数据导致渲染崩。
+- **多列联动渲染**：内部 `activePath` 决定渲染哪几列。第 0 列永远是顶级 `options`，第 i 列是 `activePath[i-1].children`。点击非叶子节点：`activePath = activePath.slice(0, columnIndex).push(item.raw)`，自动截掉更深的列，下一列填充新选中的 children。点击叶子：emit 完整路径数组 + close。
+- **changeOnSelect**：默认 false。开启后中间节点点击时也 emit 一次 `update:modelValue` 与 `change`，但不关闭面板，让用户继续展开下一级（任一时刻 v-model 总是反映「当前已确定的最深路径」）。
+- **`change` 事件双参**：第一个参数是 `(string | number)[] | null`，第二个参数是 `selectedOptions: CascaderOption[]` 原始路径节点数组，业务可直接拿到每级的 raw option（label / 自定义 meta）。
+- **displayRender**：默认实现是 `labels.join(separator)`，separator 默认 `/`。传 `displayRender(labels, selectedOptions)` 函数可以做完全自定义的展示文本。
+- **Teleport / Form 联动**：与 DatePicker / RangePicker / TimePicker 同套（`popupAppendToBody` + 自定义 `getPopupContainer` + `formItemInjectionKey` 注入校验状态 + emit 时同步触发 `formItem?.validate('change')`）。
+- **空数据兜底**：传 `options: []` 时面板首列显示 `notFoundContent`（默认 `暂无数据`）。
+- 文档：基础 / changeOnSelect / fieldNames / 禁用某项 / 自定义 displayRender / 三种尺寸 / 表单联动 / 弹层容器；API Props 表 19 行 + Events 表 5 行 + 已知限制（multiple / showSearch / loadData / hover trigger / 键盘）。
+- 测试：39 个用例。基础渲染（默认/自定义 placeholder + separator + displayRender、modelValue 路径解析、找不到路径降级为空、null 兜底）；popup（click 切换 / outside / disabled / autoFocus）；column expansion（无值时 1 列、有值时 N+1 列、点击非叶子展开下一列、切换 sibling 截深列、active modifier 三列定位、expand-icon 仅非叶子有）；selection（叶子提交完整路径并关、非叶子 changeOnSelect=false 不 emit、changeOnSelect=true 每级都 emit 但不关到叶子才关、change 第二参数是原始 options 数组、disabled item click 不 emit）；fieldNames 自定义；clearable 4 种 + size 三档 + status；Form integration + Teleport 两种容器 + 外部 v-model 回写；notFoundContent 默认 + 自定义。
+
+工程决策：
+
+- **`activePath` 与 `selectedPath` 解耦**：`selectedPath` 是从 modelValue 推导的「确定」路径，`activePath` 是面板上「悬停 / 编辑」中的路径。点击非叶子时只改 `activePath`，不动 `selectedPath`；只有叶子点击或 `changeOnSelect=true` 时才 emit 让 `selectedPath` 通过 modelValue 回写。这种解耦让用户可以在面板里自由展开探索，不会污染 v-model 的「确定」状态。
+- **`watch(selectedPath, ...)` 同步 activePath**：外部 `modelValue` 变化时把 activePath 同步到新的 selectedPath，避免外部 setState 后面板上还停留在旧路径的展开状态。
+- **`getOptionLabel` 显式判 string/number/boolean**：而不是直接 `String(v)`——后者对 object 会返回 `[object Object]` 这种无意义字符串，命中 oxlint 的告警。显式列出三种基础类型与 Select 的 `labelAsString` 一致。
+- **不引入公共 popup hook**：DatePicker / TimePicker / RangePicker / Cascader 四个浮层组件 popup 内部内容差异巨大（grid / columns / 双 grid / 多列 menu），抽出来要传太多 render slot 反而损可读性。同款决策第 4 次复用，等推到 5 个+ 浮层组件再回头评估抽离。
+- **空 options 不进入选择流程**：第 0 列直接渲染 `notFoundContent` 占位，避免空 ul + click 后进入"半空状态"。
+
+验证结果：
+
+- `vp check` 通过（306 文件 lint/type 全干净）。
+- 从 `packages/ccui` 跑 `pnpm test ui/cascader --run` 通过 39/39。
 
 ### Batch 22：RangePicker 80% 首次交付（双面板 + hover 预览 + 自动调换）
 

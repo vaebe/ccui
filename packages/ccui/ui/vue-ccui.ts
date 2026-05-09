@@ -9,6 +9,7 @@ import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 import ButtonInstall, { Button } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
 import CalendarInstall, { Calendar } from './calendar'
+import CascaderInstall, { Cascader } from './cascader'
 import CardInstall, { Card } from './card'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
@@ -89,6 +90,7 @@ const installs = [
   Button3DInstall,
   CalendarInstall,
   CardInstall,
+  CascaderInstall,
   CheckBoxInstall,
   CollapseInstall,
   ConfigProviderInstall,
@@ -156,6 +158,7 @@ export {
   Button3d,
   Calendar,
   Card,
+  Cascader,
   CheckBox,
   Collapse,
   CollapseItem,

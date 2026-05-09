@@ -168,6 +168,11 @@ export default {
       text: '数据录入',
       items: [
         {
+          text: 'Cascader 级联选择',
+          link: '/components/cascader/',
+          status: '80%',
+        },
+        {
           text: 'CheckBox 多选框',
           link: '/components/check-box/',
           status: '100%',
