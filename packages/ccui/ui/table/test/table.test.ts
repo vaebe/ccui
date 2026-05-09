@@ -1061,3 +1061,72 @@ describe('table', () => {
     expect(headers[0].classes()).toContain('ccui-table__th--merged')
   })
 })
+
+describe('table tree data', () => {
+  const treeColumns = [
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Value', dataIndex: 'value', key: 'value' },
+  ]
+  const treeData = [
+    {
+      key: 'p1',
+      name: 'Parent 1',
+      value: 10,
+      children: [
+        { key: 'c1', name: 'Child 1', value: 3 },
+        { key: 'c2', name: 'Child 2', value: 7 },
+      ],
+    },
+    { key: 'p2', name: 'Parent 2', value: 20 },
+  ]
+
+  it('renders tree expand icon for rows with children', () => {
+    const wrapper = mount(Table, {
+      props: { columns: treeColumns, dataSource: treeData },
+    })
+    // 有 children 的行显示展开图标
+    const icons = wrapper.findAll(ns.e('tree-expand-icon'))
+    expect(icons.length).toBe(1) // 只有 Parent 1 有 children
+    expect(icons[0].text()).toBe('+')
+  })
+
+  it('does not show tree expand icon for leaf rows', () => {
+    const wrapper = mount(Table, {
+      props: { columns: treeColumns, dataSource: [{ key: '1', name: 'Leaf', value: 5 }] },
+    })
+    expect(wrapper.find(ns.e('tree-expand-icon')).exists()).toBe(false)
+  })
+
+  it('expands children on tree expand icon click', async () => {
+    const wrapper = mount(Table, {
+      props: { columns: treeColumns, dataSource: treeData },
+    })
+    // 初始只有 2 行
+    expect(wrapper.findAll(ns.e('tr')).length).toBe(2)
+
+    // 点击展开
+    await wrapper.find(ns.e('tree-expand-icon')).trigger('click')
+    // 展开后有 4 行（2 + 2 children）
+    expect(wrapper.findAll(ns.e('tr')).length).toBe(4)
+    // 再次点击收起
+    await wrapper.find(ns.e('tree-expand-icon')).trigger('click')
+    expect(wrapper.findAll(ns.e('tr')).length).toBe(2)
+  })
+
+  it('emits update:expandedRowKeys on tree expand', async () => {
+    const wrapper = mount(Table, {
+      props: { columns: treeColumns, dataSource: treeData },
+    })
+    await wrapper.find(ns.e('tree-expand-icon')).trigger('click')
+    expect(wrapper.emitted('update:expandedRowKeys')).toBeDefined()
+    expect(wrapper.emitted('update:expandedRowKeys')![0][0]).toContain('p1')
+  })
+
+  it('supports custom childrenColumnName', () => {
+    const data = [{ key: 'a', name: 'A', value: 1, items: [{ key: 'a1', name: 'A1', value: 2 }] }]
+    const wrapper = mount(Table, {
+      props: { columns: treeColumns, dataSource: data, childrenColumnName: 'items' },
+    })
+    expect(wrapper.find(ns.e('tree-expand-icon')).exists()).toBe(true)
+  })
+})

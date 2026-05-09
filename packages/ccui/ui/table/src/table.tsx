@@ -425,8 +425,17 @@ export default defineComponent({
     const isRowExpandable = (record: any) =>
       props.expandable?.rowExpandable ? props.expandable.rowExpandable(record) : true
 
+    const hasTreeChildren = (record: any) => {
+      const children = record[props.childrenColumnName]
+      return Array.isArray(children) && children.length > 0
+    }
+
     const toggleExpand = (record: any, key: TableSelectionKey) => {
-      if (!isExpandableEnabled.value || !isRowExpandable(record)) {
+      // 支持 expandable row 和树形展开
+      if (!isExpandableEnabled.value && !hasTreeChildren(record)) {
+        return
+      }
+      if (isExpandableEnabled.value && !isRowExpandable(record)) {
         return
       }
       const expanded = expandedRowKeySet.value.has(key)
@@ -756,14 +765,47 @@ export default defineComponent({
       )
     }
 
-    const renderRow = (record: any, rowIndex: number) => {
+    const renderRow = (record: any, rowIndex: number, depth = 0): VNodeChild[] => {
       const key = getRowKey(record, rowIndex, props.rowKey)
+      const children = record[props.childrenColumnName] as any[] | undefined
+      const hasChildren = Array.isArray(children) && children.length > 0
+      const isTreeExpanded = hasChildren && expandedRowKeySet.value.has(key)
+
       const cells = orderedColumns.value
         .map(({ column, originalIndex }, orderedIndex) => {
           const cellProps: TableCellRenderProps = column.onCell ? column.onCell(record, rowIndex) : {}
           if (cellProps.rowSpan === 0 || cellProps.colSpan === 0) {
             return null
           }
+          // 第一个非 fixed-left 的可见列（或第一列）加缩进
+          const isFirstContentColumn = orderedIndex === 0
+          const indentPx = depth * props.indentSize
+          const cellContent = renderCell(record, rowIndex, column) as any
+          const wrappedContent =
+            isFirstContentColumn && (depth > 0 || hasChildren)
+              ? h(
+                  'span',
+                  { style: { paddingLeft: `${indentPx}px`, display: 'inline-flex', alignItems: 'center', gap: '4px' } },
+                  [
+                    hasChildren
+                      ? h(
+                          'span',
+                          {
+                            class: [ns.e('tree-expand-icon')],
+                            style: { cursor: 'pointer', userSelect: 'none' },
+                            onClick: (e: MouseEvent) => {
+                              e.stopPropagation()
+                              toggleExpand(record, key)
+                            },
+                          },
+                          isTreeExpanded ? '−' : '+',
+                        )
+                      : h('span', { style: { width: '14px', display: 'inline-block' } }),
+                    cellContent,
+                  ],
+                )
+              : cellContent
+
           return h(
             'td',
             {
@@ -779,14 +821,14 @@ export default defineComponent({
               rowspan: cellProps.rowSpan,
               colspan: cellProps.colSpan,
             },
-            renderCell(record, rowIndex, column) as any,
+            wrappedContent,
           )
         })
         .filter(Boolean)
 
       const trClickHandler = props.expandable?.expandRowByClick ? () => toggleExpand(record, key) : undefined
 
-      return [
+      const rows: VNodeChild[] = [
         h(
           'tr',
           {
@@ -798,6 +840,15 @@ export default defineComponent({
         ),
         renderExpandedRow(record, rowIndex, key),
       ]
+
+      // 递归渲染子行
+      if (hasChildren && isTreeExpanded) {
+        children!.forEach((child, childIndex) => {
+          rows.push(...(renderRow(child, childIndex, depth + 1) as VNodeChild[]))
+        })
+      }
+
+      return rows
     }
 
     const renderPagination = () => {

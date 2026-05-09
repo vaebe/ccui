@@ -127,6 +127,16 @@ export const tableProps = {
     type: Object as PropType<{ x?: string | number; y?: string | number }>,
     default: undefined,
   },
+  // 树形数据子节点字段名
+  childrenColumnName: {
+    type: String,
+    default: 'children',
+  },
+  // 树形数据缩进宽度（px）
+  indentSize: {
+    type: Number,
+    default: 15,
+  },
 } as const
 
 export type TableProps = ExtractPropTypes<typeof tableProps>
