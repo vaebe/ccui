@@ -40,6 +40,7 @@ import PaginationInstall, { Pagination } from './pagination'
 import PopconfirmInstall, { Popconfirm } from './popconfirm'
 import PopoverInstall, { Popover } from './popover'
 import ProgressInstall, { Progress } from './progress'
+import QRCodeInstall, { QRCode } from './qr-code'
 import RadioInstall, { Radio, RadioGroup } from './radio'
 import RangePickerInstall, { RangePicker } from './range-picker'
 import RateInstall, { Rate } from './rate'
@@ -122,6 +123,7 @@ const installs = [
   PopconfirmInstall,
   PopoverInstall,
   ProgressInstall,
+  QRCodeInstall,
   RadioInstall,
   RangePickerInstall,
   RateInstall,
@@ -211,6 +213,7 @@ export {
   Popconfirm,
   Popover,
   Progress,
+  QRCode,
   Radio,
   RadioGroup,
   RangePicker,

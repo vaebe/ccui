@@ -288,6 +288,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'QRCode 二维码',
+          link: '/components/qr-code/',
+          status: '80%',
+        },
+        {
           text: 'Rate 评分',
           link: '/components/rate/',
           status: '100%',

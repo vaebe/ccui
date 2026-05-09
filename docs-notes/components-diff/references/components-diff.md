@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 68 个一级目录，其中 66 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：66 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P2 启动 / Carousel 80% 首次交付**：23 用例，scrollx + fade 双 effect、autoplay + pauseOnHover、4 向 dots、infinite wrap、prev/next/goTo expose、受控/非受控双模。中等复杂度剩余从 3 项减到 2 项（QRCode / ColorPicker）。同时 P1 数据录入复杂组件 5/5 全部 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 维持。
+> 当前项目目录：`packages/ccui/ui` 下共 69 个一级目录，其中 67 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：67 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P2 推进 / QRCode 80% 首次交付**：17 用例，基于 `qrcode-generator` (3KB) 自渲 SVG `<path>`，容错 L/M/Q/H 4 档、自定义颜色、logo 嵌入（自动截到 30%）、`active` / `loading` / `expired` / `scanned` 四态遮罩 + `refresh` emit + `statusRender` slot。中等复杂度剩余从 2 项减到 1 项（仅余 ColorPicker）。Carousel 80% (Batch 25) 与 P1 数据录入复杂组件 5/5 全部 80% 维持。
 
 ## 零、交付完整度口径
 
@@ -58,6 +58,7 @@
 | Popconfirm            | Popconfirm 气泡确认框   | 反馈            | 已完成 |
 | Popover               | Popover 气泡卡片        | 反馈            | 已完成 |
 | Progress              | Progress 进度条         | 反馈            | 已完成 |
+| QRCode                | QRCode 二维码           | 数据展示        | 80%    |
 | Radio                 | Radio 单选框            | 数据录入        | 已完成 |
 | RangePicker           | DatePicker.RangePicker  | 数据录入        | 80%    |
 | Rate                  | Rate 评分               | 数据录入        | 已完成 |
@@ -92,11 +93,10 @@
 
 ## 二、缺失组件清单
 
-### 中等复杂度剩余（2 项）
+### 中等复杂度剩余（1 项）
 
 | 组件                   | 分类     | 复杂点                                   | 建议优先级 |
 | ---------------------- | -------- | ---------------------------------------- | ---------- |
-| QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
 ### 复杂组件（5 项剩余 + 5 项推进中，P1 数据录入复杂组件 5/5 已 80% 收口）
@@ -247,6 +247,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 26：QRCode 80% 首次交付（自渲 SVG / 中等复杂度剩 1 项）
+
+已完成 1 项：QRCode（80% 首次交付）。P2 第二个组件，使用 `qrcode-generator` (3KB) 提供矩阵数据，组件层负责 SVG 渲染与状态遮罩。**「中等复杂度剩余」从 2 项降到 1 项**（仅余 ColorPicker）。
+
+关键能力：
+
+- **依赖选型 — qrcode-generator 而非 qrcode**：评估了 `qrcode` (~50KB，canvas/svg/dataURL 全 API) vs `qrcode-generator` (3KB，纯矩阵数据)。最终选 `qrcode-generator`：体积小一个数量级，无 DOM/Buffer 依赖（SSR 安全），编码逻辑稳定（同一作者维护多年），代价是要自己写约 30 行 SVG 渲染（对组件库而言可控）。
+- **buildMatrix 矩阵数据 + path 合并**：`qrcode(0, level)`（typeNumber=0 自动选 version）→ `addData` → `make` → 二重循环遍历 `getModuleCount()` × `getModuleCount()`，对每行做 horizontal-run 合并：连续深色模块写成 `M{x} {y}h{span}v1h-{span}z` 单段 path，而不是一格一个 `<rect>`。一个 version 5 (37×37) 二维码 path 长度通常在 1.5-2KB，比 700+ 个 rect 节点轻得多。
+- **SVG `viewBox` = 模块数**：`viewBox="0 0 N N"` + 容器 `width/height = props.size`，浏览器自动按比例放缩；`shape-rendering="crispEdges"` 防像素抗锯齿模糊边缘。这意味着同一个 `value`，调 `size=120` / `size=400` 共用一份 path 数据，无需重新编码。
+- **iconSize 30% 截断**：QR 容错 H 档允许遮挡 ~30% 模块，所以 `iconClampedSize = Math.min(iconSize, size * 0.3)`。这是简单但有效的护栏 —— 业务侧填了 80px iconSize / size=200 也会被自动截到 60px，避免覆盖到三个角的定位图形（finder pattern）。
+- **status 四态遮罩**：`active`（不渲染遮罩）/ `loading`（CSS keyframes spinner）/ `expired`（文案 + 「点击刷新」按钮 → emit `refresh`）/ `scanned`（「已扫描」文案）。`statusRender` slot 提供完全自定义入口，提供 slot 时默认遮罩内容（spinner / 文字 / 刷新按钮）让位。
+- **value 编码失败兜底**：`buildMatrix` 包 try/catch 返回 null，渲染降级到 `<svg viewBox="0 0 1 1">` 空占位（不抛错，不破坏布局）。`qrcode-generator` 在 value 超过 version 40 容量（H 档约 1273 字符）时会 throw，组件不让这种业务错误冒泡。
+- **a11y 基础**：root 节点 `role="img"` + `aria-label={value}` 把二维码内容暴露给屏幕阅读器；SVG 内部 `aria-hidden="true"` 避免重复读出。
+
+工程决策：
+
+- **不抽 toCanvas / toDataURL expose**：80% 切片只做 SVG 渲染。业务想下载二维码可以 `new XMLSerializer().serializeToString(svg)` + Blob URL 自己实现；下一批考虑加 `toDataURL()` expose 方法（需要 canvas 转换，会引入 SSR 不友好的依赖）。
+- **不写 RoundedQRCode / GradientQRCode 变体**：Ant Design v6.x 的圆角点阵 / 渐变前景需要按 finder pattern / alignment pattern / data area 区分模块，工程量大且与 80% 「能扫码」的目标无关。留给后续。
+- **不在组件层做缓存**：`computed(buildMatrix)` 在 value/errorLevel 变化时全量重算。一次编码 typically <2ms，业务侧高频改 value 极少（多为 token 刷新），不值得引入 LRU。
+- **status 用 modifier 而非 attribute**：`ccui-qr-code__status--{status}` BEM modifier 把状态写成可被外部 CSS hook 覆盖的钩子，而不是 `data-status` 属性 —— 与本仓库其他组件（Tag / Status / Tabs）的状态约定一致。
+
+测试：17 个用例。基础渲染（svg + path 存在、path data 非空、viewBox 模块数随 errorLevel 单调递增、size/color/bgColor 正确写入 style 与 attribute、bordered modifier 切换、role + aria-label）；icon 嵌入（无 icon 时不渲染 wrapper、有 icon 时 src 正确、iconSize 30% 截断与不超时直接采用）；status 四态（active 不渲染 mask、loading spinner 存在、scanned 文字、expired 刷新按钮 + click emit refresh、refreshText 自定义、statusRender slot 完全替换默认内容）；reactivity（value 变化重建 path、errorLevel 变化重建 path）；edge case（empty value 渲染 viewBox=0 0 1 1 占位 svg 无 path）。
+
+验证结果：
+
+- `pnpm add qrcode-generator` 加 3KB 依赖。
+- `vp test run ui/qr-code`（packages/ccui 内）通过 17/17。
 
 ### Batch 25：Carousel 80% 首次交付（P2 启动 / 中等复杂度收一项）
 
@@ -807,7 +835,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 ### P2：增强展示与低频录入
 
 1. Carousel：80% 已交付（Batch 25）。剩余 swipe 手势 / 键盘 ArrowLeft/Right/Home/End / afterChange transitionend / adaptiveHeight / slidesToShow / 自定义 dots-render slot 推到 95%。
-2. QRCode：评估轻量二维码库，避免把生成算法手写进组件库。
+2. QRCode：80% 已交付（Batch 26）。剩余 toCanvas / toDataURL expose、圆角点阵 / 渐变前景、SSR 集成测试推到 95%。
 3. ColorPicker：先完成 HEX/RGB/HSV 转换和基础浮层，再补透明度与预设色。
 4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。
 

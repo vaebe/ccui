@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **66 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **67 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -127,6 +127,7 @@ app.mount('#app')
 - **Empty** - 空状态
 - **Image** - 图片
 - **List** - 列表
+- **QRCode** - 二维码（80%，自渲 SVG / 容错 4 档 / logo 嵌入 / loading・expired・scanned 三态）
 - **Rate** - 评分
 - **Segmented** - 分段控制器
 - **Statistic** - 统计数值（含 Countdown）
@@ -152,7 +153,7 @@ app.mount('#app')
 | ------------------------------- | ------ | ------------------------ |
 | Transfer / Upload               | 复杂   | 独立大任务               |
 | AutoComplete                    | 中等   | 依赖 Select / Input 稳定 |
-| QRCode / ColorPicker            | 中等   | 见路线图                 |
+| ColorPicker                     | 中等   | 见路线图                 |
 | Mentions / Tour                 | 体验型 | 见路线图                 |
 
 ## 📖 文档
