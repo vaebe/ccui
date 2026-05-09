@@ -258,6 +258,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'Carousel 走马灯',
+          link: '/components/carousel/',
+          status: '80%',
+        },
+        {
           text: 'Collapse 折叠面板',
           link: '/components/collapse/',
           status: '100%',

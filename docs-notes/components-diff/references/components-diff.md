@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 67 个一级目录，其中 65 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：65 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，本批次 P1 推进至第 5 项 / **P1 数据录入复杂组件 5/5 全部 80% 完成**：新增 TreeSelect 80%（43 用例），单选 + 多选 checkable + treeCheckStrictly + fieldNames 内部映射到 c-tree。复用现有 c-tree 当 popup 内容、复用 DatePicker / Cascader 同款 popup 模式 + Form 联动 + Teleport。DatePicker / TimePicker / RangePicker / Cascader / TreeSelect 全部 80%、Form / Table 95%、Icon / Select / Tree / Affix 100%。
+> 当前项目目录：`packages/ccui/ui` 下共 68 个一级目录，其中 66 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：66 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P2 启动 / Carousel 80% 首次交付**：23 用例，scrollx + fade 双 effect、autoplay + pauseOnHover、4 向 dots、infinite wrap、prev/next/goTo expose、受控/非受控双模。中等复杂度剩余从 3 项减到 2 项（QRCode / ColorPicker）。同时 P1 数据录入复杂组件 5/5 全部 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 维持。
 
 ## 零、交付完整度口径
 
@@ -28,6 +28,7 @@
 | Button3D              | 项目特色组件            | 通用            | 已完成 |
 | Calendar              | Calendar 日历           | 数据展示        | 已完成 |
 | Card                  | Card 卡片               | 数据展示        | 已完成 |
+| Carousel              | Carousel 走马灯         | 数据展示        | 80%    |
 | Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
@@ -91,11 +92,10 @@
 
 ## 二、缺失组件清单
 
-### 中等复杂度剩余（3 项）
+### 中等复杂度剩余（2 项）
 
 | 组件                   | 分类     | 复杂点                                   | 建议优先级 |
 | ---------------------- | -------- | ---------------------------------------- | ---------- |
-| Carousel 走马灯        | 数据展示 | 自动播放、手势、键盘、循环与动画状态     | P2         |
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
@@ -247,6 +247,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 25：Carousel 80% 首次交付（P2 启动 / 中等复杂度收一项）
+
+已完成 1 项：Carousel（80% 首次交付）。P1 收口后第一个 P2 中等复杂度组件。**P2 启动**，「中等复杂度剩余」从 3 项降到 2 项（QRCode / ColorPicker）。
+
+关键能力：
+
+- **架构 — vnode 直接当帧**：不抽 `CarouselItem` 子组件，`flattenSlides` 把 default slot 展平后过滤掉 Text / Comment / Fragment（递归展开），剩下的每个 vnode 就是一帧。`cloneVNode` 包一层 `<div class="ccui-carousel__slide">` 加 `is-active` / `aria-hidden` 控制可见性。这一选择让用户像写 Tabs / List 一样写 `<c-carousel><div>...</div></c-carousel>`，无须为每帧多一个组件。
+- **双 effect — scrollx vs fade**：`scrollx`（默认）用 `flex` 横向铺开 + 容器 `overflow:hidden` + `track.translateX(-active * 100%)`，依赖 `transition-property: transform`。`fade` 改成 `position:absolute; inset:0` 重叠摆放，每帧 `style.opacity = isActive ? 1 : 0` + `transition-duration` inline 写入，`pointer-events: none` 让非激活帧不接受点击。两套样式由 `.ccui-carousel__track--fade` modifier 切换，scss 用嵌套覆盖避免冲突。
+- **受控 / 非受控双模**：`isControlled = computed(() => props.modelValue !== undefined)`。受控走 `props.modelValue`，非受控走内部 `innerActive`。受控模式下点击 dot 仅 emit `update:modelValue`，不写入内部 state；非受控模式下点击 dot 直接写 inner state + emit。受控测例验证：父级未提交时面板停留在 `props.modelValue`、不切到点击的目标。
+- **autoplay + pauseOnHover**：`setInterval(autoplaySpeed)` 单实例，`pauseOnHover && isHover.value` 时跳过本次 tick（不停 timer，只跳过 next 调用）。`watch([autoplay, autoplaySpeed])` 自动重启 timer。`onBeforeUnmount` 清理 interval + animationTimer。当 `total <= 1` 时 next 是 no-op，autoplay 不会触发 emit（边界用例验证）。
+- **infinite 循环 vs clamp**：`setActive(next)` 时根据 `infinite` 决定 wrap（`<0 → max`，`>max → 0`）还是 clamp（`Math.min/max`）。`infinite=false` 时点击 prev 在第 0 帧、点击 next 在最后一帧 都不 emit `change`（与「target === prev → 短路」逻辑天然一致）。
+- **dotPosition 4 向**：`top` / `bottom` 横向排列居中，`left` / `right` 竖向排列居中，dots 元素本身改成竖条形（3×16 → active 3×24）。BEM modifier `__dots--<position>` 一处管定位、一处管 dot 形状。
+- **expose 三方法**：`expose<CarouselExpose>({ goTo, next, prev })`。`goTo(index, dontAnimate?)` 第二参 `dontAnimate=true` 时跳过 `animating.value = true` 的标记（虽然 transition 仍会跑，但移除 `is-animating` 状态类让外部样式可以区分跳转与动画）。
+
+工程决策：
+
+- **不抽 `CarouselItem` 子组件**：80% 切片下用户的诉求是「我有一组 div 想轮播」，不是「我每帧要复杂的生命周期」。子组件会引入 inject / provide 的耦合，对 80% 不必要。如果后面要加 lazyRender、afterChange 精确帧回调，可以在帧 wrapper 上加，不影响外部 API。
+- **dots 用 `<ul><li><button>` 而不是 `<div><span>`**：dots 是 tablist 语义近似，button 默认带键盘焦点 + Enter 触发，比 div+role 实在。每个 dot 都有 `aria-label="Go to slide N"` + `aria-current`，无障碍最低限度先过。
+- **不实现 swipe / 键盘导航**：80% 切片明确不做指针事件 + 阈值 + cancellable 拖拽（这是单独一批的工作量），也不做 Arrow / Home / End 键盘（与 dots focus 状态绑在一起，需要 roving tabindex 才有意义）。这两项放到 95% 推进时一起做。
+- **transition 用 inline style 而非 class**：`transitionDuration: ${duration}ms` 写到 inline style，让用户改 `duration` prop 立即生效，不用维护 `--ccui-carousel-duration` CSS variable 和 watcher。代价是少了一层 CSS 可定制能力，但 80% 切片下可控性 > 可定制性。
+
+测试：23 个用例。基础渲染（slides 数量、defaultActive、dots 显示/隐藏、dotPosition modifier、arrows 默认/启用、effect=fade 的 opacity 与 track--fade）；dot 点击协议（uncontrolled emit + 切换、target=current 不 emit、controlled modelValue 父级未提交保持不变）；arrows（next/prev 切换、infinite=true 在边界 wrap、infinite=false 在边界保持）；autoplay（interval 推进、autoplay=false 不推进、pauseOnHover=true 在 hover 暂停 + leave 恢复、pauseOnHover=false 不暂停、speed 变化重启 timer）；exposed methods（goTo/next/prev 通过模板 ref 调用、out-of-range clamp）；edge case（0 帧不渲染 dots、1 帧 autoplay no-op）。
+
+验证结果：
+
+- `vp test run ui/carousel`（packages/ccui 内）通过 23/23。
+- `vp test run` 全量 1067/1069 通过；2 个失败（anchor scrollTo / statistic countdown 11ms 时序漂移）在本批次改动之前已存在，与 carousel 无关。
 
 ### Batch 24：TreeSelect 80% 首次交付（P1 数据录入复杂组件 5/5 收口）
 
@@ -778,7 +806,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 ### P2：增强展示与低频录入
 
-1. Carousel：优先基础切换、自动播放、指示器，再补手势和无障碍键盘。
+1. Carousel：80% 已交付（Batch 25）。剩余 swipe 手势 / 键盘 ArrowLeft/Right/Home/End / afterChange transitionend / adaptiveHeight / slidesToShow / 自定义 dots-render slot 推到 95%。
 2. QRCode：评估轻量二维码库，避免把生成算法手写进组件库。
 3. ColorPicker：先完成 HEX/RGB/HSV 转换和基础浮层，再补透明度与预设色。
 4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。
