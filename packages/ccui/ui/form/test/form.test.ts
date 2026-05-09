@@ -1113,3 +1113,83 @@ describe('form provider', () => {
     expect(info.changedFields[0].value).toBe('Tom')
   })
 })
+
+describe('form shouldUpdate', () => {
+  it('shouldUpdate prop is accepted on FormItem', () => {
+    const model = reactive({ a: '' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () => h(Form, { model }, () => h(FormItem, { prop: 'a', shouldUpdate: false }, () => h('input'))),
+      }),
+    )
+    // FormItem 接受 shouldUpdate prop 不报错
+    expect(wrapper.find(itemNs.b()).exists()).toBe(true)
+  })
+
+  it('shouldUpdate as function is accepted', () => {
+    const model = reactive({ a: '' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model }, () => h(FormItem, { prop: 'a', shouldUpdate: () => true }, () => h('input'))),
+      }),
+    )
+    expect(wrapper.find(itemNs.b()).exists()).toBe(true)
+  })
+})
+
+describe('form validateDebounce', () => {
+  it('delays validation by specified milliseconds', async () => {
+    vi.useFakeTimers()
+    const model = reactive({ name: '' })
+    const rules: Record<string, any[]> = { name: [{ required: true, message: 'required', trigger: 'change' }] }
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model, rules }, () =>
+            h(FormItem, { prop: 'name', validateDebounce: 200 }, () =>
+              h('input', {
+                value: model.name,
+                onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
+              }),
+            ),
+          ),
+      }),
+    )
+    // 触发 change 校验
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    // 校验还没执行（在 debounce 内）
+    expect(wrapper.find(itemNs.b()).classes()).not.toContain('ccui-form-item--error')
+
+    // 推过 debounce
+    vi.advanceTimersByTime(200)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find(itemNs.b()).classes()).toContain('ccui-form-item--error')
+    vi.useRealTimers()
+  })
+})
+
+describe('form normalize', () => {
+  it('transforms value before validation via normalize prop', async () => {
+    const model = reactive({ tag: '' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model }, () =>
+            h(FormItem, { prop: 'tag', normalize: (v: string) => v.trim().toUpperCase() }, () =>
+              h('input', {
+                value: model.tag,
+                onInput: (e: Event) => (model.tag = (e.target as HTMLInputElement).value),
+              }),
+            ),
+          ),
+      }),
+    )
+    model.tag = '  hello  '
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    expect(model.tag).toBe('HELLO')
+  })
+})

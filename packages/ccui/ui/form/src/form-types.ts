@@ -265,6 +265,21 @@ export const formItemProps = {
     type: Boolean,
     default: undefined,
   },
+  // 控制 FormItem 在 model 变化时是否需要重新渲染/校验
+  shouldUpdate: {
+    type: [Boolean, Function] as PropType<boolean | ((prevValues: any, curValues: any) => boolean)>,
+    default: undefined,
+  },
+  // 校验防抖延迟（毫秒），0 = 不防抖
+  validateDebounce: {
+    type: Number,
+    default: 0,
+  },
+  // 值预处理函数：在值写入 model 之前调用
+  normalize: {
+    type: Function as PropType<(value: any, prevValue: any, allValues: any) => any>,
+    default: undefined,
+  },
 } as const
 
 export const formListProps = {

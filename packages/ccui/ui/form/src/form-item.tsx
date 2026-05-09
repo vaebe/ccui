@@ -92,7 +92,9 @@ export default defineComponent({
       validateMessage.value = ''
     }
 
-    const validate = async (trigger?: FormValidateTrigger) => {
+    let validateTimer: ReturnType<typeof setTimeout> | null = null
+
+    const doValidate = async (trigger?: FormValidateTrigger) => {
       if (!fieldKey.value || !form) {
         return true
       }
@@ -129,6 +131,18 @@ export default defineComponent({
       return true
     }
 
+    const validate = async (trigger?: FormValidateTrigger) => {
+      if (props.validateDebounce > 0) {
+        if (validateTimer) clearTimeout(validateTimer)
+        return new Promise<boolean>((resolve) => {
+          validateTimer = setTimeout(() => {
+            doValidate(trigger).then(resolve)
+          }, props.validateDebounce)
+        })
+      }
+      return doValidate(trigger)
+    }
+
     const resetField = () => {
       if (fieldKey.value && form) {
         setValueByPath(form.model.value, fieldName.value!, cloneValue(initialValue.value))
@@ -154,6 +168,14 @@ export default defineComponent({
     } as FormItemContext
 
     const onChangeCapture = (event: Event) => {
+      if (props.normalize && form && fieldName.value !== undefined) {
+        const curValue = getValueByPath(form.model.value, fieldName.value)
+        const prevValue = cloneValue(curValue)
+        const normalized = props.normalize(curValue, prevValue, form.model.value)
+        if (normalized !== curValue) {
+          setValueByPath(form.model.value, fieldName.value!, normalized)
+        }
+      }
       void validate('change')
       if (form && fieldName.value !== undefined) {
         const next = getValueByPath(form.model.value, fieldName.value)
@@ -199,9 +221,25 @@ export default defineComponent({
       validate,
     })
 
+    let prevModelSnapshot: any = undefined
+
     watch(
       () => form?.model.value,
-      () => {
+      (cur) => {
+        // shouldUpdate 控制是否在 model 变化时触发校验
+        if (props.shouldUpdate !== undefined) {
+          if (typeof props.shouldUpdate === 'function') {
+            if (!props.shouldUpdate(prevModelSnapshot, cur)) {
+              prevModelSnapshot = cloneValue(cur)
+              return
+            }
+          } else if (!props.shouldUpdate) {
+            prevModelSnapshot = cloneValue(cur)
+            return
+          }
+        }
+        prevModelSnapshot = cloneValue(cur)
+
         if (props.dependencies.length > 0) {
           void validate()
         }
