@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 69 个一级目录，其中 67 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：67 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P2 推进 / QRCode 80% 首次交付**：17 用例，基于 `qrcode-generator` (3KB) 自渲 SVG `<path>`，容错 L/M/Q/H 4 档、自定义颜色、logo 嵌入（自动截到 30%）、`active` / `loading` / `expired` / `scanned` 四态遮罩 + `refresh` emit + `statusRender` slot。中等复杂度剩余从 2 项减到 1 项（仅余 ColorPicker）。Carousel 80% (Batch 25) 与 P1 数据录入复杂组件 5/5 全部 80% 维持。
+> 当前项目目录：`packages/ccui` 下共 70 个一级目录，其中 68 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：68 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P2 中等复杂度收口 / ColorPicker 80% 首次交付**：25 用例，含 `shared/utils/color.ts` HEX/RGB/HSV 互转层（5 用例覆盖 round-trip 与 alpha 合成），自渲 SV/hue/alpha 三段拖拽（pointerdown + 全局 pointermove/pointerup），hex 输入框 + Enter/blur 提交，预设色板，Form 联动 + Teleport。**「中等复杂度剩余」清零**（QRCode + ColorPicker + Carousel 共 3 项 P2 中等复杂度全部 80%）。P1 数据录入复杂组件 5/5、Form / Table 95%、Icon / Select / Tree / Affix 100% 维持。
 
 ## 零、交付完整度口径
 
@@ -32,6 +32,7 @@
 | Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
+| ColorPicker           | ColorPicker 颜色选择器  | 数据录入        | 80%    |
 | ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
 | DatePicker            | DatePicker 日期选择框   | 数据录入        | 80%    |
 | Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
@@ -93,11 +94,9 @@
 
 ## 二、缺失组件清单
 
-### 中等复杂度剩余（1 项）
+### 中等复杂度剩余（0 项 / 已全部收口）
 
-| 组件                   | 分类     | 复杂点                                   | 建议优先级 |
-| ---------------------- | -------- | ---------------------------------------- | ---------- |
-| ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
+P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) / ColorPicker (Batch 27)。后续 P2 工作只剩独立大任务 Transfer / Upload。
 
 ### 复杂组件（5 项剩余 + 5 项推进中，P1 数据录入复杂组件 5/5 已 80% 收口）
 
@@ -247,6 +246,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 27：ColorPicker 80% 首次交付（P2 中等复杂度三件套收口）
+
+已完成 1 项：ColorPicker（80% 首次交付）。P2 第三个、也是最后一个中等复杂度组件，至此 **「中等复杂度剩余」清零**。25 个测试用例分两层：5 个覆盖 `shared/utils/color.ts` HEX/RGB/HSV 互转，20 个覆盖组件层。
+
+关键能力：
+
+- **shared/utils/color.ts 转换层**：与 `date.ts` 同样的 utility-first 风格，按 `hexToRgb` / `rgbToHex` / `rgbToHsv` / `hsvToRgb` / `rgbToString` / `hsvToString` 拆开，每个函数都接收/返回 `{ r,g,b,a }` 或 `{ h,s,v,a }` 普通对象，无类对象、无单例、SSR 安全。HEX 解析支持 3/4/6/8 位四种形态（4/8 位带 alpha），`rgbToHex` 在 `a < 1` 或 `includeAlpha=true` 时输出 8 位 hex。round-trip：red `#ff0000` → `{h:0,s:100,v:100}` → 回 `{255,0,0,1}` 对得上，hue 边界 `120 → green` / `240 → blue` 也对得上。
+- **三段拖拽 — 通用 trackPointer**：抽出一个共享的 `trackPointer(el, e, apply)` 工具：从 `getBoundingClientRect()` 拿到一次 rect、立刻调用一次 `apply(relX, relY)`、把 `pointermove` / `pointerup` 监听挂到 `document` 直到 up。三个滑块（SV / hue / alpha）各自只关心自己的 `apply` 逻辑（SV 改 s/v 两维、hue 改 h、alpha 改 a），rect 计算与生命周期统一。Click 也是合法 pointerdown，所以「点哪去哪」与「按住拖」共用同一条路径。
+- **SV picker 三层叠加**：`backgroundColor: hsl(${h}, 100%, 50%)` 给底层纯色 → 叠 `linear-gradient(to right, #fff, transparent)`（饱和度从左到右 0→100）→ 再叠 `linear-gradient(to bottom, transparent, #000)`（明度从上到下 100→0）。cursor 用 `left=s%`、`top=(100-v)%` 定位，与 Ant Design 视觉一致。
+- **alpha 滑块的 checker 底纹**：`linear-gradient(45deg/-45deg, #ddd 25%, transparent 25%) ...` 多层小方格（8×8 px）拼出经典棋盘格。slider 自身的实色轨道用 `linear-gradient(to right, rgba(...,0), rgb(...))`（基于当前 SV+hue 算出的 baseRgb）覆在棋盘上，cursor 拖 → 透明度真实可视。
+- **hex 输入 lazy commit**：键入 → 只更新 `hexInput` 显示，**不触发 emit**（允许打到一半的不合法状态）；blur 或 Enter → 解析尝试，成功就 commit，失败就把 input 文本回滚到当前 currentHex（不滑出 modelValue）。这是与 Ant Design QRCode hex 输入相同的「edit-on-blur」语义。
+- **disabledAlpha 强守门**：在三处生效 ——（1）alpha 区域不渲染、（2）alpha number input 不渲染、（3）任何 commitHsv 调用都会被 `{ ...next, a: 1 }` 重写。这意味着即使外部有 `modelValue="#1677ff80"` 注入，组件也会把 alpha 还原成 1（输出 hex 始终 6 位）。
+- **format 仅影响显示，不影响 v-model**：`format='rgb' | 'hsv'` 切换 `displayText` 的格式（rgb()/rgba() 或 hsv()/hsva() 字符串），但 `update:modelValue` 永远 emit hex 字符串。`change` 事件第二参 `{ rgb, hsv }` 给业务原生对象方便自己再格式化，避免在 v-model 上做 polymorphic 类型分支。
+- **受控 / 非受控双模**：`isControlled = computed(() => props.modelValue !== undefined)`。受控走 `props.modelValue`，非受控走内部 `innerValue`（默认 `defaultValue ?? '#1677ff'`）。受控测例验证：父级未提交时 swatch 仍停留在原 modelValue，不切到点击的 preset 颜色。
+- **Form 联动**：与 P1 五件套同套 `formItemInjectionKey`（`mergedStatus = props.status || formItem?.validateStatus.value`），`commitHsv` 同步触发 `formItem?.validate('change')`。
+
+工程决策：
+
+- **不抽 useColorState 复合 hook**：颜色状态较 DatePicker 简单（一个 hex 字符串、一个 pending HSV），抽 hook 反而拆散逻辑。沿用「全部 setup 内联」与之前 P1 五件套同款。
+- **不在组件层支持 rgb()/hsl() 字符串输入**：`parseColor` 只识别 hex（含简写 / 带 alpha）。要支持 `rgb(22, 119, 255)` 解析需要规范化空白、单位、百分比 vs 整数等多种形态的 fuzz parsing，工程量与 80% 不匹配。业务侧若拿到 rgb 字符串，应先转 hex 再注入。
+- **pointermove 不做 debounce / requestAnimationFrame**：`commitHsv` 在拖拽期间会高频触发（典型每秒 60 次）。computed `currentRgb` / `displayText` / SV/hue/alpha cursor 的 inline style 更新都是 reactive 缓存友好的，没出现卡顿。早优化没必要。
+- **disabledAlpha 而不是 `alpha: false`**：与 Ant Design 的 prop 命名对齐（同样叫 `disabledAlpha`），同时与本仓库 `disabled` / `disabledHours` / `disabledDate` 的「disabledX」前缀风格一致。
+- **不引入颜色库（chroma-js / color / tinycolor）**：HEX/RGB/HSV 互转加起来不到 70 行，自己写既能掌控边界 case 又免一份依赖。chroma-js 等库主要价值在 `interpolate` / `mix` / `cmyk` / `lab` 等高阶能力，与 80% 切片无关。
+
+测试：25 个用例。color util 5：HEX 解析（3/4/6/8 位 + 不合法回 null）、rgb→hex round-trip（含 alpha < 1 输出 8 位）、rgb↔hsv round-trip（red/green/blue 关键三色）、hsv→rgb hue 边界（120/240）、rgbToString / hsvToString 格式化（带 alpha 与不带 alpha）。组件层 20：渲染（trigger swatch 着色 + showText 三档 format + disabled）；popup（click 开 / 再 click 关 / 外点关 / disabledAlpha 隐藏 alpha 段 + alpha number input）；SV/hue/alpha 拖拽（stubRect + MouseEvent('pointerdown') 模拟，断言 emit 出来的 hex 解析回 hsv 后 s/v/h/a 接近预期值）；hex 输入（合法值 blur 提交 + 非法值 blur 回滚 + Enter 直接 commit）；预设色（点击 commit + 空数组不渲染 presets section）；受控 / 非受控（uncontrolled 下点击 preset 改 swatch、controlled 下父级未提交 swatch 不变）；Form 联动（FormItem 内 v-model 双向 + emit 后 value 同步到 reactive form）。
+
+验证结果：
+
+- `vp test run ui/color-picker`（packages/ccui 内）通过 25/25。
 
 ### Batch 26：QRCode 80% 首次交付（自渲 SVG / 中等复杂度剩 1 项）
 
@@ -836,8 +865,8 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 1. Carousel：80% 已交付（Batch 25）。剩余 swipe 手势 / 键盘 ArrowLeft/Right/Home/End / afterChange transitionend / adaptiveHeight / slidesToShow / 自定义 dots-render slot 推到 95%。
 2. QRCode：80% 已交付（Batch 26）。剩余 toCanvas / toDataURL expose、圆角点阵 / 渐变前景、SSR 集成测试推到 95%。
-3. ColorPicker：先完成 HEX/RGB/HSV 转换和基础浮层，再补透明度与预设色。
-4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。
+3. ColorPicker：80% 已交付（Batch 27）。剩余 RGB / HSV 三联输入控件、trigger slot、EyeDropper API、键盘导航、modelValue=null 清空状态推到 95%。
+4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。P2 中等复杂度三件套全部收口后，下一波就是 Transfer / Upload。
 
 ### P3：体验型组件
 

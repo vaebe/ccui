@@ -178,6 +178,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'ColorPicker 颜色选择器',
+          link: '/components/color-picker/',
+          status: '80%',
+        },
+        {
           text: 'DatePicker 日期选择框',
           link: '/components/date-picker/',
           status: '80%',

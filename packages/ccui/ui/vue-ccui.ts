@@ -14,6 +14,7 @@ import CardInstall, { Card } from './card'
 import CarouselInstall, { Carousel } from './carousel'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
+import ColorPickerInstall, { ColorPicker } from './color-picker'
 import ConfigProviderInstall, { ConfigProvider, useConfig } from './config-provider'
 import DatePickerInstall, { DatePicker } from './date-picker'
 import DescriptionsInstall, { Descriptions, DescriptionsItem } from './descriptions'
@@ -97,6 +98,7 @@ const installs = [
   CarouselInstall,
   CheckBoxInstall,
   CollapseInstall,
+  ColorPickerInstall,
   ConfigProviderInstall,
   DatePickerInstall,
   DescriptionsInstall,
@@ -169,6 +171,7 @@ export {
   CheckBox,
   Collapse,
   CollapseItem,
+  ColorPicker,
   ConfigProvider,
   useConfig,
   DatePicker,
