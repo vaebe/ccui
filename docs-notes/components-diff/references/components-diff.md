@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 63 个一级目录，其中 61 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：61 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，本批次开 P1：新增 DatePicker（date 单选 80%，40 用例），抽 `shared/utils/date.ts` 日期工具层（toDayjs / formatDate / emitValue / generateMonthGrid / isSameDay / isSameMonth / isToday）作为后续 TimePicker / Range / Cascader 的共享底座。Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用上轮状态。
+> 当前项目目录：`packages/ccui/ui` 下共 64 个一级目录，其中 62 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：62 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，本批次 P1 推进至第 2 项：新增 TimePicker 80%（45 用例），扩 `shared/utils/date.ts` 加 `buildTimeColumnValues` 通用列构造函数，被 TimePicker 三列以及未来 DatePicker showTime 共用。DatePicker 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用上一批次状态。
 
 ## 零、交付完整度口径
 
@@ -14,7 +14,7 @@
 - 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
-## 一、已覆盖组件（61 项）
+## 一、已覆盖组件（62 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态   |
 | --------------------- | ----------------------- | --------------- | ------ |
@@ -73,6 +73,7 @@
 | Tabs                  | Tabs 标签页             | 导航            | 已完成 |
 | Table                 | Table 表格              | 数据展示        | 已完成 |
 | Tag                   | Tag 标签                | 数据展示        | 已完成 |
+| TimePicker            | TimePicker 时间选择框   | 数据录入        | 80%    |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
@@ -95,12 +96,12 @@
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（8 项剩余 + 1 项进行中）
+### 复杂组件（7 项剩余 + 2 项推进中）
 
 | 组件                  | 分类     | 复杂点                                                                                            | 建议优先级   |
 | --------------------- | -------- | ------------------------------------------------------------------------------------------------- | ------------ |
 | DatePicker 日期选择框 | 数据录入 | range / week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选） | P1（推进中） |
-| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项                                                                            | P1           |
+| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）      | P1（推进中） |
 | Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                                                                          | P1           |
 | TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                    | P1           |
 | Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                    | P2           |
@@ -242,6 +243,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 21：TimePicker 80% 首次交付（24 小时三列 + step + disabled + footer）
+
+已完成 1 项：TimePicker（24 小时制 80%）；扩展 `shared/utils/date.ts`。
+
+关键能力：
+
+- **`buildTimeColumnValues(range, step, disabledValues?)`**：在 `shared/utils/date.ts` 新增的通用列构造函数，输出 `{ value, disabled }[]`。`step <= 0` 兜底成 1，`disabledValues` 用 `Set` 标记 disabled 行。TimePicker 的 hour（0..23）/ minute（0..59）/ second（0..59）三列，以及未来 DatePicker showTime 都共用这一个 helper。
+- **TimePicker 80% API**：受控/非受控 `v-model:modelValue`（默认 string，可切 `'date'` / `'number'`，与 DatePicker 同款 `valueFormat` 三档）；`format`（默认 `HH:mm:ss`，dayjs token）；`placeholder` / `disabled` / `clearable`（默认 true）/ `size` 三档 / `status`；`placement` 4 个方位映射到 floating-ui；`popupAppendToBody` + 自定义 `getPopupContainer`，复用 Select/DatePicker 同款 Teleport + Transition 模式。
+- **三列控制**：`showHour` / `showMinute` / `showSecond` 任意组合（关到只剩 1 列也能用）；`hourStep` / `minuteStep` / `secondStep` 控制每列步长（hourStep=4 → 6 行 0/4/8/12/16/20）；`disabledHours` / `disabledMinutes(hour)` / `disabledSeconds(hour, minute)` 三层联动屏蔽，`disabledMinutes` 接当前 pending hour、`disabledSeconds` 接 pending hour + minute，可以做"9:00 之前禁选"这种联动。
+- **footer 双按钮 + showOk 行为分流**：`showOk=true`（默认）时点击单元格只更新 pending、不 emit、面板不关，等点确定才 emit + 关；`showOk=false` 时点击单元格立即 emit + 关。`showNow` 控制「此刻」按钮，`showOk=false` 模式下「此刻」也立即 emit + 关。两个按钮都关时整个 footer 不渲染。文案 `nowText` / `okText` 可自定义。
+- **pending 状态机**：内部维护 `pendingDayjs: Dayjs`，`watch(selectedDayjs)` 在外部受控值变化时把 pending 同步过去，避免 popup 打开期间外部 setState 后面板停留在旧值；`openPopup` 时把 pending 重置到当前 selected（外部无值时回 `dayjs().startOf('day')`），避免上次面板状态泄漏。
+- **Form 联动**：和 DatePicker 同套机制——通过 `formItemInjectionKey` inject `validateStatus`，校验失败 root 自动加 `--status-error`；`emitChange` 同步触发 `formItem?.validate('change')`。
+- 文档：覆盖基础（默认 showOk）/ 选中即提交（showOk=false）/ 自定义格式（含 valueFormat 三档 demo）/ 步长 / 屏蔽时间（含 hour-minute 联动）/ 隐藏某列 / 三种尺寸 / 表单联动 / 弹层容器；API Props 表 27 行 + Events 表 5 行 + 已知限制清单（12 小时制 / 键盘 / 范围 / showTime / 滚轮 snap）。
+- 测试：45 个用例。基础渲染（默认/自定义 placeholder、3 类 modelValue + format + 无效值兜底）；popup open/close（click 切换、outside、disabled、autoFocus）；columns（默认 3 列、3 种 show-X 关闭、24 cells 全集、3 种 step 验证 cells 数 + 文本、selected modifier 三列定位）；disabled values（disabledHours 命中、disabledMinutes 联动、disabled cell click 不变 pending）；selection showOk=false 急切 emit 三档 valueFormat；footer showOk=true（hour click 只更 pending 不 emit、ok 提交、now 设 pending 不关、now+ok 提交、showOk=false 时 now 立即 emit、both off 不渲染 footer、自定义文案）；clearable 4 种组合；size 三档 + status；Form integration + Teleport 两种容器 + 外部 v-model 回写。
+
+工程决策：
+
+- **复用 DatePicker 的内部抽象，但不抽 `use-popup` hook**：本来想把 DatePicker / TimePicker 的 popup（rootRef + popupRef + open + floating + click outside + Teleport + Transition）抽成 `use-time-popup` hook，但当前两个组件 popup 渲染内容差别足够大（grid vs columns），抽象 hook 会要传入太多 render slot，反而损可读性。先保持两份相似代码，等推第三个浮层组件（Cascader / TreeSelect）时再回头抽。
+- **`showOk=true` 是默认**：与 Ant Design TimePicker 默认行为一致——用户在三列里多次微调最后才确定，避免每次点击都 emit 触发外部 reactive / Form rules。`showOk=false` 留给「快速选时间」场景。
+- **`buildTimeColumnValues` 输出 cell list 而不是 `disabled` 函数**：函数式更灵活但每帧重算开销大。这里数据规模小（最多 60 cell），用 Set 一次性求值后就直接当 cell.disabled 用，computed 缓存命中也轻松。
+- **不引入 `dayjs` 默认插件外的额外插件**：date.ts 已经 extend `customParseFormat`，TimePicker 用的 hour() / minute() / second() / .hour(x) 都是核心 API，无需 `advancedFormat` 等附加插件。这与上一批次工具层口径一致。
+
+验证结果：
+
+- `vp check` 通过（298 文件 lint/type、所有 prettier 全干净）。
+- 从 `packages/ccui` 跑 `pnpm test ui/time-picker --run` 通过 45/45。
+- 从 `packages/docs` 跑生成器无 warning，TimePicker 出现在数据录入分类，状态 80%。
 
 ### Batch 20：DatePicker 80% 首次交付（date 单选 + 共享日期工具层）
 

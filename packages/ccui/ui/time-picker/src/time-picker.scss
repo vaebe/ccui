@@ -1,0 +1,223 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-time-picker {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  &--small &__input-wrap {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large &__input-wrap {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+  }
+
+  &__input-wrap {
+    display: flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $ccui-primary;
+    }
+  }
+
+  &.is-disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &.is-open &__input-wrap {
+    border-color: $ccui-primary;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    padding: 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1050;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow: $ccui-box-shadow-secondary;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  &__columns {
+    display: flex;
+    border-bottom: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__column {
+    flex: 1;
+    width: 56px;
+    max-height: 224px;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    overflow-y: auto;
+    border-right: 1px solid $ccui-color-border-secondary;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    margin: 0 4px;
+    padding: 0 8px;
+    border-radius: $ccui-border-radius;
+    color: $ccui-text;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--selected,
+    &--selected:hover {
+      background-color: $ccui-primary;
+      color: #fff;
+    }
+
+    &--disabled,
+    &--disabled:hover {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+      background-color: transparent;
+    }
+
+    &--selected#{&}--disabled,
+    &--selected#{&}--disabled:hover {
+      background-color: $ccui-color-fill-quaternary;
+      color: $ccui-color-text-disabled;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  &__footer-btn {
+    height: 24px;
+    padding: 0 12px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    color: $ccui-text;
+    font-size: $ccui-font-size-sm;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s,
+      color 0.2s;
+
+    &:hover {
+      border-color: $ccui-primary;
+      color: $ccui-primary;
+    }
+
+    &--ok {
+      border-color: $ccui-primary;
+      background-color: $ccui-primary;
+      color: #fff;
+
+      &:hover {
+        opacity: 0.85;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.#{$cls-prefix}-time-picker-fade-enter-active,
+.#{$cls-prefix}-time-picker-fade-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.#{$cls-prefix}-time-picker-fade-enter-from,
+.#{$cls-prefix}-time-picker-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

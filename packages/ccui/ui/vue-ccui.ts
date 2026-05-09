@@ -55,6 +55,7 @@ import SwitchInstall, { Switch } from './switch'
 import TabsInstall, { Tab, Tabs } from './tabs'
 import TableInstall, { Table } from './table'
 import TagInstall, { Tag } from './tag'
+import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
 import TreeInstall, { Tree } from './tree'
@@ -132,6 +133,7 @@ const installs = [
   TabsInstall,
   TableInstall,
   TagInstall,
+  TimePickerInstall,
   TimelineInstall,
   TooltipInstall,
   TreeInstall,
@@ -220,6 +222,7 @@ export {
   Tabs,
   Table,
   Tag,
+  TimePicker,
   Timeline,
   TimelineItem,
   Tooltip,

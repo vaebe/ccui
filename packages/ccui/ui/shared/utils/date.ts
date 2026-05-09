@@ -52,6 +52,27 @@ export interface MonthGridCell {
   isToday: boolean
 }
 
+export interface TimeColumnCell {
+  value: number
+  disabled: boolean
+}
+
+// 生成 0..range-1 的时间列（小时 0-23 / 分钟 0-59 / 秒 0-59），按 step 过滤，传入的 disabledValues
+// 决定哪些值被标记 disabled。step <= 1 时输出全集，step >= range 时输出仅起始值 0。
+export function buildTimeColumnValues(
+  range: number,
+  step: number,
+  disabledValues?: readonly number[],
+): TimeColumnCell[] {
+  const safeStep = step > 0 ? step : 1
+  const disabledSet = disabledValues ? new Set(disabledValues) : null
+  const cells: TimeColumnCell[] = []
+  for (let v = 0; v < range; v += safeStep) {
+    cells.push({ value: v, disabled: disabledSet ? disabledSet.has(v) : false })
+  }
+  return cells
+}
+
 // 生成 6×7=42 格月视图。weekStart=0 表示周日开头（与 Calendar 现有约定一致），1 表示周一开头。
 export function generateMonthGrid(viewMonth: Dayjs, weekStart: 0 | 1 = 0): MonthGridCell[] {
   const firstDayOfMonth = viewMonth.startOf('month')

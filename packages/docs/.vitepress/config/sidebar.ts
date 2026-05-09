@@ -212,6 +212,11 @@ export default {
           link: '/components/switch/',
           status: '100%',
         },
+        {
+          text: 'TimePicker 时间选择框',
+          link: '/components/time-picker/',
+          status: '80%',
+        },
       ],
     },
     {
