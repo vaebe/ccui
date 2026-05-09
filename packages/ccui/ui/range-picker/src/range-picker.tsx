@@ -1,0 +1,438 @@
+import type { Placement } from '@floating-ui/vue'
+import type { Dayjs } from 'dayjs'
+import type { FormItemInjectedContext } from '../../form/src/form-types'
+import type { DateOutputFormat, RangePickerPlacement, RangePickerProps, RangeValue } from './range-picker-types'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import dayjs from 'dayjs'
+import {
+  computed,
+  defineComponent,
+  h,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+  Teleport,
+  Transition,
+  watch,
+} from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
+import { useNamespace } from '../../shared/hooks/use-namespace'
+import { emitValue, generateMonthGrid, isSameDay, toDayjs } from '../../shared/utils/date'
+import { rangePickerProps } from './range-picker-types'
+import './range-picker.scss'
+
+const PLACEMENT_TO_FLOATING: Record<RangePickerPlacement, Placement> = {
+  bottomLeft: 'bottom-start',
+  bottomRight: 'bottom-end',
+  topLeft: 'top-start',
+  topRight: 'top-end',
+}
+
+const WEEK_LABELS_SUN = ['日', '一', '二', '三', '四', '五', '六']
+const WEEK_LABELS_MON = ['一', '二', '三', '四', '五', '六', '日']
+
+type Phase = 'start' | 'end'
+
+function emitRangeValue(start: Dayjs | null, end: Dayjs | null, output: DateOutputFormat, format: string): RangeValue {
+  if (!start && !end) return null
+  return [emitValue(start, output, format), emitValue(end, output, format)] as RangeValue
+}
+
+export default defineComponent({
+  name: 'CRangePicker',
+  props: rangePickerProps,
+  emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur'],
+  setup(props: RangePickerProps, { emit }) {
+    const ns = useNamespace('range-picker')
+    const rootRef = ref<HTMLElement | null>(null)
+    const popupRef = ref<HTMLElement | null>(null)
+    const startInputRef = ref<HTMLInputElement | null>(null)
+    const endInputRef = ref<HTMLInputElement | null>(null)
+    const open = shallowRef(false)
+    const phase = shallowRef<Phase>('start')
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
+
+    const selectedStart = computed<Dayjs | null>(() => {
+      const v = props.modelValue
+      if (!v || !Array.isArray(v)) return null
+      return toDayjs(v[0], props.format)
+    })
+    const selectedEnd = computed<Dayjs | null>(() => {
+      const v = props.modelValue
+      if (!v || !Array.isArray(v)) return null
+      return toDayjs(v[1], props.format)
+    })
+
+    const pendingStart = shallowRef<Dayjs | null>(selectedStart.value)
+    const pendingEnd = shallowRef<Dayjs | null>(selectedEnd.value)
+    const hoverDate = shallowRef<Dayjs | null>(null)
+
+    function syncPendingFromSelected() {
+      pendingStart.value = selectedStart.value
+      pendingEnd.value = selectedEnd.value
+    }
+
+    watch([selectedStart, selectedEnd], () => {
+      syncPendingFromSelected()
+    })
+
+    const viewMonth = shallowRef<Dayjs>(selectedStart.value ?? dayjs())
+
+    const placement = computed(() => PLACEMENT_TO_FLOATING[props.placement])
+    const popupContainer = computed<HTMLElement | null>(() => {
+      if (typeof document === 'undefined') return null
+      if (props.getPopupContainer) return props.getPopupContainer(rootRef.value)
+      if (props.popupAppendToBody) return document.body
+      return null
+    })
+    const teleported = computed(() => popupContainer.value !== null)
+
+    const { floatingStyles } = useFloating(rootRef, popupRef, {
+      placement: placement as never,
+      open,
+      whileElementsMounted: autoUpdate,
+      middleware: [offset(4), flip(), shift({ padding: 8 })],
+      strategy: computed(() => (teleported.value ? 'fixed' : 'absolute')) as never,
+    })
+
+    const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
+    const mergedStatus = computed(() => props.status || validationStatus.value)
+
+    const startInputDisplay = computed(() => {
+      const d = open.value ? pendingStart.value : selectedStart.value
+      return d ? d.format(props.format) : ''
+    })
+    const endInputDisplay = computed(() => {
+      const d = open.value ? pendingEnd.value : selectedEnd.value
+      return d ? d.format(props.format) : ''
+    })
+
+    const leftMonth = computed(() => viewMonth.value)
+    const rightMonth = computed(() => viewMonth.value.add(1, 'month'))
+    const leftGrid = computed(() => generateMonthGrid(leftMonth.value, props.weekStart))
+    const rightGrid = computed(() => generateMonthGrid(rightMonth.value, props.weekStart))
+    const weekLabels = computed(() => (props.weekStart === 1 ? WEEK_LABELS_MON : WEEK_LABELS_SUN))
+
+    function openPopup(focus: Phase = 'start') {
+      if (props.disabled || open.value) return
+      syncPendingFromSelected()
+      hoverDate.value = null
+      phase.value = focus
+      // 把面板对齐到现有的 start（或当前月）
+      if (selectedStart.value) viewMonth.value = selectedStart.value
+      open.value = true
+      emit('open-change', true)
+    }
+
+    function closePopup() {
+      if (!open.value) return
+      open.value = false
+      hoverDate.value = null
+      emit('open-change', false)
+    }
+
+    function emitRange(start: Dayjs | null, end: Dayjs | null) {
+      const value = emitRangeValue(start, end, props.valueFormat, props.format)
+      emit('update:modelValue', value)
+      const dateStrings: [string, string] = [
+        start ? start.format(props.format) : '',
+        end ? end.format(props.format) : '',
+      ]
+      emit('change', value, dateStrings)
+      formItem?.validate('change')
+    }
+
+    function selectDate(cell: Dayjs) {
+      if (props.disabledDate?.(cell)) return
+      if (phase.value === 'start') {
+        pendingStart.value = cell
+        pendingEnd.value = null
+        phase.value = 'end'
+        // 让面板对齐到 start 月份附近，避免 left=N right=N+1 时 user 选了 N-3 月的日期
+        return
+      }
+      // phase === 'end'
+      let s = pendingStart.value
+      let e = cell
+      // 自动调换：end < start
+      if (s && e.isBefore(s, 'day')) {
+        ;[s, e] = [e, s]
+      }
+      pendingStart.value = s
+      pendingEnd.value = e
+      emitRange(s, e)
+      closePopup()
+    }
+
+    function onCellMouseEnter(cell: Dayjs) {
+      if (phase.value === 'end' && pendingStart.value) {
+        hoverDate.value = cell
+      }
+    }
+
+    function onCellMouseLeave() {
+      // 留到鼠标移到下一个 cell；不立即清空，避免抖动
+    }
+
+    function prevMonth() {
+      viewMonth.value = viewMonth.value.subtract(1, 'month')
+    }
+    function nextMonth() {
+      viewMonth.value = viewMonth.value.add(1, 'month')
+    }
+    function prevYear() {
+      viewMonth.value = viewMonth.value.subtract(1, 'year')
+    }
+    function nextYear() {
+      viewMonth.value = viewMonth.value.add(1, 'year')
+    }
+
+    function clear(e: MouseEvent) {
+      e.stopPropagation()
+      if (!selectedStart.value && !selectedEnd.value) return
+      pendingStart.value = null
+      pendingEnd.value = null
+      emitRange(null, null)
+    }
+
+    function onClickOutside(e: MouseEvent) {
+      if (!open.value) return
+      const target = e.target as Node | null
+      if (!target) return
+      if (rootRef.value?.contains(target)) return
+      if (popupRef.value?.contains(target)) return
+      closePopup()
+    }
+
+    onMounted(() => {
+      document.addEventListener('mousedown', onClickOutside, true)
+      if (props.autoFocus) {
+        nextTick(() => startInputRef.value?.focus())
+      }
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('mousedown', onClickOutside, true)
+    })
+
+    const showClear = computed(
+      () => props.clearable && !props.disabled && (!!selectedStart.value || !!selectedEnd.value),
+    )
+
+    function isCellInRange(date: Dayjs): boolean {
+      // 已确认范围（pending start + end 都有，或受控值都有）
+      if (pendingStart.value && pendingEnd.value) {
+        return date.isAfter(pendingStart.value, 'day') && date.isBefore(pendingEnd.value, 'day')
+      }
+      return false
+    }
+
+    function isCellInHoverRange(date: Dayjs): boolean {
+      if (phase.value !== 'end' || !pendingStart.value || !hoverDate.value) return false
+      const start = pendingStart.value
+      const hover = hoverDate.value
+      const min = hover.isBefore(start, 'day') ? hover : start
+      const max = hover.isBefore(start, 'day') ? start : hover
+      return date.isAfter(min, 'day') && date.isBefore(max, 'day')
+    }
+
+    function isCellRangeStart(date: Dayjs): boolean {
+      return !!pendingStart.value && isSameDay(date, pendingStart.value)
+    }
+
+    function isCellRangeEnd(date: Dayjs): boolean {
+      return !!pendingEnd.value && isSameDay(date, pendingEnd.value)
+    }
+
+    function renderPanelHeader(side: 'left' | 'right') {
+      const month = side === 'left' ? leftMonth.value : rightMonth.value
+      const showLeftArrows = side === 'left'
+      const showRightArrows = side === 'right'
+      return (
+        <div class={ns.e('panel-header')}>
+          {showLeftArrows ? (
+            <>
+              <button
+                type="button"
+                class={[ns.e('arrow'), ns.em('arrow', 'prev-year')]}
+                aria-label="前一年"
+                onClick={prevYear}
+              >
+                «
+              </button>
+              <button
+                type="button"
+                class={[ns.e('arrow'), ns.em('arrow', 'prev-month')]}
+                aria-label="上个月"
+                onClick={prevMonth}
+              >
+                ‹
+              </button>
+            </>
+          ) : (
+            <span class={ns.e('arrow-placeholder')} aria-hidden="true" />
+          )}
+          <span class={ns.e('panel-label')}>{month.format('YYYY 年 M 月')}</span>
+          {showRightArrows ? (
+            <>
+              <button
+                type="button"
+                class={[ns.e('arrow'), ns.em('arrow', 'next-month')]}
+                aria-label="下个月"
+                onClick={nextMonth}
+              >
+                ›
+              </button>
+              <button
+                type="button"
+                class={[ns.e('arrow'), ns.em('arrow', 'next-year')]}
+                aria-label="后一年"
+                onClick={nextYear}
+              >
+                »
+              </button>
+            </>
+          ) : (
+            <span class={ns.e('arrow-placeholder')} aria-hidden="true" />
+          )}
+        </div>
+      )
+    }
+
+    function renderWeekRow() {
+      return (
+        <div class={ns.e('week-row')}>
+          {weekLabels.value.map((w) => (
+            <div class={ns.e('week-cell')}>{w}</div>
+          ))}
+        </div>
+      )
+    }
+
+    function renderGrid(cells: ReturnType<typeof generateMonthGrid>) {
+      return (
+        <div class={ns.e('grid')}>
+          {cells.map((cell) => {
+            const disabled = !!props.disabledDate?.(cell.date)
+            const isStart = isCellRangeStart(cell.date)
+            const isEnd = isCellRangeEnd(cell.date)
+            const inRange = isCellInRange(cell.date)
+            const inHover = isCellInHoverRange(cell.date)
+            const cellCls = [
+              ns.e('cell'),
+              !cell.isCurrentMonth && ns.em('cell', 'outside'),
+              cell.isToday && ns.em('cell', 'today'),
+              isStart && ns.em('cell', 'range-start'),
+              isEnd && ns.em('cell', 'range-end'),
+              inRange && ns.em('cell', 'in-range'),
+              inHover && ns.em('cell', 'in-hover-range'),
+              disabled && ns.em('cell', 'disabled'),
+            ]
+            return (
+              <div
+                class={cellCls}
+                role="gridcell"
+                aria-disabled={disabled}
+                onClick={() => !disabled && selectDate(cell.date)}
+                onMouseenter={() => onCellMouseEnter(cell.date)}
+                onMouseleave={onCellMouseLeave}
+              >
+                <span class={ns.e('cell-inner')}>{cell.day}</span>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
+    function buildPopup() {
+      const popupCls = [ns.e('panel'), props.popupClassName].filter(Boolean) as string[]
+      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, [
+        <div class={ns.e('panels')}>
+          <div class={[ns.e('panel-side'), ns.em('panel-side', 'left')]}>
+            {renderPanelHeader('left')}
+            {renderWeekRow()}
+            {renderGrid(leftGrid.value)}
+          </div>
+          <div class={[ns.e('panel-side'), ns.em('panel-side', 'right')]}>
+            {renderPanelHeader('right')}
+            {renderWeekRow()}
+            {renderGrid(rightGrid.value)}
+          </div>
+        </div>,
+      ])
+    }
+
+    function renderPopup() {
+      const popup = open.value ? buildPopup() : null
+      const transitioned = h(
+        Transition as never,
+        { name: props.transitionName, appear: true },
+        { default: () => popup },
+      )
+      if (teleported.value && popupContainer.value) {
+        return h(Teleport, { to: popupContainer.value }, [transitioned])
+      }
+      return transitioned
+    }
+
+    const rootCls = computed(() => [
+      ns.b(),
+      props.disabled && ns.is('disabled'),
+      open.value && ns.is('open'),
+      ns.m(props.size),
+      mergedStatus.value && ns.m(`status-${mergedStatus.value}`),
+    ])
+
+    return () => (
+      <div ref={rootRef} class={rootCls.value}>
+        <div class={ns.e('input-wrap')}>
+          <input
+            ref={startInputRef}
+            class={[ns.e('input'), ns.em('input', 'start')]}
+            type="text"
+            readonly={props.inputReadOnly}
+            disabled={props.disabled}
+            placeholder={props.placeholder[0]}
+            value={startInputDisplay.value}
+            aria-haspopup="dialog"
+            aria-expanded={open.value && phase.value === 'start'}
+            onClick={() => openPopup('start')}
+            onFocus={() => emit('focus')}
+            onBlur={() => emit('blur')}
+          />
+          <span class={ns.e('separator')} aria-hidden="true">
+            {props.separator}
+          </span>
+          <input
+            ref={endInputRef}
+            class={[ns.e('input'), ns.em('input', 'end')]}
+            type="text"
+            readonly={props.inputReadOnly}
+            disabled={props.disabled}
+            placeholder={props.placeholder[1]}
+            value={endInputDisplay.value}
+            aria-haspopup="dialog"
+            aria-expanded={open.value && phase.value === 'end'}
+            onClick={() => openPopup('end')}
+            onFocus={() => emit('focus')}
+            onBlur={() => emit('blur')}
+          />
+          {showClear.value ? (
+            <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
+              ×
+            </span>
+          ) : (
+            <span class={ns.e('suffix')} aria-hidden="true">
+              📅
+            </span>
+          )}
+        </div>
+        {renderPopup()}
+      </div>
+    )
+  },
+})

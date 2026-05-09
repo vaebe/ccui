@@ -198,6 +198,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'RangePicker 日期范围',
+          link: '/components/range-picker/',
+          status: '80%',
+        },
+        {
           text: 'Select 选择器',
           link: '/components/select/',
           status: '100%',

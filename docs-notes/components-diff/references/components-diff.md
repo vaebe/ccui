@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 64 个一级目录，其中 62 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：62 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，本批次 P1 推进至第 2 项：新增 TimePicker 80%（45 用例），扩 `shared/utils/date.ts` 加 `buildTimeColumnValues` 通用列构造函数，被 TimePicker 三列以及未来 DatePicker showTime 共用。DatePicker 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用上一批次状态。
+> 当前项目目录：`packages/ccui/ui` 下共 65 个一级目录，其中 63 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：63 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，本批次 P1 推进至第 3 项：新增独立 RangePicker 80%（38 用例），双面板（左 N / 右 N+1）+ start-end 状态机 + hover in-range 预览 + end<start 自动调换。复用 DatePicker 同款 dayjs 工具层与 `valueFormat` 三档。DatePicker 80% / TimePicker 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用前批状态。
 
 ## 零、交付完整度口径
 
@@ -14,7 +14,7 @@
 - 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
-## 一、已覆盖组件（62 项）
+## 一、已覆盖组件（63 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态   |
 | --------------------- | ----------------------- | --------------- | ------ |
@@ -57,6 +57,7 @@
 | Popover               | Popover 气泡卡片        | 反馈            | 已完成 |
 | Progress              | Progress 进度条         | 反馈            | 已完成 |
 | Radio                 | Radio 单选框            | 数据录入        | 已完成 |
+| RangePicker           | DatePicker.RangePicker  | 数据录入        | 80%    |
 | Rate                  | Rate 评分               | 数据录入        | 已完成 |
 | Result                | Result 结果             | 反馈            | 已完成 |
 | Segmented             | Segmented 分段控制器    | 数据展示        | 已完成 |
@@ -96,19 +97,20 @@
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（7 项剩余 + 2 项推进中）
+### 复杂组件（7 项剩余 + 3 项推进中）
 
-| 组件                  | 分类     | 复杂点                                                                                            | 建议优先级   |
-| --------------------- | -------- | ------------------------------------------------------------------------------------------------- | ------------ |
-| DatePicker 日期选择框 | 数据录入 | range / week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选） | P1（推进中） |
-| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）      | P1（推进中） |
-| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                                                                          | P1           |
-| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                    | P1           |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                    | P2           |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                  | P2           |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                 | P2           |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                               | P3           |
-| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                      | P3           |
+| 组件                  | 分类     | 复杂点                                                                                                                           | 建议优先级   |
+| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付 | P1（推进中） |
+| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）           | P1（推进中） |
+| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                     | P1（推进中） |
+| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                                                                                                         | P1           |
+| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                                                   | P1           |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                   | P2           |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                 | P2           |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                                                | P2           |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                              | P3           |
+| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                                                     | P3           |
 
 ## 三、本轮交付记录
 
@@ -243,6 +245,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 22：RangePicker 80% 首次交付（双面板 + hover 预览 + 自动调换）
+
+已完成 1 项：RangePicker（80%）。独立组件 `packages/ccui/ui/range-picker/`，**不在 DatePicker 上加 `mode='range'`**：现有 DatePicker 80% props 已不少，叠 range mode 会让 modelValue 类型分裂、disabledDate 签名分裂、hover 状态新增成 props，损耗 single 单选用户的可读性与测试隔离。Ant Design 也是分两个组件。复用 `shared/utils/date.ts` 的 `toDayjs / emitValue / generateMonthGrid / isSameDay` 与 `@floating-ui/vue` 同款 popup 模式，零新增工具层。
+
+关键能力：
+
+- **协议**：`v-model` 是 `[start, end]` 数组，与 DatePicker 同款 `valueFormat` 三档（`['string','string']` / `[Date,Date]` / `[number,number]`，全空时 = `null`）。`change(value, [startStr, endStr])` 同时 emit 数组值与格式化字符串对。`disabledDate(current: Dayjs) => boolean` 一份共用，对 start / end 都生效（独立 disabledDate 留下一切片）。
+- **双面板**：左 `viewMonth`，右 `viewMonth + 1`。左 panel header 只有 `‹ 上月 / « 上年`，右 panel header 只有 `下月 › / 下年 »`，中间 label 不可点。一个 `viewMonth` 控制左面板，右面板永远 `+1` 跟随，避免左右独立 viewMonth 的同步成本。
+- **状态机 phase: 'start' | 'end'**：打开面板时 phase=`start`（除非 click end input 直接 phase=`end`）；点击日期把 cell 设为 pendingStart，phase 切到 `end`，pendingEnd 重置为 null；下一次点击若 cell.isBefore(pendingStart) 则 `[s, e] = [e, s]` 自动调换，否则按选中顺序 emit `[start, end]` 并关闭。两次提交都满足 `start <= end`。
+- **hover in-range 预览**：phase=`end` 且 pendingStart 已选时，cell `mouseenter` 把 hoverDate 设为该 cell。`isCellInHoverRange(d)` 计算 `min(start, hover)` 与 `max(start, hover)` 之间（不含两端）的 cell 加 `--in-hover-range` modifier，实时给用户「此刻提交将选这一段」的视觉反馈。`mouseleave` 不立即清空 hoverDate（避免抖动），closePopup 时统一清。
+- **已确认 in-range**：pendingStart && pendingEnd 都有时，两端之间的 cell 加 `--in-range`；两端本身加 `--range-start` / `--range-end` 配合 `--in-range` 的浅蓝背景画出连续 hue。
+- **input 显示分流**：打开期间 `startInputDisplay` 显示 pendingStart、`endInputDisplay` 显示 pendingEnd，让用户在选 start 后能立刻看到「左 input 已填好、右 input 等待」；关闭时回退到 selectedStart / selectedEnd 受控值。
+- **clear 一键清空**：清按钮 `e.stopPropagation()` 不触发面板打开，把 pendingStart / pendingEnd 设 null 并 emit `null`，`change` 的 dateStrings 退化成 `['', '']`。
+- **Teleport / Form 联动**：与 DatePicker 同套机制——`popupAppendToBody` + 自定义 `getPopupContainer` 用 `teleported` computed 切换 floating 的 fixed/absolute 策略；`formItemInjectionKey` inject `validateStatus` 合并到 `mergedStatus`，emit 同步触发 `formItem?.validate('change')`。
+- 文档：基础 / 显示已选区间 / 自定义格式（valueFormat 三档）/ 自动调换（end<start）/ 禁用日期 / 自定义分隔符与占位 / 三种尺寸 / 表单联动 / 弹层容器；API Props 表 18 行 + Events 表 5 行 + 已知限制（preset / showTime / 独立 disabledDate / 键盘 / 响应式单面板）。
+- 测试：38 个用例。基础渲染（默认/自定义 placeholder + separator、3 类 modelValue + format + null）；popup（start/end input 都能打开、outside 关、disabled 不开、双面板月相邻、autoFocus 落在 start input）；selection flow（首次只设 pending start、二次提交并关、end<start 自动调换、跨月 start-left-end-right、valueFormat 三档输出 + 类型校验）；hover preview（in-hover-range 数量精确为 hover 与 start 之间的非端点 cell、phase=start 阶段无 hover 高亮、已确认 in-range 数量、range-start/end modifier 文本）；disabledDate；月切换（左 prev、右 next 联动）；clearable 4 种 + size 三档 + status；Form integration + Teleport 两种容器 + 外部 v-model 回写（无初始值场景）。
+
+工程决策：
+
+- **不抽 `use-date-popup` 通用 hook**：跟 TimePicker 一样的判断——DatePicker / RangePicker / TimePicker 三个组件 popup 的 cell 渲染差异（grid / 双 grid / columns）足够大，再不同的 emit 协议（单值 / 数组 / 单值），抽出来要传一堆 render slot 与 callback，反而损可读性。等做第四个浮层组件（Cascader / TreeSelect）时再回头看是否值得抽。
+- **emit 路径仅在第二次点击触发**：第一次点击只更 pending state，不发 `update:modelValue` 也不调 `formItem.validate('change')`。这避免「点了 start 还没选完 end，Form rules 已经认为只有 start 是无效输入」这种半成品校验。
+- **hover 不立即清空**：`mouseleave` 故意不清 hoverDate。原因是格子之间的 1px 间隙会触发 mouseleave-enter 抖动，每次都清掉再重建会让 in-hover-range 高亮闪烁。下次 mouseenter 自然覆盖。closePopup / phase 切换时统一清。
+- **`isBefore` 而不是 `<` 比较**：所有日期比较都走 dayjs 的 `isBefore(other, 'day')` / `isAfter(other, 'day')`，确保按"日"粒度比较，避免外部传入带时分秒的 Date 时把同一天的不同时刻误判成 before/after。
+- **`emitRangeValue` 助手函数提到顶层模块**：内部 helper，不导出到 components 公共 API；同时把 `start && end 都为 null → null` 的特殊形态也封装在这里，调用点不需要重复判 null。
+
+验证结果：
+
+- `vp check` 通过（302 文件 lint/type 全干净）。
+- 从 `packages/ccui` 跑 `pnpm test ui/range-picker --run` 通过 38/38。
 
 ### Batch 21：TimePicker 80% 首次交付（24 小时三列 + step + disabled + footer）
 

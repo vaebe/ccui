@@ -39,6 +39,7 @@ import PopconfirmInstall, { Popconfirm } from './popconfirm'
 import PopoverInstall, { Popover } from './popover'
 import ProgressInstall, { Progress } from './progress'
 import RadioInstall, { Radio, RadioGroup } from './radio'
+import RangePickerInstall, { RangePicker } from './range-picker'
 import RateInstall, { Rate } from './rate'
 import ResultInstall, { Result } from './result'
 import SegmentedInstall, { Segmented } from './segmented'
@@ -117,6 +118,7 @@ const installs = [
   PopoverInstall,
   ProgressInstall,
   RadioInstall,
+  RangePickerInstall,
   RateInstall,
   ResultInstall,
   SegmentedInstall,
@@ -203,6 +205,7 @@ export {
   Progress,
   Radio,
   RadioGroup,
+  RangePicker,
   Rate,
   Result,
   Segmented,

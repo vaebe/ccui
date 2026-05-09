@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **62 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **63 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -107,6 +107,7 @@ app.mount('#app')
 - **Input** - 输入框
 - **InputNumber** - 数字输入框
 - **Radio** - 单选框
+- **RangePicker** - 日期范围（80%，双面板 + hover 预览 + 自动调换 + Form 联动 + Teleport）
 - **Select** - 选择器（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）
 - **Slider** - 滑块
 - **Switch** - 开关
