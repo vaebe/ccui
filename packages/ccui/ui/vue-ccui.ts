@@ -61,6 +61,7 @@ import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
 import TreeInstall, { Tree } from './tree'
+import TreeSelectInstall, { TreeSelect } from './tree-select'
 import TypographyInstall, { Link, Paragraph, Text, Title, Typography } from './typography'
 import UtilInstall, {
   canUseDom,
@@ -141,6 +142,7 @@ const installs = [
   TimelineInstall,
   TooltipInstall,
   TreeInstall,
+  TreeSelectInstall,
   TypographyInstall,
   UtilInstall,
   WatermarkInstall,
@@ -233,6 +235,7 @@ export {
   TimelineItem,
   Tooltip,
   Tree,
+  TreeSelect,
   Link,
   Paragraph,
   Text,

@@ -227,6 +227,11 @@ export default {
           link: '/components/time-picker/',
           status: '80%',
         },
+        {
+          text: 'TreeSelect 树选择',
+          link: '/components/tree-select/',
+          status: '80%',
+        },
       ],
     },
     {

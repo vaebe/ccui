@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 66 个一级目录，其中 64 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：64 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，本批次 P1 推进至第 4 项：新增 Cascader 80%（39 用例），多列联动面板 + 路径数组 v-model + fieldNames 字段映射 + changeOnSelect 中间节点提交。复用 DatePicker / RangePicker 同款 popup + Form 联动 + Teleport 模式。DatePicker / TimePicker / RangePicker 各 80%、Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用前批状态。
+> 当前项目目录：`packages/ccui/ui` 下共 67 个一级目录，其中 65 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：65 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，本批次 P1 推进至第 5 项 / **P1 数据录入复杂组件 5/5 全部 80% 完成**：新增 TreeSelect 80%（43 用例），单选 + 多选 checkable + treeCheckStrictly + fieldNames 内部映射到 c-tree。复用现有 c-tree 当 popup 内容、复用 DatePicker / Cascader 同款 popup 模式 + Form 联动 + Teleport。DatePicker / TimePicker / RangePicker / Cascader / TreeSelect 全部 80%、Form / Table 95%、Icon / Select / Tree / Affix 100%。
 
 ## 零、交付完整度口径
 
@@ -14,7 +14,7 @@
 - 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
-## 一、已覆盖组件（64 项）
+## 一、已覆盖组件（65 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态   |
 | --------------------- | ----------------------- | --------------- | ------ |
@@ -79,6 +79,7 @@
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
+| TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
 | Typography            | Typography 排版         | 通用            | 已完成 |
 | Util                  | 工具函数集合            | 通用            | 已完成 |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成 |
@@ -98,20 +99,20 @@
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（6 项剩余 + 4 项推进中）
+### 复杂组件（5 项剩余 + 5 项推进中，P1 数据录入复杂组件 5/5 已 80% 收口）
 
-| 组件                  | 分类     | 复杂点                                                                                                                           | 建议优先级   |
-| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付 | P1（推进中） |
-| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）           | P1（推进中） |
-| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                     | P1（推进中） |
-| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）  | P1（推进中） |
-| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                                                   | P1           |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                   | P2           |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                 | P2           |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                                                | P2           |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                              | P3           |
-| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                                                     | P3           |
+| 组件                  | 分类     | 复杂点                                                                                                                                    | 建议优先级   |
+| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付          | P1（推进中） |
+| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）                    | P1（推进中） |
+| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                              | P1（推进中)  |
+| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）           | P1（推进中） |
+| TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly） | P1（推进中） |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                            | P2           |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                          | P2           |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                                                         | P2           |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
+| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                                                              | P3           |
 
 ## 三、本轮交付记录
 
@@ -246,6 +247,51 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 24：TreeSelect 80% 首次交付（P1 数据录入复杂组件 5/5 收口）
+
+已完成 1 项：TreeSelect（单选 80% + 多选 checkable 80%）。**P1 数据录入复杂组件 5/5 全部 80% 收口**：DatePicker / TimePicker / RangePicker / Cascader / TreeSelect。
+
+关键能力：
+
+- **架构 — popup 内嵌 c-tree**：TreeSelect 不重写 Tree 渲染，直接把现有的 `c-tree` 当浮层内容。这是本批次最大的工程红利——Tree 已经支持 `selectable / multiple / checkable / checkStrictly / selectedKeys / checkedKeys / expandedKeys / defaultExpandAll / fieldNames / blockNode / disabled` 等完整能力，TreeSelect 只需做「外壳 + 状态桥接 + 输入框渲染」。
+- **fieldNames 双层映射**：TreeSelect 对外暴露 `{ label, value, children, disabled }`（与 Cascader / Select 一致），内部通过 `toTreeFieldNames` 转成 `c-tree` 的 `{ title, key, children, disabled }`。业务端只用一套字段名习惯，不必在 Cascader / TreeSelect / Tree 之间切换。
+- **v-model 类型分支**：`modelValue` 在单选时是 `string | number | null`，多选时是 `(string | number)[] | null`。`normalizeMultipleValue` 把单值包成数组喂给 `c-tree` 的 `selectedKeys` / `checkedKeys`；emit 时单选只取 `keys.at(-1)`，多选回数组（empty 转 null 与其他 picker 一致）。
+- **三种交互模式**：
+  - **单选** (`multiple=false`，默认)：`c-tree selectable selectedKeys=[v]`。点击任意节点（含父节点）→ emit + close。
+  - **多选 checkable** (`multiple=true treeCheckable=true`，默认)：`c-tree checkable checkedKeys=v selectable=false`。监听 `check` 事件 emit 数组，select 不响应。父子节点联动除非 `treeCheckStrictly=true`。
+  - **多选 selectable** (`multiple=true treeCheckable=false`)：`c-tree multiple selectable selectedKeys=v`。监听 `select` 事件 emit 数组，不显示 checkbox。
+- **多选 tags 渲染**：`buildNodeIndex` 一次性扁平化整棵 treeData 成 `Map<key, {label, disabled}>`，从 modelValue 反查 label 拼成 tags；超过 `maxTagCount` 折叠成 `+ N` 占位 tag。单 tag 移除：`removeTag(e, key)` `e.stopPropagation()` 不触发面板打开，`emitChange(filtered.length === 0 ? null : filtered)`。
+- **clear 一键清空**：单选 / 多选都 emit `null`（与 Cascader / DatePicker 一致），`stopPropagation` 不触发面板打开。
+- **Teleport / Form 联动**：与前 4 个 P1 组件同套（`popupAppendToBody` + 自定义 `getPopupContainer` + `formItemInjectionKey` 注入校验状态 + `emitChange` 同步触发 `formItem?.validate('change')`）。
+- **空数据兜底**：`treeData: []` 时面板渲染 `notFoundContent`（默认 `暂无数据`）占位，不触发 c-tree mount。
+- 文档：单选 / 多选 / treeCheckStrictly / 多选 selectable / fieldNames / 三种尺寸 / 表单联动 / 弹层容器；API Props 23 行 + Events 5 行 + 已知限制（showSearch / loadData / showCheckedStrategy / 键盘 / halfCheckedKeys 输出）。
+- 测试：43 个用例。基础渲染（默认/自定义 placeholder + modelValue label 反查 + 单值未知降级 + null 兜底）；多选渲染（tags 数量 + 内容、placeholder 占位、`+ N` 折叠 tag、多选模式无 input 元素、tag close 单移除 + stopPropagation、最后一个移除 emit null、disabled 时无 close 按钮）；popup（click 切换 / outside / disabled / empty + 自定义 notFoundContent）；single selection（叶子提交 + close、change 带 labels 数组、父节点单选可选）；multiple checkable（check emit 数组、追加 keys、uncheck 退出、checkable 模式渲染 checkbox、treeCheckable=false 不渲染 checkbox、selectable 模式不关面板）；fieldNames 自定义；clearable 5 种 + size 三档 + status + is-multiple modifier；Form integration + Teleport 两种容器 + 单选外部 v-model 回写。
+
+工程决策：
+
+- **不在 c-tree 上加 wrapper component，直接 `h(Tree, props)`**：TreeSelect 对 c-tree 的需求是 props 驱动 + 事件透传，没有自定义渲染需求。直接 `h(Tree, baseProps)` 比 `<c-tree>` 模板简洁，省去 setup 中模板编译开销。
+- **buildNodeIndex 一次性扁平化**：tags 渲染需要 `value → label` 反查，每次 modelValue 变化逐节点 walk 是 O(N) 的开销但实现简单。如果 treeData 很大可以加 memoize，但 80% 切片不优化。
+- **`treeCheckable=true` 是默认（与 multiple 配合）**：与 Ant Design TreeSelect 的常用模式一致——多选场景下用户期望看到 checkbox。`treeCheckable=false` 留给「想要 c-tree 多选 selectable 视觉效果」的少数用户。
+- **不在 v-model 中输出 halfCheckedKeys**：c-tree 的 check 事件第二参带 halfCheckedKeys，业务可以监听 `c-tree-select` 自身的 `change` 事件（含全集 checkedKeys）或直接渲染 c-tree 处理。把半选状态放进 v-model 会让类型膨胀，留下一切片或单独 `halfCheckedKeys` prop 处理。
+- **`buildPopup` 直接渲染 `Tree`，不复用第三方包装**：保持 popup 内容与外壳的关注点分离，Tree 自身的 popup 行为（如展开/收起动画、键盘导航后续接通）不影响 TreeSelect 的 popup 容器层。
+
+P1 数据录入复杂组件全景（5/5 全部 80%）：
+
+| 组件        | 用例数 | 共享                                                      | 80% 范围                                           |
+| ----------- | ------ | --------------------------------------------------------- | -------------------------------------------------- |
+| DatePicker  | 40     | shared/utils/date.ts + popup 模式                         | date 单选 + valueFormat 三档 + disabledDate        |
+| TimePicker  | 45     | shared/utils/date.ts (buildTimeColumnValues) + popup 模式 | 24h 三列 + step + disabled + now/ok                |
+| RangePicker | 38     | shared/utils/date.ts + popup 模式                         | 双面板 + hover 预览 + 自动调换                     |
+| Cascader    | 39     | popup 模式                                                | 单选 + fieldNames + changeOnSelect + displayRender |
+| TreeSelect  | 43     | popup 模式 + c-tree                                       | 单选 + 多选 checkable + treeCheckStrictly + tags   |
+
+累计 205 个 P1 新增测试用例。所有 5 个组件共享：`@floating-ui/vue` placement / Teleport + Transition / Form `formItemInjectionKey` 联动 / click outside 关闭 / 与 emit 同步触发 `validate('change')`。
+
+验证结果：
+
+- `vp check` 通过（310 文件 lint/type 全干净）。
+- 从 `packages/ccui` 跑 `pnpm test ui/tree-select --run` 通过 43/43。
 
 ### Batch 23：Cascader 80% 首次交付（多列联动 + 路径数组 v-model）
 

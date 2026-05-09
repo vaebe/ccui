@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **64 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **65 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -113,6 +113,7 @@ app.mount('#app')
 - **Slider** - 滑块
 - **Switch** - 开关
 - **TimePicker** - 时间选择框（80%，含 hourStep / disabledHours / showHour-Minute-Second / now+ok / Form 联动 / Teleport）
+- **TreeSelect** - 树选择（80%，单选 / 多选 checkable / treeCheckStrictly / fieldNames / Form 联动 / Teleport）
 
 ### 数据展示
 
@@ -146,13 +147,12 @@ app.mount('#app')
 
 ### 还没交付的常见组件
 
-| 组件                            | 复杂度 | 备注                                    |
-| ------------------------------- | ------ | --------------------------------------- |
-| TreeSelect                      | 复杂   | 复用 Tree + Select；Cascader 已交付 80% |
-| Transfer / Upload               | 复杂   | 独立大任务                              |
-| AutoComplete                    | 中等   | 依赖 Select / Input 稳定                |
-| Carousel / QRCode / ColorPicker | 中等   | 见路线图                                |
-| Mentions / Tour                 | 体验型 | 见路线图                                |
+| 组件                            | 复杂度 | 备注                     |
+| ------------------------------- | ------ | ------------------------ |
+| Transfer / Upload               | 复杂   | 独立大任务               |
+| AutoComplete                    | 中等   | 依赖 Select / Input 稳定 |
+| Carousel / QRCode / ColorPicker | 中等   | 见路线图                 |
+| Mentions / Tour                 | 体验型 | 见路线图                 |
 
 ## 📖 文档
 
