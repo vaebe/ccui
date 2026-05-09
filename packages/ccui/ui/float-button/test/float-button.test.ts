@@ -123,17 +123,24 @@ describe('backTop', () => {
   it('uses window as the default target when scroll APIs are mocked', async () => {
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation(rafNow)
     const scrollToSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
-    vi.spyOn(window, 'scrollY', 'get').mockReturnValue(160)
+
+    // jsdom 的 scrollY 在 window 自身或原型上，用 defineProperty 覆盖
+    Object.defineProperty(window, 'scrollY', { get: () => 160, configurable: true })
 
     const wrapper = mount(BackTop, {
       props: { visibilityHeight: 100, duration: 0 },
       attachTo: document.body,
     })
-    window.dispatchEvent(new Event('scroll'))
+
+    // onMounted 已调用 onScroll()，但 <Transition> 需要额外 tick
+    await nextTick()
     await nextTick()
 
     expect(wrapper.find(ns.b()).exists()).toBe(true)
     await wrapper.find(ns.b()).trigger('click')
     expect(scrollToSpy).toHaveBeenCalledWith(0, 0)
+
+    // 恢复
+    Object.defineProperty(window, 'scrollY', { get: () => 0, configurable: true })
   })
 })

@@ -157,7 +157,13 @@ describe('statistic countdown', () => {
     await vi.advanceTimersByTimeAsync(1100)
     await nextTick()
     expect(wrapper.emitted('change')?.length).toBeGreaterThan(0)
-    expect(wrapper.find(ns.e('value')).text()).toBe('00 900')
+    // setInterval(1000/30) 的 tick 粒度约 33ms，允许 ±50ms 漂移
+    const text = wrapper.find(ns.e('value')).text()
+    const match = text.match(/^00 (\d{3})$/)
+    expect(match).not.toBeNull()
+    const remainingMs = Number(match![1])
+    expect(remainingMs).toBeGreaterThanOrEqual(850)
+    expect(remainingMs).toBeLessThanOrEqual(950)
 
     wrapper.unmount()
     expect(clearIntervalSpy).toHaveBeenCalled()

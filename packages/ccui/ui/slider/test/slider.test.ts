@@ -4,674 +4,319 @@ import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Slider } from '../index'
 
 const ns = useNamespace('slider', true)
-const baseClass = ns.b()
-const wrapperClass = ns.e('wrapper')
-const trackClass = ns.e('track')
-const buttonClass = ns.e('button')
 
-describe('slider', () => {
-  let wrapper: any
-
-  // Helper function to create mock rect
-  const createMockRect = (width = 100, height = 32) => ({
+// Helper: mock getBoundingClientRect on wrapper element
+function stubSliderRect(wrapper: any, width = 200, height = 32) {
+  const el = wrapper.find(ns.e('wrapper')).element
+  vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
     left: 0,
-    width,
     top: 0,
+    width,
     height,
     right: width,
     bottom: height,
-  })
+    x: 0,
+    y: 0,
+    toJSON() {},
+  } as DOMRect)
+}
 
-  it('dom', () => {
-    wrapper = mount(Slider)
+describe('slider', () => {
+  // ─── 渲染 ─────────────────────────────────────────────
 
-    expect(wrapper.find(baseClass).exists()).toBe(true)
-    expect(wrapper.find(wrapperClass).exists()).toBe(true)
-    expect(wrapper.find(trackClass).exists()).toBe(true)
-    expect(wrapper.find(buttonClass).exists()).toBe(true)
-
+  it('renders track, bar, and button', () => {
+    const wrapper = mount(Slider)
+    expect(wrapper.find(ns.b()).exists()).toBe(true)
+    expect(wrapper.find(ns.e('wrapper')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('track')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('button')).exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('props - modelValue', () => {
-    const modelValue = 50
-    wrapper = mount(Slider, {
-      props: {
-        modelValue,
-      },
-    })
-
-    expect(wrapper.vm.currentValue).toBe(modelValue)
+  it('positions bar width from modelValue', () => {
+    const wrapper = mount(Slider, { props: { modelValue: 40 } })
+    const bar = wrapper.find(ns.e('bar'))
+    expect((bar.element as HTMLElement).style.width).toBe('40%')
     wrapper.unmount()
   })
 
-  it('props - range mode', () => {
-    wrapper = mount(Slider, {
-      props: {
-        range: true,
-        modelValue: [20, 80],
-      },
-    })
-
-    expect(wrapper.vm.currentValue).toEqual([20, 80])
+  it('renders two buttons in range mode', () => {
+    const wrapper = mount(Slider, { props: { range: true, modelValue: [20, 80] } })
     expect(wrapper.findAll(ns.e('button-wrapper')).length).toBe(2)
     wrapper.unmount()
   })
 
-  it('props - disabled', () => {
-    wrapper = mount(Slider, {
-      props: {
-        disabled: true,
-      },
-    })
-
+  it('applies disabled modifier and prevents interaction', async () => {
+    const wrapper = mount(Slider, { props: { disabled: true, modelValue: 50 } })
     expect(wrapper.find(ns.m('disabled')).exists()).toBe(true)
-    expect(wrapper.find(ns.em('button', 'disabled')).exists()).toBe(true)
+
+    stubSliderRect(wrapper)
+    await wrapper.find(ns.e('wrapper')).trigger('click', { clientX: 100 })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     wrapper.unmount()
   })
 
-  it('props - vertical', () => {
-    wrapper = mount(Slider, {
-      props: {
-        vertical: true,
-      },
-    })
-
+  it('applies vertical modifier', () => {
+    const wrapper = mount(Slider, { props: { vertical: true } })
     expect(wrapper.find(ns.m('vertical')).exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('props - showTooltip', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        showTooltip: true,
-        modelValue: 50,
-      },
-    })
-
-    const button = wrapper.find(ns.e('button'))
-    await button.trigger('mouseenter')
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('visible')).toBe(true)
-    expect(tooltipComponent.props('content')).toBe('50')
+  it('applies size modifier', () => {
+    const wrapper = mount(Slider, { props: { size: 'large' } })
+    expect(wrapper.find(ns.m('large')).exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('props - showTooltip false', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showTooltip: false,
-      },
-    })
+  // ─── ARIA ──────────────────────────────────────────────
 
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(false)
+  it('sets aria attributes on button', () => {
+    const wrapper = mount(Slider, { props: { modelValue: 30, min: 0, max: 100 } })
+    const btn = wrapper.find(ns.e('button'))
+    expect(btn.attributes('role')).toBe('slider')
+    expect(btn.attributes('aria-valuemin')).toBe('0')
+    expect(btn.attributes('aria-valuemax')).toBe('100')
+    expect(btn.attributes('aria-valuenow')).toBe('30')
     wrapper.unmount()
   })
 
-  it('props - showInput', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-      },
-    })
+  it('applies ariaLabel and label props', () => {
+    const w1 = mount(Slider, { props: { ariaLabel: 'Volume' } })
+    expect(w1.find(ns.e('wrapper')).attributes('aria-label')).toBe('Volume')
+    w1.unmount()
 
+    const w2 = mount(Slider, { props: { label: 'Brightness' } })
+    expect(w2.attributes('aria-label')).toBe('Brightness')
+    w2.unmount()
+  })
+
+  it('range mode shows custom aria labels for start and end', () => {
+    const wrapper = mount(Slider, {
+      props: { range: true, modelValue: [20, 80], rangeStartLabel: 'Start', rangeEndLabel: 'End' },
+    })
+    const buttons = wrapper.findAll(ns.e('button'))
+    expect(buttons[0].attributes('aria-label')).toBe('Start')
+    expect(buttons[1].attributes('aria-label')).toBe('End')
+    wrapper.unmount()
+  })
+
+  it('formatValueText customizes aria-valuetext', () => {
+    const wrapper = mount(Slider, {
+      props: { modelValue: 50, formatValueText: (v: number) => `${v} degrees` },
+    })
+    expect(wrapper.find(ns.e('button')).attributes('aria-valuetext')).toBe('50 degrees')
+    wrapper.unmount()
+  })
+
+  // ─── 点击交互 ─────────────────────────────────────────
+
+  it('click on slider emits precise value aligned to step', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 0, step: 10, min: 0, max: 100 } })
+    stubSliderRect(wrapper, 200)
+
+    // clientX=50 → 25% of 200px → 25 → rounded to step 10 → 30
+    await wrapper.find(ns.e('wrapper')).trigger('click', { clientX: 50 })
+
+    const emitted = wrapper.emitted('update:modelValue')!
+    expect(emitted).toBeDefined()
+    expect(emitted[0][0]).toBe(30)
+
+    // also emits change and input
+    expect(wrapper.emitted('change')).toBeDefined()
+    expect(wrapper.emitted('input')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  // ─── 键盘交互 ─────────────────────────────────────────
+
+  it('ArrowRight increments by step', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 50, step: 5 } })
+    await wrapper.find(ns.e('button')).trigger('keydown', { key: 'ArrowRight' })
+
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(55)
+    expect(wrapper.emitted('change')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  it('ArrowLeft decrements by step', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 50, step: 5 } })
+    await wrapper.find(ns.e('button')).trigger('keydown', { key: 'ArrowLeft' })
+
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(45)
+    expect(wrapper.emitted('change')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  it('Home goes to min, End goes to max', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 50, min: 10, max: 90 } })
+    const btn = wrapper.find(ns.e('button'))
+
+    await btn.trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(10)
+
+    await btn.trigger('keydown', { key: 'End' })
+    expect(wrapper.emitted('update:modelValue')![1][0]).toBe(90)
+    wrapper.unmount()
+  })
+
+  it('keyboard does not emit when disabled', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 50, disabled: true } })
+    await wrapper.find(ns.e('button')).trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('ArrowRight clamps at max boundary', async () => {
+    const wrapper = mount(Slider, { props: { modelValue: 99, step: 5, max: 100 } })
+    await wrapper.find(ns.e('button')).trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(100)
+    wrapper.unmount()
+  })
+
+  // ─── 拖拽 ─────────────────────────────────────────────
+
+  it('mousedown starts drag and registers document listeners', async () => {
+    const addSpy = vi.spyOn(document, 'addEventListener')
+    const wrapper = mount(Slider, { props: { modelValue: 50 } })
+
+    stubSliderRect(wrapper)
+    await wrapper.find(ns.e('button')).trigger('mousedown', { clientX: 50, preventDefault: () => {} })
+
+    expect(addSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
+    expect(addSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
+    addSpy.mockRestore()
+    wrapper.unmount()
+  })
+
+  // ─── Tooltip ──────────────────────────────────────────
+
+  it('shows tooltip on hover with value text', async () => {
+    const wrapper = mount(Slider, { props: { showTooltip: true, modelValue: 50 } })
+    await wrapper.find(ns.e('button')).trigger('mouseenter')
+
+    const tooltip = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltip.exists()).toBe(true)
+    expect(tooltip.props('visible')).toBe(true)
+    expect(tooltip.props('content')).toBe('50')
+    wrapper.unmount()
+  })
+
+  it('hides tooltip when showTooltip is false', () => {
+    const wrapper = mount(Slider, { props: { showTooltip: false } })
+    expect(wrapper.findComponent({ name: 'CTooltip' }).exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('tipsRenderer customizes tooltip text', async () => {
+    const wrapper = mount(Slider, {
+      props: { modelValue: 5, tipsRenderer: (v: number) => `${v} apples`, showTooltip: true },
+    })
+    await wrapper.find(ns.e('button')).trigger('mouseenter')
+    expect(wrapper.findComponent({ name: 'CTooltip' }).props('content')).toBe('5 apples')
+    wrapper.unmount()
+  })
+
+  it('tipsRenderer=null clears tooltip content', () => {
+    const wrapper = mount(Slider, { props: { modelValue: 50, tipsRenderer: null } })
+    const tooltip = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltip.exists()).toBe(true)
+    expect(tooltip.props('content')).toBe('')
+    wrapper.unmount()
+  })
+
+  it('placement prop is forwarded to tooltip', async () => {
+    const wrapper = mount(Slider, {
+      props: { modelValue: 50, placement: 'bottom', showTooltip: true },
+    })
+    await wrapper.find(ns.e('button')).trigger('mouseenter')
+    expect(wrapper.findComponent({ name: 'CTooltip' }).props('placement')).toBe('bottom')
+    wrapper.unmount()
+  })
+
+  // ─── Input 联动 ────────────────────────────────────────
+
+  it('shows input number when showInput is true', () => {
+    const wrapper = mount(Slider, { props: { showInput: true, modelValue: 50 } })
     expect(wrapper.find(ns.e('input')).exists()).toBe(true)
-    expect(wrapper.find(ns.e('input-number')).exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'CInputNumber' }).exists()).toBe(true)
     wrapper.unmount()
   })
 
-  it('props - showInputControls', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        showInputControls: true,
-        modelValue: 50,
-      },
-    })
-
-    expect(wrapper.find(ns.e('input-number')).exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('props - showInputControls false', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        showInputControls: false,
-        modelValue: 50,
-      },
-    })
-
-    expect(wrapper.find(ns.e('input-controls')).exists()).toBe(false)
-    wrapper.unmount()
-  })
-
-  it('props - showInput with range should not show input', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        range: true,
-        modelValue: [20, 80],
-      },
-    })
-
+  it('hides input in range mode even if showInput is true', () => {
+    const wrapper = mount(Slider, { props: { showInput: true, range: true, modelValue: [20, 80] } })
     expect(wrapper.find(ns.e('input')).exists()).toBe(false)
     wrapper.unmount()
   })
 
-  it('props - tipsRenderer null should hide tooltip', () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        tipsRenderer: null,
-      },
-    })
+  it('input change emits clamped value', async () => {
+    const wrapper = mount(Slider, { props: { showInput: true, modelValue: 50, min: 0, max: 100 } })
+    const input = wrapper.findComponent({ name: 'CInputNumber' })
 
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('content')).toBe('')
+    await input.vm.$emit('update:modelValue', 75)
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(75)
+    expect(wrapper.emitted('change')).toBeDefined()
     wrapper.unmount()
   })
 
-  it('props - tipsRenderer custom function', async () => {
-    const tipsRenderer = (value: number) => `${value} apples`
-
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 5,
-        tipsRenderer,
-        showTooltip: true,
-      },
-    })
-
-    const button = wrapper.find(ns.e('button'))
-    await button.trigger('mouseenter')
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('visible')).toBe(true)
-    expect(tooltipComponent.props('content')).toBe('5 apples')
+  it('input value exceeding max is clamped to max', async () => {
+    const wrapper = mount(Slider, { props: { showInput: true, modelValue: 50, min: 0, max: 100 } })
+    await wrapper.findComponent({ name: 'CInputNumber' }).vm.$emit('update:modelValue', 150)
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(100)
     wrapper.unmount()
   })
 
-  it('props - placement', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        placement: 'bottom',
-        showTooltip: true,
-      },
-    })
-
-    const button = wrapper.find(ns.e('button'))
-    await button.trigger('mouseenter')
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('visible')).toBe(true)
-    expect(tooltipComponent.props('placement')).toBe('bottom')
+  it('input value below min is clamped to min', async () => {
+    const wrapper = mount(Slider, { props: { showInput: true, modelValue: 50, min: 0, max: 100 } })
+    await wrapper.findComponent({ name: 'CInputNumber' }).vm.$emit('update:modelValue', -10)
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe(0)
     wrapper.unmount()
   })
 
-  it('props - marks', () => {
-    const marks = {
-      0: '0°C',
-      25: '25°C',
-      50: '50°C',
-      75: '75°C',
-      100: '100°C',
-    }
-
-    wrapper = mount(Slider, {
-      props: {
-        marks,
-      },
-    })
-
-    expect(wrapper.findAll(ns.e('mark')).length).toBe(Object.keys(marks).length)
-    expect(wrapper.find(ns.e('mark-label')).text()).toBe('0°C')
+  it('inputSize prop is forwarded to InputNumber', () => {
+    const wrapper = mount(Slider, { props: { showInput: true, inputSize: 'large', modelValue: 50 } })
+    expect(wrapper.findComponent({ name: 'CInputNumber' }).props('size')).toBe('large')
     wrapper.unmount()
   })
 
-  it('props - showStops', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showStops: true,
-        step: 10,
-      },
-    })
+  it('showInputControls=false hides controls', () => {
+    const wrapper = mount(Slider, { props: { showInput: true, showInputControls: false, modelValue: 50 } })
+    const input = wrapper.findComponent({ name: 'CInputNumber' })
+    expect(input.props('controls')).toBe(false)
+    wrapper.unmount()
+  })
 
+  // ─── Marks & Stops ────────────────────────────────────
+
+  it('renders marks at correct positions', () => {
+    const marks = { 0: '0°C', 25: '25°C', 50: '50°C', 75: '75°C', 100: '100°C' }
+    const wrapper = mount(Slider, { props: { marks } })
+
+    const markEls = wrapper.findAll(ns.e('mark'))
+    expect(markEls.length).toBe(5)
+
+    const labels = wrapper.findAll(ns.e('mark-label'))
+    expect(labels[0].text()).toBe('0°C')
+    expect(labels[4].text()).toBe('100°C')
+    wrapper.unmount()
+  })
+
+  it('renders stops based on step', () => {
+    const wrapper = mount(Slider, { props: { showStops: true, step: 10 } })
     expect(wrapper.find(ns.e('stops')).exists()).toBe(true)
     expect(wrapper.findAll(ns.e('stop')).length).toBe(11)
     wrapper.unmount()
   })
 
-  it('props - size', () => {
-    wrapper = mount(Slider, {
-      props: {
-        size: 'large',
-      },
+  // ─── showDefaultTooltip / persistent ───────────────────
+
+  it('showDefaultTooltip overrides tipsRenderer=null', async () => {
+    const wrapper = mount(Slider, {
+      props: { modelValue: 50, tipsRenderer: null, showTooltip: true, showDefaultTooltip: true },
     })
-
-    expect(wrapper.find(ns.m('large')).exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('event - click', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 0,
-      },
-    })
-
-    const sliderWrapper = wrapper.find(wrapperClass)
-    vi.spyOn(sliderWrapper.element, 'getBoundingClientRect').mockReturnValue(createMockRect())
-
-    await sliderWrapper.trigger('click', { clientX: 50 })
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    expect(wrapper.emitted('input')).toBeTruthy()
-    wrapper.unmount()
-  })
-
-  it('event - keyboard', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-      },
-    })
-
-    const button = wrapper.find(buttonClass)
-    await button.trigger('keydown', { key: 'ArrowRight' })
-
-    expect(wrapper.emitted('change')).toBeTruthy()
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    wrapper.unmount()
-  })
-
-  it('event - keyboard Home and End', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const button = wrapper.find(buttonClass)
-
-    // Test Home key
-    await button.trigger('keydown', { key: 'Home' })
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-
-    // Test End key
-    await button.trigger('keydown', { key: 'End' })
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    wrapper.unmount()
-  })
-
-  it('event - drag', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-      },
-    })
-
-    const button = wrapper.find(buttonClass)
-    vi.spyOn(wrapper.vm.sliderRef, 'getBoundingClientRect').mockReturnValue(createMockRect())
-
-    await button.trigger('mousedown', { clientX: 50 })
-    expect(wrapper.vm.isDragging).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('disabled state', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        disabled: true,
-        modelValue: 50,
-      },
-    })
-
-    const sliderWrapper = wrapper.find(wrapperClass)
-    await sliderWrapper.trigger('click')
-
-    expect(wrapper.emitted('update:modelValue')).toBeFalsy()
-    wrapper.unmount()
-  })
-
-  it('formatTooltip function', () => {
-    const formatTooltip = (value: number) => `${value}%`
-
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        formatTooltip,
-      },
-    })
-
-    expect(wrapper.vm.formatTooltipText(50)).toBe('50%')
-    wrapper.unmount()
-  })
-
-  it('tipsRenderer function', () => {
-    const tipsRenderer = (value: number) => `${value} apples`
-
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 5,
-        tipsRenderer,
-      },
-    })
-
-    expect(wrapper.vm.formatTooltipText(5)).toBe('5 apples')
-    wrapper.unmount()
-  })
-
-  it('step calculation', () => {
-    wrapper = mount(Slider, {
-      props: {
-        step: 5,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    // Test that value is rounded to step
-    const value = wrapper.vm.getValueFromPercent(23) // Should be rounded to nearest step
-    expect(value % 5).toBe(0)
-    wrapper.unmount()
-  })
-
-  it('range mode functionality', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        range: true,
-        modelValue: [20, 80],
-      },
-    })
-
-    expect(wrapper.vm.currentValue).toEqual([20, 80])
-
-    // Should have two buttons
-    const buttons = wrapper.findAll(buttonClass)
-    expect(buttons.length).toBe(2)
-    wrapper.unmount()
-  })
-
-  it('percentage calculation', () => {
-    wrapper = mount(Slider, {
-      props: {
-        min: 0,
-        max: 100,
-        modelValue: 50,
-      },
-    })
-
-    expect(wrapper.vm.getPercent(50)).toBe(50)
-    wrapper.unmount()
-  })
-
-  it('input change event', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    await inputNumber.vm.$emit('update:modelValue', 75)
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    expect(wrapper.emitted('change')).toBeTruthy()
-    wrapper.unmount()
-  })
-
-  it('input change with invalid value', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('event - input change with value exceeding max', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    await inputNumber.vm.$emit('update:modelValue', 150)
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    const emittedValues = wrapper.emitted('update:modelValue') as any[]
-    expect(emittedValues[emittedValues.length - 1][0]).toBe(100)
-    wrapper.unmount()
-  })
-
-  it('input change with value below min', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    await inputNumber.vm.$emit('update:modelValue', -10)
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    const emittedValues = wrapper.emitted('update:modelValue') as any[]
-    expect(emittedValues[emittedValues.length - 1][0]).toBe(0)
-    wrapper.unmount()
-  })
-
-  it('event - input increase button', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        showInputControls: true,
-        modelValue: 50,
-        step: 5,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('event - input decrease button', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        showInputControls: true,
-        modelValue: 50,
-        step: 5,
-        min: 0,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('event - input buttons disabled at boundaries', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        showInputControls: true,
-        modelValue: 0,
-        min: 0,
-        max: 100,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('props - aria labels', () => {
-    wrapper = mount(Slider, {
-      props: {
-        ariaLabel: 'Custom slider label',
-        rangeStartLabel: 'Start',
-        rangeEndLabel: 'End',
-        range: true,
-        modelValue: [20, 80],
-      },
-    })
-
-    const sliderWrapper = wrapper.find(ns.e('wrapper'))
-    expect(sliderWrapper.attributes('aria-label')).toBe('Custom slider label')
-    wrapper.unmount()
-  })
-
-  it('props - formatValueText', () => {
-    const formatValueText = (value: number) => `${value} degrees`
-
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        formatValueText,
-      },
-    })
-
-    expect(wrapper.vm.getAriaValueText(50)).toBe('50 degrees')
-    wrapper.unmount()
-  })
-
-  it('props - label', () => {
-    wrapper = mount(Slider, {
-      props: {
-        label: 'Volume Control',
-        modelValue: 50,
-      },
-    })
-
-    expect(wrapper.attributes('aria-label')).toBe('Volume Control')
-    wrapper.unmount()
-  })
-
-  it('props - inputSize', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        inputSize: 'large',
-        modelValue: 50,
-      },
-    })
-
-    // InputNumber 组件接收 size 属性
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.props('size')).toBe('large')
-    wrapper.unmount()
-  })
-
-  it('props - persistent tooltip', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        persistent: true,
-        showTooltip: true,
-      },
-    })
-
-    // persistent 模式下 tooltip 应该一直显示，但仍需要悬停或拖拽状态
-    const button = wrapper.find('.ccui-slider__button')
-    await button.trigger('mouseenter')
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('visible')).toBe(true)
-    expect(tooltipComponent.props('content')).toBe('50')
-    wrapper.unmount()
-  })
-
-  it('props - persistent false with showTooltip false', () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        persistent: true,
-        showTooltip: false,
-      },
-    })
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(false)
-    wrapper.unmount()
-  })
-
-  it('props - showDefaultTooltip true', async () => {
-    wrapper = mount(Slider, {
-      props: {
-        modelValue: 50,
-        tipsRenderer: null,
-        showTooltip: true,
-        showDefaultTooltip: true,
-      },
-    })
-
-    // 需要触发悬停才能显示 tooltip
-    const button = wrapper.find(ns.e('button'))
-    await button.trigger('mouseenter')
-
-    const tooltipComponent = wrapper.findComponent({ name: 'CTooltip' })
-    expect(tooltipComponent.exists()).toBe(true)
-    expect(tooltipComponent.props('visible')).toBe(true)
-    expect(tooltipComponent.props('content')).toBe('50')
-    wrapper.unmount()
-  })
-
-  it('props - validateEvent', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        validateEvent: true,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('props - validateEvent false', () => {
-    wrapper = mount(Slider, {
-      props: {
-        showInput: true,
-        modelValue: 50,
-        validateEvent: false,
-      },
-    })
-
-    const inputNumber = wrapper.findComponent({ name: 'CInputNumber' })
-    expect(inputNumber.exists()).toBe(true)
+    await wrapper.find(ns.e('button')).trigger('mouseenter')
+    const tooltip = wrapper.findComponent({ name: 'CTooltip' })
+    expect(tooltip.props('visible')).toBe(true)
+    expect(tooltip.props('content')).toBe('50')
     wrapper.unmount()
   })
 })

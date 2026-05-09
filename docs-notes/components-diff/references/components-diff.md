@@ -982,14 +982,20 @@ Icon 剩余非完整对齐项：
 
 ### 测试覆盖率后续原则
 
-当前覆盖率基线为 Statements `93.76%`、Branches `84.26%`、Functions `94.10%`、Lines `94.08%`。后续不建议为了数字硬追 `95%`；应优先补能证明真实用户行为、Vue 状态协议、事件协议和副作用清理的测试。
+覆盖率基线（2026-05-09 测试质量审查后）：Statements `91.51%`、Branches `83.43%`、Functions `92.78%`、Lines `93.23%`。全量 **74/74 文件通过、1220/1220 测试通过**（含 slider 重写后的 32 个高价值用例）。此前基线 Statements `93.76%` 是在 64 个 TSX 文件无法加载（0 test 执行）的情况下统计的，修复 TSX 加载后覆盖率分母增大导致数值回落，实际覆盖面大幅提升。后续不建议为了数字硬追 `95%`；应优先补能证明真实用户行为、Vue 状态协议、事件协议和副作用清理的测试。
 
-建议新任务从以下方向继续：
+本轮审查已完成的工作：
 
-1. 审查新增测试质量，移除或改写过度依赖 DOM 细节、Transition 时序、内部实现变量的低价值断言。
-2. 补高价值剩余缺口：`statistic/countdown`、`collapse-item`、`slider/use-slider`、`float-button/back-top`、`popover/tooltip`。
-3. 清理 coverage 输出噪声：Vitest/coverage mixed versions 提示，以及 jsdom `window.scrollTo` not implemented 噪声。
-4. 每次推进后重新记录覆盖率基线，并明确说明覆盖率目标服从真实行为测试质量。
+1. ✅ **修复 TSX import-analysis 错误**：`vueJsx({ tsTransform: 'built-in' })` 让 OXC 内置处理 TSX，从 64 个文件加载失败降到 0。
+2. ✅ **slider.test.ts 重写**：消除所有 `wrapper.vm.*` 内部状态访问（currentValue / isDragging / getValueFromPercent / formatTooltipText / getPercent / getAriaValueText），改为验证 emitted 值、DOM 输出和 ARIA 属性；移除只检查 `exists()` 的空壳测试，补充键盘 ArrowRight/ArrowLeft/Home/End 具体值、click step 对齐值、disabled 阻止交互等高价值用例。从 30 个低价值测试重写为 32 个高价值测试。
+3. ✅ **statistic countdown 11ms 漂移修复**：`setInterval(1000/30)` 的 tick 粒度导致精确到毫秒的断言不稳定，改为 ±50ms 范围断言。
+4. ✅ **backTop window target 修复**：`window instanceof Window` 在 jsdom 下返回 `false`，在 `getScrollTop` 和 `scrollTo` 中增加 `t === window` 前置判断。
+5. ✅ 其余 5 个高价值缺口文件（statistic / collapse / popover / tooltip / float-button）审查后质量良好，无需改写。
+
+后续建议：
+
+1. 新增组件测试时避免访问 `wrapper.vm.*` 内部状态，通过 emitted 事件、DOM 输出和 ARIA 属性验证行为。
+2. 覆盖率目标服从真实行为测试质量，不追数字。
 
 ### P0：核心复杂组件（已收口）
 

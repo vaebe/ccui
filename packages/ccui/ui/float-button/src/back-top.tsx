@@ -19,7 +19,7 @@ function resolveTarget(target: BackTopProps['target']): HTMLElement | Window {
 }
 
 function getScrollTop(t: HTMLElement | Window): number {
-  return t instanceof Window ? t.scrollY : t.scrollTop
+  return t === window || t instanceof Window ? (t as Window).scrollY : (t as HTMLElement).scrollTop
 }
 
 function easeInOutCubic(t: number): number {
@@ -33,10 +33,10 @@ function scrollTo(target: HTMLElement | Window, to: number, duration: number) {
     const elapsed = Date.now() - startTime
     const progress = duration > 0 ? Math.min(1, elapsed / duration) : 1
     const value = start + (to - start) * easeInOutCubic(progress)
-    if (target instanceof Window) {
-      target.scrollTo(0, value)
+    if (target === window || target instanceof Window) {
+      ;(target as Window).scrollTo(0, value)
     } else {
-      target.scrollTop = value
+      ;(target as HTMLElement).scrollTop = value
     }
     if (progress < 1) {
       requestAnimationFrame(frame)
