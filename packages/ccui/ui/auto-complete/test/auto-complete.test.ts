@@ -308,3 +308,63 @@ describe('auto-complete form integration', () => {
     expect(value.value).toBe('Apple')
   })
 })
+
+describe('auto-complete defaultActiveFirstOption', () => {
+  it('highlights first enabled option when popup opens', async () => {
+    const wrapper = mountAC({ defaultActiveFirstOption: true })
+    await focus(wrapper)
+    const options = wrapper.findAll(ns.e('option'))
+    expect(options[0].classes()).toContain('is-active')
+  })
+
+  it('does not highlight first option by default', async () => {
+    const wrapper = mountAC()
+    await focus(wrapper)
+    const activeOptions = wrapper.findAll(`${ns.e('option')}.is-active`)
+    expect(activeOptions).toHaveLength(0)
+  })
+})
+
+describe('auto-complete backfill', () => {
+  it('writes active option label to input on ArrowDown when backfill=true', async () => {
+    const wrapper = mountAC({ backfill: true })
+    await focus(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(wrapper.find('input').element.value).toBe('Apple')
+  })
+
+  it('clears backfill display on close', async () => {
+    const wrapper = mountAC({ backfill: true, defaultValue: '' })
+    await focus(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(wrapper.find('input').element.value).toBe('Apple')
+    await wrapper.find('input').trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    // backfill 清除后恢复为 defaultValue
+    expect(wrapper.find('input').element.value).toBe('')
+  })
+})
+
+describe('auto-complete trigger slot', () => {
+  it('renders custom trigger via slot', async () => {
+    const wrapper = mount(AutoComplete, {
+      props: { options: SAMPLE },
+      slots: {
+        trigger: (props: any) =>
+          h('textarea', {
+            class: 'my-textarea',
+            value: props.value,
+            onInput: props.onInput,
+            onFocus: props.onFocus,
+            onKeydown: props.onKeydown,
+          }),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    expect(wrapper.find('.my-textarea').exists()).toBe(true)
+    expect(wrapper.find(ns.e('input')).exists()).toBe(false)
+  })
+})

@@ -46,7 +46,7 @@ export default defineComponent({
       const raw = isControlled.value ? props.modelValue : innerValue.value
       return raw ?? ''
     })
-    const inputDisplay = computed(() => String(currentValue.value ?? ''))
+    const inputDisplay = computed(() => backfillDisplay.value ?? String(currentValue.value ?? ''))
 
     const normalized = computed<NormalizedOption[]>(() => (props.options || []).map((item) => normalizeOption(item)))
 
@@ -85,25 +85,45 @@ export default defineComponent({
     const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
     const mergedStatus = computed(() => props.status || validationStatus.value)
 
+    function findFirstEnabledIndex(): number {
+      if (!props.defaultActiveFirstOption) return -1
+      return filteredOptions.value.findIndex((o) => !o.disabled)
+    }
+
     function openPopup() {
       if (props.disabled || open.value) return
       open.value = true
-      activeIndex.value = -1
+      activeIndex.value = findFirstEnabledIndex()
       emit('open-change', true)
     }
     function closePopup() {
       if (!open.value) return
       open.value = false
+      backfillDisplay.value = null
       emit('open-change', false)
     }
 
+    // backfill 临时显示值（不 emit，仅视觉）
+    const backfillDisplay = shallowRef<string | null>(null)
+
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
     function setValue(next: string | number) {
+      backfillDisplay.value = null
       if (!isControlled.value) {
         innerValue.value = next
       }
       emit('update:modelValue', next)
       emit('change', next)
-      emit('search', String(next))
+
+      if (props.searchDebounce > 0) {
+        if (debounceTimer) clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => {
+          emit('search', String(next))
+        }, props.searchDebounce)
+      } else {
+        emit('search', String(next))
+      }
       formItem?.validate('change')
     }
 
@@ -137,6 +157,12 @@ export default defineComponent({
       if (props.disabled) return
       const list = filteredOptions.value
       const enabled = list.filter((o) => !o.disabled)
+      function applyBackfill(idx: number) {
+        if (props.backfill && idx >= 0 && list[idx]) {
+          backfillDisplay.value = list[idx].label
+        }
+      }
+
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         if (!open.value) {
@@ -147,6 +173,7 @@ export default defineComponent({
         const enabledIdx = enabled.findIndex((o) => o === list[activeIndex.value])
         const nextEnabled = enabled[(enabledIdx + 1) % enabled.length]
         activeIndex.value = list.indexOf(nextEnabled)
+        applyBackfill(activeIndex.value)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
         if (!open.value) {
@@ -157,6 +184,7 @@ export default defineComponent({
         const enabledIdx = enabled.findIndex((o) => o === list[activeIndex.value])
         const prev = enabledIdx <= 0 ? enabled[enabled.length - 1] : enabled[enabledIdx - 1]
         activeIndex.value = list.indexOf(prev)
+        applyBackfill(activeIndex.value)
       } else if (e.key === 'Enter') {
         if (open.value && activeIndex.value >= 0 && list[activeIndex.value]) {
           e.preventDefault()
@@ -207,26 +235,41 @@ export default defineComponent({
         open.value ? ns.is('open') : '',
         mergedStatus.value ? ns.em('status', mergedStatus.value) : '',
       ]
+
+      const inputNode = slots.trigger ? (
+        slots.trigger({
+          value: inputDisplay.value,
+          onInput,
+          onFocus,
+          onBlur,
+          onKeydown,
+          placeholder: props.placeholder,
+          disabled: props.disabled,
+        })
+      ) : (
+        <input
+          ref={inputRef}
+          class={ns.e('input')}
+          type="text"
+          value={inputDisplay.value}
+          placeholder={props.placeholder}
+          disabled={props.disabled}
+          autocomplete="off"
+          spellcheck={false}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={open.value}
+          aria-controls={`${ns.b()}-popup`}
+          onInput={onInput}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onKeydown={onKeydown}
+        />
+      )
+
       return (
         <div ref={rootRef} class={wrapClass}>
-          <input
-            ref={inputRef}
-            class={ns.e('input')}
-            type="text"
-            value={inputDisplay.value}
-            placeholder={props.placeholder}
-            disabled={props.disabled}
-            autocomplete="off"
-            spellcheck={false}
-            role="combobox"
-            aria-autocomplete="list"
-            aria-expanded={open.value}
-            aria-controls={`${ns.b()}-popup`}
-            onInput={onInput}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onKeydown={onKeydown}
-          />
+          {inputNode}
           {showClear.value && (
             <span class={ns.e('clear')} role="button" aria-label="clear" onMousedown={clear}>
               ✕

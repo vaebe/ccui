@@ -90,6 +90,21 @@ export const autoCompleteProps = {
     type: Number,
     default: 256,
   },
+  // 打开浮层时是否默认高亮第一项
+  defaultActiveFirstOption: {
+    type: Boolean,
+    default: false,
+  },
+  // 键盘高亮时是否把 active 项写回 input
+  backfill: {
+    type: Boolean,
+    default: false,
+  },
+  // 搜索防抖延迟（毫秒），0 = 不防抖
+  searchDebounce: {
+    type: Number,
+    default: 0,
+  },
 } as const
 
 export type AutoCompleteProps = ExtractPropTypes<typeof autoCompleteProps>

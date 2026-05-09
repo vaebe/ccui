@@ -21,7 +21,7 @@
 | Affix                 | Affix 固钉              | 导航            | 已完成 |
 | Alert                 | Alert 警告提示          | 反馈            | 已完成 |
 | Anchor                | Anchor 锚点             | 导航            | 已完成 |
-| AutoComplete          | AutoComplete 自动完成   | 数据录入        | 80%    |
+| AutoComplete          | AutoComplete 自动完成   | 数据录入        | 95%    |
 | Avatar                | Avatar 头像             | 数据展示        | 已完成 |
 | Badge                 | Badge 徽标数            | 数据展示        | 已完成 |
 | Breadcrumb            | Breadcrumb 面包屑       | 导航            | 已完成 |
@@ -1028,7 +1028,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 ### P3：体验型组件
 
-1. AutoComplete：80% 已交付（Batch 28）。剩余 defaultActiveFirstOption / backfill / 远程搜索 debounce / 自定义 trigger slot / 虚拟滚动推到 95%。
+1. AutoComplete：**95% 已交付**。新增 defaultActiveFirstOption / backfill 键盘回填 / searchDebounce 防抖 / trigger 作用域插槽。29 个测试全通过。剩余虚拟滚动留给后续。
 2. Mentions：80% 已交付（Batch 32）。剩余光标精确定位、autoSize、彩色 token（contenteditable）、async loadData、Tab 选中推到 95%。
 3. Tour：80% 已交付（Batch 30）。剩余 type='primary' 主题、arrow 箭头、scrollIntoView、cover slot、per-step async hooks 推到 95%。
 
