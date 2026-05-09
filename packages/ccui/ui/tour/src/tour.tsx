@@ -62,6 +62,14 @@ export default defineComponent({
       const el = resolveTarget(currentStep.value.target)
       targetRef.value = el
       if (el) {
+        // scrollIntoView if needed
+        if (props.scrollIntoViewIfNeeded) {
+          const rect = el.getBoundingClientRect()
+          const inViewport = rect.top >= 0 && rect.bottom <= window.innerHeight
+          if (!inViewport && typeof el.scrollIntoView === 'function') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }
         const r = el.getBoundingClientRect()
         targetRect.value = { top: r.top, left: r.left, width: r.width, height: r.height }
       } else {
@@ -179,11 +187,23 @@ export default defineComponent({
             transform: 'translate(-50%, -50%)',
           }
       styles.maxWidth = `${props.panelWidth}px`
+      const panelCls = [ns.e('panel'), props.type === 'primary' ? ns.em('panel', 'primary') : '']
+      const coverContent = step.cover ? (
+        typeof step.cover === 'string' ? (
+          <div class={ns.e('cover')}>
+            <img src={step.cover} alt="" />
+          </div>
+        ) : (
+          <div class={ns.e('cover')}>{step.cover}</div>
+        )
+      ) : null
       return (
-        <div ref={popupRef} class={ns.e('panel')} style={styles} role="dialog" aria-modal="true">
+        <div ref={popupRef} class={panelCls} style={styles} role="dialog" aria-modal="true">
+          {props.arrow && hasTarget && <div class={[ns.e('arrow'), ns.em('arrow', stepPlacement.value)]} />}
           <button type="button" class={ns.e('close')} aria-label="close" onClick={close}>
             ✕
           </button>
+          {coverContent}
           <div class={ns.e('title')}>{step.title}</div>
           {step.description && <div class={ns.e('description')}>{step.description}</div>}
           <div class={ns.e('footer')}>
@@ -210,7 +230,7 @@ export default defineComponent({
       return (
         <Teleport to="body">
           <Transition name="ccui-tour-fade" appear>
-            <div class={ns.b()} role="presentation">
+            <div class={[ns.b(), ns.em('type', props.type)]} role="presentation">
               {renderMask()}
               {renderPopup()}
             </div>

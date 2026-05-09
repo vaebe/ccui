@@ -279,3 +279,99 @@ describe('tour v-model integration', () => {
     expect(open.value).toBe(false)
   })
 })
+
+describe('tour type=primary', () => {
+  it('applies primary modifier to panel and root', async () => {
+    mount(Tour, {
+      props: { open: true, steps: STEPS, current: 0, type: 'primary' },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(findInBody('.ccui-tour__type--primary').length).toBe(1)
+    expect(findInBody('.ccui-tour__panel--primary').length).toBe(1)
+  })
+})
+
+describe('tour arrow', () => {
+  it('renders arrow element when arrow=true and target exists', async () => {
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    Object.defineProperty(target, 'getBoundingClientRect', {
+      value: () => ({
+        top: 100,
+        left: 100,
+        width: 50,
+        height: 50,
+        right: 150,
+        bottom: 150,
+        x: 100,
+        y: 100,
+        toJSON: () => ({}),
+      }),
+    })
+    mount(Tour, {
+      props: { open: true, steps: [{ title: 'Arrow', target }], current: 0, arrow: true },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(findInBody('.ccui-tour__arrow').length).toBe(1)
+    document.body.removeChild(target)
+  })
+
+  it('does not render arrow when arrow=false', async () => {
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    Object.defineProperty(target, 'getBoundingClientRect', {
+      value: () => ({
+        top: 100,
+        left: 100,
+        width: 50,
+        height: 50,
+        right: 150,
+        bottom: 150,
+        x: 100,
+        y: 100,
+        toJSON: () => ({}),
+      }),
+    })
+    mount(Tour, {
+      props: { open: true, steps: [{ title: 'No arrow', target }], current: 0, arrow: false },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(findInBody('.ccui-tour__arrow').length).toBe(0)
+    document.body.removeChild(target)
+  })
+
+  it('does not render arrow for no-target centered modal', async () => {
+    mount(Tour, {
+      props: { open: true, steps: [{ title: 'Centered' }], current: 0, arrow: true },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(findInBody('.ccui-tour__arrow').length).toBe(0)
+  })
+})
+
+describe('tour cover', () => {
+  it('renders cover image from step.cover string', async () => {
+    const steps = [{ title: 'Cover', cover: 'https://example.com/img.png' }]
+    mount(Tour, {
+      props: { open: true, steps, current: 0 },
+      attachTo: document.body,
+    })
+    await nextTick()
+    const cover = document.body.querySelector('.ccui-tour__cover')
+    expect(cover).toBeTruthy()
+    expect(cover!.querySelector('img')?.getAttribute('src')).toBe('https://example.com/img.png')
+  })
+
+  it('does not render cover when step has no cover', async () => {
+    mount(Tour, {
+      props: { open: true, steps: STEPS, current: 0 },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(document.body.querySelector('.ccui-tour__cover')).toBeNull()
+  })
+})

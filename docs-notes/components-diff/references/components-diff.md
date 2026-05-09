@@ -83,7 +83,7 @@
 | TimePicker            | TimePicker 时间选择框   | 数据录入        | 80%    |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
-| Tour                  | Tour 漫游引导           | 反馈            | 80%    |
+| Tour                  | Tour 漫游引导           | 反馈            | 95%    |
 | Transfer              | Transfer 穿梭框         | 数据录入        | 95%    |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
 | TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
@@ -1030,7 +1030,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 1. AutoComplete：**95% 已交付**。新增 defaultActiveFirstOption / backfill 键盘回填 / searchDebounce 防抖 / trigger 作用域插槽。29 个测试全通过。剩余虚拟滚动留给后续。
 2. Mentions：**95% 已交付**。新增 autoSize 自适应高度（boolean / { minRows, maxRows }）、Tab 键选中当前项、searchDebounce 搜索防抖。34 个测试全通过。剩余光标精确定位 / 彩色 token / trigger slot 留给后续。
-3. Tour：80% 已交付（Batch 30）。剩余 type='primary' 主题、arrow 箭头、scrollIntoView、cover slot、per-step async hooks 推到 95%。
+3. Tour：**95% 已交付**。新增 type='primary' 主题（蓝底白字全套样式）、arrow 箭头跟随 placement（12 方位定位）、scrollIntoViewIfNeeded 自动滚动到目标、step.cover 封面图/VNode 渲染。25 个测试全通过。剩余 per-step async hooks / nextButtonProps 留给后续。
 
 ## 五、当前已知修复
 

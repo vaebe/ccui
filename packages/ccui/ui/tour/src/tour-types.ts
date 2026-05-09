@@ -16,12 +16,15 @@ export type TourPlacement =
 
 export type TourTarget = HTMLElement | (() => HTMLElement | null) | null | undefined
 
+export type TourType = 'default' | 'primary'
+
 export interface TourStep {
   target?: TourTarget
   title: string | VNode
   description?: string | VNode
   placement?: TourPlacement
   mask?: boolean
+  cover?: string | VNode
 }
 
 export const tourProps = {
@@ -68,6 +71,21 @@ export const tourProps = {
   },
   // 是否在 Esc 键按下时关闭
   closeOnEsc: {
+    type: Boolean,
+    default: true,
+  },
+  // 主题类型
+  type: {
+    type: String as PropType<TourType>,
+    default: 'default',
+  },
+  // 是否显示箭头
+  arrow: {
+    type: Boolean,
+    default: true,
+  },
+  // target 不在视口内时是否自动滚动
+  scrollIntoViewIfNeeded: {
     type: Boolean,
     default: true,
   },

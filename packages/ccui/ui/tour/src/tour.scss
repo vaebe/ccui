@@ -127,6 +127,104 @@
       }
     }
   }
+
+  // ─── Arrow ────────────────────────────────────────────
+  &__arrow {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: inherit;
+    transform: rotate(45deg);
+    z-index: -1;
+  }
+
+  &__arrow--bottom,
+  &__arrow--bottomLeft,
+  &__arrow--bottomRight {
+    top: -6px;
+    left: calc(50% - 6px);
+  }
+
+  &__arrow--top,
+  &__arrow--topLeft,
+  &__arrow--topRight {
+    bottom: -6px;
+    left: calc(50% - 6px);
+  }
+
+  &__arrow--left,
+  &__arrow--leftTop,
+  &__arrow--leftBottom {
+    right: -6px;
+    top: calc(50% - 6px);
+  }
+
+  &__arrow--right,
+  &__arrow--rightTop,
+  &__arrow--rightBottom {
+    left: -6px;
+    top: calc(50% - 6px);
+  }
+
+  // ─── Cover ────────────────────────────────────────────
+  &__cover {
+    margin: -16px -16px 12px;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  // ─── Primary 主题 ─────────────────────────────────────
+  &__panel--primary {
+    background: #1677ff;
+    color: #fff;
+  }
+
+  &__panel--primary &__title {
+    color: #fff;
+  }
+
+  &__panel--primary &__description {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  &__panel--primary &__indicator {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  &__panel--primary &__close {
+    color: rgba(255, 255, 255, 0.65);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+  }
+
+  &__panel--primary &__btn {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+
+    &:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    &--next {
+      border-color: #fff;
+      background: #fff;
+      color: #1677ff;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
 }
 
 .ccui-tour-fade-enter-active,
