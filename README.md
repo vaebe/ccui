@@ -75,6 +75,7 @@ app.mount('#app')
 
 ### 导航
 
+- **Affix** - 固钉
 - **Anchor** - 锚点
 - **Breadcrumb** - 面包屑
 - **Dropdown** - 下拉菜单
@@ -138,10 +139,6 @@ app.mount('#app')
 - **Masonry** - 瀑布流
 - **Space** - 间距
 - **Splitter** - 分隔面板
-
-### 其他
-
-- **Affix** - 固钉
 
 ### 还没交付的常见组件
 

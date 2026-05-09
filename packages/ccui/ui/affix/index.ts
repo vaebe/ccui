@@ -9,7 +9,7 @@ export { Affix }
 
 export default {
   title: 'Affix 固钉',
-  category: '其他',
+  category: '导航',
   status: '100%',
   install(app: App): void {
     app.component(Affix.name!, Affix)

@@ -16,68 +16,68 @@
 
 ## 一、已覆盖组件（60 项）
 
-| ccui 组件             | Ant Design 对应         | 分类            | 状态         |
-| --------------------- | ----------------------- | --------------- | ------------ |
-| Affix                 | Affix 固钉              | 其他            | 已完成       |
-| Alert                 | Alert 警告提示          | 反馈            | 已完成       |
-| Anchor                | Anchor 锚点             | 导航            | 已完成       |
-| Avatar                | Avatar 头像             | 数据展示        | 已完成       |
-| Badge                 | Badge 徽标数            | 数据展示        | 已完成       |
-| Breadcrumb            | Breadcrumb 面包屑       | 导航            | 已完成       |
-| Button                | Button 按钮             | 通用            | 已完成       |
-| Button3D              | 项目特色组件            | 通用            | 已完成       |
-| Calendar              | Calendar 日历           | 数据展示        | 已完成       |
-| Card                  | Card 卡片               | 数据展示        | 已完成       |
-| CheckBox              | Checkbox 多选框         | 数据录入        | 已完成       |
-| Collapse              | Collapse 折叠面板       | 数据展示        | 已完成       |
-| ConfigProvider        | ConfigProvider 全局配置 | 其他            | 已完成       |
-| Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成       |
-| Divider               | Divider 分割线          | 布局            | 已完成       |
-| Drawer                | Drawer 抽屉             | 反馈            | 已完成       |
-| Dropdown              | Dropdown 下拉菜单       | 导航            | 已完成       |
-| Empty                 | Empty 空状态            | 数据展示        | 已完成       |
-| Flex                  | Flex 弹性布局           | 布局            | 已完成       |
-| FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成       |
-| Form                  | Form 表单               | 数据录入        | 已完成       |
-| Grid                  | Grid 栅格               | 布局            | 已完成       |
-| Icon                  | Icon 图标               | 通用            | 已完成       |
-| Image                 | Image 图片              | 数据展示        | 已完成       |
-| Input                 | Input 输入框            | 数据录入        | 已完成       |
-| InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成       |
-| Layout                | Layout 布局             | 布局            | 已完成       |
-| List                  | List 列表               | 数据展示        | 已完成       |
-| Masonry               | 瀑布流布局              | 布局            | 已完成       |
-| Menu                  | Menu 导航菜单           | 导航            | 已完成       |
-| Message               | Message 全局提示        | 反馈            | 已完成       |
-| Modal                 | Modal 对话框            | 反馈            | 已完成       |
-| Notification          | Notification 通知       | 反馈            | 已完成       |
-| Pagination            | Pagination 分页         | 导航            | 已完成       |
-| Popconfirm            | Popconfirm 气泡确认框   | 反馈            | 已完成       |
-| Popover               | Popover 气泡卡片        | 反馈            | 已完成       |
-| Progress              | Progress 进度条         | 反馈            | 已完成       |
-| Radio                 | Radio 单选框            | 数据录入        | 已完成       |
-| Rate                  | Rate 评分               | 数据录入        | 已完成       |
-| Result                | Result 结果             | 反馈            | 已完成       |
-| Segmented             | Segmented 分段控制器    | 数据展示        | 已完成       |
-| Select                | Select 选择器           | 数据录入        | 已完成       |
-| Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成       |
-| Slider                | Slider 滑动输入条       | 数据录入        | 已完成       |
-| Space                 | Space 间距              | 布局            | 已完成       |
-| Spin                  | Spin 加载中             | 反馈            | 已完成       |
-| Splitter              | Splitter 分隔面板       | 布局            | 已完成       |
-| Statistic             | Statistic 统计数值      | 数据展示        | 已完成       |
-| Status                | Tag 近似组件            | 通用 / 数据展示 | 已完成       |
-| Steps                 | Steps 步骤条            | 导航            | 已完成       |
-| Switch                | Switch 开关             | 数据录入        | 已完成       |
-| Tabs                  | Tabs 标签页             | 导航            | 已完成       |
-| Table                 | Table 表格              | 数据展示        | 已完成       |
-| Tag                   | Tag 标签                | 数据展示        | 已完成       |
-| Timeline              | Timeline 时间轴         | 数据展示        | 已完成       |
-| Tooltip               | Tooltip 文字提示        | 反馈            | 已完成       |
-| Tree                  | Tree 树形控件           | 数据展示        | 已完成       |
-| Typography            | Typography 排版         | 通用            | 已完成       |
-| Util                  | 工具函数集合            | 其他            | 已完成       |
-| Watermark             | Watermark 水印          | 数据展示        | 已完成       |
+| ccui 组件             | Ant Design 对应         | 分类            | 状态   |
+| --------------------- | ----------------------- | --------------- | ------ |
+| Affix                 | Affix 固钉              | 导航            | 已完成 |
+| Alert                 | Alert 警告提示          | 反馈            | 已完成 |
+| Anchor                | Anchor 锚点             | 导航            | 已完成 |
+| Avatar                | Avatar 头像             | 数据展示        | 已完成 |
+| Badge                 | Badge 徽标数            | 数据展示        | 已完成 |
+| Breadcrumb            | Breadcrumb 面包屑       | 导航            | 已完成 |
+| Button                | Button 按钮             | 通用            | 已完成 |
+| Button3D              | 项目特色组件            | 通用            | 已完成 |
+| Calendar              | Calendar 日历           | 数据展示        | 已完成 |
+| Card                  | Card 卡片               | 数据展示        | 已完成 |
+| CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
+| Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
+| ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
+| Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
+| Divider               | Divider 分割线          | 布局            | 已完成 |
+| Drawer                | Drawer 抽屉             | 反馈            | 已完成 |
+| Dropdown              | Dropdown 下拉菜单       | 导航            | 已完成 |
+| Empty                 | Empty 空状态            | 数据展示        | 已完成 |
+| Flex                  | Flex 弹性布局           | 布局            | 已完成 |
+| FloatButton / BackTop | FloatButton 悬浮按钮    | 通用            | 已完成 |
+| Form                  | Form 表单               | 数据录入        | 已完成 |
+| Grid                  | Grid 栅格               | 布局            | 已完成 |
+| Icon                  | Icon 图标               | 通用            | 已完成 |
+| Image                 | Image 图片              | 数据展示        | 已完成 |
+| Input                 | Input 输入框            | 数据录入        | 已完成 |
+| InputNumber           | InputNumber 数字输入框  | 数据录入        | 已完成 |
+| Layout                | Layout 布局             | 布局            | 已完成 |
+| List                  | List 列表               | 数据展示        | 已完成 |
+| Masonry               | 瀑布流布局              | 布局            | 已完成 |
+| Menu                  | Menu 导航菜单           | 导航            | 已完成 |
+| Message               | Message 全局提示        | 反馈            | 已完成 |
+| Modal                 | Modal 对话框            | 反馈            | 已完成 |
+| Notification          | Notification 通知       | 反馈            | 已完成 |
+| Pagination            | Pagination 分页         | 导航            | 已完成 |
+| Popconfirm            | Popconfirm 气泡确认框   | 反馈            | 已完成 |
+| Popover               | Popover 气泡卡片        | 反馈            | 已完成 |
+| Progress              | Progress 进度条         | 反馈            | 已完成 |
+| Radio                 | Radio 单选框            | 数据录入        | 已完成 |
+| Rate                  | Rate 评分               | 数据录入        | 已完成 |
+| Result                | Result 结果             | 反馈            | 已完成 |
+| Segmented             | Segmented 分段控制器    | 数据展示        | 已完成 |
+| Select                | Select 选择器           | 数据录入        | 已完成 |
+| Skeleton              | Skeleton 骨架屏         | 反馈            | 已完成 |
+| Slider                | Slider 滑动输入条       | 数据录入        | 已完成 |
+| Space                 | Space 间距              | 布局            | 已完成 |
+| Spin                  | Spin 加载中             | 反馈            | 已完成 |
+| Splitter              | Splitter 分隔面板       | 布局            | 已完成 |
+| Statistic             | Statistic 统计数值      | 数据展示        | 已完成 |
+| Status                | Tag 近似组件            | 通用 / 数据展示 | 已完成 |
+| Steps                 | Steps 步骤条            | 导航            | 已完成 |
+| Switch                | Switch 开关             | 数据录入        | 已完成 |
+| Tabs                  | Tabs 标签页             | 导航            | 已完成 |
+| Table                 | Table 表格              | 数据展示        | 已完成 |
+| Tag                   | Tag 标签                | 数据展示        | 已完成 |
+| Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
+| Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
+| Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
+| Typography            | Typography 排版         | 通用            | 已完成 |
+| Util                  | 工具函数集合            | 通用            | 已完成 |
+| Watermark             | Watermark 水印          | 数据展示        | 已完成 |
 
 > 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
 > `Select` 已对齐 100%（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）。

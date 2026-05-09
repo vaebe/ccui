@@ -59,6 +59,11 @@ export default {
       text: '导航',
       items: [
         {
+          text: 'Affix 固钉',
+          link: '/components/affix/',
+          status: '100%',
+        },
+        {
           text: 'Anchor 锚点',
           link: '/components/anchor/',
           status: '100%',
