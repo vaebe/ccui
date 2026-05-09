@@ -242,6 +242,60 @@ Table 剩余非完整对齐项：
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
 
+### Batch 19：Table 95% 完成（固定列 / 展开行 / 合并单元格）
+
+已完成 1 项：Table。
+
+关键能力：
+
+- **column.fixed='left'|'right'**：按 ordered columns（左固定 + 中间 + 右固定）渲染，`fixedLeftOffsets` 自前向后累加列宽生成 `left: <px>`，`fixedRightOffsets` 自后向前累加生成 `right: <px>`；selection 与 expand 列在存在任意左固定用户列或显式 `fixed: true` 时自动跟随固定到左侧。表格根容器挂 `--has-fixed-left` / `--has-fixed-right`，配合 CSS 给最后一个左固定列与第一个右固定列加阴影。
+- **expandable.expandedRowRender**：受控 `expandedRowKeys`（v-model + onChange）+ 非受控 `defaultExpandedRowKeys` / `defaultExpandAllRows`，`rowExpandable` 决定单行是否可展开，`expandRowByClick` 让整行点击触发；展开行作为额外 `<tr class="ccui-table__expanded-row">` 紧跟数据行渲染，`<td colspan>` 自动撑满总列数（含 selection / expand 列）。新增 `expand` 事件 `(expanded, record)`。
+- **column.onCell / column.onHeaderCell**：返回 `{ rowSpan, colSpan, style, class }`；`rowSpan === 0` 或 `colSpan === 0` 时直接跳过该单元格不渲染（被前一行/列吃掉），与 Ant Design Table 的合并语义一致。
+- **scroll: { x?, y? }**：`x` 写入 `min-width` 触发横向滚动（与固定列联动），`y` 写入 `max-height + overflow-y: auto` 实现纵向滚动容器。
+- **样式**：`__cell--fixed-left/--fixed-right` 单独着色，hover 与 selected 行下也会保持 sticky 单元格的背景色与正常 cell 一致；展开按钮 `__expand-icon` 使用边框按钮 + `+`/`−` 字符替代 SVG。
+- 文档：新增固定列、展开行、合并单元格三段示例，参数表新增 `expandable` / `scroll`，`TableColumn` 加 `onCell` / `onHeaderCell`，事件表加 `update:expandedRowKeys` 与 `expand`。
+- 测试：从 52 个扩展到 64 个，新增列重排到左/中/右、左偏移累加、右偏移逆累加、selection 跟随左固定、`expandedRowRender` 渲染、受控 `expandedRowKeys` 切换、`defaultExpandAllRows`、`rowExpandable=false` 隐藏图标、`expandRowByClick` 整行触发、`onCell rowSpan/colSpan=0` 跳过、`onHeaderCell colSpan + class` 合并表头。
+- 状态：components-diff.md / sidebar.ts / table/index.ts 全部 85% -> 95% / 已完成。
+
+工程决策：
+
+- 列重排不改原始 `index`，单独维护 `OrderedColumn { column, originalIndex }`，`getColumnKey` / 排序 / 过滤继续用 `originalIndex` 保证 key 与 columnKey 推导稳定，避免破坏既有的 sortOrder / filteredValue / customRender 协议。
+- 固定列阴影通过 `__cell--fixed-left:last-of-type` / `__cell--fixed-right:first-of-type` 用纯 CSS 实现，不引入 scroll 监听，避免 SSR / jsdom 测试环境额外开销。
+- 展开行不复用 selection 列宽常量，独立 `expandWidthPx`（默认 48），`selectionFixed` 与 `expandColumnFixed` 分别推导，互不耦合。
+- `renderCell` 返回值显式 `as any` 透传给 `h()`：因为 Vue h 的单 child 路径会把 `boolean` 走文本节点（如 `true` 渲染成 `'true'`），而数组 child 路径会把 boolean 转 Comment 不渲染，老测试 `preserves number and boolean filter values` 依赖前者行为，必须保留。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test ui/table --environment jsdom` 通过，64 个用例通过。
+
+### Batch 18：Form 95% 完成（Form.List / Form.Provider / preserve）
+
+已完成 1 项：Form。
+
+关键能力：
+
+- **Form.List 动态字段**：默认作用域插槽 `(fields, { add, remove, move })`。`fields` 元素 `{ key, name }` —— `key` 是组件级稳定 ID（move 后保持，避免 v-for 重建），`name` 是当前下标用于 `:name="[field.name, 'email']"` 拼接。`add(value?, insertIndex?)` / `remove(index | indices)` / `move(from, to)` 直接修改 `model[name]` 数组并同步 keys；`initialValue` 在 model 中无值时一次性填入，再走 FormItem 的 initialValue / model 双层兜底。
+- **name path 自动拼接**：FormItem 注入 `formListInjectionKey.prefixName`，把父级 List 的 name 作为前缀拼到子项 name 上，最终 path 形如 `['users', 0, 'email']`，与 Ant Design React 协议一致；List 嵌套 List 也能逐层拼。
+- **Form.Provider**：`forms: Record<string, FormInstance>` 注册表，子表单按 `name` 注册 / 卸载；`form-finish (name, { values, forms })` 在子表单 submit 校验通过后触发，`form-change (name, { changedFields, forms })` 在字段触发原生 change 时触发。`FormInstance` 暴露 `validate / validateField / resetFields / clearValidate / scrollToField / getFieldsValue`。
+- **preserve 双层策略**：form-level 默认 `preserve=true`（保留卸载字段值，与 Ant Design 一致）；item-level `preserve` 优先于 form-level，`preserve=false` 时卸载走 `deleteValueByPath` 删除值（数组用 splice，对象用 delete）。
+- **values-change 事件**：FormItem `onChangeCapture` 在校验之外额外调 `form.notifyFieldChange(field, value)`，Form 上抛 `values-change` 事件 + 接入 Provider 的 `triggerFormChange`，常用于跨表单联动或全局状态同步。
+- 文档：在 Form 文档新增 Form.List / Provider / preserve 三段完整示例，参数表新增 `name` / `preserve` / `FormItem.preserve` / `FormList`（name + initialValue + 作用域插槽签名）/ `FormProvider`（form-change + form-finish），事件表加 `values-change`。
+- 测试：从 32 个扩展到 44 个，新增 List initialValue 注入 + name path 注册、List add/remove/move、move 后 key 不变、批量 remove、preserve form/item 三档优先级、Provider form-finish/form-change/forms 注册表跨表单读取。
+- 状态：components-diff.md / sidebar.ts / form/index.ts 全部 80% -> 95% / 已完成。
+
+工程决策：
+
+- FormList 用单独的 `state.keys` 而非 `model[name]` 的下标作为 v-for key —— 删除/插入/移动后下标变了，但稳定 key 不变，避免子组件重建（输入框失焦、动画重放等）。
+- FormItem 把 `fieldContext` 的 `prop` / `field` / `dependencies` 改为 getter，使得 prefix / dependencies 变化时已注册到 Form 的字段也能拿到最新值，无需重新 add/remove。
+- `deleteValueByPath` 对 `Record<string | number, any>` 做了 `as` 断言，绕过 TS 的索引签名收窄；数组路径走 `splice` 让响应式能正确传播。
+- Form.Provider 的 `triggerFormFinish` 只在 submit 校验通过且 form 设了 `name` 时触发，避免无 name 表单污染注册表。
+
+验证结果：
+
+- `vp check` 通过。
+- `vp test ui/form --environment jsdom` 通过，44 个用例通过。
+
 ### Batch 17：Tree 100% 完成
 
 已完成 1 项：Tree。
@@ -532,11 +586,21 @@ Icon 剩余非完整对齐项：
 3. 清理 coverage 输出噪声：Vitest/coverage mixed versions 提示，以及 jsdom `window.scrollTo` not implemented 噪声。
 4. 每次推进后重新记录覆盖率基线，并明确说明覆盖率目标服从真实行为测试质量。
 
-### P0：补齐核心复杂组件
+### P0：核心复杂组件（已收口）
 
-1. Table：在基础版上继续拆固定列、展开行、合并单元格、树形数据、虚拟滚动和远程数据协议。
-2. Form：在 80% 覆盖版上继续补动态 `Form.List`、`Form.Provider`、`preserve`、状态图标、完整 ARIA 和录入组件深度联动。
-3. Select：在基础版上继续补 option group、自定义渲染、远程搜索协议、虚拟列表、popup 定位和 Form 校验状态集成。
+P0 三个组件全部对齐到 95% 或 100%，剩余项是低频边角能力，单独放入"P0 长尾"小节按需推进，不再阻塞 P1。
+
+- **Form 95%（Batch 18）**：Form.List / Form.Provider / preserve 全部交付。
+- **Table 95%（Batch 19）**：固定列 / 展开行 / 合并单元格全部交付。
+- **Select 100%（Batch 15）**：optionLabelProp / showSearch / transitionName / tagsDraggable 全部交付。
+- **Tree 100%（Batch 17）**：showLine / 拖拽 hover-expand / auto-scroll / loadData 错误重试全部交付。
+- **Icon 100%（Batch 14）**：loading / disabled / themePrefixMap 全部交付。
+
+P0 长尾（不阻塞 P1，可按业务请求触发）：
+
+1. Form：`shouldUpdate` / `validateDebounce` / `normalize` / `getValueProps`、状态图标、与录入组件的更深联动。
+2. Table：树形数据 `childrenColumnName` / 虚拟滚动 / 远程数据协议 / 横向滚动固定表头。
+3. Select：自定义浮层渲染时机、TreeSelect / Cascader 单独组件（计入 P1）。
 
 ### P1：补齐高频录入和基础设施
 
