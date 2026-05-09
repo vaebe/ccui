@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui` 下共 70 个一级目录，其中 68 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：68 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P2 中等复杂度收口 / ColorPicker 80% 首次交付**：25 用例，含 `shared/utils/color.ts` HEX/RGB/HSV 互转层（5 用例覆盖 round-trip 与 alpha 合成），自渲 SV/hue/alpha 三段拖拽（pointerdown + 全局 pointermove/pointerup），hex 输入框 + Enter/blur 提交，预设色板，Form 联动 + Teleport。**「中等复杂度剩余」清零**（QRCode + ColorPicker + Carousel 共 3 项 P2 中等复杂度全部 80%）。P1 数据录入复杂组件 5/5、Form / Table 95%、Icon / Select / Tree / Affix 100% 维持。
+> 当前项目目录：`packages/ccui/ui` 下共 71 个一级目录，其中 69 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：69 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P3 起步 / AutoComplete 80% 首次交付**：24 用例，options 兼容 string[] 与 `{value,label,disabled}[]`、`filterOption` 三态（true/false/function）+ caseSensitive、键盘 ArrowUp/Down/Enter/Esc 导航跳过 disabled 项、allowClear、Form 联动 + Teleport、空数据 notFoundContent。本批次完成 P3「依赖 Input/Select 稳定的补全场景」组件落地，剩 Mentions / Tour 两项 P3 体验组件待推进。P2 中等复杂度三件套（Carousel/QRCode/ColorPicker 全 80%）维持。
 
 ## 零、交付完整度口径
 
@@ -21,6 +21,7 @@
 | Affix                 | Affix 固钉              | 导航            | 已完成 |
 | Alert                 | Alert 警告提示          | 反馈            | 已完成 |
 | Anchor                | Anchor 锚点             | 导航            | 已完成 |
+| AutoComplete          | AutoComplete 自动完成   | 数据录入        | 80%    |
 | Avatar                | Avatar 头像             | 数据展示        | 已完成 |
 | Badge                 | Badge 徽标数            | 数据展示        | 已完成 |
 | Breadcrumb            | Breadcrumb 面包屑       | 导航            | 已完成 |
@@ -109,7 +110,7 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 | TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly） | P1（推进中） |
 | Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                            | P2           |
 | Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                          | P2           |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                                                         | P2           |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
 | Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
 | Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                                                              | P3           |
 
@@ -246,6 +247,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 28：AutoComplete 80% 首次交付（P3 起步 / Input + Select 之间的补全场景）
+
+已完成 1 项：AutoComplete（80% 首次交付）。P3 第一个组件，本质是「Input + 浮层下拉建议项」，区别于 Select 在于值可以是任意字符串（不限于选项）。复用 P1/P2 共 8 个组件已经验证过的 popup 模式（floating-ui + Teleport + formItemInjectionKey + click outside），不抽公共 hook。
+
+关键能力：
+
+- **options 双形态归一化**：对外 API 同时接收 `string[]` / `number[]` 和 `{ value, label?, disabled? }[]`。`normalizeOption` 统一映射成内部 `NormalizedOption { value, label, disabled, raw }`，渲染层只看 `label`/`disabled`，emit `select` 时回 `(value, raw)`，业务自定义字段不丢。
+- **filterOption 三态**：`true`（默认 includes，可配 `caseSensitive=true` 切到大小写敏感）/ `false`（不过滤，全展）/ `function`（自定义 `(input, option) => boolean`）。`function` 模式接收原始 `option.raw`，方便业务按 value 而非 label 过滤（演示文档里用 `startsWith` 跑了一组）。
+- **键盘导航 — 跳过 disabled 项**：`ArrowDown` / `ArrowUp` 在 `enabled = list.filter(!disabled)` 子集上前进/回退，wrap-around；`Enter` 选中当前 active；`Esc` 关闭浮层；输入字符时打开浮层；选中后浮层关闭但 input 保留焦点。`mousedown` 阻止 default 阻止 input blur，确保选中前浮层不关。
+- **受控 / 非受控双模**：`isControlled = computed(() => props.modelValue !== undefined)`。受控走 `props.modelValue`，非受控走 `innerValue`（默认 `defaultValue ?? ''`）。受控测例验证：父级未写回时，组件不会私自改 inner state（emit 走了，但 value ref 仍是 init）。
+- **emit 三件套同时触发**：每次 setValue 都同时 emit `update:modelValue` / `change` / `search`。`change` 是 v-model 的常见别名；`search` 与 AntD AutoComplete 的 search 事件语义一致（用户在搜什么），方便业务监听做远程 loadData。
+- **mousedown 阻止 input blur**：`option` 的 onMousedown 上 `e.preventDefault()` —— 这是 popup-with-input 模式的标准做法。如果用 click，input 会先失焦 → focus 转移 → outside click 关 popup → click 事件已经丢了。mousedown.preventDefault 让 input 永远是 focused 的，再走我们自己的 selectOption。
+- **selectOption 不再 nextTick 调 focus**：第一版里在 selectOption 末尾 `nextTick(() => inputRef.focus())`，结果 focus 又触发 onFocus → openPopup → 浮层重新打开，单测两个 close 断言挂掉。修正：mousedown.preventDefault 已经保证 input 持有焦点，键盘选中时焦点本来就在 input 内，根本不需要再 focus 一次。
+- **Form 联动**：`mergedStatus = props.status || formItem?.validateStatus.value`，`setValue` 同步触发 `formItem?.validate('change')`，`onBlur` 触发 `formItem?.validate('blur')`。与 P1 / P2 同套。
+
+工程决策：
+
+- **不复用 c-select 内部实现**：c-select 的核心是 value=选项之一（discrete enum），AutoComplete 是 value=任意字符串（free text）。这两个语义是根本对立的，强行复用 select 组件需要大量分支判断。重新写一个轻量的 input + popup 反而干净（仅 ~290 行）。共享的是 popup 模式（floating-ui placement / Teleport / outside click / formItemInjectionKey）—— 这层逻辑已经在 P1 五件套 + P2 ColorPicker 上跑了 6 次，模式稳定。
+- **不复用 c-input**：c-input 的 prefix/suffix/clearable/showCount/maxlength 等能力 AutoComplete 80% 用不上，引入 c-input 会带来 props 冲突和样式继承问题。直接用 native `<input>` + 自己渲染 clear 按钮更简单。
+- **option slot 第一版就开**：参考 P1 TreeSelect 的经验 —— 自定义 option 渲染是高频需求，加这个 slot 代价为 1 行 `slots.option ? slots.option({option, index}) : opt.label`，但能接住「头像 + 名字」/「label + meta」这种业务诉求。
+- **search 事件别名 change**：AntD AutoComplete API 里 search 与 change 几乎是同一时刻，但语义上 search 强调「用户在搜什么」。同时 emit 两个，让监听 search 的代码可以零迁移地从 AntD 切过来。
+
+测试：24 个用例。渲染（input placeholder / modelValue 反映 / disabled 阻止 popup）；popup 开关（focus 打开 / outside mousedown 关 / Esc 关）；过滤（默认 includes / filterOption=false 全展 / 自定义 function / caseSensitive 切大小写敏感 / 空结果 notFoundContent）；选中（mousedown 选中 emit + close、disabled 项不响应、option.value !== option.label 时 emit value 而非 label）；键盘（ArrowDown 跳 disabled 循环到首项、ArrowUp 从开头跳到最后 enabled、Enter 选中 active、Enter 无 active 不 emit）；clear（allowClear + value 非空显示 / value 空隐藏 / disabled 隐藏）；受控（typing emit 但 inner state 不写回）；Form 联动（FormItem 内 v-model 双向回写）。
+
+验证结果：
+
+- `vp test run ui/auto-complete`（packages/ccui 内）通过 24/24。
 
 ### Batch 27：ColorPicker 80% 首次交付（P2 中等复杂度三件套收口）
 
@@ -870,7 +899,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 ### P3：体验型组件
 
-1. AutoComplete：可在 Select 和 Input 稳定后实现。
+1. AutoComplete：80% 已交付（Batch 28）。剩余 defaultActiveFirstOption / backfill / 远程搜索 debounce / 自定义 trigger slot / 虚拟滚动推到 95%。
 2. Mentions：需要单独处理输入解析和光标定位。
 3. Tour：依赖浮层定位、滚动跟随和遮罩裁切，建议最后做。
 

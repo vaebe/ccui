@@ -60,7 +60,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **68 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **69 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 
@@ -101,6 +101,7 @@ app.mount('#app')
 
 ### 数据录入
 
+- **AutoComplete** - 自动完成（80%，options + filterOption + 键盘导航 + allowClear + Form 联动 + Teleport）
 - **Cascader** - 级联选择（80%，多列联动 + fieldNames + changeOnSelect + Form 联动 + Teleport）
 - **CheckBox** - 多选框
 - **ColorPicker** - 颜色选择器（80%，HEX/RGB/HSV 显示 + alpha + 预设色板 + Form 联动 + Teleport）
@@ -150,11 +151,10 @@ app.mount('#app')
 
 ### 还没交付的常见组件
 
-| 组件              | 复杂度 | 备注                     |
-| ----------------- | ------ | ------------------------ |
-| Transfer / Upload | 复杂   | 独立大任务               |
-| AutoComplete      | 中等   | 依赖 Select / Input 稳定 |
-| Mentions / Tour   | 体验型 | 见路线图                 |
+| 组件              | 复杂度 | 备注       |
+| ----------------- | ------ | ---------- |
+| Transfer / Upload | 复杂   | 独立大任务 |
+| Mentions / Tour   | 体验型 | 见路线图   |
 
 ## 📖 文档
 

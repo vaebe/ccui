@@ -3,6 +3,7 @@ import type { App } from 'vue'
 import AffixInstall, { Affix } from './affix'
 import AlertInstall, { Alert } from './alert'
 import AnchorInstall, { Anchor } from './anchor'
+import AutoCompleteInstall, { AutoComplete } from './auto-complete'
 import AvatarInstall, { Avatar } from './avatar'
 import BadgeInstall, { Badge } from './badge'
 import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
@@ -87,6 +88,7 @@ const installs = [
   AffixInstall,
   AlertInstall,
   AnchorInstall,
+  AutoCompleteInstall,
   AvatarInstall,
   BadgeInstall,
   BreadcrumbInstall,
@@ -158,6 +160,7 @@ export {
   Affix,
   Alert,
   Anchor,
+  AutoComplete,
   Avatar,
   Badge,
   Breadcrumb,

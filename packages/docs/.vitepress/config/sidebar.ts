@@ -168,6 +168,11 @@ export default {
       text: '数据录入',
       items: [
         {
+          text: 'AutoComplete 自动完成',
+          link: '/components/auto-complete/',
+          status: '80%',
+        },
+        {
           text: 'Cascader 级联选择',
           link: '/components/cascader/',
           status: '80%',
