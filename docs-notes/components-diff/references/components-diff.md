@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 62 个一级目录，其中 60 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：60 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-08，本批次把 Form / Table 推到 95% 完整对齐：Form 新增 Form.List / Form.Provider / preserve（44 用例，+12），Table 新增固定列 / 展开行 / onCell + onHeaderCell 合并单元格（64 用例，+12）。Icon / Select / Tree 沿用上轮 100% 状态（33 + 59 + 50 = 142 测试），共享 `shared/hooks/use-virtual-list`。
+> 当前项目目录：`packages/ccui/ui` 下共 63 个一级目录，其中 61 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：61 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，本批次开 P1：新增 DatePicker（date 单选 80%，40 用例），抽 `shared/utils/date.ts` 日期工具层（toDayjs / formatDate / emitValue / generateMonthGrid / isSameDay / isSameMonth / isToday）作为后续 TimePicker / Range / Cascader 的共享底座。Form / Table 95%、Icon / Select / Tree / Affix 100% 沿用上轮状态。
 
 ## 零、交付完整度口径
 
@@ -14,7 +14,7 @@
 - 复杂组件：高频功能完整度 80%，定向测试完整度 80%，优先交付渲染、交互、`v-model:*` 外部状态接管、事件协议和组合场景；固定列、虚拟滚动、复杂浮层等低频/高成本能力可拆后续批次。
 - 每个未达完整对齐的组件必须记录剩余项，不能只用“基础完成”替代覆盖说明。
 
-## 一、已覆盖组件（60 项）
+## 一、已覆盖组件（61 项）
 
 | ccui 组件             | Ant Design 对应         | 分类            | 状态   |
 | --------------------- | ----------------------- | --------------- | ------ |
@@ -31,6 +31,7 @@
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
 | ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
+| DatePicker            | DatePicker 日期选择框   | 数据录入        | 80%    |
 | Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
 | Divider               | Divider 分割线          | 布局            | 已完成 |
 | Drawer                | Drawer 抽屉             | 反馈            | 已完成 |
@@ -94,19 +95,19 @@
 | QRCode 二维码          | 数据展示 | 二维码生成库、纠错级别、图标嵌入         | P2         |
 | ColorPicker 颜色选择器 | 数据录入 | 色板、HSV/RGB/HEX 转换、透明度、浮层交互 | P2         |
 
-### 复杂组件（9 项）
+### 复杂组件（8 项剩余 + 1 项进行中）
 
-| 组件                  | 分类     | 复杂点                              | 建议优先级 |
-| --------------------- | -------- | ----------------------------------- | ---------- |
-| DatePicker 日期选择框 | 数据录入 | 日期面板、范围、时间联动、国际化    | P1         |
-| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项              | P1         |
-| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索            | P1         |
-| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选      | P1         |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择      | P2         |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理    | P2         |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互   | P2         |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 | P3         |
-| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随        | P3         |
+| 组件                  | 分类     | 复杂点                                                                                            | 建议优先级   |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------------- | ------------ |
+| DatePicker 日期选择框 | 数据录入 | range / week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选） | P1（推进中） |
+| TimePicker 时间选择框 | 数据录入 | 滚轮选择、范围、禁用项                                                                            | P1           |
+| Cascader 级联选择     | 数据录入 | 多级联动、异步加载、搜索                                                                          | P1           |
+| TreeSelect 树选择     | 数据录入 | Select + Tree 组合、搜索、多选                                                                    | P1           |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                    | P2           |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                  | P2           |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互                                                                 | P2           |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                               | P3           |
+| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                      | P3           |
 
 ## 三、本轮交付记录
 
@@ -241,6 +242,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 20：DatePicker 80% 首次交付（date 单选 + 共享日期工具层）
+
+已完成 1 项：DatePicker（date 单选 80%）；新增共享层 `shared/utils/date.ts`。
+
+关键能力：
+
+- **共享日期工具层** `packages/ccui/ui/shared/utils/date.ts` 包装 dayjs，作为后续 TimePicker / Range / Cascader 等所有日期相关组件的共享底座：`toDayjs(value, format?)`（接受 `string | number | Date | Dayjs | null`，按 format 严格解析失败返回 null）、`formatDate`、`emitValue(dayjs, 'string'|'date'|'number', format)` 把内部 Dayjs 输出为外部 v-model 期望的形态、`generateMonthGrid(viewMonth, weekStart)` 输出 6×7 = 42 格 cell `{ date, day, isCurrentMonth, isToday }`、`isSameDay` / `isSameMonth` / `isToday` 比较谓词。
+- **DatePicker 80% API**：受控/非受控 `v-model:modelValue`（默认 string，可切 `'date'` / `'number'`）；`format`（默认 `YYYY-MM-DD`，dayjs token）；`placeholder` / `disabled` / `clearable`（默认 true）/ `size` 三档 / `status`；`disabledDate(current: Dayjs) => boolean`；`placement` 4 个方位（`bottomLeft / bottomRight / topLeft / topRight`，对齐 Ant Design 命名，内部映射到 `@floating-ui/vue` 的 `bottom-start / bottom-end / top-start / top-end`）；`popupAppendToBody` + 自定义 `getPopupContainer`，复用 Select 同款 Teleport + Transition 模式；`weekStart` 0/1 切换周日/周一开头；`autoFocus` / `inputReadOnly` / `popupClassName` / `transitionName`；`@floating-ui/vue` 的 `flip + shift({ padding: 8 }) + offset(4)` 自动 flip。
+- **Form 联动**：通过 `formItemInjectionKey` inject `validateStatus` 后合并到 `mergedStatus` 计算属性，FormItem 校验失败时自动给 root 加 `--status-error` / `--status-warning` modifier；`emitChange` 同步触发 `formItem?.validate('change')` 走 onChange trigger 校验。
+- **面板交互**：input click 切换 open；同一天再点不重发 change（仅关闭面板）；`open` 时把 `viewMonth` 重置到选中月，避免上次切到 next month 后再开还停在那；click outside（document mousedown 捕获）关闭。
+- 文档：覆盖基础 / 显示已选值 / 自定义格式（含 valueFormat 三档 demo）/ 禁用日期 / 三种尺寸 / 禁用与不可清除 / Form 联动（含 c-form-item + 校验按钮 demo）/ 弹层容器；API Props 表 18 行 + Events 表 5 行 + 已知限制清单。
+- 测试：40 个用例，覆盖基础渲染（默认/自定义 placeholder、3 类 modelValue、自定义 format、无效值兜底）、popup open/close（click 切换、click outside 关闭、disabled 不打开、autoFocus）、selection（默认 string / `valueFormat=date` Date 实例 / `valueFormat=number` 时间戳、选中后关闭、同日不重发）、disabledDate（cell 加 disabled modifier、disabled cell 不响应 click）、clearable（5 种组合 + click clear emit null + stopPropagation）、月/年 4 个箭头切换 + 关闭再打开回到选中月、grid（42 格 / today modifier 唯一 / 周日/周一两套周标签 / outside 月格子）、size 三档 + status modifier、Form integration（findComponent.vm.$.exposed）、Teleport（popupAppendToBody 挂 body / 自定义 getPopupContainer 容器）。
+- 状态：sidebar.ts（手写风格 +5 行加进 数据录入 分类，CheckBox 与 Form 之间）、vue-ccui.ts（DatePickerInstall + DatePicker 三处插入，与 ConfigProvider/Descriptions 字母序对齐）、components-diff.md 表格 + 头部 + 缺失清单同步、README 数据录入分类条目、`packages/cli/templates/vitepress-sidebar.js` 生成器无 warning。
+
+工程决策：
+
+- **统一用 dayjs 而不是 Date / Intl**：仓库已有 `dayjs ^1.11.19`（Calendar 在用），不引入新依赖；用 `dayjs/plugin/customParseFormat` 在 `toDayjs` 中按 format 严格解析（`dayjs(value, format, true)`），避免 `dayjs('not-a-date')` 落到 fallback 解析得到当前时间这种隐蔽 bug。
+- **viewMonth 与 modelValue 解耦**：内部用 `shallowRef<Dayjs>` 存当前查看的月份，`watch(selectedDayjs)` 仅在外部受控值跨月变化时同步面板，避免用户切月看其他日期时被一次回写打断。
+- **`valueFormat` 三档而不是直接吐 Dayjs**：DateValue 内部统一 Dayjs，但向外通过 `emitValue` 转回 string / Date / number，避免把 dayjs 类型暴露给业务层强迫所有 v-model 绑定都要 `import { Dayjs } from 'dayjs'`。
+- **Placement 命名映射**：对外暴露 Ant Design 风格 `bottomLeft / topRight` 等 4 个值，内部用常量表 `PLACEMENT_TO_FLOATING` 映射到 floating-ui 风格 `bottom-start / top-end`。这样未来切底层定位库时只改一张表，不影响业务调用。
+- **input 默认 `readonly={true}`**：`inputReadOnly` 默认开启，禁止键盘输入日期。键盘解析（带 format 容错、月/日范围校验、IME 中状态等）成本高，留到下一批 90% 时再做。
+- **「同日重点不重发」**：dispatch `update:modelValue` 会走外部回写 → `selectedDayjs` 重新 computed → 触发 watch 但 `isSameMonth` 拦下不切月。但还是会触发 `formItem?.validate('change')` 重复校验。所以选中同一天直接 close 不发，节省一次校验回路。
+
+验证结果：
+
+- `vp check` 通过（467 文件 prettier、294 文件 lint/type 均干净）。
+- 从 `packages/ccui` 跑 `pnpm test ui/date-picker --run` 通过，40 个用例全过。
+- 从 `packages/docs` 跑 `node ../cli/index.js create -t ccui --ignore-parse-error` 没有任何 `分类不存在` warning，DatePicker 出现在数据录入分类，状态 80%。
+- 仓库内 `pnpm test --run` 全量回归 879/881 通过；2 个失败（`statistic countdown 时钟精度差 11ms`、`float-button backTop 默认 target` mock）在 DatePicker 引入前就已存在，单独跑 `ui/statistic` / `ui/float-button` 复现，与本次改动无关。
 
 ### Batch 19：Table 95% 完成（固定列 / 展开行 / 合并单元格）
 

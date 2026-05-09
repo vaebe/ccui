@@ -1,0 +1,225 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-date-picker {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  &--small &__input-wrap {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large &__input-wrap {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+  }
+
+  &__input-wrap {
+    display: flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $ccui-primary;
+    }
+  }
+
+  &.is-disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &.is-open &__input-wrap {
+    border-color: $ccui-primary;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    padding: 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1050;
+    width: 280px;
+    padding: 8px;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow: $ccui-box-shadow-secondary;
+    box-sizing: border-box;
+  }
+
+  &__panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px 8px;
+    border-bottom: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__panel-label {
+    flex: 1;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $ccui-color-text-tertiary;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__week-row,
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &__week-row {
+    padding: 8px 0 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    text-align: center;
+  }
+
+  &__week-cell {
+    padding: 4px 0;
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    cursor: pointer;
+    color: $ccui-text;
+
+    &--outside {
+      color: $ccui-color-text-disabled;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+      background-color: $ccui-color-fill-quaternary;
+    }
+  }
+
+  &__cell-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: $ccui-border-radius;
+    transition: background-color 0.2s;
+  }
+
+  &__cell:not(&__cell--disabled):hover &__cell-inner {
+    background-color: $ccui-color-fill-tertiary;
+  }
+
+  &__cell--today &__cell-inner {
+    border: 1px solid $ccui-primary;
+  }
+
+  &__cell--selected &__cell-inner {
+    background-color: $ccui-primary;
+    color: #fff;
+  }
+
+  &__cell--selected:hover &__cell-inner {
+    background-color: $ccui-primary;
+  }
+}
+
+.#{$cls-prefix}-date-picker-fade-enter-active,
+.#{$cls-prefix}-date-picker-fade-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.#{$cls-prefix}-date-picker-fade-enter-from,
+.#{$cls-prefix}-date-picker-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

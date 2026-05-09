@@ -13,6 +13,7 @@ import CardInstall, { Card } from './card'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
 import ConfigProviderInstall, { ConfigProvider, useConfig } from './config-provider'
+import DatePickerInstall, { DatePicker } from './date-picker'
 import DescriptionsInstall, { Descriptions, DescriptionsItem } from './descriptions'
 import DividerInstall, { Divider } from './divider'
 import DrawerInstall, { Drawer } from './drawer'
@@ -89,6 +90,7 @@ const installs = [
   CheckBoxInstall,
   CollapseInstall,
   ConfigProviderInstall,
+  DatePickerInstall,
   DescriptionsInstall,
   DividerInstall,
   DrawerInstall,
@@ -155,6 +157,7 @@ export {
   CollapseItem,
   ConfigProvider,
   useConfig,
+  DatePicker,
   Descriptions,
   DescriptionsItem,
   Divider,

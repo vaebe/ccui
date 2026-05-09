@@ -173,6 +173,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'DatePicker 日期选择框',
+          link: '/components/date-picker/',
+          status: '80%',
+        },
+        {
           text: 'Form 表单',
           link: '/components/form/',
           status: '95%',
