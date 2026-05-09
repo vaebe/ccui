@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 71 个一级目录，其中 69 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：69 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P3 起步 / AutoComplete 80% 首次交付**：24 用例，options 兼容 string[] 与 `{value,label,disabled}[]`、`filterOption` 三态（true/false/function）+ caseSensitive、键盘 ArrowUp/Down/Enter/Esc 导航跳过 disabled 项、allowClear、Form 联动 + Teleport、空数据 notFoundContent。本批次完成 P3「依赖 Input/Select 稳定的补全场景」组件落地，剩 Mentions / Tour 两项 P3 体验组件待推进。P2 中等复杂度三件套（Carousel/QRCode/ColorPicker 全 80%）维持。
+> 当前项目目录：`packages/ccui/ui` 下共 72 个一级目录，其中 70 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：70 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P2 大件 / Transfer 80% 首次交付**：24 用例，双列穿梭、checkbox 全选 + indeterminate、双向移动按钮、按列独立搜索、自定义 filterOption / render / titles / operations / locale、Form 联动。Upload / Mentions / Tour 三项剩余 P2/P3 大件待推。P3 AutoComplete (Batch 28) 与 P2 中等复杂度三件套全部 80% 维持。
 
 ## 零、交付完整度口径
 
@@ -82,6 +82,7 @@
 | TimePicker            | TimePicker 时间选择框   | 数据录入        | 80%    |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
+| Transfer              | Transfer 穿梭框         | 数据录入        | 80%    |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
 | TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
 | Typography            | Typography 排版         | 通用            | 已完成 |
@@ -108,7 +109,7 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 | TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                              | P1（推进中)  |
 | Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）           | P1（推进中） |
 | TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly） | P1（推进中） |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择                                                                                                            | P2           |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动 | P2（已交付）  |
 | Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                          | P2           |
 | AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
 | Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
@@ -247,6 +248,36 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 29：Transfer 80% 首次交付（P2 大件第一项）
+
+已完成 1 项：Transfer（80% 首次交付）。P2 独立大任务的第一项。24 个用例覆盖 partition / 选择协议 / 移动协议 / 搜索 / v-model 双键。
+
+关键能力：
+
+- **partition 函数 — 顺序按 targetKeys**：把 dataSource 按 `targetKeys` 拆成 left/right 两列。关键是 right 列的顺序**严格跟随 `targetKeys` 数组顺序**，而不是 dataSource 的原始顺序。这样业务可以通过排序 targetKeys 来排序右侧，符合「目标列是用户精心挑出的有序集」语义（与 AntD 一致）。实现：先把 right 候选项收进 Map<key, item>，再按 targetKeys 顺序从 Map 里取。
+- **跨列勾选状态共用一个 selectedKeys**：与 Ant Design 一致，不拆 leftSelectedKeys / rightSelectedKeys。组件内部按 `props.targetKeys.includes(k)` 切分到左右。这让 v-model:selectedKeys 这一个 prop 就能 round-trip 双列状态。emit `select-change` 时再拆成 (sourceSelected, targetSelected) 两个数组方便业务监听。
+- **header indeterminate 三态**：每列头部 checkbox 用 `indeterminate` 真三态（none / partial / all），通过 `ref` 直接写 `el.indeterminate = ...`（Vue 不会把这个属性写到模板）。allLeftSelected：列内所有 enabled 项都被勾；someLeftSelected：有勾但未全勾。
+- **disabled 单项不进 enabled 统计**：选中、全选、计数都按 `enabled = items.filter(!disabled)` 过滤。点击 disabled 项 toggleItem 直接 return；全选 toggleAll 也只对 enabled keys 做集合操作。这意味着 disabled 项永远进不了 selectedKeys，业务侧不用自己防御。
+- **move 操作的副作用 — 同时清掉对应 selectedKeys**：移动按钮按下后，被移动的 keys 从 selectedKeys 里被自动清除（避免「我已经移过去了，但你还高亮着」的视觉错乱）。同时 emit 三个事件：`update:targetKeys`、`change(targetKeys, direction, moveKeys)`、`update:selectedKeys`。Form 联动同款 `formItem?.validate('change')`。
+- **filterOption 三态**：未传 → 默认按 `title` 包含匹配（不区分大小写）；函数 → 业务自定义 `(input, item) => boolean`，可以按 key、description、自定义字段过滤。**两列共用同一份 filterOption**，但搜索框 value 各自独立（leftSearch / rightSearch shallowRef）。
+- **render slot + render prop 双入口**：slots.render（Vue 模板风格）优先；fallback 到 props.render（函数式 prop）；fallback 到 `item.title ?? item.key`。slot 接收 `{ item }` 单参，业务可以做带图标 / 副标题 / tag 的复合渲染。
+- **locale + 单复数**：内置默认 locale `{ itemUnit: '项', itemsUnit: '项', notFoundContent: '列表为空', searchPlaceholder: '请输入搜索内容' }`。total === 1 用 itemUnit，否则用 itemsUnit。这与 AntD locale 接口一致，方便国际化。
+- **Form 联动**：`formItem?.validate('change')` 仅在 move 操作触发（不在 toggleItem 触发）—— 因为表单关心的是「最终选择了哪些」（targetKeys 变化），不关心中间勾选状态。
+
+工程决策：
+
+- **不拆 TransferList 子组件**：左右两列结构完全一致，直接 `renderList(direction)` 函数复用；外部不暴露子组件，避免增加 inject/provide 链路。如果 95% 时要支持子组件 slot 自定义某一列，再拆。
+- **不引入 c-checkbox**：用 native `<input type="checkbox">` + accent-color 样式。c-checkbox 本身有自己的状态管理，套进来会有 props 冲突；80% 切片下 native checkbox 完全够用。
+- **不集成 c-input**：搜索框是 native input + 简单样式。c-input 的 prefix/suffix/clearable 在 Transfer 列头部不需要。
+- **operations 是数组而非两个独立 prop**：与 AntD `operations: [string, string]` 对齐，业务可以一行 `:operations="['加入', '移除']"` 替换两个按钮文案；语义比 `rightText` / `leftText` 更紧凑。
+- **不渲染描述（description）**：`item.description` 字段类型上保留，但默认 render 不展示。业务想加描述就用 `render` 自己拼，避免组件层强加视觉规范。
+
+测试：24 个用例。渲染（partition 双列、targetKeys 顺序、自定义 titles/operations、locale 单复数、custom render、empty 状态）；选择（点击 toggle、disabled 项不响应、整体 disabled、emit select-change 拆 left/right）；header 全选（check-all / uncheck-all、indeterminate 真三态、空列 disabled）；移动（右移、左移、移动后清 selectedKeys、按钮 disabled 当无选中、append 不重复）；搜索（默认隐藏、showSearch=true 显示两列、左侧搜索过滤左列、自定义 filterOption、emit search 带 direction）；v-model（v-model:targetKeys + v-model:selectedKeys 双键 round-trip）。
+
+验证结果：
+
+- `vp test run ui/transfer`（packages/ccui 内）通过 24/24。
 
 ### Batch 28：AutoComplete 80% 首次交付（P3 起步 / Input + Select 之间的补全场景）
 
@@ -895,7 +926,8 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 1. Carousel：80% 已交付（Batch 25）。剩余 swipe 手势 / 键盘 ArrowLeft/Right/Home/End / afterChange transitionend / adaptiveHeight / slidesToShow / 自定义 dots-render slot 推到 95%。
 2. QRCode：80% 已交付（Batch 26）。剩余 toCanvas / toDataURL expose、圆角点阵 / 渐变前景、SSR 集成测试推到 95%。
 3. ColorPicker：80% 已交付（Batch 27）。剩余 RGB / HSV 三联输入控件、trigger slot、EyeDropper API、键盘导航、modelValue=null 清空状态推到 95%。
-4. Transfer / Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。P2 中等复杂度三件套全部收口后，下一波就是 Transfer / Upload。
+4. Transfer：80% 已交付（Batch 29）。剩余分页、虚拟滚动、拖拽排序、selectAllLabels slot 推到 95%。
+5. Upload：分别作为独立较大任务推进，避免和 Form/Table 同轮耦合。Transfer 收口后下一站。
 
 ### P3：体验型组件
 

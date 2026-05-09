@@ -238,6 +238,11 @@ export default {
           status: '80%',
         },
         {
+          text: 'Transfer 穿梭框',
+          link: '/components/transfer/',
+          status: '80%',
+        },
+        {
           text: 'TreeSelect 树选择',
           link: '/components/tree-select/',
           status: '80%',

@@ -64,6 +64,7 @@ import TagInstall, { Tag } from './tag'
 import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
+import TransferInstall, { Transfer } from './transfer'
 import TreeInstall, { Tree } from './tree'
 import TreeSelectInstall, { TreeSelect } from './tree-select'
 import TypographyInstall, { Link, Paragraph, Text, Title, Typography } from './typography'
@@ -149,6 +150,7 @@ const installs = [
   TimePickerInstall,
   TimelineInstall,
   TooltipInstall,
+  TransferInstall,
   TreeInstall,
   TreeSelectInstall,
   TypographyInstall,
@@ -246,6 +248,7 @@ export {
   Timeline,
   TimelineItem,
   Tooltip,
+  Transfer,
   Tree,
   TreeSelect,
   Link,
