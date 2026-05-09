@@ -127,6 +127,48 @@ function onRefresh() {
 
 :::
 
+## 圆角点阵
+
+`dot-radius` 控制每个模块的圆角半径，取值 0（方形）到 0.5（正圆）。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px">
+    <c-qr-code value="https://example.com" :dot-radius="0" />
+    <c-qr-code value="https://example.com" :dot-radius="0.25" />
+    <c-qr-code value="https://example.com" :dot-radius="0.5" />
+  </div>
+</template>
+```
+
+:::
+
+## 渐变前景
+
+`gradient` 设置渐变前景色，支持 `from` / `to` / `direction`（`to right` / `to bottom` / `to bottom right` 等）。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px">
+    <c-qr-code
+      value="https://example.com"
+      :gradient="{ from: '#1677ff', to: '#69c0ff', direction: 'to bottom right' }"
+    />
+    <c-qr-code
+      value="https://example.com"
+      :dot-radius="0.5"
+      :gradient="{ from: '#ff4d4f', to: '#ffa940' }"
+    />
+  </div>
+</template>
+```
+
+:::
+
 ## 无边框
 
 `bordered=false` 去掉外侧灰边和圆角，纯净嵌入到深色容器或卡片底纹。
@@ -157,6 +199,8 @@ function onRefresh() {
 | iconSize    | number                                              | `40`        | logo 边长（px），自动截到整体边长的 30% 以内                        |
 | status      | `'active' \| 'expired' \| 'loading' \| 'scanned'`   | `'active'`  | 状态                                                                |
 | refreshText | string                                              | `点击刷新`  | `expired` 状态下刷新按钮文案                                        |
+| dotRadius   | number                                              | `0`         | 模块圆角半径（0=方形，0.5=正圆）                                    |
+| gradient    | `{ from: string, to: string, direction?: string }`  | --          | 渐变前景色；设置后 `color` 作为 fallback                            |
 
 ### Events
 
@@ -170,10 +214,13 @@ function onRefresh() {
 | -------------- | --------------------- | ------------------------------- |
 | statusRender   | `{ status: string }`  | 自定义状态遮罩内容；提供后默认遮罩内容（spinner / 文字 / 刷新按钮）不再渲染 |
 
+### Exposed methods
+
+| 方法       | 签名                                                     | 说明                                      |
+| ---------- | -------------------------------------------------------- | ----------------------------------------- |
+| toDataURL  | `(type?: string, quality?: number) => Promise<string>`   | 将 SVG 通过 canvas 转换为 data URL        |
+
 ## 已知限制（未交付）
 
-- **canvas / dataURL 输出**：当前固定 SVG 渲染，未提供 `type='canvas'` / `toDataURL()` 导出。下载二维码需要业务侧自行 `new XMLSerializer().serializeToString(svg)` + Blob URL，下一批考虑加 `toDataURL` expose。
-- **Gradient / 圆角点阵**：模块绘制是方形 path 合并，未实现 Ant Design v6.x 的圆角点阵 / 渐变前景色。
 - **超长 value**：`qrcode-generator` 在 typeNumber=0（自动）模式下最多支持 version 40。超过后组件会回退到空 SVG（`viewBox="0 0 1 1"`），不会抛错；调用方需要自行做长度校验或预先短链。
 - **logo 自动外圈**：当前 logo 用 2px 白色 padding 简单勾边；Ant Design 的「白底 + 圆角 + 阴影」精修样式留后续。
-- **server-side 渲染**：`qrcode-generator` 是 pure JS、无 DOM，理论上 SSR 安全，但本批未做 SSR 集成测试。

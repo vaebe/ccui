@@ -54,6 +54,20 @@ export const qrCodeProps = {
     type: String,
     default: '点击刷新',
   },
+  // 圆角半径（0 = 方形，0.5 = 正圆），取值 0~0.5
+  dotRadius: {
+    type: Number,
+    default: 0,
+  },
+  // 渐变前景色配置，传入后 color 仅作为 fallback
+  gradient: {
+    type: Object as PropType<{ type?: 'linear'; direction?: string; from: string; to: string }>,
+    default: undefined,
+  },
 } as const
+
+export interface QRCodeExpose {
+  toDataURL: (type?: string, quality?: number) => Promise<string>
+}
 
 export type QRCodeProps = ExtractPropTypes<typeof qrCodeProps>

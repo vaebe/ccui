@@ -1,6 +1,6 @@
 # Carousel 走马灯
 
-旋转切换图像或卡片的容器组件。支持自动播放、循环、四向指示器、`scrollx` / `fade` 两种切换效果以及前后切换箭头。当一组同等内容需要在水平方向轮播展示时使用。
+旋转切换图像或卡片的容器组件。支持自动播放、循环、四向指示器、`scrollx` / `fade` 两种切换效果、前后切换箭头、键盘导航和触摸滑动手势。当一组同等内容需要在水平方向轮播展示时使用。
 
 ## 基本用法
 
@@ -101,6 +101,59 @@
 
 :::
 
+## 触摸滑动
+
+默认启用 swipe 手势（`swipeable`），左右滑动切换帧。`swipe-threshold` 控制触发阈值（默认 40px）。
+
+:::demo
+
+```vue
+<template>
+  <c-carousel style="height: 160px">
+    <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">
+      ← 左滑下一帧 / 右滑上一帧 →
+    </div>
+    <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">B</div>
+    <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">C</div>
+  </c-carousel>
+</template>
+```
+
+:::
+
+## 自定义指示器
+
+通过 `customDot` 作用域插槽自定义每个指示器的渲染内容，接收 `{ index, isActive }`。
+
+:::demo
+
+```vue
+<template>
+  <c-carousel style="height: 160px">
+    <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">1</div>
+    <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">2</div>
+    <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">3</div>
+    <template #customDot="{ index, isActive }">
+      <span
+        :style="{
+          display: 'inline-block',
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
+          background: isActive ? '#1677ff' : 'rgba(0,0,0,0.15)',
+          cursor: 'pointer',
+          transition: 'background 0.3s',
+        }"
+      >
+        {{ index + 1 }}
+      </span>
+    </template>
+  </c-carousel>
+</template>
+```
+
+:::
+
 ## 受控模式
 
 通过 `v-model` 接管激活索引，外部按钮也能驱动跳转。
@@ -163,39 +216,57 @@ const carouselRef = ref<{ next: () => void; prev: () => void; goTo: (i: number, 
 
 ### Props
 
-| 参数          | 类型                                          | 默认值       | 说明                                                          |
-| ------------- | --------------------------------------------- | ------------ | ------------------------------------------------------------- |
-| modelValue    | number                                        | --           | 当前激活索引，支持 `v-model`；不传则非受控                    |
-| defaultActive | number                                        | `0`          | 非受控初始索引                                                |
-| autoplay      | boolean                                       | `false`      | 是否自动播放                                                  |
-| autoplaySpeed | number                                        | `3000`       | 自动播放间隔（毫秒）                                          |
-| dots          | boolean                                       | `true`       | 是否显示指示器                                                |
-| dotPosition   | `'top' \| 'bottom' \| 'left' \| 'right'`      | `'bottom'`   | 指示器位置                                                    |
-| effect        | `'scrollx' \| 'fade'`                         | `'scrollx'`  | 切换动效。`scrollx` 横向位移；`fade` 透明度交替               |
-| infinite      | boolean                                       | `true`       | 是否循环；末尾点 next 回到 0、首位点 prev 跳到末尾            |
-| arrows        | boolean                                       | `false`      | 是否显示前后切换箭头                                          |
-| pauseOnHover  | boolean                                       | `true`       | 鼠标悬浮时是否暂停 autoplay                                   |
-| duration      | number                                        | `500`        | 切换动画时长（毫秒），同时控制 transition-duration            |
+| 参数           | 类型                                          | 默认值       | 说明                                                          |
+| -------------- | --------------------------------------------- | ------------ | ------------------------------------------------------------- |
+| modelValue     | number                                        | --           | 当前激活索引，支持 `v-model`；不传则非受控                    |
+| defaultActive  | number                                        | `0`          | 非受控初始索引                                                |
+| autoplay       | boolean                                       | `false`      | 是否自动播放                                                  |
+| autoplaySpeed  | number                                        | `3000`       | 自动播放间隔（毫秒）                                          |
+| dots           | boolean                                       | `true`       | 是否显示指示器                                                |
+| dotPosition    | `'top' \| 'bottom' \| 'left' \| 'right'`      | `'bottom'`   | 指示器位置                                                    |
+| effect         | `'scrollx' \| 'fade'`                         | `'scrollx'`  | 切换动效。`scrollx` 横向位移；`fade` 透明度交替               |
+| infinite       | boolean                                       | `true`       | 是否循环；末尾点 next 回到 0、首位点 prev 跳到末尾            |
+| arrows         | boolean                                       | `false`      | 是否显示前后切换箭头                                          |
+| pauseOnHover   | boolean                                       | `true`       | 鼠标悬浮时是否暂停 autoplay                                   |
+| duration       | number                                        | `500`        | 切换动画时长（毫秒），同时控制 transition-duration            |
+| swipeable      | boolean                                       | `true`       | 是否启用触摸/指针 swipe 手势                                  |
+| swipeThreshold | number                                        | `40`         | swipe 触发阈值（像素），滑动距离超过此值才切换                |
 
 ### Events
 
-| 事件名            | 回调签名                                | 触发时机             |
-| ----------------- | --------------------------------------- | -------------------- |
-| update:modelValue | `(value: number)`                       | 切换时（受控/非受控均触发） |
-| change            | `(current: number, prev: number)`       | 实际切换帧时         |
+| 事件名            | 回调签名                                | 触发时机                     |
+| ----------------- | --------------------------------------- | ---------------------------- |
+| update:modelValue | `(value: number)`                       | 切换时（受控/非受控均触发）  |
+| change            | `(current: number, prev: number)`       | 实际切换帧时（动画开始）     |
+| afterChange       | `(current: number)`                     | 切换动画结束后               |
+
+### Slots
+
+| 插槽名    | 作用域                                     | 说明                                      |
+| --------- | ------------------------------------------ | ----------------------------------------- |
+| default   | --                                         | 每个直接子节点作为一帧                    |
+| customDot | `{ index: number, isActive: boolean }`     | 自定义每个指示器内容，点击外层 li 跳转    |
 
 ### Exposed methods
 
-| 方法 | 签名                                       | 说明                                  |
-| ---- | ------------------------------------------ | ------------------------------------- |
-| next | `() => void`                               | 切到下一帧（受 `infinite` 影响）      |
-| prev | `() => void`                               | 切到上一帧（受 `infinite` 影响）      |
-| goTo | `(index: number, dontAnimate?: boolean) => void` | 跳到指定索引；`dontAnimate=true` 时不加动画类 |
+| 方法            | 签名                                              | 说明                                  |
+| --------------- | ------------------------------------------------- | ------------------------------------- |
+| next            | `() => void`                                      | 切到下一帧（受 `infinite` 影响）      |
+| prev            | `() => void`                                      | 切到上一帧（受 `infinite` 影响）      |
+| goTo            | `(index: number, dontAnimate?: boolean) => void`  | 跳到指定索引；`dontAnimate=true` 跳过动画 |
+| getCurrentIndex | `() => number`                                    | 获取当前激活索引                      |
+
+### 键盘导航
+
+组件容器 `tabindex=0`，聚焦后可用以下按键：
+
+| 按键                   | 操作             |
+| ---------------------- | ---------------- |
+| ArrowRight / ArrowDown | 切到下一帧       |
+| ArrowLeft / ArrowUp    | 切到上一帧       |
+| Home                   | 跳到第一帧       |
+| End                    | 跳到最后一帧     |
 
 ## 已知限制（未交付）
 
-- **手势滑动 / 触屏 swipe**：移动端左右滑动切换暂未实现，需要单独一批做指针事件 + 阈值判定。
-- **键盘无障碍**：ArrowLeft / ArrowRight / Home / End 键盘导航和 `aria-roledescription="carousel"` / `aria-live` 通告暂缺。
-- **afterChange 钩子**：当前 `change` 在切换发起时触发；切换动画结束后的精确回调需要补一个 transitionend 监听。
 - **adaptiveHeight / 多帧并排（slidesToShow）**：当前一帧占满 viewport，多帧并排和按内容高度自适应留给后续。
-- **自定义指示器渲染**：`dots-render` slot 暂未提供，目前固定为短条样式。

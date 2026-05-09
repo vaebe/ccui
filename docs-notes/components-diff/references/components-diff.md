@@ -29,7 +29,7 @@
 | Button3D              | 项目特色组件            | 通用            | 已完成 |
 | Calendar              | Calendar 日历           | 数据展示        | 已完成 |
 | Card                  | Card 卡片               | 数据展示        | 已完成 |
-| Carousel              | Carousel 走马灯         | 数据展示        | 80%    |
+| Carousel              | Carousel 走马灯         | 数据展示        | 95%    |
 | Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
@@ -61,7 +61,7 @@
 | Popconfirm            | Popconfirm 气泡确认框   | 反馈            | 已完成 |
 | Popover               | Popover 气泡卡片        | 反馈            | 已完成 |
 | Progress              | Progress 进度条         | 反馈            | 已完成 |
-| QRCode                | QRCode 二维码           | 数据展示        | 80%    |
+| QRCode                | QRCode 二维码           | 数据展示        | 95%    |
 | Radio                 | Radio 单选框            | 数据录入        | 已完成 |
 | RangePicker           | DatePicker.RangePicker  | 数据录入        | 80%    |
 | Rate                  | Rate 评分               | 数据录入        | 已完成 |
@@ -1020,8 +1020,8 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 ### P2：增强展示与低频录入
 
-1. Carousel：80% 已交付（Batch 25）。剩余 swipe 手势 / 键盘 ArrowLeft/Right/Home/End / afterChange transitionend / adaptiveHeight / slidesToShow / 自定义 dots-render slot 推到 95%。
-2. QRCode：80% 已交付（Batch 26）。剩余 toCanvas / toDataURL expose、圆角点阵 / 渐变前景、SSR 集成测试推到 95%。
+1. Carousel：**95% 已交付**。新增键盘导航（ArrowLeft/Right/Up/Down/Home/End）+ ARIA 增强（role=region, aria-roledescription=carousel, aria-live=polite, role=tabpanel）+ swipe 手势（pointerdown/up + swipeThreshold + 横竖自适应）+ afterChange 事件（duration 后触发）+ customDot 作用域插槽。39 个测试全通过。剩余 adaptiveHeight / slidesToShow 留给后续。
+2. QRCode：**95% 已交付**。新增 toDataURL expose（SVG→canvas→dataURL）、dotRadius 圆角点阵（0~0.5）、gradient 渐变前景色（linearGradient + 6 向 direction）。25 个测试全通过。剩余 logo 精修样式 / 超长 value 校验留给后续。
 3. ColorPicker：80% 已交付（Batch 27）。剩余 RGB / HSV 三联输入控件、trigger slot、EyeDropper API、键盘导航、modelValue=null 清空状态推到 95%。
 4. Transfer：80% 已交付（Batch 29）。剩余分页、虚拟滚动、拖拽排序、selectAllLabels slot 推到 95%。
 5. Upload：80% 已交付（Batch 31）。剩余 customRequest / 默认 action POST、listType=picture/picture-card、c-progress 进度条、preview/download、async beforeUpload、chunk 分片推到 95%。

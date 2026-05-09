@@ -170,12 +170,89 @@ describe('qr-code reactivity', () => {
   })
 })
 
+describe('qr-code dotRadius', () => {
+  it('uses geometricPrecision shapeRendering for dotRadius>0', () => {
+    const w0 = mountQR({ value: 'test', dotRadius: 0 })
+    // dotRadius=0 默认 crispEdges
+    const sr0 =
+      w0.find(ns.e('svg')).element.getAttribute('shape-rendering') ??
+      (w0.find(ns.e('svg')).element as any).getAttribute('shapeRendering')
+    expect(sr0).toBe('crispEdges')
+
+    const w1 = mountQR({ value: 'test', dotRadius: 0.3 })
+    const sr1 =
+      w1.find(ns.e('svg')).element.getAttribute('shape-rendering') ??
+      (w1.find(ns.e('svg')).element as any).getAttribute('shapeRendering')
+    expect(sr1).toBe('geometricPrecision')
+  })
+
+  it('renders arc commands in path when dotRadius > 0', () => {
+    const wrapper = mountQR({ value: 'A', dotRadius: 0.25 })
+    const d = wrapper.find('path').attributes('d')!
+    // 圆角路径包含 arc 'a' 命令
+    expect(d).toContain('a')
+  })
+
+  it('renders only straight lines when dotRadius=0', () => {
+    const wrapper = mountQR({ value: 'A', dotRadius: 0 })
+    const d = wrapper.find('path').attributes('d')!
+    // 方形路径不含 arc 'a' 命令
+    expect(d).not.toMatch(/a\d/)
+  })
+})
+
+describe('qr-code gradient', () => {
+  it('renders linearGradient defs when gradient prop is set', () => {
+    const wrapper = mountQR({
+      value: 'test',
+      gradient: { from: '#ff0000', to: '#0000ff' },
+    })
+    expect(wrapper.find('defs').exists()).toBe(true)
+    expect(wrapper.find('linearGradient').exists()).toBe(true)
+    const stops = wrapper.findAll('stop')
+    expect(stops).toHaveLength(2)
+    expect(stops[0].attributes('stop-color')).toBe('#ff0000')
+    expect(stops[1].attributes('stop-color')).toBe('#0000ff')
+  })
+
+  it('applies gradient url as path fill', () => {
+    const wrapper = mountQR({
+      value: 'test',
+      gradient: { from: '#ff0000', to: '#0000ff' },
+    })
+    expect(wrapper.find('path').attributes('fill')).toContain('url(#')
+  })
+
+  it('does not render defs when gradient is not set', () => {
+    const wrapper = mountQR({ value: 'test' })
+    expect(wrapper.find('defs').exists()).toBe(false)
+  })
+
+  it('supports direction prop', () => {
+    const wrapper = mountQR({
+      value: 'test',
+      gradient: { from: '#ff0000', to: '#0000ff', direction: 'to bottom' },
+    })
+    const lg = wrapper.find('linearGradient')
+    expect(lg.attributes('y2')).toBe('100%')
+    expect(lg.attributes('x2')).toBe('0%')
+  })
+})
+
+describe('qr-code toDataURL expose', () => {
+  it('exposes toDataURL method', () => {
+    const wrapper = mount(QRCode, { props: { value: 'test' } })
+    wrappers.push(wrapper)
+    const exposed = (wrapper.vm as any).$.exposed
+    expect(typeof exposed.toDataURL).toBe('function')
+  })
+})
+
 describe('qr-code edge cases', () => {
   it('renders empty svg when value is empty string', () => {
     const wrapper = mountQR({ value: '' })
     const svg = wrapper.find(ns.e('svg'))
     expect(svg.exists()).toBe(true)
-    // 空 value 时 viewBox 是占位的 0 0 1 1，没有 path
     expect(svg.attributes('viewBox')).toBe('0 0 1 1')
     expect(svg.find('path').exists()).toBe(false)
   })

@@ -24,7 +24,6 @@ function flattenSlides(nodes: VNode[] | undefined): VNode[] {
     if (node.type === Fragment) {
       out.push(...flattenSlides(node.children as VNode[] | undefined))
     } else if (node.type === Text || node.type === Comment) {
-      // 跳过纯文本/注释节点，避免被当成一帧
       continue
     } else {
       out.push(node)
@@ -42,7 +41,7 @@ function clamp(n: number, min: number, max: number): number {
 export default defineComponent({
   name: 'CCarousel',
   props: carouselProps,
-  emits: ['update:modelValue', 'change'],
+  emits: ['update:modelValue', 'change', 'afterChange'],
   setup(props: CarouselProps, { slots, emit, expose }) {
     const ns = useNamespace('carousel')
     const rootRef = shallowRef<HTMLElement | null>(null)
@@ -84,7 +83,10 @@ export default defineComponent({
         animationTimer = setTimeout(() => {
           animating.value = false
           animationTimer = null
+          emit('afterChange', target)
         }, props.duration)
+      } else {
+        emit('afterChange', target)
       }
 
       if (!isControlled.value) {
@@ -103,9 +105,13 @@ export default defineComponent({
     function prev(): void {
       setActive(active.value - 1)
     }
+    function getCurrentIndex(): number {
+      return active.value
+    }
 
-    expose<CarouselExpose>({ goTo, next, prev })
+    expose<CarouselExpose>({ goTo, next, prev, getCurrentIndex })
 
+    // ─── Autoplay ────────────────────────────────────────
     function startAutoplay(): void {
       stopAutoplay()
       if (!props.autoplay) return
@@ -134,6 +140,7 @@ export default defineComponent({
       if (animationTimer) clearTimeout(animationTimer)
     })
 
+    // ─── Mouse hover ─────────────────────────────────────
     function handleMouseEnter(): void {
       isHover.value = true
     }
@@ -141,6 +148,63 @@ export default defineComponent({
       isHover.value = false
     }
 
+    // ─── Keyboard ────────────────────────────────────────
+    function handleKeydown(e: KeyboardEvent): void {
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault()
+          prev()
+          break
+        case 'ArrowRight':
+        case 'ArrowDown':
+          e.preventDefault()
+          next()
+          break
+        case 'Home':
+          e.preventDefault()
+          goTo(0)
+          break
+        case 'End':
+          e.preventDefault()
+          goTo(total.value - 1)
+          break
+      }
+    }
+
+    // ─── Swipe gesture ───────────────────────────────────
+    let pointerStartX = 0
+    let pointerStartY = 0
+    let swiping = false
+
+    function handlePointerDown(e: PointerEvent): void {
+      if (!props.swipeable) return
+      swiping = true
+      pointerStartX = e.clientX
+      pointerStartY = e.clientY
+    }
+
+    function handlePointerUp(e: PointerEvent): void {
+      if (!swiping) return
+      swiping = false
+      const dx = e.clientX - pointerStartX
+      const dy = e.clientY - pointerStartY
+      const absDx = Math.abs(dx)
+      const absDy = Math.abs(dy)
+
+      // 只在主轴方向超过阈值时触发
+      if (isVertical.value) {
+        if (absDy < props.swipeThreshold || absDy < absDx) return
+        if (dy < 0) next()
+        else prev()
+      } else {
+        if (absDx < props.swipeThreshold || absDx < absDy) return
+        if (dx < 0) next()
+        else prev()
+      }
+    }
+
+    // ─── Render ──────────────────────────────────────────
     function renderSlides(): VNode[] {
       const list = slides.value
       const current = active.value
@@ -158,6 +222,7 @@ export default defineComponent({
               class: cls,
               style: fadeStyle,
               'aria-hidden': isActive ? 'false' : 'true',
+              role: 'tabpanel',
             },
             [cloneVNode(node)],
           )
@@ -167,6 +232,7 @@ export default defineComponent({
           {
             class: cls,
             'aria-hidden': isActive ? 'false' : 'true',
+            role: 'tabpanel',
           },
           [cloneVNode(node)],
         )
@@ -180,21 +246,23 @@ export default defineComponent({
       const items: VNode[] = []
       for (let i = 0; i < count; i++) {
         const isActive = i === active.value
+        const dotContent = slots.customDot
+          ? slots.customDot({ index: i, isActive })
+          : h('button', {
+              type: 'button',
+              'aria-label': `Go to slide ${i + 1}`,
+              'aria-current': isActive ? 'true' : 'false',
+              onClick: () => goTo(i),
+            })
         items.push(
           h(
             'li',
             {
               key: i,
               class: [ns.e('dot'), isActive ? ns.is('active') : ''],
+              onClick: slots.customDot ? () => goTo(i) : undefined,
             },
-            [
-              h('button', {
-                type: 'button',
-                'aria-label': `Go to slide ${i + 1}`,
-                'aria-current': isActive ? 'true' : 'false',
-                onClick: () => goTo(i),
-              }),
-            ],
+            [dotContent],
           ),
         )
       }
@@ -253,11 +321,18 @@ export default defineComponent({
         {
           ref: rootRef,
           class: rootClass,
+          tabindex: 0,
+          role: 'region',
+          'aria-roledescription': 'carousel',
+          'aria-label': 'Carousel',
           onMouseenter: handleMouseEnter,
           onMouseleave: handleMouseLeave,
+          onKeydown: handleKeydown,
+          onPointerdown: handlePointerDown,
+          onPointerup: handlePointerUp,
         },
         [
-          h('div', { class: ns.e('viewport') }, [
+          h('div', { class: ns.e('viewport'), 'aria-live': 'polite' }, [
             h(
               'div',
               {

@@ -7,6 +7,7 @@ export interface CarouselExpose {
   goTo: (index: number, dontAnimate?: boolean) => void
   next: () => void
   prev: () => void
+  getCurrentIndex: () => number
 }
 
 export const carouselProps = {
@@ -64,6 +65,16 @@ export const carouselProps = {
   duration: {
     type: Number,
     default: 500,
+  },
+  // 是否启用触摸/指针 swipe 手势
+  swipeable: {
+    type: Boolean,
+    default: true,
+  },
+  // swipe 触发阈值（像素）
+  swipeThreshold: {
+    type: Number,
+    default: 40,
   },
 } as const
 
