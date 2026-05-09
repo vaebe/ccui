@@ -333,3 +333,102 @@ describe('color-picker form integration', () => {
     expect(value.value?.toLowerCase()).toBe('#ff0000')
   })
 })
+
+describe('color-picker RGB inputs', () => {
+  it('renders R G B number inputs in the panel', async () => {
+    const wrapper = mountCP()
+    await openPanel(wrapper)
+    const inputs = wrapper.findAll(ns.e('rgb-input'))
+    expect(inputs).toHaveLength(3)
+    expect(inputs[0].attributes('aria-label')).toBe('R')
+    expect(inputs[1].attributes('aria-label')).toBe('G')
+    expect(inputs[2].attributes('aria-label')).toBe('B')
+  })
+
+  it('changing R input emits a new hex value', async () => {
+    const wrapper = mountCP({ modelValue: '#ff0000' })
+    await openPanel(wrapper)
+    const rInput = wrapper.findAll(ns.e('rgb-input'))[0]
+    // R: 255→128
+    await rInput.setValue('128')
+    await rInput.trigger('input')
+    await nextTick()
+    const emitted = wrapper.emitted('update:modelValue')
+    expect(emitted).toBeDefined()
+    const hex = (emitted![emitted!.length - 1][0] as string).toLowerCase()
+    const rgb = hexToRgb(hex)!
+    expect(rgb.r).toBe(128)
+  })
+})
+
+describe('color-picker keyboard navigation', () => {
+  it('ArrowRight on SV area increases saturation', async () => {
+    const wrapper = mountCP({ modelValue: '#808080' })
+    await openPanel(wrapper)
+    const sv = wrapper.find(ns.e('sv'))
+    await sv.trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    const emitted = wrapper.emitted('update:modelValue')
+    expect(emitted).toBeDefined()
+  })
+
+  it('ArrowRight on hue area increases hue', async () => {
+    const wrapper = mountCP({ modelValue: '#ff0000' })
+    await openPanel(wrapper)
+    const hue = wrapper.find(ns.e('hue'))
+    await hue.trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')).toBeDefined()
+  })
+
+  it('SV area has tabindex=0 for keyboard focus', async () => {
+    const wrapper = mountCP()
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('sv')).attributes('tabindex')).toBe('0')
+    expect(wrapper.find(ns.e('hue')).attributes('tabindex')).toBe('0')
+  })
+})
+
+describe('color-picker trigger slot', () => {
+  it('renders custom trigger via slot', async () => {
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(
+            ColorPicker,
+            { modelValue: '#ff0000' },
+            {
+              trigger: ({ color }: { color: string }) => h('div', { class: 'my-trigger' }, color),
+            },
+          )
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    expect(wrapper.find('.my-trigger').exists()).toBe(true)
+    expect(wrapper.find('.my-trigger').text()).toBe('#ff0000')
+    // 默认触发器不渲染
+    expect(wrapper.find(ns.e('swatch')).exists()).toBe(false)
+  })
+})
+
+describe('color-picker allowClear', () => {
+  it('shows clear button when allowClear=true', () => {
+    const wrapper = mountCP({ modelValue: '#ff0000', allowClear: true })
+    expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
+  })
+
+  it('does not show clear button by default', () => {
+    const wrapper = mountCP({ modelValue: '#ff0000' })
+    expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
+  })
+
+  it('clicking clear emits null', async () => {
+    const wrapper = mountCP({ modelValue: '#ff0000', allowClear: true })
+    await wrapper.find(ns.e('clear')).trigger('click')
+    await nextTick()
+    const emitted = wrapper.emitted('update:modelValue')
+    expect(emitted).toBeDefined()
+    expect(emitted![0][0]).toBeNull()
+  })
+})

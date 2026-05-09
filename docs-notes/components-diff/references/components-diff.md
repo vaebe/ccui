@@ -33,7 +33,7 @@
 | Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
-| ColorPicker           | ColorPicker 颜色选择器  | 数据录入        | 80%    |
+| ColorPicker           | ColorPicker 颜色选择器  | 数据录入        | 95%    |
 | ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
 | DatePicker            | DatePicker 日期选择框   | 数据录入        | 80%    |
 | Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
@@ -1022,7 +1022,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 1. Carousel：**95% 已交付**。新增键盘导航（ArrowLeft/Right/Up/Down/Home/End）+ ARIA 增强（role=region, aria-roledescription=carousel, aria-live=polite, role=tabpanel）+ swipe 手势（pointerdown/up + swipeThreshold + 横竖自适应）+ afterChange 事件（duration 后触发）+ customDot 作用域插槽。39 个测试全通过。剩余 adaptiveHeight / slidesToShow 留给后续。
 2. QRCode：**95% 已交付**。新增 toDataURL expose（SVG→canvas→dataURL）、dotRadius 圆角点阵（0~0.5）、gradient 渐变前景色（linearGradient + 6 向 direction）。25 个测试全通过。剩余 logo 精修样式 / 超长 value 校验留给后续。
-3. ColorPicker：80% 已交付（Batch 27）。剩余 RGB / HSV 三联输入控件、trigger slot、EyeDropper API、键盘导航、modelValue=null 清空状态推到 95%。
+3. ColorPicker：**95% 已交付**。新增 RGB 三联 number input、trigger 作用域插槽、SV/hue/alpha 键盘 Arrow 微调（含 Shift 大步进）、allowClear + null 清空。34 个测试全通过。剩余 EyeDropper API / panelRender slot 留给后续。
 4. Transfer：80% 已交付（Batch 29）。剩余分页、虚拟滚动、拖拽排序、selectAllLabels slot 推到 95%。
 5. Upload：80% 已交付（Batch 31）。剩余 customRequest / 默认 action POST、listType=picture/picture-card、c-progress 进度条、preview/download、async beforeUpload、chunk 分片推到 95%。
 

@@ -48,7 +48,7 @@ export default defineComponent({
   name: 'CColorPicker',
   props: colorPickerProps,
   emits: ['update:modelValue', 'change', 'open-change'],
-  setup(props: ColorPickerProps, { emit }) {
+  setup(props: ColorPickerProps, { emit, slots }) {
     const ns = useNamespace('color-picker')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
@@ -203,6 +203,83 @@ export default defineComponent({
       })
     }
 
+    // ---- 键盘导航 ----
+    function onSvKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      const step = e.shiftKey ? 10 : 1
+      let { s, v } = pendingHsv.value
+      switch (e.key) {
+        case 'ArrowRight':
+          s = Math.min(100, s + step)
+          break
+        case 'ArrowLeft':
+          s = Math.max(0, s - step)
+          break
+        case 'ArrowUp':
+          v = Math.min(100, v + step)
+          break
+        case 'ArrowDown':
+          v = Math.max(0, v - step)
+          break
+        default:
+          return
+      }
+      e.preventDefault()
+      commitHsv({ ...pendingHsv.value, s, v })
+    }
+
+    function onHueKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      const step = e.shiftKey ? 10 : 1
+      let { h } = pendingHsv.value
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowUp':
+          h = Math.min(360, h + step)
+          break
+        case 'ArrowLeft':
+        case 'ArrowDown':
+          h = Math.max(0, h - step)
+          break
+        default:
+          return
+      }
+      e.preventDefault()
+      commitHsv({ ...pendingHsv.value, h })
+    }
+
+    function onAlphaKeydown(e: KeyboardEvent) {
+      if (props.disabled || props.disabledAlpha) return
+      const step = e.shiftKey ? 0.1 : 0.01
+      let { a } = pendingHsv.value
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowUp':
+          a = Math.min(1, +(a + step).toFixed(2))
+          break
+        case 'ArrowLeft':
+        case 'ArrowDown':
+          a = Math.max(0, +(a - step).toFixed(2))
+          break
+        default:
+          return
+      }
+      e.preventDefault()
+      commitHsv({ ...pendingHsv.value, a })
+    }
+
+    // ---- 清空 ----
+    function handleClear(e: MouseEvent) {
+      e.stopPropagation()
+      if (!isControlled.value) {
+        innerValue.value = DEFAULT_COLOR_HEX
+      }
+      emit('update:modelValue', null)
+      emit('change', null, { rgb: null, hsv: null })
+      formItem?.validate('change')
+      closePopup()
+    }
+
     // ---- hex 输入 ----
     const hexInput = ref('')
     watch(
@@ -249,6 +326,17 @@ export default defineComponent({
 
     // ---- 渲染 ----
     function renderTrigger(): VNode {
+      if (slots.trigger) {
+        return (
+          <div
+            ref={(el: any) => (rootRef.value = el as HTMLElement)}
+            class={ns.e('trigger-custom')}
+            onClick={togglePopup}
+          >
+            {slots.trigger({ color: currentHex.value, open: open.value, disabled: props.disabled })}
+          </div>
+        )
+      }
       const swatchStyle: CSSProperties = {
         backgroundColor: rgbToString(currentRgb.value, true),
       }
@@ -273,6 +361,11 @@ export default defineComponent({
             <span class={ns.e('swatch-fg')} style={swatchStyle} />
           </span>
           {props.showText && <span class={ns.e('value-text')}>{displayText.value}</span>}
+          {props.allowClear && !props.disabled && (
+            <span class={ns.e('clear')} onClick={handleClear} role="button" aria-label="clear color">
+              ×
+            </span>
+          )}
         </button>
       )
     }
@@ -290,6 +383,8 @@ export default defineComponent({
           class={ns.e('sv')}
           style={bgStyle}
           onPointerdown={onSvPointerDown}
+          onKeydown={onSvKeydown}
+          tabindex={0}
           role="application"
           aria-label="saturation and value"
         >
@@ -303,7 +398,13 @@ export default defineComponent({
     function renderHue(): VNode {
       const cursorStyle: CSSProperties = { left: `${(pendingHsv.value.h / 360) * 100}%` }
       return (
-        <div ref={hueAreaRef} class={ns.e('hue')} onPointerdown={onHuePointerDown}>
+        <div
+          ref={hueAreaRef}
+          class={ns.e('hue')}
+          onPointerdown={onHuePointerDown}
+          onKeydown={onHueKeydown}
+          tabindex={0}
+        >
           <div class={ns.e('hue-cursor')} style={cursorStyle} />
         </div>
       )
@@ -317,14 +418,29 @@ export default defineComponent({
         background: `linear-gradient(to right, ${rgbToString({ ...baseRgb, a: 0 }, true)}, ${rgbToString(baseRgb, false)})`,
       }
       return (
-        <div ref={alphaAreaRef} class={ns.e('alpha')} onPointerdown={onAlphaPointerDown}>
+        <div
+          ref={alphaAreaRef}
+          class={ns.e('alpha')}
+          onPointerdown={onAlphaPointerDown}
+          onKeydown={onAlphaKeydown}
+          tabindex={0}
+        >
           <div class={ns.e('alpha-track')} style={trackStyle} />
           <div class={ns.e('alpha-cursor')} style={cursorStyle} />
         </div>
       )
     }
 
+    function onRgbInput(channel: 'r' | 'g' | 'b', e: Event) {
+      const raw = Number((e.target as HTMLInputElement).value)
+      if (Number.isNaN(raw)) return
+      const val = Math.max(0, Math.min(255, Math.round(raw)))
+      const rgb = { ...hsvToRgb(pendingHsv.value), [channel]: val }
+      commitHsv(rgbToHsv(rgb))
+    }
+
     function renderInputs(): VNode {
+      const rgb = hsvToRgb(pendingHsv.value)
       return (
         <div class={ns.e('inputs')}>
           <div class={ns.e('hex-wrap')}>
@@ -339,6 +455,21 @@ export default defineComponent({
               onKeydown={onHexKeydown}
               aria-label="hex"
             />
+          </div>
+          <div class={ns.e('rgb-inputs')}>
+            {(['r', 'g', 'b'] as const).map((ch) => (
+              <input
+                key={ch}
+                class={ns.e('rgb-input')}
+                type="number"
+                min={0}
+                max={255}
+                step={1}
+                value={rgb[ch]}
+                onInput={(e: Event) => onRgbInput(ch, e)}
+                aria-label={ch.toUpperCase()}
+              />
+            ))}
           </div>
           {!props.disabledAlpha && (
             <div class={ns.e('alpha-input-wrap')}>

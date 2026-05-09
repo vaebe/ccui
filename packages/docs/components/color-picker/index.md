@@ -169,6 +169,13 @@ const rules = { brand: [{ required: true, message: '请选择品牌色', trigger
 | popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                        |
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点，优先级高于 `popupAppendToBody`              |
 | transitionName    | string                                                     | `ccui-color-picker-fade`  | 浮层过渡名                                                    |
+| allowClear        | boolean                                                    | `false`                   | 是否允许清空（显示 × 按钮，emit null）                        |
+
+### Slots
+
+| 名称    | 作用域                                                       | 说明                                      |
+| ------- | ------------------------------------------------------------ | ----------------------------------------- |
+| trigger | `{ color: string, open: boolean, disabled: boolean }`        | 自定义触发器，替代默认 swatch 按钮        |
 
 ### Events
 
@@ -178,12 +185,18 @@ const rules = { brand: [{ required: true, message: '请选择品牌色', trigger
 | change            | `(hex: string, info: { rgb: RGB; hsv: HSV })`  | 颜色变化时（同 update:modelValue）        |
 | open-change       | `(open: boolean)`                              | 浮层打开 / 关闭时                         |
 
+### 键盘导航
+
+面板内 SV 区域、hue 滑块、alpha 滑块均支持 `tabindex=0` 聚焦和方向键微调：
+
+| 区域  | 按键                   | 操作                            |
+| ----- | ---------------------- | ------------------------------- |
+| SV    | Arrow Right/Left       | 饱和度 ±1（Shift ±10）          |
+| SV    | Arrow Up/Down          | 明度 ±1（Shift ±10）            |
+| Hue   | Arrow Right/Left/Up/Down | 色相 ±1（Shift ±10）          |
+| Alpha | Arrow Right/Left/Up/Down | 透明度 ±0.01（Shift ±0.1）    |
+
 ## 已知限制（未交付）
 
-- **rgb / hsv 输入框**：当前只支持 hex 输入框直接键入，rgb / hsv 切换时只是显示文本，不能直接编辑数值。下一批补三联输入控件（r/g/b 三档独立 number input、h/s/v 同理）。
-- **trigger slot**：暂不支持自定义 trigger 渲染（Ant Design 的 children slot）。当前 trigger 永远是 swatch + showText 文本。
 - **eyedropper（取色器）**：浏览器 EyeDropper API 集成留给后续。
-- **键盘导航**：方向键调 SV / hue / alpha、Tab 在三段间循环、Enter 关闭面板暂未实现。
-- **clear / 清空**：目前 ColorPicker 总持有一个有效颜色，没有「无颜色」状态。如果业务需要清除（modelValue=null），需要外部 emit reset 逻辑。
 - **panelRender slot**：自定义面板内容（在 SV / 滑块周围插入额外区域）暂不支持。
-- **format=rgb/hsv 时输出 string 而非 hex**：当前 v-model 输出始终是 hex，不会按 format 切换输出形态；想要 rgba() / hsva() 字符串需要业务自己用 `change` 事件第二参的 `rgb / hsv` 对象再格式化。

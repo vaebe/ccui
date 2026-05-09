@@ -69,6 +69,11 @@ export const colorPickerProps = {
     type: String,
     default: 'ccui-color-picker-fade',
   },
+  // 是否允许清空（触发器上显示 × 按钮）
+  allowClear: {
+    type: Boolean,
+    default: false,
+  },
 } as const
 
 export type ColorPickerProps = ExtractPropTypes<typeof colorPickerProps>
