@@ -1,9 +1,9 @@
 # vue3-ccui 与 Ant Design 组件对比清单
 
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
-> 当前项目目录：`packages/ccui/ui` 下共 72 个一级目录，其中 70 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
-> 当前项目组件：70 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P2 大件 / Transfer 80% 首次交付**：24 用例，双列穿梭、checkbox 全选 + indeterminate、双向移动按钮、按列独立搜索、自定义 filterOption / render / titles / operations / locale、Form 联动。Upload / Mentions / Tour 三项剩余 P2/P3 大件待推。P3 AutoComplete (Batch 28) 与 P2 中等复杂度三件套全部 80% 维持。
+> 当前项目目录：`packages/ccui/ui` 下共 73 个一级目录，其中 71 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
+> 当前项目组件：71 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
+> 更新时间：2026-05-09，**P3 体验组件推进 / Tour 80% 首次交付**：19 用例，多步骤导览 + 4 块 mask 围 target 镂空 + floating-ui 12 方位浮层定位 + 全局/单步 mask 三态 + Esc 关闭 + 末步 finish emit + 受控双 v-model（open / current）。剩 Upload / Mentions 两项大件待推。Transfer (Batch 29) / AutoComplete (Batch 28) / P2 中等复杂度三件套维持。
 
 ## 零、交付完整度口径
 
@@ -82,6 +82,7 @@
 | TimePicker            | TimePicker 时间选择框   | 数据录入        | 80%    |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
+| Tour                  | Tour 漫游引导           | 反馈            | 80%    |
 | Transfer              | Transfer 穿梭框         | 数据录入        | 80%    |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
 | TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
@@ -113,7 +114,7 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 | Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理                                                                                                          | P2           |
 | AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
 | Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位                                                                                                       | P3           |
-| Tour 漫游引导         | 数据展示 | 多步定位、蒙层裁切、滚动跟随                                                                                                              | P3           |
+| Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model       | P3（已交付）  |
 
 ## 三、本轮交付记录
 
@@ -248,6 +249,34 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 30：Tour 80% 首次交付（P3 体验组件第一项）
+
+已完成 1 项：Tour（80% 首次交付）。P3 体验型组件第一项，新功能上线时一步步带用户认识页面。19 个用例覆盖渲染 / 导航 / 关闭 / 目标元素 / v-model 协议。
+
+关键能力：
+
+- **mask 镂空 — 4 块 div 围出 target 矩形**：不用 SVG mask、不用 `clip-path`、不用 box-shadow spread。直接 4 个 fixed div 摆 top / bottom / left / right 围出目标矩形 → 中间天然空出来。每块 mask 都监听 click 触发 close。优点：jsdom 友好（getBoundingClientRect 返回值能直接读）、零 SVG 编译、零兼容性问题。缺点：圆角目标元素的镂空也是矩形（与 AntD 一致，不是真贴目标轮廓）。
+- **highlight 高亮框**：除了 4 块 mask 外，再加一个 `position:fixed` 的 `__highlight` div 贴在 target 矩形上，给一个 `box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.4)` 的蓝色光晕。`pointer-events: none` 保证不阻挡 target 自身的点击 / hover。
+- **target 三态 + 居中模态兜底**：`target` 可以是 `HTMLElement`、`() => HTMLElement | null`（懒求值，Tour 打开时再 resolve）、或 `null/undefined`。无 target 时浮层退化成 fixed 居中模态 + 整屏蒙层，是「最后一步：感谢」类总结页的标准用法。
+- **mask 三态优先级**：单步 `step.mask` undefined 时回落到全局 `props.mask`；undefined !== false，所以 `step: { mask: false }` 真的能关掉这一步的蒙层（即使全局 mask=true）。
+- **floating-ui 12 方位**：`PLACEMENT_TO_FLOATING` 把 ccui 的 12 方位（top/topLeft/topRight 等）映射到 floating-ui 的 6 个 placement + start/end 修饰。`offset(12)` 让浮层与目标保持 12px 间距，`flip()` 在视口边缘自动翻面，`shift({ padding: 8 })` 防止浮层贴到视口边缘。
+- **双 v-model**：`v-model:open` + `v-model:current` 同时存在。next 按钮在末步触发 `finish` 事件 + emit `update:open(false)` 自动关闭；prev 按钮在首步隐藏（不是 disabled，是不渲染，避免视觉浪费）。close (×) / Esc / 蒙层点击 都走同一条 `close()` 路径：emit `close` + emit `update:open(false)`。
+- **closeOnEsc 全局监听**：document.addEventListener('keydown') 在 setup 时挂上，onBeforeUnmount 摘掉。即使 Tour 没打开也挂着监听（cheap），但 handler 内 `if (!props.open) return` 短路。这样 Tour 打开期间 Esc 立即生效，不用等 mount 时机。
+
+工程决策：
+
+- **不抽 useTourState 复合 hook**：状态简单（open / current / 当前 step）+ 整个组件就一个 setup，抽 hook 反而打散逻辑。
+- **不复用 Popover / Modal**：虽然视觉上 Tour 浮层像 Popover、整屏 mask 像 Modal，但 Tour 的浮层与 mask 是同一个 Teleport 层，且镂空区域必须能透出 target 让用户继续 hover/点击 —— 这个语义在 Popover/Modal 里都不存在，强行复用反而别扭。
+- **不渲染 arrow 箭头**：80% 切片不做 `arrow()` middleware 渲染。简单的 12 方位 placement 已经能让用户理解「这个浮层在指什么」。下一批补一个跟随 placement 旋转的小三角。
+- **不做 scrollIntoView**：业务侧最了解什么时机能滚动（可能涉及虚拟列表、副作用），组件里强加 `scrollIntoView` 会踩坑。文档里明确说明业务自己滚。
+- **mask 用绝对像素而非百分比**：targetRect 是从 `getBoundingClientRect()` 拿的像素值，4 块 mask 直接用像素 top/left/width/height 写 inline style。视口 resize 时浮层会通过 `autoUpdate` 跟随 target，但 mask 不重新计算位置（80% 不做 ResizeObserver；refresh 由 watch props.open/current/steps 触发）。
+
+测试：19 个用例。渲染（open=false 不渲染、open=true 渲染 panel + mask、当前步骤 title/description/indicator、current 越界不渲染、全局 mask=false 隐藏蒙层、单步 mask=false 覆盖全局）；导航（next 推进 + emit、prev 在首步隐藏、prev 推退、末步 finish + 关闭、自定义 prev/next/finish 文案）；关闭（× 按钮、Esc 默认关 + closeOnEsc=false 阻止、蒙层点击关）；目标（target HTMLElement 模拟 stubRect 后渲染 highlight、target=null 居中模态兜底、target 函数形态懒求值）；v-model（open + current 双 v-model 端到端走完一次完整 tour）。
+
+验证结果：
+
+- `vp test run ui/tour`（packages/ccui 内）通过 19/19。
 
 ### Batch 29：Transfer 80% 首次交付（P2 大件第一项）
 
@@ -933,7 +962,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 1. AutoComplete：80% 已交付（Batch 28）。剩余 defaultActiveFirstOption / backfill / 远程搜索 debounce / 自定义 trigger slot / 虚拟滚动推到 95%。
 2. Mentions：需要单独处理输入解析和光标定位。
-3. Tour：依赖浮层定位、滚动跟随和遮罩裁切，建议最后做。
+3. Tour：80% 已交付（Batch 30）。剩余 type='primary' 主题、arrow 箭头、scrollIntoView、cover slot、per-step async hooks 推到 95%。
 
 ## 五、当前已知修复
 

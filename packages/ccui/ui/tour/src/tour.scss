@@ -1,0 +1,139 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  pointer-events: none;
+
+  &__mask {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    pointer-events: auto;
+
+    &--full {
+      inset: 0;
+    }
+
+    &--panel {
+      // 由 inline style 控制位置
+    }
+  }
+
+  &__highlight {
+    position: fixed;
+    z-index: 1101;
+    pointer-events: none;
+    border-radius: 4px;
+    box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.4);
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1102;
+    width: max-content;
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.12),
+      0 3px 6px -4px rgba(0, 0, 0, 0.16);
+    pointer-events: auto;
+    box-sizing: border-box;
+  }
+
+  &__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  &__title {
+    margin-right: 24px;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  &__description {
+    margin-top: 8px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  &__indicator {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn {
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #1677ff;
+      color: #1677ff;
+    }
+
+    &--next {
+      border-color: #1677ff;
+      background: #1677ff;
+      color: #fff;
+
+      &:hover {
+        border-color: #4096ff;
+        background: #4096ff;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.ccui-tour-fade-enter-active,
+.ccui-tour-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.ccui-tour-fade-enter-from,
+.ccui-tour-fade-leave-to {
+  opacity: 0;
+}
