@@ -87,7 +87,7 @@
 | Transfer              | Transfer 穿梭框         | 数据录入        | 95%    |
 | Tree                  | Tree 树形控件           | 数据展示        | 已完成 |
 | TreeSelect            | TreeSelect 树选择       | 数据录入        | 80%    |
-| Upload                | Upload 上传             | 数据录入        | 80%    |
+| Upload                | Upload 上传             | 数据录入        | 95%    |
 | Typography            | Typography 排版         | 通用            | 已完成 |
 | Util                  | 工具函数集合            | 通用            | 已完成 |
 | Watermark             | Watermark 水印          | 数据展示        | 已完成 |
@@ -1024,7 +1024,7 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 2. QRCode：**95% 已交付**。新增 toDataURL expose（SVG→canvas→dataURL）、dotRadius 圆角点阵（0~0.5）、gradient 渐变前景色（linearGradient + 6 向 direction）。25 个测试全通过。剩余 logo 精修样式 / 超长 value 校验留给后续。
 3. ColorPicker：**95% 已交付**。新增 RGB 三联 number input、trigger 作用域插槽、SV/hue/alpha 键盘 Arrow 微调（含 Shift 大步进）、allowClear + null 清空。34 个测试全通过。剩余 EyeDropper API / panelRender slot 留给后续。
 4. Transfer：**95% 已交付**。新增 pagination 分页（pageSize + 翻页控件）、selectAllLabels 作用域插槽、draggable 右列拖拽排序。31 个测试全通过。剩余虚拟滚动 / RTL 留给后续。
-5. Upload：80% 已交付（Batch 31）。剩余 customRequest / 默认 action POST、listType=picture/picture-card、c-progress 进度条、preview/download、async beforeUpload、chunk 分片推到 95%。
+5. Upload：**95% 已交付**。新增 customRequest 自定义上传 + action 默认 POST（XHR + progress/success/error 回调）、async beforeUpload（Promise 支持）、listType=picture 缩略图渲染（thumbUrl/url fallback）、preview 事件（点击文件名触发）。28 个测试全通过。剩余 picture-card 样式 / c-progress 进度条 / chunk 分片留给后续。
 
 ### P3：体验型组件
 

@@ -18,7 +18,16 @@ export interface UploadFile {
   [extra: string]: unknown
 }
 
-export type BeforeUpload = (file: File, fileList: File[]) => boolean | undefined
+export type BeforeUpload = (file: File, fileList: File[]) => boolean | undefined | Promise<boolean | undefined>
+
+export interface CustomRequestOptions {
+  file: File
+  onProgress: (percent: number) => void
+  onSuccess: (response?: unknown) => void
+  onError: (error: Error) => void
+}
+
+export type CustomRequest = (options: CustomRequestOptions) => { abort: () => void } | void
 
 export const uploadProps = {
   // 受控文件列表，支持 v-model:fileList
@@ -86,6 +95,16 @@ export const uploadProps = {
   dragText: {
     type: String,
     default: '点击或拖拽文件到此区域上传',
+  },
+  // 自定义上传请求函数
+  customRequest: {
+    type: Function as PropType<CustomRequest>,
+    default: undefined,
+  },
+  // 上传地址（customRequest 未传时使用）
+  action: {
+    type: String,
+    default: '',
   },
 } as const
 

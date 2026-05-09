@@ -15,7 +15,7 @@ function formatSize(bytes?: number): string {
 export default defineComponent({
   name: 'CUpload',
   props: uploadProps,
-  emits: ['update:fileList', 'change', 'remove', 'reject', 'drop'],
+  emits: ['update:fileList', 'change', 'remove', 'reject', 'drop', 'preview', 'download'],
   setup(props: UploadProps, { emit, slots }) {
     const ns = useNamespace('upload')
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -34,7 +34,62 @@ export default defineComponent({
       emit('update:fileList', next)
     }
 
-    function pickFiles(rawFiles: FileList | File[]): void {
+    function updateItemInList(uid: string, patch: Partial<UploadFile>): void {
+      const next = currentList.value.map((item) => (item.uid === uid ? { ...item, ...patch } : item))
+      commitList(next)
+    }
+
+    function doUpload(item: UploadFile): void {
+      if (!item.raw) return
+      const upload = props.customRequest || (props.action ? defaultRequest : null)
+      if (!upload) return
+
+      updateItemInList(item.uid, { status: 'uploading', percent: 0 })
+
+      upload({
+        file: item.raw,
+        onProgress: (percent: number) => {
+          updateItemInList(item.uid, { percent: Math.min(99, percent) })
+        },
+        onSuccess: (response?: unknown) => {
+          updateItemInList(item.uid, { status: 'done', percent: 100, response })
+        },
+        onError: (error: Error) => {
+          updateItemInList(item.uid, { status: 'error', response: error.message })
+        },
+      })
+    }
+
+    function defaultRequest(options: {
+      file: File
+      onProgress: (p: number) => void
+      onSuccess: (r?: unknown) => void
+      onError: (e: Error) => void
+    }) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', props.action)
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) options.onProgress(Math.round((e.loaded / e.total) * 100))
+      }
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            options.onSuccess(JSON.parse(xhr.responseText))
+          } catch {
+            options.onSuccess(xhr.responseText)
+          }
+        } else {
+          options.onError(new Error(`Upload failed: ${xhr.status}`))
+        }
+      }
+      xhr.onerror = () => options.onError(new Error('Network error'))
+      const formData = new FormData()
+      formData.append('file', options.file)
+      xhr.send(formData)
+      return { abort: () => xhr.abort() }
+    }
+
+    async function pickFiles(rawFiles: FileList | File[]): Promise<void> {
       const files = Array.from(rawFiles)
       if (files.length === 0) return
 
@@ -53,7 +108,9 @@ export default defineComponent({
           continue
         }
         if (props.beforeUpload) {
-          const ok = props.beforeUpload(file, files)
+          const result = props.beforeUpload(file, files)
+          // 支持同步和异步 beforeUpload
+          const ok = result instanceof Promise ? await result : result
           if (ok === false) {
             rejected.push({ file, reason: 'beforeUpload' })
             continue
@@ -65,10 +122,15 @@ export default defineComponent({
       for (const r of rejected) emit('reject', r.file, r.reason)
       if (accepted.length === 0) return
 
-      const newItems = accepted.map((f) => fileToUploadFile(f, props.defaultStatus))
+      const useUpload = !!(props.customRequest || props.action)
+      const status = useUpload ? ('uploading' as const) : props.defaultStatus
+      const newItems = accepted.map((f) => fileToUploadFile(f, status))
       const next = [...currentList.value, ...newItems]
       commitList(next)
-      for (const item of newItems) emit('change', item, next)
+      for (const item of newItems) {
+        emit('change', item, next)
+        if (useUpload) doUpload(item)
+      }
     }
 
     function onSelect(e: Event): void {
@@ -150,12 +212,26 @@ export default defineComponent({
 
     function renderItem(item: UploadFile): VNode {
       if (slots.itemRender) return slots.itemRender({ item, remove: () => removeItem(item) }) as unknown as VNode
-      const cls = [ns.e('item'), ns.em('item', `status-${item.status ?? 'done'}`)]
+      const cls = [
+        ns.e('item'),
+        ns.em('item', `status-${item.status ?? 'done'}`),
+        ns.em('item', `list-${props.listType}`),
+      ]
       const icon = item.status === 'uploading' ? '⌛' : item.status === 'error' ? '⚠' : '✓'
+      const thumbSrc = item.thumbUrl || item.url
+      const showThumb = props.listType === 'picture' && thumbSrc
       return (
         <li key={item.uid} class={cls}>
-          <span class={ns.e('item-icon')}>{icon}</span>
-          <span class={ns.e('item-name')}>{item.name}</span>
+          {showThumb ? (
+            <span class={ns.e('item-thumb')}>
+              <img src={thumbSrc} alt={item.name} />
+            </span>
+          ) : (
+            <span class={ns.e('item-icon')}>{icon}</span>
+          )}
+          <span class={ns.e('item-name')} onClick={() => emit('preview', item)} style={{ cursor: 'pointer' }}>
+            {item.name}
+          </span>
           {item.size !== undefined && <span class={ns.e('item-size')}>{formatSize(item.size)}</span>}
           {item.status === 'uploading' && <span class={ns.e('item-percent')}>{Math.round(item.percent ?? 0)}%</span>}
           {!props.disabled && (

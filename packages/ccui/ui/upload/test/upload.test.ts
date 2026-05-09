@@ -281,3 +281,81 @@ describe('upload v-model:fileList', () => {
     expect(list.value.map((f) => f.name)).toEqual(['new.txt'])
   })
 })
+
+describe('upload customRequest and action', () => {
+  it('calls customRequest for each accepted file when provided', async () => {
+    const onProgress = (_p: number) => {}
+    const onSuccess = (_r?: unknown) => {}
+    const onError = (_e: Error) => {}
+    const requests: Array<{ file: File }> = []
+    const wrapper = mountU({
+      customRequest: (opts: any) => {
+        requests.push({ file: opts.file })
+        opts.onSuccess('ok')
+      },
+    })
+    mockSelectFiles(wrapper, [makeFile('a.txt'), makeFile('b.txt')])
+    await nextTick()
+    expect(requests).toHaveLength(2)
+    expect(requests[0].file.name).toBe('a.txt')
+  })
+
+  it('sets status to uploading when customRequest is provided', async () => {
+    const wrapper = mountU({
+      customRequest: () => {},
+    })
+    mockSelectFiles(wrapper, [makeFile('slow.txt')])
+    await nextTick()
+    // customRequest 没调 onSuccess，所以 status 应该还是 uploading
+    const list = wrapper.emitted('update:fileList')!.slice(-1)[0][0] as any[]
+    expect(list[0].status).toBe('uploading')
+  })
+})
+
+describe('upload async beforeUpload', () => {
+  it('supports Promise-returning beforeUpload', async () => {
+    const wrapper = mountU({
+      beforeUpload: (file: File) => Promise.resolve(file.name !== 'bad.txt'),
+    })
+    mockSelectFiles(wrapper, [makeFile('good.txt'), makeFile('bad.txt')])
+    // async beforeUpload 需要额外 await
+    await nextTick()
+    await nextTick()
+    const emitted = wrapper.emitted('update:fileList')
+    expect(emitted).toBeDefined()
+    const list = emitted!.slice(-1)[0][0] as any[]
+    expect(list.map((f: any) => f.name)).toEqual(['good.txt'])
+    expect(wrapper.emitted('reject')!.length).toBe(1)
+  })
+})
+
+describe('upload listType=picture', () => {
+  it('renders thumbnail when listType=picture and item has thumbUrl', () => {
+    const wrapper = mountU({
+      listType: 'picture',
+      defaultFileList: [{ uid: '1', name: 'photo.jpg', status: 'done', thumbUrl: 'data:image/png;base64,X' }],
+    })
+    expect(wrapper.find(ns.e('item-thumb')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('item-thumb')).find('img').attributes('src')).toBe('data:image/png;base64,X')
+  })
+
+  it('falls back to icon when listType=picture but no thumbUrl/url', () => {
+    const wrapper = mountU({
+      listType: 'picture',
+      defaultFileList: [{ uid: '1', name: 'doc.pdf', status: 'done' }],
+    })
+    expect(wrapper.find(ns.e('item-thumb')).exists()).toBe(false)
+    expect(wrapper.find(ns.e('item-icon')).exists()).toBe(true)
+  })
+})
+
+describe('upload preview event', () => {
+  it('emits preview when clicking file name', async () => {
+    const wrapper = mountU({
+      defaultFileList: [{ uid: '1', name: 'doc.txt', status: 'done' }],
+    })
+    await wrapper.find(ns.e('item-name')).trigger('click')
+    expect(wrapper.emitted('preview')).toBeDefined()
+    expect((wrapper.emitted('preview')![0][0] as any).name).toBe('doc.txt')
+  })
+})
