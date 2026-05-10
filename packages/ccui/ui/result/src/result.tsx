@@ -1,4 +1,4 @@
-import type { ResultProps, ResultStatus } from './result-types'
+import type { ResultProps } from './result-types'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { resultProps } from './result-types'
@@ -12,16 +12,6 @@ const STATUS_ICON: Record<string, string> = {
   info: 'M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm32 664c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V456c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272zm-32-344a48.01 48.01 0 0 1 0-96 48.01 48.01 0 0 1 0 96z',
   warning:
     'M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 0 1 0-96 48.01 48.01 0 0 1 0 96z',
-}
-
-const ICON_COLOR: Record<ResultStatus, string> = {
-  success: '#52c41a',
-  error: '#ff4d4f',
-  info: '#1677ff',
-  warning: '#faad14',
-  404: '#1677ff',
-  403: '#1677ff',
-  500: '#1677ff',
 }
 
 const STATUS_TEXT: Record<string, { title: string; subTitle: string }> = {
@@ -48,9 +38,10 @@ export default defineComponent({
         return slots.icon()
       }
       const path = STATUS_ICON[props.status] || STATUS_ICON.info
-      const color = ICON_COLOR[props.status] || 'currentColor'
+      // SVG fill 属性不支持 var()，因此用 currentColor 引用 CSS 类上的 color，
+      // 由 result.scss 通过状态修饰类设置为对应 token（brand/success/danger/warning）。
       return (
-        <svg viewBox="64 64 896 896" width="72" height="72" fill={color}>
+        <svg viewBox="64 64 896 896" width="72" height="72" fill="currentColor">
           <path d={path} />
         </svg>
       )

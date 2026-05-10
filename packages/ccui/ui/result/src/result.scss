@@ -10,12 +10,31 @@
     justify-content: center;
     margin-bottom: 24px;
     text-align: center;
+    // 默认色：未匹配状态时（如自定义 status / icon slot 走默认）走 brand。
+    color: var(--ccui-brand, #1677ff);
 
     svg {
       display: block;
       flex: none;
       vertical-align: middle;
     }
+  }
+
+  // 内置状态：通过状态修饰类驱动 svg fill="currentColor"。
+  &--success &__icon {
+    color: var(--ccui-success, #52c41a);
+  }
+  &--error &__icon {
+    color: var(--ccui-danger, #ff4d4f);
+  }
+  &--warning &__icon {
+    color: var(--ccui-warning, #faad14);
+  }
+  &--info &__icon,
+  &--404 &__icon,
+  &--403 &__icon,
+  &--500 &__icon {
+    color: var(--ccui-brand, #1677ff);
   }
 
   &__title {
