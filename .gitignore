@@ -39,3 +39,4 @@ packages/ccui/ui/**/__snapshots__
 .pnpm-debug.log
 .claude
 .codeflicker
+docs-notes/screenshots
