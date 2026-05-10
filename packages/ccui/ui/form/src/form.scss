@@ -1,115 +1,117 @@
-.ccui-form {
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-form {
   display: block;
-  color: var(--ccui-text, rgba(0, 0, 0, 0.88));
-  font-size: 14px;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
 }
 
-.ccui-form--vertical .ccui-form-item {
+.#{$cls-prefix}-form--vertical .#{$cls-prefix}-form-item {
   display: block;
 }
 
-.ccui-form--inline {
+.#{$cls-prefix}-form--inline {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
+  gap: $ccui-padding-sm $ccui-padding;
   align-items: flex-start;
 }
 
-.ccui-form--inline .ccui-form-item {
+.#{$cls-prefix}-form--inline .#{$cls-prefix}-form-item {
   margin-bottom: 0;
 }
 
-.ccui-form--disabled {
+.#{$cls-prefix}-form--disabled {
   cursor: not-allowed;
 }
 
-.ccui-form-item {
+.#{$cls-prefix}-form-item {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 18px;
+  margin-bottom: $ccui-margin-lg;
 }
 
-.ccui-form-item--top {
+.#{$cls-prefix}-form-item--top {
   display: block;
 }
 
-.ccui-form-item--hidden {
+.#{$cls-prefix}-form-item--hidden {
   display: none;
 }
 
-.ccui-form-item--no-style {
+.#{$cls-prefix}-form-item--no-style {
   display: contents;
   margin-bottom: 0;
 }
 
-.ccui-form-item__label {
+.#{$cls-prefix}-form-item__label {
   box-sizing: border-box;
   flex: 0 0 auto;
-  min-height: 32px;
-  padding-right: 12px;
-  color: var(--ccui-text, rgba(0, 0, 0, 0.88));
-  line-height: 32px;
+  min-height: $ccui-control-height;
+  padding-right: $ccui-padding-sm;
+  color: $ccui-color-text;
+  line-height: $ccui-control-height;
   text-align: right;
 }
 
-.ccui-form-item__label--colon::after {
+.#{$cls-prefix}-form-item__label--colon::after {
   margin-inline-start: 2px;
   content: ':';
 }
 
-.ccui-form--label-left .ccui-form-item__label {
+.#{$cls-prefix}-form--label-left .#{$cls-prefix}-form-item__label {
   text-align: left;
 }
 
-.ccui-form--label-top .ccui-form-item__label,
-.ccui-form-item--top .ccui-form-item__label {
+.#{$cls-prefix}-form--label-top .#{$cls-prefix}-form-item__label,
+.#{$cls-prefix}-form-item--top .#{$cls-prefix}-form-item__label {
   display: block;
   width: auto;
   min-height: 0;
-  margin-bottom: 6px;
+  margin-bottom: $ccui-margin-xs;
   padding-right: 0;
-  line-height: 1.5;
+  line-height: $ccui-line-height-base;
   text-align: left;
 }
 
-.ccui-form-item--required .ccui-form-item__label::before {
-  margin-right: 4px;
-  color: var(--ccui-danger, #ff4d4f);
+.#{$cls-prefix}-form-item--required .#{$cls-prefix}-form-item__label::before {
+  margin-right: $ccui-margin-xxs;
+  color: $ccui-color-error;
   content: '*';
 }
 
-.ccui-form-item__optional {
-  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
+.#{$cls-prefix}-form-item__optional {
+  color: $ccui-color-text-secondary;
   font-weight: 400;
 }
 
-.ccui-form-item__content {
+.#{$cls-prefix}-form-item__content {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.ccui-form-item__message {
-  margin-top: 4px;
-  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
-  font-size: 12px;
-  line-height: 1.5;
+.#{$cls-prefix}-form-item__message {
+  margin-top: $ccui-margin-xxs;
+  color: $ccui-color-text-secondary;
+  font-size: $ccui-font-size-sm;
+  line-height: $ccui-line-height-base;
 }
 
-.ccui-form-item__extra {
-  margin-top: 4px;
-  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
-  font-size: 12px;
-  line-height: 1.5;
+.#{$cls-prefix}-form-item__extra {
+  margin-top: $ccui-margin-xxs;
+  color: $ccui-color-text-secondary;
+  font-size: $ccui-font-size-sm;
+  line-height: $ccui-line-height-base;
 }
 
-.ccui-form-item--error .ccui-form-item__message {
-  color: var(--ccui-danger, #ff4d4f);
+.#{$cls-prefix}-form-item--error .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-error;
 }
 
-.ccui-form-item--error :where(input, textarea, select) {
-  border-color: var(--ccui-danger, #ff4d4f);
+.#{$cls-prefix}-form-item--error :where(input, textarea, select) {
+  border-color: $ccui-color-error;
 }
 
-.ccui-form-item--success .ccui-form-item__message {
-  color: var(--ccui-success, #52c41a);
+.#{$cls-prefix}-form-item--success .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-success;
 }
