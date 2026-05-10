@@ -197,6 +197,10 @@ export default {
   'color-fill-secondary': 'rgba(0, 0, 0, 0.06)',
   'color-fill-tertiary': 'rgba(0, 0, 0, 0.04)',
   'color-fill-quaternary': 'rgba(0, 0, 0, 0.02)',
+  // Control · Focus Outline（focus 光环 0 0 0 2px <color>，统一三档状态）
+  'control-outline': 'rgba(5, 145, 255, 0.1)',
+  'control-outline-error': 'rgba(255, 38, 5, 0.06)',
+  'control-outline-warning': 'rgba(255, 215, 5, 0.1)',
   // 色板（10 阶蓝色，用于 Tag/Badge 预设色）
   'blue-1': '#e6f4ff',
   'blue-2': '#bae0ff',

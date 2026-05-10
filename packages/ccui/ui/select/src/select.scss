@@ -34,7 +34,7 @@
   }
 
   &--open &__selector {
-    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12);
+    box-shadow: 0 0 0 2px $ccui-control-outline;
   }
 
   &--disabled &__selector {
@@ -172,7 +172,7 @@
   }
 
   &--error.#{$cls-prefix}-select--open &__selector {
-    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.12);
+    box-shadow: 0 0 0 2px $ccui-control-outline-error;
   }
 
   &--warning &__selector {
@@ -180,7 +180,7 @@
   }
 
   &--warning.#{$cls-prefix}-select--open &__selector {
-    box-shadow: 0 0 0 2px rgba(250, 173, 20, 0.12);
+    box-shadow: 0 0 0 2px $ccui-control-outline-warning;
   }
 
   &__list {

@@ -118,7 +118,8 @@
       border-color: $ccui-color-primary;
 
       &:hover {
-        opacity: 0.85;
+        background-color: $ccui-color-primary-hover;
+        border-color: $ccui-color-primary-hover;
         color: #ffffff;
       }
     }
@@ -129,7 +130,8 @@
       border-color: $ccui-color-error;
 
       &:hover {
-        opacity: 0.85;
+        background-color: $ccui-color-error-hover;
+        border-color: $ccui-color-error-hover;
         color: #ffffff;
       }
     }

@@ -144,4 +144,8 @@ export default {
   'color-fill-secondary': 'rgba(255, 255, 255, 0.12)',
   'color-fill-tertiary': 'rgba(255, 255, 255, 0.08)',
   'color-fill-quaternary': 'rgba(255, 255, 255, 0.04)',
+  // Control · Focus Outline
+  'control-outline': 'rgba(22, 104, 220, 0.2)',
+  'control-outline-error': 'rgba(220, 68, 70, 0.2)',
+  'control-outline-warning': 'rgba(216, 150, 20, 0.2)',
 }
