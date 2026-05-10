@@ -96,27 +96,13 @@
     color: $ccui-color-error;
   }
 
-  // 预设色板
-  @each $name, $bg, $border,
-    $text
-      in (
-        ('magenta', #fff0f6, #ffadd2, #c41d7f),
-        ('red', #fff1f0, #ffa39e, #cf1322),
-        ('volcano', #fff2e8, #ffbb96, #d4380d),
-        ('orange', #fff7e6, #ffd591, #d46b08),
-        ('gold', #fffbe6, #ffe58f, #d48806),
-        ('lime', #fcffe6, #eaff8f, #7cb305),
-        ('green', #f6ffed, #b7eb8f, #389e0d),
-        ('cyan', #e6fffb, #87e8de, #08979c),
-        ('blue', #e6f4ff, #91caff, #0958d9),
-        ('geekblue', #f0f5ff, #adc6ff, #1d39c4),
-        ('purple', #f9f0ff, #d3adf7, #531dab)
-      )
-  {
+  // 预设色板：消费 12 色板（1=最浅 bg / 3=border / 7=text）token
+  // light: 浅 bg + 中 border + 深 text；dark theme 通过 CSS var 自动反转。
+  @each $name in (magenta, red, volcano, orange, gold, lime, green, cyan, blue, geekblue, purple) {
     &--#{$name} {
-      background: $bg;
-      border-color: $border;
-      color: $text;
+      background: var(--ccui-#{$name}-1);
+      border-color: var(--ccui-#{$name}-3);
+      color: var(--ccui-#{$name}-7);
     }
   }
 }
