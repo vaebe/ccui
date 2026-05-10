@@ -111,13 +111,13 @@
     transition: all 0.2s;
 
     &:hover {
-      border-color: #1677ff;
-      color: #1677ff;
+      border-color: var(--ccui-brand, #1677ff);
+      color: var(--ccui-brand, #1677ff);
     }
 
     &--next {
-      border-color: #1677ff;
-      background: #1677ff;
+      border-color: var(--ccui-brand, #1677ff);
+      background: var(--ccui-brand, #1677ff);
       color: #fff;
 
       &:hover {
@@ -180,7 +180,7 @@
 
   // ─── Primary 主题 ─────────────────────────────────────
   &__panel--primary {
-    background: #1677ff;
+    background: var(--ccui-brand, #1677ff);
     color: #fff;
   }
 
@@ -218,7 +218,7 @@
     &--next {
       border-color: #fff;
       background: #fff;
-      color: #1677ff;
+      color: var(--ccui-brand, #1677ff);
 
       &:hover {
         background: rgba(255, 255, 255, 0.9);

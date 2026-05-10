@@ -1,6 +1,6 @@
 .ccui-form {
   display: block;
-  color: var(--ccui-text-color, #1f2937);
+  color: var(--ccui-text, rgba(0, 0, 0, 0.88));
   font-size: 14px;
 }
 
@@ -47,7 +47,7 @@
   flex: 0 0 auto;
   min-height: 32px;
   padding-right: 12px;
-  color: var(--ccui-text-color, #1f2937);
+  color: var(--ccui-text, rgba(0, 0, 0, 0.88));
   line-height: 32px;
   text-align: right;
 }
@@ -74,12 +74,12 @@
 
 .ccui-form-item--required .ccui-form-item__label::before {
   margin-right: 4px;
-  color: var(--ccui-error-color, #ff4d4f);
+  color: var(--ccui-danger, #ff4d4f);
   content: '*';
 }
 
 .ccui-form-item__optional {
-  color: var(--ccui-text-color-secondary, #6b7280);
+  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
   font-weight: 400;
 }
 
@@ -90,26 +90,26 @@
 
 .ccui-form-item__message {
   margin-top: 4px;
-  color: var(--ccui-text-color-secondary, #6b7280);
+  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
   font-size: 12px;
   line-height: 1.5;
 }
 
 .ccui-form-item__extra {
   margin-top: 4px;
-  color: var(--ccui-text-color-secondary, #6b7280);
+  color: var(--ccui-text-weak, rgba(0, 0, 0, 0.65));
   font-size: 12px;
   line-height: 1.5;
 }
 
 .ccui-form-item--error .ccui-form-item__message {
-  color: var(--ccui-error-color, #ff4d4f);
+  color: var(--ccui-danger, #ff4d4f);
 }
 
 .ccui-form-item--error :where(input, textarea, select) {
-  border-color: var(--ccui-error-color, #ff4d4f);
+  border-color: var(--ccui-danger, #ff4d4f);
 }
 
 .ccui-form-item--success .ccui-form-item__message {
-  color: var(--ccui-success-color, #52c41a);
+  color: var(--ccui-success, #52c41a);
 }

@@ -29,8 +29,8 @@
     transition: all 0.2s;
 
     &:hover:not(.is-disabled) {
-      border-color: #1677ff;
-      color: #1677ff;
+      border-color: var(--ccui-brand, #1677ff);
+      color: var(--ccui-brand, #1677ff);
     }
 
     &.is-disabled {
@@ -56,12 +56,12 @@
     transition: all 0.2s;
 
     &:hover {
-      border-color: #1677ff;
+      border-color: var(--ccui-brand, #1677ff);
       background: #f0f7ff;
     }
 
     &.is-dragover {
-      border-color: #1677ff;
+      border-color: var(--ccui-brand, #1677ff);
       background: #e6f4ff;
     }
 
@@ -133,7 +133,7 @@
   }
 
   &__item-percent {
-    color: #1677ff;
+    color: var(--ccui-brand, #1677ff);
     font-size: 12px;
   }
 
