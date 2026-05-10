@@ -322,7 +322,6 @@ Vue3CCUIResolver({
 
 后续：
 
-- `cssBundlePath` 默认值需从 `vue3-ccui/dist/vue3-ccui.css` 调整到与发布 flow 一致的 `vue3-ccui/style.css`（发布流程是 cd `dist/` 后从根目录发布，`package.json` 的 `"style": "style.css"` 是相对路径）。
 - 主包后续若产出 per-component CSS chunk，resolver 内部路径切到 `vue3-ccui/es/<name>/style/index.css` 即可，API 不变。
 - 主包 `vue-ccui.ts` 若新增 `CheckBoxGroup` 等子组件导出，扩展映射表对应一行即可。
 
