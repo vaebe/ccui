@@ -94,15 +94,19 @@ export default {
   'default-line': '#d9d9d9',
   'default-bg': '#ffffff',
   // 字体设置相关
-  // @deprecated 'font-size-card-title' / 'font-size-page-title' / 'font-size-modal-title' /
-  //             'font-size-price' / 'font-size-data-overview' 是 ccui 1.x 业务 token，
-  //             保留兼容现有 SCSS。新组件请使用 'font-size-lg' / 'font-size-xl' /
-  //             'font-size-heading-3' 等 v6 标准阶梯。
+  // @deprecated 'font-size-*' 业务 token（card-title / page-title / modal-title /
+  //             price / data-overview）是 ccui 1.x 沿袭，新组件请使用 v6 标准
+  //             阶梯：'font-size-lg' / 'font-size-xl' / 'font-size-heading-3' 等。
   'font-size': '14px',
+  /** @deprecated 用 'font-size-lg' (16px) 替代 */
   'font-size-card-title': '16px',
+  /** @deprecated 用 'font-size-xl' (20px) 替代 */
   'font-size-page-title': '20px',
+  /** @deprecated 用 'font-size-lg' (16px) 替代 */
   'font-size-modal-title': '16px',
+  /** @deprecated 用 'font-size-heading-3' (24px) 替代 */
   'font-size-price': '24px',
+  /** @deprecated 用 'font-size-heading-2' (30px) 替代 */
   'font-size-data-overview': '30px',
   'font-size-icon': '16px',
   'font-size-sm': '12px',
@@ -112,31 +116,42 @@ export default {
   'font-content-weight': '400',
   'line-height-base': '1.5714285714285714',
   // 圆角
-  // @deprecated 'border-radius-feedback'（用 'border-radius-lg' 替代）。
-  //             'border-radius-card' 暂保留作 Card 等大块容器的语义化别名。
   'border-radius': '6px',
+  /** @deprecated 用 'border-radius-lg' (8px) 替代 */
   'border-radius-feedback': '8px',
+  /** @deprecated 用 'border-radius-lg' (8px) 替代；Card 大容器场景可保留作语义别名 */
   'border-radius-card': '8px',
   // 阴影
-  // @deprecated 'shadow-length-*' 系列是 ccui 1.x 业务 token，保留兼容。
-  //             新组件请使用 'box-shadow' / 'box-shadow-secondary' / 'box-shadow-tertiary'
-  //             v6 标准三档阴影 token。
+  // 'shadow-length-*' 系列是 ccui 1.x 业务 token，保留兼容；
+  // 新组件请使用 'box-shadow' / 'box-shadow-secondary' / 'box-shadow-tertiary' v6 三档阴影。
+  /** @deprecated 用 'box-shadow' 替代（含完整阴影定义） */
   'shadow-length-base': '0 1px 2px 0',
+  /** @deprecated 改用 'box-shadow-secondary' 中的对应方向阴影 */
   'shadow-length-slide-left': '-6px 0 16px 0',
+  /** @deprecated 改用 'box-shadow-secondary' 中的对应方向阴影 */
   'shadow-length-slide-right': '6px 0 16px 0',
+  /** @deprecated 用 'box-shadow-secondary' 替代 */
   'shadow-length-connected-overlay': '0 6px 16px 0',
+  /** @deprecated 用 'box-shadow-secondary' 替代 */
   'shadow-length-hover': '0 6px 16px 0',
+  /** @deprecated 用 'box-shadow-secondary' 替代 */
   'shadow-length-feedback-overlay': '0 6px 16px 0',
+  /** @deprecated 用 'box-shadow-tertiary' 替代 */
   'shadow-fullscreen-overlay': '0 6px 16px 0',
   // 动效
-  // @deprecated 'animation-duration-*' / 'animation-ease-*' 是 ccui 1.x 业务 token，
-  //             保留兼容。新组件请使用 'motion-duration-fast/mid/slow' 与
-  //             'motion-ease-in-out-circ' 等 v6 标准动效 token。
+  // 'animation-duration-*' / 'animation-ease-*' 是 ccui 1.x 业务 token，保留兼容；
+  // 新组件请使用 'motion-duration-fast/mid/slow' 与 'motion-ease-in-out-circ' 等 v6 标准动效 token。
+  /** @deprecated 用 'motion-duration-slow' (0.3s) 替代 */
   'animation-duration-slow': '0.3s',
+  /** @deprecated 用 'motion-duration-mid' (0.2s) 替代 */
   'animation-duration-base': '0.2s',
+  /** @deprecated 用 'motion-duration-fast' (0.1s) 替代 */
   'animation-duration-fast': '0.1s',
+  /** @deprecated 用 'motion-ease-in-out-circ' 替代 */
   'animation-ease-in': 'cubic-bezier(0.7, 0, 0.84, 0)',
+  /** @deprecated 用 'motion-ease-out-circ' 替代 */
   'animation-ease-out': 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+  /** @deprecated 用 'motion-ease-in-out' 替代 */
   'animation-ease-in-out': 'cubic-bezier(0.78, 0.14, 0.15, 0.86)',
   'animation-ease-in-smooth': 'cubic-bezier(0.645, 0.045, 0.355, 1)',
   'animation-linear': 'cubic-bezier(0, 0, 1, 1)',
