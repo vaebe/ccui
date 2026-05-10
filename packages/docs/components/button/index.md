@@ -363,10 +363,10 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" icon="cc-icon-search"> 搜索 </c-button>
-    <c-button type="success" icon="cc-icon-edit"> 编辑 </c-button>
-    <c-button type="warning" icon="cc-icon-delete"> 删除 </c-button>
-    <c-button type="danger" icon="cc-icon-plus"> 添加 </c-button>
+    <c-button type="primary" icon="mdi:magnify"> 搜索 </c-button>
+    <c-button type="success" icon="mdi:pencil"> 编辑 </c-button>
+    <c-button type="warning" icon="mdi:delete"> 删除 </c-button>
+    <c-button type="danger" icon="mdi:plus"> 添加 </c-button>
   </div>
 
   <div style="margin-top: 10px;">

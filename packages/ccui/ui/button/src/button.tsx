@@ -1,8 +1,15 @@
 import type { ButtonProps } from './button-types'
+import { Icon as IconifyIcon } from '@iconify/vue'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { buttonProps } from './button-types'
 import './button.scss'
+
+// Iconify 命名规范：`<collection>:<icon>`，例如 `mdi:magnify`。
+// 含 `:` 时按 Iconify 渲染 SVG；否则当 CSS 类名（兼容自定义 iconfont 接入方）。
+function isIconifyName(name: string): boolean {
+  return name.includes(':')
+}
 
 export default defineComponent({
   name: 'CButton',
@@ -42,7 +49,14 @@ export default defineComponent({
           onClick={onClick}
         >
           {props.loading && <span class={ns.e('loading-icon')}></span>}
-          {slots.icon ? slots.icon() : props.icon && <i class={props.icon}></i>}
+          {slots.icon
+            ? slots.icon()
+            : props.icon &&
+              (isIconifyName(props.icon) ? (
+                <IconifyIcon icon={props.icon} class={ns.e('icon')} />
+              ) : (
+                <i class={[ns.e('icon'), props.icon]}></i>
+              ))}
           {slots.default && <span class={ns.e('content')}>{slots.default()}</span>}
         </button>
       )

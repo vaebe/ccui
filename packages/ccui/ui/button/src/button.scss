@@ -346,6 +346,24 @@ $button-info-plain-border: #dcdfe6;
     justify-content: center;
   }
 
+  // 图标（左侧前缀）：1em 跟随按钮字号；颜色继承 currentColor
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 1.1em;
+    line-height: 1;
+    flex: none;
+
+    > svg {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+    }
+  }
+
   // 加载图标
   &__loading-icon {
     position: relative;
