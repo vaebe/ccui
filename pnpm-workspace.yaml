@@ -7,6 +7,9 @@ catalog:
 overrides:
   vite: 'catalog:'
   vitest: 'catalog:'
+  # 防止双 vue 实例（3.5.22 + 3.5.33）破坏组件库测试中的 reactivity 追踪。
+  # docs/vitepress 生态吃 3.5.33，统一锚定到该版本；ccui 的 ^3.5.22 兼容。
+  vue: 3.5.33
 peerDependencyRules:
   allowAny:
     - vite

@@ -358,9 +358,18 @@ describe('carousel ARIA attributes', () => {
 })
 
 describe('carousel swipe gesture', () => {
+  // jsdom 不实现 PointerEvent。组件用 pointerdown/up 监听，但只读 clientX/Y，
+  // 我们用 MouseEvent + 类型 cast 制造同名事件（运行时 dispatch 名是 'pointerdown'/'pointerup'）。
+  function makePointerEvent(type: string, clientX: number, clientY: number): Event {
+    if (typeof PointerEvent === 'function') {
+      return new PointerEvent(type, { clientX, clientY, bubbles: true })
+    }
+    const evt = new MouseEvent(type, { clientX, clientY, bubbles: true })
+    return evt
+  }
   function swipe(el: Element, startX: number, startY: number, endX: number, endY: number) {
-    el.dispatchEvent(new PointerEvent('pointerdown', { clientX: startX, clientY: startY, bubbles: true }))
-    el.dispatchEvent(new PointerEvent('pointerup', { clientX: endX, clientY: endY, bubbles: true }))
+    el.dispatchEvent(makePointerEvent('pointerdown', startX, startY))
+    el.dispatchEvent(makePointerEvent('pointerup', endX, endY))
   }
 
   it('swipe left (dx < -threshold) goes to next', async () => {
