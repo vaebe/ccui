@@ -1,9 +1,11 @@
 import type { ExtractPropTypes } from 'vue'
 
 export const emptyProps = {
+  // 默认从 ConfigProvider.locale.Empty.description 取值（'暂无数据' / 'No data'）；
+  // 显式传 description 仍优先。
   description: {
     type: String,
-    default: '暂无数据',
+    default: '',
   },
   image: {
     type: String,

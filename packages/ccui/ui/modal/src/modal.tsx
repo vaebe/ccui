@@ -1,5 +1,6 @@
 import type { ModalProps } from './modal-types'
 import { computed, defineComponent, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { modalProps } from './modal-types'
 import './modal.scss'
@@ -10,7 +11,11 @@ export default defineComponent({
   emits: ['update:visible', 'ok', 'cancel', 'close', 'open', 'opened', 'closed'],
   setup(props: ModalProps, { emit, slots }) {
     const ns = useNamespace('modal')
+    const cfg = useConfig()
     const rendered = ref(props.visible)
+
+    const okTextLocal = computed(() => props.okText || cfg.locale?.Modal?.okText || '确 定')
+    const cancelTextLocal = computed(() => props.cancelText || cfg.locale?.Modal?.cancelText || '取 消')
 
     const widthStyle = computed(() => {
       const w = props.width
@@ -134,7 +139,7 @@ export default defineComponent({
                       ) : (
                         <>
                           <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
-                            {props.cancelText}
+                            {cancelTextLocal.value}
                           </button>
                           <button
                             class={[ns.e('btn'), ns.em('btn', props.okType), props.okLoading && ns.is('loading')]}
@@ -142,7 +147,7 @@ export default defineComponent({
                             onClick={onOk}
                           >
                             {props.okLoading && <span class={ns.e('spinner')} />}
-                            {props.okText}
+                            {okTextLocal.value}
                           </button>
                         </>
                       )}

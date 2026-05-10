@@ -15,6 +15,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { autoCompleteProps, normalizeOption } from './auto-complete-types'
@@ -33,6 +34,10 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'select', 'search', 'focus', 'blur', 'open-change'],
   setup(props: AutoCompleteProps, { emit, slots }) {
     const ns = useNamespace('auto-complete')
+    const cfg = useConfig()
+    const notFoundLocal = computed(
+      () => props.notFoundContent || cfg.locale?.AutoComplete?.notFoundContent || '暂无数据',
+    )
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -319,7 +324,7 @@ export default defineComponent({
           <Transition name={props.transitionName} appear>
             <div ref={popupRef} class={popupCls} style={panelStyle} id={`${ns.b()}-popup`} role="listbox">
               {list.length === 0 ? (
-                <div class={ns.e('empty')}>{props.notFoundContent}</div>
+                <div class={ns.e('empty')}>{notFoundLocal.value}</div>
               ) : (
                 <ul class={ns.e('options')}>{list.map((opt, i) => renderOption(opt, i))}</ul>
               )}

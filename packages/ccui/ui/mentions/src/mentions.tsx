@@ -2,6 +2,7 @@ import type { CSSProperties, VNode } from 'vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { MentionMatch, MentionsProps, NormalizedOption } from './mentions-types'
 import { computed, defineComponent, h, inject, nextTick, onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { findActiveMention, mentionsProps, normalizeMention } from './mentions-types'
@@ -13,6 +14,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'select', 'search', 'focus', 'blur'],
   setup(props: MentionsProps, { emit, slots }) {
     const ns = useNamespace('mentions')
+    const cfg = useConfig()
+    const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.Mentions?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const textareaRef = ref<HTMLTextAreaElement | null>(null)
     const open = shallowRef(false)
@@ -232,7 +235,7 @@ export default defineComponent({
       return (
         <div class={ns.e('panel')} style={popupStyle} role="listbox">
           {list.length === 0 ? (
-            <div class={ns.e('empty')}>{props.notFoundContent}</div>
+            <div class={ns.e('empty')}>{notFoundLocal.value}</div>
           ) : (
             <ul class={ns.e('options')}>{list.map((opt, i) => renderOption(opt, i))}</ul>
           )}

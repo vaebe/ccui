@@ -16,13 +16,15 @@ export const popconfirmProps = {
     type: String as PropType<PopoverPlacement>,
     default: 'top' as PopoverPlacement,
   },
+  // 字面量默认改为 '' ，运行时从 ConfigProvider.locale.Popconfirm 取值；
+  // 用户显式传 confirm-text / cancel-text 仍优先。
   confirmText: {
     type: String,
-    default: '确 定',
+    default: '',
   },
   cancelText: {
     type: String,
-    default: '取 消',
+    default: '',
   },
   confirmType: {
     type: String as PropType<PopconfirmType>,

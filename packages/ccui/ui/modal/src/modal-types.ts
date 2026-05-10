@@ -35,13 +35,15 @@ export const modalProps = {
     type: Boolean,
     default: true,
   },
+  // 不设字面量默认；运行时从 ConfigProvider.locale.Modal.okText / cancelText 取值。
+  // 用户显式传 okText 仍按 explicit 值优先。
   okText: {
     type: String,
-    default: '确 定',
+    default: '',
   },
   cancelText: {
     type: String,
-    default: '取 消',
+    default: '',
   },
   okType: {
     type: String as PropType<'primary' | 'danger' | 'default'>,

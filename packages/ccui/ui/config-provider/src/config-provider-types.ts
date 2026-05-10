@@ -8,8 +8,35 @@ export interface ThemeConfig {
   cssVar?: boolean
 }
 
+export interface ModalLocale {
+  okText?: string
+  cancelText?: string
+  justOkText?: string
+}
+
+export interface PopconfirmLocale {
+  okText?: string
+  cancelText?: string
+}
+
+export interface EmptyLocale {
+  description?: string
+}
+
+export interface SelectLocale {
+  notFoundContent?: string
+}
+
 export interface Locale {
   locale: string
+  Modal?: ModalLocale
+  Popconfirm?: PopconfirmLocale
+  Empty?: EmptyLocale
+  AutoComplete?: SelectLocale
+  Mentions?: SelectLocale
+  Cascader?: SelectLocale
+  TreeSelect?: SelectLocale
+  Select?: SelectLocale
   [key: string]: any
 }
 

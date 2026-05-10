@@ -24,6 +24,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { cascaderProps } from './cascader-types'
@@ -107,6 +108,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'popup-visible-change', 'focus', 'blur'],
   setup(props: CascaderProps, { emit }) {
     const ns = useNamespace('cascader')
+    const cfg = useConfig()
+    const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.Cascader?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -259,7 +262,7 @@ export default defineComponent({
       if (items.length === 0) {
         return (
           <ul class={[ns.e('column'), ns.em('column', 'empty')]}>
-            <li class={ns.e('empty')}>{props.notFoundContent}</li>
+            <li class={ns.e('empty')}>{notFoundLocal.value}</li>
           </ul>
         )
       }

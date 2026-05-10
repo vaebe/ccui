@@ -63,7 +63,8 @@ export const autoCompleteProps = {
   },
   notFoundContent: {
     type: String,
-    default: '暂无数据',
+    // 默认从 ConfigProvider.locale.AutoComplete.notFoundContent 取值；显式 prop 仍优先。
+    default: '',
   },
   placement: {
     type: String as PropType<AutoCompletePlacement>,

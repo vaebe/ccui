@@ -106,7 +106,8 @@ export const treeSelectProps = {
   },
   notFoundContent: {
     type: String,
-    default: '暂无数据',
+    // 默认从 ConfigProvider.locale.TreeSelect.notFoundContent 取值；显式 prop 仍优先。
+    default: '',
   },
   // popup 最大高度
   popupMaxHeight: {

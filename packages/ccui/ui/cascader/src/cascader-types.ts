@@ -115,7 +115,8 @@ export const cascaderProps = {
   },
   notFoundContent: {
     type: String,
-    default: '暂无数据',
+    // 默认从 ConfigProvider.locale.Cascader.notFoundContent 取值；显式 prop 仍优先。
+    default: '',
   },
 } as const
 

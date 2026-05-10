@@ -16,6 +16,7 @@ import {
   Teleport,
   Transition,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Tree } from '../../tree'
@@ -101,6 +102,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'popup-visible-change', 'focus', 'blur'],
   setup(props: TreeSelectProps, { emit }) {
     const ns = useNamespace('tree-select')
+    const cfg = useConfig()
+    const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.TreeSelect?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -281,7 +284,7 @@ export default defineComponent({
       const isEmpty = !props.treeData || props.treeData.length === 0
       return h('div', { ref: popupRef, class: popupCls, style: popupStyle, role: 'dialog' }, [
         isEmpty ? (
-          <div class={ns.e('empty')}>{props.notFoundContent}</div>
+          <div class={ns.e('empty')}>{notFoundLocal.value}</div>
         ) : (
           <div class={ns.e('tree-wrap')}>{buildTree()}</div>
         ),

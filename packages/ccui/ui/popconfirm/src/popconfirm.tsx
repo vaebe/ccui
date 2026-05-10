@@ -1,5 +1,6 @@
 import type { PopconfirmProps } from './popconfirm-types'
 import { computed, defineComponent, ref, watch } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import Popover from '../../popover/src/popover'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popconfirmProps } from './popconfirm-types'
@@ -11,6 +12,10 @@ export default defineComponent({
   emits: ['confirm', 'cancel', 'update:visible'],
   setup(props: PopconfirmProps, { emit, slots }) {
     const ns = useNamespace('popconfirm')
+    const cfg = useConfig()
+
+    const confirmTextLocal = computed(() => props.confirmText || cfg.locale?.Popconfirm?.okText || '确 定')
+    const cancelTextLocal = computed(() => props.cancelText || cfg.locale?.Popconfirm?.cancelText || '取 消')
 
     const popoverRef = ref<{ hide?: () => void } | null>(null)
     const innerVisible = ref(false)
@@ -83,10 +88,10 @@ export default defineComponent({
                 ) : (
                   <>
                     <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
-                      {props.cancelText}
+                      {cancelTextLocal.value}
                     </button>
                     <button class={[ns.e('btn'), ns.em('btn', props.confirmType)]} onClick={onConfirm}>
-                      {props.confirmText}
+                      {confirmTextLocal.value}
                     </button>
                   </>
                 )}

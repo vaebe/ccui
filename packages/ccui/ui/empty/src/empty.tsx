@@ -1,5 +1,6 @@
 import type { EmptyProps } from './empty-types'
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emptyProps } from './empty-types'
 import './empty.scss'
@@ -24,13 +25,15 @@ export default defineComponent({
   props: emptyProps,
   setup(props: EmptyProps, { slots }) {
     const ns = useNamespace('empty')
+    const cfg = useConfig()
+    const descLocal = computed(() => props.description || cfg.locale?.Empty?.description || '暂无数据')
 
     return () => (
       <div class={ns.b()}>
         <div class={ns.e('image')} style={props.imageStyle}>
           {slots.image ? slots.image() : props.image ? <img src={props.image} alt="empty" /> : DEFAULT_IMG}
         </div>
-        <div class={ns.e('description')}>{slots.description ? slots.description() : props.description}</div>
+        <div class={ns.e('description')}>{slots.description ? slots.description() : descLocal.value}</div>
         {slots.default && <div class={ns.e('footer')}>{slots.default()}</div>}
       </div>
     )
