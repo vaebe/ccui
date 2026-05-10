@@ -71,11 +71,29 @@
     color: $ccui-color-text;
   }
 
-  &--primary,
+  &--primary {
+    background: $ccui-color-primary-bg;
+    border-color: $ccui-color-primary-border;
+    color: $ccui-color-primary;
+  }
+
+  // Processing: 与 primary 同色但加 6px 脉冲点，表达"加载中"语义。
+  // 对齐 Ant Design Tag.Processing 视觉。
   &--processing {
     background: $ccui-color-primary-bg;
     border-color: $ccui-color-primary-border;
     color: $ccui-color-primary;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-inline-end: 6px;
+      border-radius: 50%;
+      background: $ccui-color-primary;
+      animation: ccui-tag-processing-pulse 1.6s $ccui-motion-ease-in-out-circ infinite;
+    }
   }
 
   &--success {
@@ -104,5 +122,17 @@
       border-color: var(--ccui-#{$name}-3);
       color: var(--ccui-#{$name}-7);
     }
+  }
+}
+
+@keyframes ccui-tag-processing-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
