@@ -11,15 +11,9 @@
 ```vue
 <template>
   <c-carousel style="height: 160px">
-    <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">
-      第 1 帧
-    </div>
-    <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">
-      第 2 帧
-    </div>
-    <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">
-      第 3 帧
-    </div>
+    <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">第 1 帧</div>
+    <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">第 2 帧</div>
+    <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">第 3 帧</div>
   </c-carousel>
 </template>
 ```
@@ -193,7 +187,11 @@ const active = ref(0)
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const carouselRef = ref<{ next: () => void; prev: () => void; goTo: (i: number, dontAnimate?: boolean) => void } | null>(null)
+const carouselRef = ref<{
+  next: () => void
+  prev: () => void
+  goTo: (i: number, dontAnimate?: boolean) => void
+} | null>(null)
 </script>
 
 <template>
@@ -216,56 +214,56 @@ const carouselRef = ref<{ next: () => void; prev: () => void; goTo: (i: number, 
 
 ### Props
 
-| 参数           | 类型                                          | 默认值       | 说明                                                          |
-| -------------- | --------------------------------------------- | ------------ | ------------------------------------------------------------- |
-| modelValue     | number                                        | --           | 当前激活索引，支持 `v-model`；不传则非受控                    |
-| defaultActive  | number                                        | `0`          | 非受控初始索引                                                |
-| autoplay       | boolean                                       | `false`      | 是否自动播放                                                  |
-| autoplaySpeed  | number                                        | `3000`       | 自动播放间隔（毫秒）                                          |
-| dots           | boolean                                       | `true`       | 是否显示指示器                                                |
-| dotPosition    | `'top' \| 'bottom' \| 'left' \| 'right'`      | `'bottom'`   | 指示器位置                                                    |
-| effect         | `'scrollx' \| 'fade'`                         | `'scrollx'`  | 切换动效。`scrollx` 横向位移；`fade` 透明度交替               |
-| infinite       | boolean                                       | `true`       | 是否循环；末尾点 next 回到 0、首位点 prev 跳到末尾            |
-| arrows         | boolean                                       | `false`      | 是否显示前后切换箭头                                          |
-| pauseOnHover   | boolean                                       | `true`       | 鼠标悬浮时是否暂停 autoplay                                   |
-| duration       | number                                        | `500`        | 切换动画时长（毫秒），同时控制 transition-duration            |
-| swipeable      | boolean                                       | `true`       | 是否启用触摸/指针 swipe 手势                                  |
-| swipeThreshold | number                                        | `40`         | swipe 触发阈值（像素），滑动距离超过此值才切换                |
+| 参数           | 类型                                     | 默认值      | 说明                                               |
+| -------------- | ---------------------------------------- | ----------- | -------------------------------------------------- |
+| modelValue     | number                                   | --          | 当前激活索引，支持 `v-model`；不传则非受控         |
+| defaultActive  | number                                   | `0`         | 非受控初始索引                                     |
+| autoplay       | boolean                                  | `false`     | 是否自动播放                                       |
+| autoplaySpeed  | number                                   | `3000`      | 自动播放间隔（毫秒）                               |
+| dots           | boolean                                  | `true`      | 是否显示指示器                                     |
+| dotPosition    | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'`  | 指示器位置                                         |
+| effect         | `'scrollx' \| 'fade'`                    | `'scrollx'` | 切换动效。`scrollx` 横向位移；`fade` 透明度交替    |
+| infinite       | boolean                                  | `true`      | 是否循环；末尾点 next 回到 0、首位点 prev 跳到末尾 |
+| arrows         | boolean                                  | `false`     | 是否显示前后切换箭头                               |
+| pauseOnHover   | boolean                                  | `true`      | 鼠标悬浮时是否暂停 autoplay                        |
+| duration       | number                                   | `500`       | 切换动画时长（毫秒），同时控制 transition-duration |
+| swipeable      | boolean                                  | `true`      | 是否启用触摸/指针 swipe 手势                       |
+| swipeThreshold | number                                   | `40`        | swipe 触发阈值（像素），滑动距离超过此值才切换     |
 
 ### Events
 
-| 事件名            | 回调签名                                | 触发时机                     |
-| ----------------- | --------------------------------------- | ---------------------------- |
-| update:modelValue | `(value: number)`                       | 切换时（受控/非受控均触发）  |
-| change            | `(current: number, prev: number)`       | 实际切换帧时（动画开始）     |
-| afterChange       | `(current: number)`                     | 切换动画结束后               |
+| 事件名            | 回调签名                          | 触发时机                    |
+| ----------------- | --------------------------------- | --------------------------- |
+| update:modelValue | `(value: number)`                 | 切换时（受控/非受控均触发） |
+| change            | `(current: number, prev: number)` | 实际切换帧时（动画开始）    |
+| afterChange       | `(current: number)`               | 切换动画结束后              |
 
 ### Slots
 
-| 插槽名    | 作用域                                     | 说明                                      |
-| --------- | ------------------------------------------ | ----------------------------------------- |
-| default   | --                                         | 每个直接子节点作为一帧                    |
-| customDot | `{ index: number, isActive: boolean }`     | 自定义每个指示器内容，点击外层 li 跳转    |
+| 插槽名    | 作用域                                 | 说明                                   |
+| --------- | -------------------------------------- | -------------------------------------- |
+| default   | --                                     | 每个直接子节点作为一帧                 |
+| customDot | `{ index: number, isActive: boolean }` | 自定义每个指示器内容，点击外层 li 跳转 |
 
 ### Exposed methods
 
-| 方法            | 签名                                              | 说明                                  |
-| --------------- | ------------------------------------------------- | ------------------------------------- |
-| next            | `() => void`                                      | 切到下一帧（受 `infinite` 影响）      |
-| prev            | `() => void`                                      | 切到上一帧（受 `infinite` 影响）      |
-| goTo            | `(index: number, dontAnimate?: boolean) => void`  | 跳到指定索引；`dontAnimate=true` 跳过动画 |
-| getCurrentIndex | `() => number`                                    | 获取当前激活索引                      |
+| 方法            | 签名                                             | 说明                                      |
+| --------------- | ------------------------------------------------ | ----------------------------------------- |
+| next            | `() => void`                                     | 切到下一帧（受 `infinite` 影响）          |
+| prev            | `() => void`                                     | 切到上一帧（受 `infinite` 影响）          |
+| goTo            | `(index: number, dontAnimate?: boolean) => void` | 跳到指定索引；`dontAnimate=true` 跳过动画 |
+| getCurrentIndex | `() => number`                                   | 获取当前激活索引                          |
 
 ### 键盘导航
 
 组件容器 `tabindex=0`，聚焦后可用以下按键：
 
-| 按键                   | 操作             |
-| ---------------------- | ---------------- |
-| ArrowRight / ArrowDown | 切到下一帧       |
-| ArrowLeft / ArrowUp    | 切到上一帧       |
-| Home                   | 跳到第一帧       |
-| End                    | 跳到最后一帧     |
+| 按键                   | 操作         |
+| ---------------------- | ------------ |
+| ArrowRight / ArrowDown | 切到下一帧   |
+| ArrowLeft / ArrowUp    | 切到上一帧   |
+| Home                   | 跳到第一帧   |
+| End                    | 跳到最后一帧 |
 
 ## 已知限制（未交付）
 

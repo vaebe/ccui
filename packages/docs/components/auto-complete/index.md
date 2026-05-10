@@ -184,46 +184,46 @@ const v = ref('')
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                       | 说明                                                          |
-| ----------------- | ---------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------- |
-| modelValue        | string \| number \| null                                   | --                           | 当前输入值，支持 `v-model`                                    |
-| defaultValue      | string \| number                                           | `''`                         | 非受控初始值                                                  |
-| options           | `(string \| number \| { value, label?, disabled? })[]`     | `[]`                         | 候选项；string/number 形态的 label = value                    |
-| placeholder       | string                                                     | --                           | 占位文案                                                      |
-| disabled          | boolean                                                    | `false`                      | 是否禁用                                                      |
-| allowClear        | boolean                                                    | `false`                      | 显示一键清空按钮                                              |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`                  | 输入框尺寸                                                    |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                         | 校验状态；置于 `FormItem` 时自动继承                          |
-| filterOption      | `boolean \| (input, option) => boolean`                    | `true`                       | 过滤逻辑                                                      |
-| caseSensitive     | boolean                                                    | `false`                      | 是否区分大小写（仅默认 includes 过滤生效）                    |
-| notFoundContent   | string                                                     | `暂无数据`                   | 空数据占位                                                    |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`               | 浮层方位                                                      |
-| popupClassName    | string                                                     | --                           | 浮层根元素自定义 class                                        |
-| popupAppendToBody | boolean                                                    | `false`                      | Teleport 到 `document.body`                                   |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                           | 自定义浮层挂载点，优先级高于 `popupAppendToBody`              |
-| transitionName    | string                                                     | `ccui-auto-complete-fade`    | 浮层过渡名                                                    |
-| popupMaxHeight    | number                                                     | `256`                        | 浮层最大高度（px）                                            |
-| defaultActiveFirstOption | boolean                                           | `false`                      | 打开浮层时是否默认高亮第一项                                  |
-| backfill          | boolean                                                    | `false`                      | 键盘导航时是否把高亮项 label 写回 input                       |
-| searchDebounce    | number                                                     | `0`                          | 搜索防抖延迟（毫秒），`0` 不防抖                              |
+| 参数                     | 类型                                                       | 默认值                    | 说明                                             |
+| ------------------------ | ---------------------------------------------------------- | ------------------------- | ------------------------------------------------ |
+| modelValue               | string \| number \| null                                   | --                        | 当前输入值，支持 `v-model`                       |
+| defaultValue             | string \| number                                           | `''`                      | 非受控初始值                                     |
+| options                  | `(string \| number \| { value, label?, disabled? })[]`     | `[]`                      | 候选项；string/number 形态的 label = value       |
+| placeholder              | string                                                     | --                        | 占位文案                                         |
+| disabled                 | boolean                                                    | `false`                   | 是否禁用                                         |
+| allowClear               | boolean                                                    | `false`                   | 显示一键清空按钮                                 |
+| size                     | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                       |
+| status                   | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                      | 校验状态；置于 `FormItem` 时自动继承             |
+| filterOption             | `boolean \| (input, option) => boolean`                    | `true`                    | 过滤逻辑                                         |
+| caseSensitive            | boolean                                                    | `false`                   | 是否区分大小写（仅默认 includes 过滤生效）       |
+| notFoundContent          | string                                                     | `暂无数据`                | 空数据占位                                       |
+| placement                | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`            | 浮层方位                                         |
+| popupClassName           | string                                                     | --                        | 浮层根元素自定义 class                           |
+| popupAppendToBody        | boolean                                                    | `false`                   | Teleport 到 `document.body`                      |
+| getPopupContainer        | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点，优先级高于 `popupAppendToBody` |
+| transitionName           | string                                                     | `ccui-auto-complete-fade` | 浮层过渡名                                       |
+| popupMaxHeight           | number                                                     | `256`                     | 浮层最大高度（px）                               |
+| defaultActiveFirstOption | boolean                                                    | `false`                   | 打开浮层时是否默认高亮第一项                     |
+| backfill                 | boolean                                                    | `false`                   | 键盘导航时是否把高亮项 label 写回 input          |
+| searchDebounce           | number                                                     | `0`                       | 搜索防抖延迟（毫秒），`0` 不防抖                 |
 
 ### Events
 
-| 事件名            | 回调签名                                          | 触发时机                |
-| ----------------- | ------------------------------------------------- | ----------------------- |
-| update:modelValue | `(value: string \| number)`                       | 输入或选中时            |
-| change            | `(value: string \| number)`                       | 同 update:modelValue    |
-| search            | `(keyword: string)`                               | 同 update:modelValue（search 别名） |
-| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时           |
-| open-change       | `(open: boolean)`                                 | 浮层打开 / 关闭时       |
-| focus             | `(e: FocusEvent)`                                 | 输入框聚焦              |
-| blur              | `(e: FocusEvent)`                                 | 输入框失焦              |
+| 事件名            | 回调签名                                                | 触发时机                            |
+| ----------------- | ------------------------------------------------------- | ----------------------------------- |
+| update:modelValue | `(value: string \| number)`                             | 输入或选中时                        |
+| change            | `(value: string \| number)`                             | 同 update:modelValue                |
+| search            | `(keyword: string)`                                     | 同 update:modelValue（search 别名） |
+| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时                        |
+| open-change       | `(open: boolean)`                                       | 浮层打开 / 关闭时                   |
+| focus             | `(e: FocusEvent)`                                       | 输入框聚焦                          |
+| blur              | `(e: FocusEvent)`                                       | 输入框失焦                          |
 
 ### Slots
 
-| 名称   | 参数                                  | 说明                  |
-| ------ | ------------------------------------- | --------------------- |
-| option  | `{ option: AutoCompleteOption, index: number }` | 自定义单项渲染 |
+| 名称    | 参数                                                                    | 说明                        |
+| ------- | ----------------------------------------------------------------------- | --------------------------- |
+| option  | `{ option: AutoCompleteOption, index: number }`                         | 自定义单项渲染              |
 | trigger | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
 
 ## 已知限制（未交付）

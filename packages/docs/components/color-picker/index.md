@@ -61,16 +61,7 @@ const color = ref('#1677ff')
 
 ```vue
 <script setup lang="ts">
-const presets = [
-  '#1677ff',
-  '#36ad6a',
-  '#f7b500',
-  '#ff4d4f',
-  '#722ed1',
-  '#13c2c2',
-  '#000000',
-  '#ffffff',
-]
+const presets = ['#1677ff', '#36ad6a', '#f7b500', '#ff4d4f', '#722ed1', '#13c2c2', '#000000', '#ffffff']
 </script>
 
 <template>
@@ -153,48 +144,48 @@ const rules = { brand: [{ required: true, message: '请选择品牌色', trigger
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                    | 说明                                                          |
-| ----------------- | ---------------------------------------------------------- | ------------------------- | ------------------------------------------------------------- |
-| modelValue        | string \| null                                             | --                        | 当前颜色（hex 字符串），支持 `v-model`                        |
-| defaultValue      | string                                                     | `#1677ff`                 | 非受控初始 hex 值                                             |
-| format            | `'hex' \| 'rgb' \| 'hsv'`                                  | `'hex'`                   | swatch 文本显示格式（不影响 v-model 输出）                    |
-| disabled          | boolean                                                    | `false`                   | 是否禁用                                                      |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`               | trigger 尺寸                                                  |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                      | 校验状态；置于 `FormItem` 时自动继承                          |
-| showText          | boolean                                                    | `false`                   | 是否在 swatch 旁显示色值文本                                  |
-| disabledAlpha     | boolean                                                    | `false`                   | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                  |
-| presets           | string[]                                                   | `[]`                      | 预设色板，每项 hex 字符串                                     |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`            | 浮层方位                                                      |
-| popupClassName    | string                                                     | --                        | 浮层根元素自定义 class                                        |
-| popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                        |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点，优先级高于 `popupAppendToBody`              |
-| transitionName    | string                                                     | `ccui-color-picker-fade`  | 浮层过渡名                                                    |
-| allowClear        | boolean                                                    | `false`                   | 是否允许清空（显示 × 按钮，emit null）                        |
+| 参数              | 类型                                                       | 默认值                   | 说明                                             |
+| ----------------- | ---------------------------------------------------------- | ------------------------ | ------------------------------------------------ |
+| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`           |
+| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                |
+| format            | `'hex' \| 'rgb' \| 'hsv'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）       |
+| disabled          | boolean                                                    | `false`                  | 是否禁用                                         |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                     |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承             |
+| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                     |
+| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex     |
+| presets           | string[]                                                   | `[]`                     | 预设色板，每项 hex 字符串                        |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                         |
+| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                           |
+| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`           |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody` |
+| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                       |
+| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）           |
 
 ### Slots
 
-| 名称    | 作用域                                                       | 说明                                      |
-| ------- | ------------------------------------------------------------ | ----------------------------------------- |
-| trigger | `{ color: string, open: boolean, disabled: boolean }`        | 自定义触发器，替代默认 swatch 按钮        |
+| 名称    | 作用域                                                | 说明                               |
+| ------- | ----------------------------------------------------- | ---------------------------------- |
+| trigger | `{ color: string, open: boolean, disabled: boolean }` | 自定义触发器，替代默认 swatch 按钮 |
 
 ### Events
 
-| 事件名            | 回调签名                                       | 触发时机                                  |
-| ----------------- | ---------------------------------------------- | ----------------------------------------- |
-| update:modelValue | `(hex: string)`                                | 颜色变化时（hex 字符串，alpha<1 时 8 位） |
-| change            | `(hex: string, info: { rgb: RGB; hsv: HSV })`  | 颜色变化时（同 update:modelValue）        |
-| open-change       | `(open: boolean)`                              | 浮层打开 / 关闭时                         |
+| 事件名            | 回调签名                                      | 触发时机                                  |
+| ----------------- | --------------------------------------------- | ----------------------------------------- |
+| update:modelValue | `(hex: string)`                               | 颜色变化时（hex 字符串，alpha<1 时 8 位） |
+| change            | `(hex: string, info: { rgb: RGB; hsv: HSV })` | 颜色变化时（同 update:modelValue）        |
+| open-change       | `(open: boolean)`                             | 浮层打开 / 关闭时                         |
 
 ### 键盘导航
 
 面板内 SV 区域、hue 滑块、alpha 滑块均支持 `tabindex=0` 聚焦和方向键微调：
 
-| 区域  | 按键                   | 操作                            |
-| ----- | ---------------------- | ------------------------------- |
-| SV    | Arrow Right/Left       | 饱和度 ±1（Shift ±10）          |
-| SV    | Arrow Up/Down          | 明度 ±1（Shift ±10）            |
-| Hue   | Arrow Right/Left/Up/Down | 色相 ±1（Shift ±10）          |
-| Alpha | Arrow Right/Left/Up/Down | 透明度 ±0.01（Shift ±0.1）    |
+| 区域  | 按键                     | 操作                       |
+| ----- | ------------------------ | -------------------------- |
+| SV    | Arrow Right/Left         | 饱和度 ±1（Shift ±10）     |
+| SV    | Arrow Up/Down            | 明度 ±1（Shift ±10）       |
+| Hue   | Arrow Right/Left/Up/Down | 色相 ±1（Shift ±10）       |
+| Alpha | Arrow Right/Left/Up/Down | 透明度 ±0.01（Shift ±0.1） |
 
 ## 已知限制（未交付）
 

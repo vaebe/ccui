@@ -28,7 +28,13 @@ const steps = [
   <div style="display: flex; gap: 12px">
     <c-button ref="btn1" type="primary">保存</c-button>
     <c-button ref="btn2">导出 PDF</c-button>
-    <c-button @click="open = true; current = 0">开始引导</c-button>
+    <c-button
+      @click="
+        open = true
+        current = 0
+      "
+      >开始引导</c-button
+    >
   </div>
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
@@ -55,7 +61,13 @@ const steps = [
 </script>
 
 <template>
-  <c-button @click="open = true; current = 0">触发居中引导</c-button>
+  <c-button
+    @click="
+      open = true
+      current = 0
+    "
+    >触发居中引导</c-button
+  >
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
 ```
@@ -83,7 +95,13 @@ const steps = [
 
 <template>
   <c-button ref="btn">页面按钮</c-button>
-  <c-button @click="open = true; current = 0">开始（混合 mask）</c-button>
+  <c-button
+    @click="
+      open = true
+      current = 0
+    "
+    >开始（混合 mask）</c-button
+  >
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
 ```
@@ -101,13 +119,17 @@ const steps = [
 import { ref } from 'vue'
 const open = ref(false)
 const current = ref(0)
-const steps = [
-  { title: '一' }, { title: '二' }, { title: '三' },
-]
+const steps = [{ title: '一' }, { title: '二' }, { title: '三' }]
 </script>
 
 <template>
-  <c-button @click="open = true; current = 0">英文按钮</c-button>
+  <c-button
+    @click="
+      open = true
+      current = 0
+    "
+    >英文按钮</c-button
+  >
   <c-tour
     v-model:open="open"
     v-model:current="current"
@@ -125,42 +147,42 @@ const steps = [
 
 ### Props
 
-| 参数        | 类型                                                                                                  | 默认值     | 说明                                       |
-| ----------- | ----------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------ |
-| open        | boolean                                                                                               | `false`    | 是否打开，支持 `v-model:open`              |
-| current     | number                                                                                                | `0`        | 当前步骤索引，支持 `v-model:current`       |
-| steps       | `TourStep[]`                                                                                          | `[]`       | 步骤定义                                   |
-| mask        | boolean                                                                                               | `true`     | 全局蒙层开关；每步可单独 `step.mask` 覆盖  |
-| placement   | `'top' \| 'topLeft' \| ... \| 'rightBottom'`（12 方位）                                              | `'bottom'` | 默认浮层方位；每步可单独 `step.placement` |
-| prevText    | string                                                                                                | `上一步`   | 上一步按钮文案                             |
-| nextText    | string                                                                                                | `下一步`   | 下一步按钮文案                             |
-| finishText  | string                                                                                                | `完成`     | 末步按钮文案                               |
-| panelWidth  | number                                                                                                | `320`      | 浮层最大宽度（px）                         |
-| closeOnEsc  | boolean                                                                                               | `true`     | Esc 是否关闭                               |
-| type        | `'default' \| 'primary'`                                                                             | `'default'`| 主题类型；`primary` 蓝底白字               |
-| arrow       | boolean                                                                                               | `true`     | 是否显示箭头（仅有 target 时渲染）         |
-| scrollIntoViewIfNeeded | boolean                                                                                  | `true`     | target 在视口外时是否自动滚动到目标        |
+| 参数                   | 类型                                                    | 默认值      | 说明                                      |
+| ---------------------- | ------------------------------------------------------- | ----------- | ----------------------------------------- |
+| open                   | boolean                                                 | `false`     | 是否打开，支持 `v-model:open`             |
+| current                | number                                                  | `0`         | 当前步骤索引，支持 `v-model:current`      |
+| steps                  | `TourStep[]`                                            | `[]`        | 步骤定义                                  |
+| mask                   | boolean                                                 | `true`      | 全局蒙层开关；每步可单独 `step.mask` 覆盖 |
+| placement              | `'top' \| 'topLeft' \| ... \| 'rightBottom'`（12 方位） | `'bottom'`  | 默认浮层方位；每步可单独 `step.placement` |
+| prevText               | string                                                  | `上一步`    | 上一步按钮文案                            |
+| nextText               | string                                                  | `下一步`    | 下一步按钮文案                            |
+| finishText             | string                                                  | `完成`      | 末步按钮文案                              |
+| panelWidth             | number                                                  | `320`       | 浮层最大宽度（px）                        |
+| closeOnEsc             | boolean                                                 | `true`      | Esc 是否关闭                              |
+| type                   | `'default' \| 'primary'`                                | `'default'` | 主题类型；`primary` 蓝底白字              |
+| arrow                  | boolean                                                 | `true`      | 是否显示箭头（仅有 target 时渲染）        |
+| scrollIntoViewIfNeeded | boolean                                                 | `true`      | target 在视口外时是否自动滚动到目标       |
 
 ### TourStep
 
-| 字段        | 类型                                                | 说明                                  |
-| ----------- | --------------------------------------------------- | ------------------------------------- |
-| target      | `HTMLElement \| () => HTMLElement \| null`          | 高亮目标；无 target 时浮层居中显示    |
-| title       | `string \| VNode`                                   | 标题（必填）                          |
-| description | `string \| VNode`                                   | 描述                                  |
-| placement   | TourPlacement                                       | 单步方位，覆盖全局 `placement`        |
-| mask        | boolean                                             | 单步蒙层，覆盖全局 `mask`             |
-| cover       | `string \| VNode`                                   | 封面图（string 渲染为 img，VNode 直接渲染） |
+| 字段        | 类型                                       | 说明                                        |
+| ----------- | ------------------------------------------ | ------------------------------------------- |
+| target      | `HTMLElement \| () => HTMLElement \| null` | 高亮目标；无 target 时浮层居中显示          |
+| title       | `string \| VNode`                          | 标题（必填）                                |
+| description | `string \| VNode`                          | 描述                                        |
+| placement   | TourPlacement                              | 单步方位，覆盖全局 `placement`              |
+| mask        | boolean                                    | 单步蒙层，覆盖全局 `mask`                   |
+| cover       | `string \| VNode`                          | 封面图（string 渲染为 img，VNode 直接渲染） |
 
 ### Events
 
-| 事件名         | 回调签名                | 触发时机                              |
-| -------------- | ----------------------- | ------------------------------------- |
-| update:open    | `(open: boolean)`       | open 状态变化                         |
-| update:current | `(index: number)`       | current 步骤变化                      |
-| change         | `(index: number)`       | 同 update:current                     |
-| close          | `()`                    | 用户主动关闭（×按钮 / Esc / 蒙层点击） |
-| finish         | `()`                    | 末步「完成」按钮按下                  |
+| 事件名         | 回调签名          | 触发时机                               |
+| -------------- | ----------------- | -------------------------------------- |
+| update:open    | `(open: boolean)` | open 状态变化                          |
+| update:current | `(index: number)` | current 步骤变化                       |
+| change         | `(index: number)` | 同 update:current                      |
+| close          | `()`              | 用户主动关闭（×按钮 / Esc / 蒙层点击） |
+| finish         | `()`              | 末步「完成」按钮按下                   |
 
 ## 已知限制（未交付）
 

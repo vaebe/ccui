@@ -64,13 +64,7 @@ const allOpts = ['anna', 'todo', 'bug', 'feature']
 </script>
 
 <template>
-  <c-mentions
-    v-model="value"
-    :options="allOpts"
-    :prefix="['@', '#']"
-    placeholder="@ 提及人 / # 关联标签"
-    :rows="3"
-  />
+  <c-mentions v-model="value" :options="allOpts" :prefix="['@', '#']" placeholder="@ 提及人 / # 关联标签" :rows="3" />
 </template>
 ```
 
@@ -125,39 +119,39 @@ function startsWith(input: string, opt: { value: string }) {
 
 ### Props
 
-| 参数            | 类型                                              | 默认值       | 说明                                                          |
-| --------------- | ------------------------------------------------- | ------------ | ------------------------------------------------------------- |
-| modelValue      | string \| null                                    | --           | 当前输入值，支持 `v-model`                                    |
-| defaultValue    | string                                            | `''`         | 非受控初始值                                                  |
-| options         | `(string \| { value, label?, disabled? })[]`      | `[]`         | 候选项                                                        |
-| prefix          | `string \| string[]`                              | `'@'`        | 触发字符；数组形态可同时识别多个                              |
-| split           | string                                            | `' '`        | 选中后追加的分隔符                                            |
-| placeholder     | string                                            | --           | 占位文案                                                      |
-| disabled        | boolean                                           | `false`      | 是否禁用                                                      |
-| rows            | number                                            | `3`          | textarea 行数                                                 |
-| filterOption    | `boolean \| (input, option) => boolean`           | `true`       | 过滤逻辑                                                      |
-| caseSensitive   | boolean                                           | `false`      | 默认过滤是否区分大小写                                        |
-| notFoundContent | string                                            | `暂无数据`   | 空数据占位                                                    |
-| placement       | `'top' \| 'bottom'`                               | `'bottom'`   | 浮层方位（基于 textarea）                                     |
-| popupMaxHeight  | number                                            | `256`        | 浮层最大高度（px）                                            |
-| autoSize        | `boolean \| { minRows?: number, maxRows?: number }` | `false`     | 自适应 textarea 高度；`true` 无限制，对象指定范围             |
-| searchDebounce  | number                                            | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                              |
+| 参数            | 类型                                                | 默认值     | 说明                                              |
+| --------------- | --------------------------------------------------- | ---------- | ------------------------------------------------- |
+| modelValue      | string \| null                                      | --         | 当前输入值，支持 `v-model`                        |
+| defaultValue    | string                                              | `''`       | 非受控初始值                                      |
+| options         | `(string \| { value, label?, disabled? })[]`        | `[]`       | 候选项                                            |
+| prefix          | `string \| string[]`                                | `'@'`      | 触发字符；数组形态可同时识别多个                  |
+| split           | string                                              | `' '`      | 选中后追加的分隔符                                |
+| placeholder     | string                                              | --         | 占位文案                                          |
+| disabled        | boolean                                             | `false`    | 是否禁用                                          |
+| rows            | number                                              | `3`        | textarea 行数                                     |
+| filterOption    | `boolean \| (input, option) => boolean`             | `true`     | 过滤逻辑                                          |
+| caseSensitive   | boolean                                             | `false`    | 默认过滤是否区分大小写                            |
+| notFoundContent | string                                              | `暂无数据` | 空数据占位                                        |
+| placement       | `'top' \| 'bottom'`                                 | `'bottom'` | 浮层方位（基于 textarea）                         |
+| popupMaxHeight  | number                                              | `256`      | 浮层最大高度（px）                                |
+| autoSize        | `boolean \| { minRows?: number, maxRows?: number }` | `false`    | 自适应 textarea 高度；`true` 无限制，对象指定范围 |
+| searchDebounce  | number                                              | `0`        | 搜索防抖延迟（毫秒），`0` 不防抖                  |
 
 ### Events
 
-| 事件名            | 回调签名                                  | 触发时机                              |
-| ----------------- | ----------------------------------------- | ------------------------------------- |
-| update:modelValue | `(value: string)`                         | 输入或选中时                          |
-| change            | `(value: string)`                         | 同 update:modelValue                  |
-| select            | `(option: MentionOption, prefix: string)` | 选中候选项时                          |
-| search            | `(text: string, prefix: string)`          | 浮层打开 / 搜索词变化时               |
-| focus             | `(e: FocusEvent)`                         | textarea 聚焦                         |
-| blur              | `(e: FocusEvent)`                         | textarea 失焦                         |
+| 事件名            | 回调签名                                  | 触发时机                |
+| ----------------- | ----------------------------------------- | ----------------------- |
+| update:modelValue | `(value: string)`                         | 输入或选中时            |
+| change            | `(value: string)`                         | 同 update:modelValue    |
+| select            | `(option: MentionOption, prefix: string)` | 选中候选项时            |
+| search            | `(text: string, prefix: string)`          | 浮层打开 / 搜索词变化时 |
+| focus             | `(e: FocusEvent)`                         | textarea 聚焦           |
+| blur              | `(e: FocusEvent)`                         | textarea 失焦           |
 
 ### Slots
 
-| 名称   | 参数                                  | 说明              |
-| ------ | ------------------------------------- | ----------------- |
+| 名称   | 参数                                       | 说明           |
+| ------ | ------------------------------------------ | -------------- |
 | option | `{ option: MentionOption, index: number }` | 自定义单项渲染 |
 
 ## 已知限制（未交付）

@@ -52,12 +52,7 @@ const selected = ref<string[]>([])
 </script>
 
 <template>
-  <c-transfer
-    v-model:target-keys="target"
-    v-model:selected-keys="selected"
-    :data-source="data"
-    show-search
-  />
+  <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data" show-search />
 </template>
 ```
 
@@ -83,13 +78,11 @@ const selected = ref<string[]>([])
 </script>
 
 <template>
-  <c-transfer
-    v-model:target-keys="target"
-    v-model:selected-keys="selected"
-    :data-source="data"
-  >
+  <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data">
     <template #render="{ item }">
-      <span><strong>{{ item.title }}</strong> · <small style="color:#999">{{ item.description }}</small></span>
+      <span
+        ><strong>{{ item.title }}</strong> · <small style="color:#999">{{ item.description }}</small></span
+      >
     </template>
   </c-transfer>
 </template>
@@ -117,11 +110,7 @@ const selected = ref<string[]>([])
 </script>
 
 <template>
-  <c-transfer
-    v-model:target-keys="target"
-    v-model:selected-keys="selected"
-    :data-source="data"
-  />
+  <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data" />
 </template>
 ```
 
@@ -165,37 +154,37 @@ const selected = ref<string[]>([])
 
 ### Props
 
-| 参数         | 类型                                              | 默认值        | 说明                                              |
-| ------------ | ------------------------------------------------- | ------------- | ------------------------------------------------- |
-| dataSource   | `TransferItem[]`                                  | `[]`          | 全部数据。`{ key, title?, description?, disabled? }` |
-| targetKeys   | `string[]`                                        | `[]`          | 在右侧（target）的 key 集合，支持 `v-model:targetKeys` |
-| selectedKeys | `string[]`                                        | `[]`          | 跨两列勾选的 key，支持 `v-model:selectedKeys`     |
-| titles       | `[string, string]`                                | `['', '']`    | 两列标题                                          |
-| operations   | `[string, string]`                                | `['>', '<']`  | 中间按钮文案：[右移, 左移]                        |
-| showSearch   | boolean                                           | `false`       | 显示搜索框                                        |
-| filterOption | `(input: string, item: TransferItem) => boolean`  | --            | 自定义过滤；不传走默认 title 包含匹配             |
-| disabled     | boolean                                           | `false`       | 整体禁用                                          |
-| render       | `(item: TransferItem) => string \| VNode`         | --            | 自定义单项渲染                                    |
-| locale       | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --            | 自定义文案                                        |
-| pagination   | `boolean \| number`                               | `false`       | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize |
-| draggable    | boolean                                           | `false`       | 是否允许右侧列表拖拽排序                          |
+| 参数         | 类型                                                          | 默认值       | 说明                                                   |
+| ------------ | ------------------------------------------------------------- | ------------ | ------------------------------------------------------ |
+| dataSource   | `TransferItem[]`                                              | `[]`         | 全部数据。`{ key, title?, description?, disabled? }`   |
+| targetKeys   | `string[]`                                                    | `[]`         | 在右侧（target）的 key 集合，支持 `v-model:targetKeys` |
+| selectedKeys | `string[]`                                                    | `[]`         | 跨两列勾选的 key，支持 `v-model:selectedKeys`          |
+| titles       | `[string, string]`                                            | `['', '']`   | 两列标题                                               |
+| operations   | `[string, string]`                                            | `['>', '<']` | 中间按钮文案：[右移, 左移]                             |
+| showSearch   | boolean                                                       | `false`      | 显示搜索框                                             |
+| filterOption | `(input: string, item: TransferItem) => boolean`              | --           | 自定义过滤；不传走默认 title 包含匹配                  |
+| disabled     | boolean                                                       | `false`      | 整体禁用                                               |
+| render       | `(item: TransferItem) => string \| VNode`                     | --           | 自定义单项渲染                                         |
+| locale       | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --           | 自定义文案                                             |
+| pagination   | `boolean \| number`                                           | `false`      | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize |
+| draggable    | boolean                                                       | `false`      | 是否允许右侧列表拖拽排序                               |
 
 ### Events
 
-| 事件名                | 回调签名                                               | 触发时机                              |
-| --------------------- | ------------------------------------------------------ | ------------------------------------- |
-| update:targetKeys     | `(keys: string[])`                                     | 移动后右侧 keys 变化                  |
-| update:selectedKeys   | `(keys: string[])`                                     | 勾选 / 全选变化                       |
-| change                | `(targetKeys, direction: 'left' \| 'right', moveKeys)` | 点击移动按钮                          |
-| select-change         | `(sourceSelectedKeys, targetSelectedKeys)`             | 双列勾选状态变化（拆出左右）          |
-| search                | `(direction: 'left' \| 'right', value: string)`        | 搜索框输入                            |
+| 事件名              | 回调签名                                               | 触发时机                     |
+| ------------------- | ------------------------------------------------------ | ---------------------------- |
+| update:targetKeys   | `(keys: string[])`                                     | 移动后右侧 keys 变化         |
+| update:selectedKeys | `(keys: string[])`                                     | 勾选 / 全选变化              |
+| change              | `(targetKeys, direction: 'left' \| 'right', moveKeys)` | 点击移动按钮                 |
+| select-change       | `(sourceSelectedKeys, targetSelectedKeys)`             | 双列勾选状态变化（拆出左右） |
+| search              | `(direction: 'left' \| 'right', value: string)`        | 搜索框输入                   |
 
 ### Slots
 
-| 名称   | 参数            | 说明              |
-| ------ | --------------- | ----------------- |
-| render          | `{ item }`                                            | 自定义单项渲染                  |
-| selectAllLabels | `{ direction, selectedCount, totalCount }`            | 自定义每列头部全选区标签内容    |
+| 名称            | 参数                                       | 说明                         |
+| --------------- | ------------------------------------------ | ---------------------------- |
+| render          | `{ item }`                                 | 自定义单项渲染               |
+| selectAllLabels | `{ direction, selectedCount, totalCount }` | 自定义每列头部全选区标签内容 |
 
 ## 已知限制（未交付）
 

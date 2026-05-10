@@ -123,11 +123,7 @@ function onChange(file: { uid: string }, next: typeof list.value) {
 </script>
 
 <template>
-  <c-upload
-    :fileList="list"
-    default-status="uploading"
-    @change="onChange"
-  />
+  <c-upload :fileList="list" default-status="uploading" @change="onChange" />
 </template>
 ```
 
@@ -169,7 +165,9 @@ const list = ref<Array<{ uid: string; name: string }>>([])
 <template>
   <c-upload v-model:fileList="list" multiple>
     <template #itemRender="{ item, remove }">
-      <li style="display:flex;align-items:center;gap:8px;padding:6px;background:#fff;border:1px solid #eee;border-radius:4px;margin-top:6px">
+      <li
+        style="display:flex;align-items:center;gap:8px;padding:6px;background:#fff;border:1px solid #eee;border-radius:4px;margin-top:6px"
+      >
         <span>📄</span>
         <span style="flex:1">{{ item.name }}</span>
         <c-button size="small" @click="remove">移除</c-button>
@@ -204,57 +202,57 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 
 ### Props
 
-| 参数             | 类型                                          | 默认值          | 说明                                                          |
-| ---------------- | --------------------------------------------- | --------------- | ------------------------------------------------------------- |
-| fileList         | `UploadFile[]`                                | --              | 受控文件列表，支持 `v-model:fileList`                         |
-| defaultFileList  | `UploadFile[]`                                | `[]`            | 非受控初始列表                                                |
-| accept           | string                                        | `''`            | 接受的文件类型（传给 native input.accept）                    |
-| multiple         | boolean                                       | `false`         | 是否允许多选                                                  |
-| disabled         | boolean                                       | `false`         | 是否禁用                                                      |
-| maxCount         | number                                        | `0`             | 最大文件数；`0` 表示不限                                      |
-| maxSize          | number                                        | `0`             | 单文件最大字节数；`0` 表示不限                                |
-| beforeUpload     | `(file: File, fileList: File[]) => boolean \| Promise<boolean>` | -- | 过滤函数（同步/异步）；返回 false 拒收                    |
-| drag             | boolean                                       | `false`         | 是否渲染拖拽区域代替按钮                                      |
-| showUploadList   | boolean                                       | `true`          | 是否渲染文件列表                                              |
-| listType         | `'text' \| 'picture'`                         | `'text'`        | 列表展示形态；`picture` 显示缩略图（thumbUrl/url）            |
-| defaultStatus    | `'uploading' \| 'done' \| 'error'`            | `'done'`        | 新加文件的初始 status；业务可改为 'uploading' 让组件持续显示加载态 |
-| triggerText      | string                                        | `点击上传`      | 默认按钮文案                                                  |
-| dragText         | string                                        | `点击或拖拽文件到此区域上传` | 拖拽区文案                                              |
-| removeText       | string                                        | `删除`          | 列表项 × 按钮的 aria-label                                    |
-| customRequest    | `(options: CustomRequestOptions) => void`     | --              | 自定义上传函数（onProgress/onSuccess/onError）                |
-| action           | string                                        | `''`            | 上传地址；未传 customRequest 时用默认 XHR POST                |
+| 参数            | 类型                                                            | 默认值                       | 说明                                                               |
+| --------------- | --------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------ |
+| fileList        | `UploadFile[]`                                                  | --                           | 受控文件列表，支持 `v-model:fileList`                              |
+| defaultFileList | `UploadFile[]`                                                  | `[]`                         | 非受控初始列表                                                     |
+| accept          | string                                                          | `''`                         | 接受的文件类型（传给 native input.accept）                         |
+| multiple        | boolean                                                         | `false`                      | 是否允许多选                                                       |
+| disabled        | boolean                                                         | `false`                      | 是否禁用                                                           |
+| maxCount        | number                                                          | `0`                          | 最大文件数；`0` 表示不限                                           |
+| maxSize         | number                                                          | `0`                          | 单文件最大字节数；`0` 表示不限                                     |
+| beforeUpload    | `(file: File, fileList: File[]) => boolean \| Promise<boolean>` | --                           | 过滤函数（同步/异步）；返回 false 拒收                             |
+| drag            | boolean                                                         | `false`                      | 是否渲染拖拽区域代替按钮                                           |
+| showUploadList  | boolean                                                         | `true`                       | 是否渲染文件列表                                                   |
+| listType        | `'text' \| 'picture'`                                           | `'text'`                     | 列表展示形态；`picture` 显示缩略图（thumbUrl/url）                 |
+| defaultStatus   | `'uploading' \| 'done' \| 'error'`                              | `'done'`                     | 新加文件的初始 status；业务可改为 'uploading' 让组件持续显示加载态 |
+| triggerText     | string                                                          | `点击上传`                   | 默认按钮文案                                                       |
+| dragText        | string                                                          | `点击或拖拽文件到此区域上传` | 拖拽区文案                                                         |
+| removeText      | string                                                          | `删除`                       | 列表项 × 按钮的 aria-label                                         |
+| customRequest   | `(options: CustomRequestOptions) => void`                       | --                           | 自定义上传函数（onProgress/onSuccess/onError）                     |
+| action          | string                                                          | `''`                         | 上传地址；未传 customRequest 时用默认 XHR POST                     |
 
 ### UploadFile
 
-| 字段     | 类型                                              | 说明                          |
-| -------- | ------------------------------------------------- | ----------------------------- |
-| uid      | string                                            | 唯一标识；组件生成时自动给    |
-| name     | string                                            | 文件名                        |
-| size     | number                                            | 字节数                        |
-| type     | string                                            | MIME                          |
-| status   | `'uploading' \| 'done' \| 'error' \| 'removed'`   | 状态                          |
-| percent  | number                                            | 上传进度（0-100）             |
-| url      | string                                            | 已上传的远端 URL（业务回写）  |
-| response | unknown                                           | 后端响应（业务回写）          |
-| raw      | File                                              | 原始 File 对象                |
+| 字段     | 类型                                            | 说明                         |
+| -------- | ----------------------------------------------- | ---------------------------- |
+| uid      | string                                          | 唯一标识；组件生成时自动给   |
+| name     | string                                          | 文件名                       |
+| size     | number                                          | 字节数                       |
+| type     | string                                          | MIME                         |
+| status   | `'uploading' \| 'done' \| 'error' \| 'removed'` | 状态                         |
+| percent  | number                                          | 上传进度（0-100）            |
+| url      | string                                          | 已上传的远端 URL（业务回写） |
+| response | unknown                                         | 后端响应（业务回写）         |
+| raw      | File                                            | 原始 File 对象               |
 
 ### Events
 
-| 事件名             | 回调签名                                                    | 触发时机                          |
-| ------------------ | ----------------------------------------------------------- | --------------------------------- |
-| update:fileList    | `(list: UploadFile[])`                                      | 列表变化                          |
-| change             | `(file: UploadFile, list: UploadFile[])`                    | 单文件添加 / 移除时                |
-| remove             | `(file: UploadFile)`                                        | 用户点 × 移除                     |
-| reject             | `(file: File, reason: 'maxSize' \| 'maxCount' \| 'beforeUpload')` | 文件被拒收                        |
-| drop               | `(e: DragEvent)`                                            | 拖拽放下（仅 `drag=true`）        |
-| preview            | `(file: UploadFile)`                                        | 点击文件名时触发                  |
+| 事件名          | 回调签名                                                          | 触发时机                   |
+| --------------- | ----------------------------------------------------------------- | -------------------------- |
+| update:fileList | `(list: UploadFile[])`                                            | 列表变化                   |
+| change          | `(file: UploadFile, list: UploadFile[])`                          | 单文件添加 / 移除时        |
+| remove          | `(file: UploadFile)`                                              | 用户点 × 移除              |
+| reject          | `(file: File, reason: 'maxSize' \| 'maxCount' \| 'beforeUpload')` | 文件被拒收                 |
+| drop            | `(e: DragEvent)`                                                  | 拖拽放下（仅 `drag=true`） |
+| preview         | `(file: UploadFile)`                                              | 点击文件名时触发           |
 
 ### Slots
 
-| 名称       | 参数                                | 说明                            |
-| ---------- | ----------------------------------- | ------------------------------- |
-| default    | --                                  | 自定义触发器（drag=true 时不生效） |
-| itemRender | `{ item: UploadFile, remove: () => void }` | 自定义单项渲染            |
+| 名称       | 参数                                       | 说明                               |
+| ---------- | ------------------------------------------ | ---------------------------------- |
+| default    | --                                         | 自定义触发器（drag=true 时不生效） |
+| itemRender | `{ item: UploadFile, remove: () => void }` | 自定义单项渲染                     |
 
 ## 已知限制（未交付）
 

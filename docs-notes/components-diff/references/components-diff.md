@@ -3,7 +3,8 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 75 个一级目录，其中 73 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：73 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
+> 更新时间：2026-05-10，**Ant Design v6 主题对齐 + Resolver 工具包首次交付**：Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过 / ESM+CJS 双产物），Batch 34 主题对齐（`theme.scss` + `darkTheme.css` 重新生成对齐 v6 SeedToken / Form 9 处错误命名空间 var 修正 / 8 个组件 24 处硬编码 `#1677ff` → `var(--ccui-brand)`）。详见 Batch 33 / 34 与 `docs-notes/design-audit/references/ant-design-alignment.md`。
+> 历史更新：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
 
 ## 零、交付完整度口径
 
@@ -105,18 +106,18 @@ P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) 
 
 ### 复杂组件（5 项剩余 + 5 项推进中，P1 数据录入复杂组件 5/5 已 80% 收口）
 
-| 组件                  | 分类     | 复杂点                                                                                                                                    | 建议优先级   |
-| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付          | P1（推进中） |
-| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）                    | P1（推进中） |
-| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                              | P1（推进中)  |
-| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）           | P1（推进中） |
-| TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly） | P1（推进中） |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动 | P2（已交付）  |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传 | P2（已交付）  |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动     | P3（已交付）  |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 — 已交付 80%（Batch 32）：textarea + findActiveMention 纯函数 + 多 prefix + 键盘 + 选中插入 prefix+value+split | P3（已交付）  |
-| Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model       | P3（已交付）  |
+| 组件                  | 分类     | 复杂点                                                                                                                                                       | 建议优先级   |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付                             | P1（推进中） |
+| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）                                       | P1（推进中） |
+| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                                                 | P1（推进中)  |
+| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）                              | P1（推进中） |
+| TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly）                    | P1（推进中） |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动       | P2（已交付） |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传 | P2（已交付） |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动                      | P3（已交付） |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 — 已交付 80%（Batch 32）：textarea + findActiveMention 纯函数 + 多 prefix + 键盘 + 选中插入 prefix+value+split           | P3（已交付） |
+| Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model                        | P3（已交付） |
 
 ## 三、本轮交付记录
 
@@ -251,6 +252,79 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 34：Ant Design v6 主题对齐（theme.scss 重生 + Form var 改名 + 24 处硬编码主色 var 化）
+
+已完成 1 项：跨 9 组件的样式对齐改造，无新增功能交付。
+
+**起因**：审查发现 `packages/theme/theme.scss` + `packages/theme/darkTheme.css` 是 stale 自动生成产物，仍是 ccui 1.x 旧值（`#5e7ce0` / 2px / 12px），而 `themes/{light,dark}.ts` 已经全面对齐 Ant Design v6 SeedToken（`#1677ff` / 8px / 14px / 3 档阴影）。同时发现 Form SCSS 用错命名空间，外加 8 个组件硬编码 `#1677ff` 不走 token 体系。
+
+关键改动：
+
+- **theme 重生**：执行 `node packages/cli/index.js generate:theme`，重新从 `themes/light.ts` / `themes/dark.ts` 生成 `theme.scss` 与 `darkTheme.css`。两个文件未在 git 跟踪（自动生成产物），所以 `git status` 不显示，但内容已更新到 v6 SeedToken：`$ccui-brand` 由 `#5e7ce0` → `#1677ff`，`$ccui-text` 由 `#252b3a` → `rgba(0, 0, 0, 0.88)`，hover/active 派生色对齐 v6 算法。
+- **Form 命名空间修正**：`form.scss` 9 处 var 改名，从错误的 `--ccui-text-color` / `--ccui-text-color-secondary` / `--ccui-error-color` / `--ccui-success-color` 改为权威 `--ccui-text` / `--ccui-text-weak` / `--ccui-danger` / `--ccui-success`，fallback 同步更新到 v6 值。
+- **硬编码主色 var 化**：8 个组件 SCSS 共 24 处 `border-color/background/color/accent-color: #1677ff;` → `var(--ccui-brand, #1677ff)`，覆盖 `auto-complete`(1) / `transfer`(5) / `mentions`(1) / `carousel`(1) / `qr-code`(2) / `tour`(6) / `color-picker`(3) / `upload`(5)。fallback 保留 `#1677ff` 兜底以确保未挂主题包时仍可用。
+
+未动：
+
+- `result.tsx` 4 处 JS 硬编码 `#1677ff`（在 `ICON_COLOR` 对象里作为 SVG `fill` attribute 直接使用），SVG fill attribute 不接受 `var()`，需重构 Result 组件改用 inline style 或 `currentColor`+CSS 类，留作后续单独 PR。
+- `rgba(22, 119, 255, 0.x)` 半透明阴影（auto-complete / mentions / color-picker 各 1 处的 `box-shadow` alpha 版本）保留 —— theme 没有对应的 alpha token。
+
+验证结果：
+
+- `vp check` 通过（0 errors，4 个 pre-existing test 文件未用变量警告）。
+- 9 个改动文件 `vp test run` 出现 107 失败 / 186 通过，但通过 `git stash` 验证为 pre-existing 失败（`ui/button` 在 stash 后同样有 2 个失败，属 Vue 3.5 / vue-tsc "Missing ref owner context. ref cannot be used on hoisted vnodes" 基础设施问题），与本次改动无关。
+
+后续：
+
+- result.tsx fill 重构。
+- `vp build` 后清理 `packages/ccui/dist/` 旧 stale 产物（当前 `dist/vue-ccui.es.js` 仅 ~2KB 含 Button，需重 build 覆盖）。
+- 考虑将 `result.tsx` 的 ICON_COLOR 也对接 token 系统（hex 字符串 → CSS 变量 + JS 解析）。
+
+### Batch 33：Resolver 工具包首次交付（@vue3-ccui/unplugin-vue-components）
+
+已完成 1 项：`packages/resolver` 全新工具包，配合 [`unplugin-vue-components`](https://github.com/unplugin/unplugin-vue-components) 实现按需导入。
+
+包结构：
+
+- 包名：`@vue3-ccui/unplugin-vue-components`，`@vue3-ccui` scope 公共发布。
+- 入口：`src/index.ts` 导出 `Vue3CCUIResolver(options)` 工厂；`src/components.ts` 维护 92 项 `<C{Name}> → 命名导出` + `<style dir>` 映射表。
+- 构建：`tsdown` 双产物（ESM `dist/index.mjs` 7.98 KB / CJS `dist/index.cjs` 8.04 KB）+ 类型声明 `index.d.mts` / `index.d.cts`，gzip 后 ~1.9 KB。
+
+API：
+
+```ts
+Vue3CCUIResolver({
+  importStyle: 'css' | 'scss' | false, // 默认 'css'
+  prefix: 'C',
+  exclude: string | RegExp | (string | RegExp)[],
+  importFrom: 'vue3-ccui',
+  cssBundlePath: 'vue3-ccui/dist/vue3-ccui.css', // 后续将按发布 flow 调整为 vue3-ccui/style.css
+})
+```
+
+- `importStyle: 'css'`（默认）：注入一次全局 CSS bundle，`unplugin-vue-components` 自动去重。
+- `importStyle: 'scss'`：每个组件按需注入 `vue3-ccui/ui/<dir>/src/<dir>.scss` 源文件，需要 Sass 构建链；用户可借此覆盖主题变量。
+- `importStyle: false`：用户自行 `import 'vue3-ccui/style.css'`。
+
+92 个组件映射覆盖：69 个顶层 + 23 个子组件（Layout 4 子 / Form 3 子 / Typography 4 子 / Splitter 1 / Statistic 1 / Tabs 1 / Radio 1 / Timeline 1 / List 1 / Descriptions 1 / Collapse 1 / Breadcrumb 1 / FloatButton 1 / Grid 2 子）。`message` / `notification` / `util` 因不是模板组件不入表（用 ESM tree-shake 直接处理）。
+
+测试：
+
+- 21 单元测试覆盖默认行为、`importStyle` 三档、`exclude` 字符串/正则/数组、`prefix` 自定义、`importFrom` / `cssBundlePath` 重写、92 项映射全量解析、styleDir 命名规范。
+- 4 集成测试用真实 `unplugin-vue-components/vite` 验证 plugin 名、resolver 形状契约、多库共存的 `exclude` 配合。
+- 25/25 通过；`pnpm pack` 产出 11 KB tarball（dist + LICENSE + README + package.json）。
+
+发布前提：
+
+- `@vue3-ccui` 组织在 npm 上需先归属（`npm org create vue3-ccui` 或绑定个人 scope）。
+- 用户后续手动 `pnpm publish --access public`，资源凭证不上传。
+
+后续：
+
+- `cssBundlePath` 默认值需从 `vue3-ccui/dist/vue3-ccui.css` 调整到与发布 flow 一致的 `vue3-ccui/style.css`（发布流程是 cd `dist/` 后从根目录发布，`package.json` 的 `"style": "style.css"` 是相对路径）。
+- 主包后续若产出 per-component CSS chunk，resolver 内部路径切到 `vue3-ccui/es/<name>/style/index.css` 即可，API 不变。
+- 主包 `vue-ccui.ts` 若新增 `CheckBoxGroup` 等子组件导出，扩展映射表对应一行即可。
 
 ### Batch 32：Mentions 80% 首次交付（P3 体验组件收口）
 

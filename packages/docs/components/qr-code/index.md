@@ -158,11 +158,7 @@ function onRefresh() {
       value="https://example.com"
       :gradient="{ from: '#1677ff', to: '#69c0ff', direction: 'to bottom right' }"
     />
-    <c-qr-code
-      value="https://example.com"
-      :dot-radius="0.5"
-      :gradient="{ from: '#ff4d4f', to: '#ffa940' }"
-    />
+    <c-qr-code value="https://example.com" :dot-radius="0.5" :gradient="{ from: '#ff4d4f', to: '#ffa940' }" />
   </div>
 </template>
 ```
@@ -187,20 +183,20 @@ function onRefresh() {
 
 ### Props
 
-| 参数        | 类型                                                | 默认值      | 说明                                                                |
-| ----------- | --------------------------------------------------- | ----------- | ------------------------------------------------------------------- |
-| value       | string                                              | --（必传）  | 编码内容（文本 / URL）                                              |
-| size        | number                                              | `160`       | 整体边长（px）                                                      |
-| color       | string                                              | `#000000`   | 前景色（深色模块）                                                  |
-| bgColor     | string                                              | `#FFFFFF`   | 背景色                                                              |
-| errorLevel  | `'L' \| 'M' \| 'Q' \| 'H'`                          | `'M'`       | 容错率档位                                                          |
-| bordered    | boolean                                             | `true`      | 是否显示外边框                                                      |
-| icon        | string                                              | --          | 中心 logo 图片地址                                                  |
-| iconSize    | number                                              | `40`        | logo 边长（px），自动截到整体边长的 30% 以内                        |
-| status      | `'active' \| 'expired' \| 'loading' \| 'scanned'`   | `'active'`  | 状态                                                                |
-| refreshText | string                                              | `点击刷新`  | `expired` 状态下刷新按钮文案                                        |
-| dotRadius   | number                                              | `0`         | 模块圆角半径（0=方形，0.5=正圆）                                    |
-| gradient    | `{ from: string, to: string, direction?: string }`  | --          | 渐变前景色；设置后 `color` 作为 fallback                            |
+| 参数        | 类型                                               | 默认值     | 说明                                         |
+| ----------- | -------------------------------------------------- | ---------- | -------------------------------------------- |
+| value       | string                                             | --（必传） | 编码内容（文本 / URL）                       |
+| size        | number                                             | `160`      | 整体边长（px）                               |
+| color       | string                                             | `#000000`  | 前景色（深色模块）                           |
+| bgColor     | string                                             | `#FFFFFF`  | 背景色                                       |
+| errorLevel  | `'L' \| 'M' \| 'Q' \| 'H'`                         | `'M'`      | 容错率档位                                   |
+| bordered    | boolean                                            | `true`     | 是否显示外边框                               |
+| icon        | string                                             | --         | 中心 logo 图片地址                           |
+| iconSize    | number                                             | `40`       | logo 边长（px），自动截到整体边长的 30% 以内 |
+| status      | `'active' \| 'expired' \| 'loading' \| 'scanned'`  | `'active'` | 状态                                         |
+| refreshText | string                                             | `点击刷新` | `expired` 状态下刷新按钮文案                 |
+| dotRadius   | number                                             | `0`        | 模块圆角半径（0=方形，0.5=正圆）             |
+| gradient    | `{ from: string, to: string, direction?: string }` | --         | 渐变前景色；设置后 `color` 作为 fallback     |
 
 ### Events
 
@@ -210,15 +206,15 @@ function onRefresh() {
 
 ### Slots
 
-| 名称           | 参数                  | 说明                            |
-| -------------- | --------------------- | ------------------------------- |
-| statusRender   | `{ status: string }`  | 自定义状态遮罩内容；提供后默认遮罩内容（spinner / 文字 / 刷新按钮）不再渲染 |
+| 名称         | 参数                 | 说明                                                                        |
+| ------------ | -------------------- | --------------------------------------------------------------------------- |
+| statusRender | `{ status: string }` | 自定义状态遮罩内容；提供后默认遮罩内容（spinner / 文字 / 刷新按钮）不再渲染 |
 
 ### Exposed methods
 
-| 方法       | 签名                                                     | 说明                                      |
-| ---------- | -------------------------------------------------------- | ----------------------------------------- |
-| toDataURL  | `(type?: string, quality?: number) => Promise<string>`   | 将 SVG 通过 canvas 转换为 data URL        |
+| 方法      | 签名                                                   | 说明                               |
+| --------- | ------------------------------------------------------ | ---------------------------------- |
+| toDataURL | `(type?: string, quality?: number) => Promise<string>` | 将 SVG 通过 canvas 转换为 data URL |
 
 ## 已知限制（未交付）
 
