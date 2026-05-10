@@ -151,9 +151,108 @@ const model = reactive<{ users: Array<{ name: string; email: string }> }>({
 
 :::
 
+## 不同布局
+
+`layout` 切换 `horizontal`（默认）/ `vertical`（标签在上，输入在下，常用于移动端）/ `inline`（行内紧凑布局，filter / search 场景）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { reactive } from 'vue'
+
+const m1 = reactive({ name: '' })
+const m2 = reactive({ name: '', email: '' })
+const m3 = reactive({ keyword: '', status: '' })
+</script>
+
+<template>
+  <p style="margin: 0 0 6px; color: #666">layout="horizontal"（默认）</p>
+  <c-form :model="m1" label-width="80px">
+    <c-form-item label="姓名" prop="name"><c-input v-model="m1.name" /></c-form-item>
+  </c-form>
+
+  <p style="margin: 16px 0 6px; color: #666">layout="vertical"</p>
+  <c-form :model="m2" layout="vertical">
+    <c-form-item label="姓名" prop="name"><c-input v-model="m2.name" /></c-form-item>
+    <c-form-item label="邮箱" prop="email"><c-input v-model="m2.email" /></c-form-item>
+  </c-form>
+
+  <p style="margin: 16px 0 6px; color: #666">layout="inline"</p>
+  <c-form :model="m3" layout="inline">
+    <c-form-item label="关键词" prop="keyword"><c-input v-model="m3.keyword" /></c-form-item>
+    <c-form-item label="状态" prop="status">
+      <c-select
+        v-model="m3.status"
+        :options="[{ label: '在售', value: 'on' }, { label: '下架', value: 'off' }]"
+        style="width: 120px"
+      />
+    </c-form-item>
+    <c-form-item><c-button type="primary">查询</c-button></c-form-item>
+  </c-form>
+</template>
+```
+
+:::
+
+## 实例方法
+
+通过 `ref` 拿到 `FormInstance`，可调用 `validate` / `resetFields` / `clearValidate` / `scrollToField` 等方法。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+
+const formRef = ref()
+const model = reactive({ name: '', email: '' })
+const rules = {
+  name: { required: true, message: '请输入姓名', trigger: 'blur' },
+  email: { required: true, type: 'email', message: '邮箱格式不正确', trigger: 'change' },
+}
+const log = ref('（未操作）')
+
+async function validate() {
+  try {
+    await formRef.value.validate()
+    log.value = '校验通过'
+  }
+  catch {
+    log.value = '校验未通过'
+  }
+}
+function reset() {
+  formRef.value.resetFields()
+  log.value = '已重置'
+}
+function clear() {
+  formRef.value.clearValidate()
+  log.value = '已清空校验状态'
+}
+</script>
+
+<template>
+  <c-form ref="formRef" :model="model" :rules="rules" label-width="80px">
+    <c-form-item label="姓名" prop="name"><c-input v-model="model.name" /></c-form-item>
+    <c-form-item label="邮箱" prop="email"><c-input v-model="model.email" /></c-form-item>
+    <c-form-item>
+      <c-button type="primary" @click="validate">校验</c-button>
+      <c-button style="margin-inline-start: 8px" @click="reset">重置</c-button>
+      <c-button style="margin-inline-start: 8px" @click="clear">清空校验</c-button>
+    </c-form-item>
+  </c-form>
+  <p style="color: #666">{{ log }}</p>
+</template>
+```
+
+:::
+
 ## 跨表单联动 Form.Provider
 
-`<c-form-provider>` 包裹多个具名 `<c-form>`，在子表单提交成功后通过 `form-finish` 事件聚合 `forms` 注册表，常用于「同一页面里 A 表单提交后用 B 表单的当前值做联动」的场景。
+`<c-form-provider>` 包裹多个具名 `<c-form>`，在子表单提交成功后通过 `form-finish` 聚合 `forms` 注册表，常用于"同一页面里 A 表单提交后用 B 表单的当前值做联动"的场景。
+
+`form-change` 在任意字段值变化时触发，回调签名同 `form-finish`。
 
 ```vue
 <script setup lang="ts">
@@ -162,7 +261,7 @@ import { reactive } from 'vue'
 const profile = reactive({ name: '' })
 const billing = reactive({ address: '' })
 
-function onFinish(name: string, info: { values: any; forms: Record<string, any> }) {
+function onFinish(name: string, info: { values: any, forms: Record<string, any> }) {
   if (name === 'profile') {
     billing.address = info.forms.billing.getFieldsValue().address
   }
@@ -181,8 +280,6 @@ function onFinish(name: string, info: { values: any; forms: Record<string, any> 
   </c-form-provider>
 </template>
 ```
-
-`form-change` 在任意字段值变化时触发，回调签名同 `form-finish`。
 
 ## 字段保留策略 preserve
 
