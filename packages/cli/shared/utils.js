@@ -1,35 +1,35 @@
-const { camelCase, upperFirst } = require('lodash')
-const { INDEX_FILE_NAME, UI_DIR, WHITE_LIST_READY_COMPONENTS } = require('./constant')
-const { resolve } = require('path')
-const logger = require('./logger')
-const fs = require('fs-extra')
-const traverse = require('@babel/traverse').default
-const babelParser = require('@babel/parser')
+import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { camelCase, upperFirst } from 'lodash-es'
+import _traverse from '@babel/traverse'
+import * as babelParser from '@babel/parser'
+import { INDEX_FILE_NAME, UI_DIR, WHITE_LIST_READY_COMPONENTS } from './constant.js'
+import logger from './logger.js'
 
-exports.bigCamelCase = (str) => {
-  return upperFirst(camelCase(str))
-}
+// @babel/traverse 是 CJS，主入口同时挂在 default 与函数本身上。
+const traverse = _traverse.default ?? _traverse
 
-exports.resolveDirFilesInfo = (targetDir, ignoreDirs = []) => {
-  return fs
-    .readdirSync(targetDir)
+export const bigCamelCase = (str) => upperFirst(camelCase(str))
+
+export const resolveDirFilesInfo = (targetDir, ignoreDirs = []) => {
+  return readdirSync(targetDir)
     .filter(
       (dir) =>
-        // 过滤：必须是目录，且不存在与忽略目录内，拥有 INDEX_FILE_NAME
-        fs.statSync(resolve(targetDir, dir)).isDirectory() &&
+        // 必须是目录、不在忽略列表内、且包含 INDEX_FILE_NAME
+        statSync(resolve(targetDir, dir)).isDirectory() &&
         !ignoreDirs.includes(dir) &&
-        fs.existsSync(resolve(targetDir, dir, INDEX_FILE_NAME)),
+        existsSync(resolve(targetDir, dir, INDEX_FILE_NAME)),
     )
     .map((dir) => ({
-      name: this.bigCamelCase(dir),
+      name: bigCamelCase(dir),
       dirname: dir,
       path: resolve(targetDir, dir, INDEX_FILE_NAME),
     }))
 }
 
-exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
+export const parseExportByFileInfo = (fileInfo, ignoreParseError) => {
   const exportModule = {}
-  const indexContent = fs.readFileSync(fileInfo.path, { encoding: 'utf-8' })
+  const indexContent = readFileSync(fileInfo.path, { encoding: 'utf-8' })
 
   const ast = babelParser.parse(indexContent, {
     sourceType: 'module',
@@ -41,16 +41,11 @@ exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
 
   traverse(ast, {
     ExportNamedDeclaration({ node }) {
-      if (node.exportKind === 'type') {
-        return
-      }
+      if (node.exportKind === 'type') return
 
       if (node.specifiers.length) {
         node.specifiers.forEach((specifier) => {
-          if (specifier.exportKind === 'type') {
-            return
-          }
-
+          if (specifier.exportKind === 'type') return
           exportName.push(specifier.local.name)
         })
       } else if (node.declaration) {
@@ -64,28 +59,20 @@ exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
       }
     },
     ExportDefaultDeclaration() {
-      exportDefault = fileInfo.name + 'Install'
+      exportDefault = `${fileInfo.name}Install`
     },
   })
 
   if (!exportDefault) {
     logger.error(`${fileInfo.path} must have "export default".`)
-
-    if (ignoreParseError) {
-      return exportModule
-    } else {
-      process.exit(1)
-    }
+    if (ignoreParseError) return exportModule
+    process.exit(1)
   }
 
   if (!exportName.length) {
     logger.error(`${fileInfo.path} must have "export xxx".`)
-
-    if (ignoreParseError) {
-      return exportModule
-    } else {
-      process.exit(1)
-    }
+    if (ignoreParseError) return exportModule
+    process.exit(1)
   }
 
   exportModule.default = exportDefault
@@ -95,14 +82,10 @@ exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
   return exportModule
 }
 
-const parseComponentInfo = (name) => {
-  const componentInfo = {
-    name: this.bigCamelCase(name),
-  }
+export const parseComponentInfo = (name) => {
+  const componentInfo = { name: bigCamelCase(name) }
   let hasExportDefault = false
-  const indexContent = fs.readFileSync(resolve(UI_DIR, name, INDEX_FILE_NAME), {
-    encoding: 'utf-8',
-  })
+  const indexContent = readFileSync(resolve(UI_DIR, name, INDEX_FILE_NAME), { encoding: 'utf-8' })
 
   const ast = babelParser.parse(indexContent, {
     sourceType: 'module',
@@ -112,8 +95,7 @@ const parseComponentInfo = (name) => {
     ExportDefaultDeclaration({ node }) {
       hasExportDefault = true
       if (node.declaration && node.declaration.properties) {
-        const properties = node.declaration.properties
-        properties.forEach((pro) => {
+        node.declaration.properties.forEach((pro) => {
           if (pro.type === 'ObjectProperty') {
             componentInfo[pro.key.name] = pro.value.value
           }
@@ -129,8 +111,6 @@ const parseComponentInfo = (name) => {
   return componentInfo
 }
 
-exports.parseComponentInfo = parseComponentInfo
-
-exports.isReadyToRelease = (componentName) => {
+export const isReadyToRelease = (componentName) => {
   return parseComponentInfo(componentName).status === '100%' || WHITE_LIST_READY_COMPONENTS.includes(componentName)
 }

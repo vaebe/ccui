@@ -1,34 +1,39 @@
-const path = require('node:path')
-const fsExtra = require('fs-extra')
-const { omit } = require('lodash')
-const shell = require('shelljs')
+import path, { dirname } from 'node:path'
+import { promises as fsp } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { outputFile } from '../shared/fs.js'
+import packageJson from '../../ccui/package.json' with { type: 'json' }
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const outputDir = path.resolve(__dirname, '../../ccui/build')
-
-const packageJson = require('../../ccui/package.json')
+const sourceDir = path.resolve(__dirname, '../../ccui')
+const themeDir = path.resolve(__dirname, '../../theme')
 
 function getVersion(version) {
-  if (version) {
-    return version
-  } else {
-    const versionNums = packageJson.version.split('.')
-    return versionNums.map((num, index) => (index === versionNums.length - 1 ? +num + 1 : num)).join('.')
-  }
+  if (version) return version
+  const versionNums = packageJson.version.split('.')
+  return versionNums.map((num, index) => (index === versionNums.length - 1 ? +num + 1 : num)).join('.')
 }
 
 async function createPackageJson(version) {
-  packageJson.version = getVersion(version)
-  const fileStr = JSON.stringify(omit(packageJson, 'scripts', 'devDependencies'), null, 2)
-  await fsExtra.outputFile(path.resolve(outputDir, `package.json`), fileStr, 'utf-8')
+  const { scripts: _s, devDependencies: _d, ...rest } = packageJson
+  rest.version = getVersion(version)
+  // 移除所有 workspace: 协议引用，发布到 npm 后需要替换为实际版本号（此处置空交由 publish 流程补全）
+  const fileStr = JSON.stringify(rest, null, 2).replace(/workspace:/g, '')
+  await outputFile(path.resolve(outputDir, 'package.json'), fileStr)
 }
 
-exports.release = async ({ version }) => {
+async function copyAssets() {
+  await fsp.mkdir(path.resolve(outputDir, 'theme'), { recursive: true })
+  await Promise.all([
+    fsp.cp(path.resolve(sourceDir, 'README.md'), path.resolve(outputDir, 'README.md')),
+    fsp.cp(path.resolve(themeDir, 'theme.scss'), path.resolve(outputDir, 'theme/theme.scss')),
+    fsp.cp(path.resolve(themeDir, 'darkTheme.css'), path.resolve(outputDir, 'theme/darkTheme.css')),
+  ])
+}
+
+export const release = async ({ version }) => {
   await createPackageJson(version)
-  shell.sed('-i', 'workspace:', '', path.resolve(outputDir, 'package.json'))
-  shell.cp('-R', path.resolve(__dirname, '../../ccui/README.md'), outputDir)
-  shell.cd(outputDir)
-  shell.mkdir('-p', 'theme')
-  shell.cp('-R', path.resolve(__dirname, '../../theme/theme.scss'), path.resolve(outputDir, 'theme'))
-  shell.cp('-R', path.resolve(__dirname, '../../theme/darkTheme.css'), path.resolve(outputDir, 'theme'))
-  // shell.exec('npm publish');
+  await copyAssets()
+  // npm publish 由外层 changelog/release 脚本触发
 }

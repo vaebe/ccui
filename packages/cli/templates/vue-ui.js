@@ -1,7 +1,7 @@
-const { relative } = require('node:path')
-const { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } = require('../shared/constant')
+import { relative } from 'node:path'
+import { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } from '../shared/constant.js'
 
-exports.createUiTemplate = (exportModules = []) => {
+export const createUiTemplate = (exportModules = []) => {
   const packages = []
   const imports = []
   const installs = []
@@ -38,7 +38,7 @@ export {
 };
 
 export default {
-  version: '1.0.8',
+  version: '${VERSION}',
   install(app: App): void {
     installs.forEach((p) => app.use(p));
   }

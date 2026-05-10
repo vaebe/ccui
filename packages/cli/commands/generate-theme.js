@@ -1,9 +1,10 @@
-const path = require('node:path')
-const { pathToFileURL } = require('node:url')
-const fs = require('fs-extra')
-const logger = require('../shared/logger')
-const { CSS_CLASS_PREFIX } = require('../shared/constant')
+import path, { dirname } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import logger from '../shared/logger.js'
+import { CSS_CLASS_PREFIX } from '../shared/constant.js'
+import { outputFile } from '../shared/fs.js'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const themesDir = path.resolve(__dirname, '../../theme/themes')
 
 async function loadTheme(name) {
@@ -12,7 +13,7 @@ async function loadTheme(name) {
   return mod.default
 }
 
-exports.generateTheme = async () => {
+export const generateTheme = async () => {
   const lightTheme = await loadTheme('light')
   const darkTheme = await loadTheme('dark')
 
@@ -32,22 +33,22 @@ exports.generateTheme = async () => {
   // 保证切到 dark 后排版/形态/动画稳定，只换皮肤。
   const mergedDarkTheme = { ...lightTheme, ...darkTheme }
 
-  let darkCssVariablesStr = Object.entries(mergedDarkTheme)
+  const darkCssVars = Object.entries(mergedDarkTheme)
     .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)
     .join(';\n')
-
-  darkCssVariablesStr = `.dark{\n${darkCssVariablesStr}\n}`
+  const darkFileStr = `.dark{\n${darkCssVars}\n}`
 
   const lightThemeFilePath = path.resolve(__dirname, '../../theme/theme.scss')
   const darkThemeFilePath = path.resolve(__dirname, '../../theme/darkTheme.css')
 
   try {
-    await fs.outputFile(lightThemeFilePath, lightFileStr, 'utf-8')
+    await outputFile(lightThemeFilePath, lightFileStr)
     logger.success(`生成theme主题文件成功, ${lightThemeFilePath}!`)
 
-    await fs.outputFile(darkThemeFilePath, darkCssVariablesStr, 'utf-8')
+    await outputFile(darkThemeFilePath, darkFileStr)
     logger.success(`生成 darkTheme css 主题变量成功, ${darkThemeFilePath}!`)
   } catch (err) {
-    logger.success('生成主题文件失败！')
+    logger.error(`生成主题文件失败！${err?.message ?? err}`)
+    throw err
   }
 }

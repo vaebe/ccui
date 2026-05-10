@@ -1,16 +1,16 @@
-const { resolve } = require('node:path')
-const fs = require('fs-extra')
-const { isEmpty, kebabCase } = require('lodash')
-const ora = require('ora')
-const logger = require('../shared/logger')
-const {
+import { resolve, dirname } from 'node:path'
+import { promises as fsp } from 'node:fs'
+import { isEmpty, kebabCase } from 'lodash-es'
+import inquirer from 'inquirer'
+import logger from '../shared/logger.js'
+import {
   bigCamelCase,
   resolveDirFilesInfo,
   parseExportByFileInfo,
   parseComponentInfo,
   isReadyToRelease,
-} = require('../shared/utils')
-const {
+} from '../shared/utils.js'
+import {
   UI_DIR,
   TESTS_DIR_NAME,
   INDEX_FILE_NAME,
@@ -19,7 +19,6 @@ const {
   VUE_UI_IGNORE_DIRS,
   VUE_UI_FILE_NAME,
   CREATE_SUPPORT_TYPES,
-  CREATE_UNFINISHED_TYPES,
   CREATE_SUPPORT_TYPE_MAP,
   SITES_COMPONENTS_DIR,
   VITEPRESS_SIDEBAR_FILE,
@@ -27,10 +26,12 @@ const {
   VITEPRESS_SIDEBAR_FILE_EN,
   VITEPRESS_SIDEBAR_FILE_NAME_EN,
   isProd,
-} = require('../shared/constant')
-const { selectCreateType } = require('../inquirers/create')
-const { selectCategory, selectParts, typeName, typeTitle } = require('../inquirers/component')
-const {
+} from '../shared/constant.js'
+import { withSpinner } from '../shared/with-spinner.js'
+import { existsSync } from '../shared/fs.js'
+import { selectCreateType } from '../inquirers/create.js'
+import { selectCategory, selectParts, typeName, typeTitle } from '../inquirers/component.js'
+import {
   createComponentTemplate,
   createStyleTemplate,
   createTypesTemplate,
@@ -39,19 +40,24 @@ const {
   createIndexTemplate,
   createTestsTemplate,
   createDocumentTemplate,
-} = require('../templates/component')
-const { createUiTemplate } = require('../templates/vue-ui')
-const { createVitepressSidebarTemplates } = require('../templates/vitepress-sidebar')
+} from '../templates/component.js'
+import { createUiTemplate } from '../templates/vue-ui.js'
+import { createVitepressSidebarTemplates } from '../templates/vitepress-sidebar.js'
+
+async function writeIfNew(path, content) {
+  await fsp.mkdir(dirname(path), { recursive: true })
+  await fsp.writeFile(path, content, 'utf-8')
+}
 
 async function createComponent(params = {}) {
   const { name, hasComponent, hasDirective, hasService } = params
 
   const componentName = kebabCase(name)
-  const styleName = kebabCase(name)
-  const typesName = `${kebabCase(name)}-types`
-  const directiveName = `${kebabCase(name)}-directive`
-  const serviceName = `${kebabCase(name)}-service`
-  const testName = `${kebabCase(name)}.test.ts`
+  const styleName = componentName
+  const typesName = `${componentName}-types`
+  const directiveName = `${componentName}-directive`
+  const serviceName = `${componentName}-service`
+  const testName = `${componentName}.test.ts`
 
   const _params = {
     ...params,
@@ -63,167 +69,126 @@ async function createComponent(params = {}) {
     testName,
   }
 
-  const componentTemplate = createComponentTemplate(_params)
-  const styleTemplate = createStyleTemplate(_params)
-  const typesTemplate = createTypesTemplate(_params)
-  const directiveTemplate = createDirectiveTemplate(_params)
-  const serviceTemplate = createServiceTemplate(_params)
-  const indexTemplate = createIndexTemplate(_params)
-  // 增加测试模板
-  const testsTemplate = createTestsTemplate(_params)
-  // 增加文档模板
-  const docTemplate = createDocumentTemplate(_params)
-
   const componentDir = resolve(UI_DIR, componentName)
   const srcDir = resolve(componentDir, 'src')
-  const testsDir = resolve(UI_DIR, componentName, TESTS_DIR_NAME)
+  const testsDir = resolve(componentDir, TESTS_DIR_NAME)
   const docsDir = resolve(SITES_COMPONENTS_DIR, componentName)
 
-  if (fs.pathExistsSync(componentDir)) {
+  if (existsSync(componentDir)) {
     logger.error(`${bigCamelCase(componentName)} 组件目录已存在！`)
     process.exit(1)
   }
 
-  const spinner = ora(`开始创建 ${bigCamelCase(componentName)} 组件...`).start()
+  await withSpinner(
+    `开始创建 ${bigCamelCase(componentName)} 组件...`,
+    async () => {
+      await Promise.all([
+        fsp.mkdir(componentDir, { recursive: true }),
+        fsp.mkdir(srcDir, { recursive: true }),
+        fsp.mkdir(testsDir, { recursive: true }),
+      ])
 
-  try {
-    await Promise.all([fs.mkdirs(componentDir), fs.mkdirs(srcDir), fs.mkdirs(testsDir)])
+      const writes = [
+        writeIfNew(resolve(componentDir, INDEX_FILE_NAME), createIndexTemplate(_params)),
+        writeIfNew(resolve(testsDir, testName), createTestsTemplate(_params)),
+      ]
 
-    const writeFiles = [
-      fs.writeFile(resolve(componentDir, INDEX_FILE_NAME), indexTemplate),
-      fs.writeFile(resolve(testsDir, testName), testsTemplate),
-    ]
+      if (existsSync(docsDir)) {
+        logger.warning(`\n${bigCamelCase(componentName)} 组件文档已存在：${resolve(docsDir, DOCS_FILE_NAME)}`)
+      } else {
+        writes.push(writeIfNew(resolve(docsDir, DOCS_FILE_NAME), createDocumentTemplate(_params)))
+      }
 
-    if (!fs.existsSync(docsDir)) {
-      fs.mkdirSync(docsDir)
-      writeFiles.push(fs.writeFile(resolve(docsDir, DOCS_FILE_NAME), docTemplate))
-    } else {
-      logger.warning(`\n${bigCamelCase(componentName)} 组件文档已存在：${resolve(docsDir, DOCS_FILE_NAME)}`)
-    }
+      if (hasComponent || hasService) {
+        writes.push(writeIfNew(resolve(srcDir, `${typesName}.ts`), createTypesTemplate(_params)))
+      }
 
-    if (hasComponent || hasService) {
-      writeFiles.push(fs.writeFile(resolve(srcDir, `${typesName}.ts`), typesTemplate))
-    }
+      if (hasComponent) {
+        writes.push(
+          writeIfNew(resolve(srcDir, `${componentName}.tsx`), createComponentTemplate(_params)),
+          writeIfNew(resolve(srcDir, `${styleName}.scss`), createStyleTemplate(_params)),
+        )
+      }
 
-    if (hasComponent) {
-      writeFiles.push(
-        fs.writeFile(resolve(srcDir, `${componentName}.tsx`), componentTemplate),
-        fs.writeFile(resolve(srcDir, `${styleName}.scss`), styleTemplate),
-      )
-    }
+      if (hasDirective) {
+        writes.push(writeIfNew(resolve(srcDir, `${directiveName}.ts`), createDirectiveTemplate(_params)))
+      }
 
-    if (hasDirective) {
-      writeFiles.push(fs.writeFile(resolve(srcDir, `${directiveName}.ts`), directiveTemplate))
-    }
+      if (hasService) {
+        writes.push(writeIfNew(resolve(srcDir, `${serviceName}.ts`), createServiceTemplate(_params)))
+      }
 
-    if (hasService) {
-      writeFiles.push(fs.writeFile(resolve(srcDir, `${serviceName}.ts`), serviceTemplate))
-    }
+      await Promise.all(writes)
+    },
+    { successText: `${bigCamelCase(componentName)} 组件创建成功！` },
+  )
 
-    await Promise.all(writeFiles)
-
-    spinner.succeed(`${bigCamelCase(componentName)} 组件创建成功！`)
-    logger.info(`组件目录：${componentDir}`)
-  } catch (e) {
-    spinner.fail(e.toString())
-    process.exit(1)
-  }
+  logger.info(`组件目录：${componentDir}`)
 }
 
-async function createVueUi(params, { ignoreParseError, env }) {
+async function createVueUi(params, { ignoreParseError, env } = {}) {
   const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS).filter(
     ({ name }) => (env === 'prod' && isReadyToRelease(kebabCase(name))) || !env || env === 'dev',
   )
 
   const exportModules = []
-
-  fileInfo.forEach((f) => {
+  for (const f of fileInfo) {
     const em = parseExportByFileInfo(f, ignoreParseError)
-
-    if (isEmpty(em)) {
-      return
-    }
-
-    exportModules.push(em)
-  })
+    if (!isEmpty(em)) exportModules.push(em)
+  }
 
   const template = createUiTemplate(exportModules)
 
-  const spinner = ora(`开始创建 ${VUE_UI_FILE_NAME} 文件...`).start()
+  await withSpinner(
+    `开始创建 ${VUE_UI_FILE_NAME} 文件...`,
+    async () => {
+      await writeIfNew(VUE_UI_FILE, template)
+    },
+    { successText: `${VUE_UI_FILE_NAME} 文件创建成功！` },
+  )
 
-  try {
-    await fs.writeFile(VUE_UI_FILE, template, { encoding: 'utf-8' })
-
-    spinner.succeed(`${VUE_UI_FILE_NAME} 文件创建成功！`)
-    logger.info(`文件地址：${VUE_UI_FILE}`)
-  } catch (e) {
-    spinner.fail(e.toString())
-    process.exit(1)
-  }
+  logger.info(`文件地址：${VUE_UI_FILE}`)
 }
 
 async function createVitepressSidebar() {
   const generateFileConfig = {
-    zh: {
-      fileName: VITEPRESS_SIDEBAR_FILE_NAME,
-      location: VITEPRESS_SIDEBAR_FILE,
-    },
-    en: {
-      fileName: VITEPRESS_SIDEBAR_FILE_NAME_EN,
-      location: VITEPRESS_SIDEBAR_FILE_EN,
-    },
+    zh: { fileName: VITEPRESS_SIDEBAR_FILE_NAME, location: VITEPRESS_SIDEBAR_FILE },
+    en: { fileName: VITEPRESS_SIDEBAR_FILE_NAME_EN, location: VITEPRESS_SIDEBAR_FILE_EN },
   }
   const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS)
   const componentsInfo = []
-  fileInfo.forEach((f) => {
+  for (const f of fileInfo) {
     const info = parseComponentInfo(f.dirname)
-
-    if (isEmpty(info) || (isProd && !isReadyToRelease(f.dirname))) {
-      return
-    }
-
+    if (isEmpty(info) || (isProd && !isReadyToRelease(f.dirname))) continue
     componentsInfo.push(info)
-  })
+  }
 
   const templates = createVitepressSidebarTemplates(componentsInfo)
-  templates.forEach((template) => {
+  for (const template of templates) {
     const { fileName, location } = generateFileConfig[template.lang]
-    const spinner = ora(`开始创建 ${fileName} 文件...`).start()
-
-    try {
-      fs.writeFile(location, template.content, { encoding: 'utf-8' })
-
-      spinner.succeed(`${fileName} 文件创建成功！`)
-      logger.info(`文件地址：${location}`)
-    } catch (e) {
-      spinner.fail(e.toString())
-      process.exit(1)
-    }
-  })
+    await withSpinner(
+      `开始创建 ${fileName} 文件...`,
+      async () => {
+        await writeIfNew(location, template.content)
+      },
+      { successText: `${fileName} 文件创建成功！` },
+    )
+    logger.info(`文件地址：${location}`)
+  }
 }
 
-exports.validateCreateType = (type) => {
-  const re = new RegExp(`^(${CREATE_SUPPORT_TYPES.map((t) => `(${t})`).join('|')})$`)
-  const flag = re.test(type)
-
-  !flag && logger.error(`类型错误，可选类型为：${CREATE_SUPPORT_TYPES.join(', ')}`)
-
+export const validateCreateType = (type) => {
+  const flag = CREATE_SUPPORT_TYPES.includes(type)
+  if (!flag) logger.error(`类型错误，可选类型为：${CREATE_SUPPORT_TYPES.join(', ')}`)
   return flag ? type : null
 }
 
-// TODO: 待优化代码结构
-exports.create = async (cwd) => {
-  const inquirer = await import('inquirer')
+export const create = async (cwd) => {
   let { type } = cwd
 
   if (isEmpty(type)) {
-    const result = await inquirer.default.prompt([selectCreateType()])
+    const result = await inquirer.prompt([selectCreateType()])
     type = result.type
-  }
-
-  if (CREATE_UNFINISHED_TYPES.includes(type)) {
-    logger.info('抱歉，该功能暂未完成！')
-    process.exit(0)
   }
 
   let params = {}
@@ -231,24 +196,21 @@ exports.create = async (cwd) => {
   try {
     switch (type) {
       case CREATE_SUPPORT_TYPE_MAP.component:
-        params = await inquirer.default.prompt([typeName(), typeTitle(), selectCategory(), selectParts()])
+        params = await inquirer.prompt([typeName(), typeTitle(), selectCategory(), selectParts()])
         params.hasComponent = params.parts.includes('component')
         params.hasDirective = params.parts.includes('directive')
         params.hasService = params.parts.includes('service')
-
         await createComponent(params, cwd)
         break
       case CREATE_SUPPORT_TYPE_MAP.ccui:
-        // 创建 ui.ts
         await createVueUi(params, cwd)
-        // 创建 docs/.vitepress/config/sidebar.ts enSidebar.ts
         await createVitepressSidebar()
         break
       default:
         break
     }
   } catch (e) {
-    logger.error(e.toString())
+    logger.error(e?.message ?? String(e))
     process.exit(1)
   }
 }

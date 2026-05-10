@@ -2,6 +2,7 @@
   "name": "ccui-cli",
   "version": "1.0.0",
   "description": "ccui-cli",
+  "type": "module",
   "keywords": [
     "cli"
   ],
@@ -32,7 +33,7 @@
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "theme": "workspace:*"
   },
   "devDependencies": {
@@ -43,15 +44,9 @@
     "chalk": "^4.1.2",
     "commander": "^14.0.2",
     "conventional-changelog-cli": "^5.0.0",
-    "fs-extra": "^11.3.2",
     "inquirer": "^12.10.0",
-    "kolorist": "^1.8.0",
     "ora": "^5.4.1",
-    "rimraf": "^6.1.0",
-    "sass": "^1.93.3",
-    "shelljs": "^0.10.0",
-    "vite": "catalog:",
-    "vite-plus": "catalog:"
+    "vite": "catalog:"
   },
   "engines": {
     "node": ">=22.10.0"

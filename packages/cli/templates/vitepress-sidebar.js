@@ -1,16 +1,12 @@
-const { kebabCase } = require('lodash')
-const {
+import { kebabCase } from 'lodash-es'
+import {
   SITES_COMPONENTS_DIR_NAME,
+  SITES_COMPONENTS_DIR_NAME_EN,
   VITEPRESS_SIDEBAR_CATEGORY,
   VITEPRESS_SIDEBAR_CATEGORY_EN,
   VITEPRESS_SIDEBAR_CATEGORY_ZH_TO_EN,
-  SITES_COMPONENTS_DIR_NAME_EN,
-} = require('../shared/constant')
-const logger = require('../shared/logger')
-
-// function buildComponentOptions(text, name, status) {
-//   return { text, link: `/${SITES_COMPONENTS_DIR_NAME}/${kebabCase(name)}/`, status }
-// }
+} from '../shared/constant.js'
+import logger from '../shared/logger.js'
 
 function buildCategoryOptions(text, items = []) {
   return { text, items }
@@ -49,41 +45,23 @@ function generateEnMenus(componentsInfo) {
   return Array.from(categoryMapEn).map(([k, v]) => buildCategoryOptions(k, v))
 }
 
-exports.createVitepressSidebarTemplates = (componentsInfo = []) => {
+export const createVitepressSidebarTemplates = (componentsInfo = []) => {
   const rootNavs = [
-    {
-      text: '快速开始',
-      link: '/',
-      handler: generateZhMenus,
-      lang: 'zh',
-    },
-    {
-      text: 'Quick Start',
-      link: '/en-US/',
-      handler: generateEnMenus,
-      lang: 'en',
-    },
+    { text: '快速开始', link: '/', handler: generateZhMenus, lang: 'zh' },
+    { text: 'Quick Start', link: '/en-US/', handler: generateEnMenus, lang: 'en' },
   ]
 
   return rootNavs.map((nav) => {
     const rootItem = {
       text: nav.text,
       link: nav.link,
-      items: [
-        {
-          text: '简介',
-          link: '/introduce',
-        },
-      ],
+      items: [{ text: '简介', link: '/introduce' }],
     }
-    const sidebar = [].concat(rootItem, nav.handler(componentsInfo))
+    const sidebar = [rootItem, ...nav.handler(componentsInfo)]
+    // 输出原样的 JS 字面量；后续 lint/Prettier 会再格式化为最终风格。
     return {
       lang: nav.lang,
-      content: `\
-      export default {
-        '/': ${JSON.stringify(sidebar, null, 2).replace(/\n/g, '\n\t')}
-      }
-      `,
+      content: `export default {\n  '/': ${JSON.stringify(sidebar, null, 2)},\n}\n`,
     }
   })
 }

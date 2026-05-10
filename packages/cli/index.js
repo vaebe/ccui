@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-const { Command, Option } = require('commander')
-const { create, validateCreateType } = require('./commands/create')
-const { build } = require('./commands/build')
-const { generateTheme } = require('./commands/generate-theme')
-const { generateDts } = require('./commands/generate-dts')
-const { release } = require('./commands/release')
-const { codeCheck } = require('./commands/code-check')
-const { VERSION, CREATE_SUPPORT_TYPES } = require('./shared/constant')
+import { Command, Option } from 'commander'
+import { create, validateCreateType } from './commands/create.js'
+import { build } from './commands/build.js'
+import { generateTheme } from './commands/generate-theme.js'
+import { generateDts } from './commands/generate-dts.js'
+import { release } from './commands/release.js'
+import { codeCheck } from './commands/code-check.js'
+import { VERSION, CREATE_SUPPORT_TYPES } from './shared/constant.js'
 
 const program = new Command()
 
@@ -39,4 +39,4 @@ program
   .description('代码检查')
   .action(codeCheck)
 
-program.parse().version(VERSION)
+program.version(VERSION).parse()
