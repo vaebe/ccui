@@ -21,12 +21,12 @@
   }
 
   &__node--selected {
-    background: $ccui-color-primary-bg, rgba(22, 119, 255, 0.08);
+    background: $ccui-color-primary-bg;
     color: $ccui-primary;
   }
 
   &__node--focused {
-    box-shadow: inset 0 0 0 2px rgba(22, 119, 255, 0.45);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, $ccui-color-primary 45%, transparent);
   }
 
   &__node:focus-visible {
@@ -48,7 +48,7 @@
   }
 
   &__node--hover-expand {
-    background: rgba(22, 119, 255, 0.06);
+    background: color-mix(in srgb, $ccui-color-primary 6%, transparent);
   }
 
   &__switcher-error {
@@ -191,7 +191,7 @@
   }
 
   &__highlight {
-    background: $ccui-color-warning-bg, rgba(250, 173, 20, 0.2);
+    background: $ccui-color-warning-bg;
     color: $ccui-color-warning;
   }
 

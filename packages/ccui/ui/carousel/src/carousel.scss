@@ -108,7 +108,7 @@
 
     &.is-active > button {
       width: 24px;
-      background: var(--ccui-brand, #1677ff);
+      background: $ccui-color-primary;
     }
   }
 

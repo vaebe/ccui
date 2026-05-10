@@ -26,7 +26,7 @@
     z-index: 1101;
     pointer-events: none;
     border-radius: 4px;
-    box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.4);
+    box-shadow: 0 0 0 4px color-mix(in srgb, $ccui-color-primary 40%, transparent);
   }
 
   &__panel {
@@ -111,18 +111,18 @@
     transition: all 0.2s;
 
     &:hover {
-      border-color: var(--ccui-brand, #1677ff);
-      color: var(--ccui-brand, #1677ff);
+      border-color: $ccui-color-primary;
+      color: $ccui-color-primary;
     }
 
     &--next {
-      border-color: var(--ccui-brand, #1677ff);
-      background: var(--ccui-brand, #1677ff);
+      border-color: $ccui-color-primary;
+      background: $ccui-color-primary;
       color: #fff;
 
       &:hover {
-        border-color: #4096ff;
-        background: #4096ff;
+        border-color: $ccui-color-primary-hover;
+        background: $ccui-color-primary-hover;
         color: #fff;
       }
     }
@@ -180,7 +180,7 @@
 
   // ─── Primary 主题 ─────────────────────────────────────
   &__panel--primary {
-    background: var(--ccui-brand, #1677ff);
+    background: $ccui-color-primary;
     color: #fff;
   }
 
@@ -218,7 +218,7 @@
     &--next {
       border-color: #fff;
       background: #fff;
-      color: var(--ccui-brand, #1677ff);
+      color: $ccui-color-primary;
 
       &:hover {
         background: rgba(255, 255, 255, 0.9);

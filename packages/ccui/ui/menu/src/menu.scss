@@ -38,14 +38,14 @@
     }
 
     &:focus-visible {
-      outline: 2px solid rgba(22, 119, 255, 0.35);
+      outline: 2px solid color-mix(in srgb, $ccui-color-primary 35%, transparent);
       outline-offset: 1px;
     }
   }
 
   &__item--selected {
     color: $ccui-color-primary;
-    background-color: rgba(22, 119, 255, 0.1);
+    background-color: $ccui-color-primary-bg;
 
     &::after {
       position: absolute;

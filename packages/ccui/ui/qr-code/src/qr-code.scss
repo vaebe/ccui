@@ -57,7 +57,7 @@
   }
 
   &__refresh {
-    color: var(--ccui-brand, #1677ff);
+    color: $ccui-color-primary;
     background: transparent;
     border: 0;
     padding: 0;
@@ -65,15 +65,15 @@
     cursor: pointer;
 
     &:hover {
-      color: #4096ff;
+      color: $ccui-color-primary-hover;
     }
   }
 
   &__spinner {
     width: 24px;
     height: 24px;
-    border: 2px solid #e8e8e8;
-    border-top-color: var(--ccui-brand, #1677ff);
+    border: 2px solid $ccui-color-border;
+    border-top-color: $ccui-color-primary;
     border-radius: 50%;
     animation: ccui-qr-code-spin 0.8s linear infinite;
   }

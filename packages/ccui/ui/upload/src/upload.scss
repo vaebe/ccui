@@ -29,8 +29,8 @@
     transition: all 0.2s;
 
     &:hover:not(.is-disabled) {
-      border-color: var(--ccui-brand, #1677ff);
-      color: var(--ccui-brand, #1677ff);
+      border-color: $ccui-color-primary;
+      color: $ccui-color-primary;
     }
 
     &.is-disabled {
@@ -56,13 +56,13 @@
     transition: all 0.2s;
 
     &:hover {
-      border-color: var(--ccui-brand, #1677ff);
-      background: #f0f7ff;
+      border-color: $ccui-color-primary;
+      background: $ccui-color-primary-bg;
     }
 
     &.is-dragover {
-      border-color: var(--ccui-brand, #1677ff);
-      background: #e6f4ff;
+      border-color: $ccui-color-primary;
+      background: $ccui-color-primary-bg;
     }
 
     &.is-disabled {
@@ -133,7 +133,7 @@
   }
 
   &__item-percent {
-    color: var(--ccui-brand, #1677ff);
+    color: $ccui-color-primary;
     font-size: 12px;
   }
 

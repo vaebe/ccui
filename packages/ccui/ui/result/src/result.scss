@@ -11,7 +11,7 @@
     margin-bottom: 24px;
     text-align: center;
     // 默认色：未匹配状态时（如自定义 status / icon slot 走默认）走 brand。
-    color: var(--ccui-brand, #1677ff);
+    color: $ccui-color-primary;
 
     svg {
       display: block;
@@ -34,7 +34,7 @@
   &--404 &__icon,
   &--403 &__icon,
   &--500 &__icon {
-    color: var(--ccui-brand, #1677ff);
+    color: $ccui-color-primary;
   }
 
   &__title {
