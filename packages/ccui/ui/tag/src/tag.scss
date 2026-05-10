@@ -116,7 +116,9 @@
 
   // 预设色板：消费 12 色板（1=最浅 bg / 3=border / 7=text）token
   // light: 浅 bg + 中 border + 深 text；dark theme 通过 CSS var 自动反转。
-  @each $name in (magenta, red, volcano, orange, gold, lime, green, cyan, blue, geekblue, purple) {
+  // 名字加引号：red/blue/green 等是 Sass named-color，不加引号在插值时会被当色值处理（warning）。
+  @each $name in ('magenta', 'red', 'volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple')
+  {
     &--#{$name} {
       background: var(--ccui-#{$name}-1);
       border-color: var(--ccui-#{$name}-3);
