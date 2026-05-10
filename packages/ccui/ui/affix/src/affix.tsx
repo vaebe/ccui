@@ -24,21 +24,34 @@ function isWindow(target: HTMLElement | Window): target is Window {
   return target === window
 }
 
-function getRect(el: HTMLElement, container: HTMLElement | Window) {
+function getOffsetRect(el: HTMLElement, container: HTMLElement | Window) {
   const rect = el.getBoundingClientRect()
   if (isWindow(container)) {
-    return { top: rect.top, bottom: window.innerHeight - rect.bottom, height: rect.height, width: rect.width }
+    return {
+      top: rect.top,
+      bottom: window.innerHeight - rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    }
   }
   const containerEl = container as HTMLElement
   if (typeof containerEl.getBoundingClientRect !== 'function') {
-    return { top: rect.top, bottom: window.innerHeight - rect.bottom, height: rect.height, width: rect.width }
+    return {
+      top: rect.top,
+      bottom: window.innerHeight - rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    }
   }
   const containerRect = containerEl.getBoundingClientRect()
   return {
     top: rect.top - containerRect.top,
     bottom: containerRect.bottom - rect.bottom,
-    height: rect.height,
+    left: rect.left - containerRect.left,
     width: rect.width,
+    height: rect.height,
   }
 }
 
@@ -54,6 +67,7 @@ export default defineComponent({
     const fixedStyle = ref<CSSProperties>({})
 
     let container: HTMLElement | Window | null = null
+    let resizeObserver: ResizeObserver | null = null
 
     const isTopMode = computed(() => props.offsetBottom === undefined)
     const offsetTop = computed(() => props.offsetTop ?? 0)
@@ -62,19 +76,10 @@ export default defineComponent({
       if (!wrapperRef.value || !container) {
         return
       }
-      const rect = getRect(wrapperRef.value, container)
-      const shouldFix = isTopMode.value ? rect.top <= offsetTop.value : rect.bottom <= (props.offsetBottom ?? 0)
-
-      if (shouldFix !== fixed.value) {
-        fixed.value = shouldFix
-        emit('change', shouldFix)
-      }
+      const offset = getOffsetRect(wrapperRef.value, container)
+      const shouldFix = isTopMode.value ? offset.top <= offsetTop.value : offset.bottom <= (props.offsetBottom ?? 0)
 
       if (shouldFix) {
-        placeholderStyle.value = {
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-        }
         const targetIsWindow = isWindow(container)
         const containerEl = targetIsWindow ? null : (container as HTMLElement)
         const baseRect =
@@ -82,12 +87,13 @@ export default defineComponent({
             ? containerEl.getBoundingClientRect()
             : null
         const wrapperRect = wrapperRef.value.getBoundingClientRect()
-        const left = targetIsWindow ? wrapperRect.left : wrapperRect.left
+
         const style: CSSProperties = {
           position: 'fixed',
-          width: `${rect.width}px`,
+          width: `${offset.width}px`,
+          height: `${offset.height}px`,
           zIndex: props.zIndex,
-          left: `${left}px`,
+          left: `${wrapperRect.left}px`,
         }
         if (isTopMode.value) {
           style.top = targetIsWindow ? `${offsetTop.value}px` : `${(baseRect?.top ?? 0) + offsetTop.value}px`
@@ -97,30 +103,65 @@ export default defineComponent({
             : `${window.innerHeight - (baseRect?.bottom ?? 0) + (props.offsetBottom ?? 0)}px`
         }
         fixedStyle.value = style
+        placeholderStyle.value = {
+          width: `${offset.width}px`,
+          height: `${offset.height}px`,
+        }
       } else {
-        placeholderStyle.value = {}
         fixedStyle.value = {}
+        placeholderStyle.value = {}
+      }
+
+      if (shouldFix !== fixed.value) {
+        fixed.value = shouldFix
+        emit('change', shouldFix)
       }
     }
 
-    onMounted(() => {
+    const bindContainer = () => {
       container = resolveTarget(props.target)
       container.addEventListener('scroll', update, { passive: true })
-      window.addEventListener('resize', update)
-      update()
-    })
-    onBeforeUnmount(() => {
+      // 当滚动容器不是 window 时，仍需监听窗口滚动以处理嵌套滚动场景
+      if (!isWindow(container)) {
+        window.addEventListener('scroll', update, { passive: true })
+      }
+    }
+
+    const unbindContainer = () => {
       container?.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('scroll', update)
+    }
+
+    onMounted(() => {
+      bindContainer()
+      window.addEventListener('resize', update)
+      if (typeof ResizeObserver !== 'undefined' && wrapperRef.value) {
+        resizeObserver = new ResizeObserver(() => update())
+        resizeObserver.observe(wrapperRef.value)
+      }
+      // 等下一帧再计算，避免初次布局未完成
+      requestAnimationFrame(() => update())
     })
+
+    onBeforeUnmount(() => {
+      unbindContainer()
+      window.removeEventListener('resize', update)
+      resizeObserver?.disconnect()
+      resizeObserver = null
+    })
+
     watch(
       () => props.target,
       () => {
-        container?.removeEventListener('scroll', update)
-        container = resolveTarget(props.target)
-        container.addEventListener('scroll', update, { passive: true })
+        unbindContainer()
+        bindContainer()
         update()
       },
+    )
+
+    watch(
+      () => [props.offsetTop, props.offsetBottom],
+      () => update(),
     )
 
     return () => (

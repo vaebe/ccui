@@ -1,5 +1,15 @@
 @use '../../style-var/index.scss' as *;
 
+// ----------------------------------------------------------------------------
+// Slider 滑块
+//
+// 核心居中策略：
+// 1. wrapper 用 flex(align-items:center) 让 track / 进度条天然垂直居中
+// 2. button-wrapper 给固定 32×32 尺寸，top:50% + translate(-50%,-50%) 把它的几
+//    何中心钉在 wrapper 的几何中心；内部一律 flex 居中，把中间 Tooltip /
+//    tooltip__trigger 这一层任意嵌套全部强制透传到 button 自身
+// ----------------------------------------------------------------------------
+
 .#{$cls-prefix}-slider {
   position: relative;
   display: inline-block;
@@ -8,7 +18,187 @@
   color: $ccui-text;
   user-select: none;
 
-  // 禁用状态
+  // ============== 滑块包装器（水平模式）==============
+  // wrapper 自身 flex(align-items:center)：track 作为唯一的 flex 子项天然垂直居中，
+  // 不再依赖 absolute + margin-top 的"魔法数字"居中。
+  &__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    cursor: pointer;
+  }
+
+  // ============== 轨道（进度条容器）==============
+  // 作为 flex 子项，width:100% 撑满，align-items:center 居中
+  &__track {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  // 进度条
+  &__bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: $ccui-primary;
+    border-radius: 3px;
+    transition: width $ccui-animation-duration-base $ccui-animation-ease-out;
+  }
+
+  // ============== 滑块按钮包装器 ==============
+  // 固定 32×32：与 wrapper 等高，用几何居中（top:50% + translate(-50%,-50%)）
+  // 把中心钉在 wrapper 中心。内部不管包了几层 Tooltip 都强制透传，最终 button
+  // 总是被 flex 居中渲染。
+  &__button-wrapper {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    outline: none;
+    transform: translate(-50%, -50%);
+
+    &--first {
+      z-index: 3;
+    }
+
+    &--second {
+      z-index: 2;
+    }
+
+    // 透传：button 之上任意嵌套层（Tooltip / tooltip__trigger）必须完全
+    // 撑满 button-wrapper 32×32。用 absolute + inset:0 强制撑满，再 flex 居中
+    // button。注意：docs 全局有给 [class^="ccui-"] 加 margin 的样式，会让
+    // absolute + inset:0 的尺寸被 margin 压缩，所以这里 margin 必须用 !important
+    // 强制清掉。
+    .#{$cls-prefix}-tooltip,
+    .#{$cls-prefix}-tooltip__trigger {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      line-height: 0;
+      padding: 0;
+      margin: 0 !important;
+      border: 0;
+    }
+  }
+
+  // ============== 滑块按钮 ==============
+  &__button {
+    box-sizing: border-box;
+    display: block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $ccui-primary;
+    border-radius: 50%;
+    background-color: $ccui-base-bg;
+    cursor: grab;
+    box-shadow: $ccui-shadow-length-base $ccui-shadow;
+    transition:
+      border-color $ccui-animation-duration-base $ccui-animation-ease-out,
+      box-shadow $ccui-animation-duration-base $ccui-animation-ease-out,
+      transform $ccui-animation-duration-base $ccui-animation-ease-out;
+
+    &:hover {
+      border-color: $ccui-primary-hover;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($ccui-primary, 0.2);
+    }
+  }
+
+  // ============== 刻度点 ==============
+  // 与 track 重合（同样 6px 高、wrapper 50% 居中）
+  &__stops {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    margin-top: -3px;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__stop {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: $ccui-base-bg;
+      transform: translateX(-50%);
+    }
+  }
+
+  // ============== 标记（在 track 下方）==============
+  &__marks {
+    position: absolute;
+    top: calc(50% + 6px);
+    left: 0;
+    right: 0;
+    pointer-events: none;
+
+    .#{$cls-prefix}-slider__mark {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+
+      &-line {
+        width: 1px;
+        height: 8px;
+        margin: 0 auto;
+        background-color: $ccui-dividing-line;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          width: 8px;
+          height: 8px;
+          border: 2px solid $ccui-dividing-line;
+          border-radius: 50%;
+          background-color: $ccui-base-bg;
+          transform: translateX(-50%);
+        }
+      }
+
+      &-label {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        font-size: $ccui-font-size-sm;
+        color: $ccui-aide-text;
+        white-space: nowrap;
+        line-height: 1.2;
+        margin-top: 2px;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  // ============== 禁用 ==============
   &--disabled {
     cursor: not-allowed;
 
@@ -36,108 +226,24 @@
     }
   }
 
-  // 垂直模式
-  &--vertical {
-    display: inline-block;
-    width: auto;
-    height: 200px;
-
-    .#{$cls-prefix}-slider__wrapper {
-      width: 6px;
-      height: 100%;
-      margin: 0 auto;
-    }
-
-    .#{$cls-prefix}-slider__track {
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-    }
-
-    .#{$cls-prefix}-slider__bar {
-      width: 100%;
-      height: auto;
-      bottom: 0;
-      top: auto;
-    }
-
-    .#{$cls-prefix}-slider__button-wrapper {
-      top: auto;
-      left: 50%;
-      transform: translateX(-50%) translateY(50%);
-    }
-
-    .#{$cls-prefix}-slider__stops {
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-
-      .#{$cls-prefix}-slider__stop {
-        width: 100%;
-        height: 2px;
-        top: auto;
-        left: 0;
-      }
-    }
-
-    .#{$cls-prefix}-slider__marks {
-      top: 0;
-      left: 16px;
-      width: 20px;
-      height: 100%;
-
-      .#{$cls-prefix}-slider__mark {
-        top: auto;
-        left: 0;
-        transform: translateY(50%);
-
-        &-line {
-          width: 8px;
-          height: 1px;
-          background-color: $ccui-dividing-line;
-
-          &::before {
-            width: 8px;
-            height: 8px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-        }
-
-        &-label {
-          top: 50%;
-          left: 12px;
-          transform: translateY(-50%);
-        }
-      }
-    }
+  // ============== 尺寸变体 ==============
+  &--large .#{$cls-prefix}-slider__button {
+    width: 18px;
+    height: 18px;
   }
 
-  // 尺寸变体
-  &--large {
-    .#{$cls-prefix}-slider__button {
-      width: 18px;
-      height: 18px;
-    }
+  &--small .#{$cls-prefix}-slider__button {
+    width: 14px;
+    height: 14px;
   }
 
-  &--small {
-    .#{$cls-prefix}-slider__button {
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  // 带输入框的容器
+  // ============== 与输入框组合 ==============
   &--with-input {
     display: flex;
-    align-items: center;
-    width: 100%;
     flex-direction: row-reverse;
+    align-items: center;
     gap: 16px;
+    width: 100%;
 
     .#{$cls-prefix}-slider__wrapper {
       flex: 1;
@@ -154,163 +260,100 @@
     width: 100%;
   }
 
-  // 滑块包装器
-  &__wrapper {
-    position: relative;
-    height: 32px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
+  // ============== 垂直模式 ==============
+  // wrapper 用 flex(justify-content:center) 把 track 水平居中。
+  // track 自身固定 6px 宽 + 100% 高。button-wrapper 用 left:50% + translateX(-50%)
+  // 把水平中心钉在 wrapper 水平中心；纵向位置由 inline `bottom: percent%` 控制，
+  // translateY(50%) 让中心落在 percent 处。
+  &--vertical {
+    display: inline-block;
+    width: auto;
+    height: 200px;
 
-  // 轨道
-  &__track {
-    position: relative;
-    width: 100%;
-    height: 6px;
-    background-color: $ccui-dividing-line;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  // 进度条
-  &__bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background-color: $ccui-primary;
-    border-radius: 3px;
-    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
-  }
-
-  // 刻度点
-  &__stops {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 6px;
-    margin-top: -3px;
-    pointer-events: none;
-
-    .#{$cls-prefix}-slider__stop {
-      position: absolute;
-      top: 0;
-      width: 2px;
+    .#{$cls-prefix}-slider__wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: stretch;
+      width: 32px;
       height: 100%;
-      background-color: $ccui-base-bg;
-      transform: translateX(-50%);
+      margin: 0 auto;
     }
-  }
 
-  // 标记
-  &__marks {
-    position: absolute;
-    top: 12px;
-    left: 0;
-    right: 0;
-    height: 100%;
-    pointer-events: none;
+    .#{$cls-prefix}-slider__track {
+      position: relative;
+      flex: 1 1 auto;
+      width: 6px;
+      height: 100%;
+      margin-top: 0;
+    }
 
-    .#{$cls-prefix}-slider__mark {
-      position: absolute;
+    .#{$cls-prefix}-slider__bar {
+      top: auto;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+    }
+
+    .#{$cls-prefix}-slider__button-wrapper {
+      top: auto;
+      left: 50%;
+      transform: translate(-50%, 50%);
+    }
+
+    .#{$cls-prefix}-slider__stops {
       top: 0;
-      transform: translateX(-50%);
+      left: 50%;
+      width: 6px;
+      height: 100%;
+      margin-top: 0;
+      margin-left: -3px;
 
-      &-line {
-        width: 1px;
-        height: 8px;
-        background-color: $ccui-dividing-line;
-        margin: 0 auto;
-        position: relative;
+      .#{$cls-prefix}-slider__stop {
+        top: auto;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        transform: translateY(50%);
+      }
+    }
 
-        // 标记点
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
+    .#{$cls-prefix}-slider__marks {
+      top: 0;
+      left: calc(50% + 12px);
+      width: 20px;
+      height: 100%;
+
+      .#{$cls-prefix}-slider__mark {
+        top: auto;
+        left: 0;
+        transform: translateY(50%);
+
+        &-line {
           width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: $ccui-base-bg;
-          border: 2px solid $ccui-dividing-line;
+          height: 1px;
+
+          &::before {
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        &-label {
+          top: 50%;
+          left: 12px;
+          margin-top: 0;
+          transform: translateY(-50%);
         }
       }
-
-      &-label {
-        position: absolute;
-        top: 12px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: $ccui-font-size-sm;
-        color: $ccui-aide-text;
-        white-space: nowrap;
-        line-height: 1.2;
-        margin-top: 2px;
-      }
     }
   }
 
-  // 滑块按钮包装器
-  &__button-wrapper {
-    position: absolute;
-    top: 50%;
-    z-index: 2;
-    transform: translate(-50%, -50%);
-
-    &--first {
-      z-index: 3;
-    }
-
-    &--second {
-      z-index: 2;
-    }
-
-    // 确保 Tooltip 组件不影响按钮定位
-    .#{$cls-prefix}-tooltip {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .#{$cls-prefix}-tooltip__trigger {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  // 滑块按钮
-  &__button {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    border: 2px solid $ccui-primary;
-    border-radius: 50%;
-    background-color: $ccui-base-bg;
-    cursor: grab;
-    transition: all $ccui-animation-duration-base $ccui-animation-ease-out;
-    box-shadow: $ccui-shadow-length-base $ccui-shadow;
-
-    &:hover {
-      border-color: $ccui-primary-hover;
-      transform: scale(1.1);
-    }
-
-    &:active {
-      cursor: grabbing;
-    }
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba($ccui-primary, 0.2);
-    }
-  }
-
-  // 响应式设计
+  // ============== 响应式 ==============
   @media (max-width: 768px) {
     .#{$cls-prefix}-slider__button {
       width: 18px;

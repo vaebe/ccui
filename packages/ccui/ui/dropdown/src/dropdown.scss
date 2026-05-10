@@ -1,13 +1,25 @@
 @use '../../style-var/index.scss' as *;
 
+// dropdown 作为 popperClass 附加到 popover popper 上
+// 需要覆盖 popover 默认的 padding / border / 圆角，使其符合 Ant 风格
+.#{$cls-prefix}-popover__popper.#{$cls-prefix}-dropdown {
+  padding: 0;
+  border: none;
+  border-radius: $ccui-border-radius-lg;
+  background-color: $ccui-color-bg-elevated;
+  box-shadow: $ccui-box-shadow-secondary;
+  min-width: 100px;
+}
+
 .#{$cls-prefix}-dropdown {
   &__menu {
     min-width: 100px;
     margin: 0;
     padding: 4px 0;
     list-style: none;
-    background-color: $ccui-color-bg-elevated;
-    border-radius: $ccui-border-radius;
+    background-color: transparent;
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   &__item {
@@ -18,12 +30,14 @@
     font-size: $ccui-font-size;
     line-height: $ccui-line-height-base;
     cursor: pointer;
+    border-radius: $ccui-border-radius-sm;
+    margin: 0 4px;
     transition:
       background-color $ccui-motion-duration-mid,
       color $ccui-motion-duration-mid;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: $ccui-color-bg-text-hover;
     }
 
     &--disabled {
@@ -45,9 +59,18 @@
     }
 
     &--divided {
-      border-top: 1px solid $ccui-color-border;
-      margin-top: 4px;
-      padding-top: 9px;
+      position: relative;
+      margin-top: 8px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        height: 1px;
+        background-color: $ccui-color-border-secondary;
+      }
     }
   }
 

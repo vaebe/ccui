@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 
+import './shared/styles/base.scss'
 import AffixInstall, { Affix } from './affix'
 import AlertInstall, { Alert } from './alert'
 import AnchorInstall, { Anchor } from './anchor'
@@ -10,9 +11,9 @@ import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 import ButtonInstall, { Button } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
 import CalendarInstall, { Calendar } from './calendar'
-import CascaderInstall, { Cascader } from './cascader'
 import CardInstall, { Card } from './card'
 import CarouselInstall, { Carousel } from './carousel'
+import CascaderInstall, { Cascader } from './cascader'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
 import ColorPickerInstall, { ColorPicker } from './color-picker'
@@ -27,7 +28,18 @@ import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
 import FormInstall, { Form, FormItem, FormList, FormProvider } from './form'
 import GridInstall, { Col, Row } from './grid'
-import IconInstall, { clearIconRegistry, Icon, registerIcon, resolveIcon, unregisterIcon } from './icon'
+import IconInstall, {
+  addAPIProvider,
+  addCollection,
+  addIcon,
+  loadIcon,
+  loadIcons,
+  clearIconRegistry,
+  Icon,
+  registerIcon,
+  resolveIcon,
+  unregisterIcon,
+} from './icon'
 import ImageInstall, { Image } from './image'
 import InputInstall, { Input } from './input'
 import InputNumberInstall, { InputNumber } from './input-number'
@@ -43,7 +55,7 @@ import PaginationInstall, { Pagination } from './pagination'
 import PopconfirmInstall, { Popconfirm } from './popconfirm'
 import PopoverInstall, { Popover } from './popover'
 import ProgressInstall, { Progress } from './progress'
-import QRCodeInstall, { QRCode } from './qr-code'
+import QrCodeInstall, { QRCode } from './qr-code'
 import RadioInstall, { Radio, RadioGroup } from './radio'
 import RangePickerInstall, { RangePicker } from './range-picker'
 import RateInstall, { Rate } from './rate'
@@ -59,8 +71,8 @@ import StatisticInstall, { Statistic, StatisticCountdown } from './statistic'
 import StatusInstall, { Status } from './status'
 import StepsInstall, { Steps } from './steps'
 import SwitchInstall, { Switch } from './switch'
-import TabsInstall, { Tab, Tabs } from './tabs'
 import TableInstall, { Table } from './table'
+import TabsInstall, { Tab, Tabs } from './tabs'
 import TagInstall, { Tag } from './tag'
 import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
@@ -100,8 +112,8 @@ const installs = [
   Button3DInstall,
   CalendarInstall,
   CardInstall,
-  CascaderInstall,
   CarouselInstall,
+  CascaderInstall,
   CheckBoxInstall,
   CollapseInstall,
   ColorPickerInstall,
@@ -132,7 +144,7 @@ const installs = [
   PopconfirmInstall,
   PopoverInstall,
   ProgressInstall,
-  QRCodeInstall,
+  QrCodeInstall,
   RadioInstall,
   RangePickerInstall,
   RateInstall,
@@ -148,8 +160,8 @@ const installs = [
   StatusInstall,
   StepsInstall,
   SwitchInstall,
-  TabsInstall,
   TableInstall,
+  TabsInstall,
   TagInstall,
   TimePickerInstall,
   TimelineInstall,
@@ -201,6 +213,11 @@ export {
   FormProvider,
   Col,
   Row,
+  addAPIProvider,
+  addCollection,
+  addIcon,
+  loadIcon,
+  loadIcons,
   clearIconRegistry,
   Icon,
   registerIcon,
@@ -247,9 +264,9 @@ export {
   Status,
   Steps,
   Switch,
+  Table,
   Tab,
   Tabs,
-  Table,
   Tag,
   TimePicker,
   Timeline,

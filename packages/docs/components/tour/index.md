@@ -18,23 +18,32 @@ const btn1 = ref<HTMLElement | null>(null)
 const btn2 = ref<HTMLElement | null>(null)
 
 const steps = [
-  { title: '步骤一：保存', description: '点这里保存当前内容', target: () => btn1.value, placement: 'bottom' as const },
-  { title: '步骤二：导出', description: '点这里导出 PDF', target: () => btn2.value, placement: 'bottom' as const },
+  {
+    title: '步骤一：保存',
+    description: '点这里保存当前内容',
+    target: () => btn1.value,
+    placement: 'bottom' as const,
+  },
+  {
+    title: '步骤二：导出',
+    description: '点这里导出 PDF',
+    target: () => btn2.value,
+    placement: 'bottom' as const,
+  },
   { title: '搞定', description: '后面就靠你自己了 🎉' },
 ]
+
+function startTour() {
+  current.value = 0
+  open.value = true
+}
 </script>
 
 <template>
   <div style="display: flex; gap: 12px">
     <c-button ref="btn1" type="primary">保存</c-button>
     <c-button ref="btn2">导出 PDF</c-button>
-    <c-button
-      @click="
-        open = true
-        current = 0
-      "
-      >开始引导</c-button
-    >
+    <c-button @click="startTour">开始引导</c-button>
   </div>
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
@@ -58,16 +67,15 @@ const steps = [
   { title: '欢迎', description: '欢迎使用 ccui，本次引导大约 30 秒' },
   { title: '完成', description: '后续可以在帮助中心重新查看' },
 ]
+
+function startTour() {
+  current.value = 0
+  open.value = true
+}
 </script>
 
 <template>
-  <c-button
-    @click="
-      open = true
-      current = 0
-    "
-    >触发居中引导</c-button
-  >
+  <c-button @click="startTour">触发居中引导</c-button>
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
 ```
@@ -91,17 +99,16 @@ const steps = [
   { title: '提示一', description: '这步不挡操作', target: () => btn.value, mask: false },
   { title: '提示二', description: '这步加上蒙层', target: () => btn.value, mask: true },
 ]
+
+function startTour() {
+  current.value = 0
+  open.value = true
+}
 </script>
 
 <template>
   <c-button ref="btn">页面按钮</c-button>
-  <c-button
-    @click="
-      open = true
-      current = 0
-    "
-    >开始（混合 mask）</c-button
-  >
+  <c-button @click="startTour">开始（混合 mask）</c-button>
   <c-tour v-model:open="open" v-model:current="current" :steps="steps" />
 </template>
 ```
@@ -120,16 +127,15 @@ import { ref } from 'vue'
 const open = ref(false)
 const current = ref(0)
 const steps = [{ title: '一' }, { title: '二' }, { title: '三' }]
+
+function startTour() {
+  current.value = 0
+  open.value = true
+}
 </script>
 
 <template>
-  <c-button
-    @click="
-      open = true
-      current = 0
-    "
-    >英文按钮</c-button
-  >
+  <c-button @click="startTour">英文按钮</c-button>
   <c-tour
     v-model:open="open"
     v-model:current="current"
@@ -137,6 +143,45 @@ const steps = [{ title: '一' }, { title: '二' }, { title: '三' }]
     prev-text="Prev"
     next-text="Next"
     finish-text="Done"
+  />
+</template>
+```
+
+:::
+
+## 主题与箭头
+
+`type="primary"` 切换为蓝底白字主题；`arrow="false"` 隐藏指向目标的小箭头。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const open = ref(false)
+const current = ref(0)
+const target = ref<HTMLElement | null>(null)
+const steps = [
+  { title: '主要操作', description: '蓝底白字、强调主题', target: () => target.value },
+  { title: '辅助提示', description: '这一步取消了箭头', target: () => target.value },
+]
+
+function startTour() {
+  current.value = 0
+  open.value = true
+}
+</script>
+
+<template>
+  <c-button ref="target" type="primary">演示按钮</c-button>
+  <c-button @click="startTour" style="margin-inline-start: 12px">primary 主题</c-button>
+  <c-tour
+    v-model:open="open"
+    v-model:current="current"
+    :steps="steps"
+    type="primary"
+    :arrow="false"
   />
 </template>
 ```

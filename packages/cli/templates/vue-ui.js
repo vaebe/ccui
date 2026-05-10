@@ -23,6 +23,7 @@ exports.createUiTemplate = (exportModules = []) => {
   return `\
 import type { App } from 'vue';
 
+import './shared/styles/base.scss';
 ${imports.join('\n')}
 
 const installs = [
