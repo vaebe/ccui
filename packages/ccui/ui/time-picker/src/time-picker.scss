@@ -202,7 +202,8 @@
       color: #fff;
 
       &:hover {
-        opacity: 0.85;
+        border-color: $ccui-color-primary-hover;
+        background-color: $ccui-color-primary-hover;
         color: #fff;
       }
     }
