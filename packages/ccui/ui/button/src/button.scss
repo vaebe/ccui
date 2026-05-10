@@ -159,29 +159,31 @@ $button-info-plain-border: #dcdfe6;
   }
 
   // plain 朴素按钮：浅色背景 + 主色边框
-  &--plain-primary,
-  &--plain-success,
-  &--plain-info,
-  &--plain-warning,
-  &--plain-danger {
-    &:focus,
-    &:active {
-      color: $ccui-color-text-light-solid;
-    }
-  }
-
+  // 修复要点：
+  // 1. hover 文字走 *-active（更深主色），避免 warning/danger 文字变浅与浅底融合
+  // 2. focus 与 hover 视觉一致，再叠 box-shadow 做焦点暗示，避免文字纯白扣浅底不可见
+  // 3. active 保留 Ant Design plain 实色填充语义，文字白色 + *-active 深主色底，
+  //    保证 ≥ 4.5:1 对比度（warning 走 *-active 而非 *-color，提升白字对比）
   &--plain-primary {
     color: $ccui-color-primary;
     background-color: $ccui-color-primary-bg;
     border-color: $ccui-color-primary-border;
 
     &:hover {
-      color: $ccui-color-primary-hover;
+      color: $ccui-color-primary-active;
       background-color: $ccui-color-primary-bg-hover;
       border-color: $ccui-color-primary-border-hover;
     }
 
+    &:focus {
+      color: $ccui-color-primary-active;
+      background-color: $ccui-color-primary-bg-hover;
+      border-color: $ccui-color-primary-border-hover;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
     &:active {
+      color: $ccui-color-text-light-solid;
       background-color: $ccui-color-primary-active;
       border-color: $ccui-color-primary-active;
     }
@@ -193,12 +195,22 @@ $button-info-plain-border: #dcdfe6;
     border-color: $ccui-color-success-border;
 
     &:hover {
-      color: $ccui-color-success-hover;
+      color: $ccui-color-success-active;
+      background-color: $ccui-color-success-bg;
+      border-color: $ccui-color-success;
+    }
+
+    &:focus {
+      color: $ccui-color-success-active;
+      background-color: $ccui-color-success-bg;
+      border-color: $ccui-color-success;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
     }
 
     &:active {
-      background-color: $ccui-color-success;
-      border-color: $ccui-color-success;
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-success-active;
+      border-color: $ccui-color-success-active;
     }
   }
 
@@ -208,13 +220,22 @@ $button-info-plain-border: #dcdfe6;
     border-color: $button-info-plain-border;
 
     &:hover {
-      color: $button-info-hover-color;
-      border-color: $button-info-hover-color;
+      color: $button-info-active-color;
+      background-color: $button-info-plain-bg;
+      border-color: $button-info-active-color;
+    }
+
+    &:focus {
+      color: $button-info-active-color;
+      background-color: $button-info-plain-bg;
+      border-color: $button-info-active-color;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
     }
 
     &:active {
-      background-color: $button-info-color;
-      border-color: $button-info-color;
+      color: $ccui-color-text-light-solid;
+      background-color: $button-info-active-color;
+      border-color: $button-info-active-color;
     }
   }
 
@@ -224,12 +245,22 @@ $button-info-plain-border: #dcdfe6;
     border-color: $ccui-color-warning-border;
 
     &:hover {
-      color: $ccui-color-warning-hover;
+      color: $ccui-color-warning-active;
+      background-color: $ccui-color-warning-bg;
+      border-color: $ccui-color-warning;
+    }
+
+    &:focus {
+      color: $ccui-color-warning-active;
+      background-color: $ccui-color-warning-bg;
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
     }
 
     &:active {
-      background-color: $ccui-color-warning;
-      border-color: $ccui-color-warning;
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-warning-active;
+      border-color: $ccui-color-warning-active;
     }
   }
 
@@ -239,12 +270,22 @@ $button-info-plain-border: #dcdfe6;
     border-color: $ccui-color-error-border;
 
     &:hover {
-      color: $ccui-color-error-hover;
+      color: $ccui-color-error-active;
+      background-color: $ccui-color-error-bg;
+      border-color: $ccui-color-error;
+    }
+
+    &:focus {
+      color: $ccui-color-error-active;
+      background-color: $ccui-color-error-bg;
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
     }
 
     &:active {
-      background-color: $ccui-color-error;
-      border-color: $ccui-color-error;
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-error-active;
+      border-color: $ccui-color-error-active;
     }
   }
 
