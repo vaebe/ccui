@@ -16,7 +16,7 @@
 
 @mixin focus-state {
   border-color: $ccui-primary;
-  box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+  box-shadow: 0 0 0 2px $ccui-control-outline;
 }
 
 @mixin hide-controls {
