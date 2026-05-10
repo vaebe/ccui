@@ -3,7 +3,7 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 75 个一级目录，其中 73 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：73 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-10，**Ant Design v6 主题对齐 + Resolver 工具包首次交付**：Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过 / ESM+CJS 双产物），Batch 34 主题对齐（`theme.scss` + `darkTheme.css` 重新生成对齐 v6 SeedToken / Form 9 处错误命名空间 var 修正 / 8 个组件 24 处硬编码 `#1677ff` → `var(--ccui-brand)`）。详见 Batch 33 / 34 与 `docs-notes/design-audit/references/ant-design-alignment.md`。
+> 更新时间：2026-05-10，**审查报告 P1/P2 整改批次完成 + 测试基础设施修复**。Batch 35 设计体系 v2（control-outline 三档 token / Modal hover 切 colorPrimaryHover / dark.ts 非颜色 token 补全 / 12 色板 × 10 阶接入 Tag 预设色 / Tag.Processing 6px 脉冲点 / 旧 token deprecated 标记 / 品牌色与设计原则决策文档）；Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过）；Batch 34 主题对齐（theme 重生 / Form var 改名 / 24 处硬编码主色 var 化 / Result 4 处 JS 主色重构）。本会话累计 23 commits，1289/1289 测试通过。详见 Batch 33-35 与 `docs-notes/design-audit/`。
 > 历史更新：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
 
 ## 零、交付完整度口径
@@ -252,6 +252,33 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 35：审查报告 P1/P2 整改 + 测试基础设施
+
+**A. 测试基础设施（commit `3afadc8`）**
+
+`pnpm-workspace.yaml` `overrides.vue: 3.5.33` 修复双 vue 实例（`3.5.22` ccui 直接依赖 vs `3.5.33` docs/vitepress 生态），消灭跨实例 reactivity tracking 失效（107 失败 → 0）。jsdom 缺 PointerEvent 全局，carousel swipe 5 个用例补 MouseEvent fallback。
+
+**B. 审查报告 P1/P2 整改（commits `cb57837` / `ef29d93` / `05663a7` / `53b5b46` + docs）**
+
+- P1 #3 control-outline token：`light.ts` / `dark.ts` 加 `--ccui-control-outline` / `-error` / `-warning` 三档 focus 光环 token，6 处硬编码 `rgba(<主色>, 0.1)` 切到 token（auto-complete / mentions / color-picker / select(open/error/warning) / input）。
+- P1 #4 Modal hover：`--primary` / `--danger` 状态由 opacity 0.85 改为 `colorPrimaryHover` / `colorErrorHover`，与 Button 组件保持一致。
+- P1 #2 12 色板补全：`light.ts` / `dark.ts` 各加 12 色 × 10 阶 = 120 token，覆盖 red / volcano / orange / gold / yellow / lime / green / cyan / blue / geekblue / purple / magenta（pink 别名 magenta），dark 用 antd dark algorithm 派生。Tag 预设色 11 种 由硬编码 `@each` 改为消费 `var(--ccui-{name}-1/-3/-7)` 三层 token，亮暗主题切换不再需要重写 Tag SCSS。
+- P2 #4 dark.ts 非颜色 token 补全：圆角 / 字号 / 字体族 / 行高 / 控件高度 / 阴影 / 动效 / 间距 7 类共 60+ token 镜像 light.ts，dark 阴影按 antd dark algorithm 加深 alpha；`darkTheme.css` 输出从 ~140 增至 204 个 CSS 变量。
+- P2 #3 Tag.Processing 脉冲：6px 圆点 + 1.6s `motion-ease-in-out-circ` 双轴脉冲（透明度 0.4↔1 / 缩放 0.7↔1），对齐 antd Tag.Processing 视觉。
+- P2 #2 deprecated 标记：`light.ts` 内对 `font-size-card-title` / `-page-title` / `-modal-title` / `-price` / `-data-overview` / `border-radius-feedback` / `shadow-length-*` / `animation-duration-*` / `animation-ease-*` 旧业务 token 加 `@deprecated` 注释，给出 v6 替代项。
+- P1 #1 + P2 #1 决策文档：`docs-notes/design-audit/decisions/brand-color.md`（保留 `#1677ff` 全量对齐 v6 的决策依据 + 反向决策成本估算 + 不变性约束）；`design-values.md`（自然 / 确定 / 意义 / 生长 4 大原则在 ccui 的体现 + 与 antd 差异点表）。
+
+**C. 验证**
+
+- `vp test run` 1289/1289 通过；`vp check` 0 errors / 4 个 pre-existing 警告。
+- 主题二次重生（`pnpm exec node packages/cli/index.js generate:theme`）验证 token 增量正确写入 `theme.scss` / `darkTheme.css`（自动产物，未入 git）。
+
+**D. 未处理**
+
+审查报告 P0 #1 / #2 / #3（本会话已在 Batch 34 落地）；P1 / P2 全部完成。
+result.tsx JS 主色重构在 Batch 34 已附带处理。
+长尾：暗色模式下 controlOutline alpha 还可能微调（视觉体感），先按 antd dark 默认值；待用户视觉验收后再 fine-tune。
 
 ### Batch 34：Ant Design v6 主题对齐（theme.scss 重生 + Form var 改名 + 24 处硬编码主色 var 化）
 

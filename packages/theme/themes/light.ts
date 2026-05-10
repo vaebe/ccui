@@ -94,6 +94,10 @@ export default {
   'default-line': '#d9d9d9',
   'default-bg': '#ffffff',
   // 字体设置相关
+  // @deprecated 'font-size-card-title' / 'font-size-page-title' / 'font-size-modal-title' /
+  //             'font-size-price' / 'font-size-data-overview' 是 ccui 1.x 业务 token，
+  //             保留兼容现有 SCSS。新组件请使用 'font-size-lg' / 'font-size-xl' /
+  //             'font-size-heading-3' 等 v6 标准阶梯。
   'font-size': '14px',
   'font-size-card-title': '16px',
   'font-size-page-title': '20px',
@@ -108,10 +112,15 @@ export default {
   'font-content-weight': '400',
   'line-height-base': '1.5714285714285714',
   // 圆角
+  // @deprecated 'border-radius-feedback'（用 'border-radius-lg' 替代）。
+  //             'border-radius-card' 暂保留作 Card 等大块容器的语义化别名。
   'border-radius': '6px',
   'border-radius-feedback': '8px',
   'border-radius-card': '8px',
   // 阴影
+  // @deprecated 'shadow-length-*' 系列是 ccui 1.x 业务 token，保留兼容。
+  //             新组件请使用 'box-shadow' / 'box-shadow-secondary' / 'box-shadow-tertiary'
+  //             v6 标准三档阴影 token。
   'shadow-length-base': '0 1px 2px 0',
   'shadow-length-slide-left': '-6px 0 16px 0',
   'shadow-length-slide-right': '6px 0 16px 0',
@@ -120,6 +129,9 @@ export default {
   'shadow-length-feedback-overlay': '0 6px 16px 0',
   'shadow-fullscreen-overlay': '0 6px 16px 0',
   // 动效
+  // @deprecated 'animation-duration-*' / 'animation-ease-*' 是 ccui 1.x 业务 token，
+  //             保留兼容。新组件请使用 'motion-duration-fast/mid/slow' 与
+  //             'motion-ease-in-out-circ' 等 v6 标准动效 token。
   'animation-duration-slow': '0.3s',
   'animation-duration-base': '0.2s',
   'animation-duration-fast': '0.1s',
