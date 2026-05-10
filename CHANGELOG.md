@@ -21,9 +21,25 @@
 - **Select**：分组、`fieldNames`、tags、远程搜索、`FormItem` 联动、虚拟列表、嵌套分组、ARIA、`labelInValue`、`maxCount`、`tagsDraggable`、`optionLabelProp`、`showSearch`。
 - **Icon**：Iconify 适配、`themePrefixMap`、`ConfigProvider`、`spinDirection`、`loading` / `disabled`。
 - **Tag**：processing 状态加 6px 脉冲点动画。
+- **i18n**：新增 `packages/ccui/ui/locale/{zh-CN,en-US,index}.ts` 语言包基础设施，从顶层包导出 `zhCN` / `enUS` / `defaultLocale`。`ConfigProvider.useConfig` 在注入时按 namespace 浅合并用户 locale 与 zhCN 默认，避免深取值变 `undefined`。
+- **ConfigProvider 接通 `theme.algorithm`**：原本是死接口（仅类型存在）。
+  - `algorithm: 'dark'`：在 wrapper 上叠加 `.dark` 类，`darkTheme.css` 内的 CSS 变量自动级联到子树。
+  - `algorithm: 'compact'`：注入紧凑尺寸 token 集（`controlHeight 32→24`，`padding/margin` 系列各档缩小一档），对齐 Ant Design v6 compact 算法。
+  - `algorithm: 'default'`：保留原行为。
+  - 用户 `theme.token` 仍胜过 compact 的默认值。
 
 ### Changed
 
+- **ConfigProvider 接通 `locale`**：原本是死接口，被 `inject` 但无组件消费。本次：
+  - 7 个组件改读 `cfg.locale.{ns}.{key}`：Modal / Popconfirm 的 ok / cancel 文案，Empty 的 description，AutoComplete / Mentions / Cascader / TreeSelect 的 notFoundContent。
+  - prop 默认值由 `'确 定'` 等中文字面量改为 `''`；运行时优先级：用户显式 prop > `cfg.locale.{ns}.{key}` > 内置 zhCN 兜底。
+  - cli `vue-ui` 模板静态注入 `export { zhCN, enUS, defaultLocale } from './locale'`。
+  - DatePicker 月份 / 周名、Pagination 文案、Image 加载提示等仍未走 locale，作为 P1 跟进。
+- **Form scss 全量 token 化**：
+  - 加 `@use '../../style-var/index.scss' as *;`，类名走 `#{$cls-prefix}-form` 占位符。
+  - 9 处变量名对齐 v6：`var(--ccui-text)` → `$ccui-color-text`、`var(--ccui-text-weak)` → `$ccui-color-text-secondary`、`var(--ccui-danger)` → `$ccui-color-error`、`var(--ccui-success)` → `$ccui-color-success`。
+  - 字面量尺寸全部 → token：`14px` → `$ccui-font-size`、`12px` → `$ccui-font-size-sm`、`32px` → `$ccui-control-height`、`12px / 4px / 6px / 16px` → `$ccui-padding-sm / -margin-xxs / -xs / -padding`。
+  - form-item `margin-bottom` 由 18px 调到 24px（`$ccui-margin-lg`），对齐 Ant Design v6 Form.Item 默认间距。视觉上比之前略宽，是有意调整。
 - **品牌色**：保留 `#1677ff` 全量对齐 Ant Design v6 SeedToken；旧 1.x 主色 `#5e7ce0` 由使用方通过 `<ConfigProvider>` 自定义注入。
 - **主题源单源化**：`themes/light.ts` / `dark.ts` 是唯一真源，`theme.scss` / `darkTheme.css` 由 cli 重生，不可手改。
 - **品牌色硬编码清扫**：在 11 个组件 SCSS 把 `#1677ff` / `var(--ccui-brand, #1677ff)` / `rgba(22,119,255,…)` / 派生 hover/active/bg 色一律替换为 `$ccui-color-primary` 系列 token；rgba 透明度走 `color-mix(in srgb, $ccui-color-primary N%, transparent)`。
@@ -60,6 +76,7 @@
   - Batch A：pagination / steps / skeleton / progress
   - Batch B：descriptions / flex / result / spin
   - Batch C：segmented / layout / typography / grid / calendar
+  - Form：补 layout / methods 两个 demo，从 4 扩到 6（button / input / select / table 已 ≥7，无需扩）。
 - **首页 hero**：随各 batch 推进同步组件数 / 单测数。
 
 ### Build
@@ -70,7 +87,8 @@
 
 - 测试质量审查：TSX 加载修复 + slider 重写 + 2 个已知失败修复。
 - 多组件覆盖率扩展（form / table / menu / select 等）。
-- 1200+ 单测稳定通过。
+- 新增 5 个 ConfigProvider 算法 / locale 浅合并测试，覆盖 dark / compact / default 行为与 token 优先级。
+- 1294 单测稳定通过（vue-tsc 0 错）。
 
 ---
 
