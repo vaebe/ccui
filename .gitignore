@@ -32,7 +32,7 @@ packages/ccui/build
 **/.vitepress/config.ts.js
 **/.vitepress/cache
 
-**CHANGELOG.md
+packages/*/CHANGELOG.md
 # test
 packages/ccui/coverage
 packages/ccui/ui/**/__snapshots__
