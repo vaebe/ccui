@@ -26,7 +26,13 @@ exports.generateTheme = async () => {
 
   const lightFileStr = `${lightScssVars};\n\n:root {\n${lightCssVars}\n}\n`
 
-  let darkCssVariablesStr = Object.entries(darkTheme)
+  // dark 主题只覆盖颜色相关 token（参见 themes/dark.ts），但运行期切换到 .dark
+  // 时仍需要 border-radius / spacing / motion 这些非颜色 token。这里把 light 全集
+  // 与 dark 合并，dark 命中的 key 用 dark 值，dark 未定义的 key 复用 light，
+  // 保证切到 dark 后排版/形态/动画稳定，只换皮肤。
+  const mergedDarkTheme = { ...lightTheme, ...darkTheme }
+
+  let darkCssVariablesStr = Object.entries(mergedDarkTheme)
     .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)
     .join(';\n')
 
