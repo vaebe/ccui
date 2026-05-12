@@ -15,9 +15,7 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 
 <template>
   <c-masonry :columns="3" :gutter="16">
-    <div v-for="(h, i) in heights" :key="i" class="mas-item" :style="{ height: `${h}px` }">
-      Item {{ i + 1 }}
-    </div>
+    <div v-for="(h, i) in heights" :key="i" class="mas-item" :style="{ height: `${h}px` }">Item {{ i + 1 }}</div>
   </c-masonry>
 </template>
 
@@ -43,9 +41,7 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 ```vue
 <template>
   <c-masonry :columns="{ xs: 1, sm: 2, md: 3, lg: 4 }" :gutter="12">
-    <div v-for="i in 8" :key="i" class="mas-item" :style="{ height: `${60 + i * 12}px` }">
-      Item {{ i }}
-    </div>
+    <div v-for="i in 8" :key="i" class="mas-item" :style="{ height: `${60 + i * 12}px` }">Item {{ i }}</div>
   </c-masonry>
   <p style="margin-top: 8px; color: #666">缩窄浏览器观察列数变化</p>
 </template>
@@ -72,9 +68,7 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 <template>
   <p style="color: #666; margin: 0 0 8px">水平 24, 垂直 8</p>
   <c-masonry :columns="3" :gutter="[24, 8]">
-    <div v-for="i in 6" :key="i" class="mas-item" :style="{ height: `${60 + i * 8}px` }">
-      Item {{ i }}
-    </div>
+    <div v-for="i in 6" :key="i" class="mas-item" :style="{ height: `${60 + i * 8}px` }">Item {{ i }}</div>
   </c-masonry>
 </template>
 
@@ -142,9 +136,7 @@ function reset() {
 
 <template>
   <c-masonry :columns="3" :gutter="12">
-    <div v-for="n in list" :key="n" class="mas-item" :style="{ height: `${60 + (n % 4) * 20}px` }">
-      Item {{ n }}
-    </div>
+    <div v-for="n in list" :key="n" class="mas-item" :style="{ height: `${60 + (n % 4) * 20}px` }">Item {{ n }}</div>
   </c-masonry>
   <div style="margin-top: 8px">
     <c-button type="primary" @click="loadMore">加载更多</c-button>
@@ -168,11 +160,11 @@ function reset() {
 
 ### Props
 
-| 参数       | 类型                                                    | 默认值 | 说明                                              |
-| ---------- | ------------------------------------------------------- | ------ | ------------------------------------------------- |
-| columns    | `number \| { xs?, sm?, md?, lg?, xl?, xxl?: number }`   | `3`    | 列数；对象形式按断点响应                          |
-| gutter     | `number \| [number, number]`                            | `16`   | 间距：单值 = H/V 同；数组 = `[水平, 垂直]`        |
-| sequential | boolean                                                 | `false`| 顺序填充（保持原序，不做高度平衡）                |
+| 参数       | 类型                                                  | 默认值  | 说明                                       |
+| ---------- | ----------------------------------------------------- | ------- | ------------------------------------------ |
+| columns    | `number \| { xs?, sm?, md?, lg?, xl?, xxl?: number }` | `3`     | 列数；对象形式按断点响应                   |
+| gutter     | `number \| [number, number]`                          | `16`    | 间距：单值 = H/V 同；数组 = `[水平, 垂直]` |
+| sequential | boolean                                               | `false` | 顺序填充（保持原序，不做高度平衡）         |
 
 ### 断点对照（与 c-grid 一致）
 

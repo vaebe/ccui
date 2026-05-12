@@ -135,24 +135,24 @@ const size = ref(20)
 
 ### Props
 
-| 参数             | 类型                                                          | 默认值              | 说明                                              |
-| ---------------- | ------------------------------------------------------------- | ------------------- | ------------------------------------------------- |
-| current          | number                                                        | `1`                 | 当前页，支持 `v-model:current`                    |
-| total            | number                                                        | `0`                 | 总条数                                            |
-| pageSize         | number                                                        | `10`                | 每页条数，支持 `v-model:pageSize`                 |
-| pageSizeOptions  | `number[]`                                                    | `[10, 20, 50, 100]` | 切换 pageSize 的下拉选项                          |
-| showSizeChanger  | boolean                                                       | `false`             | 显示每页条数切换器                                |
-| showQuickJumper  | boolean                                                       | `false`             | 显示快速跳页输入                                  |
-| showTotal        | `boolean \| (total, range) => string`                         | `false`             | 显示总数；传函数自定义文案                        |
-| simple           | boolean                                                       | `false`             | 简洁模式                                          |
-| disabled         | boolean                                                       | `false`             | 整体禁用                                          |
-| hideOnSinglePage | boolean                                                       | `false`             | 只有 1 页时隐藏自身                               |
-| size             | `'default' \| 'small'`                                        | `'default'`         | 尺寸                                              |
+| 参数             | 类型                                  | 默认值              | 说明                              |
+| ---------------- | ------------------------------------- | ------------------- | --------------------------------- |
+| current          | number                                | `1`                 | 当前页，支持 `v-model:current`    |
+| total            | number                                | `0`                 | 总条数                            |
+| pageSize         | number                                | `10`                | 每页条数，支持 `v-model:pageSize` |
+| pageSizeOptions  | `number[]`                            | `[10, 20, 50, 100]` | 切换 pageSize 的下拉选项          |
+| showSizeChanger  | boolean                               | `false`             | 显示每页条数切换器                |
+| showQuickJumper  | boolean                               | `false`             | 显示快速跳页输入                  |
+| showTotal        | `boolean \| (total, range) => string` | `false`             | 显示总数；传函数自定义文案        |
+| simple           | boolean                               | `false`             | 简洁模式                          |
+| disabled         | boolean                               | `false`             | 整体禁用                          |
+| hideOnSinglePage | boolean                               | `false`             | 只有 1 页时隐藏自身               |
+| size             | `'default' \| 'small'`                | `'default'`         | 尺寸                              |
 
 ### Events
 
-| 事件名            | 回调签名                                | 说明              |
-| ----------------- | --------------------------------------- | ----------------- |
-| update:current    | `(page: number)`                        | 页码变化          |
-| update:pageSize   | `(size: number)`                        | 每页条数变化      |
-| change            | `(page: number, pageSize: number)`      | 页码或条数变化    |
+| 事件名          | 回调签名                           | 说明           |
+| --------------- | ---------------------------------- | -------------- |
+| update:current  | `(page: number)`                   | 页码变化       |
+| update:pageSize | `(size: number)`                   | 每页条数变化   |
+| change          | `(page: number, pageSize: number)` | 页码或条数变化 |

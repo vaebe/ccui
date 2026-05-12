@@ -122,7 +122,11 @@ refresh()
 <template>
   <c-skeleton :loading="loading" active avatar :paragraph="{ rows: 3 }">
     <div style="display: flex; gap: 12px">
-      <div style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600">CC</div>
+      <div
+        style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600"
+      >
+        CC
+      </div>
       <div>
         <h4 style="margin: 0">真实标题已加载</h4>
         <p style="margin: 4px 0; color: #666">这里是异步取回的内容…</p>
@@ -139,17 +143,17 @@ refresh()
 
 ### Props
 
-| 参数      | 类型                                                  | 默认值  | 说明                                                       |
-| --------- | ----------------------------------------------------- | ------- | ---------------------------------------------------------- |
-| active    | boolean                                               | `false` | 显示扫光动画                                               |
-| loading   | boolean                                               | `true`  | `false` 时显示默认插槽内容                                 |
-| avatar    | `boolean \| { shape, size }`                          | `false` | 头像占位                                                   |
-| title     | `boolean \| { width }`                                | `true`  | 标题占位                                                   |
-| paragraph | `boolean \| { rows, width }`                          | `true`  | 段落占位                                                   |
-| round     | boolean                                               | `false` | 圆角化占位条                                               |
+| 参数      | 类型                         | 默认值  | 说明                       |
+| --------- | ---------------------------- | ------- | -------------------------- |
+| active    | boolean                      | `false` | 显示扫光动画               |
+| loading   | boolean                      | `true`  | `false` 时显示默认插槽内容 |
+| avatar    | `boolean \| { shape, size }` | `false` | 头像占位                   |
+| title     | `boolean \| { width }`       | `true`  | 标题占位                   |
+| paragraph | `boolean \| { rows, width }` | `true`  | 段落占位                   |
+| round     | boolean                      | `false` | 圆角化占位条               |
 
 ### Slots
 
-| 名称    | 说明                                |
-| ------- | ----------------------------------- |
-| default | `loading=false` 时的真实内容渲染区   |
+| 名称    | 说明                               |
+| ------- | ---------------------------------- |
+| default | `loading=false` 时的真实内容渲染区 |

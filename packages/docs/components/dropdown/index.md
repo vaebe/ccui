@@ -163,34 +163,34 @@ const visible = ref(false)
 
 ### Props
 
-| 参数        | 类型                                  | 默认值           | 说明                                          |
-| ----------- | ------------------------------------- | ---------------- | --------------------------------------------- |
-| items       | `DropdownItem[]`                      | `[]`             | 菜单项列表                                    |
-| trigger     | `'hover' \| 'click' \| 'contextmenu'` | `'hover'`        | 触发方式                                      |
-| placement   | `PopoverPlacement`                    | `'bottom-start'` | 弹出方位（与 Popover 一致）                   |
-| disabled    | boolean                               | `false`          | 禁用整个下拉                                  |
-| visible     | boolean                               | `undefined`      | 受控显示状态，支持 `v-model:visible`          |
-| hideOnClick | boolean                               | `true`           | 点击菜单项后是否自动收起                      |
-| width       | `number \| string`                    | `''`             | 弹层最小宽度                                  |
+| 参数        | 类型                                  | 默认值           | 说明                                 |
+| ----------- | ------------------------------------- | ---------------- | ------------------------------------ |
+| items       | `DropdownItem[]`                      | `[]`             | 菜单项列表                           |
+| trigger     | `'hover' \| 'click' \| 'contextmenu'` | `'hover'`        | 触发方式                             |
+| placement   | `PopoverPlacement`                    | `'bottom-start'` | 弹出方位（与 Popover 一致）          |
+| disabled    | boolean                               | `false`          | 禁用整个下拉                         |
+| visible     | boolean                               | `undefined`      | 受控显示状态，支持 `v-model:visible` |
+| hideOnClick | boolean                               | `true`           | 点击菜单项后是否自动收起             |
+| width       | `number \| string`                    | `''`             | 弹层最小宽度                         |
 
 ### DropdownItem
 
-| 字段     | 类型              | 说明                                            |
-| -------- | ----------------- | ----------------------------------------------- |
-| key      | `string \| number`| 唯一标识                                        |
-| label    | string            | 显示文本                                        |
-| icon     | string            | 图标 class（可选）                              |
-| disabled | boolean           | 是否禁用                                        |
-| divided  | boolean           | 在该项上方加分隔线                              |
-| danger   | boolean           | 危险项样式（红色文本，hover 红底白字）          |
+| 字段     | 类型               | 说明                                   |
+| -------- | ------------------ | -------------------------------------- |
+| key      | `string \| number` | 唯一标识                               |
+| label    | string             | 显示文本                               |
+| icon     | string             | 图标 class（可选）                     |
+| disabled | boolean            | 是否禁用                               |
+| divided  | boolean            | 在该项上方加分隔线                     |
+| danger   | boolean            | 危险项样式（红色文本，hover 红底白字） |
 
 ### Events
 
-| 事件名         | 回调签名               | 触发时机              |
-| -------------- | ---------------------- | --------------------- |
-| select         | `(item: DropdownItem)` | 点击某一项时触发      |
-| update:visible | `(visible: boolean)`   | 弹层显示状态变化      |
-| visible-change | `(visible: boolean)`   | 同 `update:visible`   |
+| 事件名         | 回调签名               | 触发时机            |
+| -------------- | ---------------------- | ------------------- |
+| select         | `(item: DropdownItem)` | 点击某一项时触发    |
+| update:visible | `(visible: boolean)`   | 弹层显示状态变化    |
+| visible-change | `(visible: boolean)`   | 同 `update:visible` |
 
 ### Slots
 

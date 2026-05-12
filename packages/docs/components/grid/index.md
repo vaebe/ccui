@@ -160,21 +160,21 @@
 
 ### Row Props
 
-| 参数    | 类型                                                                             | 默认值    | 说明           |
-| ------- | -------------------------------------------------------------------------------- | --------- | -------------- |
-| justify | `'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'` | `'start'` | 水平对齐       |
-| align   | `'top' \| 'middle' \| 'bottom' \| 'stretch'`                                     | `'top'`   | 垂直对齐       |
-| gutter  | `number \| [number, number] \| Record<Breakpoint, number>`                       | `0`       | 栅格间距       |
-| wrap    | boolean                                                                          | `true`    | 自动换行       |
+| 参数    | 类型                                                                                  | 默认值    | 说明     |
+| ------- | ------------------------------------------------------------------------------------- | --------- | -------- |
+| justify | `'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'` | `'start'` | 水平对齐 |
+| align   | `'top' \| 'middle' \| 'bottom' \| 'stretch'`                                          | `'top'`   | 垂直对齐 |
+| gutter  | `number \| [number, number] \| Record<Breakpoint, number>`                            | `0`       | 栅格间距 |
+| wrap    | boolean                                                                               | `true`    | 自动换行 |
 
 ### Col Props
 
-| 参数               | 类型                                                              | 默认值 | 说明                           |
-| ------------------ | ----------------------------------------------------------------- | ------ | ------------------------------ |
-| span               | number                                                            | —      | 占据的栅格数 0–24              |
-| order              | number                                                            | —      | 排序                           |
-| offset             | number                                                            | —      | 左偏移                         |
-| push               | number                                                            | —      | 向右推                         |
-| pull               | number                                                            | —      | 向左拉                         |
-| flex               | `number \| string`                                                | —      | flex 简写（脱离栅格按 flex 分配）|
-| xs/sm/md/lg/xl/xxl | `number \| { span, offset, order, push, pull }`                   | —      | 响应式配置                     |
+| 参数               | 类型                                            | 默认值 | 说明                              |
+| ------------------ | ----------------------------------------------- | ------ | --------------------------------- |
+| span               | number                                          | —      | 占据的栅格数 0–24                 |
+| order              | number                                          | —      | 排序                              |
+| offset             | number                                          | —      | 左偏移                            |
+| push               | number                                          | —      | 向右推                            |
+| pull               | number                                          | —      | 向左拉                            |
+| flex               | `number \| string`                              | —      | flex 简写（脱离栅格按 flex 分配） |
+| xs/sm/md/lg/xl/xxl | `number \| { span, offset, order, push, pull }` | —      | 响应式配置                        |

@@ -185,28 +185,28 @@ function destroyAll() {
 
 ### message 命名空间
 
-| 方法                                 | 说明                                                          |
-| ------------------------------------ | ------------------------------------------------------------- |
-| `message.open(options)`              | 通用入口，传完整 `MessageOptions`，返回 `MessageHandle`       |
-| `message.info(content, duration?)`   | 信息（默认 3 秒），返回 `MessageHandle`                       |
-| `message.success(content, duration?)`| 成功                                                          |
-| `message.warning(content, duration?)`| 警告                                                          |
-| `message.error(content, duration?)`  | 错误                                                          |
-| `message.loading(content, duration?)`| 加载（带旋转图标）                                            |
-| `message.destroy()`                  | 关闭全部当前提示并卸载容器                                    |
+| 方法                                  | 说明                                                    |
+| ------------------------------------- | ------------------------------------------------------- |
+| `message.open(options)`               | 通用入口，传完整 `MessageOptions`，返回 `MessageHandle` |
+| `message.info(content, duration?)`    | 信息（默认 3 秒），返回 `MessageHandle`                 |
+| `message.success(content, duration?)` | 成功                                                    |
+| `message.warning(content, duration?)` | 警告                                                    |
+| `message.error(content, duration?)`   | 错误                                                    |
+| `message.loading(content, duration?)` | 加载（带旋转图标）                                      |
+| `message.destroy()`                   | 关闭全部当前提示并卸载容器                              |
 
 ### MessageOptions
 
-| 字段        | 类型              | 默认       | 说明                                              |
-| ----------- | ----------------- | ---------- | ------------------------------------------------- |
-| content     | `string \| VNode` | —          | 提示内容（必填）                                  |
-| type        | `MessageType`     | `'info'`   | 类型：`info` / `success` / `warning` / `error` / `loading` |
-| duration    | number            | `3000`     | 停留毫秒数；`0` 表示不自动关闭                    |
-| showClose   | boolean           | `false`    | 是否显示关闭按钮                                  |
-| icon        | string            | `''`       | 自定义 icon 名（覆盖默认类型图标）                |
-| customClass | string            | `''`       | 自定义类名，便于做样式覆盖                        |
-| onClose     | `() => void`      | —          | 关闭时回调（自动 / 主动 / destroy 都会触发）      |
-| key         | `string \| number`| —          | 标识，便于以同一 key 替换已存在的提示             |
+| 字段        | 类型               | 默认     | 说明                                                       |
+| ----------- | ------------------ | -------- | ---------------------------------------------------------- |
+| content     | `string \| VNode`  | —        | 提示内容（必填）                                           |
+| type        | `MessageType`      | `'info'` | 类型：`info` / `success` / `warning` / `error` / `loading` |
+| duration    | number             | `3000`   | 停留毫秒数；`0` 表示不自动关闭                             |
+| showClose   | boolean            | `false`  | 是否显示关闭按钮                                           |
+| icon        | string             | `''`     | 自定义 icon 名（覆盖默认类型图标）                         |
+| customClass | string             | `''`     | 自定义类名，便于做样式覆盖                                 |
+| onClose     | `() => void`       | —        | 关闭时回调（自动 / 主动 / destroy 都会触发）               |
+| key         | `string \| number` | —        | 标识，便于以同一 key 替换已存在的提示                      |
 
 ### MessageHandle
 

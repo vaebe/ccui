@@ -227,35 +227,35 @@ function beforeChange(isChecked, label) {
 
 ### CheckBox Props
 
-| 参数         | 类型                                                       | 默认值  | 说明                                                                                                        |
-| ------------ | ---------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------- |
-| modelValue   | boolean                                                    | —       | 必选，单独使用时绑定布尔；group 内由 group 接管                                                             |
-| label        | `string \| number \| boolean`                              | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值                                                     |
-| disabled     | boolean                                                    | `false` | 是否禁用                                                                                                    |
-| color        | string                                                     | —       | 自定义选中色                                                                                                |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —       | 切换前的钩子                                                                                                |
+| 参数         | 类型                                                             | 默认值  | 说明                                                    |
+| ------------ | ---------------------------------------------------------------- | ------- | ------------------------------------------------------- |
+| modelValue   | boolean                                                          | —       | 必选，单独使用时绑定布尔；group 内由 group 接管         |
+| label        | `string \| number \| boolean`                                    | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值 |
+| disabled     | boolean                                                          | `false` | 是否禁用                                                |
+| color        | string                                                           | —       | 自定义选中色                                            |
+| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —       | 切换前的钩子                                            |
 
 ### CheckBox Events
 
-| 事件   | 回调签名                  | 说明                  |
-| ------ | ------------------------- | --------------------- |
-| change | `(value: boolean)`        | 值改变时触发          |
+| 事件   | 回调签名           | 说明         |
+| ------ | ------------------ | ------------ |
+| change | `(value: boolean)` | 值改变时触发 |
 
 ### CheckBoxGroup Props
 
-| 参数         | 类型                                                       | 默认值     | 说明                          |
-| ------------ | ---------------------------------------------------------- | ---------- | ----------------------------- |
-| modelValue   | `Array<string \| number>`                                  | `[]`       | 已选项数组，支持 `v-model`    |
-| disabled     | boolean                                                    | `false`    | 整组禁用                      |
-| color        | string                                                     | —          | 整组的选中色                  |
-| direction    | `'row' \| 'column'`                                        | `'column'` | 排列方向                      |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —          | 切换前的钩子                  |
+| 参数         | 类型                                                             | 默认值     | 说明                       |
+| ------------ | ---------------------------------------------------------------- | ---------- | -------------------------- |
+| modelValue   | `Array<string \| number>`                                        | `[]`       | 已选项数组，支持 `v-model` |
+| disabled     | boolean                                                          | `false`    | 整组禁用                   |
+| color        | string                                                           | —          | 整组的选中色               |
+| direction    | `'row' \| 'column'`                                              | `'column'` | 排列方向                   |
+| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —          | 切换前的钩子               |
 
 ### CheckBoxGroup Events
 
-| 事件   | 回调签名                  | 说明           |
-| ------ | ------------------------- | -------------- |
-| change | `(values: string[])`      | 选中项改变时触发 |
+| 事件   | 回调签名             | 说明             |
+| ------ | -------------------- | ---------------- |
+| change | `(values: string[])` | 选中项改变时触发 |
 
 ### Slots
 

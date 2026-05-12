@@ -44,13 +44,7 @@
 <template>
   <div style="display: flex; gap: 32px">
     <c-statistic title="EN" :value="1234567.89" :precision="2" />
-    <c-statistic
-      title="EU"
-      :value="1234567.89"
-      :precision="2"
-      group-separator="."
-      decimal-separator=","
-    />
+    <c-statistic title="EU" :value="1234567.89" :precision="2" group-separator="." decimal-separator="," />
   </div>
 </template>
 ```
@@ -124,11 +118,7 @@ const deadlineFull = computed(() => Date.now() + 1000 * 60 * 60 * 28)
 <template>
   <div style="display: flex; gap: 32px; flex-wrap: wrap">
     <c-statistic-countdown title="距开始" :value="deadlineHM" format="HH:mm:ss" />
-    <c-statistic-countdown
-      title="距活动结束"
-      :value="deadlineFull"
-      format="DD 天 HH:mm:ss"
-    />
+    <c-statistic-countdown title="距活动结束" :value="deadlineFull" format="DD 天 HH:mm:ss" />
   </div>
 </template>
 ```
@@ -139,25 +129,25 @@ const deadlineFull = computed(() => Date.now() + 1000 * 60 * 60 * 28)
 
 ### Statistic Props
 
-| 参数             | 类型                | 默认值 | 说明                                              |
-| ---------------- | ------------------- | ------ | ------------------------------------------------- |
-| title            | string              | `''`   | 数字上方的小标题                                  |
-| value            | `number \| string`  | `0`    | 数值                                              |
-| precision        | number              | —      | 小数位数；不传按原值                              |
-| prefix           | string              | `''`   | 前缀（如 `¥`、`+`）                               |
-| suffix           | string              | `''`   | 后缀（如 `%`、`单`）                              |
-| groupSeparator   | string              | `','`  | 千分位符                                          |
-| decimalSeparator | string              | `'.'`  | 小数分隔符                                        |
-| valueStyle       | `CSSProperties`     | `{}`   | 数字行内样式                                      |
-| loading          | boolean             | `false`| 加载中（显示骨架）                                |
+| 参数             | 类型               | 默认值  | 说明                 |
+| ---------------- | ------------------ | ------- | -------------------- |
+| title            | string             | `''`    | 数字上方的小标题     |
+| value            | `number \| string` | `0`     | 数值                 |
+| precision        | number             | —       | 小数位数；不传按原值 |
+| prefix           | string             | `''`    | 前缀（如 `¥`、`+`）  |
+| suffix           | string             | `''`    | 后缀（如 `%`、`单`） |
+| groupSeparator   | string             | `','`   | 千分位符             |
+| decimalSeparator | string             | `'.'`   | 小数分隔符           |
+| valueStyle       | `CSSProperties`    | `{}`    | 数字行内样式         |
+| loading          | boolean            | `false` | 加载中（显示骨架）   |
 
 ### StatisticCountdown Props
 
-| 参数       | 类型                              | 默认值        | 说明                              |
-| ---------- | --------------------------------- | ------------- | --------------------------------- |
-| title      | string                            | `''`          | 标题                              |
-| value      | `number \| string \| Date`        | `0`           | 截止时间（毫秒时间戳 / Date 等）  |
-| format     | string                            | `'HH:mm:ss'`  | 格式串：`DD HH mm ss SSS`         |
-| prefix     | string                            | `''`          | 前缀                              |
-| suffix     | string                            | `''`          | 后缀                              |
-| valueStyle | `CSSProperties`                   | `{}`          | 数字行内样式                      |
+| 参数       | 类型                       | 默认值       | 说明                             |
+| ---------- | -------------------------- | ------------ | -------------------------------- |
+| title      | string                     | `''`         | 标题                             |
+| value      | `number \| string \| Date` | `0`          | 截止时间（毫秒时间戳 / Date 等） |
+| format     | string                     | `'HH:mm:ss'` | 格式串：`DD HH mm ss SSS`        |
+| prefix     | string                     | `''`         | 前缀                             |
+| suffix     | string                     | `''`         | 后缀                             |
+| valueStyle | `CSSProperties`            | `{}`         | 数字行内样式                     |

@@ -4,14 +4,14 @@
 
 ## 命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `ccui-cli create [-t component\|ccui]` | 交互式创建组件目录，或重新生成 `vue-ccui.ts` / `sidebar.ts` / `enSidebar.ts` |
-| `ccui-cli build` | vite 构建组件库；命令完成后自动触发 `generate:theme` 与 `generate:dts` |
-| `ccui-cli generate:theme` | 把 `theme/themes/{light,dark}.ts` 编译为 `theme.scss` + `darkTheme.css` |
-| `ccui-cli generate:dts` | 写入 `build/index.d.ts` 并复制到各子包目录 |
-| `ccui-cli release [-v <version>]` | 把 `build/` 整理为可发布产物（写 package.json、复制 README 与主题资源） |
-| `ccui-cli code-check [-t eslint\|unit-test] [-c <names>]` | 跑 ESLint 或单元测试，可用逗号指定组件名 |
+| 命令                                                      | 说明                                                                         |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `ccui-cli create [-t component\|ccui]`                    | 交互式创建组件目录，或重新生成 `vue-ccui.ts` / `sidebar.ts` / `enSidebar.ts` |
+| `ccui-cli build`                                          | vite 构建组件库；命令完成后自动触发 `generate:theme` 与 `generate:dts`       |
+| `ccui-cli generate:theme`                                 | 把 `theme/themes/{light,dark}.ts` 编译为 `theme.scss` + `darkTheme.css`      |
+| `ccui-cli generate:dts`                                   | 写入 `build/index.d.ts` 并复制到各子包目录                                   |
+| `ccui-cli release [-v <version>]`                         | 把 `build/` 整理为可发布产物（写 package.json、复制 README 与主题资源）      |
+| `ccui-cli code-check [-t eslint\|unit-test] [-c <names>]` | 跑 ESLint 或单元测试，可用逗号指定组件名                                     |
 
 `--help` / `-V` 可在任意子命令上使用。
 

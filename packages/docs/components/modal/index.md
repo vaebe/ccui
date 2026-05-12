@@ -39,13 +39,7 @@ const v = ref(false)
 
 <template>
   <c-button @click="v = true">删除...</c-button>
-  <c-modal
-    v-model:visible="v"
-    title="确认删除"
-    ok-text="删除"
-    cancel-text="再想想"
-    ok-type="danger"
-  >
+  <c-modal v-model:visible="v" title="确认删除" ok-text="删除" cancel-text="再想想" ok-type="danger">
     删除后无法恢复，确认要删除吗？
   </c-modal>
 </template>
@@ -77,12 +71,7 @@ function handleOk() {
 
 <template>
   <c-button type="primary" @click="visible = true">打开</c-button>
-  <c-modal
-    v-model:visible="visible"
-    title="异步提交"
-    :ok-loading="loading"
-    @ok="handleOk"
-  >
+  <c-modal v-model:visible="visible" title="异步提交" :ok-loading="loading" @ok="handleOk">
     点击「确定」后会模拟 1.5s 的请求再关闭弹窗。
   </c-modal>
 </template>
@@ -165,41 +154,41 @@ const v = ref(false)
 
 ### Props
 
-| 参数           | 类型                                  | 默认值     | 说明                                  |
-| -------------- | ------------------------------------- | ---------- | ------------------------------------- |
-| visible        | boolean                               | `false`    | 是否可见，支持 `v-model:visible`      |
-| title          | string                                | `''`       | 标题（也可用 `title` slot 自定义）    |
-| width          | `number \| string`                    | `520`      | 宽度，数字为 px                       |
-| closable       | boolean                               | `true`     | 是否显示右上角关闭按钮                |
-| maskClosable   | boolean                               | `true`     | 点击蒙层是否关闭                      |
-| closeOnEsc     | boolean                               | `true`     | 按 Esc 是否关闭                       |
-| centered       | boolean                               | `false`    | 是否垂直居中显示                      |
-| mask           | boolean                               | `true`     | 是否显示蒙层                          |
-| okText         | string                                | `'确 定'`  | 确认按钮文案                          |
-| cancelText     | string                                | `'取 消'`  | 取消按钮文案                          |
-| okType         | `'primary' \| 'danger' \| 'default'`  | `'primary'`| 确认按钮类型                          |
-| okLoading      | boolean                               | `false`    | 确认按钮加载态                        |
-| hideFooter     | boolean                               | `false`    | 隐藏底部按钮区                        |
-| destroyOnClose | boolean                               | `false`    | 关闭时销毁内部内容                    |
-| zIndex         | number                                | `1000`     | z-index                               |
-| appendToBody   | boolean                               | `true`     | 是否挂到 body                         |
+| 参数           | 类型                                 | 默认值      | 说明                               |
+| -------------- | ------------------------------------ | ----------- | ---------------------------------- |
+| visible        | boolean                              | `false`     | 是否可见，支持 `v-model:visible`   |
+| title          | string                               | `''`        | 标题（也可用 `title` slot 自定义） |
+| width          | `number \| string`                   | `520`       | 宽度，数字为 px                    |
+| closable       | boolean                              | `true`      | 是否显示右上角关闭按钮             |
+| maskClosable   | boolean                              | `true`      | 点击蒙层是否关闭                   |
+| closeOnEsc     | boolean                              | `true`      | 按 Esc 是否关闭                    |
+| centered       | boolean                              | `false`     | 是否垂直居中显示                   |
+| mask           | boolean                              | `true`      | 是否显示蒙层                       |
+| okText         | string                               | `'确 定'`   | 确认按钮文案                       |
+| cancelText     | string                               | `'取 消'`   | 取消按钮文案                       |
+| okType         | `'primary' \| 'danger' \| 'default'` | `'primary'` | 确认按钮类型                       |
+| okLoading      | boolean                              | `false`     | 确认按钮加载态                     |
+| hideFooter     | boolean                              | `false`     | 隐藏底部按钮区                     |
+| destroyOnClose | boolean                              | `false`     | 关闭时销毁内部内容                 |
+| zIndex         | number                               | `1000`      | z-index                            |
+| appendToBody   | boolean                              | `true`      | 是否挂到 body                      |
 
 ### Events
 
-| 事件名         | 回调签名             | 触发时机                |
-| -------------- | -------------------- | ----------------------- |
-| update:visible | `(visible: boolean)` | 显示状态变化            |
-| ok             | `()`                 | 点击确认按钮            |
-| cancel         | `()`                 | 点击取消 / 关闭 / Esc   |
-| close          | `()`                 | 关闭过程中（先于 cancel）|
-| open           | `()`                 | 开始展开                |
-| opened         | `()`                 | 展开动画完成            |
-| closed         | `()`                 | 收起动画完成            |
+| 事件名         | 回调签名             | 触发时机                  |
+| -------------- | -------------------- | ------------------------- |
+| update:visible | `(visible: boolean)` | 显示状态变化              |
+| ok             | `()`                 | 点击确认按钮              |
+| cancel         | `()`                 | 点击取消 / 关闭 / Esc     |
+| close          | `()`                 | 关闭过程中（先于 cancel） |
+| open           | `()`                 | 开始展开                  |
+| opened         | `()`                 | 展开动画完成              |
+| closed         | `()`                 | 收起动画完成              |
 
 ### Slots
 
-| 名称    | slot 参数            | 说明           |
-| ------- | -------------------- | -------------- |
-| default | -                    | 弹窗内容       |
-| title   | -                    | 自定义标题区   |
-| footer  | `{ ok, cancel }`     | 自定义底部按钮 |
+| 名称    | slot 参数        | 说明           |
+| ------- | ---------------- | -------------- |
+| default | -                | 弹窗内容       |
+| title   | -                | 自定义标题区   |
+| footer  | `{ ok, cancel }` | 自定义底部按钮 |

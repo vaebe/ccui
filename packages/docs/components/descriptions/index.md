@@ -92,14 +92,22 @@
     bordered
     size="small"
     :column="3"
-    :items="[{ label: 'A', value: '1' }, { label: 'B', value: '2' }, { label: 'C', value: '3' }]"
+    :items="[
+      { label: 'A', value: '1' },
+      { label: 'B', value: '2' },
+      { label: 'C', value: '3' },
+    ]"
   />
 
   <p style="color: #666; margin: 16px 0 6px">default</p>
   <c-descriptions
     bordered
     :column="3"
-    :items="[{ label: 'A', value: '1' }, { label: 'B', value: '2' }, { label: 'C', value: '3' }]"
+    :items="[
+      { label: 'A', value: '1' },
+      { label: 'B', value: '2' },
+      { label: 'C', value: '3' },
+    ]"
   />
 
   <p style="color: #666; margin: 16px 0 6px">middle</p>
@@ -107,7 +115,11 @@
     bordered
     size="middle"
     :column="3"
-    :items="[{ label: 'A', value: '1' }, { label: 'B', value: '2' }, { label: 'C', value: '3' }]"
+    :items="[
+      { label: 'A', value: '1' },
+      { label: 'B', value: '2' },
+      { label: 'C', value: '3' },
+    ]"
   />
 </template>
 ```
@@ -171,23 +183,23 @@
 
 ### Descriptions Props
 
-| 参数     | 类型                              | 默认值          | 说明                                 |
-| -------- | --------------------------------- | --------------- | ------------------------------------ |
-| title    | string                            | `''`            | 顶部标题                             |
-| extra    | string                            | `''`            | 标题右端附加内容                     |
-| bordered | boolean                           | `false`         | 表格风格的边框                       |
-| column   | number                            | `3`             | 列数                                 |
-| size     | `'small' \| 'default' \| 'middle'`| `'default'`     | 尺寸                                 |
-| layout   | `'horizontal' \| 'vertical'`      | `'horizontal'`  | label / value 排布                   |
-| colon    | boolean                           | `true`          | 显示冒号                             |
-| items    | `DescriptionsItem[]`              | —               | 描述项数据                           |
+| 参数     | 类型                               | 默认值         | 说明               |
+| -------- | ---------------------------------- | -------------- | ------------------ |
+| title    | string                             | `''`           | 顶部标题           |
+| extra    | string                             | `''`           | 标题右端附加内容   |
+| bordered | boolean                            | `false`        | 表格风格的边框     |
+| column   | number                             | `3`            | 列数               |
+| size     | `'small' \| 'default' \| 'middle'` | `'default'`    | 尺寸               |
+| layout   | `'horizontal' \| 'vertical'`       | `'horizontal'` | label / value 排布 |
+| colon    | boolean                            | `true`         | 显示冒号           |
+| items    | `DescriptionsItem[]`               | —              | 描述项数据         |
 
 ### DescriptionsItem
 
-| 字段         | 类型                  | 说明                          |
-| ------------ | --------------------- | ----------------------------- |
-| label        | string                | 标签                          |
-| value        | `string \| number`    | 值                            |
-| span         | number                | 跨列数（默认 1）              |
-| labelStyle   | `CSSProperties`       | 单项 label 样式               |
-| contentStyle | `CSSProperties`       | 单项内容样式                  |
+| 字段         | 类型               | 说明             |
+| ------------ | ------------------ | ---------------- |
+| label        | string             | 标签             |
+| value        | `string \| number` | 值               |
+| span         | number             | 跨列数（默认 1） |
+| labelStyle   | `CSSProperties`    | 单项 label 样式  |
+| contentStyle | `CSSProperties`    | 单项内容样式     |

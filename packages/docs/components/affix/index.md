@@ -73,9 +73,7 @@ function onChange(val: boolean) {
 <template>
   <p>当前是否固定：{{ fixed ? '是' : '否' }}</p>
   <c-affix :offset-top="100" @change="onChange">
-    <c-button :type="fixed ? 'primary' : 'default'">{{
-      fixed ? '已固定到顶部 100px' : '未固定，向下滚动'
-    }}</c-button>
+    <c-button :type="fixed ? 'primary' : 'default'">{{ fixed ? '已固定到顶部 100px' : '未固定，向下滚动' }}</c-button>
   </c-affix>
 </template>
 ```
@@ -123,18 +121,18 @@ const containerRef = ref<HTMLElement | null>(null)
 
 ### Props
 
-| 参数         | 类型                                                              | 默认值      | 说明                                                                                       |
-| ------------ | ----------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| offsetTop    | number                                                            | `0`         | 距离窗口（或目标容器）顶部多少像素后开始固定。`offsetBottom` 未传时启用顶部模式            |
-| offsetBottom | number                                                            | `undefined` | 距离窗口（或目标容器）底部多少像素后开始固定。设置该值则忽略 `offsetTop`                   |
-| target       | `string \| HTMLElement \| () => HTMLElement \| Window \| null`    | `window`    | 滚动容器。可传 CSS 选择器、DOM 节点或返回 DOM 节点的函数                                   |
-| zIndex       | number                                                            | `10`        | 固定时元素的 `z-index`                                                                     |
+| 参数         | 类型                                                           | 默认值      | 说明                                                                            |
+| ------------ | -------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------- |
+| offsetTop    | number                                                         | `0`         | 距离窗口（或目标容器）顶部多少像素后开始固定。`offsetBottom` 未传时启用顶部模式 |
+| offsetBottom | number                                                         | `undefined` | 距离窗口（或目标容器）底部多少像素后开始固定。设置该值则忽略 `offsetTop`        |
+| target       | `string \| HTMLElement \| () => HTMLElement \| Window \| null` | `window`    | 滚动容器。可传 CSS 选择器、DOM 节点或返回 DOM 节点的函数                        |
+| zIndex       | number                                                         | `10`        | 固定时元素的 `z-index`                                                          |
 
 ### Events
 
-| 事件名 | 回调签名             | 触发时机                       |
-| ------ | -------------------- | ------------------------------ |
-| change | `(fixed: boolean)`   | 固定状态变化（进入/退出固定）  |
+| 事件名 | 回调签名           | 触发时机                      |
+| ------ | ------------------ | ----------------------------- |
+| change | `(fixed: boolean)` | 固定状态变化（进入/退出固定） |
 
 ## 注意事项
 

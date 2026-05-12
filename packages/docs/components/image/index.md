@@ -10,11 +10,7 @@
 
 ```vue
 <template>
-  <c-image
-    src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-    width="200"
-    alt="示例图"
-  />
+  <c-image src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" width="200" alt="示例图" />
 </template>
 ```
 
@@ -123,11 +119,7 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
 
 ```vue
 <template>
-  <c-image
-    src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-    :width="200"
-    :height="120"
-  >
+  <c-image src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" :width="200" :height="120">
     <template #placeholder>
       <div
         style="
@@ -166,29 +158,29 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
 
 ### Props
 
-| 参数       | 类型                | 默认值     | 说明                                              |
-| ---------- | ------------------- | ---------- | ------------------------------------------------- |
-| src        | string              | —          | 必填，图片地址                                    |
-| alt        | string              | `''`       | 替代文本                                          |
-| fit        | `ImageFit`          | `'fill'`   | 与 CSS `object-fit` 同义                          |
-| width      | `number \| string`  | `''`       | 宽度（数字按 px）                                 |
-| height     | `number \| string`  | `''`       | 高度                                              |
-| preview    | boolean             | `false`    | 启用大图预览，点击弹层                            |
-| fallback   | string              | `''`       | 加载失败时使用的兜底图片地址                      |
-| lazy       | boolean             | `false`    | 懒加载（IntersectionObserver）                    |
-| rootMargin | string              | `'0px'`    | 配合 lazy 的预加载距离                            |
+| 参数       | 类型               | 默认值   | 说明                           |
+| ---------- | ------------------ | -------- | ------------------------------ |
+| src        | string             | —        | 必填，图片地址                 |
+| alt        | string             | `''`     | 替代文本                       |
+| fit        | `ImageFit`         | `'fill'` | 与 CSS `object-fit` 同义       |
+| width      | `number \| string` | `''`     | 宽度（数字按 px）              |
+| height     | `number \| string` | `''`     | 高度                           |
+| preview    | boolean            | `false`  | 启用大图预览，点击弹层         |
+| fallback   | string             | `''`     | 加载失败时使用的兜底图片地址   |
+| lazy       | boolean            | `false`  | 懒加载（IntersectionObserver） |
+| rootMargin | string             | `'0px'`  | 配合 lazy 的预加载距离         |
 
 ### Events
 
-| 事件名 | 回调签名             | 触发时机              |
-| ------ | -------------------- | --------------------- |
-| load   | `(e: Event)`         | 图片加载完成          |
-| error  | `(e: Event)`         | 加载失败              |
-| click  | `(e: MouseEvent)`    | 点击图片              |
+| 事件名 | 回调签名          | 触发时机     |
+| ------ | ----------------- | ------------ |
+| load   | `(e: Event)`      | 图片加载完成 |
+| error  | `(e: Event)`      | 加载失败     |
+| click  | `(e: MouseEvent)` | 点击图片     |
 
 ### Slots
 
-| 名称        | 说明                          |
-| ----------- | ----------------------------- |
-| placeholder | 自定义加载中占位              |
-| error       | 自定义加载失败展示            |
+| 名称        | 说明               |
+| ----------- | ------------------ |
+| placeholder | 自定义加载中占位   |
+| error       | 自定义加载失败展示 |

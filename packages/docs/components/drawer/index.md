@@ -135,12 +135,7 @@ const visible = ref(false)
 
 <template>
   <c-button @click="visible = true">打开（不可点蒙层关、Esc 不关）</c-button>
-  <c-drawer
-    v-model:visible="visible"
-    title="只能点 × 才能关"
-    :mask-closable="false"
-    :close-on-esc="false"
-  >
+  <c-drawer v-model:visible="visible" title="只能点 × 才能关" :mask-closable="false" :close-on-esc="false">
     <p>这种用法适合"必须显式确认"的流程。</p>
   </c-drawer>
 </template>
@@ -181,35 +176,35 @@ const text = ref('')
 
 ### Props
 
-| 参数           | 类型                | 默认值     | 说明                                                  |
-| -------------- | ------------------- | ---------- | ----------------------------------------------------- |
-| visible        | boolean             | `false`    | 是否显示，支持 `v-model:visible`                      |
-| title          | string              | `''`       | 标题                                                  |
-| placement      | `DrawerPlacement`   | `'right'`  | 弹出方向：`left` / `right` / `top` / `bottom`         |
-| size           | `number \| string`  | `378`      | 横向时为宽，纵向时为高（数字按 px，字符串按原值）     |
-| closable       | boolean             | `true`     | 是否显示右上 × 关闭按钮                               |
-| maskClosable   | boolean             | `true`     | 点遮罩是否关闭                                        |
-| closeOnEsc     | boolean             | `true`     | Esc 键是否关闭                                        |
-| mask           | boolean             | `true`     | 是否显示遮罩                                          |
-| showFooter     | boolean             | `false`    | 是否启用底部区域（即便没有 `#footer` slot 也保留高度）|
-| destroyOnClose | boolean             | `false`    | 关闭后销毁内部 DOM                                    |
-| zIndex         | number              | `1000`     | 层级                                                  |
-| appendToBody   | boolean             | `true`     | 是否挂到 `<body>` 下，避开父层 overflow / transform 影响 |
+| 参数           | 类型               | 默认值    | 说明                                                     |
+| -------------- | ------------------ | --------- | -------------------------------------------------------- |
+| visible        | boolean            | `false`   | 是否显示，支持 `v-model:visible`                         |
+| title          | string             | `''`      | 标题                                                     |
+| placement      | `DrawerPlacement`  | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`            |
+| size           | `number \| string` | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）        |
+| closable       | boolean            | `true`    | 是否显示右上 × 关闭按钮                                  |
+| maskClosable   | boolean            | `true`    | 点遮罩是否关闭                                           |
+| closeOnEsc     | boolean            | `true`    | Esc 键是否关闭                                           |
+| mask           | boolean            | `true`    | 是否显示遮罩                                             |
+| showFooter     | boolean            | `false`   | 是否启用底部区域（即便没有 `#footer` slot 也保留高度）   |
+| destroyOnClose | boolean            | `false`   | 关闭后销毁内部 DOM                                       |
+| zIndex         | number             | `1000`    | 层级                                                     |
+| appendToBody   | boolean            | `true`    | 是否挂到 `<body>` 下，避开父层 overflow / transform 影响 |
 
 ### Events
 
-| 事件名         | 回调签名                | 触发时机              |
-| -------------- | ----------------------- | --------------------- |
-| update:visible | `(visible: boolean)`    | 显示状态变化          |
-| open           | `()`                    | 开启动画开始          |
-| opened         | `()`                    | 开启动画结束          |
-| close          | `()`                    | 关闭被触发            |
-| closed         | `()`                    | 关闭动画结束          |
+| 事件名         | 回调签名             | 触发时机     |
+| -------------- | -------------------- | ------------ |
+| update:visible | `(visible: boolean)` | 显示状态变化 |
+| open           | `()`                 | 开启动画开始 |
+| opened         | `()`                 | 开启动画结束 |
+| close          | `()`                 | 关闭被触发   |
+| closed         | `()`                 | 关闭动画结束 |
 
 ### Slots
 
-| 名称    | 说明                          |
-| ------- | ----------------------------- |
-| default | 抽屉主体内容                  |
-| title   | 自定义标题（覆盖 `title` 属性）|
-| footer  | 自定义底部内容                |
+| 名称    | 说明                            |
+| ------- | ------------------------------- |
+| default | 抽屉主体内容                    |
+| title   | 自定义标题（覆盖 `title` 属性） |
+| footer  | 自定义底部内容                  |

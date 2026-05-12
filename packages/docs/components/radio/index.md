@@ -204,34 +204,34 @@ function onChange(val) {
 
 ### Radio Props
 
-| 参数         | 类型                  | 默认值  | 说明                                                                          |
-| ------------ | --------------------- | ------- | ----------------------------------------------------------------------------- |
-| modelValue   | `string \| number`    | —       | 必选，绑定值（与 `label` 比较决定是否选中），支持 `v-model`                    |
-| label        | `string \| number`    | `''`    | 必选，本项的值                                                                |
-| name         | string                | `''`    | 原生 `name` 属性                                                              |
-| disabled     | boolean               | `false` | 是否禁用                                                                      |
-| beforeChange | `BeforeChangeType`    | —       | 切换前的钩子，返回 `false` 阻止切换                                           |
+| 参数         | 类型               | 默认值  | 说明                                                        |
+| ------------ | ------------------ | ------- | ----------------------------------------------------------- |
+| modelValue   | `string \| number` | —       | 必选，绑定值（与 `label` 比较决定是否选中），支持 `v-model` |
+| label        | `string \| number` | `''`    | 必选，本项的值                                              |
+| name         | string             | `''`    | 原生 `name` 属性                                            |
+| disabled     | boolean            | `false` | 是否禁用                                                    |
+| beforeChange | `BeforeChangeType` | —       | 切换前的钩子，返回 `false` 阻止切换                         |
 
 ### Radio Events
 
-| 事件   | 回调签名                  | 说明           |
-| ------ | ------------------------- | -------------- |
-| change | `(value: string)`         | 值改变时触发   |
+| 事件   | 回调签名          | 说明         |
+| ------ | ----------------- | ------------ |
+| change | `(value: string)` | 值改变时触发 |
 
 ### RadioGroup Props
 
-| 参数         | 类型               | 默认值      | 说明                                |
-| ------------ | ------------------ | ----------- | ----------------------------------- |
-| modelValue   | `string \| number` | —           | 必选，被选中的值，支持 `v-model`    |
-| disabled     | boolean            | `false`     | 整组禁用                            |
-| direction    | `DirectionType`    | `'column'`  | 排列方向（`row` / `column`）        |
-| beforeChange | `BeforeChangeType` | —           | 切换前的钩子，返回 `false` 阻止     |
+| 参数         | 类型               | 默认值     | 说明                             |
+| ------------ | ------------------ | ---------- | -------------------------------- |
+| modelValue   | `string \| number` | —          | 必选，被选中的值，支持 `v-model` |
+| disabled     | boolean            | `false`    | 整组禁用                         |
+| direction    | `DirectionType`    | `'column'` | 排列方向（`row` / `column`）     |
+| beforeChange | `BeforeChangeType` | —          | 切换前的钩子，返回 `false` 阻止  |
 
 ### RadioGroup Events
 
-| 事件   | 回调签名             | 说明           |
-| ------ | -------------------- | -------------- |
-| change | `(value: string)`    | 值改变时触发   |
+| 事件   | 回调签名          | 说明         |
+| ------ | ----------------- | ------------ |
+| change | `(value: string)` | 值改变时触发 |
 
 ### Slots
 

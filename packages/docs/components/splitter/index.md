@@ -154,24 +154,24 @@ function onResize(arr) {
 
 ### Splitter Props
 
-| 参数   | 类型                            | 默认值         | 说明     |
-| ------ | ------------------------------- | -------------- | -------- |
-| layout | `'horizontal' \| 'vertical'`    | `'horizontal'` | 布局方向 |
+| 参数   | 类型                         | 默认值         | 说明     |
+| ------ | ---------------------------- | -------------- | -------- |
+| layout | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向 |
 
 ### Splitter Events
 
-| 事件名      | 回调签名             | 触发时机            |
-| ----------- | -------------------- | ------------------- |
-| resize      | `(sizes: number[])`  | 拖拽过程中持续触发  |
-| resizeStart | `(sizes: number[])`  | 开始拖拽            |
-| resizeEnd   | `(sizes: number[])`  | 结束拖拽            |
+| 事件名      | 回调签名            | 触发时机           |
+| ----------- | ------------------- | ------------------ |
+| resize      | `(sizes: number[])` | 拖拽过程中持续触发 |
+| resizeStart | `(sizes: number[])` | 开始拖拽           |
+| resizeEnd   | `(sizes: number[])` | 结束拖拽           |
 
 ### SplitterPanel Props
 
-| 参数        | 类型               | 默认值 | 说明                       |
-| ----------- | ------------------ | ------ | -------------------------- |
-| size        | `number \| string` | —      | 由外部状态接管的尺寸       |
-| defaultSize | `number \| string` | —      | 初始尺寸（不接管时生效）   |
-| min         | `number \| string` | `0`    | 最小尺寸                   |
-| max         | `number \| string` | —      | 最大尺寸                   |
+| 参数        | 类型               | 默认值 | 说明                          |
+| ----------- | ------------------ | ------ | ----------------------------- |
+| size        | `number \| string` | —      | 由外部状态接管的尺寸          |
+| defaultSize | `number \| string` | —      | 初始尺寸（不接管时生效）      |
+| min         | `number \| string` | `0`    | 最小尺寸                      |
+| max         | `number \| string` | —      | 最大尺寸                      |
 | resizable   | boolean            | `true` | 是否在该面板右 / 下侧画拖拽条 |

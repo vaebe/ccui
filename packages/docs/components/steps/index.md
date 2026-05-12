@@ -36,11 +36,7 @@
   <c-steps
     :current="1"
     status="error"
-    :items="[
-      { title: '已完成' },
-      { title: '出错了', description: '无法继续' },
-      { title: '待处理' },
-    ]"
+    :items="[{ title: '已完成' }, { title: '出错了', description: '无法继续' }, { title: '待处理' }]"
   />
 </template>
 ```
@@ -100,11 +96,7 @@
 
 ```vue
 <template>
-  <c-steps
-    size="small"
-    :current="1"
-    :items="[{ title: '准备' }, { title: '执行' }, { title: '完成' }]"
-  />
+  <c-steps size="small" :current="1" :items="[{ title: '准备' }, { title: '执行' }, { title: '完成' }]" />
 </template>
 ```
 
@@ -144,24 +136,14 @@
 import { ref } from 'vue'
 
 const cur = ref(0)
-const items = [
-  { title: '第一步' },
-  { title: '第二步' },
-  { title: '第三步' },
-  { title: '第四步' },
-]
+const items = [{ title: '第一步' }, { title: '第二步' }, { title: '第三步' }, { title: '第四步' }]
 </script>
 
 <template>
   <c-steps :current="cur" :items="items" @update:current="(i) => (cur = i)" />
   <div style="margin-top: 12px">
     <c-button :disabled="cur === 0" @click="cur -= 1">上一步</c-button>
-    <c-button
-      type="primary"
-      style="margin-inline-start: 8px"
-      :disabled="cur === items.length - 1"
-      @click="cur += 1"
-    >
+    <c-button type="primary" style="margin-inline-start: 8px" :disabled="cur === items.length - 1" @click="cur += 1">
       下一步
     </c-button>
   </div>
@@ -174,33 +156,33 @@ const items = [
 
 ### Props
 
-| 参数           | 类型                              | 默认值          | 说明                                              |
-| -------------- | --------------------------------- | --------------- | ------------------------------------------------- |
-| current        | number                            | `0`             | 当前步骤（从 0 开始），支持 `v-model:current`     |
-| items          | `StepItem[]`                      | `[]`            | 步骤数据                                          |
-| direction      | `'horizontal' \| 'vertical'`      | `'horizontal'`  | 排列方向                                          |
-| size           | `'default' \| 'small'`            | `'default'`     | 尺寸                                              |
-| type           | `'default' \| 'navigation'`       | `'default'`     | 风格：默认 / 导航                                 |
-| status         | `StepStatus`                      | `'process'`     | 当前步骤的全局状态                                |
-| labelPlacement | `'horizontal' \| 'vertical'`      | `'horizontal'`  | 描述与标题排布                                    |
-| progressDot    | boolean                           | `false`         | 点状步骤条                                        |
+| 参数           | 类型                         | 默认值         | 说明                                          |
+| -------------- | ---------------------------- | -------------- | --------------------------------------------- |
+| current        | number                       | `0`            | 当前步骤（从 0 开始），支持 `v-model:current` |
+| items          | `StepItem[]`                 | `[]`           | 步骤数据                                      |
+| direction      | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向                                      |
+| size           | `'default' \| 'small'`       | `'default'`    | 尺寸                                          |
+| type           | `'default' \| 'navigation'`  | `'default'`    | 风格：默认 / 导航                             |
+| status         | `StepStatus`                 | `'process'`    | 当前步骤的全局状态                            |
+| labelPlacement | `'horizontal' \| 'vertical'` | `'horizontal'` | 描述与标题排布                                |
+| progressDot    | boolean                      | `false`        | 点状步骤条                                    |
 
 ### StepItem
 
-| 字段        | 类型         | 说明                          |
-| ----------- | ------------ | ----------------------------- |
-| title       | string       | 标题                          |
-| description | string       | 子说明                        |
-| icon        | string       | 自定义 icon class             |
-| status      | `StepStatus` | 单项状态（覆盖全局）          |
-| disabled    | boolean      | 禁用本步骤的点击              |
-| subTitle    | string       | 标题右侧的辅助文案            |
+| 字段        | 类型         | 说明                 |
+| ----------- | ------------ | -------------------- |
+| title       | string       | 标题                 |
+| description | string       | 子说明               |
+| icon        | string       | 自定义 icon class    |
+| status      | `StepStatus` | 单项状态（覆盖全局） |
+| disabled    | boolean      | 禁用本步骤的点击     |
+| subTitle    | string       | 标题右侧的辅助文案   |
 
 ### Events
 
-| 事件名         | 回调签名             | 说明           |
-| -------------- | -------------------- | -------------- |
-| update:current | `(index: number)`    | 当前步骤变化   |
+| 事件名         | 回调签名          | 说明         |
+| -------------- | ----------------- | ------------ |
+| update:current | `(index: number)` | 当前步骤变化 |
 
 ### 类型定义
 

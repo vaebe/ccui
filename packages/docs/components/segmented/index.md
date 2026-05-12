@@ -131,25 +131,25 @@ function onChange(val) {
 
 ### Props
 
-| 参数       | 类型                                       | 默认值     | 说明                                              |
-| ---------- | ------------------------------------------ | ---------- | ------------------------------------------------- |
-| modelValue | `string \| number`                         | `''`       | 选中值，支持 `v-model`                            |
-| options    | `(SegmentedOption \| string \| number)[]`  | `[]`       | 选项列表                                          |
-| block      | boolean                                    | `false`    | 撑满父容器                                        |
-| disabled   | boolean                                    | `false`    | 整组禁用                                          |
-| size       | `'small' \| 'middle' \| 'large'`           | `'middle'` | 尺寸                                              |
+| 参数       | 类型                                      | 默认值     | 说明                   |
+| ---------- | ----------------------------------------- | ---------- | ---------------------- |
+| modelValue | `string \| number`                        | `''`       | 选中值，支持 `v-model` |
+| options    | `(SegmentedOption \| string \| number)[]` | `[]`       | 选项列表               |
+| block      | boolean                                   | `false`    | 撑满父容器             |
+| disabled   | boolean                                   | `false`    | 整组禁用               |
+| size       | `'small' \| 'middle' \| 'large'`          | `'middle'` | 尺寸                   |
 
 ### SegmentedOption
 
-| 字段     | 类型                | 说明              |
-| -------- | ------------------- | ----------------- |
-| label    | string              | 显示文字          |
-| value    | `string \| number`  | 必填，选中值      |
-| disabled | boolean             | 单项禁用          |
-| icon     | string              | 自定义 icon class |
+| 字段     | 类型               | 说明              |
+| -------- | ------------------ | ----------------- |
+| label    | string             | 显示文字          |
+| value    | `string \| number` | 必填，选中值      |
+| disabled | boolean            | 单项禁用          |
+| icon     | string             | 自定义 icon class |
 
 ### Events
 
-| 事件名 | 回调签名                       | 说明      |
-| ------ | ------------------------------ | --------- |
-| change | `(value: string \| number)`    | 切换时触发 |
+| 事件名 | 回调签名                    | 说明       |
+| ------ | --------------------------- | ---------- |
+| change | `(value: string \| number)` | 切换时触发 |

@@ -193,28 +193,28 @@ function clear() {
 
 ### notification 命名空间
 
-| 方法                          | 说明                                                           |
-| ----------------------------- | -------------------------------------------------------------- |
-| `notification.open(options)`  | 通用入口，传 `NotificationOptions`，返回 `NotificationHandle`  |
-| `notification.info(options)`  | info 类型                                                      |
-| `notification.success(...)`   | success 类型                                                   |
-| `notification.warning(...)`   | warning 类型                                                   |
-| `notification.error(...)`     | error 类型                                                     |
-| `notification.destroy()`      | 关闭并卸载所有通知容器                                         |
+| 方法                         | 说明                                                          |
+| ---------------------------- | ------------------------------------------------------------- |
+| `notification.open(options)` | 通用入口，传 `NotificationOptions`，返回 `NotificationHandle` |
+| `notification.info(options)` | info 类型                                                     |
+| `notification.success(...)`  | success 类型                                                  |
+| `notification.warning(...)`  | warning 类型                                                  |
+| `notification.error(...)`    | error 类型                                                    |
+| `notification.destroy()`     | 关闭并卸载所有通知容器                                        |
 
 ### NotificationOptions
 
-| 字段        | 类型                  | 默认         | 说明                                                                     |
-| ----------- | --------------------- | ------------ | ------------------------------------------------------------------------ |
-| title       | string                | —            | 通知标题（建议必填）                                                     |
-| description | `string \| VNode`     | —            | 通知正文                                                                 |
-| type        | `NotificationType`    | `'info'`     | 类型：`info` / `success` / `warning` / `error`                           |
-| placement   | `NotificationPlacement` | `'topRight'` | 弹出位置：`topRight` / `topLeft` / `bottomRight` / `bottomLeft`          |
-| duration    | number                | `4500`       | 停留毫秒数；`0` 表示不自动关闭                                           |
-| showClose   | boolean               | `true`       | 是否显示关闭按钮                                                         |
-| icon        | string                | `''`         | 自定义 icon 名（覆盖默认类型图标）                                       |
-| customClass | string                | `''`         | 自定义类名                                                               |
-| onClose     | `() => void`          | —            | 关闭时回调                                                               |
+| 字段        | 类型                    | 默认         | 说明                                                            |
+| ----------- | ----------------------- | ------------ | --------------------------------------------------------------- |
+| title       | string                  | —            | 通知标题（建议必填）                                            |
+| description | `string \| VNode`       | —            | 通知正文                                                        |
+| type        | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                  |
+| placement   | `NotificationPlacement` | `'topRight'` | 弹出位置：`topRight` / `topLeft` / `bottomRight` / `bottomLeft` |
+| duration    | number                  | `4500`       | 停留毫秒数；`0` 表示不自动关闭                                  |
+| showClose   | boolean                 | `true`       | 是否显示关闭按钮                                                |
+| icon        | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                              |
+| customClass | string                  | `''`         | 自定义类名                                                      |
+| onClose     | `() => void`            | —            | 关闭时回调                                                      |
 
 ### NotificationHandle
 

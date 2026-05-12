@@ -11,9 +11,7 @@
 ```vue
 <template>
   <c-watermark content="vue3-ccui">
-    <div style="height: 200px; background: #f6f8fa; padding: 16px">
-      水印保护区域，文字会随宽高密铺。
-    </div>
+    <div style="height: 200px; background: #f6f8fa; padding: 16px">水印保护区域，文字会随宽高密铺。</div>
   </c-watermark>
 </template>
 ```
@@ -29,9 +27,7 @@
 ```vue
 <template>
   <c-watermark :content="['CCUI', 'Confidential']">
-    <div style="height: 200px; background: #fff; border: 1px dashed #d9d9d9; padding: 16px">
-      多行水印
-    </div>
+    <div style="height: 200px; background: #fff; border: 1px dashed #d9d9d9; padding: 16px">多行水印</div>
   </c-watermark>
 </template>
 ```
@@ -65,10 +61,7 @@
 
 ```vue
 <template>
-  <c-watermark
-    content="Important"
-    :font="{ color: 'rgba(255, 0, 0, 0.18)', fontSize: 18, fontWeight: 600 }"
-  >
+  <c-watermark content="Important" :font="{ color: 'rgba(255, 0, 0, 0.18)', fontSize: 18, fontWeight: 600 }">
     <div style="height: 160px; background: #fff; border: 1px solid #f0f0f0; padding: 16px">
       自定义颜色 / 字号 / 粗细
     </div>
@@ -110,9 +103,7 @@
     :width="120"
     :height="64"
   >
-    <div style="height: 200px; background: #fff; border: 1px solid #f0f0f0; padding: 16px">
-      图片水印（背景层）
-    </div>
+    <div style="height: 200px; background: #fff; border: 1px solid #f0f0f0; padding: 16px">图片水印（背景层）</div>
   </c-watermark>
 </template>
 ```
@@ -123,14 +114,14 @@
 
 ### Props
 
-| 参数    | 类型                       | 默认值       | 说明                                              |
-| ------- | -------------------------- | ------------ | ------------------------------------------------- |
-| content | `string \| string[]`       | `''`         | 文字水印（数组按多行排列）                        |
-| image   | string                     | `''`         | 图片水印地址（优先于 `content`）                  |
-| width   | number                     | `120`        | 单个水印块的宽度（px）                            |
-| height  | number                     | `64`         | 单个水印块的高度（px）                            |
-| rotate  | number                     | `-22`        | 旋转角度（度）                                    |
-| zIndex  | number                     | `9`          | 水印层 `z-index`                                  |
-| gap     | `[number, number]`         | `[100, 100]` | 水印间距 `[水平, 垂直]`                           |
-| offset  | `[number, number]`         | `undefined`  | 偏移量，控制起点位置                              |
-| font    | `WatermarkFont`            | `{}`         | 字体样式（color / fontSize / fontWeight 等）      |
+| 参数    | 类型                 | 默认值       | 说明                                         |
+| ------- | -------------------- | ------------ | -------------------------------------------- |
+| content | `string \| string[]` | `''`         | 文字水印（数组按多行排列）                   |
+| image   | string               | `''`         | 图片水印地址（优先于 `content`）             |
+| width   | number               | `120`        | 单个水印块的宽度（px）                       |
+| height  | number               | `64`         | 单个水印块的高度（px）                       |
+| rotate  | number               | `-22`        | 旋转角度（度）                               |
+| zIndex  | number               | `9`          | 水印层 `z-index`                             |
+| gap     | `[number, number]`   | `[100, 100]` | 水印间距 `[水平, 垂直]`                      |
+| offset  | `[number, number]`   | `undefined`  | 偏移量，控制起点位置                         |
+| font    | `WatermarkFont`      | `{}`         | 字体样式（color / fontSize / fontWeight 等） |

@@ -132,7 +132,9 @@ const routes = [
 
 ```vue
 <template>
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #fafafa; border-radius: 6px">
+  <div
+    style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #fafafa; border-radius: 6px"
+  >
     <c-breadcrumb>
       <c-breadcrumb-item><a href="#">首页</a></c-breadcrumb-item>
       <c-breadcrumb-item><a href="#">订单</a></c-breadcrumb-item>
@@ -149,30 +151,30 @@ const routes = [
 
 ### Breadcrumb Props
 
-| 参数      | 类型                | 默认值 | 说明     |
-| --------- | ------------------- | ------ | -------- |
-| separator | string              | `'/'`  | 分隔符   |
+| 参数      | 类型                | 默认值 | 说明                           |
+| --------- | ------------------- | ------ | ------------------------------ |
+| separator | string              | `'/'`  | 分隔符                         |
 | routes    | `BreadcrumbRoute[]` | `[]`   | 路由数据，提供时优先于默认插槽 |
 
 ### BreadcrumbRoute
 
-| 字段           | 类型   | 说明                                                  |
-| -------------- | ------ | ----------------------------------------------------- |
-| breadcrumbName | string | 显示文本                                              |
-| title          | string | `breadcrumbName` 的别名                               |
-| href           | string | 链接地址                                              |
-| path           | string | 链接地址（兼容字段，与 `href` 等价）                  |
+| 字段           | 类型   | 说明                                 |
+| -------------- | ------ | ------------------------------------ |
+| breadcrumbName | string | 显示文本                             |
+| title          | string | `breadcrumbName` 的别名              |
+| href           | string | 链接地址                             |
+| path           | string | 链接地址（兼容字段，与 `href` 等价） |
 
 ### BreadcrumbItem Props
 
-| 参数      | 类型   | 默认值 | 说明                                |
-| --------- | ------ | ------ | ----------------------------------- |
-| href      | string | `''`   | 设置后整项渲染为 `<a>`              |
-| separator | string | `''`   | 单项级别覆盖父级 `separator`        |
+| 参数      | 类型   | 默认值 | 说明                         |
+| --------- | ------ | ------ | ---------------------------- |
+| href      | string | `''`   | 设置后整项渲染为 `<a>`       |
+| separator | string | `''`   | 单项级别覆盖父级 `separator` |
 
 ### BreadcrumbItem Slots
 
-| 名称      | 说明                          |
-| --------- | ----------------------------- |
-| default   | 内容                          |
-| separator | 自定义分隔符（覆盖字符形式）  |
+| 名称      | 说明                         |
+| --------- | ---------------------------- |
+| default   | 内容                         |
+| separator | 自定义分隔符（覆盖字符形式） |

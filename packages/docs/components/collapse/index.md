@@ -19,9 +19,7 @@ const value = ref(['1'])
   <c-collapse v-model="value">
     <c-collapse-item name="1" title="面板一">默认展开的内容。</c-collapse-item>
     <c-collapse-item name="2" title="面板二">点击标题展开。</c-collapse-item>
-    <c-collapse-item name="3" title="面板三（禁用）" disabled>
-      面板被禁用，无法展开。
-    </c-collapse-item>
+    <c-collapse-item name="3" title="面板三（禁用）" disabled> 面板被禁用，无法展开。 </c-collapse-item>
   </c-collapse>
 </template>
 ```
@@ -171,33 +169,33 @@ function onChange(names) {
 
 ### Collapse Props
 
-| 参数               | 类型                                       | 默认值    | 说明                                                  |
-| ------------------ | ------------------------------------------ | --------- | ----------------------------------------------------- |
-| modelValue         | `string \| number \| (string\|number)[]`   | `[]`      | 展开的 name；accordion 模式下是单值                   |
-| accordion          | boolean                                    | `false`   | 手风琴模式（同时只展开一项）                          |
-| bordered           | boolean                                    | `true`    | 是否带外框                                            |
-| ghost              | boolean                                    | `false`   | 透明背景（无填充）                                    |
-| expandIconPosition | `'start' \| 'end'`                         | `'start'` | 展开图标位置                                          |
+| 参数               | 类型                                     | 默认值    | 说明                                |
+| ------------------ | ---------------------------------------- | --------- | ----------------------------------- |
+| modelValue         | `string \| number \| (string\|number)[]` | `[]`      | 展开的 name；accordion 模式下是单值 |
+| accordion          | boolean                                  | `false`   | 手风琴模式（同时只展开一项）        |
+| bordered           | boolean                                  | `true`    | 是否带外框                          |
+| ghost              | boolean                                  | `false`   | 透明背景（无填充）                  |
+| expandIconPosition | `'start' \| 'end'`                       | `'start'` | 展开图标位置                        |
 
 ### Collapse Events
 
-| 事件名            | 回调签名                                   | 触发时机              |
-| ----------------- | ------------------------------------------ | --------------------- |
-| update:modelValue | `(names: string \| number \| (...)[])`     | 激活项变化            |
-| change            | 同上                                       | 同上（语义化别名）    |
+| 事件名            | 回调签名                               | 触发时机           |
+| ----------------- | -------------------------------------- | ------------------ |
+| update:modelValue | `(names: string \| number \| (...)[])` | 激活项变化         |
+| change            | 同上                                   | 同上（语义化别名） |
 
 ### CollapseItem Props
 
-| 参数      | 类型                | 默认值 | 说明                       |
-| --------- | ------------------- | ------ | -------------------------- |
-| name      | `string \| number`  | —      | 必填，唯一标识             |
-| title     | string              | `''`   | 标题（也可用 `#title` slot） |
-| disabled  | boolean             | `false`| 禁用展开                   |
-| showArrow | boolean             | `true` | 是否显示展开箭头           |
+| 参数      | 类型               | 默认值  | 说明                         |
+| --------- | ------------------ | ------- | ---------------------------- |
+| name      | `string \| number` | —       | 必填，唯一标识               |
+| title     | string             | `''`    | 标题（也可用 `#title` slot） |
+| disabled  | boolean            | `false` | 禁用展开                     |
+| showArrow | boolean            | `true`  | 是否显示展开箭头             |
 
 ### CollapseItem Slots
 
-| 名称    | 说明        |
-| ------- | ----------- |
-| default | 面板内容    |
-| title   | 自定义标题  |
+| 名称    | 说明       |
+| ------- | ---------- |
+| default | 面板内容   |
+| title   | 自定义标题 |

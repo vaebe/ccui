@@ -154,12 +154,12 @@
 
 ### Props
 
-| 参数      | 类型                                          | 默认值     | 说明                                  |
-| --------- | --------------------------------------------- | ---------- | ------------------------------------- |
-| vertical  | boolean                                       | `false`    | 垂直方向                              |
-| wrap      | `boolean \| 'wrap' \| 'nowrap' \| 'wrap-reverse'` | `false`  | 是否换行                              |
-| justify   | `CSSProperties['justifyContent']`             | `'normal'` | 对应 `justify-content`                |
-| align     | `CSSProperties['alignItems']`                 | `'normal'` | 对应 `align-items`                    |
-| flex      | string                                        | `'normal'` | flex 简写（如 `'1'`, `'0 0 auto'`）   |
-| gap       | `string \| number`                            | —          | 间距：`small` / `middle` / `large` 或数字 |
-| component | string                                        | `'div'`    | 渲染的标签                            |
+| 参数      | 类型                                              | 默认值     | 说明                                      |
+| --------- | ------------------------------------------------- | ---------- | ----------------------------------------- |
+| vertical  | boolean                                           | `false`    | 垂直方向                                  |
+| wrap      | `boolean \| 'wrap' \| 'nowrap' \| 'wrap-reverse'` | `false`    | 是否换行                                  |
+| justify   | `CSSProperties['justifyContent']`                 | `'normal'` | 对应 `justify-content`                    |
+| align     | `CSSProperties['alignItems']`                     | `'normal'` | 对应 `align-items`                        |
+| flex      | string                                            | `'normal'` | flex 简写（如 `'1'`, `'0 0 auto'`）       |
+| gap       | `string \| number`                                | —          | 间距：`small` / `middle` / `large` 或数字 |
+| component | string                                            | `'div'`    | 渲染的标签                                |

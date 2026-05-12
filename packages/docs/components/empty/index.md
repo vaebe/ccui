@@ -61,10 +61,7 @@
 
 ```vue
 <template>
-  <c-empty
-    description="搜索没有命中任何条目"
-    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-  />
+  <c-empty description="搜索没有命中任何条目" image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
 </template>
 ```
 
@@ -123,16 +120,16 @@
 
 ### Props
 
-| 参数        | 类型              | 默认值       | 说明           |
-| ----------- | ----------------- | ------------ | -------------- |
-| description | string            | `'暂无数据'` | 描述文案       |
-| image       | string            | `''`         | 自定义图片 URL |
-| imageStyle  | `CSSProperties`   | `{}`         | 图片元素样式   |
+| 参数        | 类型            | 默认值       | 说明           |
+| ----------- | --------------- | ------------ | -------------- |
+| description | string          | `'暂无数据'` | 描述文案       |
+| image       | string          | `''`         | 自定义图片 URL |
+| imageStyle  | `CSSProperties` | `{}`         | 图片元素样式   |
 
 ### Slots
 
-| 名称        | 说明               |
-| ----------- | ------------------ |
-| default     | 描述下方的额外内容 |
-| description | 自定义描述（覆盖 `description` 属性）|
-| image       | 自定义插画         |
+| 名称        | 说明                                  |
+| ----------- | ------------------------------------- |
+| default     | 描述下方的额外内容                    |
+| description | 自定义描述（覆盖 `description` 属性） |
+| image       | 自定义插画                            |

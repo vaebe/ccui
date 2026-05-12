@@ -71,10 +71,7 @@
 
 ```vue
 <template>
-  <c-avatar
-    name="刘武"
-    img-src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-  />
+  <c-avatar name="刘武" img-src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" />
   &nbsp;
   <c-avatar
     name="刘武"
@@ -135,13 +132,13 @@
 
 ### Props
 
-| 参数       | 类型                                                 | 默认值  | 说明                                              |
-| ---------- | ---------------------------------------------------- | ------- | ------------------------------------------------- |
-| name       | string                                               | -       | 用于生成头像文字（可不传，回退到默认占位）        |
-| gender     | `'male' \| 'female' \| string`                       | -       | 影响默认背景色                                    |
-| width      | number                                               | `36`    | 宽度（px）                                        |
-| height     | number                                               | `36`    | 高度（px）                                        |
-| isRound    | boolean                                              | `true`  | 是否圆形                                          |
-| imgSrc     | string                                               | -       | 自定义图片                                        |
-| customText | string                                               | -       | 自定义文字（不做提取）                            |
-| fit        | `'fill' \| 'contain' \| 'cover' \| 'none' \| 'scale-down'` | `cover` | 图片填充方式                                  |
+| 参数       | 类型                                                       | 默认值  | 说明                                       |
+| ---------- | ---------------------------------------------------------- | ------- | ------------------------------------------ |
+| name       | string                                                     | -       | 用于生成头像文字（可不传，回退到默认占位） |
+| gender     | `'male' \| 'female' \| string`                             | -       | 影响默认背景色                             |
+| width      | number                                                     | `36`    | 宽度（px）                                 |
+| height     | number                                                     | `36`    | 高度（px）                                 |
+| isRound    | boolean                                                    | `true`  | 是否圆形                                   |
+| imgSrc     | string                                                     | -       | 自定义图片                                 |
+| customText | string                                                     | -       | 自定义文字（不做提取）                     |
+| fit        | `'fill' \| 'contain' \| 'cover' \| 'none' \| 'scale-down'` | `cover` | 图片填充方式                               |

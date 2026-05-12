@@ -184,7 +184,10 @@ const m3 = reactive({ keyword: '', status: '' })
     <c-form-item label="状态" prop="status">
       <c-select
         v-model="m3.status"
-        :options="[{ label: '在售', value: 'on' }, { label: '下架', value: 'off' }]"
+        :options="[
+          { label: '在售', value: 'on' },
+          { label: '下架', value: 'off' },
+        ]"
         style="width: 120px"
       />
     </c-form-item>
@@ -217,8 +220,7 @@ async function validate() {
   try {
     await formRef.value.validate()
     log.value = '校验通过'
-  }
-  catch {
+  } catch {
     log.value = '校验未通过'
   }
 }
@@ -261,7 +263,7 @@ import { reactive } from 'vue'
 const profile = reactive({ name: '' })
 const billing = reactive({ address: '' })
 
-function onFinish(name: string, info: { values: any, forms: Record<string, any> }) {
+function onFinish(name: string, info: { values: any; forms: Record<string, any> }) {
   if (name === 'profile') {
     billing.address = info.forms.billing.getFieldsValue().address
   }

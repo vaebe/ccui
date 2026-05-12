@@ -33,15 +33,9 @@
 
 ```vue
 <template>
-  <c-card header="一直显示阴影" style="margin-bottom: 12px">
-    shadow="always"
-  </c-card>
-  <c-card shadow="hover" header="鼠标悬停时显示阴影" style="margin-bottom: 12px">
-    shadow="hover"
-  </c-card>
-  <c-card shadow="never" header="不显示阴影">
-    shadow="never"
-  </c-card>
+  <c-card header="一直显示阴影" style="margin-bottom: 12px"> shadow="always" </c-card>
+  <c-card shadow="hover" header="鼠标悬停时显示阴影" style="margin-bottom: 12px"> shadow="hover" </c-card>
+  <c-card shadow="never" header="不显示阴影"> shadow="never" </c-card>
 </template>
 ```
 
@@ -135,15 +129,15 @@
 
 ### Props
 
-| 参数      | 类型                              | 默认值                | 说明                                                                |
-| --------- | --------------------------------- | --------------------- | ------------------------------------------------------------------- |
-| header    | string                            | `''`                  | 卡片标题（也可用 `header` slot 自定义）                             |
-| bodyStyle | object                            | `{ padding: '20px' }` | 内容区样式                                                          |
-| shadow    | `'always' \| 'hover' \| 'never'`  | `'always'`            | 阴影显示时机                                                        |
+| 参数      | 类型                             | 默认值                | 说明                                    |
+| --------- | -------------------------------- | --------------------- | --------------------------------------- |
+| header    | string                           | `''`                  | 卡片标题（也可用 `header` slot 自定义） |
+| bodyStyle | object                           | `{ padding: '20px' }` | 内容区样式                              |
+| shadow    | `'always' \| 'hover' \| 'never'` | `'always'`            | 阴影显示时机                            |
 
 ### Slots
 
-| 名称    | 说明           |
-| ------- | -------------- |
-| default | 卡片内容       |
-| header  | 自定义标题区   |
+| 名称    | 说明         |
+| ------- | ------------ |
+| default | 卡片内容     |
+| header  | 自定义标题区 |

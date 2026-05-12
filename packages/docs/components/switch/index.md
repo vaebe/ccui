@@ -127,21 +127,21 @@ function onChange(val: boolean) {
 
 ### Props
 
-| 参数              | 类型                          | 默认值      | 说明                       |
-| ----------------- | ----------------------------- | ----------- | -------------------------- |
-| modelValue        | `boolean \| string \| number` | `false`     | v-model 绑定值             |
-| checkedValue      | `boolean \| string \| number` | `true`      | 选中时的值                 |
-| uncheckedValue    | `boolean \| string \| number` | `false`     | 未选中时的值               |
-| disabled          | boolean                       | `false`     | 禁用                       |
-| loading           | boolean                       | `false`     | 加载状态                   |
-| size              | `'default' \| 'small'`        | `'default'` | 大小                       |
-| checkedChildren   | string                        | `--`        | 选中时显示的内容           |
-| uncheckedChildren | string                        | `--`        | 未选中时显示的内容         |
-| autofocus         | boolean                       | `false`     | 自动聚焦                   |
+| 参数              | 类型                          | 默认值      | 说明               |
+| ----------------- | ----------------------------- | ----------- | ------------------ |
+| modelValue        | `boolean \| string \| number` | `false`     | v-model 绑定值     |
+| checkedValue      | `boolean \| string \| number` | `true`      | 选中时的值         |
+| uncheckedValue    | `boolean \| string \| number` | `false`     | 未选中时的值       |
+| disabled          | boolean                       | `false`     | 禁用               |
+| loading           | boolean                       | `false`     | 加载状态           |
+| size              | `'default' \| 'small'`        | `'default'` | 大小               |
+| checkedChildren   | string                        | `--`        | 选中时显示的内容   |
+| uncheckedChildren | string                        | `--`        | 未选中时显示的内容 |
+| autofocus         | boolean                       | `false`     | 自动聚焦           |
 
 ### Events
 
-| 事件名 | 回调签名                  | 触发时机       |
-| ------ | ------------------------- | -------------- |
-| change | `(value, e: MouseEvent)`  | 状态改变时触发 |
-| click  | `(e: MouseEvent)`         | 点击时触发     |
+| 事件名 | 回调签名                 | 触发时机       |
+| ------ | ------------------------ | -------------- |
+| change | `(value, e: MouseEvent)` | 状态改变时触发 |
+| click  | `(e: MouseEvent)`        | 点击时触发     |

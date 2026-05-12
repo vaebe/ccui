@@ -15,11 +15,7 @@
 
 ```vue
 <template>
-  <c-result
-    status="success"
-    title="操作成功！"
-    sub-title="订单 #2025-04-001 已提交，结果将于三天内反馈。"
-  >
+  <c-result status="success" title="操作成功！" sub-title="订单 #2025-04-001 已提交，结果将于三天内反馈。">
     <template #extra>
       <c-button type="primary">查看订单</c-button>
       <c-button style="margin-inline-start: 8px">返回首页</c-button>
@@ -151,12 +147,12 @@
 
 ### Props
 
-| 参数     | 类型                                                                  | 默认值   | 说明           |
-| -------- | --------------------------------------------------------------------- | -------- | -------------- |
+| 参数     | 类型                                                                     | 默认值   | 说明           |
+| -------- | ------------------------------------------------------------------------ | -------- | -------------- |
 | status   | `'success' \| 'error' \| 'info' \| 'warning' \| '404' \| '403' \| '500'` | `'info'` | 状态           |
-| title    | string                                                                | —        | 主标题         |
-| subTitle | string                                                                | —        | 副标题         |
-| icon     | string                                                                | —        | 自定义图标类名 |
+| title    | string                                                                   | —        | 主标题         |
+| subTitle | string                                                                   | —        | 副标题         |
+| icon     | string                                                                   | —        | 自定义图标类名 |
 
 ### Slots
 

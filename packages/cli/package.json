@@ -2,7 +2,6 @@
   "name": "ccui-cli",
   "version": "1.0.0",
   "description": "ccui-cli",
-  "type": "module",
   "keywords": [
     "cli"
   ],
@@ -19,6 +18,7 @@
     "lib",
     "types"
   ],
+  "type": "module",
   "main": "lib/ccui-cli.js",
   "scripts": {
     "build:docs": "pnpm --filter docs predev && pnpm --filter docs docs:build",

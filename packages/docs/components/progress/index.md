@@ -103,12 +103,7 @@
   <div style="display: flex; gap: 24px">
     <c-progress type="dashboard" :percent="60" />
     <c-progress type="dashboard" :percent="80" status="active" />
-    <c-progress
-      type="dashboard"
-      :percent="92"
-      status="exception"
-      :format="(p) => `${p}%\n紧张`"
-    />
+    <c-progress type="dashboard" :percent="92" status="exception" :format="(p) => `${p}%\n紧张`" />
   </div>
 </template>
 ```
@@ -164,15 +159,15 @@ onBeforeUnmount(stop)
 
 ### Props
 
-| 参数        | 类型                                                  | 默认值      | 说明                                              |
-| ----------- | ----------------------------------------------------- | ----------- | ------------------------------------------------- |
-| percent     | number                                                | `0`         | 百分比 0–100                                      |
-| type        | `'line' \| 'circle' \| 'dashboard'`                   | `'line'`    | 形态                                              |
-| status      | `'normal' \| 'active' \| 'success' \| 'exception'`    | `'normal'`  | 状态                                              |
-| showInfo    | boolean                                               | `true`      | 显示百分比数字                                    |
-| strokeColor | string                                                | —           | 进度条颜色（不传走主色 token）                    |
-| trailColor  | string                                                | —           | 未完成段颜色                                      |
-| strokeWidth | number                                                | —           | 线宽（line: px；circle: 描边粗细）                |
-| width       | number                                                | `120`       | 圆形 / 仪表盘的画布尺寸（px）                     |
-| size        | `'default' \| 'small' \| number \| [number, number]`  | `'default'` | 尺寸                                              |
-| format      | `(percent: number) => string`                         | —           | 自定义中心 / 后置文案                             |
+| 参数        | 类型                                                 | 默认值      | 说明                               |
+| ----------- | ---------------------------------------------------- | ----------- | ---------------------------------- |
+| percent     | number                                               | `0`         | 百分比 0–100                       |
+| type        | `'line' \| 'circle' \| 'dashboard'`                  | `'line'`    | 形态                               |
+| status      | `'normal' \| 'active' \| 'success' \| 'exception'`   | `'normal'`  | 状态                               |
+| showInfo    | boolean                                              | `true`      | 显示百分比数字                     |
+| strokeColor | string                                               | —           | 进度条颜色（不传走主色 token）     |
+| trailColor  | string                                               | —           | 未完成段颜色                       |
+| strokeWidth | number                                               | —           | 线宽（line: px；circle: 描边粗细） |
+| width       | number                                               | `120`       | 圆形 / 仪表盘的画布尺寸（px）      |
+| size        | `'default' \| 'small' \| number \| [number, number]` | `'default'` | 尺寸                               |
+| format      | `(percent: number) => string`                        | —           | 自定义中心 / 后置文案              |

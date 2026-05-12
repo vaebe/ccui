@@ -112,11 +112,11 @@
 
 ### Props
 
-| 参数                   | 类型                            | 默认值       | 说明                     |
-| ---------------------- | ------------------------------- | ------------ | ------------------------ |
-| color                  | string                          | -            | 分隔线颜色               |
-| direction              | `'horizontal' \| 'vertical'`    | `horizontal` | 分隔线方向               |
-| borderStyle            | `'solid' \| 'dashed'`           | `solid`      | 线型                     |
-| contentPosition        | `'left' \| 'right' \| 'center'` | `center`     | 文案位置                 |
-| contentColor           | string                          | -            | 文案文字颜色             |
-| contentBackgroundColor | string                          | -            | 文案文字背景色           |
+| 参数                   | 类型                            | 默认值       | 说明           |
+| ---------------------- | ------------------------------- | ------------ | -------------- |
+| color                  | string                          | -            | 分隔线颜色     |
+| direction              | `'horizontal' \| 'vertical'`    | `horizontal` | 分隔线方向     |
+| borderStyle            | `'solid' \| 'dashed'`           | `solid`      | 线型           |
+| contentPosition        | `'left' \| 'right' \| 'center'` | `center`     | 文案位置       |
+| contentColor           | string                          | -            | 文案文字颜色   |
+| contentBackgroundColor | string                          | -            | 文案文字背景色 |

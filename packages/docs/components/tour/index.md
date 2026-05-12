@@ -176,13 +176,7 @@ function startTour() {
 <template>
   <c-button ref="target" type="primary">演示按钮</c-button>
   <c-button @click="startTour" style="margin-inline-start: 12px">primary 主题</c-button>
-  <c-tour
-    v-model:open="open"
-    v-model:current="current"
-    :steps="steps"
-    type="primary"
-    :arrow="false"
-  />
+  <c-tour v-model:open="open" v-model:current="current" :steps="steps" type="primary" :arrow="false" />
 </template>
 ```
 

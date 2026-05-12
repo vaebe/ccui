@@ -76,9 +76,7 @@ const loading = ref(true)
       <p style="margin: 0">这块内容会被遮罩盖住，加载结束后浮现。</p>
     </div>
   </c-spin>
-  <c-button style="margin-top: 12px" @click="loading = !loading">
-    {{ loading ? '关闭' : '打开' }} loading
-  </c-button>
+  <c-button style="margin-top: 12px" @click="loading = !loading"> {{ loading ? '关闭' : '打开' }} loading </c-button>
 </template>
 ```
 
@@ -113,9 +111,7 @@ function slow() {
     </div>
   </c-spin>
   <c-button style="margin-top: 12px" @click="fast">短任务（200ms，不出 loading）</c-button>
-  <c-button type="primary" style="margin-inline-start: 8px" @click="slow">
-    长任务（1.5s，出 loading）
-  </c-button>
+  <c-button type="primary" style="margin-inline-start: 8px" @click="slow"> 长任务（1.5s，出 loading） </c-button>
 </template>
 ```
 
@@ -151,16 +147,16 @@ function trigger() {
 
 ### Props
 
-| 参数       | 类型                              | 默认值      | 说明                              |
-| ---------- | --------------------------------- | ----------- | --------------------------------- |
-| spinning   | boolean                           | `true`      | 是否显示                          |
-| size       | `'small' \| 'default' \| 'large'` | `'default'` | 尺寸                              |
-| tip        | string                            | —           | 指示器下方的说明                  |
-| delay      | number                            | `0`         | 延迟显示（毫秒），避免快任务闪屏  |
-| fullscreen | boolean                           | `false`     | 全屏覆盖                          |
+| 参数       | 类型                              | 默认值      | 说明                             |
+| ---------- | --------------------------------- | ----------- | -------------------------------- |
+| spinning   | boolean                           | `true`      | 是否显示                         |
+| size       | `'small' \| 'default' \| 'large'` | `'default'` | 尺寸                             |
+| tip        | string                            | —           | 指示器下方的说明                 |
+| delay      | number                            | `0`         | 延迟显示（毫秒），避免快任务闪屏 |
+| fullscreen | boolean                           | `false`     | 全屏覆盖                         |
 
 ### Slots
 
-| 名称    | 说明                                |
-| ------- | ----------------------------------- |
-| default | 被包裹的内容（容器内嵌模式）        |
+| 名称    | 说明                         |
+| ------- | ---------------------------- |
+| default | 被包裹的内容（容器内嵌模式） |

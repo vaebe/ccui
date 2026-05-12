@@ -72,9 +72,7 @@ const collapsed = ref(false)
     </c-layout-sider>
     <c-layout>
       <c-layout-header style="background: #1677ff" />
-      <c-layout-content style="padding: 24px">
-        当前 collapsed = {{ collapsed }}
-      </c-layout-content>
+      <c-layout-content style="padding: 24px"> 当前 collapsed = {{ collapsed }} </c-layout-content>
     </c-layout>
   </c-layout>
 </template>
@@ -151,9 +149,7 @@ function onCollapse(val, type) {
 
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-sider v-model:collapsed="collapsed" collapsible @collapse="onCollapse">
-      Sider
-    </c-layout-sider>
+    <c-layout-sider v-model:collapsed="collapsed" collapsible @collapse="onCollapse"> Sider </c-layout-sider>
     <c-layout-content style="padding: 24px">最近一次折叠：{{ log }}</c-layout-content>
   </c-layout>
 </template>
@@ -169,19 +165,19 @@ function onCollapse(val, type) {
 
 ### LayoutSider Props
 
-| 参数             | 类型                  | 默认值   | 说明                                   |
-| ---------------- | --------------------- | -------- | -------------------------------------- |
-| width            | `number \| string`    | `200`    | 展开宽度                               |
-| collapsedWidth   | `number \| string`    | `80`     | 折叠后宽度                             |
-| collapsed        | boolean               | —        | 当前折叠状态，支持 `v-model:collapsed` |
-| defaultCollapsed | boolean               | `false`  | 初始折叠状态                           |
-| collapsible      | boolean               | `false`  | 显示底部折叠按钮                       |
-| reverseArrow     | boolean               | `false`  | 折叠按钮的箭头反向                     |
-| theme            | `'light' \| 'dark'`   | `'dark'` | 主题色                                 |
+| 参数             | 类型                | 默认值   | 说明                                   |
+| ---------------- | ------------------- | -------- | -------------------------------------- |
+| width            | `number \| string`  | `200`    | 展开宽度                               |
+| collapsedWidth   | `number \| string`  | `80`     | 折叠后宽度                             |
+| collapsed        | boolean             | —        | 当前折叠状态，支持 `v-model:collapsed` |
+| defaultCollapsed | boolean             | `false`  | 初始折叠状态                           |
+| collapsible      | boolean             | `false`  | 显示底部折叠按钮                       |
+| reverseArrow     | boolean             | `false`  | 折叠按钮的箭头反向                     |
+| theme            | `'light' \| 'dark'` | `'dark'` | 主题色                                 |
 
 ### LayoutSider Events
 
-| 事件             | 回调签名                          | 说明           |
-| ---------------- | --------------------------------- | -------------- |
-| update:collapsed | `(value: boolean)`                | 折叠状态变化   |
-| collapse         | `(value: boolean, type: string)`  | 折叠被触发     |
+| 事件             | 回调签名                         | 说明         |
+| ---------------- | -------------------------------- | ------------ |
+| update:collapsed | `(value: boolean)`               | 折叠状态变化 |
+| collapse         | `(value: boolean, type: string)` | 折叠被触发   |

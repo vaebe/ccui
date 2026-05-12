@@ -18,8 +18,8 @@
   <c-typography>
     <c-typography-title>Introduction</c-typography-title>
     <c-typography-paragraph>
-      In the process of internal desktop applications development, many different design specs and implementations
-      would be involved.
+      In the process of internal desktop applications development, many different design specs and implementations would
+      be involved.
     </c-typography-paragraph>
     <c-typography-paragraph>
       After massive project practice and summaries, Ant Design, a design language for background applications, is
@@ -87,12 +87,10 @@
 
 ```vue
 <template>
-  <c-typography-text mark>Marked</c-typography-text>&nbsp;
-  <c-typography-text code>code()</c-typography-text>&nbsp;
+  <c-typography-text mark>Marked</c-typography-text>&nbsp; <c-typography-text code>code()</c-typography-text>&nbsp;
   <c-typography-text keyboard>Cmd+K</c-typography-text>&nbsp;
   <c-typography-text underline>Underline</c-typography-text>&nbsp;
-  <c-typography-text delete>Deleted</c-typography-text>&nbsp;
-  <c-typography-text strong>Strong</c-typography-text>&nbsp;
+  <c-typography-text delete>Deleted</c-typography-text>&nbsp; <c-typography-text strong>Strong</c-typography-text>&nbsp;
   <c-typography-text italic>Italic</c-typography-text>
 </template>
 ```
@@ -149,27 +147,27 @@
 
 ### Title Props
 
-| 参数  | 类型              | 默认值 | 说明     |
-| ----- | ----------------- | ------ | -------- |
+| 参数  | 类型                    | 默认值 | 说明     |
+| ----- | ----------------------- | ------ | -------- |
 | level | `1 \| 2 \| 3 \| 4 \| 5` | `1`    | 标题级别 |
 
 ### Link Props
 
-| 参数   | 类型   | 默认值 | 说明          |
-| ------ | ------ | ------ | ------------- |
-| href   | string | —      | 链接地址      |
-| target | string | —      | 链接 target   |
+| 参数   | 类型   | 默认值 | 说明        |
+| ------ | ------ | ------ | ----------- |
+| href   | string | —      | 链接地址    |
+| target | string | —      | 链接 target |
 
 ### 通用 Props（Text / Paragraph / Title / Link）
 
-| 参数      | 类型                                                | 默认值 | 说明     |
-| --------- | --------------------------------------------------- | ------ | -------- |
-| type      | `'secondary' \| 'success' \| 'warning' \| 'danger'` | —      | 文本类型 |
-| disabled  | boolean                                             | `false`| 禁用     |
-| mark      | boolean                                             | `false`| 高亮     |
-| code      | boolean                                             | `false`| 代码样式 |
-| keyboard  | boolean                                             | `false`| 键盘样式 |
-| underline | boolean                                             | `false`| 下划线   |
-| delete    | boolean                                             | `false`| 删除线   |
-| strong    | boolean                                             | `false`| 加粗     |
-| italic    | boolean                                             | `false`| 斜体     |
+| 参数      | 类型                                                | 默认值  | 说明     |
+| --------- | --------------------------------------------------- | ------- | -------- |
+| type      | `'secondary' \| 'success' \| 'warning' \| 'danger'` | —       | 文本类型 |
+| disabled  | boolean                                             | `false` | 禁用     |
+| mark      | boolean                                             | `false` | 高亮     |
+| code      | boolean                                             | `false` | 代码样式 |
+| keyboard  | boolean                                             | `false` | 键盘样式 |
+| underline | boolean                                             | `false` | 下划线   |
+| delete    | boolean                                             | `false` | 删除线   |
+| strong    | boolean                                             | `false` | 加粗     |
+| italic    | boolean                                             | `false` | 斜体     |

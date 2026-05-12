@@ -53,11 +53,7 @@
 ```vue
 <template>
   <div class="anchor-demo">
-    <c-anchor
-      :items="items"
-      style="width: 200px; flex: none"
-      scroll-container=".anchor-nested"
-    />
+    <c-anchor :items="items" style="width: 200px; flex: none" scroll-container=".anchor-nested" />
     <div class="anchor-nested" style="flex: 1; max-height: 320px; overflow: auto">
       <h3 id="api">API</h3>
       <p style="height: 100px; background: #f6f8fa; padding: 12px">概述...</p>
@@ -251,33 +247,33 @@ function onClick(_e, link) {
 
 ### Props
 
-| 参数            | 类型                          | 默认值      | 说明                                                  |
-| --------------- | ----------------------------- | ----------- | ----------------------------------------------------- |
-| items           | `AnchorLink[]`                | `[]`        | 锚点列表，支持 `children` 嵌套                        |
-| affix           | boolean                       | `true`      | 是否固定（保留外观位）                                |
-| bounds          | number                        | `5`         | 元素到顶部小于此距离时视为激活（px）                  |
-| offsetTop       | number                        | `0`         | 高亮判定与点击滚动统一加的顶部偏移（px）              |
-| targetOffset    | number                        | `undefined` | 仅点击滚动用的偏移；未传则回退 `offsetTop`            |
-| scrollContainer | `string \| HTMLElement`       | `window`    | 自定义滚动容器（CSS 选择器或元素引用）                |
-| showInkInFixed  | boolean                       | `false`     | 固定时是否仍显示墨色滑块                              |
+| 参数            | 类型                    | 默认值      | 说明                                       |
+| --------------- | ----------------------- | ----------- | ------------------------------------------ |
+| items           | `AnchorLink[]`          | `[]`        | 锚点列表，支持 `children` 嵌套             |
+| affix           | boolean                 | `true`      | 是否固定（保留外观位）                     |
+| bounds          | number                  | `5`         | 元素到顶部小于此距离时视为激活（px）       |
+| offsetTop       | number                  | `0`         | 高亮判定与点击滚动统一加的顶部偏移（px）   |
+| targetOffset    | number                  | `undefined` | 仅点击滚动用的偏移；未传则回退 `offsetTop` |
+| scrollContainer | `string \| HTMLElement` | `window`    | 自定义滚动容器（CSS 选择器或元素引用）     |
+| showInkInFixed  | boolean                 | `false`     | 固定时是否仍显示墨色滑块                   |
 
 ### AnchorLink
 
-| 字段     | 类型           | 说明                       |
-| -------- | -------------- | -------------------------- |
-| href     | string         | 必填，目标元素 id（带 `#`）|
-| title    | string         | 显示文本，省略则用 href    |
-| children | `AnchorLink[]` | 子级锚点（可任意层嵌套）   |
+| 字段     | 类型           | 说明                        |
+| -------- | -------------- | --------------------------- |
+| href     | string         | 必填，目标元素 id（带 `#`） |
+| title    | string         | 显示文本，省略则用 href     |
+| children | `AnchorLink[]` | 子级锚点（可任意层嵌套）    |
 
 ### Events
 
-| 事件名 | 回调签名                                | 触发时机                |
-| ------ | --------------------------------------- | ----------------------- |
-| change | `(activeHref: string)`                  | 当前激活锚点变化时      |
-| click  | `(event: MouseEvent, link: AnchorLink)` | 点击锚点时（已阻默认）  |
+| 事件名 | 回调签名                                | 触发时机               |
+| ------ | --------------------------------------- | ---------------------- |
+| change | `(activeHref: string)`                  | 当前激活锚点变化时     |
+| click  | `(event: MouseEvent, link: AnchorLink)` | 点击锚点时（已阻默认） |
 
 ### Slots
 
-| 名称    | 说明                                                  |
-| ------- | ----------------------------------------------------- |
+| 名称    | 说明                                                     |
+| ------- | -------------------------------------------------------- |
 | default | 自定义渲染（不使用 `items`，需自行写带 `href` 的 `<a>`） |
