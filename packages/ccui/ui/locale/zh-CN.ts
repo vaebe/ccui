@@ -19,6 +19,32 @@ const zhCN: Locale = {
   Cascader: { notFoundContent: '暂无数据' },
   TreeSelect: { notFoundContent: '暂无数据' },
   Select: { notFoundContent: '暂无数据' },
+  Pagination: {
+    itemsPerPage: '条/页',
+    jumpTo: '跳至',
+    page: '页',
+    prevPage: '上一页',
+    nextPage: '下一页',
+    total: '共 {total} 条',
+  },
+  Image: {
+    loading: '加载中',
+    error: '加载失败',
+  },
+  DatePicker: {
+    placeholder: '请选择日期',
+    rangePlaceholder: ['开始日期', '结束日期'],
+    timePlaceholder: '请选择时间',
+    weekdaysShort: ['日', '一', '二', '三', '四', '五', '六'],
+    panelLabelFormat: 'YYYY 年 M 月',
+    now: '此刻',
+    ok: '确定',
+    prevYearLabel: '前一年',
+    prevMonthLabel: '上个月',
+    nextYearLabel: '后一年',
+    nextMonthLabel: '下个月',
+    clearLabel: '清除',
+  },
 }
 
 export default zhCN

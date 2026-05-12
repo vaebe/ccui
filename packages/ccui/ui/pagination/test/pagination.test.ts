@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { ConfigProvider } from '../../config-provider'
+import enUS from '../../locale/en-US'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Pagination } from '../index'
 
@@ -154,6 +156,44 @@ describe('pagination', () => {
     await wrapper.find(ns.e('simple-input')).setValue('3')
     await wrapper.find(ns.e('simple-input')).trigger('change')
     expect(wrapper.emitted('update:current')?.[0]).toEqual([3])
+  })
+
+  it('renders zhCN locale by default for total / size-changer / jumper / aria-label', () => {
+    const wrapper = mount(Pagination, {
+      props: {
+        current: 2,
+        total: 25,
+        pageSize: 10,
+        showTotal: true,
+        showSizeChanger: true,
+        showQuickJumper: true,
+      },
+    })
+    expect(wrapper.find(ns.e('total-text')).text()).toBe('共 25 条')
+    expect(wrapper.find('option').text()).toBe('10 条/页')
+    expect(wrapper.find(ns.e('jumper')).text()).toContain('跳至')
+    expect(wrapper.find(ns.e('jumper')).text()).toContain('页')
+    expect(wrapper.find(ns.e('prev')).attributes('aria-label')).toBe('上一页')
+    expect(wrapper.find(ns.e('next')).attributes('aria-label')).toBe('下一页')
+  })
+
+  it('switches to enUS locale via ConfigProvider', () => {
+    const wrapper = mount({
+      components: { ConfigProvider, Pagination },
+      data() {
+        return { enUS }
+      },
+      template: `
+        <ConfigProvider :locale="enUS">
+          <Pagination :current="2" :total="25" :page-size="10" :show-total="true" :show-size-changer="true" :show-quick-jumper="true" />
+        </ConfigProvider>
+      `,
+    })
+    expect(wrapper.find(ns.e('total-text')).text()).toBe('Total 25 items')
+    expect(wrapper.find('option').text()).toBe('10 / page')
+    expect(wrapper.find(ns.e('jumper')).text()).toContain('Go to')
+    expect(wrapper.find(ns.e('prev')).attributes('aria-label')).toBe('Previous Page')
+    expect(wrapper.find(ns.e('next')).attributes('aria-label')).toBe('Next Page')
   })
 
   it('renders total and custom prev next slots', () => {

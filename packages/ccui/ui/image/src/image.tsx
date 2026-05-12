@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'vue'
 import type { ImageProps } from './image-types'
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, Transition, watch } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { imageProps } from './image-types'
 import './image.scss'
@@ -18,6 +19,9 @@ export default defineComponent({
   emits: ['load', 'error', 'click'],
   setup(props: ImageProps, { emit, slots }) {
     const ns = useNamespace('image')
+    const cfg = useConfig()
+    const loadingText = computed(() => cfg.locale?.Image?.loading || '加载中')
+    const errorText = computed(() => cfg.locale?.Image?.error || '加载失败')
     const status = ref<'loading' | 'loaded' | 'error'>('loading')
     const showSrc = ref<string>(props.lazy ? '' : props.src)
     const wrapperRef = ref<HTMLElement>()
@@ -112,7 +116,7 @@ export default defineComponent({
       <div ref={wrapperRef} class={ns.b()} style={wrapperStyle.value}>
         {status.value === 'loading' && (
           <div class={ns.e('placeholder')}>
-            {slots.placeholder ? slots.placeholder() : <span class={ns.e('loading')}>加载中</span>}
+            {slots.placeholder ? slots.placeholder() : <span class={ns.e('loading')}>{loadingText.value}</span>}
           </div>
         )}
         {status.value === 'error' && (
@@ -122,7 +126,7 @@ export default defineComponent({
             ) : props.fallback ? (
               <img class={ns.e('inner')} src={props.fallback} alt={props.alt} />
             ) : (
-              <span>加载失败</span>
+              <span>{errorText.value}</span>
             )}
           </div>
         )}

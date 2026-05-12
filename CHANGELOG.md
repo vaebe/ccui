@@ -34,7 +34,12 @@
   - 7 个组件改读 `cfg.locale.{ns}.{key}`：Modal / Popconfirm 的 ok / cancel 文案，Empty 的 description，AutoComplete / Mentions / Cascader / TreeSelect 的 notFoundContent。
   - prop 默认值由 `'确 定'` 等中文字面量改为 `''`；运行时优先级：用户显式 prop > `cfg.locale.{ns}.{key}` > 内置 zhCN 兜底。
   - cli `vue-ui` 模板静态注入 `export { zhCN, enUS, defaultLocale } from './locale'`。
-  - DatePicker 月份 / 周名、Pagination 文案、Image 加载提示等仍未走 locale，作为 P1 跟进。
+- **locale 第二轮收口（Batch 36）**：扩 `PaginationLocale` / `ImageLocale` / `DatePickerLocale` 三个 namespace，把上一轮列为 P1 跟进的 5 个组件全部接通：
+  - **Pagination**：`showTotal` 默认模板（`{total}` 占位）/ `条/页` / `跳至` / `页` / 上下页 `aria-label` 全部走 `cfg.locale.Pagination`，自定义 `showTotal` 函数与显式 prop 仍优先。
+  - **Image**：`加载中` / `加载失败` 字面量改读 `cfg.locale.Image`，slots 仍优先。
+  - **DatePicker / RangePicker / TimePicker**：placeholder / 周名（`weekdaysShort`，自然 [日…六] 顺序，`weekStart=1` 时组件层后置首项）/ 面板标题（`panelLabelFormat` 用 dayjs format：zhCN `YYYY 年 M 月`、enUS `MMM YYYY`）/ `now` / `ok` 按钮 / 4 个 arrow aria-label / clearLabel 全部走 `cfg.locale.DatePicker`。
+  - 三个 Picker 5 个 prop（DatePicker.placeholder / RangePicker.placeholder / TimePicker.placeholder / nowText / okText）默认值由中文字面量改为 `''`，统一三级 fallback（用户 prop > locale > zhCN 兜底）。
+  - `vue-ccui.ts` 补静态 `export { zhCN, enUS, defaultLocale } from './locale'`（cli 模板早已注入，文件未同步生成）。
 - **Form scss 全量 token 化**：
   - 加 `@use '../../style-var/index.scss' as *;`，类名走 `#{$cls-prefix}-form` 占位符。
   - 9 处变量名对齐 v6：`var(--ccui-text)` → `$ccui-color-text`、`var(--ccui-text-weak)` → `$ccui-color-text-secondary`、`var(--ccui-danger)` → `$ccui-color-error`、`var(--ccui-success)` → `$ccui-color-success`。
@@ -67,7 +72,8 @@
 ### Docs
 
 - **审查报告**：`docs-notes/design-audit/references/ant-design-alignment.md` 完整体检 + P0/P1/P2 整改记录。
-- **设计决策**：品牌色（`brand-color.md`）、设计原则（`design-values.md`）、Batch 修复（`2026-05-10-component-fixes.md`）。
+- **设计决策**：品牌色（`brand-color.md`）、设计原则（`design-values.md`）、Batch 修复（`2026-05-10-component-fixes.md`）、locale & algorithm 接通（`2026-05-10-locale-algorithm.md`，含 Batch 36 第二轮收口）。
+- **ConfigProvider 文档**：新增 "切换语言" 两块 :::demo（Pagination 中英文 toggle + DatePicker/TimePicker enUS）。
 - **组件示例向 Ant 对齐**：每组件 5–8 个独立 `:::demo` 块，按"基本 → 配置 → 边界 → 事件"分层。
   - Batch 1：anchor / message / status
   - Batch 2：notification / drawer / breadcrumb / popconfirm / collapse / empty
@@ -88,7 +94,8 @@
 - 测试质量审查：TSX 加载修复 + slider 重写 + 2 个已知失败修复。
 - 多组件覆盖率扩展（form / table / menu / select 等）。
 - 新增 5 个 ConfigProvider 算法 / locale 浅合并测试，覆盖 dark / compact / default 行为与 token 优先级。
-- 1294 单测稳定通过（vue-tsc 0 错）。
+- Batch 36 locale 接通增 12 个用例：Pagination / Image 各 +2（zhCN 默认 + enUS 切换），DatePicker / RangePicker / TimePicker 各 +1（placeholder / 周名 / 面板标题 / aria-label / footer 按钮文案随 locale 切换）。
+- 1301 单测稳定通过（vue-tsc 0 错）。
 
 ---
 

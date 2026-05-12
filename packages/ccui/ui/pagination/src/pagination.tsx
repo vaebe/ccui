@@ -1,5 +1,6 @@
 import type { PaginationProps } from './pagination-types'
 import { computed, defineComponent, ref, watch } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { paginationProps } from './pagination-types'
 import './pagination.scss'
@@ -29,6 +30,8 @@ export default defineComponent({
   emits: ['update:current', 'update:pageSize', 'change'],
   setup(props: PaginationProps, { emit, slots }) {
     const ns = useNamespace('pagination')
+    const cfg = useConfig()
+    const locale = computed(() => cfg.locale?.Pagination ?? {})
 
     const innerCurrent = ref(props.current)
     const innerPageSize = ref(props.pageSize)
@@ -123,8 +126,13 @@ export default defineComponent({
       if (!props.showTotal) {
         return null
       }
-      const text =
-        typeof props.showTotal === 'function' ? props.showTotal(props.total, range.value) : `共 ${props.total} 条`
+      let text: string
+      if (typeof props.showTotal === 'function') {
+        text = props.showTotal(props.total, range.value)
+      } else {
+        const tpl = locale.value.total || '共 {total} 条'
+        text = tpl.replace('{total}', String(props.total))
+      }
       return <li class={ns.e('total-text')}>{text}</li>
     }
 
@@ -162,7 +170,7 @@ export default defineComponent({
             onChange={handleSizeChange}
           >
             {props.pageSizeOptions.map((opt) => (
-              <option key={opt} value={opt}>{`${opt} 条/页`}</option>
+              <option key={opt} value={opt}>{`${opt} ${locale.value.itemsPerPage || '条/页'}`}</option>
             ))}
           </select>
         </li>
@@ -175,7 +183,7 @@ export default defineComponent({
       }
       return (
         <li class={ns.e('jumper')}>
-          跳至
+          {locale.value.jumpTo || '跳至'}
           <input
             class={ns.e('jumper-input')}
             type="text"
@@ -186,7 +194,7 @@ export default defineComponent({
             }}
             onKeydown={handleJumperKeydown}
           />
-          页
+          {locale.value.page || '页'}
         </li>
       )
     }
@@ -206,6 +214,7 @@ export default defineComponent({
             class={[ns.e('prev'), prevDisabled && ns.is('disabled')]}
             onClick={handlePrev}
             aria-disabled={prevDisabled}
+            aria-label={locale.value.prevPage || '上一页'}
           >
             {slots.prev ? slots.prev() : <span class={ns.e('arrow')}>‹</span>}
           </li>
@@ -235,6 +244,7 @@ export default defineComponent({
             class={[ns.e('next'), nextDisabled && ns.is('disabled')]}
             onClick={handleNext}
             aria-disabled={nextDisabled}
+            aria-label={locale.value.nextPage || '下一页'}
           >
             {slots.next ? slots.next() : <span class={ns.e('arrow')}>›</span>}
           </li>

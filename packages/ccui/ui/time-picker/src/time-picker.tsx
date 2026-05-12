@@ -18,6 +18,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { buildTimeColumnValues, emitValue, toDayjs } from '../../shared/utils/date'
@@ -43,6 +44,11 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur'],
   setup(props: TimePickerProps, { emit }) {
     const ns = useNamespace('time-picker')
+    const cfg = useConfig()
+    const locale = computed(() => cfg.locale?.DatePicker ?? {})
+    const placeholderText = computed(() => props.placeholder || locale.value.timePlaceholder || '请选择时间')
+    const nowText = computed(() => props.nowText || locale.value.now || '此刻')
+    const okText = computed(() => props.okText || locale.value.ok || '确定')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -227,14 +233,14 @@ export default defineComponent({
       if (props.showNow) {
         footerNodes.push(
           <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'now')]} onClick={clickNow}>
-            {props.nowText}
+            {nowText.value}
           </button>,
         )
       }
       if (props.showOk) {
         footerNodes.push(
           <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]} onClick={clickOk}>
-            {props.okText}
+            {okText.value}
           </button>,
         )
       }
@@ -276,7 +282,7 @@ export default defineComponent({
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}
-            placeholder={props.placeholder}
+            placeholder={placeholderText.value}
             value={inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
@@ -284,7 +290,7 @@ export default defineComponent({
             onBlur={() => emit('blur')}
           />
           {showClear.value ? (
-            <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
+            <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
               ×
             </span>
           ) : (

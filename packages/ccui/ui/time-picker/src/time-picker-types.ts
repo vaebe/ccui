@@ -27,7 +27,7 @@ export const timePickerProps = {
   },
   placeholder: {
     type: String,
-    default: '请选择时间',
+    default: '',
   },
   disabled: {
     type: Boolean,
@@ -121,11 +121,11 @@ export const timePickerProps = {
   },
   nowText: {
     type: String,
-    default: '此刻',
+    default: '',
   },
   okText: {
     type: String,
-    default: '确定',
+    default: '',
   },
 } as const
 

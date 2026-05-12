@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 
 import './shared/styles/base.scss'
+export { zhCN, enUS, defaultLocale } from './locale'
 import AffixInstall, { Affix } from './affix'
 import AlertInstall, { Alert } from './alert'
 import AnchorInstall, { Anchor } from './anchor'

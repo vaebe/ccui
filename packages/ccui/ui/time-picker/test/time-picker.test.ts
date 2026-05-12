@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import dayjs from 'dayjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
+import { ConfigProvider } from '../../config-provider'
+import enUS from '../../locale/en-US'
 import { TimePicker } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
@@ -419,5 +421,37 @@ describe('time-picker integrations', () => {
     await findCells(wrapper as unknown as VueWrapper, 'hour')[20].trigger('click')
     await nextTick()
     expect((wrapper.find('input').element as HTMLInputElement).value).toBe('20:00:00')
+  })
+})
+
+describe('time-picker locale', () => {
+  it('switches placeholder / footer buttons / clear label to enUS via ConfigProvider', async () => {
+    const wrapper = mount(
+      defineComponent({
+        components: { ConfigProvider, TimePicker },
+        setup() {
+          return { enUS }
+        },
+        template: `
+          <ConfigProvider :locale="enUS">
+            <TimePicker model-value="10:30:45" />
+          </ConfigProvider>
+        `,
+      }),
+      { attachTo: document.body },
+    )
+    wrappers.push(wrapper as unknown as VueWrapper)
+
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Select time')
+
+    await wrapper.find(ns.e('input-wrap')).trigger('click')
+    await nextTick()
+    await nextTick()
+
+    const footerBtns = wrapper.findAll(`${ns.e('footer-btn')}`).map((b) => b.text())
+    expect(footerBtns).toEqual(['Now', 'OK'])
+
+    const clear = wrapper.find(ns.e('clear'))
+    expect(clear.attributes('aria-label')).toBe('Clear')
   })
 })

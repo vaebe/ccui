@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import dayjs from 'dayjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
+import { ConfigProvider } from '../../config-provider'
+import enUS from '../../locale/en-US'
 import { DatePicker } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
@@ -388,5 +390,40 @@ describe('date-picker popup teleport', () => {
     await openPanel(wrapper)
     expect(container.querySelector(ns.e('panel'))).toBeTruthy()
     container.remove()
+  })
+})
+
+describe('date-picker locale', () => {
+  it('switches placeholder / weekdays / panel label / aria-labels to enUS via ConfigProvider', async () => {
+    const wrapper = mount(
+      defineComponent({
+        components: { ConfigProvider, DatePicker },
+        setup() {
+          return { enUS }
+        },
+        template: `
+          <ConfigProvider :locale="enUS">
+            <DatePicker model-value="2026-05-09" />
+          </ConfigProvider>
+        `,
+      }),
+      { attachTo: document.body },
+    )
+    wrappers.push(wrapper as unknown as VueWrapper)
+
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Select date')
+
+    await wrapper.find(ns.e('input-wrap')).trigger('click')
+    await nextTick()
+    await nextTick()
+
+    const weekCells = wrapper.findAll(ns.e('week-cell')).map((w) => w.text())
+    expect(weekCells).toEqual(['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'])
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('May 2026')
+    expect(wrapper.find(ns.em('arrow', 'prev-year')).attributes('aria-label')).toBe('Previous year')
+    expect(wrapper.find(ns.em('arrow', 'next-month')).attributes('aria-label')).toBe('Next month')
+
+    const clear = wrapper.find(ns.e('clear'))
+    expect(clear.attributes('aria-label')).toBe('Clear')
   })
 })

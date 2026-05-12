@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
+import { ConfigProvider } from '../../config-provider'
+import enUS from '../../locale/en-US'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Image } from '../index'
 
@@ -173,6 +175,36 @@ describe('image', () => {
 
     expect(wrapper.emitted('click')).toBeTruthy()
     expect(document.body.querySelector(ns.e('preview-mask'))).toBeNull()
+  })
+
+  it('renders zhCN loading/error text by default', async () => {
+    const wrapper = mount(Image, {
+      props: { src: '/foo.png' },
+    })
+    expect(wrapper.find(ns.e('loading')).text()).toBe('加载中')
+
+    await wrapper.find('img').trigger('error')
+    await nextTick()
+    expect(wrapper.find(ns.e('error')).text()).toBe('加载失败')
+  })
+
+  it('switches to enUS loading/error text via ConfigProvider', async () => {
+    const wrapper = mount({
+      components: { ConfigProvider, Image },
+      data() {
+        return { enUS }
+      },
+      template: `
+        <ConfigProvider :locale="enUS">
+          <Image src="/foo.png" />
+        </ConfigProvider>
+      `,
+    })
+    expect(wrapper.find(ns.e('loading')).text()).toBe('Loading')
+
+    await wrapper.find('img').trigger('error')
+    await nextTick()
+    expect(wrapper.find(ns.e('error')).text()).toBe('Failed to load')
   })
 
   it('clamps preview zoom out and closes from toolbar button', async () => {

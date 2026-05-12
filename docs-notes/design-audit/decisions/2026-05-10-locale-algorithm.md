@@ -58,13 +58,22 @@
 
 测试：1289 → 1294（+5 个 algorithm / locale 浅合并测试）。vue-tsc 0 错。
 
-## 后续 P1 跟进项（暂未做）
+## P1 跟进项落地（2026-05-12，Batch 36）
 
-- **DatePicker / RangePicker / TimePicker**：月份名、周名、format 默认值未走 locale。需要补 `DatePickerLocale` namespace + 替换组件内硬编码字符串。
-- **Pagination**："共"、"页"、"上一页"、"下一页"、"跳至"、"条/页" 等仍硬编码中文。
-- **Image** 加载中 / 加载失败提示。
-- **Drawer**：当前没文案，但后续如果加默认底部按钮要走 locale。
-- **正向消费方文档**：在 `docs/components/config-provider/index.md` 补一个"切换语言"的 demo（`<ConfigProvider :locale="enUS">`）。
+第二轮收口，把上节列出的所有"暂未做"项接通：
+
+- **Pagination 接通 locale**：扩 `PaginationLocale`（`itemsPerPage` / `jumpTo` / `page` / `prevPage` / `nextPage` / `total` 模板）。`total` 用 `{total}` 占位符替换，自定义函数 `showTotal` 仍优先；prev/next 按钮新挂 `aria-label`。
+- **Image 接通 locale**：扩 `ImageLocale`（`loading` / `error`）。组件内 `加载中` / `加载失败` 字面量改读 `cfg.locale.Image`。slots 仍优先（custom placeholder / error slot 不受影响）。
+- **DatePicker / RangePicker / TimePicker 接通 locale**：扩 `DatePickerLocale`（`placeholder` / `rangePlaceholder` / `timePlaceholder` / `weekdaysShort` / `panelLabelFormat` / `now` / `ok` / `prev*Label` / `next*Label` / `clearLabel`）。
+  - 三个组件 prop 默认值 `'请选择日期'` / `['开始日期','结束日期']` / `'请选择时间'` / `'此刻'` / `'确定'` 全部改成 `''`，走 fallback 链：**用户 prop > locale > 内置 zhCN 字面量**。这是有意的 breaking：纯空字符串 props 现在等于"用 locale 默认值"。
+  - `weekdaysShort` 以"周日开头"自然顺序存储；`weekStart=1` 时组件层 `[...base.slice(1), base[0]]` 把首项后置。
+  - `panelLabelFormat` 用 dayjs format 字符串：zhCN `'YYYY 年 M 月'`、enUS `'MMM YYYY'`。dayjs 默认英文 month 名生效；不引入 dayjs/locale 包以保最小体积。
+- **正向消费方文档**：`packages/docs/components/config-provider/index.md` 新增"切换语言"两块 :::demo：Pagination 中英文切换 + DatePicker/TimePicker enUS。
+- **vue-ccui.ts** 静态 `export { zhCN, enUS, defaultLocale } from './locale'` 已落地（之前 cli 模板已注入但实际文件未同步生成）。
+
+测试：1289 → 1301（+12 用例，分布：Pagination +2 / Image +2 / DatePicker +1 / RangePicker +1 / TimePicker +1，余 5 来自之前迭代）。vue-tsc 0 错。
+
+> **Drawer**：当前仍无默认文案，留待真正引入默认底部按钮时再接 locale。
 
 ## 反向决策开销
 

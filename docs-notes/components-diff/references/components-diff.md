@@ -3,8 +3,9 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 75 个一级目录，其中 73 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：73 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-10，**审查报告 P1/P2 整改批次完成 + 测试基础设施修复**。Batch 35 设计体系 v2（control-outline 三档 token / Modal hover 切 colorPrimaryHover / dark.ts 非颜色 token 补全 / 12 色板 × 10 阶接入 Tag 预设色 / Tag.Processing 6px 脉冲点 / 旧 token deprecated 标记 / 品牌色与设计原则决策文档）；Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过）；Batch 34 主题对齐（theme 重生 / Form var 改名 / 24 处硬编码主色 var 化 / Result 4 处 JS 主色重构）。本会话累计 23 commits，1289/1289 测试通过。详见 Batch 33-35 与 `docs-notes/design-audit/`。
-> 历史更新：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
+> 更新时间：2026-05-12，**locale 第二轮收口（Batch 36）**：扩 `PaginationLocale` / `ImageLocale` / `DatePickerLocale`；Pagination / Image / DatePicker / RangePicker / TimePicker 5 个组件读 `cfg.locale`；Picker 系 5 个 prop 默认 `''`（用户 prop > locale > zhCN 兜底）；vue-ccui.ts 静态 export zhCN/enUS/defaultLocale；docs/config-provider 补"切换语言"两 demo。1289 → 1301 测试。详见 `docs-notes/design-audit/decisions/2026-05-10-locale-algorithm.md`。
+> 历史更新：2026-05-10，**审查报告 P1/P2 整改批次完成 + 测试基础设施修复**。Batch 35 设计体系 v2（control-outline 三档 token / Modal hover 切 colorPrimaryHover / dark.ts 非颜色 token 补全 / 12 色板 × 10 阶接入 Tag 预设色 / Tag.Processing 6px 脉冲点 / 旧 token deprecated 标记 / 品牌色与设计原则决策文档）；Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过）；Batch 34 主题对齐（theme 重生 / Form var 改名 / 24 处硬编码主色 var 化 / Result 4 处 JS 主色重构）。1289/1289 测试通过。详见 Batch 33-35 与 `docs-notes/design-audit/`。
+> 更早历史：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
 
 ## 零、交付完整度口径
 

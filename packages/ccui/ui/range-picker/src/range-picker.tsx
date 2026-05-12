@@ -18,6 +18,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emitValue, generateMonthGrid, isSameDay, toDayjs } from '../../shared/utils/date'
@@ -31,8 +32,9 @@ const PLACEMENT_TO_FLOATING: Record<RangePickerPlacement, Placement> = {
   topRight: 'top-end',
 }
 
-const WEEK_LABELS_SUN = ['日', '一', '二', '三', '四', '五', '六']
-const WEEK_LABELS_MON = ['一', '二', '三', '四', '五', '六', '日']
+const FALLBACK_WEEK_LABELS_SUN = ['日', '一', '二', '三', '四', '五', '六']
+const FALLBACK_PANEL_LABEL_FORMAT = 'YYYY 年 M 月'
+const FALLBACK_RANGE_PLACEHOLDER: [string, string] = ['开始日期', '结束日期']
 
 type Phase = 'start' | 'end'
 
@@ -47,6 +49,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur'],
   setup(props: RangePickerProps, { emit }) {
     const ns = useNamespace('range-picker')
+    const cfg = useConfig()
+    const locale = computed(() => cfg.locale?.DatePicker ?? {})
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const startInputRef = ref<HTMLInputElement | null>(null)
@@ -114,7 +118,15 @@ export default defineComponent({
     const rightMonth = computed(() => viewMonth.value.add(1, 'month'))
     const leftGrid = computed(() => generateMonthGrid(leftMonth.value, props.weekStart))
     const rightGrid = computed(() => generateMonthGrid(rightMonth.value, props.weekStart))
-    const weekLabels = computed(() => (props.weekStart === 1 ? WEEK_LABELS_MON : WEEK_LABELS_SUN))
+    const weekLabels = computed(() => {
+      const base = locale.value.weekdaysShort ?? FALLBACK_WEEK_LABELS_SUN
+      return props.weekStart === 1 ? [...base.slice(1), base[0]] : base
+    })
+    const panelLabelFormat = computed(() => locale.value.panelLabelFormat || FALLBACK_PANEL_LABEL_FORMAT)
+    const placeholderTexts = computed<[string, string]>(() => {
+      const base = locale.value.rangePlaceholder ?? FALLBACK_RANGE_PLACEHOLDER
+      return [props.placeholder[0] || base[0], props.placeholder[1] || base[1]]
+    })
 
     function openPopup(focus: Phase = 'start') {
       if (props.disabled || open.value) return
@@ -258,7 +270,7 @@ export default defineComponent({
               <button
                 type="button"
                 class={[ns.e('arrow'), ns.em('arrow', 'prev-year')]}
-                aria-label="前一年"
+                aria-label={locale.value.prevYearLabel || '前一年'}
                 onClick={prevYear}
               >
                 «
@@ -266,7 +278,7 @@ export default defineComponent({
               <button
                 type="button"
                 class={[ns.e('arrow'), ns.em('arrow', 'prev-month')]}
-                aria-label="上个月"
+                aria-label={locale.value.prevMonthLabel || '上个月'}
                 onClick={prevMonth}
               >
                 ‹
@@ -275,13 +287,13 @@ export default defineComponent({
           ) : (
             <span class={ns.e('arrow-placeholder')} aria-hidden="true" />
           )}
-          <span class={ns.e('panel-label')}>{month.format('YYYY 年 M 月')}</span>
+          <span class={ns.e('panel-label')}>{month.format(panelLabelFormat.value)}</span>
           {showRightArrows ? (
             <>
               <button
                 type="button"
                 class={[ns.e('arrow'), ns.em('arrow', 'next-month')]}
-                aria-label="下个月"
+                aria-label={locale.value.nextMonthLabel || '下个月'}
                 onClick={nextMonth}
               >
                 ›
@@ -289,7 +301,7 @@ export default defineComponent({
               <button
                 type="button"
                 class={[ns.e('arrow'), ns.em('arrow', 'next-year')]}
-                aria-label="后一年"
+                aria-label={locale.value.nextYearLabel || '后一年'}
                 onClick={nextYear}
               >
                 »
@@ -396,7 +408,7 @@ export default defineComponent({
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}
-            placeholder={props.placeholder[0]}
+            placeholder={placeholderTexts.value[0]}
             value={startInputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value && phase.value === 'start'}
@@ -413,7 +425,7 @@ export default defineComponent({
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}
-            placeholder={props.placeholder[1]}
+            placeholder={placeholderTexts.value[1]}
             value={endInputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value && phase.value === 'end'}
@@ -422,7 +434,7 @@ export default defineComponent({
             onBlur={() => emit('blur')}
           />
           {showClear.value ? (
-            <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
+            <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
               ×
             </span>
           ) : (

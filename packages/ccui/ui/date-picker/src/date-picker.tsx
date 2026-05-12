@@ -17,6 +17,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emitValue, generateMonthGrid, isSameDay, isSameMonth, toDayjs } from '../../shared/utils/date'
@@ -30,8 +31,8 @@ const PLACEMENT_TO_FLOATING: Record<DatePickerPlacement, Placement> = {
   topRight: 'top-end',
 }
 
-const WEEK_LABELS_SUN = ['日', '一', '二', '三', '四', '五', '六']
-const WEEK_LABELS_MON = ['一', '二', '三', '四', '五', '六', '日']
+const FALLBACK_WEEK_LABELS_SUN = ['日', '一', '二', '三', '四', '五', '六']
+const FALLBACK_PANEL_LABEL_FORMAT = 'YYYY 年 M 月'
 
 export default defineComponent({
   name: 'CDatePicker',
@@ -39,6 +40,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur'],
   setup(props: DatePickerProps, { emit }) {
     const ns = useNamespace('date-picker')
+    const cfg = useConfig()
+    const locale = computed(() => cfg.locale?.DatePicker ?? {})
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -78,7 +81,17 @@ export default defineComponent({
     const inputDisplay = computed(() => (selectedDayjs.value ? selectedDayjs.value.format(props.format) : ''))
 
     const grid = computed(() => generateMonthGrid(viewMonth.value, props.weekStart))
-    const weekLabels = computed(() => (props.weekStart === 1 ? WEEK_LABELS_MON : WEEK_LABELS_SUN))
+    /**
+     * weekdaysShort 在 locale 里以"周日开头"自然顺序存储；weekStart=1 时把首项前置到末尾再渲染。
+     */
+    const weekLabels = computed(() => {
+      const base = locale.value.weekdaysShort ?? FALLBACK_WEEK_LABELS_SUN
+      return props.weekStart === 1 ? [...base.slice(1), base[0]] : base
+    })
+    const panelLabel = computed(() =>
+      viewMonth.value.format(locale.value.panelLabelFormat || FALLBACK_PANEL_LABEL_FORMAT),
+    )
+    const placeholderText = computed(() => props.placeholder || locale.value.placeholder || '请选择日期')
 
     function openPopup() {
       if (props.disabled || open.value) return
@@ -167,7 +180,7 @@ export default defineComponent({
           <button
             type="button"
             class={[ns.e('arrow'), ns.em('arrow', 'prev-year')]}
-            aria-label="前一年"
+            aria-label={locale.value.prevYearLabel || '前一年'}
             onClick={prevYear}
           >
             «
@@ -175,16 +188,16 @@ export default defineComponent({
           <button
             type="button"
             class={[ns.e('arrow'), ns.em('arrow', 'prev-month')]}
-            aria-label="上个月"
+            aria-label={locale.value.prevMonthLabel || '上个月'}
             onClick={prevMonth}
           >
             ‹
           </button>
-          <span class={ns.e('panel-label')}>{viewMonth.value.format('YYYY 年 M 月')}</span>
+          <span class={ns.e('panel-label')}>{panelLabel.value}</span>
           <button
             type="button"
             class={[ns.e('arrow'), ns.em('arrow', 'next-month')]}
-            aria-label="下个月"
+            aria-label={locale.value.nextMonthLabel || '下个月'}
             onClick={nextMonth}
           >
             ›
@@ -192,7 +205,7 @@ export default defineComponent({
           <button
             type="button"
             class={[ns.e('arrow'), ns.em('arrow', 'next-year')]}
-            aria-label="后一年"
+            aria-label={locale.value.nextYearLabel || '后一年'}
             onClick={nextYear}
           >
             »
@@ -279,7 +292,7 @@ export default defineComponent({
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}
-            placeholder={props.placeholder}
+            placeholder={placeholderText.value}
             value={inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
@@ -287,7 +300,7 @@ export default defineComponent({
             onBlur={() => emit('blur')}
           />
           {showClear.value ? (
-            <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
+            <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
               ×
             </span>
           ) : (

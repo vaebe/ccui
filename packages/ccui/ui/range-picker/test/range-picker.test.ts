@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import dayjs from 'dayjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
+import { ConfigProvider } from '../../config-provider'
+import enUS from '../../locale/en-US'
 import { RangePicker } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
@@ -401,5 +403,40 @@ describe('range-picker integrations', () => {
     const inputs = wrapper.findAll('input')
     expect((inputs[0].element as HTMLInputElement).value).toBe('2026-05-08')
     expect((inputs[1].element as HTMLInputElement).value).toBe('2026-05-20')
+  })
+})
+
+describe('range-picker locale', () => {
+  it('switches placeholders / weekdays / panel labels to enUS via ConfigProvider', async () => {
+    const wrapper = mount(
+      defineComponent({
+        components: { ConfigProvider, RangePicker },
+        setup() {
+          return { enUS }
+        },
+        template: `
+          <ConfigProvider :locale="enUS">
+            <RangePicker />
+          </ConfigProvider>
+        `,
+      }),
+      { attachTo: document.body },
+    )
+    wrappers.push(wrapper as unknown as VueWrapper)
+
+    const inputs = wrapper.findAll('input')
+    expect(inputs[0].attributes('placeholder')).toBe('Start date')
+    expect(inputs[1].attributes('placeholder')).toBe('End date')
+
+    await wrapper.find(ns.em('input', 'start')).trigger('click')
+    await nextTick()
+    await nextTick()
+
+    const labels = wrapper.findAll(ns.e('panel-label')).map((l) => l.text())
+    expect(labels[0]).toBe('May 2026')
+    expect(labels[1]).toBe('Jun 2026')
+
+    const weekCells = wrapper.findAll(`${ns.em('panel-side', 'left')} ${ns.e('week-cell')}`).map((c) => c.text())
+    expect(weekCells).toEqual(['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'])
   })
 })

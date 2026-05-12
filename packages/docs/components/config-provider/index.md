@@ -109,6 +109,56 @@
 
 :::
 
+## 切换语言
+
+传入 `locale` 把内部组件的默认文案换成对应语言。ccui 内置 `zhCN` 与 `enUS` 两个语言包，可从 `vue3-ccui` 直接导出；未覆盖的 namespace 会自动回退到 `zhCN`。
+
+下面用 Pagination 演示中英文切换：
+
+:::demo
+
+```vue
+<template>
+  <c-config-provider :locale="locale">
+    <c-pagination :current="2" :total="55" :page-size="10" show-total show-quick-jumper />
+  </c-config-provider>
+  <div style="margin-top: 12px">
+    <c-button @click="toggle">切换到 {{ locale.locale === 'zh-CN' ? 'en-US' : 'zh-CN' }}</c-button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { enUS, zhCN } from 'vue3-ccui'
+
+const locale = ref(zhCN)
+const toggle = () => {
+  locale.value = locale.value.locale === 'zh-CN' ? enUS : zhCN
+}
+</script>
+```
+
+:::
+
+DatePicker / TimePicker / RangePicker 的 placeholder、周名、面板标题、按钮文案同样会跟着 `locale` 切换：
+
+:::demo
+
+```vue
+<template>
+  <c-config-provider :locale="enUS">
+    <c-date-picker />
+    <c-time-picker style="margin-inline-start: 8px" />
+  </c-config-provider>
+</template>
+
+<script setup>
+import { enUS } from 'vue3-ccui'
+</script>
+```
+
+:::
+
 ## 在组件内读取配置
 
 业务组件用组合 API `useConfig` 读当前生效的配置。
@@ -124,14 +174,14 @@ const cfg = useConfig()
 
 ### Props
 
-| 参数          | 类型                                 | 默认值        | 说明                                                                                                              |
-| ------------- | ------------------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------- |
-| prefixCls     | string                               | `'ccui'`      | 类名前缀                                                                                                          |
-| componentSize | `'small' \| 'middle' \| 'large'`     | `'middle'`    | 默认组件尺寸                                                                                                      |
-| direction     | `'ltr' \| 'rtl'`                     | `'ltr'`       | 文字方向                                                                                                          |
-| locale        | `Locale`                             | —             | 语言包                                                                                                            |
-| theme         | `{ token, algorithm, cssVar }`       | —             | 主题配置：`token` 用 camelCase（colorPrimary / borderRadius 等），自动映射为 CSS 变量并下传                       |
-| iconPrefixCls | string                               | `'ccui-icon'` | 图标类名前缀                                                                                                      |
+| 参数          | 类型                             | 默认值        | 说明                                                                                        |
+| ------------- | -------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
+| prefixCls     | string                           | `'ccui'`      | 类名前缀                                                                                    |
+| componentSize | `'small' \| 'middle' \| 'large'` | `'middle'`    | 默认组件尺寸                                                                                |
+| direction     | `'ltr' \| 'rtl'`                 | `'ltr'`       | 文字方向                                                                                    |
+| locale        | `Locale`                         | —             | 语言包                                                                                      |
+| theme         | `{ token, algorithm, cssVar }`   | —             | 主题配置：`token` 用 camelCase（colorPrimary / borderRadius 等），自动映射为 CSS 变量并下传 |
+| iconPrefixCls | string                           | `'ccui-icon'` | 图标类名前缀                                                                                |
 
 ### useConfig
 

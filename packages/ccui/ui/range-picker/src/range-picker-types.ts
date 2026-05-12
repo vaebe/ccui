@@ -27,7 +27,7 @@ export const rangePickerProps = {
   },
   placeholder: {
     type: Array as unknown as PropType<[string, string]>,
-    default: () => ['开始日期', '结束日期'],
+    default: () => ['', ''],
   },
   separator: {
     type: String,
