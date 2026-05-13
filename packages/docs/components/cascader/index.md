@@ -237,32 +237,177 @@ const options = [{ value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1'
 
 :::
 
+## hover 触发
+
+`expand-trigger="hover"` 时，鼠标移到非叶子节点即展开下一列；hover 不触发 emit。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref([])
+const options = [
+  {
+    value: 'zhejiang',
+    label: '浙江',
+    children: [
+      { value: 'hangzhou', label: '杭州', children: [{ value: 'xihu', label: '西湖' }] },
+      { value: 'ningbo', label: '宁波', children: [{ value: 'haishu', label: '海曙' }] },
+    ],
+  },
+]
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="options" expand-trigger="hover" />
+</template>
+```
+
+:::
+
+## showSearch 搜索
+
+`show-search` 时 input 可输入，面板换成扁平匹配列表；默认按 label includes 匹配，传 `{ filter }` 可自定义。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref([])
+const options = [
+  {
+    value: 'zhejiang',
+    label: '浙江',
+    children: [
+      { value: 'hangzhou', label: '杭州', children: [{ value: 'xihu', label: '西湖' }] },
+      { value: 'ningbo', label: '宁波', children: [{ value: 'haishu', label: '海曙' }] },
+    ],
+  },
+  {
+    value: 'jiangsu',
+    label: '江苏',
+    children: [{ value: 'nanjing', label: '南京', children: [{ value: 'gulou', label: '鼓楼' }] }],
+  },
+]
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="options" show-search />
+</template>
+```
+
+:::
+
+## loadData 异步加载
+
+非叶子节点用 `isLeaf: false` 显式标记，配合 `loadData` 在展开时拉取 children；加载中显示 `⟳`。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+
+const value = ref([])
+const options = reactive([
+  { value: 'a', label: '根 A', isLeaf: false },
+  { value: 'b', label: '根 B', isLeaf: false },
+])
+
+function loadData(path) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      const target = path[path.length - 1]
+      target.children = [
+        { value: `${target.value}-1`, label: `${target.label} 子 1` },
+        { value: `${target.value}-2`, label: `${target.label} 子 2` },
+      ]
+      target.isLeaf = undefined
+      resolve()
+    }, 800)
+  })
+}
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="options" :load-data="loadData" />
+</template>
+```
+
+:::
+
+## multiple 多选
+
+`multiple` 时叶子节点渲染 checkbox，勾选聚合写入；input wrap 展示 tag，点 × 移除。`modelValue` 变 `CascaderValuePath[]`。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref([['zhejiang', 'hangzhou', 'xihu']])
+const options = [
+  {
+    value: 'zhejiang',
+    label: '浙江',
+    children: [
+      {
+        value: 'hangzhou',
+        label: '杭州',
+        children: [
+          { value: 'xihu', label: '西湖' },
+          { value: 'binjiang', label: '滨江' },
+        ],
+      },
+      { value: 'ningbo', label: '宁波', children: [{ value: 'haishu', label: '海曙' }] },
+    ],
+  },
+]
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="options" multiple placeholder="多选城市" />
+  <p style="margin-top: 8px">v-model: {{ value }}</p>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值               | 说明                                   |
-| ----------------- | ---------------------------------------------------------- | -------------------- | -------------------------------------- |
-| modelValue        | `(string \| number)[] \| null`                             | --                   | 选中路径数组（每级 value）             |
-| options           | `CascaderOption[]`                                         | `[]`                 | 数据源（递归 children）                |
-| fieldNames        | `{ label?, value?, children?, disabled? }`                 | `{}`                 | 字段名映射                             |
-| placeholder       | string                                                     | `请选择`             | 占位文案                               |
-| separator         | string                                                     | `/`                  | 默认 displayRender 的拼接符            |
-| displayRender     | `(labels, selectedOptions) => string`                      | --                   | 自定义路径展示                         |
-| changeOnSelect    | boolean                                                    | `false`              | 中间节点也可选并提交                   |
-| disabled          | boolean                                                    | `false`              | 是否禁用                               |
-| clearable         | boolean                                                    | `true`               | 是否显示清除按钮                       |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`          | 输入框尺寸                             |
-| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                 | 校验状态；置于 `FormItem` 时自动继承   |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`       | 浮层方位                               |
-| popupClassName    | string                                                     | --                   | 浮层根元素自定义 class                 |
-| popupAppendToBody | boolean                                                    | `false`              | 是否把浮层 Teleport 到 `document.body` |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                   | 自定义浮层挂载点                       |
-| autoFocus         | boolean                                                    | `false`              | 挂载后自动 focus 输入框                |
-| inputReadOnly     | boolean                                                    | `true`               | 输入框只读                             |
-| transitionName    | string                                                     | `ccui-cascader-fade` | 浮层过渡名                             |
-| expandIcon        | string                                                     | `›`                  | 非叶子节点的展开图标                   |
-| notFoundContent   | string                                                     | `暂无数据`           | 空数据文案                             |
+| 参数              | 类型                                                       | 默认值               | 说明                                                       |
+| ----------------- | ---------------------------------------------------------- | -------------------- | ---------------------------------------------------------- |
+| modelValue        | `(string \| number)[] \| (string \| number)[][] \| null`   | --                   | 单选：路径数组；多选：路径数组的数组                       |
+| options           | `CascaderOption[]`                                         | `[]`                 | 数据源（递归 children）                                    |
+| fieldNames        | `{ label?, value?, children?, disabled? }`                 | `{}`                 | 字段名映射                                                 |
+| placeholder       | string                                                     | `请选择`             | 占位文案                                                   |
+| separator         | string                                                     | `/`                  | 默认 displayRender 的拼接符                                |
+| displayRender     | `(labels, selectedOptions) => string`                      | --                   | 自定义路径展示                                             |
+| changeOnSelect    | boolean                                                    | `false`              | 中间节点也可选并提交                                       |
+| disabled          | boolean                                                    | `false`              | 是否禁用                                                   |
+| clearable         | boolean                                                    | `true`               | 是否显示清除按钮                                           |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`          | 输入框尺寸                                                 |
+| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                 | 校验状态；置于 `FormItem` 时自动继承                       |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`       | 浮层方位                                                   |
+| popupClassName    | string                                                     | --                   | 浮层根元素自定义 class                                     |
+| popupAppendToBody | boolean                                                    | `false`              | 是否把浮层 Teleport 到 `document.body`                     |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                   | 自定义浮层挂载点                                           |
+| autoFocus         | boolean                                                    | `false`              | 挂载后自动 focus 输入框                                    |
+| inputReadOnly     | boolean                                                    | `true`               | 输入框只读                                                 |
+| transitionName    | string                                                     | `ccui-cascader-fade` | 浮层过渡名                                                 |
+| expandIcon        | string                                                     | `›`                  | 非叶子节点的展开图标                                       |
+| notFoundContent   | string                                                     | `暂无数据`           | 空数据文案                                                 |
+| expandTrigger     | `'click' \| 'hover'`                                       | `'click'`            | 列展开触发方式                                             |
+| multiple          | boolean                                                    | `false`              | 多选模式，modelValue 类型变为路径数组的数组                |
+| showSearch        | `boolean \| { filter?: (input, path) => boolean }`         | `false`              | 启用搜索，传 object 自定义 filter                          |
+| loadData          | `(path: CascaderOption[]) => Promise<void> \| void`        | --                   | 异步加载非叶子 children；option 用 `isLeaf:false` 显式标记 |
 
 ### Events
 
@@ -276,8 +421,5 @@ const options = [{ value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1'
 
 ## 已知限制（未交付）
 
-- **multiple 多选**：当前仅单选。多选会引入 checkable / showCheckedStrategy（all / parent / child）。
-- **showSearch 搜索**：扁平化叶子路径并按关键字过滤，留下一切片。
-- **loadData 异步加载**：当前仅支持同步 options。
-- **expandTrigger='hover'**：当前固定 `'click'`。
+- **showCheckedStrategy**：multiple 模式下当前为「all」语义（每条勾选路径独立提交），未提供 `parent` / `child` 折叠策略。
 - **键盘导航**：方向键 / Enter 切换尚未实现。

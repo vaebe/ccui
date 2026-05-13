@@ -2,7 +2,8 @@ import type { ExtractPropTypes, PropType } from 'vue'
 
 export type CascaderRawValue = string | number
 export type CascaderValuePath = CascaderRawValue[]
-export type CascaderModelValue = CascaderValuePath | null
+export type CascaderModelValue = CascaderValuePath | CascaderValuePath[] | null
+export type CascaderExpandTrigger = 'click' | 'hover'
 export type CascaderSize = 'large' | 'default' | 'small'
 export type CascaderStatus = '' | 'error' | 'warning' | 'success' | 'validating'
 export type CascaderPlacement = 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight'
@@ -13,6 +14,10 @@ export interface CascaderOption {
   value?: CascaderRawValue
   disabled?: boolean
   children?: CascaderOption[]
+  // 显式标记节点是否是叶子。配合 loadData：isLeaf=false 即使无 children 也按可加载处理。
+  isLeaf?: boolean
+  // 配合 multiple：true 表示该节点视为选中（受控）
+  checked?: boolean
   [key: string]: unknown
 }
 
@@ -59,6 +64,26 @@ export const cascaderProps = {
   changeOnSelect: {
     type: Boolean,
     default: false,
+  },
+  // 列展开触发方式
+  expandTrigger: {
+    type: String as PropType<CascaderExpandTrigger>,
+    default: 'click',
+  },
+  // 多选模式：modelValue 变 CascaderValuePath[]；勾选叶子节点聚合提交
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
+  // 搜索匹配。true → 默认 includes 匹配；函数 → 自定义 (input, path) => boolean
+  showSearch: {
+    type: [Boolean, Object] as PropType<boolean | { filter?: (input: string, path: CascaderOption[]) => boolean }>,
+    default: false,
+  },
+  // 异步加载非叶子节点的 children。返回 Promise，组件按 path 调用并 swap loading 状态。
+  loadData: {
+    type: Function as PropType<(path: CascaderOption[]) => Promise<void> | void>,
+    default: undefined,
   },
   // 自定义路径展示
   displayRender: {

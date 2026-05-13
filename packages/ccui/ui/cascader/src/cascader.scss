@@ -183,6 +183,91 @@
     font-size: $ccui-font-size-sm;
     text-align: center;
   }
+
+  &__item-checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 1px solid $ccui-color-border;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+
+    &--checked {
+      background-color: $ccui-primary;
+      border-color: $ccui-primary;
+    }
+  }
+
+  &__tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px 0 8px;
+    height: 22px;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-fill-tertiary;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+  }
+
+  &__tag-close {
+    cursor: pointer;
+    color: $ccui-color-text-tertiary;
+    padding: 0 2px;
+    border-radius: 2px;
+
+    &:hover {
+      background-color: $ccui-color-fill-secondary;
+      color: $ccui-text;
+    }
+  }
+
+  &__search-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: $ccui-font-size;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &--multiple &__input-wrap {
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 32px;
+    padding: 4px 8px;
+  }
+
+  &--multiple &__input {
+    flex: 1 1 auto;
+    min-width: 60px;
+    width: auto;
+  }
 }
 
 .#{$cls-prefix}-cascader-fade-enter-active,

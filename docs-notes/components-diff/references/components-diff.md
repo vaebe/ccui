@@ -3,9 +3,13 @@
 > 数据来源：Ant Design 官方组件总览（基于 v6.3.7 口径，共 71 个官方组件）。
 > 当前项目目录：`packages/ccui/ui` 下共 75 个一级目录，其中 73 个组件/工具入口；`shared` 与 `style-var` 为内部支撑目录，不计入组件覆盖数。
 > 当前项目组件：73 个组件/工具入口（含 `button-3d` 项目特色组件、`masonry` 布局扩展、`util` 工具入口）。
-> 更新时间：2026-05-12，**locale 第二轮收口（Batch 36）**：扩 `PaginationLocale` / `ImageLocale` / `DatePickerLocale`；Pagination / Image / DatePicker / RangePicker / TimePicker 5 个组件读 `cfg.locale`；Picker 系 5 个 prop 默认 `''`（用户 prop > locale > zhCN 兜底）；vue-ccui.ts 静态 export zhCN/enUS/defaultLocale；docs/config-provider 补"切换语言"两 demo。1289 → 1301 测试。详见 `docs-notes/design-audit/decisions/2026-05-10-locale-algorithm.md`。
-> 历史更新：2026-05-10，**审查报告 P1/P2 整改批次完成 + 测试基础设施修复**。Batch 35 设计体系 v2（control-outline 三档 token / Modal hover 切 colorPrimaryHover / dark.ts 非颜色 token 补全 / 12 色板 × 10 阶接入 Tag 预设色 / Tag.Processing 6px 脉冲点 / 旧 token deprecated 标记 / 品牌色与设计原则决策文档）；Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过）；Batch 34 主题对齐（theme 重生 / Form var 改名 / 24 处硬编码主色 var 化 / Result 4 处 JS 主色重构）。1289/1289 测试通过。详见 Batch 33-35 与 `docs-notes/design-audit/`。
-> 更早历史：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
+> 更新时间：2026-05-14，**Cascader 95% 推进（Batch 40）**：`expandTrigger='hover'` 鼠标悬停展开 + `showSearch` 扁平搜索面板（默认 includes / 自定义 `{ filter }` / 禁用项不可选）+ `loadData` 异步加载（option 用 `isLeaf:false` 显式标记 / loading 期间 `--loading` + ⟳ 图标）+ `multiple` 多选（modelValue 变 `CascaderValuePath[]` / checkbox / tag 展示 + × 移除 / 与 showSearch 共存不关闭面板）；CascaderOption 加 `isLeaf` / `checked` 字段。docs +4 demo + API 4 行。1397 → 1416 测试（+19）。
+> 历史更新：2026-05-13，**TimePicker 95% 推进（Batch 39）**：`use12Hours` 12 小时制 + AM/PM 第 4 列（hour 列展示 [12,1..11]，hourStep 抽稀，disabledHours 仍按 24h 接收内部映射）+ 键盘导航（ArrowUp/Down 列内环绕 / Home/End 跳首尾 / Enter 触发 ok / Esc 关闭，cell tabindex=0 / disabled tabindex=-1）+ auto-scroll 打开时把每列选中项滚到中央；format 默认 `''`（breaking，未传时按 use12Hours 切 `'h:mm:ss a'` 或 `'HH:mm:ss'`）；docs 加 3 demo。1383 → 1397 测试（+14）。
+> 更早：2026-05-12，**RangePicker 95% 推进（Batch 38）**：`disabledStartDate` / `disabledEndDate` 起止侧独立禁用（优先于通用 `disabledDate`）+ `presets` 侧边 rail（元组 value，end < start 自动调换）+ `showTime` 双面板各挂时间三列 + 双 phase pending（start 默认 00:00:00 / end 默认 23:59:59）+ ok 单按钮 footer（无 now，范围下语义模糊）；effectiveFormat 启用 showTime 时自动追加时间部分，显式 format 含时间 token 优先；docs 加 5 个 demo（disabledStart/End / showTime 基础 / showTime 默认时间 / presets / presets+showTime 共存）。1364 → 1383 测试（+19）。
+> 更早：2026-05-12，**DatePicker 95% 推进（Batch 37）**：5 个 picker 模式（`date` / `week` / `month` / `year` / `quarter`）+ 面板逐级展开（date → month → year decade）+ `showTime` 时间列三件套 + footer「此刻」/「确定」+ `presets` 侧边 rail；shared/utils/date 加 `generateYearMonthGrid` / `generateDecadeYearGrid` / `generateQuarterGrid` / `getWeekInfo` + 装 dayjs `quarterOfYear` / `advancedFormat` 插件；`DatePickerLocale` 扩 `monthNamesShort` / `quarterNames` / `weekFormat` / `weekHeader`；docs 补 4 个 picker 模式 demo + 4 个 showTime demo + 2-3 个 presets demo。1301 → 1364 测试（+63）。
+> 更早：2026-05-12，**locale 第二轮收口（Batch 36）**：扩 `PaginationLocale` / `ImageLocale` / `DatePickerLocale`；Pagination / Image / DatePicker / RangePicker / TimePicker 5 个组件读 `cfg.locale`；Picker 系 5 个 prop 默认 `''`（用户 prop > locale > zhCN 兜底）；vue-ccui.ts 静态 export zhCN/enUS/defaultLocale；docs/config-provider 补"切换语言"两 demo。1289 → 1301 测试。详见 `docs-notes/design-audit/decisions/2026-05-10-locale-algorithm.md`。
+> 更早历史：2026-05-10，**审查报告 P1/P2 整改批次完成 + 测试基础设施修复**。Batch 35 设计体系 v2（control-outline 三档 token / Modal hover 切 colorPrimaryHover / dark.ts 非颜色 token 补全 / 12 色板 × 10 阶接入 Tag 预设色 / Tag.Processing 6px 脉冲点 / 旧 token deprecated 标记 / 品牌色与设计原则决策文档）；Batch 33 Resolver `@vue3-ccui/unplugin-vue-components`（92 组件映射 / 25 测试通过）；Batch 34 主题对齐（theme 重生 / Form var 改名 / 24 处硬编码主色 var 化 / Result 4 处 JS 主色重构）。1289/1289 测试通过。详见 Batch 33-35 与 `docs-notes/design-audit/`。
+> 再更早：2026-05-09，**P3 体验组件收口 / Mentions 80% 首次交付**：31 用例，textarea + 多 prefix 触发 + 7 个 `findActiveMention` 纯函数测例（含 email-style `me@x` 防误触发、空白后允许、多 prefix 选最近）+ filterOption 三态 + 键盘导航 + 选中插入 prefix+value+split + 受控/非受控 v-model + Form blur/change validate。**P2 大件 + P3 体验型全部 80% 收口**：剩余工作仅有长尾 80→95% 推进与测试质量审查（详见四节）。
 
 ## 零、交付完整度口径
 
@@ -32,12 +36,12 @@
 | Calendar              | Calendar 日历           | 数据展示        | 已完成 |
 | Card                  | Card 卡片               | 数据展示        | 已完成 |
 | Carousel              | Carousel 走马灯         | 数据展示        | 95%    |
-| Cascader              | Cascader 级联选择       | 数据录入        | 80%    |
+| Cascader              | Cascader 级联选择       | 数据录入        | 95%    |
 | CheckBox              | Checkbox 多选框         | 数据录入        | 已完成 |
 | Collapse              | Collapse 折叠面板       | 数据展示        | 已完成 |
 | ColorPicker           | ColorPicker 颜色选择器  | 数据录入        | 95%    |
 | ConfigProvider        | ConfigProvider 全局配置 | 通用            | 已完成 |
-| DatePicker            | DatePicker 日期选择框   | 数据录入        | 80%    |
+| DatePicker            | DatePicker 日期选择框   | 数据录入        | 95%    |
 | Descriptions          | Descriptions 描述列表   | 数据展示        | 已完成 |
 | Divider               | Divider 分割线          | 布局            | 已完成 |
 | Drawer                | Drawer 抽屉             | 反馈            | 已完成 |
@@ -65,7 +69,7 @@
 | Progress              | Progress 进度条         | 反馈            | 已完成 |
 | QRCode                | QRCode 二维码           | 数据展示        | 95%    |
 | Radio                 | Radio 单选框            | 数据录入        | 已完成 |
-| RangePicker           | DatePicker.RangePicker  | 数据录入        | 80%    |
+| RangePicker           | DatePicker.RangePicker  | 数据录入        | 95%    |
 | Rate                  | Rate 评分               | 数据录入        | 已完成 |
 | Result                | Result 结果             | 反馈            | 已完成 |
 | Segmented             | Segmented 分段控制器    | 数据展示        | 已完成 |
@@ -82,7 +86,7 @@
 | Tabs                  | Tabs 标签页             | 导航            | 已完成 |
 | Table                 | Table 表格              | 数据展示        | 已完成 |
 | Tag                   | Tag 标签                | 数据展示        | 已完成 |
-| TimePicker            | TimePicker 时间选择框   | 数据录入        | 80%    |
+| TimePicker            | TimePicker 时间选择框   | 数据录入        | 95%    |
 | Timeline              | Timeline 时间轴         | 数据展示        | 已完成 |
 | Tooltip               | Tooltip 文字提示        | 反馈            | 已完成 |
 | Tour                  | Tour 漫游引导           | 反馈            | 95%    |
@@ -105,20 +109,20 @@
 
 P2 中等复杂度三件套全部 80%：Carousel (Batch 25) / QRCode (Batch 26) / ColorPicker (Batch 27)。后续 P2 工作只剩独立大任务 Transfer / Upload。
 
-### 复杂组件（5 项剩余 + 5 项推进中，P1 数据录入复杂组件 5/5 已 80% 收口）
+### 复杂组件（5 项剩余 + 1 项推进中，P1 数据录入复杂组件 4/5 已 95% 收口 + 1 项 80%）
 
-| 组件                  | 分类     | 复杂点                                                                                                                                                       | 建议优先级   |
-| --------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
-| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — 已交付 80%（date 单选）；range 已拆为独立 RangePicker 组件交付                             | P1（推进中） |
-| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — 已交付 80%（双面板 + hover 预览 + 自动调换）                                       | P1（推进中） |
-| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — 已交付 80%（24 小时制 + step + disabled + now/ok）                                                                 | P1（推进中)  |
-| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — 已交付 80%（单选 + fieldNames + changeOnSelect + displayRender）                              | P1（推进中） |
-| TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly）                    | P1（推进中） |
-| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动       | P2（已交付） |
-| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传 | P2（已交付） |
-| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动                      | P3（已交付） |
-| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 — 已交付 80%（Batch 32）：textarea + findActiveMention 纯函数 + 多 prefix + 键盘 + 选中插入 prefix+value+split           | P3（已交付） |
-| Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model                        | P3（已交付） |
+| 组件                  | 分类     | 复杂点                                                                                                                                                                                                                                | 建议优先级   |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| DatePicker 日期选择框 | 数据录入 | week / month / year / quarter / showTime / preset / locale 切换 — **已交付 95%（Batch 37）**：5 picker 模式 + 面板逐级展开 + showTime 三列 + footer + presets 侧边 rail；range 在独立 RangePicker 组件                                | P1（已交付） |
+| RangePicker 日期范围  | 数据录入 | preset 快捷预设 / showTime / start-end 独立 disabledDate / 响应式单面板 — **已交付 95%（Batch 38）**：双面板 + hover 预览 + 自动调换 + disabledStartDate/EndDate + presets 元组 rail + 双侧 showTime + ok footer                      | P1（已交付） |
+| TimePicker 时间选择框 | 数据录入 | 12 小时制 / 范围 / 键盘导航 / 滚轮 snap — **已交付 95%（Batch 39）**：12 小时制 + AM/PM 列 + 键盘导航全套（ArrowUp/Down/Home/End/Enter/Esc）+ auto-scroll 打开时居中；范围（TimeRangePicker）独立组件留作 100% 长尾；滚轮 snap 暂未做 | P1（已交付） |
+| Cascader 级联选择     | 数据录入 | multiple 多选 / showSearch 搜索 / loadData 异步 / hover 触发 — **已交付 95%（Batch 40）**：expandTrigger=hover + showSearch 扁平面板 + loadData 异步 + multiple checkbox + tag rail；showCheckedStrategy / 键盘导航留作 100% 长尾     | P1（已交付） |
+| TreeSelect 树选择     | 数据录入 | showSearch 搜索 / loadData 异步 / showCheckedStrategy / 键盘导航 / 半选 v-model — 已交付 80%（单选 + 多选 checkable + treeCheckStrictly）                                                                                             | P1（推进中） |
+| Transfer 穿梭框       | 数据录入 | 双列管理、搜索、分页、批量选择 — 已交付 80%（Batch 29）：双列勾选 + indeterminate / 双向移动 / 按列独立搜索 + 自定义 filterOption / render / Form 联动                                                                                | P2（已交付） |
+| Upload 上传           | 数据录入 | 拖拽、切片、进度、预览、错误处理 — 已交付 80%（Batch 31）：选择 + 拖拽 + 三层守门（maxCount/maxSize/beforeUpload）+ 状态四态 + reject emit；不内置 HTTP 上传                                                                          | P2（已交付） |
+| AutoComplete 自动完成 | 数据录入 | 与 Input 紧耦合、候选项、键盘交互 — 已交付 80%（Batch 28）：filterOption 三态 + caseSensitive + ArrowUp/Down/Enter/Esc 键盘 + Form 联动                                                                                               | P3（已交付） |
+| Mentions 提及         | 数据录入 | contentEditable、触发解析、光标定位 — 已交付 80%（Batch 32）：textarea + findActiveMention 纯函数 + 多 prefix + 键盘 + 选中插入 prefix+value+split                                                                                    | P3（已交付） |
+| Tour 漫游引导         | 反馈     | 多步定位、蒙层裁切、滚动跟随 — 已交付 80%（Batch 30）：4 块 mask 围出镂空 + floating-ui 12 方位 + Esc 关闭 + finish emit + 双 v-model                                                                                                 | P3（已交付） |
 
 ## 三、本轮交付记录
 
@@ -253,6 +257,215 @@ Table 剩余非完整对齐项：
 
 - `vp check` 通过。
 - `vp test packages/ccui/ui/table/test/table.test.ts --environment jsdom` 通过，52 个用例通过。
+
+### Batch 40：Cascader 95% 推进（hover / showSearch / loadData / multiple）
+
+P1 复杂组件第四件 95%：Cascader 80% → 95%。1397 → 1416 测试（+19 用例），栏目内 39 → 58。
+
+**A. expandTrigger='hover'**
+
+- 新 prop `expandTrigger: 'click' | 'hover'`，默认 `'click'`（保持向后兼容）。
+- `hoverOption(columnIndex, item)`：mouseenter 非叶子节点 → 截断 activePath + push item，仅展开不 emit；叶子节点与 disabled 忽略；click 模式下完全短路。
+
+**B. showSearch 扁平搜索**
+
+- 新 prop `showSearch: boolean | { filter?: (input, path) => boolean }`，默认 `false`。
+- `flattenPaths(opts)` DFS 展平所有叶子路径（含 `changeOnSelect` 中间节点）。
+- 默认 filter：`path.some(n => label.toLowerCase().includes(input.toLowerCase()))`，传 `{ filter }` 自定义。
+- 启用后 input 由 `readonly` 改可写；`onInput` 写 `searchValue`；`isSearching = showSearchActive && searchValue.length > 0`。
+- isSearching=true 时 panel 加 `--searching` modifier，渲染 `__search-item` 列表（label 路径用 separator 拼接）；点击 emit + 关闭（multiple 下不关）。
+- 含 disabled 节点的路径标 `--disabled` 不可点击。
+
+**C. loadData 异步加载**
+
+- 新 prop `loadData: (path: CascaderOption[]) => Promise<void> | void`。
+- `CascaderOption` 加可选字段 `isLeaf?: boolean` —— 显式 `isLeaf=false` 时即使 children 空也按非叶子处理（提示需 loadData）。
+- `toColumnItem` 优先 `opt.isLeaf === false`，否则按 children 数组判定。
+- `maybeLoadData(item, pathUpTo)`：非叶子 + 空 children + loadData prop set + 未在 loading → 进 `loadingSet`，调 loadData，resolve/reject 后移出集合。
+- pickOption / hoverOption 各自调用 maybeLoadData。
+- 渲染：`loadingSet.has(item.raw)` 时 cell 加 `--loading` 类，expand-icon 区显示 `⟳`。
+
+**D. multiple 多选**
+
+- 新 prop `multiple: boolean`，默认 `false`。
+- modelValue 类型扩为 `CascaderValuePath | CascaderValuePath[] | null`。单选/多选两套 computed：`selectedPath`（单）/ `selectedPaths`（多），按 `props.multiple` 互斥。
+- `pathKey(path)` 把路径 value 数组拼成 key；`checkedKeys` 是当前已选 keys 的 Set。
+- `togglePath(path)`：检查 key 是否在 checkedKeys → 移除或追加，调 `emitChangeMultiple`。
+- pickOption：multiple 模式下叶子节点（或 changeOnSelect 中间节点）触发 togglePath；非叶子继续展开（不 emit），面板不关。
+- 渲染：multiple 模式下叶子节点（或 changeOnSelect 中间节点）前置 `__item-checkbox`（受 `--checked` 修饰）；input wrap 渲染 `__tags`（每条 path → tag with × close），placeholder 仅在无 tag + 无搜索值时显示；clear 把 `[]` 推上（不再 null）；showSearch 共存：搜索结果点击调 togglePath 后清空 searchValue 但不关。
+- 用户 disabledRender / displayRender 复用：tag 优先 `displayRender(labels, path)`，否则取叶子 label。
+
+**E. 验证**
+
+- `pnpm exec vp test run`（@ packages/ccui）：75 文件 / 1416 用例全过。
+- 改动 4 文件：`cascader-types.ts`（+50：4 props + RangePresetItem 等接口）/ `cascader.tsx`（+170）/ `cascader.scss`（+90 多选 tag + checkbox + search-item 等）/ `cascader.test.ts`（+260：19 用例覆盖 4 个特性）。
+- 后台 docs agent 卡住 600s 触发 watchdog 杀掉，主线接手补完 docs（+135 行 / 4 demo）。
+
+**F. 后续**
+
+- Cascader 留作 95%；100% 长尾：`showCheckedStrategy`（all / parent / child 折叠语义）、半选三态、键盘导航、tag maxTagCount 折叠、searchDebounce。
+- 同批未做：TreeSelect 仍 80%（剩 1 项 P1）。下一批 → TreeSelect 95% 收口（showSearch / loadData / showCheckedStrategy / 键盘 / 半选 v-model）即可完成 P1 数据录入复杂组件 5/5 全部 95%。
+
+### Batch 39：TimePicker 95% 推进（use12Hours / 键盘 / auto-scroll）
+
+P1 复杂组件第三件 95%：TimePicker 80% → 95%。1383 → 1397 测试（+14 用例），栏目内 46 → 60。
+
+**A. 12 小时制 + AM/PM 列（use12Hours）**
+
+- 新 prop `use12Hours: boolean`，开启后：
+  - hour 列显示顺序为 `[12, 1, 2, ..., 11]`（受 `hourStep` 抽稀，step=3 → `[12, 3, 6, 9]`）
+  - 第 4 列 period（AM/PM）
+  - `disabledHours` 仍按 24 小时数字接收，组件按当前 period（pendingDayjs.hour() >= 12）映射判定
+  - `pickValue('period', 0|1)` 通过 to12h/from12h 双向换算保持 hour 不漂移
+- 新 helper：`to12h(h24) → { display, isPM }` / `from12h(display, isPM) → h24`
+- `format` prop **默认改 `''`**（breaking，与 DatePicker Batch 37 一致）。`effectiveFormat = props.format || (use12Hours ? 'h:mm:ss a' : 'HH:mm:ss')`，所有 `props.format` 引用切到 `effectiveFormat.value`。
+- 7 个测试：第 4 列存在 + AM/PM 文本 / hour 列 12,1..11 顺序 / AM-PM 切换 emit 12 与 0 的转换 / format 'h:mm:ss a' 默认 / hourStep 抽稀 / disabledHours 24h→12h 映射 / 未传 format 时 use12Hours 走 h:mm:ss a 兜底。
+
+**B. 键盘导航**
+
+- 每个 cell `tabindex=0`（disabled cell tabindex=-1），监听 `onKeydown(e, type, index)`：
+  - `ArrowUp` / `ArrowDown`：列内上下移（环绕）+ pickValue + focus 新 cell
+  - `Home` / `End`：跳列首 / 列尾
+  - `Enter`：触发 ok（showOk=true）或关闭面板
+  - `Escape`：关闭面板（不 emit）
+- focusCell 用 `[data-time-column="<type>"]` 属性选择器定位列容器，按 index 取 `children[index]` focus。
+- 6 个测试：ArrowDown / ArrowUp 环绕到末项 / End+Home / Enter 触发 ok / Escape 关闭无 emit / disabled cell tabindex=-1。
+
+**C. auto-scroll 打开时居中**
+
+- `watch(open)` 触发后 `nextTick().then(() => scrollSelectedIntoCenter())`：对所有 `[data-time-column]` 容器查 `li[aria-selected="true"]`，设 `scrollTop = max(0, selected.offsetTop - col.clientHeight/2 + selected.offsetHeight/2)`。
+- jsdom 不计算 layout，但 setter 不报错；测试断言 selected 类与 scrollTop ≥ 0 即可。
+- 1 个测试：modelValue=14:30:45 打开后 selected DOM 存在 + scrollTop 是数字。
+
+**D. 文档**
+
+`packages/docs/components/time-picker/index.md` ~~200 → 329 行：
+
+- 加 3 个 section：`## 12 小时制`（1 demo）+ `## 键盘导航`（1 demo + 引子说明 6 个键位）+ `## 自动滚动到选中`（1 demo）。
+- API 表 `format` 默认改 `''`；新增 `use12Hours` 行。
+- 已知限制 section 删 use12Hours / 键盘导航，保留滚轮 snap（未做）作为后续。
+
+**E. 验证**
+
+- `pnpm exec vp test run`（@ packages/ccui）：75 文件 / 1397 用例全过。
+- `pnpm exec vp check`：与前两批同 baseline 2 errors（pre-existing 在 `config-provider.tsx:43` + `upload/test/upload.test.ts:287-289`）+ 5 warnings。
+- 4 个文件改动：`time-picker-types.ts`（+8）/ `time-picker.tsx`（+135）/ `time-picker.test.ts`（+130）/ 无 scss 变更。
+
+**F. 后续**
+
+- TimePicker 留作 95%；100% 长尾：滚轮 snap（pointer drag / wheel + smooth scroll）、TimeRangePicker 范围组件（独立组件）、移动端 input 体验。
+- 同批未做：Cascader / TreeSelect 仍 80%（剩 2 项 P1）。下一批可选 Cascader → 95%（multiple / showSearch / loadData / hover 触发）。
+
+### Batch 38：RangePicker 95% 推进（disabledStart/End / presets / showTime）
+
+P1 复杂组件第二件 95%：RangePicker 80% → 95%。1364 → 1383 测试（+19 用例），栏目内 48 → 58。复用 Batch 37 落地的 shared/utils/date 和 dayjs 插件链，未引入新依赖。
+
+**A. 起止侧独立禁用（disabledStartDate / disabledEndDate）**
+
+- 新增两个 prop（类型同 `disabledDate: (current: Dayjs) => boolean`），优先级**高于**通用 `disabledDate`；单侧未配置时回落到通用。
+- 内部 `isDisabledFor(cell, side)` 帮助函数集中判定。点击与渲染阶段都走它（grid 用当前 phase 决定 cell 显示状态）。
+- 4 个测试：基础 / 仅起始侧 / 仅结束侧（phase 切换后样式生效）/ side-specific 优先级。
+
+**B. presets 侧边 rail（元组 value）**
+
+- `presets: RangePresetItem[]`；`RangePresetItem = { label: string | (() => string); value: [DateValue, DateValue] | (() => [DateValue, DateValue]) }`。
+- value 走非严格解析（`toDayjs(raw)` 无 format）—— 业务常用 ISO 串 / Date / Dayjs / number(ms)。
+- end < start 时自动调换（按 day 级别比较）。
+- 非 showTime：点击即 emit + 关；与 showTime 共存：只设 pending，等 ok。
+- panel 加 `--with-presets` modifier 自适应宽度。
+- 6 个测试：rail 渲染 / 空数组不渲染 / 立即 emit + 关 / value 函数延迟求值 / end < start 自动调换 / modifier 类。
+
+**C. showTime + footer（双侧时间列）**
+
+- `showTime: boolean | RangeTimeShowConfig`，仅对单面板（picker='date' 等价）生效。
+- `RangeTimeShowConfig` 字段：`format?`（默认 `'HH:mm:ss'`）/ `defaultStartTime?` / `defaultEndTime?` / `hourStep? / minuteStep? / secondStep?` / `disabledHours? / disabledMinutes? / disabledSeconds?` / `hideDisabledOptions?`。
+- 双面板 panel-side 各挂自己的 time-columns（hour/minute/second 三列，受 format 控制显隐）；`pickTime(side, unit, value)` 分别更新 pendingStart / pendingEnd 的时分秒。
+- selectDate 在 showTime 启用时：起始侧合并 pendingStart 或 `defaultStartTime`（默认 00:00:00）；结束侧合并 pendingEnd 或 `defaultEndTime`（默认 23:59:59）；end < start 按 day 自动调换；**不立即关闭**，等 ok 确认。
+- Footer 只有 ok 按钮（无 now —— 范围下"此刻"语义模糊；保留 `showNow` 字面 prop 给后续扩展用）。ok 在 pendingStart / pendingEnd 任一为 null 时 disabled。
+- effectiveFormat：showTime 启用且用户 `props.format` 不含 `[HhmsAa]` 任一时间 token 时，自动拼成 `'YYYY-MM-DD HH:mm:ss'`；显式 format 含时间 token 时优先。
+- 10 个测试：每侧 3 列 / format=HH:mm 切 2 列 / 点日期不立即 emit / ok 禁用 → 启用 / 时间格点击落到对应 phase / defaultStartTime+defaultEndTime / hourStep=6 / 含时分秒的 modelValue 回显 / 用户 format 覆盖默认拼接 / presets + showTime 共存。
+
+**D. 文档**
+
+`packages/docs/components/range-picker/index.md` 230 → 369 行：
+
+- 加 3 个 section：`## 独立禁用起止侧`（1 demo）+ `## showTime 时间选择`（2 demo：基础 / 默认时间+步进）+ `## presets 预设快捷项`（2 demo：相对项 + presets+showTime 共存）。
+- API 表加 `disabledStartDate` / `disabledEndDate` / `presets` / `showTime` 四行。
+- 已知限制 section 删 4 项（preset / showTime / start-end disabledDate / locale 切换 —— locale 走 ConfigProvider 路径），保留键盘导航 / 响应式单面板。
+
+**E. 验证**
+
+- `pnpm exec vp test run`（@ packages/ccui）：75 文件 / 1383 用例全过。
+- `pnpm exec vp check`：与 Batch 37 同 baseline 1 error（pre-existing 在 config-provider.tsx:43）+ 5 warnings（pre-existing 在 tour.test.ts 等）。
+- 4 个文件改动：`range-picker-types.ts`（+45）/ `range-picker.tsx`（+170）/ `range-picker.scss`（+95）/ `range-picker.test.ts`（+250）；docs +139。
+
+**F. 后续**
+
+- RangePicker 留作 95%；100% 长尾：响应式单面板（移动端 / 窄屏自动堆叠）、键盘导航全套、preset 高亮当前命中（hovered preset 时整段 highlighted in panel）。
+- 同批未做：TimePicker / Cascader / TreeSelect 仍在 80%（剩 3 项 P1）。下一批可选 TimePicker → 95%（12 小时制 / 滚轮 snap）。
+
+### Batch 37：DatePicker 95% 推进（picker 模式 / showTime / presets）
+
+P1 复杂组件首件 95%：DatePicker 80% → 95%。1301 → 1364 测试（+63 用例，分布详见下），vp check 0 errors（baseline 18 → 1，pre-existing 在 config-provider.tsx，与本批无关）。
+
+**A. shared/utils/date 基础层**
+
+- 新增 4 个纯函数 + 4 个 interface：`generateYearMonthGrid(viewYear)`（月面板 12 格 / 当前月 isToday 标记）、`generateDecadeYearGrid(viewYear)`（年面板 12 格 = decadeStart-1..decadeStart+10，10 内 + 2 外）、`generateQuarterGrid(viewYear)`（季度面板 4 格 / isCurrentQuarter）、`getWeekInfo(date, weekStart)`（双模式周计数：weekStart=1 走 ISO 8601 含跨年；weekStart=0 走美式 weekYear 不跨年）。
+- 装两个 dayjs 插件：`quarterOfYear`（提供 Q 解析 token + `.quarter()` 方法）+ `advancedFormat`（让 `format('Q')` 输出季度数字而非字面 Q）。验证：`dayjs('2024-Q3', 'YYYY-[Q]Q', true)` 解析为 2024-07-01 / `.format('YYYY-[Q]Q')` 反向输出 '2024-Q3'。
+- 14 个 utils 单测：年/十年/季度网格的 12 格结构、isCurrentQuarter / isToday 标记、decadeStart 边界（1995 → 1989..2000）、ISO 周跨年（2023-01-01 周日 → 2022 W52）、ISO 长年 W53（2020-12-31 → W53）、美式 weekYear 不跨年（2023-01-01 → W1 / 2023-12-31 → W53）。
+
+**B. picker 5 模式 + 面板状态机**
+
+- 新 prop `picker: 'date' | 'week' | 'month' | 'year' | 'quarter'`，默认 `'date'`。`format` 默认从 `'YYYY-MM-DD'` 改为 `''`，未传时走 `DEFAULT_FORMAT_BY_PICKER` 兜底（date→YYYY-MM-DD / week→YYYY-MM-DD / month→YYYY-MM / year→YYYY / quarter→YYYY-[Q]Q）。这是有意 breaking：纯 `''` 现在等于"按 picker 兜底"；显式 `'YYYY-MM-DD'` 仍生效。
+- 内部 `panelMode: 'date' | 'month' | 'year' | 'quarter'` 状态机：openPopup 按 picker 重置；点 panel-label 上钻（date → month → year）；选中年/月格按 picker 语义下钻或 emit。
+- panel-label 在 `--clickable` 修饰下可点击；arrow 按 mode 切语义化类名：date 模式 `prev-month / next-month / prev-year / next-year`（保持向后兼容）；month/quarter 模式 `prev-year / next-year / prev-decade / next-decade`；year 模式仅两按钮 `prev-decade / next-decade`，无 super 箭头（不实现世纪面板）。
+- picker='week' 行级整周高亮 + 左侧加 32px 周编号列；emit 该周起始日（按 weekStart）；input 显示走 `locale.weekFormat` 模板（中文默认「2026 年第 19 周」/ 英文默认 `2026-W19`）。
+- picker='quarter' panel-label 上钻到 year 后**回 quarter**（不是 month）—— quarter 不经过 month 面板。
+- 新事件 `panel-change(mode, viewMonth)`，面板上钻/下钻时触发。
+- 28 个 picker 模式测试：每模式典型路径（基础渲染 / 选中 emit / panel-label 上钻 / 箭头步进）+ panel-change 事件 + 重新开 panelMode 重置 + effectiveFormat 切换 + 用户 format 覆盖。
+
+**C. showTime + footer**
+
+- 新 prop `showTime: boolean | TimeShowConfig`，仅 `picker='date'` 生效（其他 picker 不渲染 time-columns 也不渲染 footer，沿用原行为）。
+- `TimeShowConfig` 字段：`format?`（默认 `'HH:mm:ss'`，未含 'm' 隐藏分列、未含 's' 隐藏秒列）/ `defaultValue?` / `hourStep? / minuteStep? / secondStep?` / `disabledHours? / disabledMinutes? / disabledSeconds?` / `hideDisabledOptions?`。
+- 新 prop `showNow: boolean = true`，决定 footer 是否显示「此刻」按钮（值由 locale 提供）。
+- 内部 `pendingValue: Dayjs | null` + `pendingDirty: boolean`。showTime 启用时 pickDate 暂存（保留前一个 pending 的时分秒），不 emit 不关闭；时间格 click 走 `pickTime(unit, value)` 改 pending；ok 按钮在「无 modelValue 且 pendingDirty=false」时禁用，否则点 ok emit pending + 关闭；now 按钮直接 emit `dayjs()` + 关闭。
+- effectiveFormat 启用 showTime 时拼接 `YYYY-MM-DD ${timeFormat}`，用户 format 优先。
+- date 面板用 `panelSelected` computed（showTime 时跟 pendingValue / 否则跟 selectedDayjs）做"选中"高亮。
+- 13 个 showTime 测试：3 列 / 2 列、不立即 emit、click 时间格 → ok emit 含时分秒、ok disabled 状态、defaultValue / 已有 modelValue 时显示已有时间、now 按钮、showNow=false、hourStep / disabledHours / hideDisabledOptions、picker=month 时 showTime 不生效、用户 format 覆盖。
+
+**D. presets 侧边 rail**
+
+- 新 prop `presets: PresetItem[]`，`PresetItem = { label: string | (() => string); value: DateValue | (() => DateValue) }`。空数组不渲染（panel 加 `--with-presets` modifier 后宽度自适应）。
+- value 用**非严格**解析（`toDayjs(raw)` 无 format 参数）—— 业务常用 ISO 串 '2026-05-09' / Date / Dayjs / number(ms)，不强求匹配 effectiveFormat。
+- 非 showTime：点击预设立即 emit + 关闭；picker='week' 时取该周起始日。
+- 与 showTime 共存：点击预设只更新 pending + dirty，不关闭，ok 可点；时间默认走 initialPendingTime（00:00:00 或 showTime.defaultValue）。
+- label/value 函数延迟求值（点击时才调用，用于"今天 / 一周后"这种相对值；渲染时不调用 = 不会闪烁）。
+- 8 个 presets 测试：rail 渲染、空数组不渲染、非 showTime 立即 emit + 关、value 函数延迟求值（计数验证）、与 showTime 共存、picker=week 取周起、picker=month 按月 emit、`--with-presets` modifier。
+
+**E. locale 扩展**
+
+- `DatePickerLocale` 新增 4 字段：`monthNamesShort` / `quarterNames` / `weekFormat` / `weekHeader`。中文默认 12 月名 `'1 月'..'12 月'` / 季度名 `'一季度'..'四季度'` / 周模板 `'{weekYear} 年第 {weekNumber} 周'` / 周表头 `'周'`。英文相应 `Jan..Dec` / `Q1..Q4` / `{weekYear}-W{weekNumber}` / `Wk`。
+
+**F. 文档**
+
+`packages/docs/components/date-picker/index.md` 230 → 459 行：
+
+- 顶部介绍改写为 5 picker 模式现状。
+- 新增 3 个 section：`## Picker 模式`（4 demo：week / month / year / quarter）+ `## showTime 时间选择`（4 demo：基础 / 只显示时分 / 步进+默认时间 / 禁用部分时间 + showNow=false）+ `## presets 预设快捷项`（3 demo：相对项 / picker=week 共存 / showTime 共存）。
+- API 表加 `picker` / `showTime` / `showNow` / `presets` 四行；`format` 默认改 `''` 并补 picker 兜底说明；Events 表加 `panel-change`。
+- 已知限制 section 删 picker 模式四项 / locale 切换 / showTime / showNow / presets（全部已交付），保留 `TimePicker / renderExtraFooter / showToday`。
+
+**G. 验证**
+
+- `pnpm exec vp test run`（@ packages/ccui）：75 文件 / 1364 用例全过。
+- `pnpm exec vp check`：1 error（pre-existing 在 `config-provider.tsx:43` no-useless-fallback-in-spread）+ 5 warnings（pre-existing 在 tour.test.ts 等）。Baseline stash 验证：18 errors → 1 error（本批顺手让 17 个 errors 不再触发）。
+- 4 个文件首次接入：`shared/utils/date.test.ts`（新建 +109 行）+ `date-picker.{ts,tsx,scss}` 大幅扩张 + `config-provider-types.ts` / `locale/zh-CN.ts` / `locale/en-US.ts` 加字段。
+
+**H. 后续**
+
+- DatePicker 留作 95%；100% 长尾：`renderExtraFooter` 自定义 footer 插槽、`showToday` 「今日」快捷按钮、`disabledTime` 与 disabledHours 协议合并、键盘导航全套（Arrow/PageUp/PageDown/Home/End）。
+- 同批未做：RangePicker / TimePicker / Cascader / TreeSelect 仍在 80%（剩 4 项 P1）。下一批可选 RangePicker → 95%（preset / showTime / 独立 disabledDate）或 TimePicker → 95%（12 小时制 + 滚轮 snap）。
 
 ### Batch 35：审查报告 P1/P2 整改 + 测试基础设施
 
@@ -1116,8 +1329,11 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 
 ### P1：补齐高频录入和基础设施
 
-1. DatePicker / TimePicker：建议先抽日期时间工具层，再做面板组件。
-2. Cascader / TreeSelect：复用 Tree 和 Select 的已完成能力。
+1. DatePicker：**95% 已交付（Batch 37）**。新增 5 picker 模式（date/week/month/year/quarter）+ 面板逐级展开（date→month→year decade）+ showTime 时间三列 + footer（此刻/确定）+ presets 侧边 rail + DatePickerLocale 扩 4 字段。共享层装 dayjs `quarterOfYear` / `advancedFormat` 插件。90 个测试全通过。剩余 100% 长尾：renderExtraFooter 自定义 footer / showToday 「今日」按钮 / disabledTime / 键盘导航全套。
+2. RangePicker：**95% 已交付（Batch 38）**。新增 disabledStartDate / disabledEndDate 起止侧独立禁用 + presets 元组 rail + showTime 双面板各挂时间三列 + ok footer。58 个测试全通过。剩余 100% 长尾：响应式单面板 / 键盘导航 / preset 高亮当前命中。
+3. TimePicker：**95% 已交付（Batch 39）**。新增 use12Hours 12 小时制 + AM/PM 列 + 键盘导航全套（ArrowUp/Down/Home/End/Enter/Esc） + auto-scroll 打开时居中。60 个测试全通过。剩余 100% 长尾：滚轮 snap / TimeRangePicker 独立组件。
+4. Cascader：**95% 已交付（Batch 40）**。新增 expandTrigger=hover + showSearch 扁平面板（默认 includes / 自定义 filter）+ loadData 异步（isLeaf 显式标记 + loading 状态）+ multiple 多选（checkbox + tag rail + × 移除 + 与 showSearch 共存）。58 个测试全通过。剩余 100% 长尾：showCheckedStrategy / 半选三态 / 键盘导航 / tag 折叠。
+5. TreeSelect：仍 80%，剩 1 项 P1。下一批 → TreeSelect 95%（showSearch / loadData / showCheckedStrategy / 键盘 / 半选）完成 P1 数据录入复杂组件 5/5 全部 95% 收口。
 
 ### P2：增强展示与低频录入
 
