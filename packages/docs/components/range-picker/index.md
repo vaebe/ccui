@@ -111,6 +111,36 @@ function disabledDate(current: Dayjs) {
 
 :::
 
+## 独立禁用起止侧
+
+`disabledStartDate` / `disabledEndDate` 仅作用于对应侧（phase=start / phase=end），优先级高于通用 `disabledDate`；单侧未配置时回落到 `disabledDate`。先点起始切到 end 阶段后，结束侧的禁用样式才会出现。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import dayjs, { type Dayjs } from 'dayjs'
+import { computed, ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+const start = computed(() => value.value?.[0])
+
+function disabledStartDate(current: Dayjs) {
+  return current.isBefore(dayjs().startOf('day'))
+}
+function disabledEndDate(current: Dayjs) {
+  if (!start.value) return false
+  return current.isAfter(dayjs(start.value).add(14, 'day'))
+}
+</script>
+
+<template>
+  <c-range-picker v-model="value" :disabled-start-date="disabledStartDate" :disabled-end-date="disabledEndDate" />
+</template>
+```
+
+:::
+
 ## 自定义分隔符与占位
 
 :::demo
@@ -198,30 +228,130 @@ const value = ref<[string, string] | null>(null)
 
 :::
 
+## showTime 时间选择
+
+`show-time` 为 `true` 或对象时启用时间选择，两侧面板各挂时分秒三列；点日期不立即提交，footer 出现「确定」按钮，起止齐全后可点。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+</script>
+
+<template>
+  <c-range-picker v-model="value" show-time />
+  <p>当前值：{{ value }}</p>
+</template>
+```
+
+:::
+
+传对象可配置默认时刻与步进，未传 `defaultStartTime` / `defaultEndTime` 时默认 `00:00:00` / `23:59:59`。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+const showTime = {
+  defaultStartTime: '2026-01-01 09:00:00',
+  defaultEndTime: '2026-01-01 17:30:00',
+  minuteStep: 15,
+}
+</script>
+
+<template>
+  <c-range-picker v-model="value" :show-time="showTime" />
+</template>
+```
+
+:::
+
+## presets 预设快捷项
+
+`presets` 传入快捷项数组后，面板左侧出现 rail；空数组不渲染。每项 `value` 可为元组或返回元组的函数，非严格解析，`end < start` 时自动调换。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import dayjs from 'dayjs'
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+const presets = [
+  { label: '今天', value: () => [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')] },
+  { label: '最近 7 天', value: () => [dayjs().subtract(6, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')] },
+  {
+    label: '本周',
+    value: () => [dayjs().startOf('week').format('YYYY-MM-DD'), dayjs().endOf('week').format('YYYY-MM-DD')],
+  },
+  {
+    label: '本月',
+    value: () => [dayjs().startOf('month').format('YYYY-MM-DD'), dayjs().endOf('month').format('YYYY-MM-DD')],
+  },
+]
+</script>
+
+<template>
+  <c-range-picker v-model="value" :presets="presets" />
+</template>
+```
+
+:::
+
+与 `show-time` 共存时，点击预设仅写入 pending，可继续微调时间，最后通过「确定」提交。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+const presets = [{ label: '上次会议', value: ['2026-05-08 14:00:00', '2026-05-08 15:30:00'] }]
+</script>
+
+<template>
+  <c-range-picker v-model="value" show-time :presets="presets" />
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                    | 说明                                                          |
-| ----------------- | ---------------------------------------------------------- | ------------------------- | ------------------------------------------------------------- |
-| modelValue        | `[DateValue, DateValue] \| null`                           | --                        | 起止区间，支持 `v-model`                                      |
-| format            | string                                                     | `YYYY-MM-DD`              | 输入框显示与字符串解析格式                                    |
-| valueFormat       | `'string' \| 'date' \| 'number'`                           | `'string'`                | `v-model` 输出形态：按 format 字符串 / Date 实例 / 毫秒时间戳 |
-| placeholder       | `[string, string]`                                         | `['开始日期','结束日期']` | 起止两端占位文案                                              |
-| separator         | string                                                     | `~`                       | 起止之间的分隔符                                              |
-| disabled          | boolean                                                    | `false`                   | 是否禁用                                                      |
-| clearable         | boolean                                                    | `true`                    | 是否显示清除按钮                                              |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                                    |
-| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                      | 校验状态；置于 `FormItem` 时自动继承                          |
-| disabledDate      | `(current: Dayjs) => boolean`                              | --                        | 不可选日期回调                                                |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`            | 浮层方位                                                      |
-| popupClassName    | string                                                     | --                        | 浮层根元素自定义 class                                        |
-| popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                        |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点                                              |
-| autoFocus         | boolean                                                    | `false`                   | 挂载后自动 focus 起始输入框                                   |
-| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读                                                    |
-| transitionName    | string                                                     | `ccui-range-picker-fade`  | 浮层过渡名                                                    |
-| weekStart         | `0 \| 1`                                                   | `0`                       | 周起始：`0` 周日开头，`1` 周一开头                            |
+| 参数              | 类型                                                       | 默认值                    | 说明                                                                                                                                                                                                 |
+| ----------------- | ---------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| modelValue        | `[DateValue, DateValue] \| null`                           | --                        | 起止区间，支持 `v-model`                                                                                                                                                                             |
+| format            | string                                                     | `YYYY-MM-DD`              | 输入框显示与字符串解析格式                                                                                                                                                                           |
+| valueFormat       | `'string' \| 'date' \| 'number'`                           | `'string'`                | `v-model` 输出形态：按 format 字符串 / Date 实例 / 毫秒时间戳                                                                                                                                        |
+| placeholder       | `[string, string]`                                         | `['开始日期','结束日期']` | 起止两端占位文案                                                                                                                                                                                     |
+| separator         | string                                                     | `~`                       | 起止之间的分隔符                                                                                                                                                                                     |
+| disabled          | boolean                                                    | `false`                   | 是否禁用                                                                                                                                                                                             |
+| clearable         | boolean                                                    | `true`                    | 是否显示清除按钮                                                                                                                                                                                     |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                                                                                                                                                                           |
+| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                      | 校验状态；置于 `FormItem` 时自动继承                                                                                                                                                                 |
+| disabledDate      | `(current: Dayjs) => boolean`                              | --                        | 不可选日期回调，对 start / end 都生效                                                                                                                                                                |
+| disabledStartDate | `(current: Dayjs) => boolean`                              | --                        | 仅作用于起始侧（phase=start），优先级高于 `disabledDate`                                                                                                                                             |
+| disabledEndDate   | `(current: Dayjs) => boolean`                              | --                        | 仅作用于结束侧（phase=end），优先级高于 `disabledDate`                                                                                                                                               |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`            | 浮层方位                                                                                                                                                                                             |
+| popupClassName    | string                                                     | --                        | 浮层根元素自定义 class                                                                                                                                                                               |
+| popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                               |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点                                                                                                                                                                                     |
+| autoFocus         | boolean                                                    | `false`                   | 挂载后自动 focus 起始输入框                                                                                                                                                                          |
+| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读                                                                                                                                                                                           |
+| transitionName    | string                                                     | `ccui-range-picker-fade`  | 浮层过渡名                                                                                                                                                                                           |
+| weekStart         | `0 \| 1`                                                   | `0`                       | 周起始：`0` 周日开头，`1` 周一开头                                                                                                                                                                   |
+| presets           | `RangePresetItem[]`                                        | `[]`                      | 左侧快捷项；每项 `{ label, value }`，`value` 可为元组或返回元组的函数；空数组不渲染 rail                                                                                                             |
+| showTime          | `boolean \| RangeTimeShowConfig`                           | `false`                   | 启用时间选择；对象支持 `format` / `defaultStartTime` / `defaultEndTime` / `hourStep` / `minuteStep` / `secondStep` / `disabledHours` / `disabledMinutes` / `disabledSeconds` / `hideDisabledOptions` |
 
 ### Events
 
@@ -235,8 +365,5 @@ const value = ref<[string, string] | null>(null)
 
 ## 已知限制（未交付）
 
-- **preset 快捷预设**（最近 7 天 / 本月 / 本季度等）：留给下一切片做。
-- **showTime 时间联动**：DatePicker / RangePicker 推到 95% 时一并接通。
-- **start / end 独立 disabledDate**：当前 disabledDate 一份，对 start 与 end 都生效。
 - **键盘导航**：方向键 / Enter 切换尚未实现。
 - **响应式单面板**：移动端 PC 双面板会溢出，自动切单面板留给后续。

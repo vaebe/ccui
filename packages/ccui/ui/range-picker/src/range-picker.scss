@@ -118,6 +118,36 @@
     box-sizing: border-box;
   }
 
+  &__main-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__presets {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    width: 110px;
+    border-right: 1px solid $ccui-color-border-secondary;
+    overflow-y: auto;
+    max-height: 320px;
+  }
+
+  &__preset-item {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-primary;
+    }
+  }
+
   &__panels {
     display: flex;
     gap: 12px;
@@ -238,6 +268,80 @@
   &__cell--range-start,
   &__cell--range-end {
     background-color: rgba($ccui-primary, 0.12);
+  }
+
+  &__time-columns {
+    display: flex;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__time-column {
+    display: flex;
+    flex-direction: column;
+    width: 56px;
+    max-height: 160px;
+    overflow-y: auto;
+    list-style: none;
+
+    & + & {
+      border-left: 1px dashed $ccui-color-border-secondary;
+    }
+  }
+
+  &__time-cell {
+    flex: 0 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--selected {
+      background-color: $ccui-color-fill-secondary;
+      font-weight: 500;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__footer-btn {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: $ccui-border-radius;
+    background: $ccui-primary;
+    color: #fff;
+    font-size: $ccui-font-size-sm;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 }
 

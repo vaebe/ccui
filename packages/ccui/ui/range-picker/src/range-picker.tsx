@@ -1,7 +1,14 @@
 import type { Placement } from '@floating-ui/vue'
 import type { Dayjs } from 'dayjs'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
-import type { DateOutputFormat, RangePickerPlacement, RangePickerProps, RangeValue } from './range-picker-types'
+import type {
+  DateOutputFormat,
+  RangePickerPlacement,
+  RangePickerProps,
+  RangePresetItem,
+  RangeTimeShowConfig,
+  RangeValue,
+} from './range-picker-types'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import dayjs from 'dayjs'
 import {
@@ -21,8 +28,8 @@ import {
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { emitValue, generateMonthGrid, isSameDay, toDayjs } from '../../shared/utils/date'
-import { rangePickerProps } from './range-picker-types'
+import { buildTimeColumnValues, emitValue, generateMonthGrid, isSameDay, toDayjs } from '../../shared/utils/date'
+import { RANGE_DEFAULT_TIME_FORMAT, rangePickerProps } from './range-picker-types'
 import './range-picker.scss'
 
 const PLACEMENT_TO_FLOATING: Record<RangePickerPlacement, Placement> = {
@@ -43,6 +50,20 @@ function emitRangeValue(start: Dayjs | null, end: Dayjs | null, output: DateOutp
   return [emitValue(start, output, format), emitValue(end, output, format)] as RangeValue
 }
 
+function normalizeTimeConfig(raw: boolean | RangeTimeShowConfig | undefined): RangeTimeShowConfig {
+  if (raw === true || raw === false || raw == null) return {}
+  return raw
+}
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+function combineDayWithTime(day: Dayjs, time: Dayjs | null): Dayjs {
+  if (!time) return day.hour(0).minute(0).second(0).millisecond(0)
+  return day.hour(time.hour()).minute(time.minute()).second(time.second()).millisecond(0)
+}
+
 export default defineComponent({
   name: 'CRangePicker',
   props: rangePickerProps,
@@ -59,15 +80,32 @@ export default defineComponent({
     const phase = shallowRef<Phase>('start')
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
+    const showTimeActive = computed(() => !!props.showTime)
+    const timeCfg = computed<RangeTimeShowConfig>(() => normalizeTimeConfig(props.showTime))
+    const effectiveTimeFormat = computed(() =>
+      showTimeActive.value ? timeCfg.value.format || RANGE_DEFAULT_TIME_FORMAT : '',
+    )
+    const hasMinutes = computed(() => /m/.test(effectiveTimeFormat.value))
+    const hasSeconds = computed(() => /s/.test(effectiveTimeFormat.value))
+
+    // showTime 启用且用户未显式给 format 加时间 token 时，自动追加；显式 format 优先
+    const effectiveFormat = computed(() => {
+      if (showTimeActive.value) {
+        if (/[HhmsAa]/.test(props.format)) return props.format
+        return `YYYY-MM-DD ${effectiveTimeFormat.value}`
+      }
+      return props.format
+    })
+
     const selectedStart = computed<Dayjs | null>(() => {
       const v = props.modelValue
       if (!v || !Array.isArray(v)) return null
-      return toDayjs(v[0], props.format)
+      return toDayjs(v[0], effectiveFormat.value)
     })
     const selectedEnd = computed<Dayjs | null>(() => {
       const v = props.modelValue
       if (!v || !Array.isArray(v)) return null
-      return toDayjs(v[1], props.format)
+      return toDayjs(v[1], effectiveFormat.value)
     })
 
     const pendingStart = shallowRef<Dayjs | null>(selectedStart.value)
@@ -107,11 +145,11 @@ export default defineComponent({
 
     const startInputDisplay = computed(() => {
       const d = open.value ? pendingStart.value : selectedStart.value
-      return d ? d.format(props.format) : ''
+      return d ? d.format(effectiveFormat.value) : ''
     })
     const endInputDisplay = computed(() => {
       const d = open.value ? pendingEnd.value : selectedEnd.value
-      return d ? d.format(props.format) : ''
+      return d ? d.format(effectiveFormat.value) : ''
     })
 
     const leftMonth = computed(() => viewMonth.value)
@@ -147,34 +185,58 @@ export default defineComponent({
     }
 
     function emitRange(start: Dayjs | null, end: Dayjs | null) {
-      const value = emitRangeValue(start, end, props.valueFormat, props.format)
+      const value = emitRangeValue(start, end, props.valueFormat, effectiveFormat.value)
       emit('update:modelValue', value)
       const dateStrings: [string, string] = [
-        start ? start.format(props.format) : '',
-        end ? end.format(props.format) : '',
+        start ? start.format(effectiveFormat.value) : '',
+        end ? end.format(effectiveFormat.value) : '',
       ]
       emit('change', value, dateStrings)
       formItem?.validate('change')
     }
 
+    // 拿到当前 phase（start/end）的合并禁用判定：side-specific 优先于通用 disabledDate
+    function isDisabledFor(cell: Dayjs, side: 'start' | 'end'): boolean {
+      const sideFn = side === 'start' ? props.disabledStartDate : props.disabledEndDate
+      if (sideFn) return sideFn(cell)
+      return !!props.disabledDate?.(cell)
+    }
+
+    function getInitialStartTime(): Dayjs {
+      const dv = toDayjs(timeCfg.value.defaultStartTime)
+      if (dv) return dv
+      return dayjs().hour(0).minute(0).second(0).millisecond(0)
+    }
+    function getInitialEndTime(): Dayjs {
+      const dv = toDayjs(timeCfg.value.defaultEndTime)
+      if (dv) return dv
+      return dayjs().hour(23).minute(59).second(59).millisecond(0)
+    }
+
     function selectDate(cell: Dayjs) {
-      if (props.disabledDate?.(cell)) return
+      if (isDisabledFor(cell, phase.value)) return
       if (phase.value === 'start') {
-        pendingStart.value = cell
-        pendingEnd.value = null
+        const merged = showTimeActive.value
+          ? combineDayWithTime(cell, pendingStart.value ?? getInitialStartTime())
+          : cell
+        pendingStart.value = merged
+        // showTime 启用时保留 pendingEnd 以便用户回头微调；常规模式清空 end 进入二次选择
+        if (!showTimeActive.value) pendingEnd.value = null
         phase.value = 'end'
-        // 让面板对齐到 start 月份附近，避免 left=N right=N+1 时 user 选了 N-3 月的日期
         return
       }
       // phase === 'end'
+      const endMerged = showTimeActive.value ? combineDayWithTime(cell, pendingEnd.value ?? getInitialEndTime()) : cell
       let s = pendingStart.value
-      let e = cell
-      // 自动调换：end < start
+      let e = endMerged
+      // 自动调换：end < start（按日级别比较，时间部分忽略）
       if (s && e.isBefore(s, 'day')) {
         ;[s, e] = [e, s]
       }
       pendingStart.value = s
       pendingEnd.value = e
+      // showTime 启用时等待 ok 确认；常规模式立即提交
+      if (showTimeActive.value) return
       emitRange(s, e)
       closePopup()
     }
@@ -208,6 +270,45 @@ export default defineComponent({
       pendingStart.value = null
       pendingEnd.value = null
       emitRange(null, null)
+    }
+
+    function clickPreset(p: RangePresetItem) {
+      const rawTuple = typeof p.value === 'function' ? (p.value as () => [unknown, unknown])() : p.value
+      const [s, e] = rawTuple
+      // 非严格解析（值常用 ISO 串 / Date / Dayjs / number）
+      const ds = toDayjs(s as never)
+      const de = toDayjs(e as never)
+      if (!ds || !de) return
+      const [normStart, normEnd] = ds.isAfter(de, 'day') ? [de, ds] : [ds, de]
+      pendingStart.value = normStart
+      pendingEnd.value = normEnd
+      // showTime 共存：仅更新 pending，由 ok 提交；非 showTime 立即提交 + 关
+      if (showTimeActive.value) return
+      emitRange(normStart, normEnd)
+      closePopup()
+    }
+
+    function pickTime(side: Phase, unit: 'hour' | 'minute' | 'second', value: number) {
+      if (side === 'start') {
+        const base = pendingStart.value ?? combineDayWithTime(dayjs(), getInitialStartTime())
+        pendingStart.value =
+          unit === 'hour' ? base.hour(value) : unit === 'minute' ? base.minute(value) : base.second(value)
+      } else {
+        const base = pendingEnd.value ?? combineDayWithTime(dayjs(), getInitialEndTime())
+        pendingEnd.value =
+          unit === 'hour' ? base.hour(value) : unit === 'minute' ? base.minute(value) : base.second(value)
+      }
+    }
+
+    function clickOk() {
+      if (!pendingStart.value || !pendingEnd.value) return
+      let s = pendingStart.value
+      let e = pendingEnd.value
+      if (e.isBefore(s, 'minute')) {
+        ;[s, e] = [e, s]
+      }
+      emitRange(s, e)
+      closePopup()
     }
 
     function onClickOutside(e: MouseEvent) {
@@ -328,7 +429,8 @@ export default defineComponent({
       return (
         <div class={ns.e('grid')}>
           {cells.map((cell) => {
-            const disabled = !!props.disabledDate?.(cell.date)
+            // 显示禁用以当前 phase 为准（用户先填 start 再填 end，对应该侧的限制）
+            const disabled = isDisabledFor(cell.date, phase.value)
             const isStart = isCellRangeStart(cell.date)
             const isEnd = isCellRangeEnd(cell.date)
             const inRange = isCellInRange(cell.date)
@@ -360,22 +462,110 @@ export default defineComponent({
       )
     }
 
+    function renderPresets() {
+      return (
+        <ul class={ns.e('presets')}>
+          {props.presets.map((p) => {
+            const label = typeof p.label === 'function' ? (p.label as () => string)() : p.label
+            return (
+              <li class={ns.e('preset-item')} role="button" onClick={() => clickPreset(p)}>
+                {label}
+              </li>
+            )
+          })}
+        </ul>
+      )
+    }
+
+    function renderTimeColumn(side: Phase, unit: 'hour' | 'minute' | 'second') {
+      const cfg = timeCfg.value
+      const range = unit === 'hour' ? 24 : 60
+      const step =
+        unit === 'hour' ? (cfg.hourStep ?? 1) : unit === 'minute' ? (cfg.minuteStep ?? 1) : (cfg.secondStep ?? 1)
+      const disabled =
+        unit === 'hour' ? cfg.disabledHours?.() : unit === 'minute' ? cfg.disabledMinutes?.() : cfg.disabledSeconds?.()
+      let cells = buildTimeColumnValues(range, step, disabled)
+      if (cfg.hideDisabledOptions) cells = cells.filter((c) => !c.disabled)
+      const cur = side === 'start' ? pendingStart.value : pendingEnd.value
+      const curValue = !cur ? -1 : unit === 'hour' ? cur.hour() : unit === 'minute' ? cur.minute() : cur.second()
+      return (
+        <div class={[ns.e('time-column'), ns.em('time-column', unit)]} role="listbox">
+          {cells.map((c) => {
+            const isSel = c.value === curValue
+            const cellCls = [
+              ns.e('time-cell'),
+              isSel && ns.em('time-cell', 'selected'),
+              c.disabled && ns.em('time-cell', 'disabled'),
+            ]
+            return (
+              <div
+                class={cellCls}
+                role="option"
+                aria-selected={isSel}
+                aria-disabled={c.disabled}
+                onClick={() => !c.disabled && pickTime(side, unit, c.value)}
+              >
+                {pad2(c.value)}
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
+    function renderTimeColumns(side: Phase) {
+      return (
+        <div class={[ns.e('time-columns'), ns.em('time-columns', side)]}>
+          {renderTimeColumn(side, 'hour')}
+          {hasMinutes.value && renderTimeColumn(side, 'minute')}
+          {hasSeconds.value && renderTimeColumn(side, 'second')}
+        </div>
+      )
+    }
+
+    function renderFooter() {
+      const okDisabled = !pendingStart.value || !pendingEnd.value
+      return (
+        <div class={ns.e('footer')}>
+          <button
+            type="button"
+            class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]}
+            disabled={okDisabled}
+            onClick={clickOk}
+          >
+            {locale.value.ok || '确定'}
+          </button>
+        </div>
+      )
+    }
+
     function buildPopup() {
-      const popupCls = [ns.e('panel'), props.popupClassName].filter(Boolean) as string[]
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, [
+      const hasPresets = props.presets.length > 0
+      const popupCls = [
+        ns.e('panel'),
+        hasPresets && ns.em('panel', 'with-presets'),
+        showTimeActive.value && ns.em('panel', 'with-time'),
+        props.popupClassName,
+      ].filter(Boolean) as string[]
+      const panels = (
         <div class={ns.e('panels')}>
           <div class={[ns.e('panel-side'), ns.em('panel-side', 'left')]}>
             {renderPanelHeader('left')}
             {renderWeekRow()}
             {renderGrid(leftGrid.value)}
+            {showTimeActive.value && renderTimeColumns('start')}
           </div>
           <div class={[ns.e('panel-side'), ns.em('panel-side', 'right')]}>
             {renderPanelHeader('right')}
             {renderWeekRow()}
             {renderGrid(rightGrid.value)}
+            {showTimeActive.value && renderTimeColumns('end')}
           </div>
-        </div>,
-      ])
+        </div>
+      )
+      const body = hasPresets ? h('div', { class: ns.e('main-row') }, [renderPresets(), panels]) : panels
+      const children = showTimeActive.value ? [body, renderFooter()] : [body]
+      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, children)
     }
 
     function renderPopup() {
