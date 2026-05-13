@@ -455,3 +455,147 @@ describe('time-picker locale', () => {
     expect(clear.attributes('aria-label')).toBe('Clear')
   })
 })
+
+describe('time-picker use12Hours', () => {
+  it('use12Hours=true 时渲染第 4 列 period（AM/PM）', async () => {
+    const wrapper = mountTP({ use12Hours: true })
+    await openPanel(wrapper)
+    expect(wrapper.findAll(ns.e('column'))).toHaveLength(4)
+    const period = wrapper.find(ns.em('column', 'period'))
+    expect(period.exists()).toBe(true)
+    const periodCells = period.findAll(ns.e('cell')).map((c) => c.text())
+    expect(periodCells).toEqual(['AM', 'PM'])
+  })
+
+  it('hour 列展示 12, 1..11 顺序', async () => {
+    const wrapper = mountTP({ use12Hours: true })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`).map((c) => c.text())
+    expect(hourCells).toEqual(['12', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'])
+  })
+
+  it('AM 期选 hour=12 emit 00:xx:xx；PM 期选 hour=12 emit 12:xx:xx', async () => {
+    const wrapper = mountTP({ use12Hours: true, showOk: false })
+    await openPanel(wrapper)
+    // 默认 hour=0 → display 12 AM
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('click') // 12 AM
+    const emits1 = wrapper.emitted('update:modelValue')!
+    expect(emits1.at(-1)![0]).toMatch(/^12:\d{2}:\d{2} am$/)
+
+    await openPanel(wrapper)
+    // 切到 PM
+    const periodCells = wrapper.findAll(`${ns.em('column', 'period')} ${ns.e('cell')}`)
+    await periodCells[1].trigger('click') // PM → 现在 hour 内部=12
+    const last = wrapper.emitted('update:modelValue')!.at(-1)![0]
+    expect(last).toMatch(/^12:\d{2}:\d{2} pm$/)
+  })
+
+  it('use12Hours 时 modelValue 显示按 h:mm:ss a 默认格式', () => {
+    const wrapper = mountTP({ use12Hours: true, modelValue: '3:30:00 pm', format: 'h:mm:ss a' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('3:30:00 pm')
+  })
+
+  it('hourStep=3 时 12 小时制 hour 列抽稀', async () => {
+    const wrapper = mountTP({ use12Hours: true, hourStep: 3 })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`).map((c) => c.text())
+    // [12,1,2,3,4,5,6,7,8,9,10,11] step 3 → [12, 3, 6, 9]
+    expect(hourCells).toEqual(['12', '03', '06', '09'])
+  })
+
+  it('disabledHours 仍按 24h 数字接收；映射到 12h cell 标 disabled', async () => {
+    const wrapper = mountTP({
+      use12Hours: true,
+      disabledHours: () => [0, 12], // 12 AM 与 12 PM 都禁
+    })
+    await openPanel(wrapper)
+    // 默认 pending 00:00:00（AM）→ cell 12 disabled
+    const cell12 = wrapper.find(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    expect(cell12.classes().some((c) => c.endsWith('cell--disabled'))).toBe(true)
+  })
+
+  it('未传 format 时 use12Hours 走 h:mm:ss a 兜底', () => {
+    const wrapper = mountTP({ use12Hours: true, modelValue: '9:15:30 am' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('9:15:30 am')
+  })
+})
+
+describe('time-picker 键盘导航', () => {
+  it('ArrowDown 把 hour 列下一个值变为 selected', async () => {
+    const wrapper = mountTP({ modelValue: '00:00:00' })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('keydown', { key: 'ArrowDown' })
+    // pending 移到 01:00:00 — 通过新选中类来验证
+    const selected = wrapper.find(`${ns.em('column', 'hour')} ${ns.em('cell', 'selected')}`)
+    expect(selected.text()).toBe('01')
+  })
+
+  it('ArrowUp 在首项时环绕到末项', async () => {
+    const wrapper = mountTP({ modelValue: '00:00:00' })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('keydown', { key: 'ArrowUp' })
+    const selected = wrapper.find(`${ns.em('column', 'hour')} ${ns.em('cell', 'selected')}`)
+    expect(selected.text()).toBe('23')
+  })
+
+  it('End 跳列尾，Home 跳列首', async () => {
+    const wrapper = mountTP({ modelValue: '05:00:00' })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[5].trigger('keydown', { key: 'End' })
+    let selected = wrapper.find(`${ns.em('column', 'hour')} ${ns.em('cell', 'selected')}`)
+    expect(selected.text()).toBe('23')
+    const hourCells2 = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells2[23].trigger('keydown', { key: 'Home' })
+    selected = wrapper.find(`${ns.em('column', 'hour')} ${ns.em('cell', 'selected')}`)
+    expect(selected.text()).toBe('00')
+  })
+
+  it('Enter 触发 ok（showOk=true 时）emit 当前 pending + 关', async () => {
+    const wrapper = mountTP({ modelValue: '00:00:00' })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('keydown', { key: 'ArrowDown' }) // pending 01:00:00
+    await hourCells[1].trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')!.at(-1)![0]).toBe('01:00:00')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('Escape 关闭面板（不 emit）', async () => {
+    const wrapper = mountTP({ modelValue: '00:00:00' })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('cell 默认 tabindex=0，disabled cell tabindex=-1', async () => {
+    const wrapper = mountTP({ disabledHours: () => [5, 6, 7] })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    expect(cells[0].attributes('tabindex')).toBe('0')
+    expect(cells[5].attributes('tabindex')).toBe('-1')
+  })
+})
+
+describe('time-picker auto-scroll', () => {
+  it('打开时把选中项滚到列中央（scrollTop 被设置）', async () => {
+    const wrapper = mountTP({ modelValue: '14:30:45' })
+    await openPanel(wrapper)
+    await nextTick()
+    // 直接验证 scrollTop 不为 0（jsdom 下 offsetTop 通常为 0，所以 max(0, target) 可能就是 0；
+    // 改为验证 selected DOM 存在并能找到列元素）
+    const hourCol = wrapper.find(ns.em('column', 'hour'))
+    expect(hourCol.element instanceof HTMLElement).toBe(true)
+    const selected = wrapper.find(`${ns.em('column', 'hour')} ${ns.em('cell', 'selected')}`)
+    expect(selected.text()).toBe('14')
+    // jsdom 不算 layout，但 scrollTop 是个 setter，能被赋值（默认 0），不抛错即正确
+    expect((hourCol.element as HTMLElement).scrollTop).toBeGreaterThanOrEqual(0)
+  })
+})

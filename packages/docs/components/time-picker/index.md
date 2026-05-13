@@ -210,40 +210,107 @@ const value = ref('')
 
 :::
 
+## 12 小时制
+
+打开 `use-12-hours` 后，小时列按 `[12, 1, 2, ..., 11]` 排列，并追加 AM / PM 列。未显式传 `format` 时，输入框默认按 `'h:mm:ss a'` 渲染。`disabled-hours` 仍按 24 小时数字配置，组件内部完成映射。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <c-time-picker v-model="value" use-12-hours />
+  <p>v-model 值: {{ value }}</p>
+</template>
+```
+
+:::
+
+## 键盘导航
+
+打开面板后 Tab 进入任意 cell（每个 cell 均为 `tabindex=0`），即可使用键盘切换：
+
+- `ArrowUp` / `ArrowDown`：在当前列内上下移动（环绕到首 / 尾）。
+- `Home` / `End`：跳到当前列首项 / 末项。
+- `Enter`：相当于点击「确定」，或在 `show-ok=false` 时关闭面板。
+- `Escape`：关闭面板。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <c-time-picker v-model="value" />
+</template>
+```
+
+:::
+
+## 自动滚动到选中
+
+弹层打开时，每一列会基于 `offsetTop` / `clientHeight` 自动计算 `scrollTop`，将当前选中项滚动到列中央。下例预置 `14:30:45`，展开面板即可看到三列均已对齐到选中行。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('14:30:45')
+</script>
+
+<template>
+  <c-time-picker v-model="value" />
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                  | 说明                                                          |
-| ----------------- | ---------------------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
-| modelValue        | string / Date / Dayjs / number / null                      | --                      | 当前选中时间，支持 `v-model`                                  |
-| format            | string                                                     | `HH:mm:ss`              | 输入框显示与字符串解析格式（dayjs format token）              |
-| valueFormat       | `'string' \| 'date' \| 'number'`                           | `'string'`              | `v-model` 输出形态：按 format 字符串 / Date 实例 / 毫秒时间戳 |
-| placeholder       | string                                                     | `请选择时间`            | 占位文案                                                      |
-| disabled          | boolean                                                    | `false`                 | 是否禁用                                                      |
-| clearable         | boolean                                                    | `true`                  | 是否显示清除按钮                                              |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`             | 输入框尺寸                                                    |
-| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                    | 校验状态；置于 `FormItem` 时自动继承                          |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`          | 浮层方位                                                      |
-| popupClassName    | string                                                     | --                      | 浮层根元素自定义 class                                        |
-| popupAppendToBody | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                        |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点，优先级高于 `popupAppendToBody`              |
-| autoFocus         | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                       |
-| inputReadOnly     | boolean                                                    | `true`                  | 输入框只读                                                    |
-| transitionName    | string                                                     | `ccui-time-picker-fade` | 浮层过渡名                                                    |
-| showHour          | boolean                                                    | `true`                  | 是否显示小时列                                                |
-| showMinute        | boolean                                                    | `true`                  | 是否显示分钟列                                                |
-| showSecond        | boolean                                                    | `true`                  | 是否显示秒列                                                  |
-| hourStep          | number                                                     | `1`                     | 小时步长                                                      |
-| minuteStep        | number                                                     | `1`                     | 分钟步长                                                      |
-| secondStep        | number                                                     | `1`                     | 秒步长                                                        |
-| disabledHours     | `() => number[]`                                           | --                      | 不可选小时数组                                                |
-| disabledMinutes   | `(hour: number) => number[]`                               | --                      | 不可选分钟（接收当前选中小时联动）                            |
-| disabledSeconds   | `(hour: number, minute: number) => number[]`               | --                      | 不可选秒（接收当前小时分钟联动）                              |
-| showNow           | boolean                                                    | `true`                  | 是否显示「此刻」按钮                                          |
-| showOk            | boolean                                                    | `true`                  | 是否显示「确定」按钮；`false` 时点击单元格立即提交并关闭      |
-| nowText           | string                                                     | `此刻`                  | 「此刻」按钮文案                                              |
-| okText            | string                                                     | `确定`                  | 「确定」按钮文案                                              |
+| 参数              | 类型                                                       | 默认值                  | 说明                                                                                                       |
+| ----------------- | ---------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| modelValue        | string / Date / Dayjs / number / null                      | --                      | 当前选中时间，支持 `v-model`                                                                               |
+| format            | string                                                     | `''`                    | 输入框显示与字符串解析格式（dayjs format token）；为空时按 `use12Hours` 兜底 `'h:mm:ss a'` 或 `'HH:mm:ss'` |
+| use12Hours        | boolean                                                    | `false`                 | 12 小时制：小时列按 `[12, 1, ..., 11]` 排列并追加 AM / PM 列                                               |
+| valueFormat       | `'string' \| 'date' \| 'number'`                           | `'string'`              | `v-model` 输出形态：按 format 字符串 / Date 实例 / 毫秒时间戳                                              |
+| placeholder       | string                                                     | `请选择时间`            | 占位文案                                                                                                   |
+| disabled          | boolean                                                    | `false`                 | 是否禁用                                                                                                   |
+| clearable         | boolean                                                    | `true`                  | 是否显示清除按钮                                                                                           |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`             | 输入框尺寸                                                                                                 |
+| status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                    | 校验状态；置于 `FormItem` 时自动继承                                                                       |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`          | 浮层方位                                                                                                   |
+| popupClassName    | string                                                     | --                      | 浮层根元素自定义 class                                                                                     |
+| popupAppendToBody | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                                                     |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                                           |
+| autoFocus         | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                                                                    |
+| inputReadOnly     | boolean                                                    | `true`                  | 输入框只读                                                                                                 |
+| transitionName    | string                                                     | `ccui-time-picker-fade` | 浮层过渡名                                                                                                 |
+| showHour          | boolean                                                    | `true`                  | 是否显示小时列                                                                                             |
+| showMinute        | boolean                                                    | `true`                  | 是否显示分钟列                                                                                             |
+| showSecond        | boolean                                                    | `true`                  | 是否显示秒列                                                                                               |
+| hourStep          | number                                                     | `1`                     | 小时步长                                                                                                   |
+| minuteStep        | number                                                     | `1`                     | 分钟步长                                                                                                   |
+| secondStep        | number                                                     | `1`                     | 秒步长                                                                                                     |
+| disabledHours     | `() => number[]`                                           | --                      | 不可选小时数组                                                                                             |
+| disabledMinutes   | `(hour: number) => number[]`                               | --                      | 不可选分钟（接收当前选中小时联动）                                                                         |
+| disabledSeconds   | `(hour: number, minute: number) => number[]`               | --                      | 不可选秒（接收当前小时分钟联动）                                                                           |
+| showNow           | boolean                                                    | `true`                  | 是否显示「此刻」按钮                                                                                       |
+| showOk            | boolean                                                    | `true`                  | 是否显示「确定」按钮；`false` 时点击单元格立即提交并关闭                                                   |
+| nowText           | string                                                     | `此刻`                  | 「此刻」按钮文案                                                                                           |
+| okText            | string                                                     | `确定`                  | 「确定」按钮文案                                                                                           |
 
 ### Events
 
@@ -257,8 +324,6 @@ const value = ref('')
 
 ## 已知限制（未交付）
 
-- **12 小时制 (`use12Hours`)**：当前固定 24 小时制。AM / PM 列、12:30 vs 12:30 PM 渲染需要单独一批做。
-- **键盘导航**：方向键 / Home / End / PageUp / PageDown 切换值、Enter 触发 ok 暂未实现。
 - **范围选择**：与 DatePicker range 一起作为一批做。
 - **showTime 嵌入 DatePicker**：DatePicker 推到 90% 时一并接通。
-- **滚动到选中位置 / 滚轮滚动行为**：当前是普通 list，没有 wheel-snap，复杂的"滚轮选时间"交互留给后续。
+- **滚轮 snap**：打开时已可自动滚动到选中项（见上文 "自动滚动到选中"），但鼠标滚轮 / 触控板的 snap-to-cell 吸附交互暂未实现，留给后续。

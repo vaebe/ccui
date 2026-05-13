@@ -18,7 +18,12 @@ export const timePickerProps = {
   },
   format: {
     type: String,
-    default: 'HH:mm:ss',
+    default: '',
+  },
+  // 12 小时制：hour 列展示 12, 1..11，多出 AM/PM 列。format 默认切到 'h:mm:ss a'。
+  use12Hours: {
+    type: Boolean,
+    default: false,
   },
   // v-model 输出形态：'string' 按 format 输出；'date' 输出原生 Date；'number' 输出毫秒时间戳。
   valueFormat: {
