@@ -111,6 +111,153 @@
     border-radius: $ccui-border-radius;
     box-shadow: $ccui-box-shadow-secondary;
     box-sizing: border-box;
+
+    &--with-time {
+      width: auto;
+      min-width: 460px;
+    }
+  }
+
+  &__body-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__date-side {
+    flex: 1;
+    min-width: 264px;
+  }
+
+  &__time-columns {
+    display: flex;
+    border-left: 1px solid $ccui-color-border-secondary;
+    padding-left: 8px;
+  }
+
+  &__time-column {
+    display: flex;
+    flex-direction: column;
+    width: 56px;
+    max-height: 216px;
+    overflow-y: auto;
+    list-style: none;
+
+    & + & {
+      border-left: 1px dashed $ccui-color-border-secondary;
+    }
+  }
+
+  &__time-cell {
+    flex: 0 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--selected {
+      background-color: $ccui-color-fill-secondary;
+      font-weight: 500;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &__main-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__main-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__presets {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    width: 100px;
+    border-right: 1px solid $ccui-color-border-secondary;
+    overflow-y: auto;
+    max-height: 280px;
+  }
+
+  &__preset-item {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-primary;
+    }
+  }
+
+  &--with-presets &__panel,
+  &__panel--with-presets {
+    width: auto;
+    min-width: 380px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__footer-btn {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: $ccui-border-radius;
+    background: transparent;
+    color: $ccui-primary;
+    font-size: $ccui-font-size-sm;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--ok {
+      background-color: $ccui-primary;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background-color: $ccui-color-fill-secondary;
+        color: $ccui-primary;
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 
   &__panel-header {
@@ -147,6 +294,18 @@
     }
   }
 
+  &__panel-label {
+    &--clickable {
+      cursor: pointer;
+      border-radius: $ccui-border-radius;
+      padding: 2px 6px;
+
+      &:hover {
+        background-color: $ccui-color-fill-tertiary;
+      }
+    }
+  }
+
   &__week-row,
   &__grid {
     display: grid;
@@ -160,8 +319,39 @@
     text-align: center;
   }
 
+  &__week-row--with-week,
+  &__grid--with-week {
+    grid-template-columns: 32px repeat(7, 1fr);
+  }
+
+  &__grid--month {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__grid--year {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__grid--quarter {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   &__week-cell {
     padding: 4px 0;
+  }
+
+  &__week-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+
+    &--selected {
+      color: $ccui-primary;
+      font-weight: 500;
+    }
   }
 
   &__cell {
@@ -181,6 +371,12 @@
       color: $ccui-color-text-disabled;
       background-color: $ccui-color-fill-quaternary;
     }
+
+    &--month,
+    &--year,
+    &--quarter {
+      height: 56px;
+    }
   }
 
   &__cell-inner {
@@ -193,12 +389,25 @@
     transition: background-color 0.2s;
   }
 
+  &__cell--month &__cell-inner,
+  &__cell--year &__cell-inner,
+  &__cell--quarter &__cell-inner {
+    width: auto;
+    min-width: 60px;
+    padding: 0 8px;
+    height: 24px;
+  }
+
   &__cell:not(&__cell--disabled):hover &__cell-inner {
     background-color: $ccui-color-fill-tertiary;
   }
 
   &__cell--today &__cell-inner {
     border: 1px solid $ccui-primary;
+  }
+
+  &__cell--in-week &__cell-inner {
+    background-color: $ccui-color-fill-tertiary;
   }
 
   &__cell--selected &__cell-inner {
@@ -208,6 +417,10 @@
 
   &__cell--selected:hover &__cell-inner {
     background-color: $ccui-primary;
+  }
+
+  &--picker-week &__cell--in-week:hover &__cell-inner {
+    background-color: $ccui-color-fill-secondary;
   }
 }
 

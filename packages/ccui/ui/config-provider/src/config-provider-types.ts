@@ -55,6 +55,14 @@ export interface DatePickerLocale {
   weekdaysShort?: string[]
   /** 日期面板标题的 dayjs 格式串，例如 'YYYY 年 M 月' / 'MMM YYYY'。 */
   panelLabelFormat?: string
+  /** 月选择面板的 12 个月名简写（picker='month' / date 模式下钻）。 */
+  monthNamesShort?: string[]
+  /** 季度选择面板的 4 个季度名（picker='quarter'）。 */
+  quarterNames?: string[]
+  /** picker='week' 显示模板，支持 {weekYear} / {weekNumber} 两个占位符。 */
+  weekFormat?: string
+  /** picker='week' 时表头周编号列文案。 */
+  weekHeader?: string
   /** TimePicker 「此刻」/「确定」按钮文案。 */
   now?: string
   ok?: string

@@ -427,3 +427,515 @@ describe('date-picker locale', () => {
     expect(clear.attributes('aria-label')).toBe('Clear')
   })
 })
+
+describe('date-picker picker=month 模式', () => {
+  it('打开直接进入 month 面板，渲染 12 个月格', async () => {
+    const wrapper = mountDP({ picker: 'month', modelValue: '2026-05' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'month'))
+    expect(cells).toHaveLength(12)
+    expect(cells[0].text()).toBe('1 月')
+    expect(cells[11].text()).toBe('12 月')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2026')
+  })
+
+  it('点击月格 emit YYYY-MM 字符串并关闭', async () => {
+    const wrapper = mountDP({ picker: 'month' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'month'))
+    await cells[6].trigger('click') // 7 月
+    const emitted = wrapper.emitted('update:modelValue')!
+    expect(emitted[0][0]).toBe('2026-07')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('面板 label 点击下钻到 year 模式', async () => {
+    const wrapper = mountDP({ picker: 'month' })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    expect(wrapper.findAll(ns.em('cell', 'year'))).toHaveLength(12)
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2020-2029')
+  })
+
+  it('箭头 prev/next 按年步进', async () => {
+    const wrapper = mountDP({ picker: 'month' })
+    await openPanel(wrapper)
+    await wrapper.find(ns.em('arrow', 'next-year')).trigger('click')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2027')
+    await wrapper.find(ns.em('arrow', 'prev-decade')).trigger('click')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2017')
+  })
+
+  it('选中月在面板上有 selected 样式', async () => {
+    const wrapper = mountDP({ picker: 'month', modelValue: '2026-03' })
+    await openPanel(wrapper)
+    const selected = wrapper.findAll(`${ns.e('cell')}.${ns.em('cell', 'selected').slice(1)}`)
+    expect(selected).toHaveLength(1)
+    expect(selected[0].text()).toBe('3 月')
+  })
+})
+
+describe('date-picker picker=year 模式', () => {
+  it('打开直接进入 decade 面板，渲染 12 年格（10 内 + 2 外）', async () => {
+    const wrapper = mountDP({ picker: 'year', modelValue: '2026' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'year'))
+    expect(cells).toHaveLength(12)
+    expect(cells[0].text()).toBe('2019')
+    expect(cells[11].text()).toBe('2030')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2020-2029')
+    // 边界两年应带 outside 类
+    expect(cells[0].classes().some((c) => c.endsWith('--outside'))).toBe(true)
+    expect(cells[11].classes().some((c) => c.endsWith('--outside'))).toBe(true)
+  })
+
+  it('点击年格 emit YYYY 字符串并关闭', async () => {
+    const wrapper = mountDP({ picker: 'year' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'year'))
+    await cells[5].trigger('click') // 2024
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2024')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('year 面板隐藏 super 箭头（无世纪步进）', async () => {
+    const wrapper = mountDP({ picker: 'year' })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.em('arrow', 'prev-decade')).exists()).toBe(true)
+    expect(wrapper.find(ns.em('arrow', 'next-decade')).exists()).toBe(true)
+    // 没有 super 类型的箭头（year 模式下唯一的箭头就是 decade 级，仅 2 个）
+    expect(wrapper.findAll(ns.e('arrow'))).toHaveLength(2)
+  })
+
+  it('箭头按十年步进', async () => {
+    const wrapper = mountDP({ picker: 'year' })
+    await openPanel(wrapper)
+    await wrapper.find(ns.em('arrow', 'next-decade')).trigger('click')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2030-2039')
+    await wrapper.find(ns.em('arrow', 'prev-decade')).trigger('click')
+    await wrapper.find(ns.em('arrow', 'prev-decade')).trigger('click')
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2010-2019')
+  })
+
+  it('year 面板 panel-label 不可点击（无 super 上钻）', async () => {
+    const wrapper = mountDP({ picker: 'year' })
+    await openPanel(wrapper)
+    const label = wrapper.find(ns.e('panel-label'))
+    expect(label.classes().some((c) => c.endsWith('--clickable'))).toBe(false)
+  })
+})
+
+describe('date-picker picker=quarter 模式', () => {
+  it('渲染 4 个季度格，label 为年份', async () => {
+    const wrapper = mountDP({ picker: 'quarter', modelValue: '2026-Q2' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'quarter'))
+    expect(cells).toHaveLength(4)
+    expect(cells.map((c) => c.text())).toEqual(['一季度', '二季度', '三季度', '四季度'])
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2026')
+  })
+
+  it('点击季度 emit YYYY-[Q]Q 字符串并关闭', async () => {
+    const wrapper = mountDP({ picker: 'quarter' })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('cell', 'quarter'))
+    await cells[2].trigger('click') // Q3
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-Q3')
+  })
+
+  it('从 year 面板选年后回到 quarter 面板（不直接 emit）', async () => {
+    const wrapper = mountDP({ picker: 'quarter' })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    expect(wrapper.findAll(ns.em('cell', 'year'))).toHaveLength(12)
+    const yearCells = wrapper.findAll(ns.em('cell', 'year'))
+    await yearCells[4].trigger('click') // 2023
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.findAll(ns.em('cell', 'quarter'))).toHaveLength(4)
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2023')
+  })
+})
+
+describe('date-picker picker=week 模式', () => {
+  it('显示 week-number 列与 week 表头', async () => {
+    const wrapper = mountDP({ picker: 'week', modelValue: '2026-05-09' })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.em('week-row', 'with-week')).exists()).toBe(true)
+    expect(wrapper.find(ns.em('grid', 'with-week')).exists()).toBe(true)
+    // 表头第一个是 weekHeader（中文 "周"），后面是日一二三四五六
+    const headers = wrapper.findAll(ns.e('week-cell')).map((w) => w.text())
+    expect(headers[0]).toBe('周')
+    expect(headers.slice(1)).toEqual(['日', '一', '二', '三', '四', '五', '六'])
+    // 6 行 → 6 个 week-number 单元
+    expect(wrapper.findAll(ns.e('week-number'))).toHaveLength(6)
+  })
+
+  it('点击日期 emit 该周起始日（weekStart=0 → 周日）', async () => {
+    const wrapper = mountDP({ picker: 'week' })
+    await openPanel(wrapper)
+    // 找日期 12（在 2026-05 视图中是周二）
+    const cells = wrapper.findAll(ns.e('cell'))
+    const day12 = cells.find((c) => c.text() === '12' && !c.classes().some((cl) => cl.endsWith('--outside')))
+    await day12!.trigger('click')
+    const emitted = wrapper.emitted('update:modelValue')!
+    // 2026-05-12 是周二，weekStart=0 时该周起始 = 2026-05-10（周日）
+    expect(emitted[0][0]).toBe('2026-05-10')
+  })
+
+  it('input 显示 weekFormat 模板（默认中文：YYYY 年第 WW 周）', async () => {
+    const wrapper = mountDP({ picker: 'week', modelValue: '2026-05-09' })
+    const input = wrapper.find('input').element as HTMLInputElement
+    // 2026-05-09 周六，weekStart=0 → US-style，week number = 19
+    expect(input.value).toBe('2026 年第 19 周')
+  })
+
+  it('选中周内所有日期带 in-week class，week-number 高亮', async () => {
+    const wrapper = mountDP({ picker: 'week', modelValue: '2026-05-09' })
+    await openPanel(wrapper)
+    const inWeekCells = wrapper.findAll(`${ns.e('cell')}.${ns.em('cell', 'in-week').slice(1)}`)
+    expect(inWeekCells).toHaveLength(7)
+    const selectedWeekNum = wrapper.find(`${ns.e('week-number')}.${ns.em('week-number', 'selected').slice(1)}`)
+    expect(selectedWeekNum.exists()).toBe(true)
+  })
+
+  it('weekStart=1 时起始切到周一', async () => {
+    const wrapper = mountDP({ picker: 'week', weekStart: 1 })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.e('cell'))
+    const day12 = cells.find((c) => c.text() === '12' && !c.classes().some((cl) => cl.endsWith('--outside')))
+    await day12!.trigger('click')
+    // 2026-05-12 周二，weekStart=1 → 起始 = 2026-05-11（周一）
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-05-11')
+  })
+})
+
+describe('date-picker picker=date 面板逐级展开（date → month → year）', () => {
+  it('panel-label 点击：date 模式 → month 模式', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('panel-label')).text()).toContain('5 月')
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    expect(wrapper.findAll(ns.em('cell', 'month'))).toHaveLength(12)
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2026')
+  })
+
+  it('panel-label 再点击：month 模式 → year 模式', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    expect(wrapper.findAll(ns.em('cell', 'year'))).toHaveLength(12)
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2020-2029')
+  })
+
+  it('year 模式选年后回 month 模式（不 emit）', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    const yearCells = wrapper.findAll(ns.em('cell', 'year'))
+    await yearCells[6].trigger('click') // 2025（decadeStart 2020 + 5）
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.findAll(ns.em('cell', 'month'))).toHaveLength(12)
+    expect(wrapper.find(ns.e('panel-label')).text()).toBe('2025')
+  })
+
+  it('month 模式选月后回 date 模式（不 emit），viewMonth 跳到所选月', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    const monthCells = wrapper.findAll(ns.em('cell', 'month'))
+    await monthCells[8].trigger('click') // 9 月
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    // 回到 date 视图
+    expect(wrapper.find(ns.e('week-row')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('panel-label')).text()).toContain('9 月')
+  })
+
+  it('再次打开面板时面板模式重置为 picker 默认', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    expect(wrapper.findAll(ns.em('cell', 'month'))).toHaveLength(12)
+    // 外部点击关闭
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await nextTick()
+    await openPanel(wrapper)
+    // 应该回到 date 视图
+    expect(wrapper.find(ns.e('week-row')).exists()).toBe(true)
+    expect(wrapper.findAll(ns.em('cell', 'month'))).toHaveLength(0)
+  })
+
+  it('emit panel-change 事件携带新模式', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('panel-label')).trigger('click')
+    const pc = wrapper.emitted('panel-change')!
+    expect(pc[0][0]).toBe('month')
+  })
+})
+
+describe('date-picker effectiveFormat / picker 切换', () => {
+  it('picker=month 时默认 format 为 YYYY-MM，能解析字符串 modelValue', () => {
+    const wrapper = mountDP({ picker: 'month', modelValue: '2024-09' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2024-09')
+  })
+
+  it('picker=year 时默认 format 为 YYYY', () => {
+    const wrapper = mountDP({ picker: 'year', modelValue: '2024' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2024')
+  })
+
+  it('picker=quarter 时默认 format 为 YYYY-[Q]Q', () => {
+    const wrapper = mountDP({ picker: 'quarter', modelValue: '2024-Q3' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2024-Q3')
+  })
+
+  it('用户显式 format 覆盖 picker 默认', () => {
+    const wrapper = mountDP({ picker: 'month', format: 'YYYY/MM', modelValue: '2024/09' })
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2024/09')
+  })
+})
+
+describe('date-picker showTime', () => {
+  it('showTime=true 时面板渲染 time-columns 和 footer', async () => {
+    const wrapper = mountDP({ showTime: true })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('time-columns')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('footer')).exists()).toBe(true)
+    // 默认 HH:mm:ss → 3 列
+    expect(wrapper.findAll(ns.e('time-column'))).toHaveLength(3)
+  })
+
+  it('showTime.format=HH:mm 时只渲染 2 列（无秒）', async () => {
+    const wrapper = mountDP({ showTime: { format: 'HH:mm' } })
+    await openPanel(wrapper)
+    expect(wrapper.findAll(ns.e('time-column'))).toHaveLength(2)
+  })
+
+  it('showTime 启用时点击日期不立即 emit、面板不关', async () => {
+    const wrapper = mountDP({ showTime: true })
+    await openPanel(wrapper)
+    const cell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '15')
+    await cell!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('点时间格更新 pending，点 ok 才 emit（含时分秒）', async () => {
+    const wrapper = mountDP({ showTime: true })
+    await openPanel(wrapper)
+    // 选 15 号
+    const dateCell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '15')
+    await dateCell!.trigger('click')
+    // 时列：点击 hour=9
+    const hourCol = wrapper.findAll(ns.em('time-column', 'hour'))[0]
+    const hourCells = hourCol.findAll(ns.e('time-cell'))
+    await hourCells[9].trigger('click')
+    // 分列：点击 minute=30
+    const minCol = wrapper.findAll(ns.em('time-column', 'minute'))[0]
+    await minCol.findAll(ns.e('time-cell'))[30].trigger('click')
+    // 秒列：点击 second=45
+    const secCol = wrapper.findAll(ns.em('time-column', 'second'))[0]
+    await secCol.findAll(ns.e('time-cell'))[45].trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    // 点 ok
+    await wrapper.find(ns.em('footer-btn', 'ok')).trigger('click')
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-05-15 09:30:45')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('未选日期时 ok 按钮 disabled', async () => {
+    const wrapper = mountDP({ showTime: true })
+    await openPanel(wrapper)
+    const ok = wrapper.find(ns.em('footer-btn', 'ok'))
+    expect(ok.attributes('disabled')).toBeDefined()
+  })
+
+  it('已有 modelValue 时 ok 不 disabled，并显示已有时间', async () => {
+    const wrapper = mountDP({ showTime: true, modelValue: '2026-05-09 09:30:45' })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.em('footer-btn', 'ok')).attributes('disabled')).toBeUndefined()
+    // hour=9 cell 应该 selected
+    const hourSel = wrapper
+      .findAll(ns.em('time-column', 'hour'))[0]
+      .findAll(`${ns.e('time-cell')}.${ns.em('time-cell', 'selected').slice(1)}`)
+    expect(hourSel).toHaveLength(1)
+    expect(hourSel[0].text()).toBe('09')
+  })
+
+  it('now 按钮直接 emit 当前时刻并关闭', async () => {
+    const wrapper = mountDP({ showTime: true })
+    await openPanel(wrapper)
+    await wrapper.find(ns.em('footer-btn', 'now')).trigger('click')
+    // fake time 锁在 2026-05-09T08:00:00.000Z
+    const emitted = wrapper.emitted('update:modelValue')![0][0] as string
+    expect(emitted).toMatch(/^2026-05-09 \d{2}:\d{2}:\d{2}$/)
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('showNow=false 时 footer 不显示 now 按钮', async () => {
+    const wrapper = mountDP({ showTime: true, showNow: false })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.em('footer-btn', 'now')).exists()).toBe(false)
+    expect(wrapper.find(ns.em('footer-btn', 'ok')).exists()).toBe(true)
+  })
+
+  it('hourStep=2 时小时列每隔 2 跳一格（12 项 0,2,4,...,22）', async () => {
+    const wrapper = mountDP({ showTime: { hourStep: 2 } })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('time-column', 'hour'))[0].findAll(ns.e('time-cell'))
+    expect(cells).toHaveLength(12)
+    expect(cells.map((c) => c.text())).toEqual(['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22'])
+  })
+
+  it('disabledHours 把 0..5 标 disabled 类', async () => {
+    const wrapper = mountDP({
+      showTime: { disabledHours: () => [0, 1, 2, 3, 4, 5] },
+    })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('time-column', 'hour'))[0].findAll(ns.e('time-cell'))
+    const disabledCells = cells.filter((c) => c.classes().some((cl) => cl.endsWith('time-cell--disabled')))
+    expect(disabledCells.map((c) => c.text())).toEqual(['00', '01', '02', '03', '04', '05'])
+  })
+
+  it('hideDisabledOptions 把 disabled 项从列表里剔除', async () => {
+    const wrapper = mountDP({
+      showTime: {
+        disabledHours: () => [0, 1, 2, 3, 4, 5],
+        hideDisabledOptions: true,
+      },
+    })
+    await openPanel(wrapper)
+    const cells = wrapper.findAll(ns.em('time-column', 'hour'))[0].findAll(ns.e('time-cell'))
+    expect(cells).toHaveLength(18)
+    expect(cells[0].text()).toBe('06')
+  })
+
+  it('showTime 仅在 picker=date 时生效；picker=month 不渲染 time-columns', async () => {
+    const wrapper = mountDP({ showTime: true, picker: 'month' })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('time-columns')).exists()).toBe(false)
+    expect(wrapper.find(ns.e('footer')).exists()).toBe(false)
+    // month 面板按原逻辑：点月直接 emit + 关
+    const monthCells = wrapper.findAll(ns.em('cell', 'month'))
+    await monthCells[2].trigger('click')
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-03')
+  })
+
+  it('format 显式覆盖 showTime 的兜底（YYYY/MM/DD HH:mm）', async () => {
+    const wrapper = mountDP({ showTime: { format: 'HH:mm' }, format: 'YYYY/MM/DD HH:mm' })
+    await openPanel(wrapper)
+    const dateCell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '20')
+    await dateCell!.trigger('click')
+    await wrapper.find(ns.em('footer-btn', 'ok')).trigger('click')
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026/05/20 00:00')
+  })
+})
+
+describe('date-picker presets', () => {
+  const samplePresets = [
+    { label: '今天', value: '2026-05-09' },
+    { label: '一周后', value: () => '2026-05-16' },
+    { label: () => '动态标签', value: '2026-05-22' },
+  ]
+
+  it('非空 presets 渲染侧边 rail，每项一个 li', async () => {
+    const wrapper = mountDP({ presets: samplePresets })
+    await openPanel(wrapper)
+    const rail = wrapper.find(ns.e('presets'))
+    expect(rail.exists()).toBe(true)
+    const items = rail.findAll(ns.e('preset-item'))
+    expect(items).toHaveLength(3)
+    expect(items[0].text()).toBe('今天')
+    expect(items[1].text()).toBe('一周后')
+    expect(items[2].text()).toBe('动态标签')
+  })
+
+  it('空 presets 不渲染 rail', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('presets')).exists()).toBe(false)
+  })
+
+  it('点击预设：非 showTime 立即 emit + 关闭', async () => {
+    const wrapper = mountDP({ presets: samplePresets })
+    await openPanel(wrapper)
+    const items = wrapper.findAll(ns.e('preset-item'))
+    await items[1].trigger('click') // 一周后 → '2026-05-16'
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-05-16')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('value 函数延迟求值', async () => {
+    let counter = 0
+    const wrapper = mountDP({
+      presets: [
+        {
+          label: '惰性',
+          value: () => {
+            counter += 1
+            return '2026-06-01'
+          },
+        },
+      ],
+    })
+    expect(counter).toBe(0)
+    await openPanel(wrapper)
+    expect(counter).toBe(0) // 渲染时不调用
+    await wrapper.find(ns.e('preset-item')).trigger('click')
+    expect(counter).toBe(1)
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-06-01')
+  })
+
+  it('与 showTime 共存：点击预设只更新 pending，不关闭面板', async () => {
+    const wrapper = mountDP({ presets: samplePresets, showTime: true })
+    await openPanel(wrapper)
+    await wrapper.findAll(ns.e('preset-item'))[0].trigger('click') // 今天 '2026-05-09'
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    // 此时 pending 已经赋值，ok 按钮可点
+    expect(wrapper.find(ns.em('footer-btn', 'ok')).attributes('disabled')).toBeUndefined()
+    await wrapper.find(ns.em('footer-btn', 'ok')).trigger('click')
+    // 时分秒默认 0
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-05-09 00:00:00')
+  })
+
+  it('picker=week 时点击预设 emit 该周起始日', async () => {
+    const wrapper = mountDP({
+      picker: 'week',
+      presets: [{ label: '本周', value: '2026-05-12' }], // 2026-05-12 周二
+    })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('preset-item')).trigger('click')
+    // weekStart=0 → 周日起始 2026-05-10
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-05-10')
+  })
+
+  it('picker=month 时预设值按月格式 emit', async () => {
+    const wrapper = mountDP({
+      picker: 'month',
+      presets: [{ label: '六月', value: '2026-06' }],
+    })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('preset-item')).trigger('click')
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-06')
+  })
+
+  it('panel 加 with-presets modifier', async () => {
+    const wrapper = mountDP({ presets: samplePresets })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.em('panel', 'with-presets')).exists()).toBe(true)
+  })
+})

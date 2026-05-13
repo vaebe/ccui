@@ -40,7 +40,7 @@ function mergeLocale(user?: Locale): Locale {
   const merged: Locale = { ...defaultLocale, ...user }
   for (const ns of Object.keys(defaultLocale) as (keyof Locale)[]) {
     if (typeof defaultLocale[ns] === 'object' && defaultLocale[ns] !== null) {
-      merged[ns] = { ...(defaultLocale[ns] as object), ...((user[ns] as object) ?? {}) }
+      merged[ns] = { ...(defaultLocale[ns] as object), ...(user[ns] as object) }
     }
   }
   return merged
