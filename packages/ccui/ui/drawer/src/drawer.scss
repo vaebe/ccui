@@ -48,6 +48,56 @@
     line-height: $ccui-line-height-lg;
   }
 
+  // 头部右侧 extra 区（与 close 同侧），Ant Design `extra` slot
+  &__extra {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 8px;
+  }
+
+  // body 区 transform 过渡（用于 push 嵌套抽屉让位）
+  &__content {
+    transition: transform $ccui-motion-duration-mid cubic-bezier(0.7, 0.3, 0.1, 1);
+  }
+
+  // loading 状态的骨架占位
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 0;
+
+    &--line {
+      display: block;
+      height: 16px;
+      background: linear-gradient(
+        90deg,
+        $ccui-color-fill-tertiary 25%,
+        $ccui-color-fill-secondary 37%,
+        $ccui-color-fill-tertiary 63%
+      );
+      background-size: 400% 100%;
+      border-radius: $ccui-border-radius-sm;
+      animation: ccui-drawer-skeleton 1.4s ease infinite;
+    }
+
+    &--line:nth-child(1) {
+      width: 38%;
+    }
+
+    &--line:nth-child(2) {
+      width: 100%;
+    }
+
+    &--line:nth-child(3) {
+      width: 61%;
+    }
+  }
+
+  &__body--loading {
+    overflow: hidden;
+  }
+
   &__close {
     display: inline-flex;
     align-items: center;
@@ -153,3 +203,12 @@
 @include drawer-slide(left, translateX(-100%));
 @include drawer-slide(top, translateY(-100%));
 @include drawer-slide(bottom, translateY(100%));
+
+@keyframes ccui-drawer-skeleton {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
