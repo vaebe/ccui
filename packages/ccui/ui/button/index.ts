@@ -2,21 +2,14 @@ import type { App } from 'vue'
 import Button from './src/button'
 import ButtonGroup from './src/button-group'
 
-// 把 Group 作为静态属性挂到 Button 上，对齐 Ant Design 的 `Button.Group` 命名空间用法
-type ButtonWithGroup = typeof Button & {
-  Group: typeof ButtonGroup
-  install: (app: App) => void
-}
-
-const ButtonInstall = Button as ButtonWithGroup
-ButtonInstall.Group = ButtonGroup
-
-ButtonInstall.install = function (app: App): void {
+// 平铺导出：模板用 <c-button-group>，TSX 用 import { ButtonGroup }
+// 不做 React 风格的 Button.Group 静态属性挂载（详见 docs-notes/roadmap.md「对标原则」节）
+Button.install = function (app: App): void {
   app.component(Button.name!, Button)
   app.component(ButtonGroup.name!, ButtonGroup)
 }
 
-export { ButtonInstall as Button, ButtonGroup }
+export { Button, ButtonGroup }
 
 export type {
   ButtonColor,
