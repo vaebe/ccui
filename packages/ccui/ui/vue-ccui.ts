@@ -44,6 +44,7 @@ import IconInstall, {
 import ImageInstall, { Image } from './image'
 import InputInstall, { Input } from './input'
 import InputNumberInstall, { InputNumber } from './input-number'
+import InputSearchInstall, { InputSearch } from './input-search'
 import LayoutInstall, { Content, Footer, Header, Layout, Sider } from './layout'
 import ListInstall, { List, ListItem } from './list'
 import MasonryInstall, { Masonry } from './masonry'
@@ -134,6 +135,7 @@ const installs = [
   ImageInstall,
   InputInstall,
   InputNumberInstall,
+  InputSearchInstall,
   LayoutInstall,
   ListInstall,
   MasonryInstall,
@@ -230,6 +232,7 @@ export {
   Image,
   Input,
   InputNumber,
+  InputSearch,
   Content,
   Footer,
   Header,
