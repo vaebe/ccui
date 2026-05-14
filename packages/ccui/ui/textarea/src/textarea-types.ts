@@ -1,0 +1,120 @@
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
+
+export type TextareaSize = 'large' | 'default' | 'small'
+export type TextareaStatus = '' | 'error' | 'warning'
+
+/**
+ * `autoSize` 复合配置：
+ *
+ * - `false`（默认）：不自动调高度，行数走原生 `rows` 属性。
+ * - `true`：高度跟随内容自动撑开，无上限。
+ * - `{ minRows, maxRows }`：限制最小 / 最大行数。
+ */
+export interface TextareaAutoSizeObject {
+  minRows?: number
+  maxRows?: number
+}
+export type TextareaAutoSize = boolean | TextareaAutoSizeObject
+
+/**
+ * `allowClear` 复合配置（与 Input 对齐）：
+ *
+ * - `boolean`：开启/关闭清除按钮
+ * - `{ clearIcon }`：自定义清除图标（接 string Iconify name / VNode）
+ */
+export interface TextareaAllowClearObject {
+  clearIcon?: VNode | string
+}
+export type TextareaAllowClear = boolean | TextareaAllowClearObject
+
+/**
+ * `showCount` 复合配置（与 Input 对齐）：
+ *
+ * - `boolean`：开启右侧字符计数
+ * - `{ formatter }`：自定义计数格式
+ */
+export interface TextareaShowCountObject {
+  formatter?: (info: { value: string; count: number; maxLength?: number }) => string
+}
+export type TextareaShowCount = boolean | TextareaShowCountObject
+
+export const textareaProps = {
+  modelValue: {
+    type: String,
+    default: '',
+  },
+  /**
+   * 非受控模式初始值。设置后首次挂载从 `defaultValue` 取值，之后忽略；与 `v-model:value` 并存。
+   */
+  defaultValue: {
+    type: String,
+    default: undefined,
+  },
+  placeholder: {
+    type: String,
+    default: '',
+  },
+  size: {
+    type: String as PropType<TextareaSize>,
+    default: 'default',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 原生 `rows` 属性。autoSize=true 时被忽略。
+   */
+  rows: {
+    type: Number,
+    default: 2,
+  },
+  /**
+   * 高度自适应（与 Ant `Input.TextArea` autoSize 对齐）。
+   */
+  autoSize: {
+    type: [Boolean, Object] as PropType<TextareaAutoSize>,
+    default: false,
+  },
+  /**
+   * 清除按钮。与 Input 对齐。
+   */
+  allowClear: {
+    type: [Boolean, Object] as PropType<TextareaAllowClear>,
+    default: false,
+  },
+  /**
+   * 显示字符计数。与 Input 对齐。
+   */
+  showCount: {
+    type: [Boolean, Object] as PropType<TextareaShowCount>,
+    default: false,
+  },
+  /**
+   * 最大长度（透传原生 maxlength）。
+   */
+  maxLength: {
+    type: Number,
+    default: undefined,
+  },
+  /**
+   * 校验状态。与 Input 对齐，Form 联动会自动透传。
+   */
+  status: {
+    type: String as PropType<TextareaStatus>,
+    default: '',
+  },
+  /**
+   * resize 行为，对齐原生 textarea 的 CSS resize 属性。
+   */
+  resize: {
+    type: String as PropType<'none' | 'both' | 'horizontal' | 'vertical'>,
+    default: 'vertical',
+  },
+} as const
+
+export type TextareaProps = ExtractPropTypes<typeof textareaProps>

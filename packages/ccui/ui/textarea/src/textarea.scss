@@ -1,0 +1,135 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-textarea {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $ccui-color-bg-container;
+  border: 1px solid $ccui-color-border;
+  border-radius: $ccui-border-radius;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
+  transition:
+    border-color $ccui-motion-duration-mid,
+    box-shadow $ccui-motion-duration-mid;
+
+  &:hover {
+    border-color: $ccui-color-primary-hover;
+  }
+
+  &:focus-within {
+    border-color: $ccui-color-primary;
+    box-shadow: 0 0 0 2px $ccui-control-outline;
+  }
+
+  &--disabled {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-disabled-line;
+    }
+  }
+
+  &--status-error {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+
+  &--large {
+    font-size: $ccui-font-size-lg;
+  }
+
+  &--small {
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__inner {
+    width: 100%;
+    min-height: 32px;
+    padding: 4px 11px;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    outline: none;
+    font: inherit;
+    font-family: inherit;
+    line-height: $ccui-line-height-base;
+    resize: vertical;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    top: 6px;
+    inset-inline-end: 8px;
+    width: 16px;
+    height: 16px;
+    color: $ccui-color-text-tertiary;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: $ccui-font-size-sm;
+    font-style: normal;
+
+    &:hover {
+      color: $ccui-color-text-secondary;
+    }
+  }
+
+  &__count {
+    align-self: flex-end;
+    padding: 2px 8px 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  &__suffix {
+    align-self: flex-end;
+    padding: 2px 8px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &--show-count {
+    padding-bottom: 0;
+  }
+}

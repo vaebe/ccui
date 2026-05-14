@@ -9,7 +9,7 @@ import AutoCompleteInstall, { AutoComplete } from './auto-complete'
 import AvatarInstall, { Avatar } from './avatar'
 import BadgeInstall, { Badge } from './badge'
 import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
-import ButtonInstall, { Button } from './button'
+import ButtonInstall, { Button, ButtonGroup } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
 import CalendarInstall, { Calendar } from './calendar'
 import CardInstall, { Card } from './card'
@@ -75,6 +75,7 @@ import SwitchInstall, { Switch } from './switch'
 import TableInstall, { Table } from './table'
 import TabsInstall, { Tab, Tabs } from './tabs'
 import TagInstall, { Tag } from './tag'
+import TextareaInstall, { Textarea } from './textarea'
 import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
@@ -164,6 +165,7 @@ const installs = [
   TableInstall,
   TabsInstall,
   TagInstall,
+  TextareaInstall,
   TimePickerInstall,
   TimelineInstall,
   TooltipInstall,
@@ -188,6 +190,7 @@ export {
   BreadcrumbItem,
   Button,
   Button3d,
+  ButtonGroup,
   Calendar,
   Card,
   Carousel,
@@ -269,6 +272,7 @@ export {
   Tab,
   Tabs,
   Tag,
+  Textarea,
   TimePicker,
   Timeline,
   TimelineItem,
