@@ -1,0 +1,87 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-input-otp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $ccui-font-size;
+
+  &__cell {
+    width: $ccui-size-md;
+    height: $ccui-size-md;
+    padding: 0;
+    text-align: center;
+    font: inherit;
+    font-family: inherit;
+    color: $ccui-color-text;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+      border-color $ccui-motion-duration-mid,
+      box-shadow $ccui-motion-duration-mid;
+
+    &:hover {
+      border-color: $ccui-color-primary-hover;
+    }
+
+    &:focus {
+      border-color: $ccui-color-primary;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
+    &:disabled {
+      background-color: $ccui-disabled-bg;
+      border-color: $ccui-disabled-line;
+      color: $ccui-disabled-text;
+      cursor: not-allowed;
+    }
+  }
+
+  &--large &__cell {
+    width: $ccui-size-lg;
+    height: $ccui-size-lg;
+    font-size: $ccui-font-size-lg;
+  }
+
+  &--small &__cell {
+    width: $ccui-size-sm;
+    height: $ccui-size-sm;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &--disabled &__cell {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
+  }
+
+  &--status-error &__cell {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:focus {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning &__cell {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &:focus {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+}
