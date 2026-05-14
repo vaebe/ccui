@@ -142,4 +142,167 @@ describe('input', () => {
 
     wrapper.unmount()
   })
+
+  // ─────────────────────────────────────────────────────────────
+  // L-1.2: Ant Design API alignment
+  // ─────────────────────────────────────────────────────────────
+
+  describe('allowClear（Ant 主名）', () => {
+    it('allowClear=true 等价于旧 clearable=true', async () => {
+      const wrapper = mount(Input, { props: { allowClear: true, modelValue: 'hello' } })
+      expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('allowClear={ clearIcon: "mdi:close-circle" } 用 Iconify 自定义图标', () => {
+      const wrapper = mount(Input, {
+        props: { allowClear: { clearIcon: 'mdi:close-circle' }, modelValue: 'x' },
+      })
+      const clearWrap = wrapper.find(ns.e('clear'))
+      expect(clearWrap.exists()).toBe(true)
+      // Iconify 渲染会注入 svg
+      expect(clearWrap.html()).toContain('svg')
+      wrapper.unmount()
+    })
+
+    it('显式 allowClear 优先于旧 clearable', () => {
+      // allowClear=false 显式关 → 旧 clearable=true 也不生效
+      const wrapper = mount(Input, {
+        props: { allowClear: false, clearable: true, modelValue: 'x' },
+      })
+      expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
+      wrapper.unmount()
+    })
+  })
+
+  describe('addonBefore / addonAfter（Ant 主名）', () => {
+    it('addonBefore prop 渲染左侧 addon', () => {
+      const wrapper = mount(Input, { props: { addonBefore: 'Http://' } })
+      expect(wrapper.find(ns.e('prepend')).text()).toBe('Http://')
+      wrapper.unmount()
+    })
+
+    it('addon-before slot 优先于 prop', () => {
+      const wrapper = mount(Input, {
+        props: { addonBefore: 'fallback' },
+        slots: { 'addon-before': '<i class="custom-icon">@</i>' },
+      })
+      const prepend = wrapper.find(ns.e('prepend'))
+      expect(prepend.find('.custom-icon').exists()).toBe(true)
+      expect(prepend.text()).not.toContain('fallback')
+      wrapper.unmount()
+    })
+
+    it('旧 prepend prop 仍兼容', () => {
+      const wrapper = mount(Input, { props: { prepend: 'old' } })
+      expect(wrapper.find(ns.e('prepend')).text()).toBe('old')
+      wrapper.unmount()
+    })
+
+    it('addonAfter prop + addon-after slot 行为对称', () => {
+      const w1 = mount(Input, { props: { addonAfter: '.com' } })
+      expect(w1.find(ns.e('append')).text()).toBe('.com')
+
+      const w2 = mount(Input, {
+        slots: { 'addon-after': '<i class="suffix-icon">$</i>' },
+      })
+      expect(w2.find(ns.e('append')).find('.suffix-icon').exists()).toBe(true)
+    })
+  })
+
+  describe('prefix / suffix slot', () => {
+    it('prefix slot 渲染', () => {
+      const wrapper = mount(Input, {
+        slots: { prefix: '<i class="user-icon"></i>' },
+      })
+      expect(wrapper.find(ns.e('prefix')).find('.user-icon').exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('suffix slot 渲染', () => {
+      const wrapper = mount(Input, {
+        slots: { suffix: '<i class="eye-icon"></i>' },
+      })
+      expect(wrapper.find(ns.e('suffix')).find('.eye-icon').exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
+  describe('showCount / maxLength', () => {
+    it('showCount=true 显示字符计数', () => {
+      const wrapper = mount(Input, { props: { showCount: true, modelValue: 'hello' } })
+      expect(wrapper.find(ns.e('count')).text()).toBe('5')
+      wrapper.unmount()
+    })
+
+    it('showCount=true 配合 maxLength 显示 x / max', () => {
+      const wrapper = mount(Input, {
+        props: { showCount: true, maxLength: 10, modelValue: 'hi' },
+      })
+      expect(wrapper.find(ns.e('count')).text()).toBe('2 / 10')
+      wrapper.unmount()
+    })
+
+    it('showCount={ formatter } 自定义格式', () => {
+      const wrapper = mount(Input, {
+        props: {
+          showCount: { formatter: ({ count, maxLength }) => `${count}字 / 上限 ${maxLength}` },
+          maxLength: 50,
+          modelValue: 'abc',
+        },
+      })
+      expect(wrapper.find(ns.e('count')).text()).toBe('3字 / 上限 50')
+      wrapper.unmount()
+    })
+
+    it('maxLength 透传到原生 maxlength', () => {
+      const wrapper = mount(Input, { props: { maxLength: 8 } })
+      expect(wrapper.find('input').attributes('maxlength')).toBe('8')
+      wrapper.unmount()
+    })
+  })
+
+  describe('status', () => {
+    it('status="error" 加 --status-error 类', () => {
+      const wrapper = mount(Input, { props: { status: 'error' } })
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('status="warning" 加 --status-warning 类', () => {
+      const wrapper = mount(Input, { props: { status: 'warning' } })
+      expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
+  describe('press-enter 事件', () => {
+    it('回车键触发 press-enter', async () => {
+      const wrapper = mount(Input)
+      await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+      expect(wrapper.emitted('press-enter')).toBeTruthy()
+      wrapper.unmount()
+    })
+
+    it('非回车键不触发 press-enter', async () => {
+      const wrapper = mount(Input)
+      await wrapper.find('input').trigger('keydown', { key: 'a' })
+      expect(wrapper.emitted('press-enter')).toBeUndefined()
+      wrapper.unmount()
+    })
+  })
+
+  describe('defaultValue 非受控', () => {
+    it('未传 modelValue 时 defaultValue 作为初值', () => {
+      const wrapper = mount(Input, { props: { defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('preset')
+      wrapper.unmount()
+    })
+
+    it('显式 modelValue 优先于 defaultValue', () => {
+      const wrapper = mount(Input, { props: { modelValue: 'real', defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('real')
+      wrapper.unmount()
+    })
+  })
 })

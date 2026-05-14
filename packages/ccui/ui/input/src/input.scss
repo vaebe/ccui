@@ -34,6 +34,42 @@
     }
   }
 
+  // ── 校验状态（Ant Design 风格 status='error'|'warning'）──
+  &--status-error {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+
+  // ── 字符计数 ────────────────────────────────────────
+  &__count {
+    margin-inline-start: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    user-select: none;
+    pointer-events: none;
+  }
+
   &--large {
     height: $ccui-size-lg;
     font-size: $ccui-font-size-lg;
