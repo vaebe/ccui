@@ -4,10 +4,11 @@
 
 ## 目录
 
-| 子目录 | SKILL | 用途 | 最新状态 |
+| 子目录 / 文件 | SKILL | 用途 | 最新状态 |
 | --- | --- | --- | --- |
 | [components-diff/](./components-diff/SKILL.md) | components-diff-notes | Ant Design API/Demo diff、组件批次交付记录、剩余 gap | 截至 Batch 40（2026-05-14），含 73 组件逐项明细 `per-component/` |
 | [design-audit/](./design-audit/SKILL.md) | design-audit-notes | 主题 token、品牌色、locale、设计原则等决策 + 视觉对齐审查 | 2026-05-10 审查的 P0/P1/P2 均已落地 |
+| [roadmap.md](./roadmap.md) | — | 后续任务清单，按 T-Shirt Size（S/M/L/XL）分级 | 2026-05-14 初版，5 大 Tier 共 60+ 可执行 batch |
 
 ## 何时进 docs-notes vs 进 packages/docs
 
