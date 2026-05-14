@@ -1354,3 +1354,113 @@ P0 长尾（不阻塞 P1，可按业务请求触发）：
 - `packages/ccui/ui/vue-ccui.ts` 已移除 ccui `App` 组件的导入、安装和命名导出，Vue 安装函数类型保留为 `VueApp`。
 - `packages/ccui/ui/grid/src/grid.scss` 已修复 Dart Sass `/` 除法和全局 `percentage()` deprecation warning。
 - `packages/ccui/ui/tag/src/tag.scss` 已修复预设色名插值 warning。
+
+## 六、API 风格对齐审计（2026-05-14）
+
+> 数据来源：拉取 `https://ant.design/llms-full.txt`（74 段 / 60551 行 / Ant v6.3.7）后逐组件 diff，并对 ccui `*-types.ts` 做了证据级抽样核对。
+> 结论独立于「已完成 / 95% / 80%」三档功能完整度口径——这里只看 **API 形状/命名/通用能力是否对齐 Ant Design**。
+> **明细见 [`per-component/`](./per-component/README.md)**：73 个组件按 6 个 bucket 一一列出 demo 缺口、props 缺口、events / 静态导出缺口（4305 行）。本节只做横向归纳，不复述明细。
+
+### 6.1 双源 API 现状
+
+仓库 README 自报「视觉规范对齐 Ant Design」，实际代码呈**双源混合**：
+
+- **Element Plus 风格保留区**（基础与反馈类大量沿用）：
+  - Button：`type='primary|success|warning|danger|info|text'` / `plain` / `round` / `circle` boolean / `nativeType`。
+  - Input：`prepend` / `append` 字符串 / `clearable` / `showPassword` / `type='text'|'password'`。
+  - Modal：`visible` / `hideFooter` / `closable: Boolean` / `appendToBody`。
+  - Drawer：`visible` / `size`（数字字符串通用） / `showFooter` / `appendToBody`。
+  - Tooltip / Popover：`content` / `effect='dark'|'light'` / `popperClass` / `showAfter` / `hideAfter` / `teleported` / `virtualTriggering` / `virtualRef` / `triggerKeys`。
+  - Form：`prop` / `labelWidth` / `labelPosition='left|right|top'`（FormItem 用 `prop` 而非 Ant 的 `name`）。
+  - Message / Notification：仅命令式 + props 字典，无 `useMessage()` / `useNotification()` Hook。
+- **Ant 风格新写区**（近期 Batch 17–40 按 Ant 协议重新设计）：
+  - Tree / TreeSelect / Cascader / Select / DatePicker / RangePicker / TimePicker / Tour：`fieldNames` / `loadData` / `showSearch` / `presets` / `disabledDate` / `defaultExpandAll` / 受控 `v-model:*` keys 协议、`getPopupContainer`、placement 名空间（`bottomLeft` / `bottomRight`）。
+
+**这是仓库与 Ant Design 之间最大的、components-diff.md 第一到五节没有点透的差异**。从 Ant 迁移过来的用户会先撞上 Button / Input / Modal / Tooltip / Message 而不是 DatePicker。
+
+### 6.2 全量缺失的通用能力（与单组件无关）
+
+Ant Design v5.13+ 把下列四类做成了「凡是有外观的组件都应该有」，目前 ccui 全量未接入：
+
+| 通用能力 | Ant 起始版本 | 适用范围 | ccui 状态 |
+| --- | --- | --- | --- |
+| `variant: 'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | 5.13.0 | Input / InputNumber / Select / Cascader / AutoComplete / Mentions / DatePicker / RangePicker / TimePicker / TreeSelect / ColorPicker | 全部缺 |
+| `classNames` / `styles` 语义化 DOM 钩子 | 5.18.0 | 录入 + 展示 + 反馈类全量 | 全部缺 |
+| `status: 'error' \| 'warning'` | 4.19.0 | 录入类 | 仅 Cascader / Select / 部分 DatePicker 接入 |
+| `prefix` / `suffixIcon` / `allowClear={ clearIcon }` / `*Icon` 自定义图标钩子 | 5.8 / 5.22 | 录入类 | 几乎全部缺 |
+
+建议开一个跨组件 Batch「通用 props 拉齐」，单批价值高于继续推 1 个组件的长尾。
+
+### 6.3 子组件 / 静态导出缺口（迁移用户的硬墙）
+
+Ant 通过点号导出的二级 API，目前 ccui 完全没有：
+
+| Ant 子组件 / 静态方法 | 用途 | 影响 |
+| --- | --- | --- |
+| `Input.TextArea` | 多行文本，含 `autoSize` / `showCount` | 高 |
+| `Input.Search` | 搜索框，含 `enterButton` / `loading` | 高 |
+| `Input.Password` | 密码框（`iconRender` / `visibilityToggle`），ccui 用 `type='password'+showPassword` 凑 | 中 |
+| `Input.OTP` | 一次性密码（v5.18+） | 中 |
+| `Button.Group` | 按钮组 | 中 |
+| `Modal.confirm/info/success/error/warning` | 命令式确认 | 高 |
+| `Modal.useModal()` | Hook 形式承载静态方法上下文 | 高 |
+| `message.useMessage()` / `notification.useNotification()` | Hook 形式（v4.16+ 起 Ant 主推） | 高 |
+| `Tag.CheckableTag` | 可勾选标签 | 低 |
+| `Image.PreviewGroup` | 多图预览 | 中 |
+| `Table.Column` / `Table.ColumnGroup` / `Table.Summary` | JSX 风格列声明 + 汇总行 | 中 |
+| `Tree.DirectoryTree` | 目录树 | 低 |
+| `Dropdown.Button` | 下拉按钮 | 中 |
+| `Form.ErrorList` | 错误列表 | 低 |
+| `Typography.Title` / `.Text` / `.Paragraph` / `.Link` 的高级 props（`copyable={icon,text,onCopy}` / `editable` / `ellipsis={rows, expandable, suffix, symbol}`） | 文案展示标配 | 中 |
+| `Calendar.Header` + `headerRender` | 日历自定义头 | 低 |
+| `Layout.Sider` 的 `breakpoint` / `onBreakpoint` / `zeroWidthTriggerStyle` / `reverseArrow` | 响应式 Sider | 中 |
+
+### 6.4 基础组件命名/形状重映射清单
+
+| 组件 | ccui 当前 | Ant 对应 | 建议处理 |
+| --- | --- | --- | --- |
+| Button.type | `'primary'\|'success'\|'warning'\|'danger'\|'info'\|'text'` | `'primary'\|'default'\|'dashed'\|'link'\|'text'` + 独立 `danger` / `ghost` / `color` / `variant` | 加 Ant 取值兼容层 + 旧值 deprecated |
+| Button.nativeType / round / circle | Element Plus | Ant：`htmlType` / `shape='circle'\|'round'` | 加别名 props |
+| Button 缺：`block` / `href` / `target` / `loading={delay,icon}` / `iconPosition` / `autoInsertSpace` / `Button.Group` | — | 5.x 标配 | 补 |
+| Input.prepend / append | string only | `addonBefore` / `addonAfter` ReactNode | 升级为 slot/VNode + 加 Ant 别名 |
+| Input 缺：`prefix` / `suffix` / `allowClear` / `showCount` / `maxLength` / `status` / `onPressEnter` / `defaultValue` | — | 必备 | 补 |
+| Modal.visible | `visible` | `open`（v5 起） | 加 `open` 别名，标 visible deprecated |
+| Modal.hideFooter | `Boolean` | `footer: ReactNode \| null` | 升级为 footer slot + 保留 hideFooter 别名 |
+| Modal.closable | `Boolean` | `Boolean \| { closeIcon, disabled, ariaLabel }` | 扩为联合类型 |
+| Modal 缺：`afterOpenChange` / `forceRender` / `modalRender` / `wrapClassName` / `keyboard` / `transitionName` / `maskTransitionName` / `focusTriggerAfterClose` / 静态方法 / `useModal` | — | 必备 | 补 |
+| Tooltip.content / effect / showAfter / hideAfter / popperClass / offset(number) | Element Plus | `title` / `color` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `align` | 加 Ant 别名层 |
+| Tooltip 缺：`getPopupContainer` / `destroyTooltipOnHide` / `arrow={pointAtCenter}` / `fresh` / `autoAdjustOverflow` / `align` | — | 必备 | 补 |
+| Popover.trigger | 含 `'contextmenu'`（Element Plus）+ 'focus' | Ant 同字段不含 contextmenu | 保留扩展，标差异 |
+| Drawer.visible / size | Element Plus | `open` / `width` 与 `height`（依 placement） | 加别名 |
+| Drawer 缺：`extra` / `footer` slot / `afterOpenChange` / `loading`（v5.17）/ `forceRender` / `keyboard` / `push`（嵌套抽屉）/ `classNames`/`styles` | — | 必备 | 补 |
+| Form FormItem.prop | `prop`（Element Plus） | `name`（Ant） | 加 `name` 别名 + 文档 |
+| Form 缺：`Form.useForm()` / `getFieldsValue` / `setFieldsValue` / `getFieldsError` / `validateFields` 一致命名 / `colon` / `labelCol`/`wrapperCol` 栅格、`Form.ErrorList` / `requiredMark='optional'` 完整支持 | — | 必备 | 补 |
+| Message / Notification 缺：`useMessage()` / `useNotification()` Hook、`stack` / `maxCount` / `pauseOnHover` / `top`/`bottom` / `placement`（v5.23 多位置）/ `role` | — | 必备 | 补 |
+
+### 6.5 文档示例覆盖（demo 数）核对
+
+按 ant.design `## Examples` 段下 `### <Title>` 行数（剔除 API / FAQ）vs `packages/docs/components/<name>/index.md` 的 `## <Title>` 行数（剔除 API / 已知限制）：
+
+- **平均**：Ant ≈ 10–12 demo / 组件，ccui ≈ 6–9 demo / 组件。
+- **大缺口（缺 ≥ 8）**：Rate / Result / Progress / Avatar / Badge / Alert / FloatButton / Affix / Spin / Empty / Segmented / Input / Flex。
+- **中缺口（缺 4–6）**：Mentions / Collapse / Card / List / Image / Statistic / Divider / Grid / Cascader / DatePicker / Tooltip / Popover。Cascader 具体漏：`Default value` / `Custom trigger` / `ShowCheckedStrategy` / `Variants` / `Status` / `Prefix and Suffix` / `Panel` / `Custom semantic dom styling` 共 8 条。
+- **对齐或反超**：Form / Select / Table / Tree / Icon / Modal / Drawer / Menu / Steps / Tabs / Tag。
+- **ccui 特色扩展**：Select +9、Tree +10、Form +5、Table +4、Icon +6、Cascader +1（表单联动）—— Batch 9–17 推进时按 Ant 协议重写带来的副产物，质量高于 Ant 官方 demo。
+
+> 6.5 节里「Variants」「Custom semantic dom styling」「Status」「Placement」四组 demo 全部组件未给 —— 这与 6.2 节「通用能力未接入」是同一件事的镜像证据。
+
+### 6.6 建议的三个跨组件 Batch
+
+按性价比排序，每个批次都是「一次拉齐多个组件」而不是继续推单组件长尾：
+
+1. **Batch 41（建议名）：通用 props 拉齐**——给所有录入组件加 `variant` / `classNames` / `styles` / `status` / `prefix` / `suffixIcon` / `allowClear={clearIcon}` / `*Icon` 钩子。预计影响 12 个组件 / 30+ 测试。
+2. **Batch 42（建议名）：基础组件 Ant 别名层**——Button / Input / Modal / Drawer / Tooltip / Popover / Popconfirm 加 Ant 风格 props 别名（`open` ↔ `visible`、`title` ↔ `content`、`htmlType` ↔ `nativeType`、`addonBefore`/`addonAfter`、`mouseEnterDelay/LeaveDelay`、`shape='circle'|'round'`、`block`、`danger`、`ghost`、`href` 等），旧名标 deprecated。预计影响 7 个组件 / 25+ 测试。
+3. **Batch 43（建议名）：缺失子组件**——`Input.TextArea` / `.Search` / `.Password` / `.OTP`、`Button.Group`、`Tag.CheckableTag`、`Image.PreviewGroup`、`Modal.confirm/info/success/error/warning` + `Modal.useModal()`、`useMessage()` / `useNotification()` Hook、`Form.ErrorList`、`Dropdown.Button`。预计 9 个新子组件 / 60+ 测试。
+
+完成后再回到「DatePicker → 100%」「TreeSelect → 95%」这类单组件长尾，整体一致性收益最大。
+
+### 6.7 README / components-diff.md 表述建议
+
+- README 第 63 行「视觉规范对齐 Ant Design v6.3.7」加一行说明：**「组件视觉与设计 Token 已对齐 Ant Design v6.3.7；基础组件 API（Button / Input / Modal / Drawer / Tooltip / Popover / Message / Notification）当前仍为 Element Plus 风格命名，正在分批迁移到 Ant API；近期推进的复杂组件（DatePicker 系 / Cascader / Tree / TreeSelect / Tour）已按 Ant 协议设计。」**
+- 「73 个组件 / 工具入口」口径正确，但「已完成」≠「已对齐 Ant API」，建议「已完成」一档拆成「功能闭环」和「API 对齐 Ant」两列。
+- 6.2 节「通用 props 全量缺」和 6.3 节「子组件全量缺」也应作为「未交付项」单独入清单，避免被「单组件功能完成度」掩盖。

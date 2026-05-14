@@ -6,6 +6,33 @@
 
 ---
 
+## 状态更新（2026-05-14）
+
+**P0 / P1 / P2 整改情况**：本审查报告的整改建议大部分已经在 Batch 33-36 之间落地。本节作为 2026-05-14 状态快照，避免读者把已落实项当作待办。
+
+| 优先级 | 建议项 | 状态 | 落地批次 / 决策 |
+| --- | --- | --- | --- |
+| P0 | 重新生成 theme.scss / darkTheme.css | 已落实 | Batch 34（commit `1a4ec62`） |
+| P0 | 重写 Form 组件 SCSS（接 token） | 已落实 | Batch 34（commit `1a4ec62`）+ `586c4e3` |
+| P0 | 消灭 7 组件 19 处硬编码 `#1677ff` | 已落实 | Batch 34 |
+| P1 | 明确品牌色策略 | 已决策 | [decisions/brand-color.md](../decisions/brand-color.md)（保留 `#1677ff`） |
+| P1 | 补齐 12 色板 × 10 阶 | 已落实 | Batch 35（commit `05663a7`） |
+| P1 | 抽取 control-outline token | 已落实 | Batch 35（设计体系 v2） |
+| P1 | 统一 Modal 内置按钮 hover 到 colorPrimaryHover | 已落实 | Batch 35 |
+| P1 | ConfigProvider locale / algorithm 接通 + Form scss token 化 | 已落实 | [decisions/2026-05-10-locale-algorithm.md](../decisions/2026-05-10-locale-algorithm.md)（commits `586c4e3` / `eed2024` / `84e7600`） |
+| P1 | Pagination / Image / DatePicker 系接通 locale | 已落实 | Batch 36（详见同上决策文档跟进项节） |
+| P2 | 补充设计原则文档 | 已落实 | [decisions/design-values.md](../decisions/design-values.md) |
+| P2 | 保留 ccui 旧业务 token 但标 deprecated | 已落实 | Batch 35（旧 token deprecated 标记） |
+| P2 | Tag.Processing 6px 脉冲点 | 已落实 | Batch 35（commit `53b5b46`） |
+| P2 | dark 非颜色 token 补全 | 已落实 | Batch 35（commit `ef29d93`） |
+
+**仍开放的横向工作**：API 层（非视觉）的差距已转入 `docs-notes/components-diff/` 跟进，详见 `references/components-diff.md` 第六节「API 风格对齐审计」+ `references/per-component/` 73 组件明细。本文件之后只在以下两种场景再更新：
+
+1. 重启一次主题层 / SCSS 横向审查时，作为旧基线对照。
+2. 新增重大主题 token 项（例如新增 `controlInteractiveSize` 一类）。
+
+---
+
 ## 一、总体结论
 
 **对齐度估计：约 70%。** ccui 在过去一段时间已完成一次 token 系统迁移：`packages/theme/themes/light.ts` 与 `dark.ts` 已经按 Ant Design v5 的 SeedToken/MapToken 体系重写（colorPrimary=#1677ff、boxShadow 三档、6px 圆角等），新组件（Button、Modal、Card、Tag、Select、Table、Input 等绝大多数）也已经在 SCSS 中切换到 `$ccui-color-primary` / `$ccui-control-height` / `$ccui-motion-duration-mid` 等新 token 名。
