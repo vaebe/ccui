@@ -158,6 +158,117 @@ $button-info-plain-border: #dcdfe6;
     }
   }
 
+  // ── Ant Design type 取值扩展 ────────────────────────────
+  // 'default'：等价于无 type 时的默认外观，主要用于 color × variant 矩阵的显式表达
+  &--default {
+    // 不写额外样式，复用 .ccui-button 默认值
+  }
+
+  // 'dashed'：虚线边框 + 默认色
+  &--dashed {
+    border-style: dashed;
+
+    &:hover {
+      border-style: dashed;
+    }
+  }
+
+  // 'link'：纯文字 + 主色，无背景与边框
+  &--link {
+    color: $ccui-color-primary;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+      text-decoration: underline;
+      background: transparent;
+    }
+
+    &:active {
+      color: $ccui-color-primary-active;
+      background: transparent;
+    }
+  }
+
+  // ── Ant Design 行为扩展 ─────────────────────────────────
+  // dangerous（boolean prop danger=true）：与 Ant `.ant-btn-dangerous` 对齐
+  // 单独用：红字 + 红边框；与 type='primary' 组合：红色实色按钮
+  &--dangerous {
+    color: $ccui-color-error;
+    border-color: $ccui-color-error;
+
+    &:hover {
+      color: $ccui-color-error-hover;
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:active {
+      color: $ccui-color-error-active;
+      border-color: $ccui-color-error-active;
+    }
+
+    &.#{$cls-prefix}-button--primary {
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-error;
+      border-color: $ccui-color-error;
+
+      &:hover {
+        background-color: $ccui-color-error-hover;
+        border-color: $ccui-color-error-hover;
+      }
+
+      &:active {
+        background-color: $ccui-color-error-active;
+        border-color: $ccui-color-error-active;
+      }
+    }
+  }
+
+  // ghost：背景透明，文字与边框跟主色
+  &--ghost {
+    background-color: transparent;
+    box-shadow: none;
+
+    // ghost + primary：透明背景 + 主色文字 + 主色边框
+    &.#{$cls-prefix}-button--primary {
+      color: $ccui-color-primary;
+      background-color: transparent;
+      border-color: $ccui-color-primary;
+
+      &:hover {
+        color: $ccui-color-primary-hover;
+        background-color: transparent;
+        border-color: $ccui-color-primary-hover;
+      }
+
+      &:active {
+        color: $ccui-color-primary-active;
+        background-color: transparent;
+        border-color: $ccui-color-primary-active;
+      }
+    }
+
+    // ghost + danger：透明背景 + 红色文字 + 红色边框
+    &.#{$cls-prefix}-button--danger {
+      background-color: transparent;
+    }
+  }
+
+  // block：宽度撑满父容器
+  &--block {
+    width: 100%;
+  }
+
+  // icon-end：图标在右侧（默认在左侧）
+  &--icon-end {
+    flex-direction: row-reverse;
+  }
+
+  // ── color / variant（v5.21+，forward-compat 钩子，矩阵留 v2.x） ──
+  // 当前仅占位，避免未来 SCSS 完整接入时类名冲突
+
   // plain 朴素按钮：浅色背景 + 主色边框
   // 修复要点：
   // 1. hover 文字走 *-active（更深主色），避免 warning/danger 文字变浅与浅底融合
