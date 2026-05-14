@@ -159,4 +159,69 @@ describe('popconfirm', () => {
     expect(document.body.innerHTML).not.toContain('Disabled')
     disabled.unmount()
   })
+
+  // ─────────────────────────────────────────────────────────────
+  // L-1.5 Ant Design API alignment
+  // ─────────────────────────────────────────────────────────────
+
+  describe('L-1.5 Ant 别名', () => {
+    it('open=true 等价 visible=true', async () => {
+      const wrapper = mount(Popconfirm, {
+        props: { open: true, title: '确认删除？' },
+        slots: { default: '<button>删除</button>' },
+        attachTo: document.body,
+      })
+      await nextTick()
+      expect(document.body.innerHTML).toContain('确认删除？')
+      wrapper.unmount()
+    })
+
+    it('显式 open 优先于 visible', async () => {
+      const wrapper = mount(Popconfirm, {
+        props: { open: false, visible: true, title: '隐藏' },
+        slots: { default: '<button>X</button>' },
+        attachTo: document.body,
+      })
+      await nextTick()
+      expect(document.body.innerHTML).not.toContain('隐藏')
+      wrapper.unmount()
+    })
+
+    it('okText 优先于旧 confirmText', async () => {
+      const wrapper = mount(Popconfirm, {
+        props: { visible: true, title: 'X', okText: 'OK!', confirmText: '旧' },
+        slots: { default: '<button>btn</button>' },
+        attachTo: document.body,
+      })
+      await nextTick()
+      expect(document.body.innerHTML).toContain('OK!')
+      expect(document.body.innerHTML).not.toContain('旧')
+      wrapper.unmount()
+    })
+
+    it('okType 优先于旧 confirmType（class 按 okType 走）', async () => {
+      const wrapper = mount(Popconfirm, {
+        props: { visible: true, title: 'X', okType: 'danger', confirmType: 'primary' },
+        slots: { default: '<button>btn</button>' },
+        attachTo: document.body,
+      })
+      await nextTick()
+      const confirmBtn = document.body.querySelector('.ccui-popconfirm__btn--danger')
+      expect(confirmBtn).not.toBeNull()
+      wrapper.unmount()
+    })
+
+    it('update:open 与 update:visible 同步触发', async () => {
+      const wrapper = mount(Popconfirm, {
+        props: { title: 'X' },
+        slots: { default: '<button>btn</button>' },
+        attachTo: document.body,
+      })
+      await wrapper.find('.ccui-popover__trigger').trigger('click')
+      await nextTick()
+      expect(wrapper.emitted('update:visible')).toBeTruthy()
+      expect(wrapper.emitted('update:open')).toBeTruthy()
+      wrapper.unmount()
+    })
+  })
 })

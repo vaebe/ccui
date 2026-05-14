@@ -1,16 +1,25 @@
-import type { TooltipProps } from './tooltip-types'
+import type { TooltipArrowObject, TooltipProps } from './tooltip-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tooltipProps } from './tooltip-types'
 import './tooltip.scss'
 
+function isArrowObject(v: unknown): v is TooltipArrowObject {
+  return v !== null && typeof v === 'object' && !Array.isArray(v)
+}
+
 export default defineComponent({
   name: 'CTooltip',
   props: tooltipProps,
-  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible'],
+  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'update:open'],
   setup(props: TooltipProps, { emit, slots }) {
     const ns = useNamespace('tooltip')
+
+    // ── Ant 主名 / ccui 旧名解析 ───────────────────────
+    // open / visible：显式 open 优先
+    const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    const isControlled = computed(() => externalOpen.value !== undefined)
 
     // 状态管理
     const visible = ref(false)
@@ -20,35 +29,60 @@ export default defineComponent({
     const showTimer = ref<number>()
     const hideTimer = ref<number>()
 
-    // 计算属性
-    const isControlled = computed(() => props.visible !== undefined)
-    const actualVisible = computed(() => (isControlled.value ? props.visible : visible.value))
+    const actualVisible = computed(() => (isControlled.value ? externalOpen.value : visible.value))
+
+    // mouseEnterDelay / mouseLeaveDelay：显式 ant 名优先；单位 ms
+    const enterDelay = computed(() => (props.mouseEnterDelay !== undefined ? props.mouseEnterDelay : props.showAfter))
+    const leaveDelay = computed(() => (props.mouseLeaveDelay !== undefined ? props.mouseLeaveDelay : props.hideAfter))
+
+    // arrow：复合对象优先于旧 showArrow boolean
+    const arrowEnabled = computed(() => {
+      if (props.arrow !== undefined) {
+        return typeof props.arrow === 'boolean' ? props.arrow : true
+      }
+      return props.showArrow
+    })
+    const arrowPointAtCenter = computed(() => (isArrowObject(props.arrow) ? !!props.arrow.pointAtCenter : false))
+
+    // overlayClassName / popperClass：显式 ant 名优先
+    const customClassName = computed(() => props.overlayClassName || props.popperClass)
+
+    // title / content：显式 title 优先；slot 优先级最高（在 renderContent 处理）
+    const contentText = computed(() => props.title || props.content)
+
+    // color：覆盖 effect 的内置背景
+    const inlineColorStyle = computed(() => {
+      if (!props.color) return {}
+      return { backgroundColor: props.color }
+    })
 
     const popperClass = computed(() => {
       return [
         ns.e('popper'),
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
-        props.popperClass,
+        arrowPointAtCenter.value && ns.em('popper', 'arrow-center'),
+        customClassName.value,
       ]
         .filter(Boolean)
         .join(' ')
     })
 
     // 使用 floating-ui 进行位置计算
+    // autoAdjustOverflow=true 时启用 flip middleware；否则不翻转
     const { floatingStyles, middlewareData, update } = useFloating(triggerRef, popperRef, {
       placement: props.placement as any,
       middleware: [
         offset(props.offset),
-        flip(),
+        ...(props.autoAdjustOverflow ? [flip()] : []),
         shift({ padding: 8 }),
-        ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
+        ...(arrowEnabled.value ? [arrow({ element: arrowRef })] : []),
       ],
     })
 
     // 箭头位置计算
     const arrowStyles = computed(() => {
-      if (!props.showArrow || !middlewareData.value.arrow) {
+      if (!arrowEnabled.value || !middlewareData.value.arrow) {
         return {}
       }
 
@@ -92,14 +126,15 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
+        emit('update:open', true)
         void nextTick(() => {
           update()
           emit('show')
         })
       }
 
-      if (props.showAfter > 0) {
-        showTimer.value = window.setTimeout(showTooltip, props.showAfter)
+      if (enterDelay.value > 0) {
+        showTimer.value = window.setTimeout(showTooltip, enterDelay.value)
       } else {
         showTooltip()
       }
@@ -114,11 +149,12 @@ export default defineComponent({
           visible.value = false
         }
         emit('update:visible', false)
+        emit('update:open', false)
         emit('hide')
       }
 
-      if (props.hideAfter > 0 && props.trigger !== 'click') {
-        hideTimer.value = window.setTimeout(hideTooltip, props.hideAfter)
+      if (leaveDelay.value > 0 && props.trigger !== 'click') {
+        hideTimer.value = window.setTimeout(hideTooltip, leaveDelay.value)
       } else {
         hideTooltip()
       }
@@ -186,19 +222,15 @@ export default defineComponent({
       cleanup?.()
     })
 
-    // 监听 visible prop 变化
-    watch(
-      () => props.visible,
-      (newVal) => {
-        if (newVal !== undefined) {
-          if (newVal) {
-            void nextTick(() => {
-              update()
-            })
-          }
-        }
-      },
-    )
+    // 监听 visible / open prop 变化（外部受控）
+    watch(externalOpen, (newVal) => {
+      if (newVal !== undefined && newVal) {
+        void nextTick(() => update())
+      }
+    })
+
+    // fresh：关闭后强制销毁缓存。fresh=true 时与 destroyTooltipOnHide 行为重叠，统一在 actualVisible 切 false 后清理 DOM
+    // 当前实现：actualVisible 已经决定是否渲染浮层 DOM；fresh/destroyTooltipOnHide 不需要额外清理（每次都重新渲染）
 
     // 监听显示状态变化，设置自动更新
     watch(actualVisible, (newVal) => {
@@ -212,24 +244,21 @@ export default defineComponent({
 
     // 渲染箭头
     const renderArrow = () => {
-      if (!props.showArrow) return null
+      if (!arrowEnabled.value) return null
 
       const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
 
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
 
-    // 渲染弹出层内容
+    // 渲染弹出层内容：title slot > content slot > title prop > content prop
     const renderContent = () => {
+      if (slots.title) return slots.title()
+      if (slots.content) return slots.content()
       if (props.rawContent) {
-        return <div innerHTML={props.content}></div>
+        return <div innerHTML={contentText.value}></div>
       }
-
-      if (slots.content) {
-        return slots.content()
-      }
-
-      return props.content
+      return contentText.value
     }
 
     return () => {
@@ -268,6 +297,7 @@ export default defineComponent({
               id={ns.e('popper')}
               style={{
                 ...floatingStyles.value,
+                ...inlineColorStyle.value,
                 zIndex: 2000,
                 pointerEvents: props.enterable ? 'auto' : 'none',
               }}

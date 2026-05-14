@@ -250,4 +250,93 @@ describe('tooltip', () => {
       expect(popper.attributes('role')).toBe('tooltip')
     })
   })
+
+  // ─────────────────────────────────────────────────────────────
+  // L-1.5: Ant Design API alignment
+  // ─────────────────────────────────────────────────────────────
+
+  describe('L-1.5 Ant 别名', () => {
+    it('title 优先于旧 content', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { title: 'Ant 标题', content: '旧文案', visible: true },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__content').text()).toBe('Ant 标题')
+    })
+
+    it('open=true 等价 visible=true', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { open: true, title: 'X' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(true)
+    })
+
+    it('显式 open 优先于 visible', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { open: false, visible: true, title: 'X' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(false)
+    })
+
+    it('color 应用到 popper 背景 inline style', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, title: 'X', color: '#ff7875' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-tooltip__popper')
+      expect(popper.attributes('style')).toContain('background-color: rgb(255, 120, 117)')
+    })
+
+    it('arrow=false 不渲染箭头', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, title: 'X', arrow: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__arrow').exists()).toBe(false)
+    })
+
+    it('arrow={ pointAtCenter } 加 arrow-center 类', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, title: 'X', arrow: { pointAtCenter: true } },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper--arrow-center').exists()).toBe(true)
+    })
+
+    it('overlayClassName 覆盖 popperClass 时优先', async () => {
+      const wrapper = mount(Tooltip, {
+        props: {
+          visible: true,
+          title: 'X',
+          overlayClassName: 'new-name',
+          popperClass: 'old-name',
+        },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-tooltip__popper')
+      expect(popper.classes()).toContain('new-name')
+      expect(popper.classes()).not.toContain('old-name')
+    })
+
+    it('update:open 与 update:visible 同步触发', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { title: 'X', trigger: 'click' },
+        slots: { default: '<button>T</button>' },
+      })
+      await wrapper.find('.ccui-tooltip__trigger').trigger('click')
+      await nextTick()
+      expect(wrapper.emitted('update:visible')).toBeTruthy()
+      expect(wrapper.emitted('update:open')).toBeTruthy()
+      expect(wrapper.emitted('update:open')![0]).toEqual([true])
+    })
+  })
 })

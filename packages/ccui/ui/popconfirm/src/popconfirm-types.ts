@@ -16,9 +16,18 @@ export const popconfirmProps = {
     type: String as PropType<PopoverPlacement>,
     default: 'top' as PopoverPlacement,
   },
-  // 字面量默认改为 '' ，运行时从 ConfigProvider.locale.Popconfirm 取值；
-  // 用户显式传 confirm-text / cancel-text 仍优先。
+  /**
+   * @deprecated 请改用 `okText`（Ant Design 主名）。
+   * 运行时从 ConfigProvider.locale.Popconfirm 取值；用户显式传 ok-text 仍优先。
+   */
   confirmText: {
+    type: String,
+    default: '',
+  },
+  /**
+   * Ant Design 主名：确认按钮文案。显式 `okText` 优先于 `confirmText`。
+   */
+  okText: {
     type: String,
     default: '',
   },
@@ -26,9 +35,19 @@ export const popconfirmProps = {
     type: String,
     default: '',
   },
+  /**
+   * @deprecated 请改用 `okType`（Ant Design 主名）。
+   */
   confirmType: {
     type: String as PropType<PopconfirmType>,
     default: 'primary' as PopconfirmType,
+  },
+  /**
+   * Ant Design 主名：确认按钮 type。
+   */
+  okType: {
+    type: String as PropType<PopconfirmType>,
+    default: undefined,
   },
   icon: {
     type: String,
@@ -50,7 +69,17 @@ export const popconfirmProps = {
     type: Boolean,
     default: false,
   },
+  /**
+   * @deprecated 请改用 `open`（Ant Design 主名 + `v-model:open`）。
+   */
   visible: {
+    type: Boolean,
+    default: undefined,
+  },
+  /**
+   * Ant Design 主名：受控显示。显式 `open` 优先于 `visible`。
+   */
+  open: {
     type: Boolean,
     default: undefined,
   },

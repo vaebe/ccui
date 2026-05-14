@@ -1,9 +1,13 @@
-import type { PopoverProps } from './popover-types'
+import type { PopoverArrowObject, PopoverProps } from './popover-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, Teleport, Transition, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
+
+function isPopoverArrowObject(v: unknown): v is PopoverArrowObject {
+  return v !== null && typeof v === 'object' && !Array.isArray(v)
+}
 
 let popoverIdCounter = 0
 
@@ -16,6 +20,7 @@ export default defineComponent({
     'before-hide',
     'hide',
     'update:visible',
+    'update:open',
     'before-enter',
     'after-enter',
     'before-leave',
@@ -33,11 +38,26 @@ export default defineComponent({
     const hideTimer = ref<number>()
     const autoCloseTimer = ref<number>()
 
-    const isControlled = computed(() => props.visible !== undefined)
+    // Ant 主名 / ccui 旧名解析
+    const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    const isControlled = computed(() => externalOpen.value !== undefined)
     const actualVisible = computed(() => {
-      const val = isControlled.value ? props.visible : visible.value
+      const val = isControlled.value ? externalOpen.value : visible.value
       return Boolean(val)
     })
+
+    // 别名解析
+    const enterDelay = computed(() => (props.mouseEnterDelay !== undefined ? props.mouseEnterDelay : props.showAfter))
+    const leaveDelay = computed(() => (props.mouseLeaveDelay !== undefined ? props.mouseLeaveDelay : props.hideAfter))
+    const arrowEnabled = computed(() => {
+      if (props.arrow !== undefined) {
+        return typeof props.arrow === 'boolean' ? props.arrow : true
+      }
+      return props.showArrow
+    })
+    const arrowPointAtCenter = computed(() => (isPopoverArrowObject(props.arrow) ? !!props.arrow.pointAtCenter : false))
+    const customClassName = computed(() => props.overlayClassName || props.popperClass)
+    const inlineColorStyle = computed(() => (props.color ? { backgroundColor: props.color } : {}))
 
     // 虚拟触发支持
     const actualTriggerRef = computed(() => {
@@ -52,7 +72,8 @@ export default defineComponent({
         ns.e('popper'),
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
-        props.popperClass,
+        arrowPointAtCenter.value && ns.em('popper', 'arrow-center'),
+        customClassName.value,
       ]
         .filter(Boolean)
         .join(' ')
@@ -65,15 +86,15 @@ export default defineComponent({
         placement: props.placement as any,
         middleware: [
           offset(props.offset),
-          flip(),
+          ...(props.autoAdjustOverflow ? [flip()] : []),
           shift({ padding: 8 }),
-          ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
+          ...(arrowEnabled.value ? [arrow({ element: arrowRef })] : []),
         ],
       },
     )
 
     const arrowStyles = computed(() => {
-      if (!props.showArrow || !middlewareData.value.arrow) return {}
+      if (!arrowEnabled.value || !middlewareData.value.arrow) return {}
       const { x, y } = middlewareData.value.arrow
       const staticSide = {
         top: 'bottom',
@@ -113,10 +134,11 @@ export default defineComponent({
           visible.value = false
         }
         emit('update:visible', false)
+        emit('update:open', false)
         emit('hide')
       }
-      if (props.hideAfter > 0 && props.trigger !== 'click') {
-        hideTimer.value = window.setTimeout(hidePopover, props.hideAfter)
+      if (leaveDelay.value > 0 && props.trigger !== 'click') {
+        hideTimer.value = window.setTimeout(hidePopover, leaveDelay.value)
       } else {
         hidePopover()
       }
@@ -131,6 +153,7 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
+        emit('update:open', true)
         void nextTick(() => {
           update()
           emit('show')
@@ -142,8 +165,8 @@ export default defineComponent({
           }
         })
       }
-      if (props.showAfter > 0) {
-        showTimer.value = window.setTimeout(showPopover, props.showAfter)
+      if (enterDelay.value > 0) {
+        showTimer.value = window.setTimeout(showPopover, enterDelay.value)
       } else {
         showPopover()
       }
@@ -279,22 +302,17 @@ export default defineComponent({
         virtualEl.removeEventListener('contextmenu', handleContextMenu)
       }
     })
-    watch(
-      () => props.visible,
-      (newVal) => {
-        if (isControlled.value) {
-          const boolVal = Boolean(newVal)
-          if (boolVal !== visible.value) {
-            visible.value = boolVal
-            if (boolVal) {
-              void nextTick(() => {
-                update()
-              })
-            }
+    watch(externalOpen, (newVal) => {
+      if (isControlled.value) {
+        const boolVal = Boolean(newVal)
+        if (boolVal !== visible.value) {
+          visible.value = boolVal
+          if (boolVal) {
+            void nextTick(() => update())
           }
         }
-      },
-    )
+      }
+    })
     watch(actualVisible, (newVal) => {
       if (newVal) {
         const triggerElement = actualTriggerRef.value
@@ -312,7 +330,7 @@ export default defineComponent({
     })
 
     const renderArrow = () => {
-      if (!props.showArrow) return null
+      if (!arrowEnabled.value) return null
       const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
@@ -364,6 +382,7 @@ export default defineComponent({
           id={popperId}
           style={{
             ...floatingStyles.value,
+            ...inlineColorStyle.value,
             zIndex: 2000,
             pointerEvents: props.enterable ? 'auto' : 'none',
             width: props.width || undefined,
@@ -376,6 +395,15 @@ export default defineComponent({
           <div class={ns.e('content')}>{renderContent()}</div>
         </div>
       )
+
+      // 渲染容器决策：getPopupContainer 显式 > 旧 teleported boolean
+      const renderPopperWithContainer = () => {
+        if (props.getPopupContainer) {
+          const target = props.getPopupContainer(triggerRef.value ?? null)
+          return target ? <Teleport to={target}>{popperContent}</Teleport> : popperContent
+        }
+        return props.teleported ? <Teleport to="body">{popperContent}</Teleport> : popperContent
+      }
 
       return (
         <div class={rootClass.value}>
@@ -401,7 +429,7 @@ export default defineComponent({
             onBeforeLeave={() => emit('before-leave')}
             onAfterLeave={() => emit('after-leave')}
           >
-            {actualVisible.value && (props.teleported ? <Teleport to="body">{popperContent}</Teleport> : popperContent)}
+            {actualVisible.value && renderPopperWithContainer()}
           </Transition>
         </div>
       )

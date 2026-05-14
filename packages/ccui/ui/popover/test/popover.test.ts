@@ -471,4 +471,89 @@ describe('popover', () => {
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
     })
   })
+
+  // ─────────────────────────────────────────────────────────────
+  // L-1.5 Ant Design API alignment
+  // ─────────────────────────────────────────────────────────────
+
+  describe('L-1.5 Ant 别名', () => {
+    it('open=true 等价 visible=true', async () => {
+      const wrapper = mount(Popover, {
+        props: { open: true, content: 'X', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
+    it('显式 open 优先于 visible', async () => {
+      const wrapper = mount(Popover, {
+        props: { open: false, visible: true, content: 'X', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+
+    it('color 应用到 popper inline style', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', color: '#000000', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-popover__popper')
+      expect(popper.attributes('style')).toContain('background-color: rgb(0, 0, 0)')
+    })
+
+    it('arrow=false 不渲染箭头', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', arrow: false, teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(false)
+    })
+
+    it('overlayClassName 优先于 popperClass', async () => {
+      const wrapper = mount(Popover, {
+        props: {
+          visible: true,
+          content: 'X',
+          overlayClassName: 'new-cls',
+          popperClass: 'old-cls',
+          teleported: false,
+        },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-popover__popper')
+      expect(popper.classes()).toContain('new-cls')
+      expect(popper.classes()).not.toContain('old-cls')
+    })
+
+    it('getPopupContainer 返回容器节点 Teleport 到该节点', async () => {
+      const host = document.createElement('div')
+      host.id = 'popover-host'
+      document.body.appendChild(host)
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', getPopupContainer: () => host },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(host.querySelector('.ccui-popover__popper')).not.toBeNull()
+      wrapper.unmount()
+      host.remove()
+    })
+
+    it('update:open 与 update:visible 同步', async () => {
+      const wrapper = mount(Popover, {
+        props: { content: 'X', trigger: 'click', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await wrapper.find('.ccui-popover__trigger').trigger('click')
+      await nextTick()
+      expect(wrapper.emitted('update:open')).toBeTruthy()
+      expect(wrapper.emitted('update:open')![0]).toEqual([true])
+    })
+  })
 })
