@@ -213,6 +213,16 @@ export default {
           status: '100%',
         },
         {
+          text: 'InputOtp 一次性密码',
+          link: '/components/input-otp/',
+          status: '85%',
+        },
+        {
+          text: 'InputSearch 搜索框',
+          link: '/components/input-search/',
+          status: '80%',
+        },
+        {
           text: 'Mentions 提及',
           link: '/components/mentions/',
           status: '80%',
@@ -241,6 +251,11 @@ export default {
           text: 'Switch 开关',
           link: '/components/switch/',
           status: '100%',
+        },
+        {
+          text: 'Textarea 多行文本',
+          link: '/components/textarea/',
+          status: '80%',
         },
         {
           text: 'TimePicker 时间选择框',
