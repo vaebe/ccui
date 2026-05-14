@@ -1,5 +1,7 @@
 # Docs Notes
 
+> **vue3-ccui 是一个 Vue 3 组件库。** 与 Ant Design 的关系是「对标」而不是「移植」——视觉/Token/心智模型对齐，但 React-only 模式（render props / forwardRef / shouldUpdate / 受控-非受控二分法 / Hook 元组返回 等）一律不照搬，要么不做，要么翻译成 Vue 习惯（v-model / slot / composable / KeepAlive）。详见 [roadmap.md](./roadmap.md) 顶部「对标原则」一节。
+
 跨组件 / 跨主题的内部协作笔记。**不进入 VitePress 文档站发布产物**，是工程层的「shared memory」：批次交付记录、设计决策、视觉审查、API diff 等。
 
 ## 目录

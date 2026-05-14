@@ -1,9 +1,65 @@
 # vue3-ccui 后续任务清单（roadmap）
 
+> **本仓库是 Vue 3 组件库。** 与 Ant Design 的关系是「对标」而不是「移植」。所有 React-only 模式（render props / forwardRef / shouldUpdate / 受控-非受控二分法 等）一律不照搬，要么不做，要么翻译成 Vue 习惯写法（v-model / slot / composable / KeepAlive）。详见下文「对标原则」一节。
+>
 > 数据基础：`components-diff/references/per-component/` 73 组件 4305 行明细 + `components-diff.md` 第 6 节「API 风格对齐审计」。
 > 分级口径（T-Shirt Size）：**S** <1 天 / **M** 1–3 天 / **L** 3–7 天 / **XL** >1 周。
 > 每个 batch 互相不阻塞，可并行；建议节奏：每 sprint 取 1 个 L + 2–3 个 M + 5–10 个 S。
 > 每个 batch 完成后在对应行加状态（`[x]` 完成 / `[~]` 推进中），并把交付摘要写到 `components-diff.md` 「三、本轮交付记录」节。
+
+---
+
+## 对标原则（Benchmark, 不是 100% 对齐）
+
+ccui 与 Ant Design 的关系是**对标**：能力覆盖到、心智模型对齐、迁移成本低，但**不照搬 React-only 模式**。下面这些清单决定每条任务怎么落地。
+
+### 一、不做的事（React-only / Vue 自带等价物）
+
+| Ant 概念 | 为什么不做 | ccui 怎么解决 |
+| --- | --- | --- |
+| `Form.shouldUpdate` | React 渲染优化原语，强迫子树重渲。Vue 响应式自动处理依赖收集 | 不实现，文档说明「Vue 中通过 reactive 自然达成」 |
+| `Form.Item.valuePropName` / `getValueFromEvent` / `getValueProps` | 用来桥接 React 受控 onChange/value 协议 | **不需要**，Vue `v-model:*` + `modelValue` 已经统一协议 |
+| `controlled` vs `uncontrolled` 语义 | React 受控/非受控二分法 | Vue 用 `v-model:*` + `default-*` 双轨已统一覆盖，文档不引入这两个词 |
+| `ref forwarding` / `React.forwardRef` | React 特有 ref 转发 | Vue `defineExpose` + 模板 `ref` 直接拿，本就是另一套机制 |
+| React 风格的 `render props`（`tagRender` / `optionRender` / `cellRender` / `headerRender` / `iconRender` / `modalRender` / `popupRender` / `dropdownRender` / `indicatorsRender` / `actionsRender` / `panelRender` / `displayRender` / `titleRender` 等） | React 把 render 当一等公民 | **全部翻译成 Vue 作用域插槽**，命名按 ccui 惯例（如 `tag` / `option` / `cell` / `header` / `icon` / `modal` / `popup` / `indicator` slot），保留 prop 形式时仅接受字符串 / VNode，不接受 React 函数 |
+| `Modal.useModal()` 返回的 `[modal, contextHolder]` 二元组 | React Hook + JSX 单一 contextHolder | ccui 改成 `useModal()` composable 返回 `{ modal, holder }`，`holder` 是 Vue 组件，模板写 `<component :is="holder" />`，或直接挂 `<c-modal-host>` 单例 |
+| `App` 组件（包裹全局 message/notification/modal 上下文） | React 没有 `app.use()` 这种全局插件机制 | **不做**，Vue 通过 `app.use(ccui)` 自然挂载全局命令式 API，这一点 components-diff.md 已记录为"设计排除项" |
+| `errorBoundary`（Alert.ErrorBoundary） | React 错误边界组件 | ccui 用 `onErrorCaptured` 实现的 Vue 包裹组件，行为对齐 |
+| `getContainer: () => HTMLElement` | React Portal 容器函数 | ccui 已有 `appendToBody` boolean；这里**接 Ant 的 `getContainer` 函数签名**（更灵活），保留 `appendToBody` 别名 |
+| `keepAlive` / `forceRender` / `destroyOnHidden` 这类显式生命周期标志 | React 没有 KeepAlive，需要手动控制 mount | Vue 用 `<KeepAlive>` 已提供。ccui 接同名 prop 时**对齐语义**（destroyOnHidden 改 v-if，forceRender 等价于 keepAlive=true），不照搬实现 |
+
+### 二、要"翻译"的事（同心智，不同 API 形状）
+
+| Ant React 写法 | ccui Vue 化写法 |
+| --- | --- |
+| `value={x}` + `onChange={fn}` | `v-model:value="x"` 或更语义化的 `v-model:<name>` |
+| `defaultValue` | `default-value` 同名保留 |
+| `open` + `onOpenChange` | `v-model:open` + 兼容 `update:open` 事件 |
+| `<Button icon={<Icon />}>` | `<c-button>` + `icon` slot 或 `icon` prop（字符串 Iconify name） |
+| `closable={{ closeIcon, disabled, ariaLabel }}` 复合对象 | 同形 object 接收 + 单独 `closeIcon` slot 兜底 |
+| `footer={null}` / `footer={vnode}` | `footer` slot；prop 接受 `null \| VNode`；保留 `hideFooter` 别名 |
+| `addonBefore` / `addonAfter` ReactNode | `addon-before` / `addon-after` slot；prop 仍接 string 兼容旧 `prepend`/`append` |
+| `loading={{ delay, icon }}` | 同形 object 接收，`icon` 部分接 slot 或 string |
+| `Form.useForm()` 命令式 form 实例 | **可选**：保留 `<c-form ref="formRef" />` + `formRef.value.validate()` 主路径；只在确实需要"游离 form 实例"（如多 form 间 hot-swap）时再做 `useForm()` composable |
+| `tagsDraggable` / `optionRender` / `tagRender` / `cellRender` 等 render props | 全部 slot，命名按 ccui 惯例 |
+
+### 三、要保留的对标项（语言无关）
+
+- **视觉 token / 主题算法**：colorPrimary / control-outline / border-radius / motion-duration 等，对齐 Ant v6 SeedToken/MapToken（已完成，见 design-audit）。
+- **`variant: 'outlined' \| 'filled' \| 'borderless' \| 'underlined'`** —— 视觉变体，跟语言无关。
+- **`classNames` / `styles` 语义化 DOM 钩子** —— Vue 也可以接受 `{ root, popup, item }` 形式的 object，是结构化定制方案，跟 React 没绑死。
+- **`status: 'error' \| 'warning'`** —— 状态语义。
+- **图标钩子 `prefix` / `suffixIcon` / `clearIcon` / `loadingIcon` / `removeIcon` / `expandIcon`** —— 接 string（Iconify name） / slot / VNode 三态。
+- **命令式 API** `Modal.confirm` / `message.info` / `notification.open` —— 跟语言无关，纯函数调用。
+- **静态/常量导出** 如 `Cascader.SHOW_PARENT` / `TreeSelect.SHOW_ALL` —— 模块级常量，跟语言无关。
+- **子组件命名** `Input.TextArea` / `Tag.CheckableTag` / `Image.PreviewGroup` —— Vue 同样可以挂静态属性，迁移成本低。
+
+### 四、判断准则（新任务进来时怎么定位）
+
+1. **要解决的用户痛点是不是 React 框架特有的？** 是 → 不做（如 forwardRef / shouldUpdate）。
+2. **API 形状能不能用 v-model / slot / composable 等价表达？** 能 → 翻译成 Vue 习惯（render prop → slot 是主要动作）。
+3. **概念是不是跨语言通用？** 是 → 直接对齐（如 variant / status / classNames）。
+4. **是不是 Ant 已经废弃的 API？** 是 → 跳过（如 `bordered` 改 `variant`、`message` 改 `title`、`dataSource` 改 `options`），ccui 不背包袱。
 
 ---
 
@@ -42,7 +98,7 @@
 | M-A1 | `variant: 'outlined' \| 'filled' \| 'borderless' \| 'underlined'`（v5.13.0+） | Input / InputNumber / Select / Cascader / AutoComplete / Mentions / DatePicker / RangePicker / TimePicker / TreeSelect / ColorPicker / Textarea（如有）共 12 个 | +24 | 每组件 4 种 variant 视觉对齐 Ant；提供 demo「Variants」一节 | [ ] |
 | M-A2 | `classNames` / `styles` 语义化 DOM 钩子（v5.18.0+） | 录入 12 + 展示 8（Table / Avatar / Badge / Card / List / Image / Tree / Calendar）+ 反馈 5（Modal / Drawer / Alert / Notification / Message）共 25 个 | +25 | 每组件至少 3 个语义化区域（root / popup.root / popup.listItem 等）可独立 className 注入 | [ ] |
 | M-A3 | `status: 'error' \| 'warning'` 拉齐 | 8 个未接入的录入（Input / InputNumber / DatePicker / RangePicker / TimePicker / Mentions / AutoComplete / TreeSelect）+ Form item 联动检查 | +16 | status='error' / 'warning' 时边框、阴影、图标对齐；Form 校验失败自动透传 | [ ] |
-| M-A4 | `prefix` / `suffixIcon` / `allowClear={ clearIcon }` / `loadingIcon` / `removeIcon` / `expandIcon` 自定义图标钩子 | 10 个录入 | +20 | 每个图标钩子接受 string（Iconify name） / VNode / 默认渲染回退 | [ ] |
+| M-A4 | `prefix` / `suffixIcon` / `allowClear={ clearIcon }` / `loadingIcon` / `removeIcon` / `expandIcon` 自定义图标钩子（Vue：prop 接 string Iconify name；同名 slot 高优先级） | 10 个录入 | +20 | 每个图标钩子同时支持 prop 形式（string / VNode）与同名 slot；slot 优先级高于 prop | [ ] |
 | M-A5 | 命名差异统一表（21 项）加 Ant 别名层，旧名 deprecated | Button / Input / Modal / Drawer / Tooltip / Popover / Popconfirm / Form 7 个 | +30 | `open` ↔ `visible`、`title` ↔ `content`、`htmlType` ↔ `nativeType`、`addonBefore/After` ↔ `prepend/append`、`mouseEnterDelay/LeaveDelay` ↔ `showAfter/hideAfter` 等同时支持，旧名 runtime warn 一次 | [ ] |
 
 **单批合并建议**：每批一个 commit。M-A1 是最大头，建议先做。
@@ -53,16 +109,16 @@
 
 | Batch | 组件 | 当前 → 目标 | 剩余项（来自 components-diff §6.3 + per-component） | 状态 |
 | --- | --- | --- | --- | --- |
-| M-B1 | DatePicker | 95 → 100 | `cellRender` / `minDate` / `maxDate` / `renderExtraFooter` / `showToday` / `disabledTime` / 完整键盘导航 / `multiple`（v6） | [ ] |
+| M-B1 | DatePicker | 95 → 100 | `cell` slot（替代 ant `cellRender`） / `minDate` / `maxDate` / `extra-footer` slot（替代 `renderExtraFooter`） / `showToday` / `disabledTime` / 完整键盘导航 / `multiple`（v6） | [ ] |
 | M-B2 | RangePicker | 95 → 100 | `allowEmpty: [boolean, boolean]` / `disabled: [boolean, boolean]` / `separator`（v6.3） / 响应式单面板 / preset 高亮当前命中 | [ ] |
-| M-B3 | TimePicker | 95 → 100 | 滚轮 snap / `TimeRangePicker` 独立组件 / `cellRender` | [ ] |
-| M-B4 | Cascader | 95 → 100 | `showCheckedStrategy`（SHOW_CHILD / SHOW_PARENT） / `maxTagCount` + `maxTagPlaceholder` + `maxTagTextLength` / 键盘导航 / `optionRender` / `popupRender` / showSearch 对象 `limit`/`matchInputWidth`/`render`/`sort` | [ ] |
-| M-B5 | TreeSelect | 80 → 95 | `showSearch` 完整 / `loadData` / `showCheckedStrategy` / 键盘导航 / 半选 v-model | [ ] |
-| M-B6 | ColorPicker | 95 → 100 | `presets` 预设色板 / `destroyOnHidden`（v5.25） / EyeDropper API / `panelRender` slot | [ ] |
+| M-B3 | TimePicker | 95 → 100 | 滚轮 snap / `TimeRangePicker` 独立组件 / `cell` slot | [ ] |
+| M-B4 | Cascader | 95 → 100 | `showCheckedStrategy`（导出常量 `Cascader.SHOW_CHILD` / `SHOW_PARENT`） / `maxTagCount` + `max-tag-placeholder` slot + `maxTagTextLength` / 键盘导航 / `option` slot（替代 `optionRender`） / `popup` slot（替代 `popupRender`） / showSearch 对象 `limit`/`matchInputWidth`/`render`/`sort`（`render` 翻成 `searchOption` slot） | [ ] |
+| M-B5 | TreeSelect | 80 → 95 | `showSearch` 完整 / `loadData` / `showCheckedStrategy`（常量同上） / 键盘导航 / 半选 `v-model:halfCheckedKeys` | [ ] |
+| M-B6 | ColorPicker | 95 → 100 | `presets` 预设色板 / `destroyOnHidden`（v5.25，对应 Vue `v-if` 语义） / EyeDropper API / `panel` slot（替代 `panelRender`） | [ ] |
 | M-B7 | Carousel | 95 → 100 | `adaptiveHeight` / `slidesToShow` / `slidesToScroll` / `responsive` 配置 / `pauseOnFocus` / `pauseOnHover` / `pauseOnDotsHover` / `waitForAnimate` / `dotPlacement` 别名 | [ ] |
-| M-B8 | Transfer | 95 → 100 | 虚拟滚动 / RTL / `selectionsIcon` 自定义 | [ ] |
+| M-B8 | Transfer | 95 → 100 | 虚拟滚动 / RTL / `selections-icon` slot（替代 `selectionsIcon` render prop） | [ ] |
 | M-B9 | Upload | 95 → 100 | `listType='picture-card'` 完整样式 / chunk 分片 / `Upload.Dragger` 独立子组件 / `Upload.LIST_IGNORE` 常量 | [ ] |
-| M-B10 | Tour | 95 → 100 | `gap` / `indicatorsRender` / `actionsRender` / `cover` 演示 / `disabledInteraction` / per-step `nextButtonProps` / `prevButtonProps` / async hooks | [ ] |
+| M-B10 | Tour | 95 → 100 | `gap` / `indicators` slot（替代 `indicatorsRender`） / `actions` slot（替代 `actionsRender`） / `cover` 演示 / `disabledInteraction` / per-step `nextButtonProps` / `prevButtonProps` / Vue 风格事件（`@step-change` / `@finish`，async 用 `await emit` 模式而非 React async hook） | [ ] |
 
 ---
 
@@ -72,12 +128,12 @@
 
 | Batch | 组件 | 待补 props / 行为 | 状态 |
 | --- | --- | --- | --- |
-| L-1.1 | Button | `block` / `ghost` / `danger` / `href`/`target`（render 成 `<a>`） / `shape='circle' \| 'round'` / `htmlType` / `loading={ delay, icon }` / `color` / `variant`（v5.21）/ `iconPosition` / `autoInsertSpace`（v5.17，CJK 字符间插空格） | [ ] |
-| L-1.2 | Input | `addonBefore`/`addonAfter` 改 slot/VNode / `prefix` / `suffix` / `allowClear`（含 `{ clearIcon }`） / `showCount`（含 `{ formatter }`） / `maxLength` / `status` / `onPressEnter` / `defaultValue` 受控分离 | [ ] |
-| L-1.3 | Modal | `open` 受控 + `visible` deprecated / `footer` slot 支持 ReactNode\|VNode\|null / `closable={ closeIcon, disabled, ariaLabel }` 复合 / `afterOpenChange` / `forceRender` / `modalRender` / `wrapClassName` / `keyboard` / `transitionName` / `maskTransitionName` / `focusTriggerAfterClose` | [ ] |
-| L-1.4 | Drawer | `open` 别名 / `extra` slot / `loading`（v5.17） / `footer` slot / `afterOpenChange` / `forceRender` / `push`（嵌套抽屉，含 `distance`） | [ ] |
-| L-1.5 | Tooltip / Popover / Popconfirm | `title` / `color` / `mouseEnterDelay` / `mouseLeaveDelay` / `getPopupContainer` / `destroyTooltipOnHide` / `arrow={ pointAtCenter }` / `fresh` / `align` / `autoAdjustOverflow` / `overlayClassName` | [ ] |
-| L-1.6 | Form | `name` 别名（保留 `prop`）/ `colon` / `labelCol`/`wrapperCol` 栅格 / `valuePropName` / `getValueFromEvent` / `getValueProps` / `hasFeedback` / `warningOnly` / Rule 函数式 / `validateDebounce` / `shouldUpdate` | [ ] |
+| L-1.1 | Button | `block` / `ghost` / `danger` / `href`/`target`（自动 render 成 `<a>`） / `shape='circle' \| 'round'` / `htmlType`（保留 `nativeType` 兼容） / `loading={ delay, icon }`（`icon` 接 string 或 `loading-icon` slot） / `color` / `variant`（v5.21）/ `iconPosition: 'start' \| 'end'` / `autoInsertSpace`（v5.17，CJK 字符间插空格） | [ ] |
+| L-1.2 | Input | `addon-before` / `addon-after` slot（保留 `prepend`/`append` string 兼容） / `prefix` slot / `suffix` slot / `allowClear: bool \| { clearIcon }`（`clearIcon` 也可走 slot） / `show-count` 自带计数 + `{ formatter }` slot / `maxLength` / `status` / `@press-enter` 事件（替代 `onPressEnter` 回调） / `defaultValue` 与 `v-model:value` 并存 | [ ] |
+| L-1.3 | Modal | `v-model:open` 受控 + `visible` deprecated（保留兼容） / `footer` slot（支持 string \| VNode \| null） / `closable: bool \| { closeIcon, disabled, ariaLabel }` 复合（closeIcon 同时支持 slot） / `@after-open-change` 事件 / `keep-alive` prop（替代 ant `forceRender`，对接 Vue `<KeepAlive>`） / `modal` slot（替代 `modalRender`） / `wrap-class-name` / `keyboard` 别名 `close-on-esc` / `transitionName` / `maskTransitionName` / `focusTriggerAfterClose` | [ ] |
+| L-1.4 | Drawer | `v-model:open` 别名 / `extra` slot / `loading`（v5.17） / `footer` slot / `@after-open-change` / `keep-alive` prop（替代 `forceRender`） / `push`（嵌套抽屉，含 `distance` 自动让位距离） | [ ] |
+| L-1.5 | Tooltip / Popover / Popconfirm | `title` slot + 别名 `content`（保留 ccui 旧名） / `color` 别名 `effect` 字符串 → 颜色字面量同时支持 / `mouse-enter-delay` 别名 `show-after` / `mouse-leave-delay` 别名 `hide-after` / `get-popup-container: (trigger) => HTMLElement`（保留 `append-to-body` 别名） / `destroy-tooltip-on-hide` / `arrow: bool \| { pointAtCenter }` / `fresh` / `align` 对象 / `auto-adjust-overflow` / `overlay-class-name` 别名 `popper-class` | [ ] |
+| L-1.6 | Form | `name` 别名（保留 ccui `prop`） / `colon` / `label-col` / `wrapper-col` 栅格对象 / `hasFeedback` / `warningOnly` / Rule 接受函数式 `(form) => Rule \| Rule[]` / `validateDebounce` / **不做** `valuePropName` / `getValueFromEvent` / `getValueProps` / `shouldUpdate`（Vue v-model + 响应式已替代） | [ ] |
 
 ---
 
@@ -104,7 +160,7 @@
 | L-2.17 | `Menu.SubMenu` / `Menu.ItemGroup` / `Menu.Divider` 独立导出 | 现有 items API 已有；补独立子组件导出便于 JSX 写法 | [ ] |
 | L-2.18 | `Statistic.Timer`（v5.25+） | 计时器（替代 Countdown） | [ ] |
 | L-2.19 | `Calendar.Header` + `headerRender` | 日历自定义头 | [ ] |
-| L-2.20 | `Alert.ErrorBoundary` | 错误边界 | [ ] |
+| L-2.20 | `Alert.ErrorBoundary` | 错误边界（Vue 内部用 `onErrorCaptured` 实现，行为对齐而非实现照搬） | [ ] |
 | L-2.21 | `Layout.Sider` 的 `breakpoint` / `onBreakpoint` / `zeroWidthTriggerStyle` / `reverseArrow` | 响应式 Sider | [ ] |
 | L-2.22 | `Space.Compact` / `Space.Addon` | 输入紧凑组合 | [ ] |
 | L-2.23 | `Splitter.Panel.showCollapsibleIcon` + `orientation` 别名 | 面板可折叠 / 命名对齐 | [ ] |
@@ -117,13 +173,13 @@
 
 | Batch | 范围 | 用途 | 状态 |
 | --- | --- | --- | --- |
-| L-3.1 | `Modal.confirm` / `Modal.info` / `Modal.success` / `Modal.error` / `Modal.warning` / `Modal.destroyAll` / `Modal.update` | 命令式确认弹窗 + 静态实例 | [ ] |
-| L-3.2 | `Modal.useModal()` Hook | 返回 `[modal, contextHolder]`，承载静态方法的上下文 | [ ] |
-| L-3.3 | `message.useMessage()` Hook | 类似 Modal.useModal，承载 message 上下文 | [ ] |
-| L-3.4 | `notification.useNotification()` Hook | 同上 | [ ] |
-| L-3.5 | message / notification 通用增强：`stack` / `maxCount` / `pauseOnHover` / `role`（aria） / 多 `placement`（v5.23） / `top`/`bottom` 居中位 / `duration` 单位改秒 | 通知体验对齐 ant | [ ] |
-| L-3.6 | `Form.useForm()` Hook | 返回 form 实例，外部命令式 `getFieldsValue` / `setFieldsValue` / `validateFields` / `resetFields` / `scrollToField` 调用 | [ ] |
-| L-3.7 | `Typography.Text` / `.Title` / `.Paragraph` / `.Link` 的 `copyable` / `editable` / `ellipsis` 三大交互 | 文案展示标配 | [ ] |
+| L-3.1 | `Modal.confirm` / `Modal.info` / `Modal.success` / `Modal.error` / `Modal.warning` / `Modal.destroyAll` / `Modal.update` | 命令式确认弹窗 + 静态实例（纯函数调用，跟语言无关） | [ ] |
+| L-3.2 | `useModal()` composable | Vue 化：返回 `{ modal, holder }`，`holder` 是 Vue 组件，模板写 `<component :is="holder" />`；承载 confirm 系列的上下文（替代 ant `[modal, contextHolder]` 元组） | [ ] |
+| L-3.3 | `useMessage()` composable | 同上，Vue composable + `<host>` 组件，不照搬 React Hook 元组返回 | [ ] |
+| L-3.4 | `useNotification()` composable | 同上 | [ ] |
+| L-3.5 | message / notification 通用增强：`stack` / `maxCount` / `pauseOnHover` / `role`（aria） / 多 `placement`（v5.23） / `top`/`bottom` 居中位 / `duration` 单位改秒（保留毫秒兼容） | 通知体验对齐 ant | [ ] |
+| L-3.6 | `useForm()` composable（**可选**） | Vue 主路径已经是 `<c-form ref="formRef" />` + `formRef.value.validate()`，这条只在确实需要"游离 form 实例 hot-swap"等高级场景再做；不是必交付项。**默认 [—]，不阻塞 v2.0** | [—] |
+| L-3.7 | `Typography.Text` / `.Title` / `.Paragraph` / `.Link` 的 `copyable` / `editable` / `ellipsis` 三大交互 | 文案展示标配；render props 全部翻成 slot（`copy-icon` / `edit-icon` / `expand-text` 等 slot） | [ ] |
 
 ---
 
@@ -149,11 +205,11 @@
 | Batch | 范围 | 影响 | 风险 | 状态 |
 | --- | --- | --- | --- | --- |
 | XL-1 | Form.Item `prop` → `name` 切换为主名，`prop` 保留 deprecated 至下一大版本 | docs 几十处 :::demo 重写 + 测试用例改 | 中（breaking 但有别名兼容） | [ ] |
-| XL-2 | Calendar 从原生 `Date` 迁到 `Dayjs`（对齐 DatePicker 系） | Calendar 全量重写 + valueFormat 协议引入 | 高（数据协议变更） | [ ] |
+| XL-2 | Calendar 从原生 `Date` 迁到 `Dayjs`（对齐 DatePicker 系），引入 `valueFormat` Vue 协议 | Calendar 全量重写 + valueFormat 协议引入 | 高（数据协议变更） | [ ] |
 | XL-3 | 全量 deprecation policy 落地：旧 prop 在 dev mode 触发 console.warn（每个 key 一次性，避免噪音），文档加 deprecated 标记，定一个删除时间窗 | 影响所有 deprecated 标记的 prop（命名差异表 21 项 + Tag.bordered + InputNumber size） | 低 | [ ] |
 | XL-4 | 跨组件 ARIA 完整审计 + 键盘导航补齐（Cascader / Menu / Tree / DatePicker 系 / Dropdown / Tabs 等） | 30+ 组件键盘 + screen reader 测试 | 中 | [ ] |
 | XL-5 | 国际化二期：DatePicker 系 dayjs/locale 包接入 + 完整 enUS / 其他语言包覆盖 | locale 接口扩展 + 包体积管理 | 中（需要权衡 dayjs 体积） | [ ] |
-| XL-6 | Element Plus 风格 API 全量切换到 Ant 风格主名（L-1 + M-A5 完成后），旧名彻底转为 deprecated 兼容层 | README 表述同步 + 公开 v2.0 升级指南 | 高（breaking 升大版本） | [ ] |
+| XL-6 | Element Plus 风格 API 全量切换到 Ant 风格主名（L-1 + M-A5 完成后），旧名彻底转为 deprecated 兼容层；同步把所有 render-prop 翻译成 slot；README 与 introduce.md 强调「Vue 组件库 / 对标 Ant Design 视觉 + 心智」 | README 表述同步 + 公开 v2.0 升级指南 | 高（breaking 升大版本） | [ ] |
 
 ---
 
