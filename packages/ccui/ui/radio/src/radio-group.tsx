@@ -11,7 +11,7 @@ export default defineComponent({
   setup(props: RadioGroupProps, { emit, slots }) {
     const ns = useNamespace('radio-group')
 
-    const emitChangeValue = (val: string) => {
+    const emitChangeValue = (val: string | number) => {
       emit('update:modelValue', val)
       emit('change', val)
     }

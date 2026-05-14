@@ -1,15 +1,15 @@
 import type { ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue'
 
-export type BeforeChangeType = (value: string) => boolean | Promise<boolean>
+export type BeforeChangeType = (value: string | number) => boolean | Promise<boolean>
 export type DirectionType = 'row' | 'column'
 
 export const radioProps = {
   modelValue: {
-    type: String,
+    type: [String, Number] as PropType<string | number>,
     default: null,
   },
   label: {
-    type: String || Number,
+    type: [String, Number] as PropType<string | number>,
     default: '',
   },
   name: {
@@ -31,7 +31,7 @@ export type RadioProps = ExtractPropTypes<typeof radioProps>
 // 单选框组
 export const radioGroupProps = {
   modelValue: {
-    type: String || Number,
+    type: [String, Number] as PropType<string | number>,
     default: null,
   },
   disabled: {
@@ -52,10 +52,10 @@ export type RadioGroupProps = ExtractPropTypes<typeof radioGroupProps>
 
 /** radio-group 注入字段的接口 */
 interface RadioGroupInjection {
-  modelValue: Ref<string>
+  modelValue: Ref<string | number>
   disabled: Ref<boolean>
   beforeChange: BeforeChangeType
-  emitChangeValue: (value: string) => void
+  emitChangeValue: (value: string | number) => void
 }
 
 /** radio-group 注入 radio 的 key 值 */

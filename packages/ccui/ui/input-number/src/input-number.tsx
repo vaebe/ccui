@@ -16,6 +16,23 @@ export default defineComponent({
     const innerValue = ref<InputNumberValue>(props.modelValue)
     const focused = ref(false)
 
+    // size 兼容旧值 'lg' | 'md' | 'sm'，统一映射到 'large' | 'default' | 'small'
+    const sizeAliasMap = { lg: 'large', md: 'default', sm: 'small' } as const
+    const warnedSize = ref(false)
+    const normalizedSize = computed(() => {
+      const raw = props.size
+      if (raw === 'lg' || raw === 'md' || raw === 'sm') {
+        if (!warnedSize.value && typeof console !== 'undefined') {
+          console.warn(
+            `[ccui][InputNumber] size="${raw}" 已 deprecated，请改用 "${sizeAliasMap[raw]}"（'large' | 'default' | 'small'）。`,
+          )
+          warnedSize.value = true
+        }
+        return sizeAliasMap[raw]
+      }
+      return raw
+    })
+
     // 计算显示值
     const displayValue = computed(() => {
       if (innerValue.value === undefined || innerValue.value === null) {
@@ -213,7 +230,7 @@ export default defineComponent({
               [ns.m('readonly')]: props.readonly,
               [ns.m('without-controls')]: !props.controls,
               [ns.m('controls-right')]: controlsAtRight,
-              [ns.m(props.size)]: props.size !== 'md',
+              [ns.m(normalizedSize.value)]: normalizedSize.value !== 'default',
               [ns.m('focused')]: focused.value,
               [ns.m('glow')]: props.showGlowStyle && focused.value,
             },

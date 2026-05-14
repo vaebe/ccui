@@ -8,9 +8,12 @@ import type { ExtractPropTypes, PropType } from 'vue'
 export type InputNumberValue = number | undefined
 
 /**
- * 输入框尺寸类型
+ * 输入框尺寸类型。
+ *
+ * - 推荐：`'large' | 'default' | 'small'`（与库内其他录入组件统一）
+ * - 兼容：`'lg' | 'md' | 'sm'`（旧值，运行时自动映射到推荐值；下一大版本移除）
  */
-export type ISize = 'lg' | 'md' | 'sm'
+export type ISize = 'large' | 'default' | 'small' | 'lg' | 'md' | 'sm'
 
 /**
  * 控制按钮位置类型
@@ -66,7 +69,7 @@ export const inputNumberProps = {
   },
   size: {
     type: String as PropType<ISize>,
-    default: 'md',
+    default: 'default',
   },
   reg: {
     type: [RegExp, String] as PropType<RegExp | string | undefined>,

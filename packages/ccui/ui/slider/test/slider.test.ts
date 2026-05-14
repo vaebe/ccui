@@ -121,8 +121,11 @@ describe('slider', () => {
     expect(emitted).toBeDefined()
     expect(emitted[0][0]).toBe(30)
 
-    // also emits change and input
+    // also emits change, change-complete (与 ant onChangeComplete 对齐), and input
     expect(wrapper.emitted('change')).toBeDefined()
+    expect(wrapper.emitted('change-complete')).toBeDefined()
+    // change 与 change-complete 触发次数与 payload 完全一致（alias 关系）
+    expect(wrapper.emitted('change-complete')!.length).toBe(wrapper.emitted('change')!.length)
     expect(wrapper.emitted('input')).toBeDefined()
     wrapper.unmount()
   })
@@ -135,6 +138,9 @@ describe('slider', () => {
 
     expect(wrapper.emitted('update:modelValue')![0][0]).toBe(55)
     expect(wrapper.emitted('change')).toBeDefined()
+    // change-complete 与 change 同步触发，与 ant onChangeComplete 对齐
+    expect(wrapper.emitted('change-complete')).toBeDefined()
+    expect(wrapper.emitted('change-complete')!.length).toBe(wrapper.emitted('change')!.length)
     wrapper.unmount()
   })
 

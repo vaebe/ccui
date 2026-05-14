@@ -1,4 +1,4 @@
-import type { TagProps } from './tag-types'
+import type { TagProps, TagVariant } from './tag-types'
 import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { isPresetColor, tagProps } from './tag-types'
@@ -13,10 +13,18 @@ export default defineComponent({
 
     const isPreset = computed(() => isPresetColor(props.color))
 
+    // 解析有效 variant：显式 prop > bordered=false → 'filled' > 默认 'outlined'
+    const effectiveVariant = computed<TagVariant>(() => {
+      if (props.variant) return props.variant
+      return props.bordered ? 'outlined' : 'filled'
+    })
+
     const cls = computed(() => ({
       [ns.b()]: true,
       [ns.m(props.color)]: isPreset.value,
-      [ns.m('borderless')]: !props.bordered,
+      [ns.m(`variant-${effectiveVariant.value}`)]: true,
+      // 兼容旧类：variant='filled' 等价于历史 bordered=false 输出的 --borderless 类
+      [ns.m('borderless')]: effectiveVariant.value !== 'outlined',
       [ns.m('has-color')]: !isPreset.value && !!props.color,
     }))
 

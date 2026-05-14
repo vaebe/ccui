@@ -1,4 +1,13 @@
-import type { ExtractPropTypes } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
+
+/**
+ * Tag 视觉变体（Ant Design v6 引入）。
+ *
+ * - `'outlined'`（默认）：描边款（等价于 ccui 旧 `bordered=true`）
+ * - `'filled'`：填充款，无外边框（等价于 ccui 旧 `bordered=false`）
+ * - `'solid'`：实色款，预设色更饱和
+ */
+export type TagVariant = 'outlined' | 'filled' | 'solid'
 
 export type TagColor =
   | 'default'
@@ -24,6 +33,17 @@ export const tagProps = {
     type: String,
     default: 'default',
   },
+  /**
+   * 视觉变体（推荐使用，与 Ant Design v6 对齐）。
+   * 未传时若 `bordered=false` 自动映射为 `'filled'`，否则 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<TagVariant>,
+    default: undefined,
+  },
+  /**
+   * @deprecated 请改用 `variant`。`bordered=false` 等价于 `variant='filled'`，下一大版本移除。
+   */
   bordered: {
     type: Boolean,
     default: true,

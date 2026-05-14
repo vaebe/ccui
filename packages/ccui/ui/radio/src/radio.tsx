@@ -31,7 +31,7 @@ export default defineComponent({
       return `${ns.b()} ${isActive.value ? 'active' : ''} ${isDisabled.value ? 'disabled' : ''}`
     })
 
-    const judgeCanChange = (value: string) => {
+    const judgeCanChange = (value: string | number) => {
       // 禁用状态不能切换
       if (isDisabled.value) {
         return Promise.resolve(false)
@@ -54,18 +54,19 @@ export default defineComponent({
     }
 
     const handleChange = async () => {
-      const _label = `${props.label}`
-      void judgeCanChange(_label).then((res) => {
+      // 保留 label 原类型（string 或 number），不再强制 stringify
+      const label = props.label
+      void judgeCanChange(label).then((res) => {
         if (res) {
           // 触发 radioGroup 的 emitChangeValue 事件更新数据
           if (radioGroupInject) {
-            radioGroupInject.emitChangeValue(_label)
+            radioGroupInject.emitChangeValue(label)
           }
 
           // 更新双向绑定的数据
-          emit('update:modelValue', _label)
+          emit('update:modelValue', label)
           // 触发change事件
-          emit('change', _label)
+          emit('change', label)
         }
       })
     }

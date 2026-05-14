@@ -1,6 +1,9 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export type SwitchSize = 'default' | 'small'
+/**
+ * Switch 尺寸。`'medium'` 是 Ant Design 的命名，`'default'` 是 ccui 旧名，两者等价。
+ */
+export type SwitchSize = 'default' | 'medium' | 'small'
 export type SwitchValue = boolean | string | number
 
 export const switchProps = {

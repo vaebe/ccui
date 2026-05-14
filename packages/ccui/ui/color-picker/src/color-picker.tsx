@@ -317,10 +317,22 @@ export default defineComponent({
     }
 
     // ---- 显示文本 ----
+    let warnedHsv = false
     const displayText = computed<string>(() => {
       const rgb = currentRgb.value
       if (props.format === 'rgb') return rgbToString(rgb)
-      if (props.format === 'hsv') return hsvToString(rgbToHsv(rgb))
+      if (props.format === 'hsb') {
+        // HSB 与 HSV 是同一色彩空间（不同命名），输出 `hsb(h, s%, b%)`
+        const hsv = rgbToHsv(rgb)
+        return `hsb(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`
+      }
+      if (props.format === 'hsv') {
+        if (!warnedHsv && typeof console !== 'undefined') {
+          console.warn(`[ccui][ColorPicker] format="hsv" 已 deprecated，请改用 "hsb"（与 Ant Design 一致）。`)
+          warnedHsv = true
+        }
+        return hsvToString(rgbToHsv(rgb))
+      }
       return rgbToHex(rgb, !props.disabledAlpha && rgb.a < 1).toUpperCase()
     })
 

@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 
 export function useSliderValue(
   props: SliderProps,
-  emit: (event: 'update:modelValue' | 'input' | 'change', value: number | number[]) => void,
+  emit: (event: 'update:modelValue' | 'input' | 'change' | 'change-complete', value: number | number[]) => void,
 ) {
   const currentValue = computed({
     get() {
@@ -123,7 +123,7 @@ export function useSliderStyle(
 export function useSliderInteraction(
   props: SliderProps,
   currentValue: Ref<number | number[]>,
-  emit: (event: 'update:modelValue' | 'input' | 'change', value: number | number[]) => void,
+  emit: (event: 'update:modelValue' | 'input' | 'change' | 'change-complete', value: number | number[]) => void,
   sliderRef: Ref<HTMLElement | undefined>,
   getValueFromPercent: (percent: number) => number,
 ) {
@@ -165,6 +165,7 @@ export function useSliderInteraction(
     }
 
     emit('change', currentValue.value)
+    emit('change-complete', currentValue.value)
   }
 
   // 拖拽移动
@@ -201,6 +202,7 @@ export function useSliderInteraction(
     document.removeEventListener('touchend', handleDragEnd)
 
     emit('change', currentValue.value)
+    emit('change-complete', currentValue.value)
   }
 
   // 开始拖拽
@@ -237,7 +239,7 @@ export function useSliderInteraction(
 export function useSliderKeyboard(
   props: SliderProps,
   currentValue: Ref<number | number[]>,
-  emit: (event: 'update:modelValue' | 'input' | 'change', value: number | number[]) => void,
+  emit: (event: 'update:modelValue' | 'input' | 'change' | 'change-complete', value: number | number[]) => void,
 ) {
   // 键盘事件处理
   const handleKeydown = (event: KeyboardEvent, index?: number) => {
@@ -281,6 +283,7 @@ export function useSliderKeyboard(
     }
 
     emit('change', currentValue.value)
+    emit('change-complete', currentValue.value)
   }
 
   return {
@@ -337,7 +340,7 @@ export function useSliderMarks(props: SliderProps, getPercent: (value: number) =
 export function useSliderInput(
   props: SliderProps,
   currentValue: Ref<number | number[]>,
-  emit: (event: 'update:modelValue' | 'input' | 'change', value: number | number[]) => void,
+  emit: (event: 'update:modelValue' | 'input' | 'change' | 'change-complete', value: number | number[]) => void,
 ) {
   // 处理输入框变化
   const handleInputChange = (value: number | undefined, index?: number) => {
@@ -359,6 +362,7 @@ export function useSliderInput(
     }
 
     emit('change', currentValue.value)
+    emit('change-complete', currentValue.value)
 
     // 触发表单验证
     if (props.validateEvent) {

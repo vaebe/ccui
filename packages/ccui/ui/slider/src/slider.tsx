@@ -19,7 +19,9 @@ import './slider.scss'
 export default defineComponent({
   name: 'CSlider',
   props: sliderProps,
-  emits: ['update:modelValue', 'change', 'input'],
+  // change-complete：mouseup / touchend / 键盘释放 / click 后触发（与 Ant Design `onChangeComplete` 对齐）
+  // 当前 change 与 change-complete 同时触发；如未来需要拆分 every-tick change 与 interaction-end，会另开 batch
+  emits: ['update:modelValue', 'change', 'change-complete', 'input'],
   setup(props: SliderProps, { emit }) {
     const ns = useNamespace('slider')
     const sliderRef = ref<HTMLElement>()

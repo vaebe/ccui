@@ -245,11 +245,11 @@
   }
 
   // 尺寸变体
-  &--lg {
+  &--large {
     @include size-variant(200px, 40px, $ccui-font-size-lg, 38px, 40px, 14px);
   }
 
-  &--sm {
+  &--small {
     @include size-variant(100px, 24px, $ccui-font-size-sm, 22px, 24px, 8px, 0 7px);
   }
 }

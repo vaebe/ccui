@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { InputNumber } from '../index'
 
@@ -108,11 +108,28 @@ describe('inputNumber', () => {
   })
 
   it('should support different sizes', async () => {
+    const wrapper = createWrapper({ size: 'large' })
+    expect(wrapper.classes()).toContain('ccui-input-number--large')
+
+    await wrapper.setProps({ size: 'small' })
+    expect(wrapper.classes()).toContain('ccui-input-number--small')
+  })
+
+  it('should still accept deprecated size literals lg/md/sm and map them', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const wrapper = createWrapper({ size: 'lg' })
-    expect(wrapper.classes()).toContain('ccui-input-number--lg')
+    expect(wrapper.classes()).toContain('ccui-input-number--large')
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('size="lg" 已 deprecated'))
 
     await wrapper.setProps({ size: 'sm' })
-    expect(wrapper.classes()).toContain('ccui-input-number--sm')
+    expect(wrapper.classes()).toContain('ccui-input-number--small')
+
+    await wrapper.setProps({ size: 'md' })
+    // 'default' 不写 modifier 类
+    expect(wrapper.classes()).not.toContain('ccui-input-number--default')
+    expect(wrapper.classes()).not.toContain('ccui-input-number--md')
+
+    warn.mockRestore()
   })
 
   it('should handle controls position', async () => {

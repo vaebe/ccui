@@ -29,8 +29,32 @@ describe('tag', () => {
     expect(wrapper.emitted('close')).toBeTruthy()
   })
 
-  it('borderless modifier', () => {
+  it('borderless modifier (legacy bordered=false 兼容)', () => {
     const wrapper = mount(Tag, { props: { bordered: false }, slots: { default: 'x' } })
     expect(wrapper.find(ns.m('borderless')).exists()).toBe(true)
+    // 兼容路径：bordered=false 等价 variant='filled'
+    expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+  })
+
+  it('variant=outlined（默认）渲染 outlined class，无 borderless', () => {
+    const wrapper = mount(Tag, { slots: { default: 'x' } })
+    expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('borderless')).exists()).toBe(false)
+  })
+
+  it('variant=solid 渲染 solid class + borderless（无外边框）', () => {
+    const wrapper = mount(Tag, { props: { variant: 'solid' }, slots: { default: 'x' } })
+    expect(wrapper.find(ns.m('variant-solid')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('borderless')).exists()).toBe(true)
+  })
+
+  it('variant 显式传值优先于 bordered=false', () => {
+    const wrapper = mount(Tag, {
+      props: { variant: 'outlined', bordered: false },
+      slots: { default: 'x' },
+    })
+    // variant 显式 outlined → 仍然渲染 outlined，不退回 filled
+    expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('borderless')).exists()).toBe(false)
   })
 })

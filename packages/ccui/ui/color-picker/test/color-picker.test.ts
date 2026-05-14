@@ -1,6 +1,6 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { ColorPicker } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
@@ -94,8 +94,16 @@ describe('color-picker rendering', () => {
     expect(wrapper.find(ns.e('value-text')).text()).toBe('#1677FF')
     await wrapper.setProps({ defaultValue: '#1677ff', showText: true, format: 'rgb' })
     expect(wrapper.find(ns.e('value-text')).text()).toBe('rgb(22, 119, 255)')
-    await wrapper.setProps({ defaultValue: '#1677ff', showText: true, format: 'hsv' })
+    await wrapper.setProps({ defaultValue: '#1677ff', showText: true, format: 'hsb' })
+    expect(wrapper.find(ns.e('value-text')).text()).toMatch(/^hsb\(/)
+  })
+
+  it('accepts deprecated format="hsv" and warns once', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mountCP({ defaultValue: '#1677ff', showText: true, format: 'hsv' })
     expect(wrapper.find(ns.e('value-text')).text()).toMatch(/^hsv\(/)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('format="hsv" 已 deprecated'))
+    warn.mockRestore()
   })
 
   it('hides showText by default', () => {
