@@ -1,8 +1,31 @@
 import type { CSSProperties } from 'vue'
-import type { FormItemContext, FormItemProps, FormNamePath, FormRule, FormValidateTrigger } from './form-types'
+import type {
+  FormColAttrs,
+  FormItemContext,
+  FormItemProps,
+  FormNamePath,
+  FormRule,
+  FormValidateTrigger,
+} from './form-types'
 import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
+
+// 把 FormColAttrs（24 栅格）转成 CSS 样式
+function colToStyle(col: FormColAttrs | undefined): CSSProperties {
+  if (!col) return {}
+  const style: CSSProperties = {}
+  if (col.flex !== undefined) {
+    style.flex = typeof col.flex === 'number' ? `${col.flex} ${col.flex} auto` : col.flex
+  }
+  if (col.span !== undefined) {
+    style.width = `${(col.span / 24) * 100}%`
+  }
+  if (col.offset !== undefined && col.offset > 0) {
+    style.marginInlineStart = `${(col.offset / 24) * 100}%`
+  }
+  return style
+}
 import {
   cloneValue,
   deleteValueByPath,
@@ -25,6 +48,7 @@ export default defineComponent({
     const formList = inject(formListInjectionKey, null)
     const validateState = ref<'validating' | 'success' | 'error' | ''>('')
     const validateMessage = ref('')
+    const warningState = ref(false)
     const itemRef = ref<HTMLElement | null>(null)
     const rawName = computed<FormNamePath | undefined>(() => props.name ?? props.prop)
     const fieldName = computed<FormNamePath | undefined>(() => {
@@ -53,8 +77,17 @@ export default defineComponent({
       return form ? getValueByPath(form.model.value, fieldName.value) : undefined
     }
 
+    // rules 解析：支持函数式 (model) => Rule | Rule[]（Ant Design v5+）
+    const resolveItemRules = (): FormRule | FormRule[] | undefined => {
+      const raw = props.rules
+      if (typeof raw === 'function') {
+        return raw(form?.model.value ?? {})
+      }
+      return raw
+    }
+
     const mergedRules = computed<FormRule[]>(() => {
-      const rules = [...normalizeRules(form?.rules.value?.[fieldKey.value]), ...normalizeRules(props.rules)]
+      const rules = [...normalizeRules(form?.rules.value?.[fieldKey.value]), ...normalizeRules(resolveItemRules())]
 
       if (props.required && !rules.some((rule) => rule.required)) {
         rules.unshift({ required: true })
@@ -64,18 +97,38 @@ export default defineComponent({
     })
 
     const isRequired = computed(() => props.required || mergedRules.value.some((rule) => rule.required))
-    const currentStatus = computed(() => props.validateStatus || validateState.value)
+    const currentStatus = computed(() => {
+      if (props.validateStatus) return props.validateStatus
+      if (warningState.value) return 'warning' as const
+      return validateState.value
+    })
     const currentMessage = computed(() => validateMessage.value || props.help)
     const shouldShowOptional = computed(() => !isRequired.value && form?.requiredMark.value === 'optional')
     const shouldShowRequiredMark = computed(() => isRequired.value && form?.requiredMark.value !== false)
     const mergedColon = computed(() => props.colon ?? form?.colon.value ?? true)
+
+    // hasFeedback：FormItem 显式 > Form 级 > 默认 false
+    const effectiveHasFeedback = computed(() =>
+      props.hasFeedback !== undefined ? props.hasFeedback : !!form?.hasFeedback.value,
+    )
+
+    // 栅格 labelCol / wrapperCol：FormItem 显式 > Form 级
+    const effectiveLabelCol = computed<FormColAttrs | undefined>(() => props.labelCol ?? form?.labelCol.value)
+    const effectiveWrapperCol = computed<FormColAttrs | undefined>(() => props.wrapperCol ?? form?.wrapperCol.value)
+
     const labelStyle = computed<CSSProperties>(() => {
+      // labelCol 栅格优先于 labelWidth
+      if (effectiveLabelCol.value) {
+        return colToStyle(effectiveLabelCol.value)
+      }
       if (!form?.labelWidth.value || form.labelPosition.value === 'top' || form.layout.value === 'vertical') {
         return {}
       }
       const width = typeof form.labelWidth.value === 'number' ? `${form.labelWidth.value}px` : form.labelWidth.value
       return { width }
     })
+
+    const wrapperStyle = computed<CSSProperties>(() => colToStyle(effectiveWrapperCol.value))
 
     const cls = computed(() => ({
       [ns.b()]: true,
@@ -90,6 +143,7 @@ export default defineComponent({
     const clearValidate = () => {
       validateState.value = ''
       validateMessage.value = ''
+      warningState.value = false
     }
 
     let validateTimer: ReturnType<typeof setTimeout> | null = null
@@ -108,6 +162,8 @@ export default defineComponent({
       validateState.value = 'validating'
       const value = getValueByPath(form.model.value, fieldName.value)
 
+      // warningOnly 规则：失败时降级为 warning，不阻塞 submit
+      let warningMessage = ''
       for (const rule of rules) {
         const error = await validateRule(
           rule,
@@ -118,6 +174,11 @@ export default defineComponent({
           form.validateMessages.value,
         )
         if (error) {
+          if (rule.warningOnly) {
+            warningMessage = error.message
+            // 继续校验其它规则，不立即返回
+            continue
+          }
           validateState.value = 'error'
           validateMessage.value = error.message
           form.emitValidate(fieldKey.value, false, error.message)
@@ -125,6 +186,17 @@ export default defineComponent({
         }
       }
 
+      if (warningMessage) {
+        // 仅 warning：状态降级（保留 success 类型签名，CSS 走 --warning class）
+        validateState.value = 'success' as any
+        validateMessage.value = warningMessage
+        // 由 currentStatus 注入 warning 类（见下方 mergedItemStatus）
+        warningState.value = true
+        form.emitValidate(fieldKey.value, true, warningMessage)
+        return true
+      }
+
+      warningState.value = false
       validateState.value = 'success'
       validateMessage.value = ''
       form.emitValidate(fieldKey.value, true, '')
@@ -268,9 +340,38 @@ export default defineComponent({
       )
     }
 
+    // hasFeedback 状态图标：根据 currentStatus 渲染对应符号
+    const renderFeedbackIcon = () => {
+      if (!effectiveHasFeedback.value) return null
+      const status = currentStatus.value
+      if (!status) return null
+      const symbol =
+        status === 'success'
+          ? '✓'
+          : status === 'error'
+            ? '✕'
+            : status === 'warning'
+              ? '!'
+              : status === 'validating'
+                ? '◌'
+                : ''
+      if (!symbol) return null
+      return h(
+        'span',
+        {
+          class: [ns.e('feedback'), ns.em('feedback', status)],
+          'aria-hidden': 'true',
+        },
+        symbol,
+      )
+    }
+
     const renderContent = () =>
-      h('div', { class: ns.e('content') }, [
-        slots.default?.(),
+      h('div', { class: ns.e('content'), style: wrapperStyle.value }, [
+        h('div', { class: [ns.e('control'), effectiveHasFeedback.value && ns.em('control', 'has-feedback')] }, [
+          slots.default?.(),
+          renderFeedbackIcon(),
+        ]),
         currentMessage.value ? h('div', { class: ns.e('message'), role: 'alert' }, currentMessage.value) : null,
         props.extra ? h('div', { class: ns.e('extra') }, props.extra) : null,
       ])

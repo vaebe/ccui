@@ -115,3 +115,65 @@
 .#{$cls-prefix}-form-item--success .#{$cls-prefix}-form-item__message {
   color: $ccui-color-success;
 }
+
+// L-1.6: Ant Design 风格的 hasFeedback / warning 状态 + 栅格 wrapperCol 容器
+.#{$cls-prefix}-form-item__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $ccui-margin-xs;
+}
+
+.#{$cls-prefix}-form-item__control--has-feedback {
+  // 给末尾的图标留位（图标本身 absolute，但 input 右内边距留 24px 让出图标空间）
+  :where(input, textarea, select) {
+    padding-inline-end: 28px;
+  }
+}
+
+.#{$cls-prefix}-form-item__feedback {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: $ccui-font-size-sm;
+  line-height: 1;
+  pointer-events: none;
+
+  &--success {
+    color: $ccui-color-success;
+  }
+
+  &--error {
+    color: $ccui-color-error;
+  }
+
+  &--warning {
+    color: $ccui-color-warning;
+  }
+
+  &--validating {
+    color: $ccui-color-primary;
+    animation: ccui-form-feedback-spin 1s linear infinite;
+  }
+}
+
+@keyframes ccui-form-feedback-spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+// warning 状态文字色（与 error 对齐结构）
+.#{$cls-prefix}-form-item--warning .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-warning;
+}
+
+.#{$cls-prefix}-form-item--warning :where(input, textarea, select) {
+  border-color: $ccui-color-warning;
+}

@@ -1193,3 +1193,215 @@ describe('form normalize', () => {
     expect(model.tag).toBe('HELLO')
   })
 })
+
+// ───────────────────────────────────────────────────────────────
+// L-1.6: Ant Design API alignment
+// ───────────────────────────────────────────────────────────────
+
+describe('L-1.6 labelCol / wrapperCol 栅格', () => {
+  it('FormItem 显式 labelCol.span 计算为百分比 width', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: {} }, () => h(FormItem, { label: 'A', labelCol: { span: 6 } }, () => h('input'))),
+      }),
+    )
+    const label = wrapper.find('.ccui-form-item__label')
+    expect(label.attributes('style')).toContain('width: 25%') // 6/24 = 25%
+  })
+
+  it('FormItem 显式 wrapperCol 应用到 __content', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: {} }, () =>
+            h(FormItem, { label: 'A', wrapperCol: { span: 18, offset: 2 } }, () => h('input')),
+          ),
+      }),
+    )
+    const content = wrapper.find('.ccui-form-item__content')
+    expect(content.attributes('style')).toContain('width: 75%') // 18/24 = 75%
+    expect(content.attributes('style')).toContain('margin-inline-start: 8.33333') // 2/24 ≈ 8.33%
+  })
+
+  it('Form 级 labelCol 默认应用到所有 FormItem', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: {}, labelCol: { span: 8 } }, () => h(FormItem, { label: 'A' }, () => h('input'))),
+      }),
+    )
+    const label = wrapper.find('.ccui-form-item__label')
+    expect(label.attributes('style')).toContain('width: 33.3333') // 8/24
+  })
+
+  it('FormItem labelCol 优先于 Form 级', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: {}, labelCol: { span: 8 } }, () =>
+            h(FormItem, { label: 'A', labelCol: { span: 12 } }, () => h('input')),
+          ),
+      }),
+    )
+    const label = wrapper.find('.ccui-form-item__label')
+    expect(label.attributes('style')).toContain('width: 50%') // 12/24
+  })
+
+  it('labelCol 优先于 labelWidth', async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: {}, labelWidth: '200px', labelCol: { span: 6 } }, () =>
+            h(FormItem, { label: 'A' }, () => h('input')),
+          ),
+      }),
+    )
+    const label = wrapper.find('.ccui-form-item__label')
+    expect(label.attributes('style')).toContain('width: 25%')
+    expect(label.attributes('style')).not.toContain('200px')
+  })
+})
+
+describe('L-1.6 hasFeedback', () => {
+  it('FormItem hasFeedback=true 校验成功时显示 ✓ 图标', async () => {
+    const model = reactive({ name: '' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model }, () =>
+            h(FormItem, { prop: 'name', hasFeedback: true, rules: { required: true } }, () =>
+              h('input', {
+                value: model.name,
+                onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
+              }),
+            ),
+          ),
+      }),
+    )
+    model.name = 'ok'
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    const feedback = wrapper.find('.ccui-form-item__feedback')
+    expect(feedback.exists()).toBe(true)
+    expect(feedback.classes()).toContain('ccui-form-item__feedback--success')
+    expect(feedback.text()).toBe('✓')
+  })
+
+  it('校验失败时显示 ✕ 图标 + error 类', async () => {
+    const model = reactive({ name: 'x' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model }, () =>
+            h(FormItem, { prop: 'name', hasFeedback: true, rules: { min: 5, message: '太短' } }, () =>
+              h('input', {
+                value: model.name,
+                onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
+              }),
+            ),
+          ),
+      }),
+    )
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    const feedback = wrapper.find('.ccui-form-item__feedback')
+    expect(feedback.exists()).toBe(true)
+    expect(feedback.classes()).toContain('ccui-form-item__feedback--error')
+    expect(feedback.text()).toBe('✕')
+  })
+
+  it('Form 级 hasFeedback 默认应用到所有 FormItem', async () => {
+    const model = reactive({ name: 'ok' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model, hasFeedback: true }, () =>
+            h(FormItem, { prop: 'name', rules: { required: true } }, () =>
+              h('input', {
+                value: model.name,
+                onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
+              }),
+            ),
+          ),
+      }),
+    )
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    expect(wrapper.find('.ccui-form-item__feedback').exists()).toBe(true)
+  })
+})
+
+describe('L-1.6 warningOnly rule', () => {
+  it('warningOnly rule 失败时 status=warning 但不阻塞 submit', async () => {
+    const model = reactive({ name: 'x' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            Form,
+            {
+              model,
+              ref: 'f',
+            },
+            () =>
+              h(
+                FormItem,
+                {
+                  prop: 'name',
+                  rules: { min: 5, message: '太短', warningOnly: true },
+                },
+                () =>
+                  h('input', {
+                    value: model.name,
+                    onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
+                  }),
+              ),
+          ),
+      }),
+    )
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    // 视觉降级到 warning
+    const item = wrapper.find('.ccui-form-item')
+    expect(item.classes()).toContain('ccui-form-item--warning')
+    // 消息正常显示
+    expect(wrapper.find('.ccui-form-item__message').text()).toBe('太短')
+    // form-level submit 不被阻塞
+    const formInstance = wrapper.vm.$refs.f as any
+    const valid = await formInstance.validate()
+    expect(valid).toBe(true)
+  })
+})
+
+describe('L-1.6 rules 函数式', () => {
+  it('rules 接受 (model) => Rule | Rule[]，基于当前 model 派生规则', async () => {
+    const model = reactive({ pwd: '', confirm: 'abc' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model }, () =>
+            h(
+              FormItem,
+              {
+                prop: 'confirm',
+                // 函数式 rules：要求 confirm === pwd
+                rules: (m: any) => ({
+                  validator: (_r: any, v: any) => (v === m.pwd ? true : new Error('两次密码不一致')),
+                }),
+              },
+              () =>
+                h('input', {
+                  value: model.confirm,
+                  onInput: (e: Event) => (model.confirm = (e.target as HTMLInputElement).value),
+                }),
+            ),
+          ),
+      }),
+    )
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+    expect(wrapper.find('.ccui-form-item').classes()).toContain('ccui-form-item--error')
+    expect(wrapper.find('.ccui-form-item__message').text()).toBe('两次密码不一致')
+  })
+})

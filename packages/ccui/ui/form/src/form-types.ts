@@ -4,7 +4,7 @@ export type FormNamePath = string | number | Array<string | number>
 export type FormLabelPosition = 'left' | 'right' | 'top'
 export type FormLayout = 'horizontal' | 'vertical' | 'inline'
 export type FormValidateTrigger = 'change' | 'blur' | 'submit'
-export type FormValidateStatus = '' | 'validating' | 'success' | 'error'
+export type FormValidateStatus = '' | 'validating' | 'success' | 'error' | 'warning'
 export type FormModel = Record<string, any>
 export type FormRequiredMark = boolean | 'optional'
 
@@ -46,6 +46,11 @@ export interface FormRule {
   pattern?: RegExp
   enum?: any[]
   whitespace?: boolean
+  /**
+   * 仅警告：校验失败时 FormItem 状态降级为 `'warning'`，不阻塞 form-level submit/validate。
+   * 对齐 Ant Design v5+ Rule.warningOnly。
+   */
+  warningOnly?: boolean
   validator?: (
     rule: FormRule,
     value: any,
@@ -53,7 +58,28 @@ export interface FormRule {
   ) => boolean | string | Error | Promise<boolean | string | Error>
 }
 
+/**
+ * Ant Design 风格：rules 可以是规则对象、数组，或返回规则的工厂函数 `(form) => Rule | Rule[]`。
+ * 工厂函数每次校验时执行，可基于当前 form model 派生规则。
+ */
+export type FormRuleFactory = (model: FormModel) => FormRule | FormRule[]
+export type FormItemRule = FormRule | FormRule[] | FormRuleFactory
+
 export type FormRules = Record<string, FormRule | FormRule[]>
+
+/**
+ * Ant Design 栅格对象（与 Grid Col 一致的子集）。
+ *
+ * `labelCol` / `wrapperCol` 用 24 栅格制描述 label 与控件的宽度比例。
+ */
+export interface FormColAttrs {
+  /** 栅格占据数（0–24） */
+  span?: number
+  /** 栅格偏移格数（0–24） */
+  offset?: number
+  /** flex 布局字符串 */
+  flex?: string | number
+}
 
 export interface FormValidateError {
   field: string
@@ -83,6 +109,12 @@ export interface FormContext {
   colon: Ref<boolean>
   requiredMark: Ref<FormRequiredMark>
   preserve: Ref<boolean>
+  /** Form 级栅格列（Ant Design 主名）。FormItem 显式 labelCol 优先。 */
+  labelCol: Ref<FormColAttrs | undefined>
+  /** Form 级栅格列。FormItem 显式 wrapperCol 优先。 */
+  wrapperCol: Ref<FormColAttrs | undefined>
+  /** Form 级 hasFeedback 默认值。FormItem 显式 hasFeedback 优先。 */
+  hasFeedback: Ref<boolean>
   addField: (field: FormItemContext) => void
   removeField: (field: FormItemContext) => void
   emitValidate: (field: string, valid: boolean, message: string) => void
@@ -202,6 +234,27 @@ export const formProps = {
     type: Boolean,
     default: true,
   },
+  /**
+   * Ant Design 风格栅格 label 列宽。配合 wrapperCol 使用，覆盖 `labelWidth` 的单一宽度方案。
+   */
+  labelCol: {
+    type: Object as PropType<FormColAttrs>,
+    default: undefined,
+  },
+  /**
+   * Ant Design 风格栅格控件列宽。
+   */
+  wrapperCol: {
+    type: Object as PropType<FormColAttrs>,
+    default: undefined,
+  },
+  /**
+   * Form 级 hasFeedback：所有 FormItem 默认显示校验状态图标。FormItem 显式优先。
+   */
+  hasFeedback: {
+    type: Boolean,
+    default: false,
+  },
 } as const
 
 export const formItemProps = {
@@ -226,7 +279,10 @@ export const formItemProps = {
     default: false,
   },
   rules: {
-    type: [Object, Array] as PropType<FormRule | FormRule[]>,
+    /**
+     * 支持规则对象、数组，或工厂函数 `(model) => Rule | Rule[]`（Ant Design v5+）。
+     */
+    type: [Object, Array, Function] as PropType<FormItemRule>,
     default: undefined,
   },
   help: {
@@ -265,9 +321,34 @@ export const formItemProps = {
     type: Boolean,
     default: undefined,
   },
-  // 控制 FormItem 在 model 变化时是否需要重新渲染/校验
+  /**
+   * @deprecated React Ant Design 用于强制重渲染的 prop。Vue 端的响应式系统已经自动处理依赖收集，
+   * 通常无需指定。保留 prop 接收以兼容现有代码；新代码不建议使用。详见 docs-notes/roadmap.md 「对标原则」节。
+   */
   shouldUpdate: {
     type: [Boolean, Function] as PropType<boolean | ((prevValues: any, curValues: any) => boolean)>,
+    default: undefined,
+  },
+  /**
+   * FormItem 级 hasFeedback：显示 success / warning / error / validating 状态图标。
+   * 显式 `hasFeedback` 优先于 Form 级。
+   */
+  hasFeedback: {
+    type: Boolean,
+    default: undefined,
+  },
+  /**
+   * Ant Design 栅格 label 列宽（FormItem 级，覆盖 Form 级 labelCol）。
+   */
+  labelCol: {
+    type: Object as PropType<FormColAttrs>,
+    default: undefined,
+  },
+  /**
+   * Ant Design 栅格控件列宽（FormItem 级，覆盖 Form 级 wrapperCol）。
+   */
+  wrapperCol: {
+    type: Object as PropType<FormColAttrs>,
     default: undefined,
   },
   // 校验防抖延迟（毫秒），0 = 不防抖
