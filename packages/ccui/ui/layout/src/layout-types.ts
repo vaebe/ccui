@@ -1,6 +1,21 @@
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue'
 
 export type SiderTheme = 'light' | 'dark'
+
+export type SiderBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
+
+/**
+ * L-2.21：ant breakpoint 取值对应的最大宽度（px）。
+ * `(max-width: {N}px)` 命中时认为「破点」，Sider 自动 collapse。
+ */
+export const SIDER_BREAKPOINT_PX: Record<SiderBreakpoint, number> = {
+  xs: 480,
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200,
+  xxl: 1600,
+}
 
 export const layoutProps = {
   hasSider: {
@@ -47,7 +62,15 @@ export const siderProps = {
     default: undefined,
   },
   breakpoint: {
-    type: String as PropType<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'>,
+    type: String as PropType<SiderBreakpoint>,
+    default: undefined,
+  },
+  /**
+   * L-2.21：collapsedWidth=0 时（Sider 完全隐藏）触发器的 inline style。
+   * 用于把折叠按钮定位为浮动按钮（如 `{ position: 'fixed', top: 16, left: 0 }`）。
+   */
+  zeroWidthTriggerStyle: {
+    type: Object as PropType<CSSProperties>,
     default: undefined,
   },
 } as const

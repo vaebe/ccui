@@ -1,8 +1,16 @@
 import type { CSSProperties } from 'vue'
 import type { LayoutContext, SiderProps } from './layout-types'
-import { computed, defineComponent, inject, provide, ref, watch } from 'vue'
+import { computed, defineComponent, inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { contentProps, footerProps, headerProps, LAYOUT_INJECT_KEY, layoutProps, siderProps } from './layout-types'
+import {
+  contentProps,
+  footerProps,
+  headerProps,
+  LAYOUT_INJECT_KEY,
+  layoutProps,
+  SIDER_BREAKPOINT_PX,
+  siderProps,
+} from './layout-types'
 import './layout.scss'
 
 let siderId = 0
@@ -67,7 +75,7 @@ export const Content = defineComponent({
 export const Sider = defineComponent({
   name: 'CLayoutSider',
   props: siderProps,
-  emits: ['update:collapsed', 'collapse'],
+  emits: ['update:collapsed', 'collapse', 'breakpoint'],
   setup(props: SiderProps, { slots, emit }) {
     const ns = useNamespace('layout-sider')
     const id = ++siderId
@@ -88,6 +96,36 @@ export const Sider = defineComponent({
     if (ctx) {
       ctx.addSider(id)
     }
+
+    // L-2.21：matchMedia 监听 breakpoint，命中（窗口变窄到断点以下）时自动 collapse；
+    // 不命中时自动 uncollapse。同步 emit @breakpoint(broken)。
+    let mql: MediaQueryList | null = null
+    const onBreakpointChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const broken = 'matches' in e ? e.matches : (e as MediaQueryListEvent).matches
+      emit('breakpoint', broken)
+      // 自动切换 collapsed 态（受控时不覆盖父值）。
+      if (props.collapsed === undefined) {
+        innerCollapsed.value = broken
+        emit('update:collapsed', broken)
+        emit('collapse', broken, 'responsive')
+      }
+    }
+
+    onMounted(() => {
+      if (!props.breakpoint || typeof window === 'undefined' || !window.matchMedia) return
+      const px = SIDER_BREAKPOINT_PX[props.breakpoint]
+      mql = window.matchMedia(`(max-width: ${px - 1}px)`)
+      // 首次主动评估一次（addEventListener 不会回放当前态）。
+      onBreakpointChange(mql)
+      mql.addEventListener('change', onBreakpointChange)
+    })
+
+    onBeforeUnmount(() => {
+      if (mql) {
+        mql.removeEventListener('change', onBreakpointChange)
+        mql = null
+      }
+    })
 
     const widthPx = computed(() => {
       const w = isCollapsed.value ? props.collapsedWidth : props.width
@@ -115,6 +153,11 @@ export const Sider = defineComponent({
       emit('collapse', next, 'clickTrigger')
     }
 
+    // L-2.21：collapsedWidth=0 时 Sider 在折叠态完全消失；此时触发器需要独立浮动渲染。
+    const isZeroWidthMode = computed(
+      () => isCollapsed.value && (props.collapsedWidth === 0 || props.collapsedWidth === '0'),
+    )
+
     const renderTrigger = () => {
       if (!props.collapsible) {
         return null
@@ -123,8 +166,11 @@ export const Sider = defineComponent({
         return null
       }
       const arrow = props.reverseArrow ? !isCollapsed.value : isCollapsed.value
+      // L-2.21：zero-width 模式下应用 zeroWidthTriggerStyle inline，便于用户做浮动定位。
+      const triggerStyle = isZeroWidthMode.value ? props.zeroWidthTriggerStyle : undefined
+      const triggerCls = [ns.e('trigger'), isZeroWidthMode.value && ns.em('trigger', 'zero-width')]
       return (
-        <div class={ns.e('trigger')} onClick={toggle}>
+        <div class={triggerCls} style={triggerStyle} onClick={toggle}>
           {slots.trigger ? slots.trigger() : <span class={ns.e('trigger-arrow')}>{arrow ? '›' : '‹'}</span>}
         </div>
       )
