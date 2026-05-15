@@ -1,0 +1,27 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-form-error-list {
+  margin: 0;
+  margin-top: $ccui-margin-xxs;
+  padding: 0;
+  font-size: $ccui-font-size-sm;
+  line-height: $ccui-line-height-base;
+  list-style: none;
+
+  &__item {
+    margin: 0;
+    padding: 0;
+
+    &--error {
+      color: $ccui-color-error;
+    }
+
+    &--warning {
+      color: $ccui-color-warning;
+    }
+
+    &--help {
+      color: $ccui-color-text-secondary;
+    }
+  }
+}

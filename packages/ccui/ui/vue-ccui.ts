@@ -35,6 +35,7 @@ import EmptyInstall, { Empty } from './empty'
 import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
 import FormInstall, { Form, FormItem, FormList, FormProvider } from './form'
+import FormErrorListInstall, { FormErrorList } from './form-error-list'
 import GridInstall, { Col, Row } from './grid'
 import IconInstall, {
   addAPIProvider,
@@ -155,6 +156,7 @@ const installs = [
   FlexInstall,
   FloatButtonInstall,
   FormInstall,
+  FormErrorListInstall,
   GridInstall,
   IconInstall,
   ImageInstall,
@@ -258,6 +260,7 @@ export {
   BackTop,
   FloatButton,
   Form,
+  FormErrorList,
   FormItem,
   FormList,
   FormProvider,

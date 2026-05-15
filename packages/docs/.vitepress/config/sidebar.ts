@@ -233,6 +233,11 @@ export default {
           status: '95%',
         },
         {
+          text: 'FormErrorList 表单错误列表',
+          link: '/components/form-error-list/',
+          status: '90%',
+        },
+        {
           text: 'Input 输入框',
           link: '/components/input/',
           status: '100%',
