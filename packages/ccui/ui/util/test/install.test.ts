@@ -25,7 +25,6 @@ import * as Image from '../../image'
 import * as Input from '../../input'
 import * as InputNumber from '../../input-number'
 import * as Layout from '../../layout'
-import * as List from '../../list'
 import * as Masonry from '../../masonry'
 import * as Menu from '../../menu'
 import * as Message from '../../message'
@@ -85,7 +84,6 @@ const modules = [
   Input,
   InputNumber,
   Layout,
-  List,
   Masonry,
   Menu,
   Message,

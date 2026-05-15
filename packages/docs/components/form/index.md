@@ -564,42 +564,6 @@ function onFinish(name: string, info: { values: any; forms: Record<string, any> 
 </template>
 ```
 
-## 错误汇总 `<c-form-error-list>`
-
-独立于 FormItem 的错误 / 警告 / 帮助列表组件。FormItem 默认只显示单条 message；当业务侧需要展示多条错误（如后端字段级错误数组），或要把错误聚合渲染到 form 顶部 / 底部时，用 `<c-form-error-list>`。
-
-`errors` 与 `warnings` 可同时存在（先 errors 后 warnings）；都为空时退化为 `help` 单条提示；三者都为空则不渲染。
-
-:::demo
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const errors = ref<string[]>([])
-const warnings = ref<string[]>([])
-
-function simulateBackendError() {
-  errors.value = ['用户名已存在', '邮箱格式不被支持', '手机号未通过运营商校验']
-  warnings.value = ['当前账号风险等级较高，建议开启二步验证']
-}
-function clear() {
-  errors.value = []
-  warnings.value = []
-}
-</script>
-
-<template>
-  <c-form-error-list :errors="errors" :warnings="warnings" help="提交前请确认所有字段已填写" />
-  <div style="margin-top:12px;display:flex;gap:8px">
-    <c-button type="primary" @click="simulateBackendError">模拟后端返回多条错误</c-button>
-    <c-button @click="clear">清空</c-button>
-  </div>
-</template>
-```
-
-:::
-
 ## 字段保留策略 preserve
 
 Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把 `preserve=false` 配置在表单上则全表单字段卸载即清理，单个 `c-form-item` 上的 `preserve` 优先于表单级配置：
@@ -701,18 +665,6 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 `forms` 是 `Record<string, FormInstance>`，`FormInstance` 暴露 `validate / validateField / resetFields / clearValidate / scrollToField / getFieldsValue`。
 
-### FormErrorList
-
-独立于 FormItem 的错误 / 警告 / 帮助列表组件。
-
-| 参数     | 类型     | 默认值 | 说明                                                                      |
-| -------- | -------- | ------ | ------------------------------------------------------------------------- |
-| errors   | string[] | []     | 错误列表（红色）                                                          |
-| warnings | string[] | []     | 警告列表（黄色），可与 `errors` 同时存在（先 errors 后 warnings）         |
-| help     | string   | --     | 单条 help 文本（仅 `errors` 与 `warnings` 都为空时显示）                  |
-
-三者全空时不渲染外层容器。组件自带 `role="alert"` + `aria-live="polite"`，可被屏幕阅读器实时朗读。
-
 ## 方法
 
 | 方法          | 说明             |
@@ -746,7 +698,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 - `Form.Provider` 跨表单注册表与 `form-change` / `form-finish` 聚合。
 - form-level 与 item-level 双层 `preserve` 控制字段卸载值。
 - `warningOnly` 规则降级、`hasFeedback` 状态图标、`labelCol` / `wrapperCol` 24 栅格。
-- 函数式 `rules: (model) => Rule | Rule[]`、`<c-form-error-list>` 错误聚合组件。
+- 函数式 `rules: (model) => Rule | Rule[]`。
 - 基础 ARIA 错误状态和错误消息 `role="alert"`。
 
 ## 缺失功能

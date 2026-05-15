@@ -125,27 +125,6 @@
 
 :::
 
-## 卡片内宫格（c-card-grid）
-
-`<c-card-grid>` 是 Card 内部的格栅子项，对标 ant `Card.Grid`。默认 1/3 宽 + hover 阴影；常用于「快捷入口宫格」。
-
-:::demo
-
-```vue
-<template>
-  <c-card header="快捷入口" :body-style="{ padding: 0 }">
-    <c-card-grid>📦 订单管理</c-card-grid>
-    <c-card-grid>👥 用户中心</c-card-grid>
-    <c-card-grid>📊 数据分析</c-card-grid>
-    <c-card-grid>⚙️ 系统设置</c-card-grid>
-    <c-card-grid>🔔 消息通知</c-card-grid>
-    <c-card-grid>💰 财务对账</c-card-grid>
-  </c-card>
-</template>
-```
-
-:::
-
 ## 卡片元数据（c-card-meta）
 
 `<c-card-meta>` 提供「头像 + 标题 + 描述」标准三段元素，对标 ant `Card.Meta`，常用于商品 / 用户 / 文章卡片。

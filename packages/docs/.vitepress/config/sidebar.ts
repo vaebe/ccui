@@ -29,6 +29,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'DropdownButton 下拉按钮',
+          link: '/components/dropdown-button/',
+          status: '90%',
+        },
+        {
           text: 'FloatButton 悬浮按钮',
           link: '/components/float-button/',
           status: '100%',
@@ -79,11 +84,6 @@ export default {
           status: '100%',
         },
         {
-          text: 'DropdownButton 下拉按钮',
-          link: '/components/dropdown-button/',
-          status: '90%',
-        },
-        {
           text: 'Menu 导航菜单',
           link: '/components/menu/',
           status: '100%',
@@ -111,11 +111,6 @@ export default {
           text: 'Alert 警告提示',
           link: '/components/alert/',
           status: '100%',
-        },
-        {
-          text: 'ErrorBoundary 错误边界',
-          link: '/components/error-boundary/',
-          status: '90%',
         },
         {
           text: 'Drawer 抽屉',
@@ -163,23 +158,23 @@ export default {
           status: '100%',
         },
         {
-          text: 'SkeletonButton 按钮骨架',
-          link: '/components/skeleton-button/',
-          status: '90%',
-        },
-        {
           text: 'SkeletonAvatar 头像骨架',
           link: '/components/skeleton-avatar/',
           status: '90%',
         },
         {
-          text: 'SkeletonInput 输入框骨架',
-          link: '/components/skeleton-input/',
+          text: 'SkeletonButton 按钮骨架',
+          link: '/components/skeleton-button/',
           status: '90%',
         },
         {
           text: 'SkeletonImage 图片骨架',
           link: '/components/skeleton-image/',
+          status: '90%',
+        },
+        {
+          text: 'SkeletonInput 输入框骨架',
+          link: '/components/skeleton-input/',
           status: '90%',
         },
         {
@@ -236,11 +231,6 @@ export default {
           text: 'Form 表单',
           link: '/components/form/',
           status: '95%',
-        },
-        {
-          text: 'FormErrorList 表单错误列表',
-          link: '/components/form-error-list/',
-          status: '90%',
         },
         {
           text: 'Input 输入框',
@@ -353,11 +343,6 @@ export default {
           status: '100%',
         },
         {
-          text: 'CardGrid 卡片网格',
-          link: '/components/card-grid/',
-          status: '90%',
-        },
-        {
           text: 'CardMeta 卡片元信息',
           link: '/components/card-meta/',
           status: '90%',
@@ -368,6 +353,11 @@ export default {
           status: '80%',
         },
         {
+          text: 'CheckableTag 可勾选标签',
+          link: '/components/checkable-tag/',
+          status: '90%',
+        },
+        {
           text: 'Collapse 折叠面板',
           link: '/components/collapse/',
           status: '100%',
@@ -376,6 +366,11 @@ export default {
           text: 'Descriptions 描述列表',
           link: '/components/descriptions/',
           status: '100%',
+        },
+        {
+          text: 'DirectoryTree 目录树',
+          link: '/components/directory-tree/',
+          status: '90%',
         },
         {
           text: 'Empty 空状态',
@@ -391,26 +386,6 @@ export default {
           text: 'ImagePreviewGroup 图片预览组',
           link: '/components/image-preview-group/',
           status: '80%',
-        },
-        {
-          text: 'List 列表',
-          link: '/components/list/',
-          status: '100%',
-        },
-        {
-          text: 'ListItemMeta 列表项元信息',
-          link: '/components/list-item-meta/',
-          status: '90%',
-        },
-        {
-          text: 'QRCode 二维码',
-          link: '/components/qr-code/',
-          status: '80%',
-        },
-        {
-          text: 'CheckableTag 可勾选标签',
-          link: '/components/checkable-tag/',
-          status: '90%',
         },
         {
           text: 'Rate 评分',
@@ -466,11 +441,6 @@ export default {
           text: 'Tree 树',
           link: '/components/tree/',
           status: '100%',
-        },
-        {
-          text: 'DirectoryTree 目录树',
-          link: '/components/directory-tree/',
-          status: '90%',
         },
         {
           text: 'Watermark 水印',

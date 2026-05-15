@@ -1,26 +1,24 @@
 import type { App } from 'vue'
 
 import './shared/styles/base.scss'
-export { zhCN, enUS, defaultLocale } from './locale'
 import AffixInstall, { Affix } from './affix'
 import AlertInstall, { Alert } from './alert'
 import AnchorInstall, { Anchor } from './anchor'
 import AutoCompleteInstall, { AutoComplete } from './auto-complete'
 import AvatarInstall, { Avatar } from './avatar'
-import AvatarGroupInstall, { AvatarGroup } from './avatar-group'
+import AvatarGroupInstall, { AvatarGroup, avatarGroupInjectionKey, resolveAvatarSize } from './avatar-group'
 import BadgeInstall, { Badge } from './badge'
-import BadgeRibbonInstall, { BadgeRibbon } from './badge-ribbon'
+import BadgeRibbonInstall, { BadgeRibbon, isRibbonPresetColor } from './badge-ribbon'
 import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 import ButtonInstall, { Button, ButtonGroup } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
 import CalendarInstall, { Calendar } from './calendar'
 import CardInstall, { Card } from './card'
-import CardGridInstall, { CardGrid } from './card-grid'
 import CardMetaInstall, { CardMeta } from './card-meta'
 import CarouselInstall, { Carousel } from './carousel'
-import CascaderInstall, { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT, Cascader } from './cascader'
-import CheckableTagInstall, { CheckableTag, CheckableTagGroup } from './checkable-tag'
+import CascaderInstall, { Cascader, CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from './cascader'
 import CheckBoxInstall, { CheckBox } from './check-box'
+import CheckableTagInstall, { CheckableTag, CheckableTagGroup, checkableTagGroupInjectionKey } from './checkable-tag'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
 import ColorPickerInstall, { ColorPicker } from './color-picker'
 import ConfigProviderInstall, { ConfigProvider, useConfig } from './config-provider'
@@ -32,11 +30,9 @@ import DrawerInstall, { Drawer } from './drawer'
 import DropdownInstall, { Dropdown } from './dropdown'
 import DropdownButtonInstall, { DropdownButton } from './dropdown-button'
 import EmptyInstall, { Empty } from './empty'
-import ErrorBoundaryInstall, { ErrorBoundary } from './error-boundary'
 import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
 import FormInstall, { Form, FormItem, FormList, FormProvider } from './form'
-import FormErrorListInstall, { FormErrorList } from './form-error-list'
 import GridInstall, { Col, Row } from './grid'
 import IconInstall, {
   addAPIProvider,
@@ -57,19 +53,16 @@ import InputNumberInstall, { InputNumber } from './input-number'
 import InputOtpInstall, { InputOtp } from './input-otp'
 import InputSearchInstall, { InputSearch } from './input-search'
 import LayoutInstall, { Content, Footer, Header, Layout, Sider } from './layout'
-import ListInstall, { List, ListItem } from './list'
-import ListItemMetaInstall, { ListItemMeta } from './list-item-meta'
 import MasonryInstall, { Masonry } from './masonry'
 import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
-import MessageInstall, { message, Message, useMessage } from './message'
+import MessageInstall, { message, useMessage, Message } from './message'
 import ModalInstall, { Modal, useModal } from './modal'
-import NotificationInstall, { notification, Notification, useNotification } from './notification'
+import NotificationInstall, { notification, useNotification, Notification } from './notification'
 import PaginationInstall, { Pagination } from './pagination'
 import PopconfirmInstall, { Popconfirm } from './popconfirm'
 import PopoverInstall, { Popover } from './popover'
 import ProgressInstall, { Progress } from './progress'
-import QrCodeInstall, { QRCode } from './qr-code'
 import RadioInstall, { Radio, RadioGroup } from './radio'
 import RangePickerInstall, { RangePicker } from './range-picker'
 import RateInstall, { Rate } from './rate'
@@ -106,10 +99,10 @@ import TourInstall, { Tour } from './tour'
 import TransferInstall, { Transfer } from './transfer'
 import TreeInstall, { Tree } from './tree'
 import TreeSelectInstall, {
+  TreeSelect,
   TREE_SELECT_SHOW_ALL,
   TREE_SELECT_SHOW_CHILD,
   TREE_SELECT_SHOW_PARENT,
-  TreeSelect,
 } from './tree-select'
 import TypographyInstall, { Link, Paragraph, Text, Title, Typography } from './typography'
 import UploadInstall, { Upload } from './upload'
@@ -130,6 +123,9 @@ import UtilInstall, {
 } from './util'
 import WatermarkInstall, { Watermark } from './watermark'
 
+// 国际化语言包导出（cli 在 vue-ui 模板内静态注入；语言包文件不是组件、走单独路径）
+export { zhCN, enUS, defaultLocale } from './locale'
+
 const installs = [
   AffixInstall,
   AlertInstall,
@@ -144,12 +140,11 @@ const installs = [
   Button3DInstall,
   CalendarInstall,
   CardInstall,
-  CardGridInstall,
   CardMetaInstall,
   CarouselInstall,
   CascaderInstall,
-  CheckableTagInstall,
   CheckBoxInstall,
+  CheckableTagInstall,
   CollapseInstall,
   ColorPickerInstall,
   ConfigProviderInstall,
@@ -161,11 +156,9 @@ const installs = [
   DropdownInstall,
   DropdownButtonInstall,
   EmptyInstall,
-  ErrorBoundaryInstall,
   FlexInstall,
   FloatButtonInstall,
   FormInstall,
-  FormErrorListInstall,
   GridInstall,
   IconInstall,
   ImageInstall,
@@ -175,8 +168,6 @@ const installs = [
   InputOtpInstall,
   InputSearchInstall,
   LayoutInstall,
-  ListInstall,
-  ListItemMetaInstall,
   MasonryInstall,
   MentionsInstall,
   MenuInstall,
@@ -187,7 +178,6 @@ const installs = [
   PopconfirmInstall,
   PopoverInstall,
   ProgressInstall,
-  QrCodeInstall,
   RadioInstall,
   RangePickerInstall,
   RateInstall,
@@ -237,24 +227,27 @@ export {
   AutoComplete,
   Avatar,
   AvatarGroup,
+  avatarGroupInjectionKey,
+  resolveAvatarSize,
   Badge,
   BadgeRibbon,
+  isRibbonPresetColor,
   Breadcrumb,
   BreadcrumbItem,
   Button,
-  Button3d,
   ButtonGroup,
+  Button3d,
   Calendar,
   Card,
-  CardGrid,
   CardMeta,
   Carousel,
   Cascader,
   CASCADER_SHOW_CHILD,
   CASCADER_SHOW_PARENT,
+  CheckBox,
   CheckableTag,
   CheckableTagGroup,
-  CheckBox,
+  checkableTagGroupInjectionKey,
   Collapse,
   CollapseItem,
   ColorPicker,
@@ -269,12 +262,10 @@ export {
   Dropdown,
   DropdownButton,
   Empty,
-  ErrorBoundary,
   Flex,
   BackTop,
   FloatButton,
   Form,
-  FormErrorList,
   FormItem,
   FormList,
   FormProvider,
@@ -301,25 +292,21 @@ export {
   Header,
   Layout,
   Sider,
-  List,
-  ListItem,
-  ListItemMeta,
   Masonry,
   Mentions,
   Menu,
   message,
-  Message,
   useMessage,
+  Message,
   Modal,
   useModal,
   notification,
-  Notification,
   useNotification,
+  Notification,
   Pagination,
   Popconfirm,
   Popover,
   Progress,
-  QRCode,
   Radio,
   RadioGroup,
   RangePicker,
@@ -387,7 +374,7 @@ export {
 }
 
 export default {
-  version: '1.0.8',
+  version: '1.0.0',
   install(app: App): void {
     installs.forEach((p) => app.use(p))
   },

@@ -62,7 +62,6 @@ describe('Vue3CCUIResolver — importStyle', () => {
     const r = Vue3CCUIResolver({ importStyle: 'scss' })
     expect(call(r, 'CButton')?.sideEffects).toBe('vue3-ccui/ui/button/src/button.scss')
     expect(call(r, 'CAutoComplete')?.sideEffects).toBe('vue3-ccui/ui/auto-complete/src/auto-complete.scss')
-    expect(call(r, 'CQRCode')?.sideEffects).toBe('vue3-ccui/ui/qr-code/src/qr-code.scss')
   })
 
   it("'scss' shares the parent dir for sub-components", () => {
