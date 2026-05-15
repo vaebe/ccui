@@ -254,6 +254,45 @@ function destroyAll() {
 
 :::
 
+## useMessage composable（L-3.3）
+
+`useMessage()` 返回 `{ message, holder }` **对象**（**不是** React 的 `[modal, contextHolder]` 元组）。容器渲染在当前 Vue 子树里，自动继承父组件 provide 的 ConfigProvider / 主题等上下文——**与模块级 `message` 的最大差异**。
+
+::: tip 何时用模块级 vs Hook 版？
+
+- **模块级 `import { message } from 'vue3-ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（如自定义 ConfigProvider、主题、locale）。
+- **Hook `useMessage()`**：当弹层需要继承组件树上下文（深色主题、自定义 locale、自定义 ConfigProvider）时用。**必须**在模板中挂 `<component :is="holder" />`。
+
+:::
+
+:::demo
+
+```vue
+<script setup>
+import { useMessage } from 'vue3-ccui'
+
+const { message, holder } = useMessage()
+
+function show() {
+  message.success('我能拿到 ConfigProvider 的 locale', 2)
+}
+</script>
+
+<template>
+  <component :is="holder" />
+  <c-button type="primary" @click="show">弹出（继承上下文）</c-button>
+</template>
+```
+
+:::
+
+### UseMessageReturn
+
+| 字段    | 类型         | 说明                                                              |
+| ------- | ------------ | ----------------------------------------------------------------- |
+| message | `MessageApi` | 与全局 `message` 同 API：`info/success/warning/error/loading/open/config/destroy` |
+| holder  | `Component`  | 必须挂到模板：`<component :is="holder" />`                        |
+
 ## API
 
 ### message 命名空间

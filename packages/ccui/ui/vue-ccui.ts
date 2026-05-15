@@ -62,7 +62,7 @@ import ListItemMetaInstall, { ListItemMeta } from './list-item-meta'
 import MasonryInstall, { Masonry } from './masonry'
 import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
-import MessageInstall, { message, Message } from './message'
+import MessageInstall, { message, Message, useMessage } from './message'
 import ModalInstall, { Modal } from './modal'
 import NotificationInstall, { notification, Notification } from './notification'
 import PaginationInstall, { Pagination } from './pagination'
@@ -309,6 +309,7 @@ export {
   Menu,
   message,
   Message,
+  useMessage,
   Modal,
   notification,
   Notification,

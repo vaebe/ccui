@@ -1,7 +1,9 @@
 import type { App } from 'vue'
 import message from './src/message'
+import { useMessage } from './src/use-message'
 
-export { message }
+export { message, useMessage }
+export type { UseMessageReturn } from './src/use-message'
 export const Message = message
 
 export default {
