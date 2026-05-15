@@ -192,11 +192,6 @@ export default {
           link: '/components/tooltip/',
           status: '100%',
         },
-        {
-          text: 'Tour 漫游引导',
-          link: '/components/tour/',
-          status: '80%',
-        },
       ],
     },
     {

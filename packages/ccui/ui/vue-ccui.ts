@@ -95,7 +95,6 @@ import TextareaInstall, { Textarea } from './textarea'
 import TimePickerInstall, { TimePicker } from './time-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
-import TourInstall, { Tour } from './tour'
 import TransferInstall, { Transfer } from './transfer'
 import TreeInstall, { Tree } from './tree'
 import TreeSelectInstall, {
@@ -210,7 +209,6 @@ const installs = [
   TimePickerInstall,
   TimelineInstall,
   TooltipInstall,
-  TourInstall,
   TransferInstall,
   TreeInstall,
   TreeSelectInstall,
@@ -344,7 +342,6 @@ export {
   Timeline,
   TimelineItem,
   Tooltip,
-  Tour,
   Transfer,
   Tree,
   TreeSelect,

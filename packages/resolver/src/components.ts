@@ -98,7 +98,6 @@ export const componentMap: Record<string, ComponentEntry> = {
   CTimeline: { exportName: 'Timeline', styleDir: 'timeline' },
   CTimelineItem: { exportName: 'TimelineItem', styleDir: 'timeline' },
   CTooltip: { exportName: 'Tooltip', styleDir: 'tooltip' },
-  CTour: { exportName: 'Tour', styleDir: 'tour' },
   CTransfer: { exportName: 'Transfer', styleDir: 'transfer' },
   CTree: { exportName: 'Tree', styleDir: 'tree' },
   CTreeSelect: { exportName: 'TreeSelect', styleDir: 'tree-select' },
