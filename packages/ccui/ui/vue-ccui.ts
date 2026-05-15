@@ -86,6 +86,7 @@ import SpaceInstall, { Space } from './space'
 import SpinInstall, { Spin } from './spin'
 import SplitterInstall, { Panel, Splitter } from './splitter'
 import StatisticInstall, { Statistic, StatisticCountdown } from './statistic'
+import StatisticTimerInstall, { StatisticTimer } from './statistic-timer'
 import StatusInstall, { Status } from './status'
 import StepsInstall, { Steps } from './steps'
 import SwitchInstall, { Switch } from './switch'
@@ -201,6 +202,7 @@ const installs = [
   SpinInstall,
   SplitterInstall,
   StatisticInstall,
+  StatisticTimerInstall,
   StatusInstall,
   StepsInstall,
   SwitchInstall,
@@ -330,6 +332,7 @@ export {
   Splitter,
   Statistic,
   StatisticCountdown,
+  StatisticTimer,
   Status,
   Steps,
   Switch,

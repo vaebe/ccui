@@ -423,6 +423,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'StatisticTimer 计时器',
+          link: '/components/statistic-timer/',
+          status: '90%',
+        },
+        {
           text: 'Table 表格',
           link: '/components/table/',
           status: '95%',
