@@ -513,6 +513,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'SpaceCompact 紧凑组合',
+          link: '/components/space-compact/',
+          status: '90%',
+        },
+        {
           text: 'Splitter 分隔面板',
           link: '/components/splitter/',
           status: '100%',

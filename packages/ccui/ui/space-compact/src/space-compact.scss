@@ -1,0 +1,71 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-space-compact {
+  display: inline-flex;
+  vertical-align: middle;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--block {
+    display: flex;
+    width: 100%;
+  }
+
+  // 横向拼接：相邻子项 border 合并，圆角合并
+  &--horizontal > *:not(:first-child) {
+    margin-inline-start: -1px;
+  }
+
+  &--horizontal > *:not(:first-child):not(:last-child) {
+    border-radius: 0;
+  }
+  &--horizontal > *:not(:first-child):not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-radius: 0;
+  }
+
+  &--horizontal > *:first-child:not(:last-child),
+  &--horizontal > *:first-child:not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &--horizontal > *:last-child:not(:first-child),
+  &--horizontal > *:last-child:not(:first-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  // 子项 hover/focus 时提层避免 border 被相邻覆盖
+  &--horizontal > *:hover,
+  &--horizontal > *:focus-within {
+    z-index: 1;
+  }
+
+  // 纵向拼接
+  &--vertical > *:not(:first-child) {
+    margin-top: -1px;
+  }
+
+  &--vertical > *:not(:first-child):not(:last-child),
+  &--vertical > *:not(:first-child):not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-radius: 0;
+  }
+
+  &--vertical > *:first-child:not(:last-child),
+  &--vertical > *:first-child:not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &--vertical > *:last-child:not(:first-child),
+  &--vertical > *:last-child:not(:first-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}

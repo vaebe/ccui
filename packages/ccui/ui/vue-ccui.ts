@@ -84,6 +84,7 @@ import SkeletonInputInstall, { SkeletonInput } from './skeleton-input'
 import SkeletonNodeInstall, { SkeletonNode } from './skeleton-node'
 import SliderInstall, { Slider } from './slider'
 import SpaceInstall, { Space } from './space'
+import SpaceCompactInstall, { SpaceCompact } from './space-compact'
 import SpinInstall, { Spin } from './spin'
 import SplitterInstall, { Panel, Splitter } from './splitter'
 import StatisticInstall, { Statistic, StatisticCountdown } from './statistic'
@@ -201,6 +202,7 @@ const installs = [
   SkeletonNodeInstall,
   SliderInstall,
   SpaceInstall,
+  SpaceCompactInstall,
   SpinInstall,
   SplitterInstall,
   StatisticInstall,
@@ -330,6 +332,7 @@ export {
   SkeletonNode,
   Slider,
   Space,
+  SpaceCompact,
   Spin,
   Panel,
   Splitter,
