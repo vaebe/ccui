@@ -79,6 +79,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'DropdownButton 下拉按钮',
+          link: '/components/dropdown-button/',
+          status: '90%',
+        },
+        {
           text: 'Menu 导航菜单',
           link: '/components/menu/',
           status: '100%',

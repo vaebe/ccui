@@ -30,6 +30,7 @@ import DirectoryTreeInstall, { DirectoryTree } from './directory-tree'
 import DividerInstall, { Divider } from './divider'
 import DrawerInstall, { Drawer } from './drawer'
 import DropdownInstall, { Dropdown } from './dropdown'
+import DropdownButtonInstall, { DropdownButton } from './dropdown-button'
 import EmptyInstall, { Empty } from './empty'
 import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
@@ -144,6 +145,7 @@ const installs = [
   DividerInstall,
   DrawerInstall,
   DropdownInstall,
+  DropdownButtonInstall,
   EmptyInstall,
   FlexInstall,
   FloatButtonInstall,
@@ -240,6 +242,7 @@ export {
   Divider,
   Drawer,
   Dropdown,
+  DropdownButton,
   Empty,
   Flex,
   BackTop,
