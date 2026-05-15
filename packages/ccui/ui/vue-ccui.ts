@@ -82,6 +82,9 @@ import StatusInstall, { Status } from './status'
 import StepsInstall, { Steps } from './steps'
 import SwitchInstall, { Switch } from './switch'
 import TableInstall, { Table } from './table'
+import TableColumnInstall, { TableColumn } from './table-column'
+import TableColumnGroupInstall, { TableColumnGroup } from './table-column-group'
+import TableSummaryInstall, { TableSummary } from './table-summary'
 import TabsInstall, { Tab, Tabs } from './tabs'
 import TagInstall, { Tag } from './tag'
 import TextareaInstall, { Textarea } from './textarea'
@@ -181,6 +184,9 @@ const installs = [
   StepsInstall,
   SwitchInstall,
   TableInstall,
+  TableColumnInstall,
+  TableColumnGroupInstall,
+  TableSummaryInstall,
   TabsInstall,
   TagInstall,
   TextareaInstall,
@@ -297,6 +303,9 @@ export {
   Steps,
   Switch,
   Table,
+  TableColumn,
+  TableColumnGroup,
+  TableSummary,
   Tab,
   Tabs,
   Tag,

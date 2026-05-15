@@ -1,4 +1,4 @@
-import type { CSSProperties, ExtractPropTypes, PropType, VNodeChild } from 'vue'
+import type { CSSProperties, ExtractPropTypes, InjectionKey, PropType, Slot, VNodeChild } from 'vue'
 
 export type TableRowKey = string | ((record: any, index: number) => string | number)
 export type TableSize = 'small' | 'middle' | 'default'
@@ -35,6 +35,11 @@ export interface TableColumn {
   customRender?: (scope: { text: any; record: any; index: number; column: TableColumn }) => VNodeChild
   onCell?: (record: any, index: number) => TableCellRenderProps
   onHeaderCell?: (column: TableColumn) => TableCellRenderProps
+  /**
+   * 列分组：仅当本列由 `<c-table-column-group>` 生成时存在。子列在 tbody 中被展平渲染，
+   * 在 thead 中表现为「分组标题 + 子列标题」两行结构。
+   */
+  children?: TableColumn[]
 }
 
 export interface TablePaginationConfig {
@@ -140,3 +145,37 @@ export const tableProps = {
 } as const
 
 export type TableProps = ExtractPropTypes<typeof tableProps>
+
+/**
+ * 模板式列收集器（L-2.12）：`<c-table-column>` / `<c-table-column-group>` 在挂载时把列定义
+ * 注册到父 Table；卸载时清理。同一 Table 实例下的子列共享一个收集器。
+ *
+ * 与 `columns` prop 互斥：`columns` 非空时优先用 prop，否则用收集到的列。
+ */
+export interface TableColumnsCollector {
+  register: (id: symbol, column: TableColumn, order: number) => void
+  unregister: (id: symbol) => void
+}
+
+export const tableColumnsCollectorKey = Symbol('TableColumnsCollector') as InjectionKey<TableColumnsCollector>
+
+/**
+ * ColumnGroup 子作用域收集器：内部 `<c-table-column>` 注册到 group，而非 root Table。
+ */
+export interface TableColumnGroupCollector {
+  register: (id: symbol, column: TableColumn, order: number) => void
+  unregister: (id: symbol) => void
+}
+
+export const tableColumnGroupCollectorKey = Symbol(
+  'TableColumnGroupCollector',
+) as InjectionKey<TableColumnGroupCollector>
+
+/**
+ * Summary slot 注入容器：`<c-table-summary>` 通过此 key 把 default slot 暴露给父 Table 渲染到 tfoot。
+ */
+export interface TableSummaryCollector {
+  setSummary: (slot: Slot | null) => void
+}
+
+export const tableSummaryCollectorKey = Symbol('TableSummaryCollector') as InjectionKey<TableSummaryCollector>

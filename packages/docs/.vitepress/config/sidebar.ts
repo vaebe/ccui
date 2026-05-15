@@ -393,6 +393,21 @@ export default {
           status: '95%',
         },
         {
+          text: 'TableColumn 表格列',
+          link: '/components/table-column/',
+          status: '90%',
+        },
+        {
+          text: 'TableColumnGroup 表格列分组',
+          link: '/components/table-column-group/',
+          status: '90%',
+        },
+        {
+          text: 'TableSummary 表格汇总',
+          link: '/components/table-summary/',
+          status: '90%',
+        },
+        {
           text: 'Tag 标签',
           link: '/components/tag/',
           status: '100%',

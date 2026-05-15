@@ -1,7 +1,8 @@
-import type { CSSProperties, VNodeChild } from 'vue'
+import type { CSSProperties, Slot, VNodeChild } from 'vue'
 import type {
   TableCellRenderProps,
   TableColumn,
+  TableColumnsCollector,
   TableFilterValue,
   TableFilters,
   TablePaginationConfig,
@@ -10,9 +11,9 @@ import type {
   TableSorter,
   TableSortOrder,
 } from './table-types'
-import { computed, defineComponent, h, ref, watch } from 'vue'
+import { computed, defineComponent, h, provide, ref, shallowRef, triggerRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { tableProps } from './table-types'
+import { tableColumnsCollectorKey, tableProps, tableSummaryCollectorKey } from './table-types'
 import '../../pagination/src/pagination.scss'
 import './table.scss'
 
@@ -115,6 +116,64 @@ export default defineComponent({
     const innerSelectedRowKeys = ref<TableSelectionKey[]>([])
     const innerExpandedRowKeys = ref<TableSelectionKey[]>([])
 
+    // L-2.12 模板式列收集：`<c-table-column>` / `<c-table-column-group>` 在挂载时调用 register。
+    // shallowRef + 手动 trigger 比 reactive Map 更稳，避免深层代理串扰 column 对象。
+    const collectedEntries = new Map<symbol, { column: TableColumn; order: number }>()
+    const collectedColumns = shallowRef<TableColumn[]>([])
+    const recomputeCollected = () => {
+      collectedColumns.value = Array.from(collectedEntries.values())
+        .sort((a, b) => a.order - b.order)
+        .map((entry) => entry.column)
+      triggerRef(collectedColumns)
+    }
+    const collector: TableColumnsCollector = {
+      register(id, column, order) {
+        collectedEntries.set(id, { column, order })
+        recomputeCollected()
+      },
+      unregister(id) {
+        collectedEntries.delete(id)
+        recomputeCollected()
+      },
+    }
+    provide(tableColumnsCollectorKey, collector)
+
+    // L-2.12 模板式 summary 收集：`<c-table-summary>` 在挂载时把 default slot 注入；Table 渲染 tfoot。
+    const summarySlot = shallowRef<Slot | null>(null)
+    provide(tableSummaryCollectorKey, {
+      setSummary(slot) {
+        summarySlot.value = slot
+      },
+    })
+
+    // 与 `columns` prop 互斥：prop 非空时优先用 prop，否则用收集到的模板式列。
+    const effectiveColumns = computed<TableColumn[]>(() =>
+      props.columns && props.columns.length > 0 ? props.columns : collectedColumns.value,
+    )
+
+    // 把带 children 的列（来自 ColumnGroup）展平为叶子列，用于 tbody 渲染 + 数据计算。
+    const flattenLeafColumns = (columns: TableColumn[]): TableColumn[] => {
+      const leaves: TableColumn[] = []
+      const walk = (list: TableColumn[]) => {
+        list.forEach((column) => {
+          if (column.children && column.children.length > 0) {
+            walk(column.children)
+          } else {
+            leaves.push(column)
+          }
+        })
+      }
+      walk(columns)
+      return leaves
+    }
+
+    const leafColumns = computed<TableColumn[]>(() => flattenLeafColumns(effectiveColumns.value))
+
+    // 是否存在分组（任一顶层列带 children）—— 决定 thead 是否双行渲染。
+    const hasColumnGroup = computed(() =>
+      effectiveColumns.value.some((column) => column.children && column.children.length > 0),
+    )
+
     watch(
       () => props.pagination,
       (pagination) => {
@@ -165,7 +224,7 @@ export default defineComponent({
       const left: OrderedColumn[] = []
       const middle: OrderedColumn[] = []
       const right: OrderedColumn[] = []
-      props.columns.forEach((column, originalIndex) => {
+      leafColumns.value.forEach((column, originalIndex) => {
         if (column.fixed === 'left') {
           left.push({ column, originalIndex })
         } else if (column.fixed === 'right') {
@@ -177,8 +236,8 @@ export default defineComponent({
       return [...left, ...middle, ...right]
     })
 
-    const hasLeftFixed = computed(() => props.columns.some((column) => column.fixed === 'left'))
-    const hasRightFixed = computed(() => props.columns.some((column) => column.fixed === 'right'))
+    const hasLeftFixed = computed(() => leafColumns.value.some((column) => column.fixed === 'left'))
+    const hasRightFixed = computed(() => leafColumns.value.some((column) => column.fixed === 'right'))
 
     const isSelectionEnabled = computed(() => Boolean(props.rowSelection))
     const isExpandableEnabled = computed(() => Boolean(props.expandable?.expandedRowRender))
@@ -264,9 +323,9 @@ export default defineComponent({
     })
 
     const activeSorter = computed<TableSorter>(() => {
-      const controlledIndex = props.columns.findIndex((column) => column.sortOrder !== undefined)
+      const controlledIndex = leafColumns.value.findIndex((column) => column.sortOrder !== undefined)
       if (controlledIndex >= 0) {
-        const column = props.columns[controlledIndex]
+        const column = leafColumns.value[controlledIndex]
         return {
           column,
           columnKey: getColumnKey(column, controlledIndex),
@@ -278,7 +337,7 @@ export default defineComponent({
 
     const activeFilters = computed<TableFilters>(() => {
       const filters: TableFilters = { ...innerFilters.value }
-      props.columns.forEach((column, index) => {
+      leafColumns.value.forEach((column, index) => {
         if (column.filteredValue !== undefined) {
           filters[getColumnKey(column, index)] = column.filteredValue
         }
@@ -288,7 +347,7 @@ export default defineComponent({
 
     const filteredData = computed(() => {
       return props.dataSource.filter((record) => {
-        return props.columns.every((column, index) => {
+        return leafColumns.value.every((column, index) => {
           const values = activeFilters.value[getColumnKey(column, index)]
           if (!values?.length) {
             return true
@@ -685,53 +744,136 @@ export default defineComponent({
       )
     }
 
+    const countLeaves = (column: TableColumn): number => {
+      if (!column.children || column.children.length === 0) return 1
+      return column.children.reduce((sum, child) => sum + countLeaves(child), 0)
+    }
+
+    // 渲染一个 leaf 列的 th（复用于单行 thead 和分组 thead 的子行 / 组外 leaf 列）。
+    const renderLeafTh = (
+      column: TableColumn,
+      originalIndex: number,
+      orderedIndex: number,
+      extraAttrs?: Record<string, any>,
+    ): VNodeChild => {
+      const key = getColumnKey(column, originalIndex)
+      const sortOrder = activeSorter.value.columnKey === key ? activeSorter.value.order : null
+      const headerContent = slots.headerCell ? slots.headerCell({ column, index: originalIndex }) : column.title
+      const headerCellProps: TableCellRenderProps = column.onHeaderCell ? column.onHeaderCell(column) : {}
+      if (headerCellProps.colSpan === 0 || headerCellProps.rowSpan === 0) {
+        return null
+      }
+      return h(
+        'th',
+        {
+          key,
+          ...extraAttrs,
+          class: [
+            ns.e('th'),
+            column.align && ns.em('th', column.align),
+            column.sorter && ns.em('th', 'sortable'),
+            sortOrder && ns.em('th', sortOrder),
+            column.fixed === 'left' && ns.em('cell', 'fixed-left'),
+            column.fixed === 'right' && ns.em('cell', 'fixed-right'),
+            headerCellProps.class,
+          ],
+          style: fixedCellStyle(orderedIndex, column, headerCellProps.style),
+          rowspan: headerCellProps.rowSpan ?? extraAttrs?.rowspan,
+          colspan: headerCellProps.colSpan ?? extraAttrs?.colspan,
+          onClick: () => handleSort(column, originalIndex),
+        },
+        [
+          h('div', { class: ns.e('title') }, [
+            h('span', null, headerContent),
+            column.sorter ? h('span', { class: ns.e('sorter') }) : null,
+          ]),
+          renderFilter(column, originalIndex),
+        ],
+      )
+    }
+
     const renderHeader = () => {
       if (!props.showHeader) {
         return null
       }
-      return h(
-        'thead',
-        { class: ns.e('thead') },
-        h('tr', null, [
-          renderSelectionHeader(),
-          renderExpandHeader(),
-          ...orderedColumns.value.map(({ column, originalIndex }, orderedIndex) => {
-            const key = getColumnKey(column, originalIndex)
-            const sortOrder = activeSorter.value.columnKey === key ? activeSorter.value.order : null
-            const headerContent = slots.headerCell ? slots.headerCell({ column, index: originalIndex }) : column.title
-            const headerCellProps: TableCellRenderProps = column.onHeaderCell ? column.onHeaderCell(column) : {}
-            if (headerCellProps.colSpan === 0 || headerCellProps.rowSpan === 0) {
-              return null
-            }
-            return h(
+      // 单行 thead（无分组）—— 走原路径，与历史 DOM 完全一致。
+      if (!hasColumnGroup.value) {
+        return h(
+          'thead',
+          { class: ns.e('thead') },
+          h('tr', null, [
+            renderSelectionHeader(),
+            renderExpandHeader(),
+            ...orderedColumns.value.map(({ column, originalIndex }, orderedIndex) =>
+              renderLeafTh(column, originalIndex, orderedIndex),
+            ),
+          ]),
+        )
+      }
+
+      // 多行 thead（含分组）—— top row 渲染顶层列（group 用 colspan，leaf 用 rowspan=2）；
+      // bottom row 渲染所有 group 的子叶子列。
+      // leafColumns 与顶层列的对应关系：按 effectiveColumns 顺序，依次铺开每个顶层列的叶子。
+      const topColumns = effectiveColumns.value
+
+      // 计算每个 leaf 在 orderedColumns 中的位置（用于 fixedCellStyle）。
+      const leafToOrderedIndex = new Map<TableColumn, number>()
+      orderedColumns.value.forEach(({ column }, orderedIndex) => {
+        leafToOrderedIndex.set(column, orderedIndex)
+      })
+
+      // 在 leafColumns 中查找原始 index。
+      const leafToOriginalIndex = new Map<TableColumn, number>()
+      leafColumns.value.forEach((column, index) => {
+        leafToOriginalIndex.set(column, index)
+      })
+
+      const topRow: VNodeChild[] = [renderSelectionHeader(), renderExpandHeader()]
+      const bottomRow: VNodeChild[] = []
+
+      topColumns.forEach((column, topIndex) => {
+        if (column.children && column.children.length > 0) {
+          // 组标题：colspan = 子叶子数，自身不可排序 / 不带 filter。
+          const headerCellProps: TableCellRenderProps = column.onHeaderCell ? column.onHeaderCell(column) : {}
+          const leafCount = countLeaves(column)
+          topRow.push(
+            h(
               'th',
               {
-                key,
+                key: `__group_${topIndex}`,
                 class: [
                   ns.e('th'),
+                  ns.em('th', 'group'),
                   column.align && ns.em('th', column.align),
-                  column.sorter && ns.em('th', 'sortable'),
-                  sortOrder && ns.em('th', sortOrder),
                   column.fixed === 'left' && ns.em('cell', 'fixed-left'),
                   column.fixed === 'right' && ns.em('cell', 'fixed-right'),
                   headerCellProps.class,
                 ],
-                style: fixedCellStyle(orderedIndex, column, headerCellProps.style),
-                rowspan: headerCellProps.rowSpan,
-                colspan: headerCellProps.colSpan,
-                onClick: () => handleSort(column, originalIndex),
+                style: headerCellProps.style,
+                colspan: leafCount,
               },
-              [
-                h('div', { class: ns.e('title') }, [
-                  h('span', null, headerContent),
-                  column.sorter ? h('span', { class: ns.e('sorter') }) : null,
-                ]),
-                renderFilter(column, originalIndex),
-              ],
-            )
-          }),
-        ]),
-      )
+              h('div', { class: ns.e('title') }, [h('span', null, column.title)]),
+            ),
+          )
+          // 该 group 下所有叶子放到 bottom row。
+          const collectLeaves = (col: TableColumn): TableColumn[] => {
+            if (!col.children || col.children.length === 0) return [col]
+            return col.children.flatMap(collectLeaves)
+          }
+          collectLeaves(column).forEach((leaf) => {
+            const orderedIndex = leafToOrderedIndex.get(leaf) ?? 0
+            const originalIndex = leafToOriginalIndex.get(leaf) ?? 0
+            bottomRow.push(renderLeafTh(leaf, originalIndex, orderedIndex))
+          })
+        } else {
+          // 顶层 leaf：rowspan=2 跨两行。
+          const orderedIndex = leafToOrderedIndex.get(column) ?? 0
+          const originalIndex = leafToOriginalIndex.get(column) ?? 0
+          topRow.push(renderLeafTh(column, originalIndex, orderedIndex, { rowspan: 2 }))
+        }
+      })
+
+      return h('thead', { class: ns.e('thead') }, [h('tr', null, topRow), h('tr', null, bottomRow)])
     }
 
     const totalColumnCount = computed(
@@ -912,8 +1054,22 @@ export default defineComponent({
       )
     }
 
+    const renderSummary = () => {
+      if (!summarySlot.value) return null
+      return h('tfoot', { class: ns.e('summary') }, [summarySlot.value()])
+    }
+
+    // L-2.12 渲染默认 slot：让 `<c-table-column>` / `<c-table-column-group>` / `<c-table-summary>` 走完 setup
+    // 触发 register；这些组件自身 render() 返回 null，所以不会产生额外 DOM。
+    // 用一层 display:none 包装保护：万一未来用户在 default slot 里混入了真实 DOM，也不会破坏表格布局。
+    const renderHiddenChildren = () => {
+      if (!slots.default) return null
+      return h('div', { class: ns.e('children-collector'), style: { display: 'none' } }, slots.default())
+    }
+
     return () =>
       h('div', { class: cls.value }, [
+        renderHiddenChildren(),
         h('div', { class: ns.e('container'), style: containerStyle.value }, [
           h('table', { class: ns.e('table'), style: tableStyle.value }, [
             renderHeader(),
@@ -924,6 +1080,7 @@ export default defineComponent({
                 ? displayData.value.flatMap((record, rowIndex) => renderRow(record, rowIndex))
                 : renderEmpty(),
             ),
+            renderSummary(),
           ]),
           props.loading ? h('div', { class: ns.e('loading') }, [h('span', { class: ns.e('loading-dot') })]) : null,
         ]),
