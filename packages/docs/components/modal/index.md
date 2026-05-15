@@ -150,6 +150,199 @@ const v = ref(false)
 
 :::
 
+## 命令式 Modal.confirm（L-3.1）
+
+`Modal.confirm({...})` / `.info` / `.success` / `.error` / `.warning` 命令式弹窗，**纯函数调用**，不需要在模板中预写组件。返回 `{ destroy, update }` 句柄。
+
+::: tip 命名空间约定
+
+ccui Vue 风格：**不挂静态属性子组件**（如 `Modal.Header` / `Modal.Footer` 这种 React 模式我们一律拆为顶层平铺组件）。但 `Modal.confirm` / `.info` 等是**命令式函数调用**，语言无关，保留 ant 习惯。
+
+:::
+
+:::demo
+
+```vue
+<script setup>
+import { Modal } from 'vue3-ccui'
+
+function ask() {
+  Modal.confirm({
+    title: '确认删除',
+    content: '此操作不可恢复，确认继续？',
+    okText: '删除',
+    okType: 'danger',
+    onOk: () => fetch('/api/delete'),
+    onCancel: () => console.log('canceled'),
+  })
+}
+
+function showInfo() {
+  Modal.info({ title: '系统提示', content: '已生成新报表，请到列表查看。' })
+}
+
+function showSuccess() {
+  Modal.success({ title: '部署成功', content: '版本 v2.0.0 已上线。' })
+}
+
+function showError() {
+  Modal.error({ title: '请求失败', content: '网络异常，请稍后重试。' })
+}
+
+function showWarning() {
+  Modal.warning({ title: '警告', content: '磁盘空间不足 10%。' })
+}
+</script>
+
+<template>
+  <c-button type="danger" @click="ask">弹 confirm</c-button>
+  <c-button @click="showInfo">info</c-button>
+  <c-button type="primary" @click="showSuccess">success</c-button>
+  <c-button @click="showError">error</c-button>
+  <c-button @click="showWarning">warning</c-button>
+</template>
+```
+
+:::
+
+### onOk 返回 Promise（loading 串行）
+
+`onOk` 返回 Promise 时，OK 按钮自动进入 loading 状态直到 resolve；reject 时**不关闭** modal（错误传给调用方）。
+
+:::demo
+
+```vue
+<script setup>
+import { Modal } from 'vue3-ccui'
+
+function asyncConfirm() {
+  Modal.confirm({
+    title: '提交订单',
+    content: '请稍候 1.5 秒...',
+    onOk: () => new Promise((resolve) => setTimeout(resolve, 1500)),
+  })
+}
+</script>
+
+<template>
+  <c-button type="primary" @click="asyncConfirm">异步 confirm</c-button>
+</template>
+```
+
+:::
+
+### update / destroy 句柄
+
+返回的 handle 可动态更新 title / content，或强制销毁。
+
+:::demo
+
+```vue
+<script setup>
+import { Modal } from 'vue3-ccui'
+
+function progressDemo() {
+  let i = 1
+  const handle = Modal.info({ title: '进度', content: `当前 ${i} / 3` })
+  const timer = setInterval(() => {
+    i += 1
+    if (i > 3) {
+      clearInterval(timer)
+      handle.destroy()
+      return
+    }
+    handle.update({ content: `当前 ${i} / 3` })
+  }, 1000)
+}
+</script>
+
+<template>
+  <c-button @click="progressDemo">进度条 demo</c-button>
+</template>
+```
+
+:::
+
+### Modal.destroyAll
+
+```ts
+Modal.destroyAll() // 关闭所有当前活跃命令式 modal（不影响 <c-modal> 模板实例）
+```
+
+## useModal composable（L-3.2）
+
+`useModal()` 返回 `{ modal, holder }` **对象**（**不是** React `[modal, contextHolder]` 元组）。命令式调用会继承调用组件的 provide / ConfigProvider / 主题 / locale 链——**与全局 `Modal.confirm` 的最大差异**：全局版走独立 `createApp`，拿不到调用方 app 的 inject。
+
+::: tip 何时用模块级 vs Hook 版？
+
+- **`Modal.confirm({...})`**：脚手架 / utils / 命令式弹一条，简单直接，但**拿不到调用方 app 的 inject**。
+- **`useModal()`**：当 confirm 弹窗需要继承父链 inject（自定义 ConfigProvider、主题、locale、formContext）时用。**必须**在模板中挂 `<component :is="holder" />` 保持 API 一致；hook 在 setup 阶段捕获 instance 并在 `modal.confirm()` 调用时**懒读** `inst.provides` 拿到最终 provides 链。
+
+:::
+
+:::demo
+
+```vue
+<script setup>
+import { useModal } from 'vue3-ccui'
+
+const { modal, holder } = useModal()
+
+function ask() {
+  modal.confirm({
+    title: '继承上下文',
+    content: '我能读到父组件 provide 的 theme / locale / ConfigProvider',
+    onOk: () => Promise.resolve(),
+  })
+}
+</script>
+
+<template>
+  <component :is="holder" />
+  <c-button type="primary" @click="ask">弹出（继承上下文）</c-button>
+</template>
+```
+
+:::
+
+### UseModalReturn
+
+| 字段   | 类型        | 说明                                                                |
+| ------ | ----------- | ------------------------------------------------------------------- |
+| modal  | `ModalApi`  | 命令式 API：`confirm` / `info` / `success` / `error` / `warning`    |
+| holder | `Component` | 必须挂到模板：`<component :is="holder" />`                          |
+
+### ModalFuncOptions
+
+| 字段              | 类型                                          | 默认        | 说明                                                                       |
+| ----------------- | --------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
+| title             | `string \| VNode`                             | —           | 标题                                                                       |
+| content           | `string \| VNode`                             | —           | 正文                                                                       |
+| type              | `ModalFuncType`                               | `'confirm'` | `confirm` / `info` / `success` / `error` / `warning`                       |
+| icon              | `string \| VNode`                             | —           | 自定义图标（不传则按 type 渲染默认图标；传空字符串隐藏图标）               |
+| width             | `number \| string`                            | `416`       | 弹窗宽度（命令式默认 416 比常规 Modal 的 520 更窄，与 ant 一致）           |
+| centered          | boolean                                       | `false`     | 垂直居中                                                                   |
+| mask              | boolean                                       | `true`      | 遮罩                                                                       |
+| maskClosable      | boolean                                       | `false`     | 点击遮罩关闭（confirm 系列默认 false）                                     |
+| keyboard          | boolean                                       | `true`      | Esc 关闭                                                                   |
+| closable          | boolean                                       | `false`     | 显示右上角关闭按钮                                                         |
+| okText            | string                                        | `'确 定'`   | OK 按钮文字                                                                |
+| cancelText        | string                                        | `'取 消'`   | Cancel 按钮文字（仅 type='confirm' 渲染）                                  |
+| okType            | `'primary' \| 'danger' \| 'default'`          | 按 type 推导 | OK 按钮类型                                                                |
+| onOk              | `() => void \| Promise<unknown>`              | —           | OK 回调；返回 Promise 时按钮 loading 直到 resolve；reject 不关闭           |
+| onCancel          | `() => void \| Promise<unknown>`              | —           | Cancel 回调                                                                |
+| afterClose        | `() => void`                                  | —           | 弹窗完全关闭并卸载 DOM 后触发（含离场动画完成）                            |
+| zIndex            | number                                        | —           | 透传 Modal `zIndex`                                                        |
+| wrapClassName     | string                                        | —           | 透传 Modal `wrapClassName`                                                 |
+| getContainer      | `(trigger) => HTMLElement \| null`            | `body`      | 透传 Modal `getContainer`                                                  |
+
+### ModalFuncReturn
+
+| 字段    | 类型                                                                          | 说明                                |
+| ------- | ----------------------------------------------------------------------------- | ----------------------------------- |
+| destroy | `() => void`                                                                  | 强制关闭并卸载                      |
+| update  | `(updater: Partial<ModalFuncOptions> \| ((prev) => Partial<...>)) => void`    | 更新部分选项（合并，不替换）        |
+
 ## API
 
 ### Props

@@ -63,7 +63,7 @@ import MasonryInstall, { Masonry } from './masonry'
 import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
 import MessageInstall, { message, Message, useMessage } from './message'
-import ModalInstall, { Modal } from './modal'
+import ModalInstall, { Modal, useModal } from './modal'
 import NotificationInstall, { notification, Notification, useNotification } from './notification'
 import PaginationInstall, { Pagination } from './pagination'
 import PopconfirmInstall, { Popconfirm } from './popconfirm'
@@ -311,6 +311,7 @@ export {
   Message,
   useMessage,
   Modal,
+  useModal,
   notification,
   Notification,
   useNotification,

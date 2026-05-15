@@ -187,3 +187,67 @@
     transform: rotate(360deg);
   }
 }
+
+// L-3.1 / L-3.2 命令式 / Hook confirm 弹窗内部布局
+.#{$cls-prefix}-modal-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+
+  &__icon {
+    flex: 0 0 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+
+    &--confirm {
+      background: $ccui-color-warning;
+    }
+    &--info {
+      background: $ccui-color-primary;
+    }
+    &--success {
+      background: $ccui-color-success;
+    }
+    &--warning {
+      background: $ccui-color-warning;
+    }
+    &--error {
+      background: $ccui-color-error;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin-bottom: 8px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: 500;
+    line-height: $ccui-line-height-lg;
+  }
+
+  &__content {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    word-wrap: break-word;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
