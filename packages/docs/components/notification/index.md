@@ -240,6 +240,45 @@ function clear() {
 
 :::
 
+## useNotification composable（L-3.4）
+
+`useNotification()` 返回 `{ notification, holder }` **对象**（**不是** React 风格元组）。容器渲染在当前 Vue 子树里，自动继承父组件 provide 的 ConfigProvider / 主题等上下文——**与模块级 `notification` 的最大差异**。
+
+::: tip 何时用模块级 vs Hook 版？
+
+- **模块级 `import { notification } from 'vue3-ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（自定义 ConfigProvider、主题、locale）。
+- **Hook `useNotification()`**：当通知需要继承组件树上下文时用。**必须**在模板中挂 `<component :is="holder" />`。
+
+:::
+
+:::demo
+
+```vue
+<script setup>
+import { useNotification } from 'vue3-ccui'
+
+const { notification, holder } = useNotification()
+
+function show() {
+  notification.success({ title: '继承上下文', description: 'locale / theme 都来自父组件', duration: 3 })
+}
+</script>
+
+<template>
+  <component :is="holder" />
+  <c-button type="primary" @click="show">弹出（继承上下文）</c-button>
+</template>
+```
+
+:::
+
+### UseNotificationReturn
+
+| 字段         | 类型              | 说明                                                              |
+| ------------ | ----------------- | ----------------------------------------------------------------- |
+| notification | `NotificationApi` | 与全局 `notification` 同 API：`info/success/warning/error/open/config/destroy` |
+| holder       | `Component`       | 必须挂到模板：`<component :is="holder" />`                        |
+
 ## API
 
 ### notification 命名空间

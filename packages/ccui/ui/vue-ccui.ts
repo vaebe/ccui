@@ -64,7 +64,7 @@ import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
 import MessageInstall, { message, Message, useMessage } from './message'
 import ModalInstall, { Modal } from './modal'
-import NotificationInstall, { notification, Notification } from './notification'
+import NotificationInstall, { notification, Notification, useNotification } from './notification'
 import PaginationInstall, { Pagination } from './pagination'
 import PopconfirmInstall, { Popconfirm } from './popconfirm'
 import PopoverInstall, { Popover } from './popover'
@@ -313,6 +313,7 @@ export {
   Modal,
   notification,
   Notification,
+  useNotification,
   Pagination,
   Popconfirm,
   Popover,

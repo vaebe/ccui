@@ -1,7 +1,9 @@
 import type { App } from 'vue'
 import notification from './src/notification'
+import { useNotification } from './src/use-notification'
 
-export { notification }
+export { notification, useNotification }
+export type { UseNotificationReturn } from './src/use-notification'
 export const Notification = notification
 
 export default {
