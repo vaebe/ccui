@@ -9,6 +9,7 @@ import AutoCompleteInstall, { AutoComplete } from './auto-complete'
 import AvatarInstall, { Avatar } from './avatar'
 import AvatarGroupInstall, { AvatarGroup } from './avatar-group'
 import BadgeInstall, { Badge } from './badge'
+import BadgeRibbonInstall, { BadgeRibbon } from './badge-ribbon'
 import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 import ButtonInstall, { Button, ButtonGroup } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
@@ -115,6 +116,7 @@ const installs = [
   AvatarInstall,
   AvatarGroupInstall,
   BadgeInstall,
+  BadgeRibbonInstall,
   BreadcrumbInstall,
   ButtonInstall,
   Button3DInstall,
@@ -197,6 +199,7 @@ export {
   Avatar,
   AvatarGroup,
   Badge,
+  BadgeRibbon,
   Breadcrumb,
   BreadcrumbItem,
   Button,

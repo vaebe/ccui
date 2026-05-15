@@ -298,6 +298,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'BadgeRibbon 缎带徽标',
+          link: '/components/badge-ribbon/',
+          status: '90%',
+        },
+        {
           text: 'Calendar 日历',
           link: '/components/calendar/',
           status: '100%',
