@@ -1,8 +1,9 @@
 import type { VNode } from 'vue'
 import type { ModalClosableObject, ModalProps } from './modal-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { modalProps } from './modal-types'
 import './modal.scss'
@@ -22,6 +23,24 @@ export default defineComponent({
   setup(props: ModalProps, { emit, slots }) {
     const ns = useNamespace('modal')
     const cfg = useConfig()
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'visible', 'visible')) {
+      warnDeprecatedProp('Modal', 'visible', 'open（v-model:open）')
+    }
+    if (isPropExplicit(rawProps, 'closeOnEsc', 'close-on-esc')) {
+      warnDeprecatedProp('Modal', 'closeOnEsc', 'keyboard')
+    }
+    if (isPropExplicit(rawProps, 'okLoading', 'ok-loading')) {
+      warnDeprecatedProp('Modal', 'okLoading', 'confirmLoading')
+    }
+    if (isPropExplicit(rawProps, 'hideFooter', 'hide-footer')) {
+      warnDeprecatedProp('Modal', 'hideFooter', 'footer={null}')
+    }
+    if (isPropExplicit(rawProps, 'appendToBody', 'append-to-body')) {
+      warnDeprecatedProp('Modal', 'appendToBody', 'getContainer')
+    }
 
     // ── open / visible 受控值统一 ──────────────────────────
     // 显式 open 优先于旧 visible

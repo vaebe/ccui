@@ -2,8 +2,9 @@ import type { VNode } from 'vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { InputAllowClearObject, InputProps, InputShowCountObject } from './input-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, inject, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, inject, ref, watch } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputProps } from './input-types'
 import './input.scss'
@@ -30,6 +31,18 @@ export default defineComponent({
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
     const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
     const mergedStatus = computed(() => props.status || validationStatus.value)
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'clearable', 'clearable')) {
+      warnDeprecatedProp('Input', 'clearable', 'allowClear')
+    }
+    if (isPropExplicit(rawProps, 'prepend', 'prepend')) {
+      warnDeprecatedProp('Input', 'prepend', 'addonBefore')
+    }
+    if (isPropExplicit(rawProps, 'append', 'append')) {
+      warnDeprecatedProp('Input', 'append', 'addonAfter')
+    }
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────
     const initial = props.modelValue !== '' ? props.modelValue : (props.defaultValue ?? '')

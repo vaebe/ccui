@@ -1,6 +1,7 @@
 import type { TooltipArrowObject, TooltipProps } from './tooltip-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tooltipProps } from './tooltip-types'
 import './tooltip.scss'
@@ -15,6 +16,27 @@ export default defineComponent({
   emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'update:open'],
   setup(props: TooltipProps, { emit, slots }) {
     const ns = useNamespace('tooltip')
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'content', 'content')) {
+      warnDeprecatedProp('Tooltip', 'content', 'title')
+    }
+    if (isPropExplicit(rawProps, 'visible', 'visible')) {
+      warnDeprecatedProp('Tooltip', 'visible', 'open（v-model:open）')
+    }
+    if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
+      warnDeprecatedProp('Tooltip', 'showArrow', 'arrow')
+    }
+    if (isPropExplicit(rawProps, 'showAfter', 'show-after')) {
+      warnDeprecatedProp('Tooltip', 'showAfter', 'mouseEnterDelay')
+    }
+    if (isPropExplicit(rawProps, 'hideAfter', 'hide-after')) {
+      warnDeprecatedProp('Tooltip', 'hideAfter', 'mouseLeaveDelay')
+    }
+    if (isPropExplicit(rawProps, 'popperClass', 'popper-class')) {
+      warnDeprecatedProp('Tooltip', 'popperClass', 'overlayClassName')
+    }
 
     // ── Ant 主名 / ccui 旧名解析 ───────────────────────
     // open / visible：显式 open 优先

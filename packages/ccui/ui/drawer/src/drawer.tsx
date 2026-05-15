@@ -4,6 +4,7 @@ import { Icon as IconifyIcon } from '@iconify/vue'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   inject,
   onBeforeUnmount,
   provide,
@@ -13,6 +14,7 @@ import {
   Transition,
   watch,
 } from 'vue'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { drawerParentInjectionKey, drawerProps } from './drawer-types'
 import './drawer.scss'
@@ -37,6 +39,21 @@ export default defineComponent({
   emits: ['update:visible', 'update:open', 'open', 'opened', 'close', 'closed', 'after-open-change'],
   setup(props: DrawerProps, { emit, slots }) {
     const ns = useNamespace('drawer')
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'visible', 'visible')) {
+      warnDeprecatedProp('Drawer', 'visible', 'open（v-model:open）')
+    }
+    if (isPropExplicit(rawProps, 'closeOnEsc', 'close-on-esc')) {
+      warnDeprecatedProp('Drawer', 'closeOnEsc', 'keyboard')
+    }
+    if (isPropExplicit(rawProps, 'showFooter', 'show-footer')) {
+      warnDeprecatedProp('Drawer', 'showFooter', 'footer slot 或 footer prop')
+    }
+    if (isPropExplicit(rawProps, 'appendToBody', 'append-to-body')) {
+      warnDeprecatedProp('Drawer', 'appendToBody', 'getContainer')
+    }
 
     // ── open / visible 受控解析 ───────────────────────────
     const isOpen = computed(() => (props.open !== undefined ? props.open : props.visible))

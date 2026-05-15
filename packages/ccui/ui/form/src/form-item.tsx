@@ -7,7 +7,19 @@ import type {
   FormRule,
   FormValidateTrigger,
 } from './form-types'
-import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  inject,
+  onMounted,
+  onUnmounted,
+  provide,
+  ref,
+  watch,
+} from 'vue'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
 
@@ -44,6 +56,13 @@ export default defineComponent({
   props: formItemProps,
   setup(props: FormItemProps, { expose, slots }) {
     const ns = useNamespace('form-item')
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'prop', 'prop')) {
+      warnDeprecatedProp('FormItem', 'prop', 'name')
+    }
+
     const form = inject(formInjectionKey, null)
     const formList = inject(formListInjectionKey, null)
     const validateState = ref<'validating' | 'success' | 'error' | ''>('')

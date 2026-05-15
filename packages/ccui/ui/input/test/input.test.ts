@@ -1,8 +1,9 @@
 import type { InputSize } from '../src/input-types'
 import { mount, shallowMount } from '@vue/test-utils'
 import { ref } from 'vue'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Input } from '../index'
 
@@ -387,6 +388,42 @@ describe('input', () => {
       const wrapper = mount(Input, { props: { modelValue: 'real', defaultValue: 'preset' } })
       expect((wrapper.find('input').element as HTMLInputElement).value).toBe('real')
       wrapper.unmount()
+    })
+  })
+
+  describe('deprecation warn (M-A5)', () => {
+    beforeEach(() => {
+      __resetDeprecationWarningsForTest()
+    })
+
+    it('clearable 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Input, { props: { clearable: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('clearable 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('allowClear'))
+      const w2 = mount(Input, { props: { clearable: true } })
+      expect(warn).toHaveBeenCalledTimes(1)
+      w.unmount()
+      w2.unmount()
+      warn.mockRestore()
+    })
+
+    it('prepend 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Input, { props: { prepend: 'http://' } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('prepend 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('addonBefore'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('append 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Input, { props: { append: '.com' } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('append 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('addonAfter'))
+      w.unmount()
+      warn.mockRestore()
     })
   })
 })

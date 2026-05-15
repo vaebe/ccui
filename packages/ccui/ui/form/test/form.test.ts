@@ -1,8 +1,9 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, reactive } from 'vue'
 import { Form, FormItem, FormList, FormProvider } from '../index'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const formNs = useNamespace('form', true)
@@ -1403,5 +1404,48 @@ describe('L-1.6 rules 函数式', () => {
     await nextTick()
     expect(wrapper.find('.ccui-form-item').classes()).toContain('ccui-form-item--error')
     expect(wrapper.find('.ccui-form-item__message').text()).toBe('两次密码不一致')
+  })
+})
+
+describe('M-A5 FormItem deprecation warn', () => {
+  beforeEach(() => {
+    __resetDeprecationWarningsForTest()
+  })
+
+  it('FormItem.prop 显式传入触发 deprecation warn 一次', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Form, {
+      props: { model: { x: '' } },
+      slots: {
+        default: () => h(FormItem, { label: 'X', prop: 'x' }, () => h('input')),
+      },
+    })
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('FormItem'))
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('prop 已 deprecated'))
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('name'))
+    // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
+    const w2 = mount(Form, {
+      props: { model: { y: '' } },
+      slots: {
+        default: () => h(FormItem, { label: 'Y', prop: 'y' }, () => h('input')),
+      },
+    })
+    expect(warn).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+    w2.unmount()
+    warn.mockRestore()
+  })
+
+  it('FormItem.name（新名）不触发 deprecation warn', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Form, {
+      props: { model: { x: '' } },
+      slots: {
+        default: () => h(FormItem, { label: 'X', name: 'x' }, () => h('input')),
+      },
+    })
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('prop 已 deprecated'))
+    wrapper.unmount()
+    warn.mockRestore()
   })
 })

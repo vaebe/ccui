@@ -1,6 +1,7 @@
 import type { ButtonSizeType, ButtonType } from '../src/button-types'
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Button } from '../index'
 
@@ -394,6 +395,39 @@ describe('button', () => {
     it('variant="solid" 加 --variant-solid 类', () => {
       const wrapper = createShallowWrapper({ variant: 'solid' })
       expect(wrapper.find(ns.m('variant-solid')).exists()).toBe(true)
+    })
+  })
+
+  describe('deprecation warn (M-A5)', () => {
+    beforeEach(() => {
+      __resetDeprecationWarningsForTest()
+    })
+
+    it('nativeType 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      createShallowWrapper({ nativeType: 'submit' })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('nativeType 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('htmlType'))
+      // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
+      createShallowWrapper({ nativeType: 'submit' })
+      expect(warn).toHaveBeenCalledTimes(1)
+      warn.mockRestore()
+    })
+
+    it('round=true 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      createShallowWrapper({ round: true })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('round 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('shape="round"'))
+      warn.mockRestore()
+    })
+
+    it('circle=true 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      createShallowWrapper({ circle: true })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('circle 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('shape="circle"'))
+      warn.mockRestore()
     })
   })
 })

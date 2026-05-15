@@ -1,7 +1,8 @@
 import type { PopconfirmProps } from './popconfirm-types'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, ref, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import Popover from '../../popover/src/popover'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popconfirmProps } from './popconfirm-types'
 import './popconfirm.scss'
@@ -13,6 +14,18 @@ export default defineComponent({
   setup(props: PopconfirmProps, { emit, slots }) {
     const ns = useNamespace('popconfirm')
     const cfg = useConfig()
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'visible', 'visible')) {
+      warnDeprecatedProp('Popconfirm', 'visible', 'open（v-model:open）')
+    }
+    if (isPropExplicit(rawProps, 'confirmText', 'confirm-text')) {
+      warnDeprecatedProp('Popconfirm', 'confirmText', 'okText')
+    }
+    if (isPropExplicit(rawProps, 'confirmType', 'confirm-type')) {
+      warnDeprecatedProp('Popconfirm', 'confirmType', 'okType')
+    }
 
     // Ant 主名 / ccui 旧名解析：okText > confirmText、okType > confirmType、open > visible
     const confirmTextResolved = computed(() => props.okText || props.confirmText)
@@ -58,11 +71,11 @@ export default defineComponent({
         trigger={props.trigger}
         placement={props.placement}
         disabled={props.disabled}
-        visible={popoverVisible.value}
+        open={popoverVisible.value}
         width={props.width}
-        popperClass={ns.b()}
-        showArrow={true}
-        onUpdate:visible={(val: boolean) => {
+        overlayClassName={ns.b()}
+        arrow={true}
+        onUpdate:open={(val: boolean) => {
           if (!isControlled.value) {
             innerVisible.value = val
           }

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Modal } from '../index'
 
@@ -431,6 +432,60 @@ describe('modal', () => {
       await nextTick()
       expect(document.body.querySelector(ns.b())).not.toBeNull()
       wrapper.unmount()
+    })
+  })
+
+  describe('deprecation warn (M-A5)', () => {
+    beforeEach(() => {
+      __resetDeprecationWarningsForTest()
+    })
+
+    it('visible 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Modal, { props: { visible: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
+      const w2 = mount(Modal, { props: { visible: true } })
+      expect(warn).toHaveBeenCalledTimes(1)
+      w.unmount()
+      w2.unmount()
+      warn.mockRestore()
+    })
+
+    it('closeOnEsc 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Modal, { props: { closeOnEsc: false } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('closeOnEsc 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('keyboard'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('okLoading 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Modal, { props: { okLoading: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okLoading 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmLoading'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('hideFooter 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Modal, { props: { hideFooter: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('hideFooter 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer={null}'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('appendToBody 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Modal, { props: { appendToBody: false } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('appendToBody 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('getContainer'))
+      w.unmount()
+      warn.mockRestore()
     })
   })
 })

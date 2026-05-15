@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Popconfirm } from '../index'
 
@@ -222,6 +223,51 @@ describe('popconfirm', () => {
       expect(wrapper.emitted('update:visible')).toBeTruthy()
       expect(wrapper.emitted('update:open')).toBeTruthy()
       wrapper.unmount()
+    })
+  })
+
+  describe('deprecation warn (M-A5)', () => {
+    beforeEach(() => {
+      __resetDeprecationWarningsForTest()
+    })
+
+    it('visible 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Popconfirm, { props: { visible: true, title: 'X' }, slots: { default: '<button>btn</button>' } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Popconfirm'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
+      const w2 = mount(Popconfirm, { props: { visible: true, title: 'X' }, slots: { default: '<button>btn</button>' } })
+      // 全局 Set 缓存，Popconfirm.visible 只 warn 一次（注：Popover.visible 在内部用 open 传入，不会触发）
+      const visibleCalls = warn.mock.calls.filter((c) => String(c[0]).includes('[ccui][Popconfirm] visible'))
+      expect(visibleCalls).toHaveLength(1)
+      w.unmount()
+      w2.unmount()
+      warn.mockRestore()
+    })
+
+    it('confirmText 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Popconfirm, {
+        props: { confirmText: '好的', title: 'X' },
+        slots: { default: '<button>btn</button>' },
+      })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmText 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okText'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('confirmType 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Popconfirm, {
+        props: { confirmType: 'danger', title: 'X' },
+        slots: { default: '<button>btn</button>' },
+      })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmType 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okType'))
+      w.unmount()
+      warn.mockRestore()
     })
   })
 })

@@ -1,7 +1,8 @@
 import type { VNode } from 'vue'
 import type { ButtonLoadingObject, ButtonProps, ButtonShape } from './button-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, h, inject, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, h, inject, onBeforeUnmount, ref, watch } from 'vue'
+import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { buttonGroupInjectionKey, buttonProps } from './button-types'
 import './button.scss'
@@ -28,6 +29,18 @@ export default defineComponent({
 
     // Group 注入：size / disabled 透传到子按钮
     const group = inject(buttonGroupInjectionKey, null)
+
+    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'nativeType', 'native-type')) {
+      warnDeprecatedProp('Button', 'nativeType', 'htmlType')
+    }
+    if (isPropExplicit(rawProps, 'round', 'round')) {
+      warnDeprecatedProp('Button', 'round', 'shape="round"')
+    }
+    if (isPropExplicit(rawProps, 'circle', 'circle')) {
+      warnDeprecatedProp('Button', 'circle', 'shape="circle"')
+    }
 
     // ── 兼容映射 ─────────────────────────────────────────
     // shape：显式 prop > circle boolean > round boolean > 'default'

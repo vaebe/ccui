@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
+import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Drawer } from '../index'
 
@@ -422,6 +423,51 @@ describe('drawer', () => {
       const parentContent = document.body.querySelectorAll(`${ns.e('content')}`)[0] as HTMLElement
       expect(parentContent.style.transform).toBe('')
       wrapper.unmount()
+    })
+  })
+
+  describe('deprecation warn (M-A5)', () => {
+    beforeEach(() => {
+      __resetDeprecationWarningsForTest()
+    })
+
+    it('visible 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Drawer, { props: { visible: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
+      const w2 = mount(Drawer, { props: { visible: true } })
+      expect(warn).toHaveBeenCalledTimes(1)
+      w.unmount()
+      w2.unmount()
+      warn.mockRestore()
+    })
+
+    it('closeOnEsc 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Drawer, { props: { closeOnEsc: false } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('closeOnEsc 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('keyboard'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('showFooter 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Drawer, { props: { showFooter: true } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showFooter 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer'))
+      w.unmount()
+      warn.mockRestore()
+    })
+
+    it('appendToBody 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const w = mount(Drawer, { props: { appendToBody: false } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('appendToBody 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('getContainer'))
+      w.unmount()
+      warn.mockRestore()
     })
   })
 })
