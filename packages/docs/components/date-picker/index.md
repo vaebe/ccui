@@ -408,6 +408,117 @@ const presets = [{ label: '上次会议', value: () => dayjs('2026-05-09 14:30:0
 
 :::
 
+## 周起始 weekStart
+
+`weekStart` 控制面板内每周的起始日：`0` 周日开头（默认）/ `1` 周一开头。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const a = ref('')
+const b = ref('')
+</script>
+
+<template>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
+    <div>
+      <p style="margin: 0 0 4px; color: #666">weekStart=0（默认，周日开头）</p>
+      <c-date-picker v-model="a" :week-start="0" />
+    </div>
+    <div>
+      <p style="margin: 0 0 4px; color: #666">weekStart=1（周一开头）</p>
+      <c-date-picker v-model="b" :week-start="1" />
+    </div>
+  </div>
+</template>
+```
+
+:::
+
+## 校验状态 status
+
+`status` 支持 `'error'` / `'warning'` / `'success'` / `'validating'`，置于 `<c-form-item>` 时自动继承。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref('')
+const v2 = ref('')
+const v3 = ref('')
+</script>
+
+<template>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
+    <c-date-picker v-model="v1" status="error" placeholder="error" />
+    <c-date-picker v-model="v2" status="warning" placeholder="warning" />
+    <c-date-picker v-model="v3" status="success" placeholder="success" />
+  </div>
+</template>
+```
+
+:::
+
+## change 事件双参追踪
+
+`change(value, dateString)` 第二个参数是按 format 格式化后的字符串，常用于「无论 valueFormat 是 string / date / number 都能拿到一致的展示字符串」。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<Date | null>(null)
+const lastChange = ref('（无）')
+
+function onChange(v, dateString) {
+  lastChange.value = `value 类型 = ${v === null ? 'null' : v?.constructor?.name} · dateString = "${dateString}"`
+}
+</script>
+
+<template>
+  <c-date-picker v-model="value" value-format="date" @change="onChange" />
+  <p style="margin: 8px 0 0; color: #666">最近一次 change：</p>
+  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastChange }}</p>
+</template>
+```
+
+:::
+
+## panel-change 事件追踪
+
+`panel-change(mode, viewMonth)` 在面板模式切换（date ↔ month ↔ year）或视图月份变化时触发，可联动日历埋点 / 上报。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+const lastPanel = ref('（无）')
+
+function onPanelChange(mode, viewMonth) {
+  lastPanel.value = `mode = ${mode} · 视图月份 = ${viewMonth?.format?.('YYYY-MM')}`
+}
+</script>
+
+<template>
+  <c-date-picker v-model="value" @panel-change="onPanelChange" />
+  <p style="margin: 8px 0 0; color: #666">最近一次 panel-change：</p>
+  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastPanel }}</p>
+  <p style="margin: 8px 0 0; color: #999; font-size: 12px">提示：点击年份 / 月份头部进入上钻视图触发该事件</p>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

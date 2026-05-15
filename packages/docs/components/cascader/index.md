@@ -340,6 +340,137 @@ function loadData(path) {
 
 :::
 
+## 空数据占位 notFoundContent
+
+`options` 为空时显示自定义文案；不传则取 ConfigProvider locale（默认中文「暂无数据」）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref([])
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="[]" not-found-content="🙈 当前角色无任何可分配的部门" />
+</template>
+```
+
+:::
+
+## 校验状态 status
+
+`status` 支持 `'error'` / `'warning'` / `'success'` / `'validating'`，置于 `<c-form-item>` 时会自动继承。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref(null)
+const v2 = ref(null)
+const v3 = ref(null)
+const options = [{ value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1' }] }]
+</script>
+
+<template>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px">
+    <c-cascader v-model="v1" :options="options" status="error" placeholder="error" />
+    <c-cascader v-model="v2" :options="options" status="warning" placeholder="warning" />
+    <c-cascader v-model="v3" :options="options" status="success" placeholder="success" />
+  </div>
+</template>
+```
+
+:::
+
+## 不可清除 clearable=false
+
+锁定已选路径，避免误清除。常用于「填了就不能撤」的关键字段（如归属部门）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref(['zhejiang', 'hangzhou'])
+const options = [
+  {
+    value: 'zhejiang',
+    label: '浙江',
+    children: [{ value: 'hangzhou', label: '杭州' }],
+  },
+]
+</script>
+
+<template>
+  <c-cascader v-model="value" :options="options" :clearable="false" />
+</template>
+```
+
+:::
+
+## 浮层方位 placement
+
+`placement` 控制浮层四向起点，配合 `popup-append-to-body` 解决滚动容器内裁切。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref(null)
+const v2 = ref(null)
+const v3 = ref(null)
+const v4 = ref(null)
+const options = [{ value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1' }] }]
+</script>
+
+<template>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap">
+    <c-cascader v-model="v1" :options="options" placement="bottomLeft" placeholder="bottomLeft（默认）" />
+    <c-cascader v-model="v2" :options="options" placement="bottomRight" placeholder="bottomRight" />
+    <c-cascader v-model="v3" :options="options" placement="topLeft" placeholder="topLeft" />
+    <c-cascader v-model="v4" :options="options" placement="topRight" placeholder="topRight" />
+  </div>
+</template>
+```
+
+:::
+
+## 自定义展开图标 expandIcon + 自动聚焦
+
+`expandIcon` 替换默认 `›`；`autoFocus` 让组件挂载后立即聚焦输入框，常用于「打开弹窗后第一个表单项」场景。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref(null)
+const v2 = ref(null)
+const options = [
+  { value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1' }] },
+  { value: 'b', label: 'B', children: [{ value: 'b1', label: 'B1' }] },
+]
+</script>
+
+<template>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px">
+    <c-cascader v-model="v1" :options="options" expand-icon="→" placeholder="自定义箭头 →" />
+    <c-cascader v-model="v2" :options="options" auto-focus placeholder="autoFocus 自动聚焦" />
+  </div>
+</template>
+```
+
+:::
+
 ## multiple 多选
 
 `multiple` 时叶子节点渲染 checkbox，勾选聚合写入；input wrap 展示 tag，点 × 移除。`modelValue` 变 `CascaderValuePath[]`。
