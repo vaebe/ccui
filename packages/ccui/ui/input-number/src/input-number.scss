@@ -120,6 +120,35 @@
   // M-A1：录入组件统一 variant 形态（outlined 是默认；其余 3 个走共享 mixin）
   @include form-control-variants;
 
+  // M-A3：校验状态（Ant 风格 status='error'|'warning'），边框层与 Input 一致在根元素
+  &--status-error {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &.#{$cls-prefix}-input-number--focused,
+    &.#{$cls-prefix}-input-number--glow {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &.#{$cls-prefix}-input-number--focused,
+    &.#{$cls-prefix}-input-number--glow {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+
   &--disabled {
     @include disabled-state;
 

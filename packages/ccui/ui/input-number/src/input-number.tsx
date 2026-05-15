@@ -1,5 +1,7 @@
+import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { InputNumberInstance, InputNumberProps, InputNumberValue } from './input-number-types'
-import { computed, defineComponent, nextTick, ref, watch } from 'vue'
+import { computed, defineComponent, inject, nextTick, ref, watch } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputNumberProps } from './input-number-types'
 import './input-number.scss'
@@ -11,6 +13,9 @@ export default defineComponent({
   setup(props: InputNumberProps, { emit, expose }) {
     const ns = useNamespace('input-number')
     const inputRef = ref<HTMLInputElement>()
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
+    const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
+    const mergedStatus = computed(() => props.status || validationStatus.value)
 
     // 内部值状态
     const innerValue = ref<InputNumberValue>(props.modelValue)
@@ -92,6 +97,8 @@ export default defineComponent({
       if (triggerChange && oldValue !== newValue) {
         emit('change', newValue, oldValue)
       }
+
+      formItem?.validate('change')
     }
 
     // 输入处理
@@ -150,6 +157,8 @@ export default defineComponent({
       if (inputRef.value) {
         inputRef.value.value = displayValue.value
       }
+
+      formItem?.validate('blur')
     }
 
     // 增加值
@@ -234,6 +243,7 @@ export default defineComponent({
               [ns.m('focused')]: focused.value,
               [ns.m('glow')]: props.showGlowStyle && focused.value,
               [ns.m(`variant-${props.variant}`)]: !!props.variant,
+              [ns.m(`status-${mergedStatus.value}`)]: !!mergedStatus.value,
             },
           ]}
         >

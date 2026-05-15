@@ -1,6 +1,8 @@
 import type { InputSize } from '../src/input-types'
 import { mount, shallowMount } from '@vue/test-utils'
+import { ref } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Input } from '../index'
 
@@ -272,6 +274,62 @@ describe('input', () => {
     it('status="warning" 加 --status-warning 类', () => {
       const wrapper = mount(Input, { props: { status: 'warning' } })
       expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('inherits validateStatus from injected FormItem context', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(Input, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('显式 status prop 优先于 Form 注入的 validateStatus', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(Input, {
+        props: { status: 'warning' },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(false)
+      wrapper.unmount()
+    })
+
+    it('triggers FormItem.validate on input change and on blur', async () => {
+      const onValidate = vi.fn(async () => true)
+      const wrapper = mount(Input, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate: onValidate,
+            },
+          },
+        },
+      })
+      await wrapper.find('input').setValue('hello')
+      expect(onValidate).toHaveBeenCalledWith('change')
+      await wrapper.find('input').trigger('blur')
+      expect(onValidate).toHaveBeenCalledWith('blur')
       wrapper.unmount()
     })
   })

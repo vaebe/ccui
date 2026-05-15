@@ -290,6 +290,32 @@ const opts = ['alice', 'bob', 'charlie']
 
 :::
 
+## 校验状态 status
+
+`status='error' | 'warning'` 控制边框 / focus 阴影色（视觉边框层在 `__textarea`，与 variant 一致）。Form 联动会自动透传 —— 放进 `<c-form-item>` 内校验失败时自动加 `--status-error` 类。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <c-mentions v-model="v1" status="error" :options="opts" placeholder="error" />
+    <c-mentions v-model="v2" status="warning" :options="opts" placeholder="warning" />
+    <c-mentions v-model="v3" :options="opts" placeholder="normal" />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const v1 = ref('')
+const v2 = ref('')
+const v3 = ref('')
+const opts = ['alice', 'bob', 'charlie']
+</script>
+```
+
+:::
+
 ## API
 
 ### Props
@@ -311,6 +337,8 @@ const opts = ['alice', 'bob', 'charlie']
 | popupMaxHeight  | number                                              | `256`      | 浮层最大高度（px）                                |
 | autoSize        | `boolean \| { minRows?: number, maxRows?: number }` | `false`    | 自适应 textarea 高度；`true` 无限制，对象指定范围 |
 | searchDebounce  | number                                              | `0`        | 搜索防抖延迟（毫秒），`0` 不防抖                  |
+| variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）        |
+| status          | `'' \| 'error' \| 'warning'`                        | `''`       | 校验状态，Form 联动会自动透传                     |
 
 ### Events
 

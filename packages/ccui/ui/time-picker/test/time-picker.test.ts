@@ -351,9 +351,34 @@ describe('time-picker size and status', () => {
     const wrapper = mountTP({ status: 'error' })
     expect(wrapper.classes()).toContain('ccui-time-picker--status-error')
   })
+
+  it('applies status="warning" modifier', () => {
+    const wrapper = mountTP({ status: 'warning' })
+    expect(wrapper.classes()).toContain('ccui-time-picker--status-warning')
+  })
 })
 
 describe('time-picker integrations', () => {
+  it('triggers FormItem.validate on blur', async () => {
+    const onValidate = vi.fn(async () => true)
+    const { formItemInjectionKey } = await import('../../form/src/form-types')
+    const wrapper = mount(TimePicker, {
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await wrapper.find('input').trigger('blur')
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
   it('inherits validate status from FormItem', async () => {
     const Wrapper = defineComponent({
       setup() {

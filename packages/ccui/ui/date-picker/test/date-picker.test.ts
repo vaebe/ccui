@@ -338,9 +338,34 @@ describe('date-picker size and status', () => {
     const wrapper = mountDP({ status: 'error' })
     expect(wrapper.classes()).toContain('ccui-date-picker--status-error')
   })
+
+  it('applies status="warning" modifier', () => {
+    const wrapper = mountDP({ status: 'warning' })
+    expect(wrapper.classes()).toContain('ccui-date-picker--status-warning')
+  })
 })
 
 describe('date-picker Form integration', () => {
+  it('triggers FormItem.validate on blur', async () => {
+    const onValidate = vi.fn(async () => true)
+    const { formItemInjectionKey } = await import('../../form/src/form-types')
+    const wrapper = mount(DatePicker, {
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await wrapper.find('input').trigger('blur')
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
   it('inherits validate status from FormItem', async () => {
     const Wrapper = defineComponent({
       setup() {

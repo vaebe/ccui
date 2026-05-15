@@ -1,7 +1,9 @@
 import type { VNode } from 'vue'
+import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { InputAllowClearObject, InputProps, InputShowCountObject } from './input-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, inject, ref, watch } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputProps } from './input-types'
 import './input.scss'
@@ -25,6 +27,9 @@ export default defineComponent({
   setup(props: InputProps, { emit, slots }) {
     const ns = useNamespace('input')
     const inputRef = ref<HTMLInputElement | null>(null)
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
+    const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
+    const mergedStatus = computed(() => props.status || validationStatus.value)
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────
     const initial = props.modelValue !== '' ? props.modelValue : (props.defaultValue ?? '')
@@ -98,7 +103,7 @@ export default defineComponent({
         [ns.m('clearable')]: allowClearEnabled.value,
         [ns.m('suffix')]: hasSuffix,
         [ns.m('prefix')]: hasPrefix,
-        [ns.m(`status-${props.status}`)]: !!props.status,
+        [ns.m(`status-${mergedStatus.value}`)]: !!mergedStatus.value,
         [ns.m(`variant-${props.variant}`)]: !!props.variant,
       }
     })
@@ -107,7 +112,7 @@ export default defineComponent({
       [ns.e('wrapper')]: true,
       [ns.em('wrapper', props.size)]: !!props.size,
       [ns.em('wrapper', 'disabled')]: props.disabled,
-      [ns.em('wrapper', `status-${props.status}`)]: !!props.status,
+      [ns.em('wrapper', `status-${mergedStatus.value}`)]: !!mergedStatus.value,
       [ns.em('wrapper', `variant-${props.variant}`)]: !!props.variant,
     }))
 
@@ -123,6 +128,7 @@ export default defineComponent({
       inputValue.value = value
       emit('update:modelValue', value)
       emit('input', value)
+      formItem?.validate('change')
     }
 
     const handleInput = (e: Event) => {
@@ -143,6 +149,7 @@ export default defineComponent({
     const handleBlur = (e: FocusEvent) => {
       isFocused.value = false
       emit('blur', e)
+      formItem?.validate('blur')
     }
 
     const handleKeydown = (e: KeyboardEvent) => {

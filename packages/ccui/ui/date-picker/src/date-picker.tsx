@@ -792,7 +792,10 @@ export default defineComponent({
             aria-haspopup="dialog"
             aria-expanded={open.value}
             onFocus={() => emit('focus')}
-            onBlur={() => emit('blur')}
+            onBlur={() => {
+              emit('blur')
+              formItem?.validate('blur')
+            }}
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>

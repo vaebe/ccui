@@ -605,7 +605,10 @@ export default defineComponent({
             aria-expanded={open.value && phase.value === 'start'}
             onClick={() => openPopup('start')}
             onFocus={() => emit('focus')}
-            onBlur={() => emit('blur')}
+            onBlur={() => {
+              emit('blur')
+              formItem?.validate('blur')
+            }}
           />
           <span class={ns.e('separator')} aria-hidden="true">
             {props.separator}
@@ -622,7 +625,10 @@ export default defineComponent({
             aria-expanded={open.value && phase.value === 'end'}
             onClick={() => openPopup('end')}
             onFocus={() => emit('focus')}
-            onBlur={() => emit('blur')}
+            onBlur={() => {
+              emit('blur')
+              formItem?.validate('blur')
+            }}
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>

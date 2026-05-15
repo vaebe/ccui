@@ -240,6 +240,31 @@ const value = ref('')
 
 :::
 
+## 校验状态 status
+
+`status='error' | 'warning'` 控制边框 / focus 阴影色。**Form 联动会自动透传**：放进 `<c-form-item>` 里且校验失败时，Input 自动加 `--status-error` 类，无需手写。显式 `status` 优先于 Form 注入。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px">
+    <c-input v-model="v1" status="error" placeholder="error" style="width: 220px" />
+    <c-input v-model="v2" status="warning" placeholder="warning" style="width: 220px" />
+    <c-input v-model="v3" placeholder="normal" style="width: 220px" />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const v1 = ref('')
+const v2 = ref('')
+const v3 = ref('')
+</script>
+```
+
+:::
+
 ## Input参数
 
 | 参数            | 类型                                          | 默认    | 说明                                                                                  |

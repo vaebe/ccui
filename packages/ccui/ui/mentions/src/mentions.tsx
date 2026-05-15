@@ -23,6 +23,8 @@ export default defineComponent({
     const activeIndex = shallowRef(0)
     const activeMatch = shallowRef<MentionMatch | null>(null)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
+    const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
+    const mergedStatus = computed(() => props.status || validationStatus.value)
 
     const isControlled = computed(() => props.modelValue !== undefined)
     const currentValue = computed<string>(() => {
@@ -246,7 +248,12 @@ export default defineComponent({
     return () => (
       <div
         ref={rootRef}
-        class={[ns.b(), props.disabled ? ns.is('disabled') : '', props.variant ? ns.m(`variant-${props.variant}`) : '']}
+        class={[
+          ns.b(),
+          props.disabled ? ns.is('disabled') : '',
+          props.variant ? ns.m(`variant-${props.variant}`) : '',
+          mergedStatus.value ? ns.m(`status-${mergedStatus.value}`) : '',
+        ]}
       >
         <textarea
           ref={textareaRef}

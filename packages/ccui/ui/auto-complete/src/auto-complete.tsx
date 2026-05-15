@@ -238,7 +238,7 @@ export default defineComponent({
         ns.em('size', props.size),
         props.disabled ? ns.is('disabled') : '',
         open.value ? ns.is('open') : '',
-        mergedStatus.value ? ns.em('status', mergedStatus.value) : '',
+        mergedStatus.value ? ns.em('wrap', `status-${mergedStatus.value}`) : '',
       ]
 
       const inputNode = slots.trigger ? (

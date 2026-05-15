@@ -1,10 +1,11 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { AutoComplete } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
+import { formItemInjectionKey } from '../../form/src/form-types'
 
 const ns = useNamespace('auto-complete', true)
 const wrappers: VueWrapper[] = []
@@ -387,6 +388,37 @@ describe('auto-complete trigger slot', () => {
     it('variant="underlined"', () => {
       const wrapper = mountAC({ variant: 'underlined' })
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
+
+  describe('status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+    it('status="error" 加 __wrap--status-error 类', () => {
+      const wrapper = mountAC({ status: 'error' })
+      expect(wrapper.find(ns.em('wrap', 'status-error')).exists()).toBe(true)
+    })
+
+    it('status="warning" 加 __wrap--status-warning 类', () => {
+      const wrapper = mountAC({ status: 'warning' })
+      expect(wrapper.find(ns.em('wrap', 'status-warning')).exists()).toBe(true)
+    })
+
+    it('inherits validateStatus from injected FormItem context', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(AutoComplete, {
+        props: { options: SAMPLE },
+        attachTo: document.body,
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find(ns.em('wrap', 'status-error')).exists()).toBe(true)
     })
   })
 })

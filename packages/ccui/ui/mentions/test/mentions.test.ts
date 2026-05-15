@@ -1,9 +1,10 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { Mentions } from '../index'
 import { findActiveMention } from '../src/mentions-types'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const ns = useNamespace('mentions', true)
@@ -345,5 +346,56 @@ describe('mentions variant', () => {
   it('variant="underlined"', () => {
     const wrapper = mountM({ variant: 'underlined' })
     expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+  })
+})
+
+describe('mentions status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+  it('status="error" 加 --status-error 类', () => {
+    const wrapper = mountM({ status: 'error' })
+    expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+  })
+
+  it('status="warning" 加 --status-warning 类', () => {
+    const wrapper = mountM({ status: 'warning' })
+    expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+  })
+
+  it('inherits validateStatus from injected FormItem context', () => {
+    const validateStatus = ref<'' | 'error'>('error')
+    const wrapper = mount(Mentions, {
+      props: { options: SAMPLE },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus,
+            isInsideForm: true,
+            validate: vi.fn(async () => true),
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+  })
+
+  it('显式 status prop 优先于 Form 注入的 validateStatus', () => {
+    const validateStatus = ref<'' | 'error'>('error')
+    const wrapper = mount(Mentions, {
+      props: { options: SAMPLE, status: 'warning' },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus,
+            isInsideForm: true,
+            validate: vi.fn(async () => true),
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+    expect(wrapper.find(ns.m('status-error')).exists()).toBe(false)
   })
 })

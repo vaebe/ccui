@@ -1,10 +1,11 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { TreeSelect } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
+import { formItemInjectionKey } from '../../form/src/form-types'
 
 const ns = useNamespace('tree-select', true)
 const wrappers: VueWrapper[] = []
@@ -341,6 +342,11 @@ describe('tree-select size and status', () => {
     expect(wrapper.classes()).toContain('ccui-tree-select--status-error')
   })
 
+  it('applies status="warning" modifier', () => {
+    const wrapper = mountTS({ status: 'warning' })
+    expect(wrapper.classes()).toContain('ccui-tree-select--status-warning')
+  })
+
   it('adds is-multiple modifier in multiple mode', () => {
     const wrapper = mountTS({ multiple: true })
     expect(wrapper.classes()).toContain('is-multiple')
@@ -348,6 +354,26 @@ describe('tree-select size and status', () => {
 })
 
 describe('tree-select integrations', () => {
+  it('triggers FormItem.validate on blur', async () => {
+    const onValidate = vi.fn(async () => true)
+    const wrapper = mount(TreeSelect, {
+      props: { treeData },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await wrapper.find('input').trigger('blur')
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
   it('inherits validate status from FormItem', async () => {
     const Wrapper = defineComponent({
       setup() {

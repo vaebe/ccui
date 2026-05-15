@@ -402,6 +402,31 @@ const value = ref(10)
 
 :::
 
+## 校验状态 status
+
+`status='error' | 'warning'` 控制边框 / focus 阴影色。Form 联动会自动透传 —— 放进 `<c-form-item>` 内校验失败时自动加 `--status-error` 类。change / blur 都会触发 FormItem 校验。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px">
+    <c-input-number v-model="v1" status="error" />
+    <c-input-number v-model="v2" status="warning" />
+    <c-input-number v-model="v3" />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const v1 = ref(0)
+const v2 = ref(0)
+const v3 = ref(0)
+</script>
+```
+
+:::
+
 ## InputNumber参数
 
 | 参数              | 类型                                                                | 默认值      | 说明                                                            |
@@ -420,6 +445,8 @@ const value = ref(10)
 | allow-empty       | `boolean`                                                           | `false`     | 是否允许空值                                                    |
 | show-glow-style   | `boolean`                                                           | `true`      | 是否显示悬浮发光效果                                            |
 | reg               | `RegExp \| string`                                                  | `undefined` | 输入限制的正则表达式，不匹配的字符会被过滤                      |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`            | `'outlined'`| 录入组件统一形态（Ant Design v5.13+）                           |
+| status            | `'' \| 'error' \| 'warning'`                                        | `''`        | 校验状态，Form 联动会自动透传                                   |
 
 ## InputNumber事件
 

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { InputNumber } from '../index'
 
 // 测试辅助函数
@@ -301,6 +302,56 @@ describe('inputNumber', () => {
     it('variant="underlined"', () => {
       const wrapper = createWrapper({ variant: 'underlined' })
       expect(wrapper.find('.ccui-input-number--variant-underlined').exists()).toBe(true)
+    })
+  })
+
+  describe('status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+    it('status="error" 加 --status-error 类', () => {
+      const wrapper = createWrapper({ status: 'error' })
+      expect(wrapper.find('.ccui-input-number--status-error').exists()).toBe(true)
+    })
+
+    it('status="warning" 加 --status-warning 类', () => {
+      const wrapper = createWrapper({ status: 'warning' })
+      expect(wrapper.find('.ccui-input-number--status-warning').exists()).toBe(true)
+    })
+
+    it('inherits validateStatus from injected FormItem context', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(InputNumber, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find('.ccui-input-number--status-error').exists()).toBe(true)
+    })
+
+    it('triggers FormItem.validate on change and on blur', async () => {
+      const onValidate = vi.fn(async () => true)
+      const wrapper = mount(InputNumber, {
+        props: { modelValue: 0 },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate: onValidate,
+            },
+          },
+        },
+      })
+      const input = wrapper.find('.ccui-input-number__inner')
+      await input.setValue('5')
+      await input.trigger('input')
+      expect(onValidate).toHaveBeenCalledWith('change')
+      await input.trigger('blur')
+      expect(onValidate).toHaveBeenCalledWith('blur')
     })
   })
 })

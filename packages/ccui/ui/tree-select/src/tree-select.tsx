@@ -362,7 +362,10 @@ export default defineComponent({
           aria-haspopup="tree"
           aria-expanded={open.value}
           onFocus={() => emit('focus')}
-          onBlur={() => emit('blur')}
+          onBlur={() => {
+            emit('blur')
+            formItem?.validate('blur')
+          }}
         />
       )
     }

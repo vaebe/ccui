@@ -367,9 +367,37 @@ describe('range-picker size and status', () => {
     const wrapper = mountRP({ status: 'error' })
     expect(wrapper.classes()).toContain('ccui-range-picker--status-error')
   })
+
+  it('applies status="warning" modifier', () => {
+    const wrapper = mountRP({ status: 'warning' })
+    expect(wrapper.classes()).toContain('ccui-range-picker--status-warning')
+  })
 })
 
 describe('range-picker integrations', () => {
+  it('triggers FormItem.validate on blur of start / end input', async () => {
+    const onValidate = vi.fn(async () => true)
+    const { formItemInjectionKey } = await import('../../form/src/form-types')
+    const wrapper = mount(RangePicker, {
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await wrapper.find(ns.em('input', 'start')).trigger('blur')
+    expect(onValidate).toHaveBeenCalledWith('blur')
+    onValidate.mockClear()
+    await wrapper.find(ns.em('input', 'end')).trigger('blur')
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
   it('inherits validate status from FormItem', async () => {
     const Wrapper = defineComponent({
       setup() {

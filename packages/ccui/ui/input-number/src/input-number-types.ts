@@ -31,6 +31,11 @@ export type ControlsPosition = 'right' | 'both'
 export type InputNumberVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 /**
+ * Ant Design 风格的校验状态。Form 联动会自动透传。
+ */
+export type InputNumberStatus = '' | 'error' | 'warning'
+
+/**
  * 格式化选项接口
  */
 export interface FormatOptions {
@@ -108,6 +113,13 @@ export const inputNumberProps = {
   variant: {
     type: String as PropType<InputNumberVariant>,
     default: 'outlined',
+  },
+  /**
+   * 校验状态。`'error' | 'warning'`，Form 联动会自动透传。
+   */
+  status: {
+    type: String as PropType<InputNumberStatus>,
+    default: '',
   },
 } as const
 
