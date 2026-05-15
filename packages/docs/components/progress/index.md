@@ -155,6 +155,240 @@ onBeforeUnmount(stop)
 
 :::
 
+## 不同尺寸
+
+`size` 支持 `'small' | 'default' | number | [number, number]` 四种形式。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="60" size="small" />
+    <span style="color: #999; font-size: 12px">size="small"</span>
+  </div>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="60" />
+    <span style="color: #999; font-size: 12px">size="default"</span>
+  </div>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="60" :size="16" />
+    <span style="color: #999; font-size: 12px">:size="16"（线宽 16px）</span>
+  </div>
+  <div>
+    <c-progress :percent="60" :size="[240, 12]" />
+    <span style="color: #999; font-size: 12px">:size="[240, 12]"（宽 240 高 12）</span>
+  </div>
+</template>
+```
+
+:::
+
+## 隐藏百分比数字
+
+`show-info="false"` 关闭右侧 / 中心的数字，常用于「占位条」或紧凑列表。
+
+:::demo
+
+```vue
+<template>
+  <c-progress :percent="40" :show-info="false" />
+  <c-progress :percent="80" :show-info="false" stroke-color="#52c41a" />
+  <div style="display: flex; gap: 16px; margin-top: 16px">
+    <c-progress type="circle" :percent="70" :show-info="false" :width="60" />
+    <c-progress type="dashboard" :percent="50" :show-info="false" :width="60" />
+  </div>
+</template>
+```
+
+:::
+
+## 自定义线宽
+
+`stroke-width` 改进度条线宽（line：高度 px；circle / dashboard：描边粗细）。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="50" :stroke-width="4" />
+  </div>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="50" :stroke-width="8" />
+  </div>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="50" :stroke-width="16" />
+  </div>
+  <div style="display: flex; gap: 16px">
+    <c-progress type="circle" :percent="75" :stroke-width="4" />
+    <c-progress type="circle" :percent="75" :stroke-width="10" />
+    <c-progress type="circle" :percent="75" :stroke-width="16" />
+  </div>
+</template>
+```
+
+:::
+
+## 圆形不同尺寸
+
+`width` 改圆形 / 仪表盘的画布尺寸（px），适合卡片中不同大小的指标圈。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap">
+    <c-progress type="circle" :percent="60" :width="48" />
+    <c-progress type="circle" :percent="60" :width="80" />
+    <c-progress type="circle" :percent="60" :width="120" />
+    <c-progress type="circle" :percent="60" :width="180" />
+  </div>
+</template>
+```
+
+:::
+
+## 渐变色（line-gradient）
+
+`stroke-color` 接受 CSS `linear-gradient` 字符串，实现渐变填充。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="70" stroke-color="linear-gradient(90deg, #108ee9, #87d068)" />
+  </div>
+  <div style="margin-bottom: 12px">
+    <c-progress :percent="85" stroke-color="linear-gradient(90deg, #faad14, #fa541c)" />
+  </div>
+  <div>
+    <c-progress :percent="100" stroke-color="linear-gradient(90deg, #722ed1, #eb2f96, #fa541c)" />
+  </div>
+</template>
+```
+
+:::
+
+## 步骤式进度（多段）
+
+通过多个 `<c-progress>` 实现「步骤完成度」展示，每段代表一个步骤。
+
+:::demo
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+const step = ref(2)
+const steps = ['创建', '审核', '部署', '验收']
+const segPercents = computed(() => steps.map((_, i) => (i < step.value ? 100 : i === step.value ? 50 : 0)))
+</script>
+
+<template>
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px">
+    <div v-for="(p, i) in segPercents" :key="i">
+      <div style="font-size: 12px; color: #666; margin-bottom: 4px">{{ steps[i] }}</div>
+      <c-progress :percent="p" :show-info="false" size="small" :stroke-color="i < step ? '#52c41a' : '#1677ff'" />
+    </div>
+  </div>
+  <c-button @click="step = Math.max(0, step - 1)">上一步</c-button>
+  <c-button style="margin-inline-start: 8px" type="primary" @click="step = Math.min(4, step + 1)">下一步</c-button>
+</template>
+```
+
+:::
+
+## 失败 + 重试
+
+`status="exception"` 显示失败态，业务侧改 percent 与 status 切回 `active` 即可重试。
+
+:::demo
+
+```vue
+<script setup>
+import { ref, onBeforeUnmount } from 'vue'
+const percent = ref(45)
+const status = ref('exception')
+let timer = null
+
+function retry() {
+  if (timer) clearInterval(timer)
+  status.value = 'active'
+  timer = setInterval(() => {
+    percent.value = Math.min(100, percent.value + 5)
+    if (percent.value >= 100) {
+      status.value = 'success'
+      clearInterval(timer)
+      timer = null
+    }
+  }, 300)
+}
+
+function fail() {
+  if (timer) clearInterval(timer)
+  status.value = 'exception'
+}
+
+onBeforeUnmount(() => timer && clearInterval(timer))
+</script>
+
+<template>
+  <c-progress :percent="percent" :status="status" />
+  <div style="margin-top: 12px">
+    <c-button type="primary" @click="retry">重试</c-button>
+    <c-button style="margin-inline-start: 8px" type="danger" @click="fail">模拟失败</c-button>
+  </div>
+</template>
+```
+
+:::
+
+## 剩余时间提示（format 计算）
+
+`format` 是普通函数，可结合外部状态计算 ETA。
+
+:::demo
+
+```vue
+<script setup>
+import { ref, onBeforeUnmount } from 'vue'
+const percent = ref(0)
+const startedAt = ref(0)
+let timer = null
+
+function start() {
+  if (timer) clearInterval(timer)
+  percent.value = 0
+  startedAt.value = Date.now()
+  timer = setInterval(() => {
+    percent.value = Math.min(100, percent.value + 4)
+    if (percent.value >= 100) {
+      clearInterval(timer)
+      timer = null
+    }
+  }, 500)
+}
+
+function fmt(p) {
+  if (p === 0) return '准备中'
+  if (p >= 100) return '完成'
+  const elapsed = (Date.now() - startedAt.value) / 1000
+  const remaining = (elapsed / p) * (100 - p)
+  return `${p}% · 约剩 ${remaining.toFixed(0)}s`
+}
+
+onBeforeUnmount(() => timer && clearInterval(timer))
+</script>
+
+<template>
+  <c-progress :percent="percent" :format="fmt" status="active" />
+  <c-button style="margin-top: 12px" type="primary" @click="start">开始</c-button>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
