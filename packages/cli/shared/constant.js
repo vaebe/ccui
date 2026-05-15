@@ -76,4 +76,4 @@ export const CSS_CLASS_PREFIX = 'ccui'
 export const TESTS_DIR_NAME = 'test'
 export const INDEX_FILE_NAME = 'index.ts'
 export const DOCS_FILE_NAME = 'index.md'
-export const VUE_UI_IGNORE_DIRS = ['shared', 'style']
+export const VUE_UI_IGNORE_DIRS = ['shared', 'style', 'locale']
