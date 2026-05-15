@@ -1,5 +1,19 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
+/**
+ * 对标 ant `Cascader.SHOW_CHILD` / `.SHOW_PARENT`：`showCheckedStrategy` 取值。
+ *
+ * - `CASCADER_SHOW_CHILD`：只输出最末级叶子节点（默认）
+ * - `CASCADER_SHOW_PARENT`：父节点全部子节点都选中时，只输出父节点
+ *
+ * 与 ant 的 `Cascader.SHOW_CHILD` 静态属性等价，**不挂命名空间**，从 `vue3-ccui` 顶层 export。
+ * 当前 ccui Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码
+ * 提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
+ */
+export const CASCADER_SHOW_CHILD = 'SHOW_CHILD' as const
+export const CASCADER_SHOW_PARENT = 'SHOW_PARENT' as const
+export type CascaderShowCheckedStrategy = typeof CASCADER_SHOW_CHILD | typeof CASCADER_SHOW_PARENT
+
 export type CascaderRawValue = string | number
 export type CascaderValuePath = CascaderRawValue[]
 export type CascaderModelValue = CascaderValuePath | CascaderValuePath[] | null

@@ -7,6 +7,9 @@ TreeSelect.install = function (app: App): void {
 
 export { TreeSelect }
 
+export { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT } from './src/tree-select-types'
+export type { TreeSelectShowCheckedStrategy } from './src/tree-select-types'
+
 export default {
   title: 'TreeSelect 树选择',
   category: '数据录入',

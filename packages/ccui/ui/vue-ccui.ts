@@ -18,7 +18,7 @@ import CardInstall, { Card } from './card'
 import CardGridInstall, { CardGrid } from './card-grid'
 import CardMetaInstall, { CardMeta } from './card-meta'
 import CarouselInstall, { Carousel } from './carousel'
-import CascaderInstall, { Cascader } from './cascader'
+import CascaderInstall, { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT, Cascader } from './cascader'
 import CheckableTagInstall, { CheckableTag, CheckableTagGroup } from './checkable-tag'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
@@ -102,7 +102,12 @@ import TooltipInstall, { Tooltip } from './tooltip'
 import TourInstall, { Tour } from './tour'
 import TransferInstall, { Transfer } from './transfer'
 import TreeInstall, { Tree } from './tree'
-import TreeSelectInstall, { TreeSelect } from './tree-select'
+import TreeSelectInstall, {
+  TREE_SELECT_SHOW_ALL,
+  TREE_SELECT_SHOW_CHILD,
+  TREE_SELECT_SHOW_PARENT,
+  TreeSelect,
+} from './tree-select'
 import TypographyInstall, { Link, Paragraph, Text, Title, Typography } from './typography'
 import UploadInstall, { Upload } from './upload'
 import UtilInstall, {
@@ -239,6 +244,8 @@ export {
   CardMeta,
   Carousel,
   Cascader,
+  CASCADER_SHOW_CHILD,
+  CASCADER_SHOW_PARENT,
   CheckableTag,
   CheckableTagGroup,
   CheckBox,
@@ -342,6 +349,9 @@ export {
   Transfer,
   Tree,
   TreeSelect,
+  TREE_SELECT_SHOW_ALL,
+  TREE_SELECT_SHOW_CHILD,
+  TREE_SELECT_SHOW_PARENT,
   Link,
   Paragraph,
   Text,

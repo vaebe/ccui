@@ -113,4 +113,86 @@ describe('splitter', () => {
     expect(wrapper.findAll(pNs.b())[0].attributes('style')).toContain('height: 300px')
     window.dispatchEvent(createPointerEvent('pointerup', {}))
   })
+
+  // L-2.23
+  it('orientation 别名生效（vertical），等价 layout', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter orientation="vertical"><Panel>A</Panel><Panel>B</Panel></Splitter>`,
+    })
+    expect(wrapper.find(sNs.m('vertical')).exists()).toBe(true)
+  })
+
+  it('layout 显式优先于 orientation 别名', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter layout="horizontal" orientation="vertical"><Panel>A</Panel><Panel>B</Panel></Splitter>`,
+    })
+    expect(wrapper.find(sNs.m('horizontal')).exists()).toBe(true)
+    expect(wrapper.find(sNs.m('vertical')).exists()).toBe(false)
+  })
+
+  it('showCollapsibleIcon=true + collapsible=true 时渲染折叠按钮', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter>
+        <Panel :default-size="200" :collapsible="true" :show-collapsible-icon="true">A</Panel>
+        <Panel>B</Panel>
+      </Splitter>`,
+    })
+    expect(wrapper.find(pNs.e('collapse-btn')).exists()).toBe(true)
+  })
+
+  it('未设 collapsible 时即使 showCollapsibleIcon=true 也不渲染按钮', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter>
+        <Panel :default-size="200" :show-collapsible-icon="true">A</Panel>
+        <Panel>B</Panel>
+      </Splitter>`,
+    })
+    expect(wrapper.find(pNs.e('collapse-btn')).exists()).toBe(false)
+  })
+
+  it('未设 showCollapsibleIcon 时不渲染按钮', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter>
+        <Panel :default-size="200" :collapsible="true">A</Panel>
+        <Panel>B</Panel>
+      </Splitter>`,
+    })
+    expect(wrapper.find(pNs.e('collapse-btn')).exists()).toBe(false)
+  })
+
+  it('点击折叠按钮：panel 切折叠态（flex: 0 0 0），再点恢复', async () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter>
+        <Panel :default-size="200" :collapsible="true" :show-collapsible-icon="true">A</Panel>
+        <Panel>B</Panel>
+      </Splitter>`,
+    })
+    const btn = wrapper.find(pNs.e('collapse-btn'))
+    await btn.trigger('click')
+    await nextTick()
+    expect(wrapper.findAll(pNs.b())[0].attributes('style')).toContain('flex: 0 0 0')
+    // 折叠后箭头朝 end（horizontal → ▶）
+    expect(btn.text()).toBe('▶')
+    // 再点击恢复
+    await btn.trigger('click')
+    await nextTick()
+    expect(wrapper.findAll(pNs.b())[0].attributes('style')).not.toContain('flex: 0 0 0')
+  })
+
+  it('collapsible 对象形态 { start: true } 也能触发图标渲染', () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter>
+        <Panel :default-size="200" :collapsible="{ start: true }" :show-collapsible-icon="true">A</Panel>
+        <Panel>B</Panel>
+      </Splitter>`,
+    })
+    expect(wrapper.find(pNs.e('collapse-btn')).exists()).toBe(true)
+  })
 })

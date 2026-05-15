@@ -419,7 +419,25 @@ const options = [
 | focus                | --                                           | 输入框聚焦                         |
 | blur                 | --                                           | 输入框失焦                         |
 
+## 顶层常量（L-2.24）
+
+对标 ant `Cascader.SHOW_CHILD` / `.SHOW_PARENT`：**不挂命名空间**，从 `vue3-ccui` 顶层 export。
+
+```ts
+import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from 'vue3-ccui'
+
+// CASCADER_SHOW_CHILD === 'SHOW_CHILD'
+// CASCADER_SHOW_PARENT === 'SHOW_PARENT'
+```
+
+| 常量                 | 说明                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| CASCADER_SHOW_CHILD  | `showCheckedStrategy` 取值：只输出最末级叶子节点（默认）         |
+| CASCADER_SHOW_PARENT | `showCheckedStrategy` 取值：父节点全部子节点都选中时只输出父节点  |
+
+> 当前 ccui Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
+
 ## 已知限制（未交付）
 
-- **showCheckedStrategy**：multiple 模式下当前为「all」语义（每条勾选路径独立提交），未提供 `parent` / `child` 折叠策略。
+- **showCheckedStrategy**：multiple 模式下当前为「all」语义（每条勾选路径独立提交），未提供 `parent` / `child` 折叠策略。**L-2.24 已顶层 export 常量符号**，待后续 batch 接入实际逻辑。
 - **键盘导航**：方向键 / Enter 切换尚未实现。

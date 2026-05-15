@@ -7,6 +7,9 @@ Cascader.install = function (app: App): void {
 
 export { Cascader }
 
+export { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from './src/cascader-types'
+export type { CascaderShowCheckedStrategy } from './src/cascader-types'
+
 export default {
   title: 'Cascader 级联选择',
   category: '数据录入',
