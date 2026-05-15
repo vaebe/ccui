@@ -1,0 +1,95 @@
+@use 'theme/theme' as *;
+
+// M-A1：录入组件统一 variant 形态（Ant Design v5.13+：outlined / filled / borderless / underlined）。
+//
+// 两个 mixin：
+// - `form-control-variants`：根元素本身就是视觉边框层（Input / InputNumber / Textarea / Mentions）
+// - `form-control-variants-on($child)`：边框层在子元素（Select __selector / Cascader __trigger 等）
+//
+// 用法示例：
+//   .ccui-input { @include form-control-variants; }
+//   .ccui-select { @include form-control-variants-on('.ccui-select__selector'); }
+//
+// 约定：
+// - outlined 是默认形态；mixin 不输出 outlined 块（默认 SCSS 即 outlined）
+// - 复合组件 `--open` 时 trigger 的 primary 边框由组件原有规则负责，mixin 只覆盖 base / hover
+// - status='error|warning' 的 border 写在 mixin 后即可覆盖 variant border（CSS 顺序优先级）
+
+@mixin form-control-variants {
+  &--variant-filled {
+    background-color: $ccui-color-fill-secondary;
+    border-color: transparent;
+
+    &:hover {
+      background-color: $ccui-color-fill;
+      border-color: transparent;
+    }
+
+    &:focus-within {
+      background-color: $ccui-color-bg-container;
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  &--variant-borderless {
+    background-color: transparent;
+    border-color: transparent;
+
+    &:hover {
+      border-color: transparent;
+    }
+
+    &:focus-within {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  &--variant-underlined {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: $ccui-color-border;
+    border-radius: 0;
+
+    &:hover {
+      border-color: transparent;
+      border-bottom-color: $ccui-color-primary-hover;
+    }
+
+    &:focus-within {
+      border-color: transparent;
+      border-bottom-color: $ccui-color-primary;
+      box-shadow: none;
+    }
+  }
+}
+
+@mixin form-control-variants-on($child) {
+  &--variant-filled #{$child} {
+    background-color: $ccui-color-fill-secondary;
+    border-color: transparent;
+  }
+  &--variant-filled #{$child}:hover {
+    background-color: $ccui-color-fill;
+    border-color: transparent;
+  }
+
+  &--variant-borderless #{$child} {
+    background-color: transparent;
+    border-color: transparent;
+  }
+  &--variant-borderless #{$child}:hover {
+    border-color: transparent;
+  }
+
+  &--variant-underlined #{$child} {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: $ccui-color-border;
+    border-radius: 0;
+  }
+  &--variant-underlined #{$child}:hover {
+    border-color: transparent;
+    border-bottom-color: $ccui-color-primary-hover;
+  }
+}

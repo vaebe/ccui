@@ -598,4 +598,26 @@ describe('time-picker auto-scroll', () => {
     // jsdom 不算 layout，但 scrollTop 是个 setter，能被赋值（默认 0），不抛错即正确
     expect((hourCol.element as HTMLElement).scrollTop).toBeGreaterThanOrEqual(0)
   })
+
+  describe('variant', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mountTP()
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mountTP({ variant: 'filled' })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mountTP({ variant: 'borderless' })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mountTP({ variant: 'underlined' })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

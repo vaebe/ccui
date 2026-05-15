@@ -244,6 +244,33 @@ const treeData = [{ value: 'a', label: 'A', children: [{ value: 'a1', label: 'A1
 
 :::
 
+## Variants
+
+Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-segmented v-model="variant" :options="['outlined', 'filled', 'borderless', 'underlined']" />
+  </div>
+  <c-tree-select v-model="value" :variant="variant" :tree-data="data" placeholder="请选择" />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const variant = ref('outlined')
+const value = ref('')
+const data = [
+  { key: '1', title: '父节点 1', children: [{ key: '1-1', title: '叶子 1-1' }, { key: '1-2', title: '叶子 1-2' }] },
+  { key: '2', title: '父节点 2' },
+]
+</script>
+```
+
+:::
+
 ## API
 
 ### Props

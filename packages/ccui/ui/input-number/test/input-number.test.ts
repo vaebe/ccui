@@ -281,4 +281,26 @@ describe('inputNumber', () => {
     vm.decrease()
     expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([4])
   })
+
+  describe('variant（v5.13+：outlined / filled / borderless / underlined）', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = createWrapper()
+      expect(wrapper.find('.ccui-input-number--variant-outlined').exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = createWrapper({ variant: 'filled' })
+      expect(wrapper.find('.ccui-input-number--variant-filled').exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = createWrapper({ variant: 'borderless' })
+      expect(wrapper.find('.ccui-input-number--variant-borderless').exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = createWrapper({ variant: 'underlined' })
+      expect(wrapper.find('.ccui-input-number--variant-underlined').exists()).toBe(true)
+    })
+  })
 })

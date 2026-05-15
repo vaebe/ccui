@@ -99,6 +99,7 @@ export default defineComponent({
         [ns.m('suffix')]: hasSuffix,
         [ns.m('prefix')]: hasPrefix,
         [ns.m(`status-${props.status}`)]: !!props.status,
+        [ns.m(`variant-${props.variant}`)]: !!props.variant,
       }
     })
 
@@ -107,6 +108,7 @@ export default defineComponent({
       [ns.em('wrapper', props.size)]: !!props.size,
       [ns.em('wrapper', 'disabled')]: props.disabled,
       [ns.em('wrapper', `status-${props.status}`)]: !!props.status,
+      [ns.em('wrapper', `variant-${props.variant}`)]: !!props.variant,
     }))
 
     const inputClass = computed(() => ({

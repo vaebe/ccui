@@ -180,6 +180,19 @@ export const selectProps = {
     type: Boolean,
     default: false,
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<SelectVariant>,
+    default: 'outlined',
+  },
 } as const
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type SelectVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 export type SelectProps = ExtractPropTypes<typeof selectProps>

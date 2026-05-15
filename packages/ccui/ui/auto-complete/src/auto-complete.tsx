@@ -335,7 +335,7 @@ export default defineComponent({
     }
 
     return () => (
-      <div class={ns.b()}>
+      <div class={[ns.b(), props.variant ? ns.m(`variant-${props.variant}`) : '']}>
         {renderInput()}
         {renderPopup()}
       </div>

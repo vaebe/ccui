@@ -5,6 +5,9 @@
   position: relative;
   width: 100%;
 
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __wrap
+  @include form-control-variants-on('.#{$cls-prefix}-auto-complete__wrap');
+
   &__wrap {
     display: inline-flex;
     align-items: center;

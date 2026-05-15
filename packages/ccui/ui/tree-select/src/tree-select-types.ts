@@ -133,6 +133,19 @@ export const treeSelectProps = {
     type: Number,
     default: 280,
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<TreeSelectVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type TreeSelectProps = ExtractPropTypes<typeof treeSelectProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type TreeSelectVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

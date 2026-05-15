@@ -228,4 +228,26 @@ describe('textarea', () => {
       expect(wrapper.find('.my-suffix').exists()).toBe(true)
     })
   })
+
+  describe('variant（v5.13+：outlined / filled / borderless / underlined）', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mount(Textarea)
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mount(Textarea, { props: { variant: 'filled' } })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mount(Textarea, { props: { variant: 'borderless' } })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mount(Textarea, { props: { variant: 'underlined' } })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

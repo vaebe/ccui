@@ -233,6 +233,7 @@ export default defineComponent({
               [ns.m(normalizedSize.value)]: normalizedSize.value !== 'default',
               [ns.m('focused')]: focused.value,
               [ns.m('glow')]: props.showGlowStyle && focused.value,
+              [ns.m(`variant-${props.variant}`)]: !!props.variant,
             },
           ]}
         >

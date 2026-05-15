@@ -138,6 +138,19 @@ export const rangePickerProps = {
     type: Boolean,
     default: true,
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<RangePickerVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type RangePickerProps = ExtractPropTypes<typeof rangePickerProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type RangePickerVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

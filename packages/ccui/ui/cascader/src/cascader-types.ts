@@ -157,6 +157,19 @@ export const cascaderProps = {
     // 默认从 ConfigProvider.locale.Cascader.notFoundContent 取值；显式 prop 仍优先。
     default: '',
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<CascaderVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type CascaderProps = ExtractPropTypes<typeof cascaderProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type CascaderVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

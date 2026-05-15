@@ -938,4 +938,26 @@ describe('date-picker presets', () => {
     await openPanel(wrapper)
     expect(wrapper.find(ns.em('panel', 'with-presets')).exists()).toBe(true)
   })
+
+  describe('variant', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mountDP()
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mountDP({ variant: 'filled' })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mountDP({ variant: 'borderless' })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mountDP({ variant: 'underlined' })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

@@ -132,6 +132,19 @@ export const timePickerProps = {
     type: String,
     default: '',
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<TimePickerVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type TimePickerProps = ExtractPropTypes<typeof timePickerProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type TimePickerVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

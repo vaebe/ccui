@@ -665,4 +665,26 @@ describe('range-picker showTime', () => {
     await wrapper.find(ns.em('footer-btn', 'ok')).trigger('click')
     expect(wrapper.emitted('update:modelValue')![0][0]).toEqual(['2026-05-04 00:00:00', '2026-05-10 00:00:00'])
   })
+
+  describe('variant', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mountRP()
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mountRP({ variant: 'filled' })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mountRP({ variant: 'borderless' })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mountRP({ variant: 'underlined' })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

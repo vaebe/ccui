@@ -217,6 +217,29 @@ export default defineComponent({
 
 :::
 
+## Variants
+
+Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled`（无边框 + 填充背景）/ `borderless`（无边框无背景）/ `underlined`（仅底部边框）。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-segmented v-model="variant" :options="['outlined', 'filled', 'borderless', 'underlined']" />
+  </div>
+  <c-input v-model="value" :variant="variant" placeholder="切换 variant 观察样式" style="width: 260px" />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const variant = ref('outlined')
+const value = ref('')
+</script>
+```
+
+:::
+
 ## Input参数
 
 | 参数            | 类型                                          | 默认    | 说明                                                                                  |

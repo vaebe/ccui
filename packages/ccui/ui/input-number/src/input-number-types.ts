@@ -21,6 +21,16 @@ export type ISize = 'large' | 'default' | 'small' | 'lg' | 'md' | 'sm'
 export type ControlsPosition = 'right' | 'both'
 
 /**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ *
+ * - `outlined`（默认）：1px solid 边框
+ * - `filled`：无边框 + 浅灰背景填充
+ * - `borderless`：完全无边框无背景
+ * - `underlined`：仅底部 1px 边框
+ */
+export type InputNumberVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
+
+/**
  * 格式化选项接口
  */
 export interface FormatOptions {
@@ -90,6 +100,14 @@ export const inputNumberProps = {
   controlsPosition: {
     type: String as PropType<ControlsPosition>,
     default: 'both',
+  },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<InputNumberVariant>,
+    default: 'outlined',
   },
 } as const
 

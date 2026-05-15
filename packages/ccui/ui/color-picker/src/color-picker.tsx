@@ -544,7 +544,9 @@ export default defineComponent({
     }
 
     return () => (
-      <div class={[ns.b(), props.disabled ? ns.is('disabled') : '']}>
+      <div
+        class={[ns.b(), props.disabled ? ns.is('disabled') : '', props.variant ? ns.m(`variant-${props.variant}`) : '']}
+      >
         {renderTrigger()}
         {renderPopup()}
       </div>

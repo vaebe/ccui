@@ -367,4 +367,26 @@ describe('auto-complete trigger slot', () => {
     expect(wrapper.find('.my-textarea').exists()).toBe(true)
     expect(wrapper.find(ns.e('input')).exists()).toBe(false)
   })
+
+  describe('variant', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mountAC()
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mountAC({ variant: 'filled' })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mountAC({ variant: 'borderless' })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mountAC({ variant: 'underlined' })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

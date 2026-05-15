@@ -106,9 +106,22 @@ export const autoCompleteProps = {
     type: Number,
     default: 0,
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<AutoCompleteVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type AutoCompleteProps = ExtractPropTypes<typeof autoCompleteProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type AutoCompleteVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 // 内部规范化的 option 形态
 export interface NormalizedOption {

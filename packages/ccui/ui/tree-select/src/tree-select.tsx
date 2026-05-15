@@ -311,6 +311,7 @@ export default defineComponent({
       props.multiple && ns.is('multiple'),
       ns.m(props.size),
       mergedStatus.value && ns.m(`status-${mergedStatus.value}`),
+      props.variant && ns.m(`variant-${props.variant}`),
     ])
 
     function renderInputContent() {

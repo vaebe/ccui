@@ -117,6 +117,9 @@
     @include focus-state;
   }
 
+  // M-A1：录入组件统一 variant 形态（outlined 是默认；其余 3 个走共享 mixin）
+  @include form-control-variants;
+
   &--disabled {
     @include disabled-state;
 

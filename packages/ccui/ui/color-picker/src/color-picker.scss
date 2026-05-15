@@ -8,6 +8,9 @@
     cursor: not-allowed;
   }
 
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __trigger
+  @include form-control-variants-on('.#{$cls-prefix}-color-picker__trigger');
+
   &__trigger {
     display: inline-flex;
     align-items: center;

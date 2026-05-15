@@ -12,6 +12,9 @@
     cursor: not-allowed;
   }
 
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __input-wrap
+  @include form-control-variants-on('.#{$cls-prefix}-date-picker__input-wrap');
+
   &--small &__input-wrap {
     min-height: 24px;
     padding: 0 8px;

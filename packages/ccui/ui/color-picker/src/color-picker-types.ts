@@ -80,6 +80,19 @@ export const colorPickerProps = {
     type: Boolean,
     default: false,
   },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<ColorPickerVariant>,
+    default: 'outlined',
+  },
 } as const
 
 export type ColorPickerProps = ExtractPropTypes<typeof colorPickerProps>
+
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ */
+export type ColorPickerVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

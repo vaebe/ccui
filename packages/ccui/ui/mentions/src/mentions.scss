@@ -9,6 +9,9 @@
     cursor: not-allowed;
   }
 
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __textarea
+  @include form-control-variants-on('.#{$cls-prefix}-mentions__textarea');
+
   &__textarea {
     width: 100%;
     padding: 6px 12px;

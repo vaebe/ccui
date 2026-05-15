@@ -681,4 +681,26 @@ describe('cascader multiple', () => {
     await nextTick()
     expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
   })
+
+  describe('variant', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mountCascader()
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = mountCascader({ variant: 'filled' })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = mountCascader({ variant: 'borderless' })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = mountCascader({ variant: 'underlined' })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+    })
+  })
 })

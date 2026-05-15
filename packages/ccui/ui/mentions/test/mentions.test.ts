@@ -325,3 +325,25 @@ describe('mentions autoSize', () => {
     expect(wrapper.find('textarea').exists()).toBe(true)
   })
 })
+
+describe('mentions variant', () => {
+  it('默认 variant 为 outlined', () => {
+    const wrapper = mountM()
+    expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+  })
+
+  it('variant="filled"', () => {
+    const wrapper = mountM({ variant: 'filled' })
+    expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+  })
+
+  it('variant="borderless"', () => {
+    const wrapper = mountM({ variant: 'borderless' })
+    expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+  })
+
+  it('variant="underlined"', () => {
+    const wrapper = mountM({ variant: 'underlined' })
+    expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+  })
+})

@@ -266,6 +266,30 @@ const team = [
 
 :::
 
+## Variants
+
+Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+
+:::demo
+
+```vue
+<template>
+  <div style="margin-bottom: 12px">
+    <c-segmented v-model="variant" :options="['outlined', 'filled', 'borderless', 'underlined']" />
+  </div>
+  <c-mentions v-model="value" :variant="variant" :options="opts" placeholder="@ 触发提示" />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const variant = ref('outlined')
+const value = ref('')
+const opts = ['alice', 'bob', 'charlie']
+</script>
+```
+
+:::
+
 ## API
 
 ### Props

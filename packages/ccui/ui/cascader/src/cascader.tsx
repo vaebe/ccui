@@ -564,6 +564,7 @@ export default defineComponent({
       open.value && ns.is('open'),
       ns.m(props.size),
       mergedStatus.value && ns.m(`status-${mergedStatus.value}`),
+      props.variant && ns.m(`variant-${props.variant}`),
     ])
 
     // showSearch 时 input 可写；面板打开 + 正在搜索时 input 显示 searchValue 而非已选 label

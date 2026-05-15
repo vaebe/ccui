@@ -124,6 +124,7 @@ export default defineComponent({
       [ns.m('multiple')]: isMultiple.value,
       [ns.m('tags')]: mode.value === 'tags',
       [ns.m(mergedStatus.value)]: !!mergedStatus.value,
+      [ns.m(`variant-${props.variant}`)]: !!props.variant,
     }))
 
     const virtualEnabled = computed(

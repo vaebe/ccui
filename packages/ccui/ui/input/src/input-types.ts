@@ -9,6 +9,16 @@ export type InputSize = 'large' | 'default' | 'small'
 export type InputStatus = '' | 'error' | 'warning'
 
 /**
+ * Ant Design v5.13+ 录入组件统一 variant 形态：
+ *
+ * - `outlined`（默认）：1px solid 边框，与既有视觉一致
+ * - `filled`：无边框 + 浅灰背景填充，hover 加深
+ * - `borderless`：完全无边框无背景
+ * - `underlined`：仅底部 1px 边框，类似 Material 风
+ */
+export type InputVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
+
+/**
  * `allowClear` 复合配置：
  *
  * - `boolean`：开启/关闭清除按钮
@@ -118,6 +128,14 @@ export const inputProps = {
   status: {
     type: String as PropType<InputStatus>,
     default: '',
+  },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<InputVariant>,
+    default: 'outlined',
   },
   /**
    * 非受控模式初始值。设置后首次挂载从 `defaultValue` 取值，之后忽略；与 `v-model:value` 并存。

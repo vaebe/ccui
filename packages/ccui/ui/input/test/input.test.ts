@@ -276,6 +276,32 @@ describe('input', () => {
     })
   })
 
+  describe('variant（v5.13+：outlined / filled / borderless / underlined）', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mount(Input)
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="filled" 加 --variant-filled 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'filled' } })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="borderless" 加 --variant-borderless 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'borderless' } })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="underlined" 加 --variant-underlined 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'underlined' } })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
   describe('press-enter 事件', () => {
     it('回车键触发 press-enter', async () => {
       const wrapper = mount(Input)

@@ -13,6 +13,12 @@ export type MentionsSourceItem = string | MentionOption
 
 export type FilterOption = boolean | ((input: string, option: MentionOption) => boolean)
 
+/**
+ * Ant Design v5.13+ 录入组件统一 variant 形态。
+ * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+ */
+export type MentionsVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
+
 export const mentionsProps = {
   modelValue: {
     type: String as PropType<string | null>,
@@ -78,6 +84,14 @@ export const mentionsProps = {
   searchDebounce: {
     type: Number,
     default: 0,
+  },
+  /**
+   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<MentionsVariant>,
+    default: 'outlined',
   },
 } as const
 

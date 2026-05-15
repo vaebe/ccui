@@ -244,7 +244,10 @@ export default defineComponent({
     }
 
     return () => (
-      <div ref={rootRef} class={[ns.b(), props.disabled ? ns.is('disabled') : '']}>
+      <div
+        ref={rootRef}
+        class={[ns.b(), props.disabled ? ns.is('disabled') : '', props.variant ? ns.m(`variant-${props.variant}`) : '']}
+      >
         <textarea
           ref={textareaRef}
           class={ns.e('textarea')}

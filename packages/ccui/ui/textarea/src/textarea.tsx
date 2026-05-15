@@ -132,6 +132,7 @@ export default defineComponent({
       [ns.m('disabled')]: props.disabled,
       [ns.m('readonly')]: props.readonly,
       [ns.m(`status-${props.status}`)]: !!props.status,
+      [ns.m(`variant-${props.variant}`)]: !!props.variant,
       [ns.m('show-count')]: showCountEnabled.value,
     }))
 
