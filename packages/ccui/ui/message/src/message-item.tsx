@@ -42,6 +42,13 @@ export default defineComponent({
       emit('destroy')
     }
 
+    const onMouseenter = () => {
+      if (props.pauseOnHover) clearTimer()
+    }
+    const onMouseleave = () => {
+      if (props.pauseOnHover) startTimer()
+    }
+
     onMounted(() => {
       visible.value = true
       startTimer()
@@ -53,9 +60,10 @@ export default defineComponent({
         {visible.value && (
           <div
             class={[ns.e('item'), ns.em('item', props.type), props.customClass]}
-            role="alert"
-            onMouseenter={clearTimer}
-            onMouseleave={startTimer}
+            role={props.role}
+            aria-live={props.role === 'alert' ? 'assertive' : 'polite'}
+            onMouseenter={onMouseenter}
+            onMouseleave={onMouseleave}
           >
             <div class={ns.e('inner')}>
               <span class={[ns.e('icon'), ns.em('icon', props.type)]}>

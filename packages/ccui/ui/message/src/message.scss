@@ -2,14 +2,76 @@
 
 .#{$cls-prefix}-message {
   position: fixed;
-  top: 16px;
-  left: 0;
   width: 100%;
   pointer-events: none;
   z-index: 1010;
   display: flex;
   flex-direction: column;
-  align-items: center;
+
+  // L-3.5 多 placement 锚点
+  &--top {
+    top: 16px;
+    left: 0;
+    align-items: center;
+  }
+
+  &--topLeft {
+    top: 16px;
+    left: 16px;
+    align-items: flex-start;
+    width: auto;
+  }
+
+  &--topRight {
+    top: 16px;
+    right: 16px;
+    left: auto;
+    align-items: flex-end;
+    width: auto;
+  }
+
+  &--bottom {
+    bottom: 16px;
+    left: 0;
+    align-items: center;
+    flex-direction: column-reverse;
+  }
+
+  &--bottomLeft {
+    bottom: 16px;
+    left: 16px;
+    align-items: flex-start;
+    width: auto;
+    flex-direction: column-reverse;
+  }
+
+  &--bottomRight {
+    bottom: 16px;
+    right: 16px;
+    left: auto;
+    align-items: flex-end;
+    width: auto;
+    flex-direction: column-reverse;
+  }
+
+  // L-3.5 stack 模式：视觉堆叠（非交互展开版）
+  &--stack {
+    .#{$cls-prefix}-message__item {
+      margin-bottom: 0;
+      transition: transform $ccui-motion-duration-mid;
+    }
+
+    .#{$cls-prefix}-message__item:not(:first-child) {
+      margin-top: -28px;
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
+    .#{$cls-prefix}-message__item:nth-child(n + 3) {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
+  }
 
   &__item {
     margin-bottom: 8px;

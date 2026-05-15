@@ -58,9 +58,9 @@ function open(item) {
 
 :::
 
-## 弹出位置
+## 弹出位置（L-3.5）
 
-通过 `placement` 选择四个角落之一。
+支持 6 个位置：`topRight` / `topLeft` / `top`（顶部居中）/ `bottomRight` / `bottomLeft` / `bottom`（底部居中）。
 
 :::demo
 
@@ -68,7 +68,7 @@ function open(item) {
 <script setup>
 import { notification } from 'vue3-ccui'
 
-const placements = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+const placements = ['top', 'topLeft', 'topRight', 'bottom', 'bottomLeft', 'bottomRight']
 
 function open(placement) {
   notification.info({
@@ -88,7 +88,15 @@ function open(placement) {
 
 ## 自定义停留时长
 
-`duration` 单位为毫秒；传 `0` 则不自动关闭，需要用户手动点 ×。
+`duration` 推荐传**秒**（与 Ant Design 对齐）；传 `0` 则不自动关闭，需要用户手动点 ×。
+
+::: tip 单位规则（L-3.5）
+
+- `duration ≤ 100` 视为「秒」（如 `4.5` → 4.5 秒）
+- `duration > 100` 视为「毫秒」（兼容历史 ms 写法，如 `4500`）
+- `duration === 0` 永远表示不自动关闭
+
+:::
 
 :::demo
 
@@ -100,7 +108,7 @@ function shortToast() {
   notification.success({
     title: '快闪',
     description: '1.5 秒后自动消失',
-    duration: 1500,
+    duration: 1.5, // 秒
   })
 }
 function sticky() {
@@ -110,11 +118,54 @@ function sticky() {
     duration: 0,
   })
 }
+function legacyMs() {
+  notification.info({
+    title: '兼容 ms 写法',
+    description: '4500ms = 4.5s',
+    duration: 4500,
+  })
+}
 </script>
 
 <template>
   <c-button @click="shortToast">短 (1.5s)</c-button>
   <c-button @click="sticky">常驻 (duration=0)</c-button>
+  <c-button @click="legacyMs">兼容 ms (4500)</c-button>
+</template>
+```
+
+:::
+
+## 全局配置 notification.config（L-3.5）
+
+`notification.config(...)` 设置 `maxCount` / `stack` / `pauseOnHover` / `role` / `duration` / `top` / `bottom` / `placement` / `getContainer` 等全局默认值。再次调用以覆盖前一次配置。
+
+:::demo
+
+```vue
+<script setup>
+import { notification } from 'vue3-ccui'
+
+function setupStack() {
+  notification.config({ maxCount: 3, stack: true })
+  for (let i = 1; i <= 5; i += 1) {
+    notification.info({ title: `第 ${i} 条`, duration: 0 })
+  }
+}
+function setupOffset() {
+  notification.config({ top: 100 })
+  notification.success({ title: '顶部偏移 100px', duration: 3 })
+}
+function reset() {
+  notification.destroy()
+  notification.config({ maxCount: Infinity, stack: false, top: undefined })
+}
+</script>
+
+<template>
+  <c-button @click="setupStack">maxCount=3 + stack</c-button>
+  <c-button @click="setupOffset">top=100px</c-button>
+  <c-button @click="reset">还原</c-button>
 </template>
 ```
 
@@ -200,21 +251,40 @@ function clear() {
 | `notification.success(...)`  | success 类型                                                  |
 | `notification.warning(...)`  | warning 类型                                                  |
 | `notification.error(...)`    | error 类型                                                    |
+| `notification.config(cfg)`   | 全局默认值配置（L-3.5）                                       |
 | `notification.destroy()`     | 关闭并卸载所有通知容器                                        |
 
 ### NotificationOptions
 
-| 字段        | 类型                    | 默认         | 说明                                                            |
-| ----------- | ----------------------- | ------------ | --------------------------------------------------------------- |
-| title       | string                  | —            | 通知标题（建议必填）                                            |
-| description | `string \| VNode`       | —            | 通知正文                                                        |
-| type        | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                  |
-| placement   | `NotificationPlacement` | `'topRight'` | 弹出位置：`topRight` / `topLeft` / `bottomRight` / `bottomLeft` |
-| duration    | number                  | `4500`       | 停留毫秒数；`0` 表示不自动关闭                                  |
-| showClose   | boolean                 | `true`       | 是否显示关闭按钮                                                |
-| icon        | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                              |
-| customClass | string                  | `''`         | 自定义类名                                                      |
-| onClose     | `() => void`            | —            | 关闭时回调                                                      |
+| 字段         | 类型                    | 默认         | 说明                                                                                            |
+| ------------ | ----------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
+| title        | string                  | —            | 通知标题（建议必填）                                                                            |
+| description  | `string \| VNode`       | —            | 通知正文                                                                                        |
+| type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                                  |
+| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`（L-3.5）       |
+| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）                             |
+| showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                                |
+| icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                                              |
+| customClass  | string                  | `''`         | 自定义类名                                                                                      |
+| onClose      | `() => void`            | —            | 关闭时回调                                                                                      |
+| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5）                 |
+| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器（L-3.5）                                                             |
+
+### NotificationGlobalConfig（L-3.5）
+
+通过 `notification.config({...})` 设置；优先级低于单次 `open()` 选项。
+
+| 字段         | 类型                    | 默认         | 说明                                       |
+| ------------ | ----------------------- | ------------ | ------------------------------------------ |
+| duration     | number                  | `4.5`        | 默认停留时长（秒）                         |
+| maxCount     | number                  | `Infinity`   | 单 placement 最多并发条数，超出顶掉最旧    |
+| stack        | boolean                 | `false`      | 视觉堆叠模式（容器加 `--stack` modifier）  |
+| pauseOnHover | boolean                 | `true`       | 全局默认 `pauseOnHover`                    |
+| role         | `'alert' \| 'status'`   | `'alert'`    | 全局默认 `role`                            |
+| placement    | `NotificationPlacement` | `'topRight'` | 全局默认弹出位置                           |
+| top          | `number \| string`      | —            | 顶部偏移（仅作用于 `top*` placement）      |
+| bottom       | `number \| string`      | —            | 底部偏移（仅作用于 `bottom*` placement）   |
+| getContainer | `() => HTMLElement`     | `body`       | 自定义挂载父节点                           |
 
 ### NotificationHandle
 

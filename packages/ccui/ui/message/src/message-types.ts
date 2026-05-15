@@ -2,15 +2,36 @@ import type { ExtractPropTypes, PropType, VNode } from 'vue'
 
 export type MessageType = 'info' | 'success' | 'warning' | 'error' | 'loading'
 
+export type MessagePlacement = 'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight'
+
+export type MessageAriaRole = 'alert' | 'status'
+
 export interface MessageOptions {
   content: string | VNode
   type?: MessageType
+  // 单位优先「秒」（与 ant 一致），>100 自动按 ms 兼容；0 表示不自动关闭
   duration?: number
   showClose?: boolean
   onClose?: () => void
   icon?: string
   key?: string | number
   customClass?: string
+  // L-3.5 新增
+  placement?: MessagePlacement
+  role?: MessageAriaRole
+  pauseOnHover?: boolean
+}
+
+// 模块级全局配置（message.config(...) 设置）
+export interface MessageGlobalConfig {
+  top?: number | string
+  bottom?: number | string
+  duration?: number
+  maxCount?: number
+  stack?: boolean
+  pauseOnHover?: boolean
+  role?: MessageAriaRole
+  getContainer?: () => HTMLElement
 }
 
 export const messageItemProps = {
@@ -26,6 +47,7 @@ export const messageItemProps = {
     type: String as PropType<MessageType>,
     default: 'info' as MessageType,
   },
+  // 内部已归一化为 ms
   duration: {
     type: Number,
     default: 3000,
@@ -41,6 +63,14 @@ export const messageItemProps = {
   customClass: {
     type: String,
     default: '',
+  },
+  role: {
+    type: String as PropType<MessageAriaRole>,
+    default: 'alert' as MessageAriaRole,
+  },
+  pauseOnHover: {
+    type: Boolean,
+    default: true,
   },
 } as const
 

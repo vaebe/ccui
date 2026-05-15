@@ -9,6 +9,13 @@
   max-width: calc(100vw - 32px);
   pointer-events: none;
 
+  &--top {
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  }
+
   &--topRight {
     top: 24px;
     right: 24px;
@@ -19,6 +26,14 @@
     top: 24px;
     left: 24px;
     align-items: flex-start;
+  }
+
+  &--bottom {
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    flex-direction: column-reverse;
   }
 
   &--bottomRight {
@@ -33,6 +48,25 @@
     left: 24px;
     align-items: flex-start;
     flex-direction: column-reverse;
+  }
+
+  // L-3.5 stack 模式：视觉堆叠
+  &--stack {
+    .#{$cls-prefix}-notification__item {
+      margin-bottom: 0;
+      transition: transform $ccui-motion-duration-mid;
+    }
+
+    .#{$cls-prefix}-notification__item:not(:first-child) {
+      margin-top: -48px;
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
+    .#{$cls-prefix}-notification__item:nth-child(n + 3) {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
   }
 
   &__item {

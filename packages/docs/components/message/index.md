@@ -60,7 +60,15 @@ function showLoading() {
 
 ## 自定义停留时长
 
-第二个参数为毫秒数，传 `0` 时不会自动关闭，需要手动调用返回的 `close()`。
+第二个参数推荐传**秒**（与 Ant Design 对齐）；传 `0` 时不会自动关闭，需要手动调用返回的 `close()`。
+
+::: tip 单位规则（L-3.5）
+
+- `duration ≤ 100` 视为「秒」（如 `3` → 3 秒、`1.5` → 1.5 秒）
+- `duration > 100` 视为「毫秒」（兼容历史 ms 写法，如 `3000`、`8000`）
+- `duration === 0` 永远表示不自动关闭
+
+:::
 
 :::demo
 
@@ -69,16 +77,81 @@ function showLoading() {
 import { message } from 'vue3-ccui'
 
 function shortToast() {
-  message.success('1 秒后消失', 1000)
+  message.success('1 秒后消失', 1) // 秒
 }
 function longToast() {
-  message.info('停留 8 秒', 8000)
+  message.info('停留 8 秒', 8)
+}
+function legacyMs() {
+  message.info('兼容旧 ms 写法', 5000) // > 100 仍按 ms 处理
 }
 </script>
 
 <template>
   <c-button @click="shortToast">短 (1s)</c-button>
   <c-button @click="longToast">长 (8s)</c-button>
+  <c-button @click="legacyMs">兼容 ms (5000)</c-button>
+</template>
+```
+
+:::
+
+## 多 placement（L-3.5）
+
+支持 6 个位置：`top` / `topLeft` / `topRight` / `bottom` / `bottomLeft` / `bottomRight`。默认 `top`。
+
+:::demo
+
+```vue
+<script setup>
+import { message } from 'vue3-ccui'
+function pop(p) {
+  message.open({ content: `placement: ${p}`, placement: p, duration: 2 })
+}
+</script>
+
+<template>
+  <c-button @click="pop('top')">top</c-button>
+  <c-button @click="pop('topLeft')">topLeft</c-button>
+  <c-button @click="pop('topRight')">topRight</c-button>
+  <c-button @click="pop('bottom')">bottom</c-button>
+  <c-button @click="pop('bottomLeft')">bottomLeft</c-button>
+  <c-button @click="pop('bottomRight')">bottomRight</c-button>
+</template>
+```
+
+:::
+
+## 全局配置 message.config（L-3.5）
+
+`message.config(...)` 可一次性设定 `maxCount` / `stack` / `pauseOnHover` / `role` / `duration` / `top` / `bottom` / `getContainer` 等全局默认值。再次调用以覆盖前一次配置。
+
+:::demo
+
+```vue
+<script setup>
+import { message } from 'vue3-ccui'
+
+function setupStack() {
+  message.config({ maxCount: 3, stack: true })
+  for (let i = 1; i <= 5; i += 1) message.info(`第 ${i} 条`, 0)
+}
+
+function setupOffset() {
+  message.config({ top: 100 }) // 顶部偏移 100px
+  message.success('从顶 100px 处弹出', 2)
+}
+
+function reset() {
+  message.destroy()
+  message.config({ maxCount: Infinity, stack: false, top: undefined })
+}
+</script>
+
+<template>
+  <c-button @click="setupStack">maxCount=3 + stack</c-button>
+  <c-button @click="setupOffset">top=100px</c-button>
+  <c-button @click="reset">还原</c-button>
 </template>
 ```
 
@@ -193,20 +266,39 @@ function destroyAll() {
 | `message.warning(content, duration?)` | 警告                                                    |
 | `message.error(content, duration?)`   | 错误                                                    |
 | `message.loading(content, duration?)` | 加载（带旋转图标）                                      |
+| `message.config(cfg)`                 | 全局默认值配置（L-3.5）                                 |
 | `message.destroy()`                   | 关闭全部当前提示并卸载容器                              |
 
 ### MessageOptions
 
-| 字段        | 类型               | 默认     | 说明                                                       |
-| ----------- | ------------------ | -------- | ---------------------------------------------------------- |
-| content     | `string \| VNode`  | —        | 提示内容（必填）                                           |
-| type        | `MessageType`      | `'info'` | 类型：`info` / `success` / `warning` / `error` / `loading` |
-| duration    | number             | `3000`   | 停留毫秒数；`0` 表示不自动关闭                             |
-| showClose   | boolean            | `false`  | 是否显示关闭按钮                                           |
-| icon        | string             | `''`     | 自定义 icon 名（覆盖默认类型图标）                         |
-| customClass | string             | `''`     | 自定义类名，便于做样式覆盖                                 |
-| onClose     | `() => void`       | —        | 关闭时回调（自动 / 主动 / destroy 都会触发）               |
-| key         | `string \| number` | —        | 标识，便于以同一 key 替换已存在的提示                      |
+| 字段         | 类型                 | 默认      | 说明                                                                   |
+| ------------ | -------------------- | --------- | ---------------------------------------------------------------------- |
+| content      | `string \| VNode`    | —         | 提示内容（必填）                                                       |
+| type         | `MessageType`        | `'info'`  | 类型：`info` / `success` / `warning` / `error` / `loading`             |
+| duration     | number               | `3`       | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）    |
+| showClose    | boolean              | `false`   | 是否显示关闭按钮                                                       |
+| icon         | string               | `''`      | 自定义 icon 名（覆盖默认类型图标）                                     |
+| customClass  | string               | `''`      | 自定义类名，便于做样式覆盖                                             |
+| onClose      | `() => void`         | —         | 关闭时回调（自动 / 主动 / destroy 都会触发）                           |
+| key          | `string \| number`   | —         | 标识，便于以同一 key 替换已存在的提示                                  |
+| placement    | `MessagePlacement`   | `'top'`   | 6 位置之一：`top` / `topLeft` / `topRight` / `bottom` / `bottomLeft` / `bottomRight`（L-3.5） |
+| role         | `'alert' \| 'status'`| `'alert'` | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5） |
+| pauseOnHover | boolean              | `true`    | 鼠标悬停暂停自动关闭计时器（L-3.5）                                    |
+
+### MessageGlobalConfig（L-3.5）
+
+通过 `message.config({...})` 设置；优先级低于单次 `open()` 选项。
+
+| 字段         | 类型                  | 默认       | 说明                                                  |
+| ------------ | --------------------- | ---------- | ----------------------------------------------------- |
+| duration     | number                | `3`        | 默认停留时长（秒）                                    |
+| maxCount     | number                | `Infinity` | 单 placement 最多并发条数，超出顶掉最旧               |
+| stack        | boolean               | `false`    | 视觉堆叠模式（容器加 `--stack` modifier）             |
+| pauseOnHover | boolean               | `true`     | 全局默认 `pauseOnHover`                               |
+| role         | `'alert' \| 'status'` | `'alert'`  | 全局默认 `role`                                       |
+| top          | `number \| string`    | —          | 顶部偏移（仅作用于 `top*` placement）                 |
+| bottom       | `number \| string`    | —          | 底部偏移（仅作用于 `bottom*` placement）              |
+| getContainer | `() => HTMLElement`   | `body`     | 自定义挂载父节点                                      |
 
 ### MessageHandle
 
