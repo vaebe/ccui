@@ -117,6 +117,144 @@ const containerRef = ref<HTMLElement | null>(null)
 
 :::
 
+## 自定义层级 zIndex
+
+默认 `z-index: 10`；当页面里有 Drawer / Modal（更高 z-index）时按需调高，确保固钉不被遮罩盖住。
+
+:::demo
+
+```vue
+<template>
+  <c-affix :offset-top="0" :z-index="1100">
+    <c-button type="primary">z-index = 1100</c-button>
+  </c-affix>
+  <p>常见取值：默认 10、悬浮触发器 100、Modal mask 1000、需要盖住 mask 时 1100+</p>
+</template>
+```
+
+:::
+
+## 多个 Affix 错开
+
+工具栏吸顶 + 二级筛选条吸顶，靠 `offsetTop` 错开高度，构成「双层 sticky」效果。
+
+:::demo
+
+```vue
+<template>
+  <c-affix :offset-top="0">
+    <div style="background: #1677ff; color: #fff; padding: 8px 12px; border-radius: 4px">
+      第一层：主导航（offsetTop=0）
+    </div>
+  </c-affix>
+  <c-affix :offset-top="48" style="margin-top: 8px">
+    <div style="background: #fff; border: 1px solid #d9d9d9; padding: 8px 12px; border-radius: 4px">
+      第二层：筛选条（offsetTop=48）
+    </div>
+  </c-affix>
+  <p style="margin-top: 12px">向下滚动，两层依次贴住顶部不重叠</p>
+</template>
+```
+
+:::
+
+## 表格工具栏吸顶
+
+后台管理页常见：表格行很长，工具栏（搜索 / 新建 / 批量操作）始终可达。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const keyword = ref('')
+</script>
+
+<template>
+  <c-affix :offset-top="0">
+    <div
+      style="
+        background: #fff;
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      "
+    >
+      <c-input v-model="keyword" placeholder="搜索订单号" style="width: 200px" />
+      <c-button>批量删除</c-button>
+      <c-button type="primary">+ 新建订单</c-button>
+    </div>
+  </c-affix>
+  <p style="margin-top: 12px">下方表格略...</p>
+</template>
+```
+
+:::
+
+## 章节锚点目录
+
+侧边目录 sticky，配合右侧主内容滚动，是长文档 / 商品详情页常用排版。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 24px; align-items: flex-start">
+    <c-affix :offset-top="80" style="width: 160px; flex-shrink: 0">
+      <div style="background: #fafafa; border-radius: 6px; padding: 12px">
+        <p style="margin: 0 0 8px; color: #666; font-size: 12px">目录</p>
+        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第一章 介绍</a>
+        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第二章 安装</a>
+        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第三章 用法</a>
+        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第四章 进阶</a>
+      </div>
+    </c-affix>
+    <div style="flex: 1">
+      <h3>正文区</h3>
+      <p>左侧目录会随页面滚动贴到 80px 处保持可见。</p>
+    </div>
+  </div>
+</template>
+```
+
+:::
+
+## 容器内 vs 全局对比
+
+并列展示「以 window 为参照」和「以容器为参照」两种模式，便于业务侧理解 `target` 的影响范围。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const boxRef = ref(null)
+</script>
+
+<template>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+    <div>
+      <p style="color: #666; margin: 0 0 8px">target = window（默认）</p>
+      <c-affix :offset-top="60">
+        <c-button>滚整页时贴顶</c-button>
+      </c-affix>
+    </div>
+    <div ref="boxRef" style="height: 160px; overflow: auto; border: 1px solid #f0f0f0; padding: 8px">
+      <p style="color: #666; margin: 0 0 8px">target = 本容器</p>
+      <c-affix :offset-top="0" :target="() => boxRef">
+        <c-button type="primary">只在此盒子内贴顶</c-button>
+      </c-affix>
+      <div style="height: 400px; padding-top: 12px">滚动此处验证 →</div>
+    </div>
+  </div>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

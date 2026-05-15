@@ -116,6 +116,125 @@
 
 :::
 
+## 列表卡片内嵌
+
+把 Empty 直接塞进 Card / 自定义边框容器里，配「立即创建」按钮做引导转化。
+
+:::demo
+
+```vue
+<template>
+  <div style="border: 1px solid #f0f0f0; border-radius: 6px; padding: 24px 16px; background: #fff">
+    <c-empty description="该项目还没有任何成员" :image-style="{ height: '56px' }">
+      <c-button type="primary">+ 邀请成员</c-button>
+    </c-empty>
+  </div>
+</template>
+```
+
+:::
+
+## 搜索无结果
+
+搜索 / 筛选场景下空态附带「清除筛选」按钮，是一键重置的常用范式。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const keyword = ref('asdfqwer')
+const results = ref([])
+function reset() {
+  keyword.value = ''
+}
+</script>
+
+<template>
+  <c-input v-model="keyword" placeholder="试着搜点什么" style="margin-bottom: 12px" />
+  <c-empty
+    v-if="results.length === 0"
+    description="未匹配到任何结果"
+    :image-style="{ height: '48px' }"
+  >
+    <c-button @click="reset">清除筛选条件</c-button>
+  </c-empty>
+</template>
+```
+
+:::
+
+## 复杂描述（description slot）
+
+需要在描述里放链接 / 多行 / 富文本时改用 `#description` slot，`description` prop 主要面向单行短文案。
+
+:::demo
+
+```vue
+<template>
+  <c-empty>
+    <template #description>
+      <div style="color: rgba(0, 0, 0, 0.65); line-height: 1.6">
+        当前账户尚未开通任何应用 <br />
+        <a href="#" style="color: #1677ff">查看接入指引 →</a>
+      </div>
+    </template>
+    <c-button type="primary">立即开通</c-button>
+  </c-empty>
+</template>
+```
+
+:::
+
+## 三种尺寸
+
+`imageStyle.height` 控制插图尺寸：32 适合表格内嵌、80 默认、120 用于专门的空页面。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap">
+    <div>
+      <p style="color: #666; margin: 0 0 8px">迷你（嵌入式）</p>
+      <c-empty description="无数据" :image-style="{ height: '32px' }" />
+    </div>
+    <div>
+      <p style="color: #666; margin: 0 0 8px">默认</p>
+      <c-empty description="暂无数据" />
+    </div>
+    <div>
+      <p style="color: #666; margin: 0 0 8px">大插图（专题页）</p>
+      <c-empty description="还没有任何项目" :image-style="{ height: '120px' }" />
+    </div>
+  </div>
+</template>
+```
+
+:::
+
+## Tabs 内嵌空态
+
+不同 tab 下视为独立空状态：选中后展示对应文案，方便业务定位「具体哪个维度没数据」。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const active = ref('订单')
+</script>
+
+<template>
+  <c-segmented v-model="active" :options="['订单', '退款', '评价']" style="margin-bottom: 16px" />
+  <c-empty :description="`暂无任何${active}记录`" :image-style="{ height: '48px' }" />
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

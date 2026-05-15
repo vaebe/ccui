@@ -127,6 +127,165 @@ function onChange(val) {
 
 :::
 
+## 数字 value
+
+`options` 元素是数字时，`v-model` 也按数字类型回传，适合评分 / 年龄段 / 分页大小等枚举数值。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const pageSize = ref(20)
+</script>
+
+<template>
+  <c-segmented v-model="pageSize" :options="[10, 20, 50, 100]" />
+  <p style="margin-top: 8px; color: #666">每页 {{ pageSize }} 条（typeof = {{ typeof pageSize }}）</p>
+</template>
+```
+
+:::
+
+## 带 icon 选项
+
+`icon` 接 CSS class（与 Button 的 `icon` prop 同源），渲染在 label 文字前。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const view = ref('list')
+</script>
+
+<template>
+  <c-segmented
+    v-model="view"
+    :options="[
+      { label: '列表', value: 'list', icon: 'icon-menu' },
+      { label: '看板', value: 'kanban', icon: 'icon-grid' },
+      { label: '日历', value: 'calendar', icon: 'icon-calendar' },
+    ]"
+  />
+</template>
+```
+
+:::
+
+## 自定义渲染（default slot）
+
+默认插槽接收 `{ option }` scope，可以完全接管单项的渲染——头像 + 文字 + 副标题等组合，适合用户切换 / 团队切换场景。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const member = ref('alice')
+
+const members = [
+  { value: 'alice', label: 'Alice', avatar: 'A', color: '#1677ff' },
+  { value: 'bob', label: 'Bob', avatar: 'B', color: '#52c41a' },
+  { value: 'carol', label: 'Carol', avatar: 'C', color: '#fa8c16' },
+]
+</script>
+
+<template>
+  <c-segmented v-model="member" :options="members">
+    <template #default="{ option }">
+      <div style="display: flex; align-items: center; gap: 6px; padding: 2px 4px">
+        <span
+          :style="{
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            background: option.color,
+            color: '#fff',
+            fontSize: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }"
+        >
+          {{ option.avatar }}
+        </span>
+        <span>{{ option.label }}</span>
+      </div>
+    </template>
+  </c-segmented>
+</template>
+```
+
+:::
+
+## 单项禁用
+
+把禁用粒度下沉到 option：仅特定值不可点，其余可点。注意与整组 `disabled` 互不冲突。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const level = ref('basic')
+</script>
+
+<template>
+  <c-segmented
+    v-model="level"
+    :options="[
+      { label: '免费版', value: 'basic' },
+      { label: '专业版', value: 'pro' },
+      { label: '企业版（需联系销售）', value: 'enterprise', disabled: true },
+    ]"
+  />
+</template>
+```
+
+:::
+
+## 视图切换业务
+
+最典型用法：切换视图模式联动主区域渲染逻辑。这里用文本占位代表实际的列表 / 看板 / 图表组件。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const view = ref('list')
+</script>
+
+<template>
+  <c-segmented v-model="view" :options="['list', 'kanban', 'chart']" style="margin-bottom: 12px" />
+  <div
+    style="
+      background: #fafafa;
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      padding: 24px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+    "
+  >
+    <span v-if="view === 'list'">📋 列表视图占位</span>
+    <span v-else-if="view === 'kanban'">🗂️ 看板视图占位</span>
+    <span v-else>📊 图表视图占位</span>
+  </div>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

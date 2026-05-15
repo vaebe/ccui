@@ -150,6 +150,129 @@
 
 :::
 
+## `justify` 全枚举
+
+横轴对齐六种取值的视觉对照。
+
+:::demo
+
+```vue
+<script setup>
+const justifies = ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly']
+</script>
+
+<template>
+  <c-flex vertical :gap="12">
+    <div v-for="j in justifies" :key="j">
+      <p style="color: #666; margin: 0 0 4px">justify="{{ j }}"</p>
+      <c-flex :justify="j" align="center" style="background: #fafafa; padding: 8px; border-radius: 6px; min-height: 40px">
+        <c-tag>A</c-tag>
+        <c-tag>B</c-tag>
+        <c-tag>C</c-tag>
+      </c-flex>
+    </div>
+  </c-flex>
+</template>
+```
+
+:::
+
+## `align` 全枚举
+
+纵轴对齐五种取值的视觉对照（容器有显式高度时差异最明显）。
+
+:::demo
+
+```vue
+<script setup>
+const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
+</script>
+
+<template>
+  <c-flex vertical :gap="12">
+    <div v-for="a in aligns" :key="a">
+      <p style="color: #666; margin: 0 0 4px">align="{{ a }}"</p>
+      <c-flex :align="a" gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px; height: 80px">
+        <c-tag style="font-size: 12px">12px</c-tag>
+        <c-tag style="font-size: 20px">20px</c-tag>
+        <c-tag style="font-size: 14px">14px</c-tag>
+      </c-flex>
+    </div>
+  </c-flex>
+</template>
+```
+
+:::
+
+## 反向换行
+
+`wrap="wrap-reverse"` 让超出的子项在前一行的上方折回。
+
+:::demo
+
+```vue
+<template>
+  <c-flex wrap="wrap-reverse" gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px">
+    <c-tag v-for="i in 10" :key="i">Tag {{ i }}</c-tag>
+  </c-flex>
+</template>
+```
+
+:::
+
+## 嵌套布局：页面骨架
+
+`vertical` + 子级 `<c-flex>` 组合可以快速搭出「页头 / 主体（侧栏 + 内容）/ 页脚」三段式骨架。
+
+:::demo
+
+```vue
+<template>
+  <c-flex vertical style="background: #fafafa; border-radius: 6px; height: 240px; overflow: hidden">
+    <c-flex justify="space-between" align="center" style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #f0f0f0">
+      <strong>页头</strong>
+      <c-button size="small">登出</c-button>
+    </c-flex>
+    <c-flex flex="1" style="overflow: hidden">
+      <c-flex vertical gap="small" style="width: 120px; padding: 12px; background: #fafafa; border-right: 1px solid #f0f0f0">
+        <c-tag>菜单 1</c-tag>
+        <c-tag>菜单 2</c-tag>
+        <c-tag>菜单 3</c-tag>
+      </c-flex>
+      <c-flex flex="1" justify="center" align="center" style="padding: 16px; background: #fff">
+        <span style="color: #999">主内容区</span>
+      </c-flex>
+    </c-flex>
+    <c-flex justify="center" align="center" style="padding: 8px; background: #fff; border-top: 1px solid #f0f0f0; color: #999; font-size: 12px">
+      © 2026 ccui
+    </c-flex>
+  </c-flex>
+</template>
+```
+
+:::
+
+## 业务工具栏（与 Space 区别）
+
+`<c-flex justify="space-between">` 适合「左标题 / 右操作」两端分布；`<c-space>` 更适合一组按钮挨在一起的等距间隔。两者可以套用：外 Flex 分两端，内 Space 排操作组。
+
+:::demo
+
+```vue
+<template>
+  <c-flex justify="space-between" align="center" style="background: #fff; border: 1px solid #f0f0f0; padding: 12px 16px; border-radius: 6px">
+    <strong>订单列表</strong>
+    <c-space>
+      <c-button size="small">导出</c-button>
+      <c-button size="small">筛选</c-button>
+      <c-button size="small" type="primary">新建</c-button>
+    </c-space>
+  </c-flex>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
