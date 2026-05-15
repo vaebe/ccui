@@ -328,6 +328,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'ImagePreviewGroup 图片预览组',
+          link: '/components/image-preview-group/',
+          status: '80%',
+        },
+        {
           text: 'List 列表',
           link: '/components/list/',
           status: '100%',

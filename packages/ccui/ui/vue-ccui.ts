@@ -43,6 +43,7 @@ import IconInstall, {
   unregisterIcon,
 } from './icon'
 import ImageInstall, { Image } from './image'
+import ImagePreviewGroupInstall, { ImagePreviewGroup } from './image-preview-group'
 import InputInstall, { Input } from './input'
 import InputNumberInstall, { InputNumber } from './input-number'
 import InputOtpInstall, { InputOtp } from './input-otp'
@@ -136,6 +137,7 @@ const installs = [
   GridInstall,
   IconInstall,
   ImageInstall,
+  ImagePreviewGroupInstall,
   InputInstall,
   InputNumberInstall,
   InputOtpInstall,
@@ -236,6 +238,7 @@ export {
   resolveIcon,
   unregisterIcon,
   Image,
+  ImagePreviewGroup,
   Input,
   InputNumber,
   InputOtp,
