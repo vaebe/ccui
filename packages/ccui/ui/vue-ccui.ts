@@ -15,6 +15,8 @@ import ButtonInstall, { Button, ButtonGroup } from './button'
 import Button3DInstall, { Button3d } from './button-3d'
 import CalendarInstall, { Calendar } from './calendar'
 import CardInstall, { Card } from './card'
+import CardGridInstall, { CardGrid } from './card-grid'
+import CardMetaInstall, { CardMeta } from './card-meta'
 import CarouselInstall, { Carousel } from './carousel'
 import CascaderInstall, { Cascader } from './cascader'
 import CheckableTagInstall, { CheckableTag, CheckableTagGroup } from './checkable-tag'
@@ -122,6 +124,8 @@ const installs = [
   Button3DInstall,
   CalendarInstall,
   CardInstall,
+  CardGridInstall,
+  CardMetaInstall,
   CarouselInstall,
   CascaderInstall,
   CheckableTagInstall,
@@ -207,6 +211,8 @@ export {
   ButtonGroup,
   Calendar,
   Card,
+  CardGrid,
+  CardMeta,
   Carousel,
   Cascader,
   CheckableTag,

@@ -313,6 +313,16 @@ export default {
           status: '100%',
         },
         {
+          text: 'CardGrid 卡片网格',
+          link: '/components/card-grid/',
+          status: '90%',
+        },
+        {
+          text: 'CardMeta 卡片元信息',
+          link: '/components/card-meta/',
+          status: '90%',
+        },
+        {
           text: 'Carousel 走马灯',
           link: '/components/carousel/',
           status: '80%',
