@@ -110,4 +110,89 @@
     background-color: #ffe58f;
     padding: 0;
   }
+
+  // L-3.7 copyable / editable / ellipsis
+  &__copy,
+  &__edit {
+    margin-inline-start: 4px;
+    color: $ccui-color-primary;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+    font-size: 0.9em;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+    }
+  }
+
+  &__copy.is-copied {
+    color: $ccui-color-success;
+    cursor: default;
+  }
+
+  &__expand,
+  &__collapse {
+    margin-inline-start: 4px;
+    color: $ccui-color-primary;
+    cursor: pointer;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+    }
+  }
+
+  &__edit-input {
+    display: inline-block;
+    width: 100%;
+    min-width: 200px;
+    padding: 4px 8px;
+    font: inherit;
+    color: inherit;
+    background: $ccui-color-bg-elevated;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius-sm;
+    outline: none;
+    resize: vertical;
+    transition: border-color $ccui-motion-duration-mid;
+
+    &:focus {
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  // 单行截断
+  &--ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // 多行截断（webkit line-clamp）
+  &--ellipsis-2,
+  &--ellipsis-3,
+  &--ellipsis-4,
+  &--ellipsis-5,
+  &--ellipsis-6 {
+    overflow: hidden;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+
+  &--ellipsis-2 {
+    -webkit-line-clamp: 2;
+  }
+  &--ellipsis-3 {
+    -webkit-line-clamp: 3;
+  }
+  &--ellipsis-4 {
+    -webkit-line-clamp: 4;
+  }
+  &--ellipsis-5 {
+    -webkit-line-clamp: 5;
+  }
+  &--ellipsis-6 {
+    -webkit-line-clamp: 6;
+  }
 }

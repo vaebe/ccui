@@ -143,6 +143,145 @@
 
 :::
 
+## 可复制（copyable，L-3.7）
+
+文本右侧渲染复制按钮，点击调用 `navigator.clipboard.writeText`。3 秒后图标恢复。
+
+::: tip slot 替代 React render props
+
+ant `copyable.icon` (函数) → ccui **slot `copy-icon`** + scope `{ copied }`（与 [[feedback-vue-first-benchmark]] 「render props 翻 slot」原则一致）。`tooltips: [before, after]` 是数据元组保留为 prop。
+
+:::
+
+:::demo
+
+```vue
+<template>
+  <c-typography-text :copyable="true">复制这段文本</c-typography-text>
+  <br />
+  <c-typography-text :copyable="{ text: '强制复制的内容', tooltips: ['点我复制', '已成功复制'] }">
+    显示的是这一段，实际复制另一段
+  </c-typography-text>
+  <br />
+  <c-typography-text :copyable="true">
+    带自定义 icon
+    <template #copy-icon="{ copied }">
+      {{ copied ? '✅ 已复制' : '📋' }}
+    </template>
+  </c-typography-text>
+</template>
+```
+
+:::
+
+### CopyableConfig
+
+| 字段          | 类型                              | 默认           | 说明                                          |
+| ------------- | --------------------------------- | -------------- | --------------------------------------------- |
+| text          | string                            | slot.text      | 实际复制的文本；不传则取 default slot 的纯文本 |
+| copyableDelay | number                            | `3000`         | 复制后图标恢复延时（ms）                       |
+| tooltips      | `[string, string] \| false`       | `['复制','已复制']` | 鼠标 hover 时的 title 文字（hover tooltip）   |
+| onCopy        | `(text: string) => void`          | —              | 复制完成回调                                  |
+
+### slot
+
+| 名称       | 作用域       | 说明                                |
+| ---------- | ------------ | ----------------------------------- |
+| copy-icon  | `{ copied }` | 自定义复制按钮 icon（替代默认 ⎘ / ✓） |
+
+## 可编辑（editable，L-3.7）
+
+点击编辑按钮（或文本本身，配置 `triggerType: ['text']`）切入 textarea 内联编辑；Enter 提交、Escape 取消。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const text = ref('双击我编辑')
+
+function onChange(v) {
+  text.value = v
+}
+</script>
+
+<template>
+  <c-typography-text :editable="{ text, onChange }">{{ text }}</c-typography-text>
+  <br />
+  <c-typography-text :editable="{ triggerType: ['text'], onChange }">
+    点文本即编辑（无 icon）
+  </c-typography-text>
+</template>
+```
+
+:::
+
+### EditableConfig
+
+| 字段        | 类型                                          | 默认       | 说明                                                       |
+| ----------- | --------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| triggerType | `Array<'icon' \| 'text'>`                     | `['icon']` | 编辑触发方式                                               |
+| tooltip     | `string \| false`                             | —          | icon hover tooltip 文字                                    |
+| editing     | boolean                                       | —          | 受控编辑态                                                 |
+| text        | string                                        | slot.text  | 初始编辑文本                                               |
+| maxLength   | number                                        | —          | 最大字符数                                                 |
+| onStart     | `() => void`                                  | —          | 进入编辑回调                                               |
+| onChange    | `(value: string) => void`                     | —          | Enter 提交时回调                                           |
+| onCancel    | `() => void`                                  | —          | Escape 取消时回调                                          |
+| onEnd       | `() => void`                                  | —          | 编辑完成回调（onChange 之后触发）                          |
+
+### slot
+
+| 名称      | 作用域 | 说明                              |
+| --------- | ------ | --------------------------------- |
+| edit-icon | —      | 自定义编辑按钮 icon（替代默认 ✎） |
+
+## 截断（ellipsis，L-3.7）
+
+文字超出指定行数自动截断；可配合 `expandable` 展开 / 收起。
+
+::: warning jsdom 不能测真实尺寸
+
+`ellipsis` 的视觉效果靠 CSS `text-overflow: ellipsis` + `-webkit-line-clamp`。jsdom 无 layout 引擎，**测试只覆盖逻辑分支**（class 是否挂载 / slot 是否渲染 / expand state 切换 / title attribute），实际截断效果请在浏览器 demo 中肉眼验证。
+
+:::
+
+:::demo
+
+```vue
+<template>
+  <c-typography-paragraph :ellipsis="true">
+    这是一段很长的文字，单行截断，超出部分会被省略号代替。Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
+  </c-typography-paragraph>
+  <c-typography-paragraph :ellipsis="{ rows: 2 }">
+    两行截断。Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum, debitis quasi quaerat quibusdam earum sed odio nemo quos repudiandae illo ratione quod sequi animi cumque expedita facere?
+  </c-typography-paragraph>
+  <c-typography-paragraph :ellipsis="{ rows: 2, expandable: 'collapsible' }">
+    可展开 + 可收起。Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum, debitis quasi quaerat quibusdam earum sed odio nemo quos repudiandae illo ratione quod sequi animi cumque expedita facere?
+  </c-typography-paragraph>
+</template>
+```
+
+:::
+
+### EllipsisConfig
+
+| 字段        | 类型                                  | 默认       | 说明                                                           |
+| ----------- | ------------------------------------- | ---------- | -------------------------------------------------------------- |
+| rows        | number                                | `1`        | 截断行数（>1 走 `-webkit-line-clamp` 多行）                    |
+| expandable  | `boolean \| 'collapsible'`            | `false`    | true 显示展开按钮；`'collapsible'` 同时支持展开 + 收起          |
+| expanded    | boolean                               | —          | 受控展开态                                                     |
+| tooltip     | `boolean \| string`                   | `false`    | true 显示 `title` 原生 tooltip（jsdom 友好）；字符串则用该字符串 |
+| onExpand    | `(expanded: boolean) => void`         | —          | 展开 / 收起回调                                                |
+| onEllipsis  | `(clipped: boolean) => void`          | —          | 文本是否被截断的状态变化回调（v2.x 待接入实际 measure）         |
+
+### slot
+
+| 名称           | 作用域 | 说明                                  |
+| -------------- | ------ | ------------------------------------- |
+| expand-text    | —      | 自定义「展开」按钮文字（替代默认）    |
+| collapse-text  | —      | 自定义「收起」按钮文字（替代默认）    |
+
 ## API
 
 ### Title Props

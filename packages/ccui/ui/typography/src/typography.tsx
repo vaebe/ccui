@@ -1,6 +1,6 @@
 import type { Slots, VNode } from 'vue'
-import type { LinkProps, TextProps, TitleProps } from './typography-types'
-import { computed, defineComponent, h } from 'vue'
+import type { CopyableConfig, EditableConfig, EllipsisConfig, LinkProps, TextProps, TitleProps } from './typography-types'
+import { computed, defineComponent, h, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { linkProps, paragraphProps, textProps, titleProps } from './typography-types'
 import './typography.scss'
@@ -52,64 +52,304 @@ function renderInner(slots: Slots, props: TextProps): VNode[] | VNode | string {
   return children.map((c) => wrapWithDecorations(c, props)) as VNode[]
 }
 
-export const Text = defineComponent({
-  name: 'CTypographyText',
-  props: textProps,
-  setup(props, { slots }) {
-    const cls = computed(() => ({
-      ...buildModifierClasses(props as TextProps),
-      [ns.m('text')]: true,
-    }))
-    return () => h('span', { class: cls.value }, renderInner(slots, props as TextProps))
-  },
-})
+// ── L-3.7 共享子能力：复制 / 编辑 / 截断 ───────────────────────────
 
-export const Paragraph = defineComponent({
-  name: 'CTypographyParagraph',
-  props: paragraphProps,
-  setup(props, { slots }) {
-    const cls = computed(() => ({
-      ...buildModifierClasses(props as TextProps),
-      [ns.m('paragraph')]: true,
-    }))
-    return () => h('div', { class: cls.value }, renderInner(slots, props as TextProps))
-  },
-})
+function resolveConfig<T>(value: boolean | T | undefined, fallback: T): T | null {
+  if (value === false || value === undefined) return null
+  if (value === true) return fallback
+  return value
+}
 
-export const Title = defineComponent({
-  name: 'CTypographyTitle',
-  props: titleProps,
-  setup(props, { slots }) {
-    const cls = computed(() => ({
-      ...buildModifierClasses(props as unknown as TextProps),
-      [ns.m('title')]: true,
-      [ns.m(`title-${props.level}`)]: true,
-    }))
-    return () =>
-      h(`h${(props as TitleProps).level}`, { class: cls.value }, renderInner(slots, props as unknown as TextProps))
-  },
-})
+function getSlotText(slots: Slots): string {
+  const children = slots.default?.() ?? []
+  return children
+    .map((c) => {
+      if (typeof c === 'string') return c
+      if (typeof c.children === 'string') return c.children
+      return ''
+    })
+    .join('')
+}
 
-export const Link = defineComponent({
-  name: 'CTypographyLink',
-  props: linkProps,
-  setup(props, { slots }) {
-    const cls = computed(() => ({
-      ...buildModifierClasses(props as TextProps),
-      [ns.m('link')]: true,
-    }))
-    return () =>
-      h(
-        'a',
-        {
-          class: cls.value,
-          href: (props as LinkProps).href,
-          target: (props as LinkProps).target,
+// ─── Typography 主组件们 ────────────────────────────────────
+
+// L-3.7：通用 Typography setup 工厂，复用 copy / edit / ellipsis 全部逻辑
+function createTypographyComponent<Props extends TextProps>(name: string, propsDef: unknown, tag: (props: Props) => string, extraClass?: (props: Props) => Record<string, boolean>) {
+  return defineComponent({
+    name,
+    props: propsDef as never,
+    emits: ['update:editable-text'],
+    setup(props: Props, { slots, emit }) {
+      // copyable
+      const copyConfig = computed<CopyableConfig | null>(() => resolveConfig(props.copyable, {} as CopyableConfig))
+      const copied = ref(false)
+      let copyResetTimer: number | null = null
+      const triggerCopy = async () => {
+        const cfg = copyConfig.value
+        if (!cfg) return
+        const text = cfg.text ?? getSlotText(slots)
+        try {
+          if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text)
+          }
+          copied.value = true
+          cfg.onCopy?.(text)
+          const delay = cfg.copyableDelay ?? 3000
+          if (copyResetTimer !== null) clearTimeout(copyResetTimer)
+          copyResetTimer = window.setTimeout(() => {
+            copied.value = false
+            copyResetTimer = null
+          }, delay)
+        } catch {}
+      }
+
+      // editable
+      const editConfig = computed<EditableConfig | null>(() => resolveConfig(props.editable, {} as EditableConfig))
+      const editing = ref(false)
+      const editValue = ref('')
+      const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+      watch(
+        () => editConfig.value?.editing,
+        (v) => {
+          if (typeof v === 'boolean') editing.value = v
         },
-        renderInner(slots, props as TextProps),
       )
-  },
-})
+
+      const startEdit = () => {
+        const cfg = editConfig.value
+        if (!cfg) return
+        editValue.value = cfg.text ?? getSlotText(slots)
+        editing.value = true
+        cfg.onStart?.()
+        nextTick(() => {
+          textareaRef.value?.focus()
+        })
+      }
+      const finishEdit = () => {
+        const cfg = editConfig.value
+        if (!cfg) return
+        editing.value = false
+        cfg.onChange?.(editValue.value)
+        cfg.onEnd?.()
+        emit('update:editable-text', editValue.value)
+      }
+      const cancelEdit = () => {
+        editing.value = false
+        editConfig.value?.onCancel?.()
+      }
+      const onTextareaInput = (e: Event) => {
+        editValue.value = (e.target as HTMLTextAreaElement).value
+      }
+      const onTextareaKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          cancelEdit()
+          return
+        }
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault()
+          finishEdit()
+        }
+      }
+
+      // ellipsis
+      const ellipsisConfig = computed<EllipsisConfig | null>(() => resolveConfig(props.ellipsis, {} as EllipsisConfig))
+      const internalExpanded = ref(false)
+      const expanded = computed(() => {
+        const cfg = ellipsisConfig.value
+        if (cfg && typeof cfg.expanded === 'boolean') return cfg.expanded
+        return internalExpanded.value
+      })
+      const ellipsisRows = computed(() => ellipsisConfig.value?.rows ?? 1)
+      const ellipsisExpandable = computed(() => {
+        const cfg = ellipsisConfig.value
+        if (!cfg) return false
+        return cfg.expandable === true || cfg.expandable === 'collapsible'
+      })
+      const toggleExpand = () => {
+        const cfg = ellipsisConfig.value
+        if (!cfg) return
+        const next = !expanded.value
+        if (typeof cfg.expanded !== 'boolean') {
+          internalExpanded.value = next
+        }
+        cfg.onExpand?.(next)
+      }
+
+      onBeforeUnmount(() => {
+        if (copyResetTimer !== null) clearTimeout(copyResetTimer)
+      })
+
+      const cls = computed(() => ({
+        ...buildModifierClasses(props as TextProps),
+        ...(extraClass ? extraClass(props) : {}),
+        [ns.m('ellipsis')]: !!ellipsisConfig.value && !expanded.value,
+        [ns.m(`ellipsis-${ellipsisRows.value}`)]: !!ellipsisConfig.value && !expanded.value && ellipsisRows.value > 1,
+      }))
+
+      const renderCopyBtn = (): VNode | null => {
+        const cfg = copyConfig.value
+        if (!cfg) return null
+        const tooltips = cfg.tooltips === false ? null : cfg.tooltips ?? ['复制', '已复制']
+        const titleAttr = tooltips ? (copied.value ? tooltips[1] : tooltips[0]) : undefined
+        if (slots['copy-icon']) {
+          return (
+            <span
+              class={[ns.e('copy'), copied.value && ns.is('copied')]}
+              role="button"
+              title={titleAttr}
+              onClick={triggerCopy}
+            >
+              {slots['copy-icon']({ copied: copied.value })}
+            </span>
+          )
+        }
+        return (
+          <span
+            class={[ns.e('copy'), copied.value && ns.is('copied')]}
+            role="button"
+            title={titleAttr}
+            onClick={triggerCopy}
+          >
+            {copied.value ? '✓' : '⎘'}
+          </span>
+        )
+      }
+
+      const renderEditBtn = (): VNode | null => {
+        const cfg = editConfig.value
+        if (!cfg) return null
+        const triggerTypes = cfg.triggerType ?? ['icon']
+        if (!triggerTypes.includes('icon')) return null
+        if (slots['edit-icon']) {
+          return (
+            <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+              {slots['edit-icon']()}
+            </span>
+          )
+        }
+        return (
+          <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+            ✎
+          </span>
+        )
+      }
+
+      const renderExpandBtn = (): VNode | null => {
+        if (!ellipsisExpandable.value) return null
+        const cfg = ellipsisConfig.value!
+        if (expanded.value) {
+          // collapsible 模式下展示收起；普通 expandable 展开后不再返回
+          if (cfg.expandable !== 'collapsible' && cfg.expandable !== true) return null
+          return (
+            <span class={ns.e('collapse')} role="button" onClick={toggleExpand}>
+              {slots['collapse-text'] ? slots['collapse-text']() : '收起'}
+            </span>
+          )
+        }
+        return (
+          <span class={ns.e('expand')} role="button" onClick={toggleExpand}>
+            {slots['expand-text'] ? slots['expand-text']() : '展开'}
+          </span>
+        )
+      }
+
+      const renderEditingInput = (): VNode => {
+        const cfg = editConfig.value!
+        return (
+          <textarea
+            ref={(el) => {
+              textareaRef.value = el as HTMLTextAreaElement
+            }}
+            class={ns.e('edit-input')}
+            value={editValue.value}
+            maxlength={cfg.maxLength}
+            onInput={onTextareaInput}
+            onKeydown={onTextareaKeydown}
+            onBlur={finishEdit}
+          />
+        )
+      }
+
+      const onTextClick = () => {
+        const cfg = editConfig.value
+        if (!cfg) return
+        if ((cfg.triggerType ?? ['icon']).includes('text')) startEdit()
+      }
+
+      return () => {
+        const tagName = tag(props)
+        const ellipsisTitle = (() => {
+          const cfg = ellipsisConfig.value
+          if (!cfg || !cfg.tooltip || expanded.value) return undefined
+          return typeof cfg.tooltip === 'string' ? cfg.tooltip : getSlotText(slots)
+        })()
+
+        if (editing.value) {
+          return h(tagName, { class: cls.value }, [renderEditingInput()])
+        }
+
+        const tagAttrs: Record<string, unknown> = {
+          class: cls.value,
+          title: ellipsisTitle,
+          'data-ellipsis-rows': ellipsisConfig.value ? ellipsisRows.value : undefined,
+        }
+        if (editConfig.value && (editConfig.value.triggerType ?? ['icon']).includes('text')) {
+          tagAttrs.onClick = onTextClick
+        }
+        if (tagName === 'a') {
+          tagAttrs.href = (props as unknown as LinkProps).href
+          tagAttrs.target = (props as unknown as LinkProps).target
+        }
+
+        const children: (VNode | string)[] = []
+        const inner = renderInner(slots, props as TextProps)
+        if (Array.isArray(inner)) children.push(...inner)
+        else children.push(inner)
+
+        const editBtn = renderEditBtn()
+        const copyBtn = renderCopyBtn()
+        const expandBtn = renderExpandBtn()
+        if (expandBtn) children.push(expandBtn)
+        if (editBtn) children.push(editBtn)
+        if (copyBtn) children.push(copyBtn)
+
+        return h(tagName, tagAttrs, children)
+      }
+    },
+  })
+}
+
+export const Text = createTypographyComponent<TextProps>(
+  'CTypographyText',
+  textProps,
+  () => 'span',
+  () => ({ [ns.m('text')]: true }),
+)
+
+export const Paragraph = createTypographyComponent<TextProps>(
+  'CTypographyParagraph',
+  paragraphProps,
+  () => 'div',
+  () => ({ [ns.m('paragraph')]: true }),
+)
+
+export const Title = createTypographyComponent<TitleProps>(
+  'CTypographyTitle',
+  titleProps,
+  (props) => `h${(props as TitleProps).level}`,
+  (props) => ({
+    [ns.m('title')]: true,
+    [ns.m(`title-${(props as TitleProps).level}`)]: true,
+  }),
+)
+
+export const Link = createTypographyComponent<LinkProps>(
+  'CTypographyLink',
+  linkProps,
+  () => 'a',
+  () => ({ [ns.m('link')]: true }),
+)
 
 export const Typography = defineComponent({
   name: 'CTypography',
