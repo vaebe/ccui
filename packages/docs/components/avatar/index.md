@@ -119,6 +119,148 @@
 
 :::
 
+## 单字符 / Emoji 头像
+
+`custom-text` 可放任意字符（emoji / 符号 / 单汉字），适合代表「身份徽章」「机器人 / 系统」「VIP」等。
+
+:::demo
+
+```vue
+<template>
+  <c-avatar custom-text="👤" gender="male" />
+  &nbsp;
+  <c-avatar custom-text="🤖" />
+  &nbsp;
+  <c-avatar custom-text="VIP" gender="female" />
+  &nbsp;
+  <c-avatar custom-text="管" gender="male" />
+  &nbsp;
+  <c-avatar custom-text="🎉" :width="48" :height="48" />
+</template>
+```
+
+:::
+
+## 加载失败回退
+
+`img-src` 加载失败时，自动回退到文字头像（`custom-text` > `name` 的字符提取）。
+
+:::demo
+
+```vue
+<template>
+  <c-avatar name="张三" img-src="https://invalid-url.example/x.png" />
+  &nbsp;
+  <c-avatar
+    custom-text="VIP"
+    img-src="https://still-invalid.example/y.jpg"
+    gender="female"
+  />
+  &nbsp;
+  <c-avatar
+    name="default fallback"
+    img-src="https://broken.example/z.png"
+    :is-round="false"
+  />
+</template>
+```
+
+:::
+
+## 头像组（AvatarGroup）
+
+`<c-avatar-group>` 把多个头像聚拢展示，超出 `max-count` 时合并为 `+N`。
+
+:::demo
+
+```vue
+<template>
+  <c-avatar-group :max-count="3">
+    <c-avatar name="张三" />
+    <c-avatar name="李四" />
+    <c-avatar name="王五" />
+    <c-avatar name="赵六" />
+    <c-avatar name="孙七" />
+  </c-avatar-group>
+</template>
+```
+
+:::
+
+## 头像组 — 自定义溢出样式
+
+`max-style` 控制 `+N` 头像的背景 / 文字色。
+
+:::demo
+
+```vue
+<template>
+  <c-avatar-group :max-count="2" :max-style="{ backgroundColor: '#f56a00', color: '#fff' }">
+    <c-avatar name="张三" />
+    <c-avatar name="李四" />
+    <c-avatar name="王五" />
+    <c-avatar name="赵六" />
+    <c-avatar name="孙七" />
+  </c-avatar-group>
+  <br /><br />
+  <c-avatar-group size="large" :max-count="3">
+    <c-avatar name="A" gender="male" />
+    <c-avatar name="B" gender="female" />
+    <c-avatar name="C" gender="male" />
+    <c-avatar name="D" />
+    <c-avatar name="E" />
+  </c-avatar-group>
+</template>
+```
+
+:::
+
+## 用户列表场景
+
+头像 + 姓名 + 描述的典型列表项排版。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: grid; gap: 12px">
+    <div v-for="u in [
+      { name: '张三', gender: 'male', desc: '前端工程师 · 上海' },
+      { name: '王芳', gender: 'female', desc: '产品经理 · 北京' },
+      { name: 'Alex Liu', desc: 'Tech Lead · 杭州' },
+    ]" :key="u.name" style="display: flex; align-items: center; gap: 12px">
+      <c-avatar :name="u.name" :gender="u.gender" />
+      <div>
+        <div style="font-weight: 600">{{ u.name }}</div>
+        <div style="font-size: 12px; color: #999">{{ u.desc }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+```
+
+:::
+
+## 评论头像
+
+评论场景下头像在左、内容在右的典型布局。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #eee; border-radius: 8px">
+    <c-avatar name="李四" gender="male" :width="40" :height="40" />
+    <div style="flex: 1">
+      <div style="font-weight: 600">李四 <span style="color: #999; font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span></div>
+      <div style="margin-top: 4px; color: #555">很好用的组件库，文档示例齐全！</div>
+    </div>
+  </div>
+</template>
+```
+
+:::
+
 ## 显示规则
 
 - 优先级：`imgSrc > customText > name`
