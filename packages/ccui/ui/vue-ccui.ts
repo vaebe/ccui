@@ -26,6 +26,7 @@ import ColorPickerInstall, { ColorPicker } from './color-picker'
 import ConfigProviderInstall, { ConfigProvider, useConfig } from './config-provider'
 import DatePickerInstall, { DatePicker } from './date-picker'
 import DescriptionsInstall, { Descriptions, DescriptionsItem } from './descriptions'
+import DirectoryTreeInstall, { DirectoryTree } from './directory-tree'
 import DividerInstall, { Divider } from './divider'
 import DrawerInstall, { Drawer } from './drawer'
 import DropdownInstall, { Dropdown } from './dropdown'
@@ -139,6 +140,7 @@ const installs = [
   ConfigProviderInstall,
   DatePickerInstall,
   DescriptionsInstall,
+  DirectoryTreeInstall,
   DividerInstall,
   DrawerInstall,
   DropdownInstall,
@@ -234,6 +236,7 @@ export {
   DatePicker,
   Descriptions,
   DescriptionsItem,
+  DirectoryTree,
   Divider,
   Drawer,
   Dropdown,

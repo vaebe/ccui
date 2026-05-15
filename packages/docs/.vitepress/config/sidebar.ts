@@ -423,6 +423,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'DirectoryTree 目录树',
+          link: '/components/directory-tree/',
+          status: '90%',
+        },
+        {
           text: 'Watermark 水印',
           link: '/components/watermark/',
           status: '100%',
