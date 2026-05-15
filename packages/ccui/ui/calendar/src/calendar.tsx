@@ -180,9 +180,19 @@ export default defineComponent({
       )
     }
 
+    // L-2.19：header slot 的富作用域。把 navigation 工具 + 当前态一起暴露给 slot，让用户自定义工具栏时不必从外部重写月份切换逻辑。
+    // 同时保留旧 string 形式的 .value 字段（旧 demo 模板 `{{ d.value }}` 可继续工作；裸 `{{ d }}` 会显示 [object Object]，需迁移）。
+    // 与 ant `headerRender({ value, onChange, onTypeChange })` 心智一致，但 token 是 ccui 风格：setDate / changeMonth。
+    const headerScope = computed(() => ({
+      value: currentDate.value,
+      currentMonth: currentMonth.value,
+      setDate: (date: string) => setCurrentDate(date),
+      changeMonth: (direction: 'lastMonth' | 'nextMonth') => changeMonth(direction),
+    }))
+
     return () => (
       <div class={ns.b()}>
-        {slots.header ? slots.header(currentDate.value) : defaultHeader()}
+        {slots.header ? slots.header(headerScope.value) : defaultHeader()}
         <div class={ns.e('week')}>{weekItemList}</div>
         <div class={ns.e('day-box')}>{dateItemList.value}</div>
       </div>

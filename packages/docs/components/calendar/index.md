@@ -76,7 +76,20 @@ const date = ref(new Date())
 
 ## 自定义 header
 
-`#header` 插槽接收当前格式化日期，可换成业务自定义的工具栏（前后月切换、跳转今天等）。
+`#header` 插槽对标 Ant Design `Calendar.headerRender` render-prop（Vue 化为 slot）。
+
+::: warning L-2.19 起：slot 作用域改为对象
+之前 slot 作用域是 `string`（仅当前日期），现在是富对象 `{ value, currentMonth, setDate, changeMonth }`，让 slot 自行调用月份切换 API 而无需从外部维护状态：
+
+| 字段          | 类型                                          | 说明                                   |
+| ------------- | --------------------------------------------- | -------------------------------------- |
+| value         | `string`                                      | 当前选中日期（`YYYY-MM-DD`）            |
+| currentMonth  | `string`                                      | 当前展示月份（`YYYY-MM`）                |
+| setDate       | `(date: string) => void`                      | 跳转到任意 `YYYY-MM-DD`                 |
+| changeMonth   | `(direction: 'lastMonth' \| 'nextMonth') => void` | 上下月切换                       |
+
+**迁移**：旧 `<template #header="d">{{ d }}</template>` → 改为 `<template #header="d">{{ d.value }}</template>`。
+:::
 
 :::demo
 
@@ -85,25 +98,17 @@ const date = ref(new Date())
 import { ref } from 'vue'
 
 const date = ref(new Date())
-
-function shift(days) {
-  const ts = date.value.getTime() + 86_400_000 * days
-  date.value = new Date(ts)
-}
-
-function today() {
-  date.value = new Date()
-}
 </script>
 
 <template>
   <c-calendar v-model="date">
-    <template #header="d">
+    <template #header="{ value, currentMonth, setDate, changeMonth }">
       <div style="padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f0f0f0">
-        <c-button size="small" @click="shift(-1)">‹ 前一天</c-button>
-        <c-button size="small" @click="shift(1)">后一天 ›</c-button>
-        <c-button size="small" type="primary" @click="today">今天</c-button>
-        <span style="margin-inline-start: auto; color: #666">当前：{{ d }}</span>
+        <c-button size="small" @click="changeMonth('lastMonth')">‹ 上月</c-button>
+        <c-button size="small" @click="changeMonth('nextMonth')">下月 ›</c-button>
+        <c-button size="small" type="primary" @click="setDate(new Date().toISOString().slice(0, 10))">今天</c-button>
+        <span style="margin-inline-start: auto; color: #666">当前月：{{ currentMonth }}</span>
+        <span style="color: #666">选中：{{ value }}</span>
       </div>
     </template>
   </c-calendar>
@@ -197,7 +202,7 @@ const date = ref(new Date())
 
 ### Slots
 
-| 名称     | 说明                                                                                |
-| -------- | ----------------------------------------------------------------------------------- |
-| header   | 自定义日历头部，参数为格式化后的日期字符串                                          |
-| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号 |
+| 名称     | 说明                                                                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| header   | 自定义日历头部。**L-2.19 起：作用域为对象** `{ value, currentMonth, setDate, changeMonth }`（详见上方 demo）；之前为字符串，旧用法需迁移到 `d.value` 访问。 |
+| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号                                                                    |

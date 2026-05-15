@@ -144,4 +144,66 @@ describe('calendar', () => {
 
     wrapper.unmount()
   })
+
+  // L-2.19：header slot 富作用域
+  it('header slot 接收富作用域对象 { value, currentMonth, setDate, changeMonth }', () => {
+    let scope: any = null
+    const wrapper = createWrapper(
+      { modelValue: new Date('2026-03-15') },
+      {
+        header: (s: any) => {
+          scope = s
+          return `<div class="my-header">${s.value}</div>` as any
+        },
+      },
+    )
+    expect(scope).not.toBeNull()
+    expect(scope.value).toBe('2026-03-15')
+    expect(scope.currentMonth).toBe('2026-03')
+    expect(typeof scope.setDate).toBe('function')
+    expect(typeof scope.changeMonth).toBe('function')
+    wrapper.unmount()
+  })
+
+  it('header slot 的 changeMonth("nextMonth") 触发月份切换', async () => {
+    let capturedScope: any = null
+    const wrapper = mount(Calendar, {
+      props: { modelValue: new Date('2026-03-15') },
+      slots: {
+        header: (s: any) => {
+          capturedScope = s
+          return undefined as any
+        },
+      },
+      global: { components: { Button } },
+    })
+    capturedScope.changeMonth('nextMonth')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    const emittedDate = wrapper.emitted('update:modelValue')![0][0] as Date
+    expect(emittedDate.getMonth()).toBe(3) // 0-indexed: 3 = April
+    wrapper.unmount()
+  })
+
+  it('header slot 的 setDate 直接跳转到任意日期', async () => {
+    let capturedScope: any = null
+    const wrapper = mount(Calendar, {
+      props: { modelValue: new Date('2026-03-15') },
+      slots: {
+        header: (s: any) => {
+          capturedScope = s
+          return undefined as any
+        },
+      },
+      global: { components: { Button } },
+    })
+    capturedScope.setDate('2026-12-25')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    const emittedDate = wrapper.emitted('update:modelValue')![0][0] as Date
+    expect(emittedDate.getFullYear()).toBe(2026)
+    expect(emittedDate.getMonth()).toBe(11)
+    expect(emittedDate.getDate()).toBe(25)
+    wrapper.unmount()
+  })
 })
