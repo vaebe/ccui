@@ -396,22 +396,34 @@ export default defineComponent({
 
 ### Tooltip Props
 
-| 参数                      | 说明                                       | 类型    | 可选值                                                                                                    | 默认值 |
-| ------------------------- | ------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------- | ------ |
-| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string  | —                                                                                                         | —      |
-| placement                 | Tooltip 的出现位置                         | string  | top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end | bottom |
-| effect                    | 默认提供的主题                             | string  | dark/light                                                                                                | dark   |
-| visible / v-model:visible | 状态是否可见                               | boolean | —                                                                                                         | false  |
-| disabled                  | Tooltip 是否可用                           | boolean | —                                                                                                         | false  |
-| offset                    | 出现位置的偏移量                           | number  | —                                                                                                         | 8      |
-| show-after                | 延迟出现，单位毫秒                         | number  | —                                                                                                         | 0      |
-| hide-after                | 延迟关闭，单位毫秒                         | number  | —                                                                                                         | 200    |
-| show-arrow                | 是否显示 Tooltip 箭头                      | boolean | —                                                                                                         | true   |
-| popper-class              | 为 Tooltip 的 popper 添加类名              | string  | —                                                                                                         | —      |
-| enterable                 | 鼠标是否可进入到 tooltip 中                | boolean | —                                                                                                         | true   |
-| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean | —                                                                                                         | false  |
-| trigger                   | 触发方式                                   | string  | hover/focus/click/manual                                                                                  | hover  |
-| aria-label                | 屏幕阅读器标签                             | string  | —                                                                                                         | —      |
+| 参数                                 | 说明                                                                                                  | 类型                                              | 默认值 |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------ |
+| title                                | 显示的内容（Ant 主名）。也可用 `slot#title` 传入                                                       | string \| VNode                                   | —      |
+| content                              | 同 `title`（保留 ccui 旧名，slot 同名 `content` 可用）                                                  | string                                            | —      |
+| open / v-model:open                  | 显示状态（Ant 主名）                                                                                  | boolean                                           | false  |
+| visible / v-model:visible            | @deprecated 请改用 `open`                                                                             | boolean                                           | false  |
+| placement                            | 出现位置                                                                                              | `'top' \| 'top-start' \| 'top-end' \| 'bottom*' \| 'left*' \| 'right*'`（12 种） | bottom |
+| effect                               | 内置主题                                                                                              | `'dark' \| 'light'`                              | dark   |
+| color                                | 自定义背景色（覆盖 `effect`）                                                                          | string                                            | —      |
+| arrow                                | 箭头配置；对象形 `{ pointAtCenter: true }` 让箭头对准触发器中心                                       | `boolean \| { pointAtCenter: boolean }`           | true   |
+| show-arrow                           | @deprecated 请改用 `arrow`                                                                            | boolean                                           | true   |
+| mouseEnterDelay                      | 鼠标进入触发显示的延迟（ms，Ant 主名）                                                                | number                                            | 0      |
+| show-after                           | @deprecated 请改用 `mouseEnterDelay`                                                                  | number                                            | 0      |
+| mouseLeaveDelay                      | 鼠标离开触发隐藏的延迟（ms，Ant 主名）                                                                | number                                            | 200    |
+| hide-after                           | @deprecated 请改用 `mouseLeaveDelay`                                                                  | number                                            | 200    |
+| overlayClassName                     | 弹层 class（Ant 主名）                                                                                | string                                            | —      |
+| popper-class                         | @deprecated 请改用 `overlayClassName`                                                                 | string                                            | —      |
+| trigger                              | 触发方式                                                                                              | `'hover' \| 'focus' \| 'click' \| 'manual'`     | hover  |
+| disabled                             | 是否禁用                                                                                              | boolean                                           | false  |
+| offset                               | 距触发器的偏移量（px）                                                                                | number                                            | 8      |
+| enterable                            | 鼠标是否可进入到 tooltip 中                                                                           | boolean                                           | true   |
+| raw-content                          | 是否将 content 作为 HTML 字符串处理                                                                   | boolean                                           | false  |
+| fresh                                | 关闭后是否销毁内部内容（覆盖一次性数据用）                                                            | boolean                                           | false  |
+| destroyTooltipOnHide                 | 隐藏时销毁 tooltip 节点（与 `fresh` 类似的清理语义）                                                  | boolean                                           | false  |
+| autoAdjustOverflow                   | 自动调整方向避免溢出（接 floating-ui flip middleware）                                                | boolean                                           | true   |
+| align                                | 自定义 floating-ui `offset` / `flip` 等微调参数                                                       | object                                            | —      |
+| getPopupContainer                    | 自定义弹层容器（返回 `null` 不 Teleport）                                                              | `(trigger: HTMLElement \| null) => HTMLElement \| null` | —      |
+| aria-label                           | 屏幕阅读器标签                                                                                        | string                                            | —      |
 
 ### Tooltip Events
 
@@ -424,7 +436,8 @@ export default defineComponent({
 
 ### Tooltip Slots
 
-| 插槽名  | 说明                      |
-| ------- | ------------------------- |
-| default | Tooltip 触发 & 引用的元素 |
-| content | 自定义内容                |
+| 插槽名  | 说明                                     |
+| ------- | ---------------------------------------- |
+| default | Tooltip 触发 & 引用的元素                |
+| title   | 自定义内容（Ant 主名，优先于 `title` prop） |
+| content | 同 `title`（旧名 slot，仍可用）          |

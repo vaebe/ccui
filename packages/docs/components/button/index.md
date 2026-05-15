@@ -411,25 +411,49 @@ export default defineComponent({
 
 ## Button参数
 
-| 参数        | 类型                                  | 默认   | 说明                |
-| ----------- | ------------------------------------- | ------ | ------------------- |
-| size        | [ButtonSizeType](#buttonsizetype)     | --     | 尺寸                |
-| type        | [ButtonType](#buttontype)             | --     | 类型                |
-| plain       | boolean                               | false  | 是否为朴素按钮      |
-| round       | boolean                               | false  | 是否为圆角按钮      |
-| circle      | boolean                               | false  | 是否为圆形按钮      |
-| disabled    | boolean                               | false  | 是否为禁用状态      |
-| autofocus   | boolean                               | false  | 原生 autofocus 属性 |
-| native-type | [ButtonNativeType](#buttonnativetype) | button | 原生 type 属性      |
-| loading     | boolean                               | false  | 是否为加载状态      |
-| icon        | string                                | --     | 图标类名            |
+| 参数             | 类型                                          | 默认    | 说明                                                                                |
+| ---------------- | --------------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| size             | [ButtonSizeType](#buttonsizetype)             | --      | 尺寸                                                                                |
+| type             | [ButtonType](#buttontype)                     | --      | 类型，扩展了 Ant 主名：`'default' \| 'dashed' \| 'link'`                              |
+| shape            | 'default' \| 'circle' \| 'round'              | default | 形状（Ant 主名，替代 boolean `round` / `circle`）                                    |
+| htmlType         | [ButtonNativeType](#buttonnativetype)         | button  | 原生 type 属性（Ant 主名）                                                            |
+| danger           | boolean                                       | false   | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类，与 ant 对齐）                   |
+| ghost            | boolean                                       | false   | 幽灵按钮（透明背景 + 描边色）                                                         |
+| block            | boolean                                       | false   | 撑满父宽度                                                                            |
+| autoInsertSpace  | boolean                                       | true    | 两个 CJK 字符之间自动插入空格（与 ant v5.17+ 对齐）                                   |
+| href             | string                                        | --      | 设置后用 `<a role="button">` 渲染                                                     |
+| target           | string                                        | --      | 配合 `href` 透传 `target`                                                             |
+| icon             | string \| VNode                               | --      | 图标（也可用 `icon` slot）                                                            |
+| iconPosition     | 'start' \| 'end'                              | start   | 图标位置                                                                              |
+| disabled         | boolean                                       | false   | 是否为禁用状态                                                                        |
+| autofocus        | boolean                                       | false   | 原生 autofocus 属性                                                                  |
+| loading          | boolean \| { delay?: number; icon?: VNode \| string } | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                  |
+| color            | string                                        | --      | 自定义按钮主色（Ant v5.21+，与 `variant` 配合形成色变体矩阵）                          |
+| variant          | 'outlined' \| 'dashed' \| 'solid' \| 'filled' \| 'text' \| 'link' | --      | 视觉变体（Ant v5.21+）                                                              |
+| plain            | boolean                                       | false   | @deprecated 旧 ccui 朴素按钮，保留行为；新代码用 `variant`                            |
+| round            | boolean                                       | false   | @deprecated 请改用 `shape="round"`                                                   |
+| circle           | boolean                                       | false   | @deprecated 请改用 `shape="circle"`                                                  |
+| native-type      | [ButtonNativeType](#buttonnativetype)         | button  | @deprecated 请改用 `htmlType`                                                        |
+
+## ButtonGroup 参数
+
+`ButtonGroup`（`<c-button-group>`）：按钮组，向子按钮注入 `size` / `disabled`，并让相邻边框对齐。
+
+| 参数     | 类型                            | 默认    | 说明                                                |
+| -------- | ------------------------------- | ------- | --------------------------------------------------- |
+| size     | 'large' \| 'default' \| 'small' | default | 注入给所有子按钮（子按钮显式 prop 仍优先）          |
+| disabled | boolean                         | false   | 注入给所有子按钮                                    |
 
 ## Button类型定义
 
 ### ButtonType
 
 ```ts
-export type ButtonType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'text'
+export type ButtonType =
+  // ccui 旧
+  | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'text'
+  // Ant 主名扩展
+  | 'default' | 'dashed' | 'link'
 ```
 
 ### ButtonSizeType

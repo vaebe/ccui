@@ -489,13 +489,24 @@ Popover 的显隐状态说明以 Vue API 为准：
 | content                   | 显示的内容，也可以通过 `slot#content` 传入 | string         | —                                                                                                         | —                  |
 | placement                 | Popover 的出现位置                         | string         | top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end | bottom             |
 | effect                    | 默认提供的主题                             | string         | dark/light                                                                                                | light              |
-| visible / v-model:visible | 状态是否可见                               | boolean        | —                                                                                                         | false              |
+| open / v-model:open       | 显示状态（Ant 主名）                       | boolean        | —                                                                                                         | false              |
+| visible / v-model:visible | @deprecated 请改用 `open`                  | boolean        | —                                                                                                         | false              |
 | disabled                  | Popover 是否可用                           | boolean        | —                                                                                                         | false              |
-| show-arrow                | 是否显示 Popover 箭头                      | boolean        | —                                                                                                         | true               |
+| color                     | 自定义背景色（覆盖 `effect`）              | string         | —                                                                                                         | —                  |
+| arrow                     | 箭头配置；对象形 `{ pointAtCenter }`        | `boolean \| { pointAtCenter: boolean }` | —                                                                                | true               |
+| show-arrow                | @deprecated 请改用 `arrow`                 | boolean        | —                                                                                                         | true               |
 | trigger                   | 触发方式                                   | string         | hover/focus/click/manual/contextmenu                                                                      | click              |
-| show-after                | 延迟出现，单位毫秒                         | number         | —                                                                                                         | 0                  |
-| hide-after                | 延迟关闭，单位毫秒                         | number         | —                                                                                                         | 200                |
-| popper-class              | 为 Popover 的 popper 添加类名              | string         | —                                                                                                         | —                  |
+| mouseEnterDelay           | 进入显示延迟（ms，Ant 主名）               | number         | —                                                                                                         | 0                  |
+| mouseLeaveDelay           | 离开隐藏延迟（ms，Ant 主名）               | number         | —                                                                                                         | 200                |
+| show-after                | @deprecated 请改用 `mouseEnterDelay`       | number         | —                                                                                                         | 0                  |
+| hide-after                | @deprecated 请改用 `mouseLeaveDelay`       | number         | —                                                                                                         | 200                |
+| overlayClassName          | 弹层 class（Ant 主名）                     | string         | —                                                                                                         | —                  |
+| popper-class              | @deprecated 请改用 `overlayClassName`      | string         | —                                                                                                         | —                  |
+| fresh                     | 关闭后是否销毁内部内容                     | boolean        | —                                                                                                         | false              |
+| destroyTooltipOnHide      | 隐藏时销毁弹层节点                         | boolean        | —                                                                                                         | false              |
+| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip） | boolean        | —                                                                                                         | true               |
+| align                     | floating-ui offset / flip 等微调参数       | object         | —                                                                                                         | —                  |
+| getPopupContainer         | 自定义弹层容器；返回 `null` 内联渲染不 Teleport | `(trigger) => HTMLElement \| null` | —                                                                                | —                  |
 | offset                    | 出现位置的偏移量                           | number         | —                                                                                                         | 4                  |
 | raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean        | —                                                                                                         | false              |
 | enterable                 | 鼠标是否可进入到 popover 中                | boolean        | —                                                                                                         | true               |
@@ -520,7 +531,8 @@ Popover 的显隐状态说明以 Vue API 为准：
 | show           | 显示时触发         | —        |
 | before-hide    | 隐藏前触发         | —        |
 | hide           | 隐藏时触发         | —        |
-| update:visible | 状态变更时触发     | visible  |
+| update:open    | v-model:open 同步（Ant 主名）   | open    |
+| update:visible | 同步触发的旧名，便于从 v-model:visible 渐进迁移 | visible |
 | before-enter   | 显示动画播放前触发 | —        |
 | after-enter    | 显示动画播放后触发 | —        |
 | before-leave   | 隐藏动画播放前触发 | —        |
