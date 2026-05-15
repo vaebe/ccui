@@ -338,6 +338,11 @@ export default {
           status: '80%',
         },
         {
+          text: 'CheckableTag 可勾选标签',
+          link: '/components/checkable-tag/',
+          status: '90%',
+        },
+        {
           text: 'Rate 评分',
           link: '/components/rate/',
           status: '100%',

@@ -15,6 +15,7 @@ import CalendarInstall, { Calendar } from './calendar'
 import CardInstall, { Card } from './card'
 import CarouselInstall, { Carousel } from './carousel'
 import CascaderInstall, { Cascader } from './cascader'
+import CheckableTagInstall, { CheckableTag, CheckableTagGroup } from './checkable-tag'
 import CheckBoxInstall, { CheckBox } from './check-box'
 import CollapseInstall, { Collapse, CollapseItem } from './collapse'
 import ColorPickerInstall, { ColorPicker } from './color-picker'
@@ -118,6 +119,7 @@ const installs = [
   CardInstall,
   CarouselInstall,
   CascaderInstall,
+  CheckableTagInstall,
   CheckBoxInstall,
   CollapseInstall,
   ColorPickerInstall,
@@ -199,6 +201,8 @@ export {
   Card,
   Carousel,
   Cascader,
+  CheckableTag,
+  CheckableTagGroup,
   CheckBox,
   Collapse,
   CollapseItem,
