@@ -2,6 +2,25 @@
 
 为页面、侧边栏和应用顶部提供导航。功能和视觉优先对齐 Ant Design Menu 的高频用法，同时保持 Vue 组件的声明式 props、`v-model` 和事件风格；React 专属的 `ReactNode`、`items` 渲染约定不会直接照搬。
 
+## 对标 Ant Design 子组件
+
+::: tip 配置式 API（与模板式取舍）
+ccui 的 `<c-menu>` 走**配置式 API**：所有菜单项、子菜单、分组、分割线都通过 `items: MenuItem[]` prop 用 `type` 字段表达，**不暴露 `Menu.SubMenu` / `Menu.ItemGroup` / `Menu.Divider` 子组件命名空间**（与 ccui 整体「平铺独立顶层组件，不挂静态属性」原则一致）。
+
+理由：Menu 数据结构高度规整（树形 + 类型枚举），配置式 API 在动态菜单（如基于后端权限）场景比模板式更简洁；模板式如 `<c-sub-menu>` 等子组件如有强需求，留作后续 v2.x 演进项。
+:::
+
+下面的对照表说明 ant 的子组件如何映射到 ccui 的 `items.type`：
+
+| Ant Design React          | ccui Vue 等价                                                                | 说明                              |
+| ------------------------- | ---------------------------------------------------------------------------- | --------------------------------- |
+| `<Menu.Item />`           | `{ key, label, icon? }`                                                      | 普通菜单项（`type` 默认 `'item'`） |
+| `<Menu.SubMenu />`        | `{ key, label, type: 'submenu' \| undefined, children: MenuItem[] }`         | 含 `children` 即为子菜单           |
+| `<Menu.ItemGroup />`      | `{ key, label, type: 'group', children: MenuItem[] }`                        | 分组容器（不可点）                 |
+| `<Menu.Divider />`        | `{ key, type: 'divider' }`                                                   | 分割线                            |
+
+`type` 字段缺省时自动推断：有 `children` 视为 `'submenu'`，无 `children` 视为 `'item'`。
+
 ## 基本用法
 
 :::demo
