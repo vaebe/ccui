@@ -108,6 +108,91 @@
 
 :::
 
+## 虚线 + 文案
+
+`border-style="dashed"` 与文案 / `content-position` 可以自由组合，常用于「可选区块分隔」「业务流程节点」。
+
+:::demo
+
+```vue
+<template>
+  <c-divider border-style="dashed">虚线居中</c-divider>
+  <c-divider border-style="dashed" content-position="left">虚线靠左</c-divider>
+  <c-divider border-style="dashed" content-position="right" content-color="#1677ff">
+    可选区块 →
+  </c-divider>
+</template>
+```
+
+:::
+
+## 章节标题分隔
+
+把 `<h3>` 与 Divider 搭配使用，是长文档 / 长表单常见的「视觉分章」范式。
+
+:::demo
+
+```vue
+<template>
+  <h3 style="margin: 16px 0 0">基本信息</h3>
+  <c-divider style="margin: 12px 0" />
+  <p style="color: #666; margin: 0">姓名 / 头像 / 联系方式</p>
+
+  <h3 style="margin: 24px 0 0">账号设置</h3>
+  <c-divider style="margin: 12px 0" />
+  <p style="color: #666; margin: 0">密码 / 双因素验证 / 登录历史</p>
+
+  <h3 style="margin: 24px 0 0">通知偏好</h3>
+  <c-divider style="margin: 12px 0" />
+  <p style="color: #666; margin: 0">邮件 / 短信 / 站内消息</p>
+</template>
+```
+
+:::
+
+## 线型动态切换
+
+`border-style` 接收响应式值，可以与开关 / 单选联动，便于业务上「打印模式 / 编辑模式」切换。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const styleMode = ref('solid')
+</script>
+
+<template>
+  <c-segmented v-model="styleMode" :options="['solid', 'dashed']" style="margin-bottom: 12px" />
+  <c-divider :border-style="styleMode">当前线型：{{ styleMode }}</c-divider>
+</template>
+```
+
+:::
+
+## 行内多段分组
+
+垂直 Divider 配合一行多段操作时，可以用多个 `c-divider direction="vertical"` 把按钮分成「编辑组 / 状态组 / 危险操作组」三段。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; align-items: center; gap: 4px">
+    <c-button type="text">复制</c-button>
+    <c-button type="text">编辑</c-button>
+    <c-divider direction="vertical" />
+    <c-button type="text">归档</c-button>
+    <c-button type="text">置顶</c-button>
+    <c-divider direction="vertical" />
+    <c-button type="text" danger>删除</c-button>
+  </div>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

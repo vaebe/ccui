@@ -154,6 +154,140 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
 
 :::
 
+## 事件追踪（load / error / click）
+
+`load` / `error` / `click` 三个事件覆盖图片完整生命周期，可用于埋点、上报、统计。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const logs = ref([])
+function trace(type, e) {
+  logs.value.unshift(`[${new Date().toLocaleTimeString()}] ${type}`)
+  if (logs.value.length > 5) logs.value.length = 5
+}
+</script>
+
+<template>
+  <div style="display: flex; gap: 12px; align-items: flex-start">
+    <c-image
+      src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
+      :width="160"
+      :height="120"
+      @load="trace('load')"
+      @error="trace('error')"
+      @click="trace('click')"
+    />
+    <ul style="margin: 0; padding-left: 18px; color: #666; font-size: 12px">
+      <li v-if="!logs.length">尚无事件</li>
+      <li v-for="(log, i) in logs" :key="i">{{ log }}</li>
+    </ul>
+  </div>
+</template>
+```
+
+:::
+
+## 多张图片相册（ImagePreviewGroup）
+
+`<c-image-preview-group>` 把多张图聚成一组，点击任一张进入统一预览：左右切换 / 缩放 / 关闭。
+
+:::demo
+
+```vue
+<script setup>
+const photos = [
+  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+]
+</script>
+
+<template>
+  <c-image-preview-group :items="photos">
+    <div style="display: flex; gap: 12px">
+      <c-image v-for="(url, i) in photos" :key="i" :src="url" :width="120" :height="80" fit="cover" />
+    </div>
+  </c-image-preview-group>
+  <p style="margin-top: 8px; color: #666">点击任一张图片打开相册预览</p>
+</template>
+```
+
+:::
+
+## 受控预览（外部按钮唤起）
+
+`preview` 传对象进入受控模式：父组件决定 `visible` / `current`，预览状态变化通过 `update:preview` 与 `change` 回写。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const photos = [
+  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+]
+const previewState = ref({ visible: false, current: 0 })
+
+function openAt(idx) {
+  previewState.value = { visible: true, current: idx }
+}
+</script>
+
+<template>
+  <div style="display: flex; gap: 8px; margin-bottom: 12px">
+    <c-button @click="openAt(0)">从第 1 张开始</c-button>
+    <c-button @click="openAt(1)">从第 2 张开始</c-button>
+  </div>
+  <c-image-preview-group v-model:preview="previewState" :items="photos" />
+</template>
+```
+
+:::
+
+## 失败兜底链
+
+`fallback` 与 `#error` slot 可同时存在：fallback 是「先重试一次」，再失败才走 error slot。常用于 CDN 多重备份场景。
+
+:::demo
+
+```vue
+<template>
+  <c-image
+    src="https://invalid.example.com/y.png"
+    :width="200"
+    :height="120"
+    fallback="https://also-invalid.example.com/x.png"
+  >
+    <template #error>
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          background: #fafafa;
+          color: #cf1322;
+          font-size: 12px;
+          gap: 4px;
+        "
+      >
+        <span>⚠️</span>
+        <span>主图与备份图均失败</span>
+      </div>
+    </template>
+  </c-image>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

@@ -125,6 +125,149 @@ const deadlineFull = computed(() => Date.now() + 1000 * 60 * 60 * 28)
 
 :::
 
+## 倒计时事件 finish / change
+
+`finish` 在倒计时归零时触发；`change` 每 tick 回传剩余毫秒数，可联动状态切换或上报。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const deadline = ref(Date.now() + 1000 * 5)
+const status = ref('进行中')
+const lastTick = ref('—')
+
+function onFinish() {
+  status.value = '已结束'
+}
+
+function onChange(remaining) {
+  lastTick.value = `${remaining} ms`
+}
+
+function reset() {
+  deadline.value = Date.now() + 1000 * 5
+  status.value = '进行中'
+}
+</script>
+
+<template>
+  <c-statistic-countdown
+    title="距活动结束"
+    :value="deadline"
+    format="ss.SSS"
+    @finish="onFinish"
+    @change="onChange"
+  />
+  <p style="margin: 8px 0 4px; color: #666">状态：{{ status }} · 上次 tick：{{ lastTick }}</p>
+  <c-button size="small" @click="reset">重置 5 秒</c-button>
+</template>
+```
+
+:::
+
+## 字符串值与占位
+
+`value` 也可以是字符串，常用于「数据未就绪 / 不适用」的占位（如 `'—'` / `'N/A'`），与异步加载状态配合使用。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 32px; flex-wrap: wrap">
+    <c-statistic title="待审核" value="—" />
+    <c-statistic title="健康度" value="N/A" :value-style="{ color: '#bfbfbf' }" />
+    <c-statistic title="评分" value="A+" :value-style="{ color: '#fa8c16', fontWeight: 700 }" />
+  </div>
+</template>
+```
+
+:::
+
+## 涨跌趋势
+
+把箭头放进 `prefix`，再配合 `value-style.color` 达成「绿涨红跌」的金融视觉风格。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 32px; flex-wrap: wrap">
+    <c-statistic title="日活" :value="11.28" prefix="▲" suffix="%" :precision="2" :value-style="{ color: '#3f8600' }" />
+    <c-statistic title="跳出率" :value="9.3" prefix="▼" suffix="%" :precision="1" :value-style="{ color: '#cf1322' }" />
+    <c-statistic title="留存" :value="0" prefix="—" suffix="%" :value-style="{ color: '#bfbfbf' }" />
+  </div>
+</template>
+```
+
+:::
+
+## 仪表盘四卡片
+
+最常见的指标卡片排版：Row + Col + Card + Statistic 组合，4 张卡片一行。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="12">
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="今日订单" :value="3892" :value-style="{ color: '#1677ff' }" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="GMV" :value="128400.32" prefix="¥" :precision="2" :value-style="{ color: '#52c41a' }" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="客单价" :value="156" prefix="¥" suffix="/单" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="退款率" :value="2.3" suffix="%" :value-style="{ color: '#cf1322' }" />
+      </c-card>
+    </c-col>
+  </c-row>
+</template>
+```
+
+:::
+
+## 限时活动卡片
+
+倒计时 + Card + 行动按钮 = 经典的「限时秒杀 / 课程报名」业务卡。
+
+:::demo
+
+```vue
+<script setup>
+import { computed } from 'vue'
+
+const deadline = computed(() => Date.now() + 1000 * 60 * 60 * 12 + 1000 * 60 * 34 + 1000 * 56)
+</script>
+
+<template>
+  <c-card style="max-width: 360px" :body-style="{ padding: '20px' }">
+    <c-statistic-countdown
+      title="距活动结束"
+      :value="deadline"
+      format="HH:mm:ss"
+      :value-style="{ color: '#cf1322', fontSize: '28px', fontWeight: 700 }"
+    />
+    <p style="margin: 12px 0 16px; color: #666">优惠券将在倒计时结束后失效。</p>
+    <c-button type="primary" block>立即领取</c-button>
+  </c-card>
+</template>
+```
+
+:::
+
 ## API
 
 ### Statistic Props
@@ -151,3 +294,10 @@ const deadlineFull = computed(() => Date.now() + 1000 * 60 * 60 * 28)
 | prefix     | string                     | `''`         | 前缀                             |
 | suffix     | string                     | `''`         | 后缀                             |
 | valueStyle | `CSSProperties`            | `{}`         | 数字行内样式                     |
+
+### StatisticCountdown Events
+
+| 事件名 | 回调签名               | 触发时机                          |
+| ------ | ---------------------- | --------------------------------- |
+| finish | `()`                   | 倒计时归零（剩余时间 ≤ 0）        |
+| change | `(remaining: number)`  | 每 tick 触发，回传剩余时间（ms）  |

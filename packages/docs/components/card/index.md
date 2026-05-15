@@ -125,6 +125,134 @@
 
 :::
 
+## 卡片内宫格（c-card-grid）
+
+`<c-card-grid>` 是 Card 内部的格栅子项，对标 ant `Card.Grid`。默认 1/3 宽 + hover 阴影；常用于「快捷入口宫格」。
+
+:::demo
+
+```vue
+<template>
+  <c-card header="快捷入口" :body-style="{ padding: 0 }">
+    <c-card-grid>📦 订单管理</c-card-grid>
+    <c-card-grid>👥 用户中心</c-card-grid>
+    <c-card-grid>📊 数据分析</c-card-grid>
+    <c-card-grid>⚙️ 系统设置</c-card-grid>
+    <c-card-grid>🔔 消息通知</c-card-grid>
+    <c-card-grid>💰 财务对账</c-card-grid>
+  </c-card>
+</template>
+```
+
+:::
+
+## 卡片元数据（c-card-meta）
+
+`<c-card-meta>` 提供「头像 + 标题 + 描述」标准三段元素，对标 ant `Card.Meta`，常用于商品 / 用户 / 文章卡片。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 16px; flex-wrap: wrap">
+    <c-card style="width: 240px" :body-style="{ padding: '16px' }">
+      <img
+        src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
+        style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 12px"
+      />
+      <c-card-meta title="Vue 3 实战课" description="60 节系统课程，附完整源码" />
+    </c-card>
+    <c-card style="width: 240px" :body-style="{ padding: '16px' }">
+      <c-card-meta title="张三 · 前端工程师" description="3 年 Vue 经验 / 北京">
+        <template #avatar>
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px">
+            张
+          </div>
+        </template>
+      </c-card-meta>
+    </c-card>
+  </div>
+</template>
+```
+
+:::
+
+## 卡片底部操作
+
+用 default slot 内部把内容与操作行分两段；`c-divider` 隔开，操作按钮靠右是常见排版。
+
+:::demo
+
+```vue
+<template>
+  <c-card header="确认删除" style="max-width: 360px">
+    <p style="margin: 0">即将删除 3 条记录，删除后无法恢复。</p>
+    <c-divider style="margin: 16px 0 12px" />
+    <div style="display: flex; justify-content: flex-end; gap: 8px">
+      <c-button>取消</c-button>
+      <c-button type="primary" danger>确认删除</c-button>
+    </div>
+  </c-card>
+</template>
+```
+
+:::
+
+## 仪表盘统计网格
+
+Card + Statistic + Row/Col 是仪表盘最常见组合：4 张卡片一行展示核心指标。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="12">
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="今日订单" :value="3892" :value-style="{ color: '#1677ff' }" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="GMV" :value="128400" prefix="¥" :precision="2" :value-style="{ color: '#52c41a' }" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="客单价" :value="156" prefix="¥" suffix="/单" />
+      </c-card>
+    </c-col>
+    <c-col :span="6">
+      <c-card :body-style="{ padding: '16px' }">
+        <c-statistic title="退款率" :value="2.3" suffix="%" :value-style="{ color: '#cf1322' }" />
+      </c-card>
+    </c-col>
+  </c-row>
+</template>
+```
+
+:::
+
+## 悬停高亮列表
+
+`shadow="hover"` 让卡片只在鼠标悬停时显阴影，配合列表网格做「可点击的卡片入口」效果。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="12">
+    <c-col v-for="i in 4" :key="i" :span="6">
+      <c-card shadow="hover" :header="`方案 ${i}`" :body-style="{ padding: '12px' }" style="cursor: pointer">
+        <p style="margin: 0; color: #666">点击查看详情 / 移动到上方变高亮</p>
+      </c-card>
+    </c-col>
+  </c-row>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

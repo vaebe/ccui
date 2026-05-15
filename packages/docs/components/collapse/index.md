@@ -165,6 +165,184 @@ function onChange(names) {
 
 :::
 
+## 单项 disabled 与隐藏箭头
+
+可以对单个 item 设置 `disabled`（禁止展开 / 收起）或 `:show-arrow="false"`（隐藏箭头但仍可点击）。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const v = ref(['1'])
+</script>
+
+<template>
+  <c-collapse v-model="v">
+    <c-collapse-item name="1" title="正常面板">默认状态</c-collapse-item>
+    <c-collapse-item name="2" title="禁用面板" disabled>无法展开</c-collapse-item>
+    <c-collapse-item name="3" title="无箭头面板" :show-arrow="false">仍可点击展开 / 收起</c-collapse-item>
+  </c-collapse>
+</template>
+```
+
+:::
+
+## 嵌套面板
+
+Collapse 支持嵌套；外层 ghost / 内层带边框是常见组合，强调层级关系。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const outer = ref(['1'])
+const inner = ref(['1-1'])
+</script>
+
+<template>
+  <c-collapse v-model="outer" ghost>
+    <c-collapse-item name="1" title="项目 Alpha">
+      <c-collapse v-model="inner">
+        <c-collapse-item name="1-1" title="开发任务">开发任务详情…</c-collapse-item>
+        <c-collapse-item name="1-2" title="测试任务">测试任务详情…</c-collapse-item>
+      </c-collapse>
+    </c-collapse-item>
+    <c-collapse-item name="2" title="项目 Beta">
+      <p style="margin: 0">尚未拆分子任务</p>
+    </c-collapse-item>
+  </c-collapse>
+</template>
+```
+
+:::
+
+## FAQ 常见问答
+
+最典型的业务场景：accordion 模式 + 自定义标题（带角标 / 副标题）+ 长描述。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const v = ref('1')
+
+const faqs = [
+  { name: '1', q: '如何重置密码？', a: '在登录页点击「忘记密码」，输入注册邮箱后按邮件指引重置。' },
+  { name: '2', q: '账号被锁怎么办？', a: '连续 5 次错误密码会临时锁定 30 分钟，或联系客服立即解锁。' },
+  { name: '3', q: '能否更换绑定手机？', a: '可以。进入「账号设置 → 安全中心」，验证旧手机后更换新号码。' },
+]
+</script>
+
+<template>
+  <c-collapse v-model="v" accordion>
+    <c-collapse-item v-for="(faq, i) in faqs" :key="faq.name" :name="faq.name">
+      <template #title>
+        <span style="color: #1677ff; font-weight: 500; margin-inline-end: 6px">Q{{ i + 1 }}</span>
+        <span>{{ faq.q }}</span>
+      </template>
+      <p style="margin: 0; color: #595959; line-height: 1.6">{{ faq.a }}</p>
+    </c-collapse-item>
+  </c-collapse>
+</template>
+```
+
+:::
+
+## 外部按钮全展全收
+
+`v-model` 受控时，外部按钮可以直接修改激活 name 列表，实现「全部展开 / 全部收起」操作。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const items = [
+  { name: '1', title: '第 1 节' },
+  { name: '2', title: '第 2 节' },
+  { name: '3', title: '第 3 节' },
+  { name: '4', title: '第 4 节' },
+]
+
+const v = ref(['1'])
+
+function expandAll() {
+  v.value = items.map((i) => i.name)
+}
+function collapseAll() {
+  v.value = []
+}
+</script>
+
+<template>
+  <div style="display: flex; gap: 8px; margin-bottom: 12px">
+    <c-button size="small" @click="expandAll">全部展开</c-button>
+    <c-button size="small" @click="collapseAll">全部收起</c-button>
+  </div>
+  <c-collapse v-model="v">
+    <c-collapse-item v-for="item in items" :key="item.name" :name="item.name" :title="item.title">
+      {{ item.title }} 的详细内容
+    </c-collapse-item>
+  </c-collapse>
+</template>
+```
+
+:::
+
+## 表单分组
+
+后台「字段太多怕一屏放不下」时常把表单按段落折叠：基础信息默认展开 + 进阶配置默认收起。
+
+:::demo
+
+```vue
+<script setup>
+import { reactive, ref } from 'vue'
+
+const v = ref(['basic'])
+const form = reactive({
+  name: '',
+  email: '',
+  webhook: '',
+  retryLimit: 3,
+})
+</script>
+
+<template>
+  <c-collapse v-model="v">
+    <c-collapse-item name="basic" title="基础信息">
+      <c-form :model="form" label-width="80px">
+        <c-form-item label="名称" prop="name">
+          <c-input v-model="form.name" placeholder="请输入" />
+        </c-form-item>
+        <c-form-item label="邮箱" prop="email">
+          <c-input v-model="form.email" placeholder="example@x.com" />
+        </c-form-item>
+      </c-form>
+    </c-collapse-item>
+    <c-collapse-item name="advanced" title="高级配置（默认收起）">
+      <c-form :model="form" label-width="80px">
+        <c-form-item label="Webhook" prop="webhook">
+          <c-input v-model="form.webhook" placeholder="https://..." />
+        </c-form-item>
+        <c-form-item label="重试次数" prop="retryLimit">
+          <c-input-number v-model="form.retryLimit" :min="0" :max="10" />
+        </c-form-item>
+      </c-form>
+    </c-collapse-item>
+  </c-collapse>
+</template>
+```
+
+:::
+
 ## API
 
 ### Collapse Props

@@ -115,6 +115,157 @@ function startsWith(input: string, opt: { value: string }) {
 
 :::
 
+## 区分大小写
+
+默认 `caseSensitive=false`（输入 `An` 也能匹配 `anna`）；开启后，必须严格匹配大小写。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref('')
+const v2 = ref('')
+const opts = ['Anna', 'ALICE', 'bob']
+</script>
+
+<template>
+  <p style="margin: 0 0 4px; color: #666">caseSensitive=false（默认，An 也能匹配 Anna）</p>
+  <c-mentions v-model="v1" :options="opts" :rows="2" />
+  <p style="margin: 12px 0 4px; color: #666">caseSensitive=true（必须严格大小写）</p>
+  <c-mentions v-model="v2" :options="opts" case-sensitive :rows="2" />
+</template>
+```
+
+:::
+
+## 自适应高度 autoSize
+
+`autoSize` 让 textarea 跟随内容自动伸缩。可以传 `true`（无限制）或 `{ minRows, maxRows }`（限制范围）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const v1 = ref('')
+const v2 = ref('')
+</script>
+
+<template>
+  <p style="margin: 0 0 4px; color: #666">autoSize=true（无限制）</p>
+  <c-mentions v-model="v1" :options="['anna', 'bob']" auto-size placeholder="多输几行回车试试" />
+  <p style="margin: 12px 0 4px; color: #666">autoSize=&#123; minRows: 2, maxRows: 6 &#125;</p>
+  <c-mentions
+    v-model="v2"
+    :options="['anna', 'bob']"
+    :auto-size="{ minRows: 2, maxRows: 6 }"
+    placeholder="最少 2 行，最多 6 行"
+  />
+</template>
+```
+
+:::
+
+## 浮层位置 placement
+
+`placement="top"` 把候选浮层放到 textarea 上方，适合输入区位于页面底部（如评论框）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <div style="height: 80px"></div>
+  <c-mentions v-model="value" :options="['anna', 'bob', 'charlie']" placement="top" :rows="3" placeholder="评论框：浮层向上弹出" />
+</template>
+```
+
+:::
+
+## 空数据占位 notFoundContent
+
+候选过滤后无匹配项时显示 `notFoundContent`；不传则取 ConfigProvider locale（默认中文「暂无数据」）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <c-mentions
+    v-model="value"
+    :options="['anna', 'bob']"
+    not-found-content="🙈 找不到相关成员，去通讯录搜搜？"
+    :rows="2"
+    placeholder="输入 @ 后乱打几个字符触发空态"
+  />
+</template>
+```
+
+:::
+
+## 自定义选项渲染（option slot）
+
+`#option` slot 接收 `{ option, index }` scope，常用于做「头像 + 姓名 + 角色」的双行选项。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+const team = [
+  { value: 'alice', label: 'Alice', role: 'PM', color: '#1677ff' },
+  { value: 'bob', label: 'Bob', role: 'Frontend', color: '#52c41a' },
+  { value: 'charlie', label: 'Charlie', role: 'Backend', color: '#fa8c16' },
+  { value: 'dora', label: 'Dora', role: 'Design', color: '#eb2f96' },
+]
+</script>
+
+<template>
+  <c-mentions v-model="value" :options="team" :rows="3" placeholder="输入 @ 看自定义选项">
+    <template #option="{ option }">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 2px 0">
+        <span
+          :style="{
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            background: option.color,
+            color: '#fff',
+            fontSize: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }"
+        >
+          {{ option.label.charAt(0) }}
+        </span>
+        <span>
+          <strong>{{ option.label }}</strong>
+          <span style="margin-left: 6px; color: #999; font-size: 12px">{{ option.role }}</span>
+        </span>
+      </div>
+    </template>
+  </c-mentions>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props

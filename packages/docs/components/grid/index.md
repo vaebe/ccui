@@ -145,6 +145,127 @@
 
 :::
 
+## push / pull 移位
+
+`push` 把列向右推，`pull` 把列向左拉。常用「侧栏代码先写 / 视觉右置」之类的反转布局。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="16">
+    <c-col :span="6" :push="18"><div class="g-block">DOM-1（push 18，视觉在最右）</div></c-col>
+    <c-col :span="18" :pull="6"><div class="g-block">DOM-2（pull 6，视觉在左）</div></c-col>
+  </c-row>
+</template>
+```
+
+:::
+
+## 嵌套行
+
+Row 可以嵌套：外层切大块，内层在大块里再分。注意嵌套时内 Row 通常也加 `gutter`，与外层独立。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="16">
+    <c-col :span="8"><div class="g-block">外层 col-8</div></c-col>
+    <c-col :span="16">
+      <c-row :gutter="8">
+        <c-col :span="12"><div class="g-block" style="background: #52c41a">内层 col-12</div></c-col>
+        <c-col :span="12"><div class="g-block" style="background: #52c41a">内层 col-12</div></c-col>
+      </c-row>
+      <c-row :gutter="8">
+        <c-col :span="24"><div class="g-block" style="background: #fa8c16">内层 col-24</div></c-col>
+      </c-row>
+    </c-col>
+  </c-row>
+</template>
+```
+
+:::
+
+## 业务双栏布局
+
+「侧栏 6 / 主内容 18」是后台管理最常见的双栏比例；配合响应式断点，移动端自动堆叠。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="16">
+    <c-col :xs="24" :md="6">
+      <div class="g-block" style="height: 160px">侧栏（xs=24 md=6）</div>
+    </c-col>
+    <c-col :xs="24" :md="18">
+      <div class="g-block" style="height: 160px; background: #52c41a">主内容（xs=24 md=18）</div>
+    </c-col>
+  </c-row>
+  <p style="margin-top: 8px; color: #666">缩窄到 md（&lt;768px）以下时，侧栏与主内容会堆叠为单列</p>
+</template>
+```
+
+:::
+
+## 关闭换行
+
+`wrap="false"` 强制 Row 单行展示，超出宽度的列会按 flex 缩压；常用于横向滚动条 / 关键指标条。
+
+:::demo
+
+```vue
+<template>
+  <div style="overflow-x: auto; padding-bottom: 4px">
+    <c-row :gutter="12" :wrap="false">
+      <c-col v-for="i in 8" :key="i" :flex="'200px'">
+        <div class="g-block">card-{{ i }}（固定 200px）</div>
+      </c-col>
+    </c-row>
+  </div>
+  <p style="margin-top: 8px; color: #666">8 张卡片强制一行，超出横向滚动</p>
+</template>
+```
+
+:::
+
+## 响应式对象配置
+
+`xs / sm / md / lg / xl / xxl` 不仅可以传数字（span 简写），还可以传 `{ span, offset, order }` 完整对象，按断点分别配置。
+
+:::demo
+
+```vue
+<template>
+  <c-row :gutter="16">
+    <c-col
+      :xs="{ span: 24 }"
+      :md="{ span: 8, offset: 0 }"
+      :lg="{ span: 6, offset: 3, order: 2 }"
+    >
+      <div class="g-block">A（lg 起 offset=3 order=2）</div>
+    </c-col>
+    <c-col
+      :xs="{ span: 24 }"
+      :md="{ span: 8 }"
+      :lg="{ span: 6, order: 1 }"
+    >
+      <div class="g-block" style="background: #52c41a">B（lg 起 order=1 视觉前置）</div>
+    </c-col>
+    <c-col
+      :xs="{ span: 24 }"
+      :md="{ span: 8 }"
+      :lg="{ span: 6, order: 3 }"
+    >
+      <div class="g-block" style="background: #fa8c16">C（lg 起 order=3 后置）</div>
+    </c-col>
+  </c-row>
+</template>
+```
+
+:::
+
 ## 断点
 
 | 断点 | 触发宽度（px） |
