@@ -358,6 +358,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'ListItemMeta 列表项元信息',
+          link: '/components/list-item-meta/',
+          status: '90%',
+        },
+        {
           text: 'QRCode 二维码',
           link: '/components/qr-code/',
           status: '80%',

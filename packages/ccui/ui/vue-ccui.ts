@@ -54,6 +54,7 @@ import InputOtpInstall, { InputOtp } from './input-otp'
 import InputSearchInstall, { InputSearch } from './input-search'
 import LayoutInstall, { Content, Footer, Header, Layout, Sider } from './layout'
 import ListInstall, { List, ListItem } from './list'
+import ListItemMetaInstall, { ListItemMeta } from './list-item-meta'
 import MasonryInstall, { Masonry } from './masonry'
 import MentionsInstall, { Mentions } from './mentions'
 import MenuInstall, { Menu } from './menu'
@@ -152,6 +153,7 @@ const installs = [
   InputSearchInstall,
   LayoutInstall,
   ListInstall,
+  ListItemMetaInstall,
   MasonryInstall,
   MentionsInstall,
   MenuInstall,
@@ -262,6 +264,7 @@ export {
   Sider,
   List,
   ListItem,
+  ListItemMeta,
   Masonry,
   Mentions,
   Menu,
