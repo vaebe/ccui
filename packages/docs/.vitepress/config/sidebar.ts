@@ -158,6 +158,31 @@ export default {
           status: '100%',
         },
         {
+          text: 'SkeletonButton 按钮骨架',
+          link: '/components/skeleton-button/',
+          status: '90%',
+        },
+        {
+          text: 'SkeletonAvatar 头像骨架',
+          link: '/components/skeleton-avatar/',
+          status: '90%',
+        },
+        {
+          text: 'SkeletonInput 输入框骨架',
+          link: '/components/skeleton-input/',
+          status: '90%',
+        },
+        {
+          text: 'SkeletonImage 图片骨架',
+          link: '/components/skeleton-image/',
+          status: '90%',
+        },
+        {
+          text: 'SkeletonNode 自定义骨架',
+          link: '/components/skeleton-node/',
+          status: '90%',
+        },
+        {
           text: 'Spin 加载中',
           link: '/components/spin/',
           status: '100%',

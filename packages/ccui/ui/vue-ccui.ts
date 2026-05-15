@@ -75,6 +75,11 @@ import ResultInstall, { Result } from './result'
 import SegmentedInstall, { Segmented } from './segmented'
 import SelectInstall, { Select } from './select'
 import SkeletonInstall, { Skeleton } from './skeleton'
+import SkeletonAvatarInstall, { SkeletonAvatar } from './skeleton-avatar'
+import SkeletonButtonInstall, { SkeletonButton } from './skeleton-button'
+import SkeletonImageInstall, { SkeletonImage } from './skeleton-image'
+import SkeletonInputInstall, { SkeletonInput } from './skeleton-input'
+import SkeletonNodeInstall, { SkeletonNode } from './skeleton-node'
 import SliderInstall, { Slider } from './slider'
 import SpaceInstall, { Space } from './space'
 import SpinInstall, { Spin } from './spin'
@@ -179,6 +184,11 @@ const installs = [
   SegmentedInstall,
   SelectInstall,
   SkeletonInstall,
+  SkeletonAvatarInstall,
+  SkeletonButtonInstall,
+  SkeletonImageInstall,
+  SkeletonInputInstall,
+  SkeletonNodeInstall,
   SliderInstall,
   SpaceInstall,
   SpinInstall,
@@ -298,6 +308,11 @@ export {
   Segmented,
   Select,
   Skeleton,
+  SkeletonAvatar,
+  SkeletonButton,
+  SkeletonImage,
+  SkeletonInput,
+  SkeletonNode,
   Slider,
   Space,
   Spin,

@@ -1,0 +1,30 @@
+@use '../../style-var/index.scss' as *;
+
+$skeleton-bg: rgba(0, 0, 0, 0.06);
+$skeleton-bg-active: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 37%, rgba(0, 0, 0, 0.06) 63%);
+$skeleton-icon: rgba(0, 0, 0, 0.18);
+
+.#{$cls-prefix}-skeleton-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: $skeleton-bg;
+  border-radius: $ccui-border-radius;
+  color: $skeleton-icon;
+  vertical-align: middle;
+
+  &--active {
+    background: $skeleton-bg-active;
+    background-size: 400% 100%;
+    animation: ccuiSkeletonLoading 1.4s ease infinite;
+  }
+}
+
+@keyframes ccuiSkeletonLoading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
