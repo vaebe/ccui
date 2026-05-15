@@ -288,6 +288,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'AvatarGroup 头像组',
+          link: '/components/avatar-group/',
+          status: '80%',
+        },
+        {
           text: 'Badge 徽标数',
           link: '/components/badge/',
           status: '100%',

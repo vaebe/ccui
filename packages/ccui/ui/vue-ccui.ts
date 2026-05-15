@@ -7,6 +7,7 @@ import AlertInstall, { Alert } from './alert'
 import AnchorInstall, { Anchor } from './anchor'
 import AutoCompleteInstall, { AutoComplete } from './auto-complete'
 import AvatarInstall, { Avatar } from './avatar'
+import AvatarGroupInstall, { AvatarGroup } from './avatar-group'
 import BadgeInstall, { Badge } from './badge'
 import BreadcrumbInstall, { Breadcrumb, BreadcrumbItem } from './breadcrumb'
 import ButtonInstall, { Button, ButtonGroup } from './button'
@@ -112,6 +113,7 @@ const installs = [
   AnchorInstall,
   AutoCompleteInstall,
   AvatarInstall,
+  AvatarGroupInstall,
   BadgeInstall,
   BreadcrumbInstall,
   ButtonInstall,
@@ -193,6 +195,7 @@ export {
   Anchor,
   AutoComplete,
   Avatar,
+  AvatarGroup,
   Badge,
   Breadcrumb,
   BreadcrumbItem,
