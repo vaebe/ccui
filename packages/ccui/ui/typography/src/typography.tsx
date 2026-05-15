@@ -1,5 +1,12 @@
 import type { Slots, VNode } from 'vue'
-import type { CopyableConfig, EditableConfig, EllipsisConfig, LinkProps, TextProps, TitleProps } from './typography-types'
+import type {
+  CopyableConfig,
+  EditableConfig,
+  EllipsisConfig,
+  LinkProps,
+  TextProps,
+  TitleProps,
+} from './typography-types'
 import { computed, defineComponent, h, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { linkProps, paragraphProps, textProps, titleProps } from './typography-types'
@@ -74,12 +81,21 @@ function getSlotText(slots: Slots): string {
 // ─── Typography 主组件们 ────────────────────────────────────
 
 // L-3.7：通用 Typography setup 工厂，复用 copy / edit / ellipsis 全部逻辑
-function createTypographyComponent<Props extends TextProps>(name: string, propsDef: unknown, tag: (props: Props) => string, extraClass?: (props: Props) => Record<string, boolean>) {
+// eslint-disable-next-line ts/explicit-function-return-type
+function createTypographyComponent(
+  name: string,
+  propsDef: Record<string, unknown>,
+  tag: (props: TextProps) => string,
+  extraClass?: (props: TextProps) => Record<string, boolean>,
+) {
   return defineComponent({
     name,
-    props: propsDef as never,
+    // eslint-disable-next-line ts/no-explicit-any
+    props: propsDef as any,
     emits: ['update:editable-text'],
-    setup(props: Props, { slots, emit }) {
+    // eslint-disable-next-line ts/no-explicit-any
+    setup(rawProps: any, { slots, emit }: any) {
+      const props = rawProps as TextProps
       // copyable
       const copyConfig = computed<CopyableConfig | null>(() => resolveConfig(props.copyable, {} as CopyableConfig))
       const copied = ref(false)
@@ -190,7 +206,7 @@ function createTypographyComponent<Props extends TextProps>(name: string, propsD
       const renderCopyBtn = (): VNode | null => {
         const cfg = copyConfig.value
         if (!cfg) return null
-        const tooltips = cfg.tooltips === false ? null : cfg.tooltips ?? ['复制', '已复制']
+        const tooltips = cfg.tooltips === false ? null : (cfg.tooltips ?? ['复制', '已复制'])
         const titleAttr = tooltips ? (copied.value ? tooltips[1] : tooltips[0]) : undefined
         if (slots['copy-icon']) {
           return (
@@ -258,8 +274,8 @@ function createTypographyComponent<Props extends TextProps>(name: string, propsD
         const cfg = editConfig.value!
         return (
           <textarea
-            ref={(el) => {
-              textareaRef.value = el as HTMLTextAreaElement
+            ref={(el: Element | null) => {
+              textareaRef.value = el as HTMLTextAreaElement | null
             }}
             class={ns.e('edit-input')}
             value={editValue.value}
@@ -320,33 +336,33 @@ function createTypographyComponent<Props extends TextProps>(name: string, propsD
   })
 }
 
-export const Text = createTypographyComponent<TextProps>(
+export const Text = createTypographyComponent(
   'CTypographyText',
-  textProps,
+  textProps as unknown as Record<string, unknown>,
   () => 'span',
   () => ({ [ns.m('text')]: true }),
 )
 
-export const Paragraph = createTypographyComponent<TextProps>(
+export const Paragraph = createTypographyComponent(
   'CTypographyParagraph',
-  paragraphProps,
+  paragraphProps as unknown as Record<string, unknown>,
   () => 'div',
   () => ({ [ns.m('paragraph')]: true }),
 )
 
-export const Title = createTypographyComponent<TitleProps>(
+export const Title = createTypographyComponent(
   'CTypographyTitle',
-  titleProps,
-  (props) => `h${(props as TitleProps).level}`,
+  titleProps as unknown as Record<string, unknown>,
+  (props) => `h${(props as unknown as TitleProps).level}`,
   (props) => ({
     [ns.m('title')]: true,
-    [ns.m(`title-${(props as TitleProps).level}`)]: true,
+    [ns.m(`title-${(props as unknown as TitleProps).level}`)]: true,
   }),
 )
 
-export const Link = createTypographyComponent<LinkProps>(
+export const Link = createTypographyComponent(
   'CTypographyLink',
-  linkProps,
+  linkProps as unknown as Record<string, unknown>,
   () => 'a',
   () => ({ [ns.m('link')]: true }),
 )
