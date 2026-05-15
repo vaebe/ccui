@@ -32,6 +32,7 @@ import DrawerInstall, { Drawer } from './drawer'
 import DropdownInstall, { Dropdown } from './dropdown'
 import DropdownButtonInstall, { DropdownButton } from './dropdown-button'
 import EmptyInstall, { Empty } from './empty'
+import ErrorBoundaryInstall, { ErrorBoundary } from './error-boundary'
 import FlexInstall, { Flex } from './flex'
 import FloatButtonInstall, { BackTop, FloatButton } from './float-button'
 import FormInstall, { Form, FormItem, FormList, FormProvider } from './form'
@@ -159,6 +160,7 @@ const installs = [
   DropdownInstall,
   DropdownButtonInstall,
   EmptyInstall,
+  ErrorBoundaryInstall,
   FlexInstall,
   FloatButtonInstall,
   FormInstall,
@@ -265,6 +267,7 @@ export {
   Dropdown,
   DropdownButton,
   Empty,
+  ErrorBoundary,
   Flex,
   BackTop,
   FloatButton,

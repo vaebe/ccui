@@ -113,6 +113,11 @@ export default {
           status: '100%',
         },
         {
+          text: 'ErrorBoundary 错误边界',
+          link: '/components/error-boundary/',
+          status: '90%',
+        },
+        {
           text: 'Drawer 抽屉',
           link: '/components/drawer/',
           status: '100%',
