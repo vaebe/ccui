@@ -387,4 +387,16 @@ describe('transfer selectionsIcon', () => {
     const wrapper = mountT({})
     expect(wrapper.find(ns.e('header-icon')).exists()).toBe(false)
   })
+
+  it('exposes listbox option roles with aria-selected on both columns', () => {
+    const wrapper = mountT({ targetKeys: ['4'], selectedKeys: ['2'] })
+    const lists = wrapper.findAll('[role="listbox"]')
+    expect(lists.length).toBe(2)
+    lists.forEach((list) => expect(list.attributes('aria-multiselectable')).toBe('true'))
+    const options = wrapper.findAll('[role="option"]')
+    expect(options.length).toBeGreaterThan(0)
+    const selected = options.filter((o) => o.attributes('aria-selected') === 'true')
+    expect(selected.length).toBe(1)
+    expect(selected[0].text()).toContain('Banana')
+  })
 })

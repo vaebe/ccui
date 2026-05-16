@@ -55,11 +55,16 @@ describe('collapse', () => {
     const wrapper = makeWrapper({ modelValue: ['1'] })
     const headers = wrapper.findAll(ns.e('header'))
 
-    expect(headers[0].attributes('role')).toBe('tab')
+    expect(headers[0].attributes('role')).toBe('button')
     expect(headers[0].attributes('aria-expanded')).toBe('true')
+    expect(headers[0].attributes('aria-controls')).toBeDefined()
     expect(headers[0].attributes('tabindex')).toBe('0')
     expect(headers[1].attributes('aria-expanded')).toBe('false')
     expect(headers[2].attributes('tabindex')).toBe('-1')
+
+    const panel = wrapper.findAll(ns.e('wrapper'))[0]
+    expect(panel.attributes('role')).toBe('region')
+    expect(panel.attributes('aria-labelledby')).toBe(headers[0].attributes('id'))
 
     await headers[2].trigger('keydown', { key: 'Enter' })
     await headers[2].trigger('keydown', { key: ' ' })

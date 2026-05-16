@@ -214,4 +214,16 @@ describe('pagination', () => {
     expect(wrapper.find('.prev-slot').exists()).toBe(true)
     expect(wrapper.find('.next-slot').exists()).toBe(true)
   })
+
+  it('exposes navigation role with aria-current on the active page', () => {
+    const wrapper = mount(Pagination, { props: { current: 2, total: 50, pageSize: 10 } })
+    const root = wrapper.find(ns.b())
+    expect(root.attributes('role')).toBe('navigation')
+    expect(root.attributes('aria-label')).toBeDefined()
+    const active = wrapper.find(ns.em('item', 'active'))
+    expect(active.attributes('aria-current')).toBe('page')
+    const items = wrapper.findAll(ns.e('item'))
+    const inactive = items.find((item) => !item.classes().some((c) => c.endsWith('--active')))!
+    expect(inactive.attributes('aria-current')).toBeUndefined()
+  })
 })

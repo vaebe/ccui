@@ -262,4 +262,19 @@ describe('menu', () => {
 
     expect(wrapper.find('.slot-item').text()).toBe('Slot item')
   })
+
+  it('exposes aria roles for menu submenu and menubar', () => {
+    const verticalWrapper = mount(Menu, { props: { items, defaultOpenKeys: ['2'] } })
+    expect(verticalWrapper.find(ns.b()).attributes('role')).toBe('menu')
+    expect(verticalWrapper.find(ns.b()).attributes('aria-orientation')).toBe('vertical')
+
+    const submenuTitle = verticalWrapper.find(ns.e('submenu-title'))
+    expect(submenuTitle.attributes('role')).toBe('menuitem')
+    expect(submenuTitle.attributes('aria-haspopup')).toBe('menu')
+    expect(submenuTitle.attributes('aria-expanded')).toBe('true')
+
+    const horizontalWrapper = mount(Menu, { props: { items, mode: 'horizontal' } })
+    expect(horizontalWrapper.find(ns.b()).attributes('role')).toBe('menubar')
+    expect(horizontalWrapper.find(ns.b()).attributes('aria-orientation')).toBe('horizontal')
+  })
 })

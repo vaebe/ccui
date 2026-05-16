@@ -156,6 +156,30 @@ describe('tabs', () => {
     expect(wrapper.emitted('change')).toBeUndefined()
   })
 
+  it('exposes tablist tab and tabpanel aria roles linking each other', async () => {
+    const wrapper = mount(Tabs, {
+      props: { modelValue: 'tab1' },
+      slots: {
+        default: () => [
+          h(Tab, { name: 'tab1', label: 'Tab 1' }, () => h('div', 'Content 1')),
+          h(Tab, { name: 'tab2', label: 'Tab 2' }, () => h('div', 'Content 2')),
+        ],
+      },
+    })
+    await nextTick()
+    const tablist = wrapper.find('[role="tablist"]')
+    expect(tablist.exists()).toBe(true)
+    expect(tablist.attributes('aria-orientation')).toBe('horizontal')
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.length).toBe(2)
+    expect(tabs[0].attributes('aria-selected')).toBe('true')
+    expect(tabs[0].attributes('aria-controls')).toBe('c-tabpanel-tab1')
+    expect(tabs[1].attributes('aria-selected')).toBe('false')
+    const panel = wrapper.find('[role="tabpanel"]')
+    expect(panel.attributes('id')).toBe('c-tabpanel-tab1')
+    expect(panel.attributes('aria-labelledby')).toBe('c-tab-tab1')
+  })
+
   it('renders card and left nav classes plus title slot', async () => {
     const wrapper = mount(Tabs, {
       props: {

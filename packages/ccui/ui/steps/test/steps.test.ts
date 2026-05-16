@@ -59,4 +59,18 @@ describe('steps', () => {
     })
     expect(wrapper.findAll(ns.em('item', 'error')).length).toBe(1)
   })
+
+  it('marks the current step with aria-current and exposes per-step label', () => {
+    const wrapper = mount(Steps, {
+      props: {
+        current: 1,
+        items: [{ title: '登录' }, { title: '校验' }, { title: '完成' }],
+      },
+    })
+    const items = wrapper.findAll(ns.e('item'))
+    expect(items[0].attributes('aria-current')).toBeUndefined()
+    expect(items[1].attributes('aria-current')).toBe('step')
+    expect(items[1].attributes('aria-label')).toBe('步骤 2：校验')
+    expect(items[2].attributes('aria-label')).toBe('步骤 3：完成')
+  })
 })

@@ -647,4 +647,27 @@ describe('tree', () => {
       expect(wrapper.find('.ccui-tree').attributes('style') || '').toContain('red')
     })
   })
+
+  describe('XL-4 aria attributes', () => {
+    it('exposes tree role with aria-level matching node depth', async () => {
+      const wrapper = mountTree({ defaultExpandedKeys: ['root-1', 'child-1-2'] })
+      expect(wrapper.find('.ccui-tree').attributes('role')).toBe('tree')
+      const nodes = wrapper.findAll(ns.e('node'))
+      const findNode = (title: string) => nodes.find((n) => n.find(ns.e('title')).text() === title)!
+      expect(findNode('Root 1').attributes('role')).toBe('treeitem')
+      expect(findNode('Root 1').attributes('aria-level')).toBe('1')
+      expect(findNode('Child 1-1').attributes('aria-level')).toBe('2')
+      expect(findNode('Leaf 1-2-1').attributes('aria-level')).toBe('3')
+      expect(findNode('Root 1').attributes('aria-expanded')).toBe('true')
+    })
+
+    it('marks tree as multiselectable when checkable or multiple is enabled', () => {
+      const single = mountTree()
+      expect(single.find('.ccui-tree').attributes('aria-multiselectable')).toBeUndefined()
+      const multi = mountTree({ multiple: true })
+      expect(multi.find('.ccui-tree').attributes('aria-multiselectable')).toBe('true')
+      const checkable = mountTree({ checkable: true })
+      expect(checkable.find('.ccui-tree').attributes('aria-multiselectable')).toBe('true')
+    })
+  })
 })

@@ -136,6 +136,7 @@ function renderItem({ item, level, keyPath, ns, ctx }: RenderItemArgs): JSX.Elem
           data-menu-key={String(item.key)}
           tabindex={-1}
           aria-disabled={disabled}
+          aria-haspopup="menu"
           aria-expanded={isOpen}
           title={getItemTitle(item)}
           onFocus={() => ctx.setActiveKey(item.key)}
@@ -437,8 +438,9 @@ export default defineComponent({
       <ul
         ref={rootRef}
         class={rootCls.value}
-        role="menu"
+        role={props.mode === 'horizontal' ? 'menubar' : 'menu'}
         aria-orientation={props.mode === 'horizontal' ? 'horizontal' : 'vertical'}
+        aria-disabled={props.disabled || undefined}
         tabindex={props.disabled ? undefined : 0}
         onKeydown={onKeydown}
       >

@@ -68,10 +68,6 @@ export default defineComponent({
       [ns.m(`icon-${props.expandIconPosition}`)]: true,
     }))
 
-    return () => (
-      <div class={cls.value} role="tablist">
-        {slots.default?.()}
-      </div>
-    )
+    return () => <div class={cls.value}>{slots.default?.()}</div>
   },
 })

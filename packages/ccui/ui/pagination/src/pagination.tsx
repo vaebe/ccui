@@ -208,7 +208,7 @@ export default defineComponent({
       const nextDisabled = innerCurrent.value >= totalPages.value || props.disabled
 
       return (
-        <ul class={cls.value}>
+        <ul class={cls.value} role="navigation" aria-label="分页">
           {renderTotal()}
           <li
             class={[ns.e('prev'), prevDisabled && ns.is('disabled')]}

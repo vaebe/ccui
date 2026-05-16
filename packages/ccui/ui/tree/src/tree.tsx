@@ -494,6 +494,7 @@ export default defineComponent({
           'aria-selected': isSelected,
           'aria-expanded': node.hasChildren ? expandedKeys.value.has(node.key) : undefined,
           'aria-disabled': node.disabled || undefined,
+          'aria-level': node.level + 1,
           'data-key': node.key,
           style: [indentStyle, props.styles?.node] as any,
           draggable: props.draggable && !node.disabled ? true : undefined,
@@ -673,10 +674,20 @@ export default defineComponent({
       ]
       const rootStyle = props.styles?.root
 
+      const ariaMulti = props.multiple || props.checkable
+
       if (visibleNodes.value.length === 0) {
         return h(
           'div',
-          { ref: treeRootRef, class: cls, style: rootStyle, role: 'tree', onKeydown },
+          {
+            ref: treeRootRef,
+            class: cls,
+            style: rootStyle,
+            role: 'tree',
+            'aria-multiselectable': ariaMulti || undefined,
+            'aria-disabled': props.disabled || undefined,
+            onKeydown,
+          },
           h('div', { class: ns.e('empty') }, 'No data'),
         )
       }
@@ -698,6 +709,8 @@ export default defineComponent({
             class: cls,
             style: rootStyle,
             role: 'tree',
+            'aria-multiselectable': ariaMulti || undefined,
+            'aria-disabled': props.disabled || undefined,
             onKeydown,
           },
           h(
@@ -724,6 +737,8 @@ export default defineComponent({
           class: cls,
           style: rootStyle,
           role: 'tree',
+          'aria-multiselectable': ariaMulti || undefined,
+          'aria-disabled': props.disabled || undefined,
           onKeydown,
           tabindex: focusedKey.value === undefined ? 0 : -1,
         },

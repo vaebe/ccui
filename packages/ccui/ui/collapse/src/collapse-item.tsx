@@ -71,12 +71,17 @@ export default defineComponent({
           </>
         )
 
+      const headerId = `c-collapse-header-${String(props.name)}`
+      const panelId = `c-collapse-panel-${String(props.name)}`
       return (
         <div class={itemCls}>
           <div
             class={ns.e('header')}
-            role="tab"
+            role="button"
+            id={headerId}
             aria-expanded={isActive.value}
+            aria-controls={panelId}
+            aria-disabled={props.disabled || undefined}
             tabindex={props.disabled ? -1 : 0}
             onClick={handleClick}
             onKeydown={(e: KeyboardEvent) => {
@@ -98,7 +103,7 @@ export default defineComponent({
             onAfterLeave={onAfterLeave}
           >
             {isActive.value && (
-              <div class={ns.e('wrapper')} ref={contentRef}>
+              <div class={ns.e('wrapper')} ref={contentRef} role="region" id={panelId} aria-labelledby={headerId}>
                 <div class={ns.e('content')}>{slots.default?.()}</div>
               </div>
             )}

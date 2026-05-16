@@ -25,7 +25,17 @@ export default defineComponent({
     })
 
     return () => {
-      return props.name === tabsState?.active ? <div class={ns.b()}>{slots.default && slots.default()}</div> : null
+      return props.name === tabsState?.active ? (
+        <div
+          class={ns.b()}
+          role="tabpanel"
+          id={`c-tabpanel-${String(props.name)}`}
+          aria-labelledby={`c-tab-${String(props.name)}`}
+          tabindex={0}
+        >
+          {slots.default && slots.default()}
+        </div>
+      ) : null
     }
   },
 })

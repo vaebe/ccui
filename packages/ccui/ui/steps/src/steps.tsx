@@ -68,8 +68,18 @@ export default defineComponent({
             item.disabled && ns.em('item', 'disabled'),
             isLast && ns.em('item', 'last'),
           ]
+          const isCurrent = index === props.current
+          const stepLabel = `步骤 ${index + 1}${item.title ? `：${item.title}` : ''}`
           return (
-            <div key={index} class={itemCls} role="listitem" onClick={() => onItemClick(index, item)}>
+            <div
+              key={index}
+              class={itemCls}
+              role="listitem"
+              aria-current={isCurrent ? 'step' : undefined}
+              aria-disabled={item.disabled || undefined}
+              aria-label={stepLabel}
+              onClick={() => onItemClick(index, item)}
+            >
               <div class={ns.e('container')}>
                 <div class={ns.e('tail')}>
                   <i />
