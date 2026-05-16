@@ -457,3 +457,30 @@ describe('auto-complete M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('XL-4 ARIA combobox / activedescendant', () => {
+  it('input 暴露 role="combobox" / aria-haspopup="listbox" / aria-controls / aria-expanded', async () => {
+    const wrapper = mountAC()
+    const input = wrapper.find('input')
+    expect(input.attributes('role')).toBe('combobox')
+    expect(input.attributes('aria-haspopup')).toBe('listbox')
+    expect(input.attributes('aria-autocomplete')).toBe('list')
+    expect(input.attributes('aria-controls')).toBeTruthy()
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await focus(wrapper)
+    expect(wrapper.find('input').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('ArrowDown 后 input.aria-activedescendant 指向高亮 option id', async () => {
+    const wrapper = mountAC({ defaultActiveFirstOption: true })
+    await focus(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    const desc = wrapper.find('input').attributes('aria-activedescendant')
+    expect(desc).toBeTruthy()
+    const activeOpt = wrapper.find(`#${desc}`)
+    expect(activeOpt.exists()).toBe(true)
+    expect(activeOpt.attributes('role')).toBe('option')
+    expect(activeOpt.attributes('aria-selected')).toBe('true')
+  })
+})

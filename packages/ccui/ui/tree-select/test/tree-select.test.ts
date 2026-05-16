@@ -622,3 +622,24 @@ describe('tree-select M-B5 键盘导航', () => {
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
   })
 })
+
+describe('XL-4 ARIA combobox / dialog', () => {
+  it('单选 input 暴露 role="combobox" / aria-haspopup="tree" / aria-controls', async () => {
+    const wrapper = mountTS()
+    const input = wrapper.find('input')
+    expect(input.attributes('role')).toBe('combobox')
+    expect(input.attributes('aria-haspopup')).toBe('tree')
+    expect(input.attributes('aria-controls')).toBeTruthy()
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await openPanel(wrapper)
+    expect(wrapper.find('input').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('面板 panel 暴露 role="dialog" 与 aria-label', async () => {
+    const wrapper = mountTS({ placeholder: '请选择部门' })
+    await openPanel(wrapper)
+    const panel = wrapper.find(ns.e('panel'))
+    expect(panel.attributes('role')).toBe('dialog')
+    expect(panel.attributes('aria-label')).toBe('请选择部门')
+  })
+})

@@ -6,6 +6,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   inject,
   onMounted,
   onUnmounted,
@@ -36,6 +37,9 @@ export default defineComponent({
   setup(props: AutoCompleteProps, { emit, slots }) {
     const ns = useNamespace('auto-complete')
     const cfg = useConfig()
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-auto-complete-popup-${uid}`
+    const optionId = (index: number) => `ccui-auto-complete-option-${uid}-${index}`
     const notFoundLocal = computed(
       () => props.notFoundContent || cfg.locale?.AutoComplete?.notFoundContent || '暂无数据',
     )
@@ -264,8 +268,10 @@ export default defineComponent({
           spellcheck={false}
           role="combobox"
           aria-autocomplete="list"
+          aria-haspopup="listbox"
           aria-expanded={open.value}
-          aria-controls={`${ns.b()}-popup`}
+          aria-controls={popupId}
+          aria-activedescendant={open.value && activeIndex.value >= 0 ? optionId(activeIndex.value) : undefined}
           onInput={onInput}
           onFocus={onFocus}
           onBlur={onBlur}
@@ -294,6 +300,7 @@ export default defineComponent({
       return (
         <li
           key={`${opt.value}-${index}`}
+          id={optionId(index)}
           class={cls}
           role="option"
           aria-selected={index === activeIndex.value}
@@ -327,7 +334,7 @@ export default defineComponent({
               ref={popupRef}
               class={[popupCls, props.classNames?.popup]}
               style={[panelStyle, props.styles?.popup] as any}
-              id={`${ns.b()}-popup`}
+              id={popupId}
               role="listbox"
             >
               {list.length === 0 ? (

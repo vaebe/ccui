@@ -13,6 +13,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   h,
   inject,
   nextTick,
@@ -112,6 +113,8 @@ export default defineComponent({
   setup(props: CascaderProps, { emit, slots }) {
     const ns = useNamespace('cascader')
     const cfg = useConfig()
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-cascader-popup-${uid}`
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.Cascader?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
@@ -646,7 +649,7 @@ export default defineComponent({
         )
       }
       return (
-        <ul class={ns.e('column')} role="menu">
+        <ul class={ns.e('column')} role="group">
           {items.map((item, idx) => {
             const active = isItemActive(columnIndex, item)
             const focused = focusedColumn.value === columnIndex && focusedIndex.value === idx
@@ -659,8 +662,10 @@ export default defineComponent({
                   item.disabled && ns.em('item', 'disabled'),
                   loadingSet.value.has(item.raw) && ns.em('item', 'loading'),
                 ]}
-                role="menuitem"
+                role="option"
+                aria-selected={props.multiple ? isItemChecked(columnIndex, item) : active && item.isLeaf}
                 aria-disabled={item.disabled}
+                aria-expanded={!item.isLeaf ? active : undefined}
                 onClick={() => pickOption(columnIndex, item)}
                 onMouseenter={() => hoverOption(columnIndex, item)}
               >
@@ -706,7 +711,7 @@ export default defineComponent({
         )
       }
       return (
-        <ul class={[ns.e('column'), ns.em('column', 'search')]} role="menu">
+        <ul class={[ns.e('column'), ns.em('column', 'search')]} role="listbox">
           {results.map((path, idx) => {
             const labels = path.map((n) => getOptionLabel(n, fn.value))
             const disabled = path.some((n) => isOptionDisabled(n, fn.value))
@@ -719,7 +724,8 @@ export default defineComponent({
                   disabled && ns.em('search-item', 'disabled'),
                   focused && ns.em('search-item', 'focused'),
                 ]}
-                role="menuitem"
+                role="option"
+                aria-selected={focused}
                 aria-disabled={disabled}
                 onClick={() => pickSearchResult(path)}
               >
@@ -747,9 +753,11 @@ export default defineComponent({
         'div',
         {
           ref: popupRef,
+          id: popupId,
           class: [popupCls, props.classNames?.popup],
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
+          'aria-label': props.placeholder || '请选择',
         },
         [content],
       )
@@ -813,8 +821,10 @@ export default defineComponent({
             disabled={props.disabled}
             placeholder={inputPlaceholder.value}
             value={props.multiple ? searchValue.value : inputValueShown.value}
-            aria-haspopup="menu"
+            role="combobox"
+            aria-haspopup="tree"
             aria-expanded={open.value}
+            aria-controls={popupId}
             onFocus={() => emit('focus')}
             onBlur={() => emit('blur')}
             onInput={onInputInput}

@@ -846,4 +846,22 @@ describe('select', () => {
       expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
     })
   })
+
+  describe('XL-4 ARIA combobox / listbox', () => {
+    it('root 节点暴露 combobox / aria-haspopup="listbox" / aria-controls', () => {
+      const wrapper = mountSelect({ options })
+      const root = wrapper.find(ns.b())
+      expect(root.attributes('role')).toBe('combobox')
+      expect(root.attributes('aria-haspopup')).toBe('listbox')
+      expect(root.attributes('aria-controls')).toBeTruthy()
+    })
+
+    it('multiple 模式 listbox 暴露 aria-multiselectable="true"', async () => {
+      const wrapper = mountSelect({ options, multiple: true })
+      await wrapper.trigger('click')
+      const list = wrapper.find(`${ns.e('list')}[role="listbox"]`)
+      expect(list.exists()).toBe(true)
+      expect(list.attributes('aria-multiselectable')).toBe('true')
+    })
+  })
 })

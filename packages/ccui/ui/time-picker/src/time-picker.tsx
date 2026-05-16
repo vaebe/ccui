@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   h,
   inject,
   nextTick,
@@ -64,6 +65,8 @@ export default defineComponent({
     const placeholderText = computed(() => props.placeholder || locale.value.timePlaceholder || '请选择时间')
     const nowText = computed(() => props.nowText || locale.value.now || '此刻')
     const okText = computed(() => props.okText || locale.value.ok || '确定')
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-time-picker-popup-${uid}`
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -377,9 +380,11 @@ export default defineComponent({
         'div',
         {
           ref: popupRef,
+          id: popupId,
           class: [popupCls, props.classNames?.popup],
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
+          'aria-label': placeholderText.value || '选择时间',
         },
         [
           <div class={ns.e('columns')}>{columns}</div>,
@@ -424,6 +429,7 @@ export default defineComponent({
             value={inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
+            aria-controls={popupId}
             onFocus={() => emit('focus')}
             onBlur={() => {
               emit('blur')

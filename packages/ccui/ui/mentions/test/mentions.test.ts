@@ -411,3 +411,28 @@ describe('mentions M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('mentions XL-4 ARIA combobox / activedescendant', () => {
+  it('textarea 暴露 role="combobox" / aria-haspopup="listbox" / aria-controls', async () => {
+    const wrapper = mountM()
+    const ta = wrapper.find('textarea')
+    expect(ta.attributes('role')).toBe('combobox')
+    expect(ta.attributes('aria-haspopup')).toBe('listbox')
+    expect(ta.attributes('aria-autocomplete')).toBe('list')
+    expect(ta.attributes('aria-controls')).toBeTruthy()
+    expect(ta.attributes('aria-expanded')).toBe('false')
+  })
+
+  it('唤起 popup 后 textarea.aria-expanded=true 且 aria-activedescendant 指向 option', async () => {
+    const wrapper = mountM()
+    await typeAt(wrapper, '@a', 2)
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    const ta = wrapper.find('textarea')
+    expect(ta.attributes('aria-expanded')).toBe('true')
+    const desc = ta.attributes('aria-activedescendant')
+    expect(desc).toBeTruthy()
+    const activeOpt = wrapper.find(`#${desc}`)
+    expect(activeOpt.exists()).toBe(true)
+    expect(activeOpt.attributes('role')).toBe('option')
+  })
+})

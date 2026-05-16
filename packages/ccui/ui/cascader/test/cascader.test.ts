@@ -991,3 +991,35 @@ describe('cascader M-B4 option / popup / searchOption slot', () => {
     expect(customs[0].text()).toContain('西湖')
   })
 })
+
+describe('XL-4 ARIA combobox / tree-popup', () => {
+  it('input 暴露 role="combobox" / aria-haspopup="tree" / aria-controls', async () => {
+    const wrapper = mountCascader()
+    const input = wrapper.find('input')
+    expect(input.attributes('role')).toBe('combobox')
+    expect(input.attributes('aria-haspopup')).toBe('tree')
+    expect(input.attributes('aria-controls')).toBeTruthy()
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await openPanel(wrapper)
+    expect(wrapper.find('input').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('面板列暴露 role="group"，叶子项 role="option"，非叶子项 aria-expanded', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    const columns = wrapper.findAll(`${ns.e('column')}[role="group"]`)
+    expect(columns.length).toBeGreaterThan(0)
+    const items = columns[0].findAll('[role="option"]')
+    expect(items.length).toBeGreaterThan(0)
+    // 非叶子项应有 aria-expanded
+    expect(items[0].attributes('aria-expanded')).toBeDefined()
+  })
+
+  it('popup dialog 暴露 role="dialog" 与 aria-label', async () => {
+    const wrapper = mountCascader({ placeholder: '请选择地区' })
+    await openPanel(wrapper)
+    const panel = wrapper.find(ns.e('panel'))
+    expect(panel.attributes('role')).toBe('dialog')
+    expect(panel.attributes('aria-label')).toBe('请选择地区')
+  })
+})

@@ -11,6 +11,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   h,
   inject,
   nextTick,
@@ -109,6 +110,8 @@ export default defineComponent({
   setup(props: TreeSelectProps, { emit, slots }) {
     const ns = useNamespace('tree-select')
     const cfg = useConfig()
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-tree-select-popup-${uid}`
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.TreeSelect?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
@@ -358,9 +361,11 @@ export default defineComponent({
         'div',
         {
           ref: popupRef,
+          id: popupId,
           class: [popupCls, props.classNames?.popup],
           style: [popupStyle, props.styles?.popup] as any,
           role: 'dialog',
+          'aria-label': props.placeholder || '选择',
         },
         [
           renderSearchBox(),
@@ -493,8 +498,10 @@ export default defineComponent({
           disabled={props.disabled}
           placeholder={props.placeholder}
           value={inputDisplay.value}
+          role="combobox"
           aria-haspopup="tree"
           aria-expanded={open.value}
+          aria-controls={popupId}
           onFocus={() => emit('focus')}
           onBlur={() => {
             emit('blur')
@@ -511,6 +518,10 @@ export default defineComponent({
           class={[ns.e('input-wrap'), props.classNames?.inputWrap]}
           style={props.styles?.inputWrap}
           tabindex={props.multiple ? 0 : undefined}
+          role={props.multiple ? 'combobox' : undefined}
+          aria-haspopup={props.multiple ? 'tree' : undefined}
+          aria-expanded={props.multiple ? open.value : undefined}
+          aria-controls={props.multiple ? popupId : undefined}
           onClick={togglePopup}
           onKeydown={props.multiple ? onInputKeydown : undefined}
         >

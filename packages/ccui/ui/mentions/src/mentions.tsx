@@ -1,7 +1,18 @@
 import type { CSSProperties, VNode } from 'vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { MentionMatch, MentionsProps, NormalizedOption } from './mentions-types'
-import { computed, defineComponent, h, inject, nextTick, onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+} from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
@@ -15,6 +26,9 @@ export default defineComponent({
   setup(props: MentionsProps, { emit, slots }) {
     const ns = useNamespace('mentions')
     const cfg = useConfig()
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-mentions-popup-${uid}`
+    const optionId = (index: number) => `ccui-mentions-option-${uid}-${index}`
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.Mentions?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const textareaRef = ref<HTMLTextAreaElement | null>(null)
@@ -204,6 +218,7 @@ export default defineComponent({
       return (
         <li
           key={`${opt.value}-${index}`}
+          id={optionId(index)}
           class={cls}
           role="option"
           aria-selected={index === activeIndex.value}
@@ -236,6 +251,7 @@ export default defineComponent({
       }
       return (
         <div
+          id={popupId}
           class={[ns.e('panel'), props.classNames?.popup]}
           style={[popupStyle, props.styles?.popup] as any}
           role="listbox"
@@ -270,6 +286,14 @@ export default defineComponent({
           placeholder={props.placeholder}
           disabled={props.disabled}
           spellcheck={false}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-haspopup="listbox"
+          aria-expanded={open.value}
+          aria-controls={popupId}
+          aria-activedescendant={
+            open.value && filteredOptions.value[activeIndex.value] ? optionId(activeIndex.value) : undefined
+          }
           onInput={onInput}
           onKeyup={onKeyup}
           onKeydown={onKeydown}

@@ -15,6 +15,7 @@ import {
   computed,
   defineComponent,
   Fragment,
+  getCurrentInstance,
   h,
   inject,
   nextTick,
@@ -105,6 +106,8 @@ export default defineComponent({
     const ns = useNamespace('date-picker')
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.DatePicker ?? {})
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-date-picker-popup-${uid}`
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
@@ -876,9 +879,11 @@ export default defineComponent({
         'div',
         {
           ref: popupRef,
+          id: popupId,
           class: [popupCls, props.classNames?.popup],
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
+          'aria-label': locale.value.placeholder || '选择日期',
         },
         children,
       )
@@ -921,6 +926,7 @@ export default defineComponent({
             value={inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
+            aria-controls={popupId}
             onFocus={() => emit('focus')}
             onBlur={() => {
               emit('blur')

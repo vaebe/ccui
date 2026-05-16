@@ -12,6 +12,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   inject,
   onMounted,
   onUnmounted,
@@ -57,6 +58,8 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'open-change'],
   setup(props: ColorPickerProps, { emit, slots }) {
     const ns = useNamespace('color-picker')
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-color-picker-popup-${uid}`
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const svAreaRef = ref<HTMLElement | null>(null)
@@ -372,6 +375,7 @@ export default defineComponent({
           disabled={props.disabled}
           aria-haspopup="dialog"
           aria-expanded={open.value}
+          aria-controls={popupId}
           onClick={togglePopup}
         >
           <span class={ns.e('swatch')}>
@@ -601,8 +605,11 @@ export default defineComponent({
           <Transition name={props.transitionName} appear>
             <div
               ref={popupRef}
+              id={popupId}
               class={[popupCls, props.classNames?.popup]}
               style={[floatingStyles.value, props.styles?.popup] as any}
+              role="dialog"
+              aria-label="选择颜色"
             >
               {body}
             </div>

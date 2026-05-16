@@ -716,3 +716,23 @@ describe('time-picker M-B3 cell slot', () => {
     expect(hourCells[10].attributes('data-dis')).toBe('0')
   })
 })
+
+describe('XL-4 ARIA dialog', () => {
+  it('input 暴露 aria-haspopup="dialog" / aria-controls / aria-expanded', async () => {
+    const wrapper = mountTP()
+    const input = wrapper.find('input')
+    expect(input.attributes('aria-haspopup')).toBe('dialog')
+    expect(input.attributes('aria-controls')).toBeTruthy()
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await openPanel(wrapper)
+    expect(wrapper.find('input').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('面板 panel 暴露 role="dialog" 与 aria-label', async () => {
+    const wrapper = mountTP({ placeholder: '请挑时间' })
+    await openPanel(wrapper)
+    const panel = wrapper.find(ns.e('panel'))
+    expect(panel.attributes('role')).toBe('dialog')
+    expect(panel.attributes('aria-label')).toBe('请挑时间')
+  })
+})
