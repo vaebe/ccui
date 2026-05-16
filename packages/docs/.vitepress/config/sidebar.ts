@@ -263,6 +263,11 @@ export default {
           status: '80%',
         },
         {
+          text: 'TimeRangePicker 时间范围',
+          link: '/components/time-range-picker/',
+          status: '60%',
+        },
+        {
           text: 'Transfer 穿梭框',
           link: '/components/transfer/',
           status: '80%',

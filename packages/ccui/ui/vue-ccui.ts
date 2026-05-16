@@ -85,6 +85,7 @@ import TabsInstall, { Tab, Tabs } from './tabs'
 import TagInstall, { Tag } from './tag'
 import TextareaInstall, { Textarea } from './textarea'
 import TimePickerInstall, { TimePicker } from './time-picker'
+import TimeRangePickerInstall, { TimeRangePicker } from './time-range-picker'
 import TimelineInstall, { Timeline, TimelineItem } from './timeline'
 import TooltipInstall, { Tooltip } from './tooltip'
 import TransferInstall, { Transfer } from './transfer'
@@ -191,6 +192,7 @@ const installs = [
   TagInstall,
   TextareaInstall,
   TimePickerInstall,
+  TimeRangePickerInstall,
   TimelineInstall,
   TooltipInstall,
   TransferInstall,
@@ -314,6 +316,7 @@ export {
   Tag,
   Textarea,
   TimePicker,
+  TimeRangePicker,
   Timeline,
   TimelineItem,
   Tooltip,

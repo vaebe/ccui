@@ -299,6 +299,42 @@ const value = ref('')
 
 :::
 
+## 自定义单元格 cell slot
+
+`#cell` slot 以 `{ value, type, label, selected, disabled }` 作 scope，可在不打破列布局的前提下追加业务标记（如「营业时段高亮」）。`type` 取值为 `'hour' | 'minute' | 'second' | 'period'`。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('10:30:00')
+
+// 业务：营业时段（9:00 - 18:00）小时加底色
+const BIZ_HOURS = new Set([9, 10, 11, 12, 13, 14, 15, 16, 17])
+</script>
+
+<template>
+  <c-time-picker v-model="value">
+    <template #cell="{ value: v, type, label }">
+      <span :class="['my-time-cell', type === 'hour' && BIZ_HOURS.has(v) ? 'my-time-cell--biz' : '']">
+        {{ label }}
+      </span>
+    </template>
+  </c-time-picker>
+</template>
+
+<style scoped>
+.my-time-cell--biz {
+  color: #1677ff;
+  font-weight: 600;
+}
+</style>
+```
+
+:::
+
 ## API
 
 ### Props
@@ -345,8 +381,19 @@ const value = ref('')
 | focus             | --                                          | 输入框聚焦                         |
 | blur              | --                                          | 输入框失焦                         |
 
+### Slots
+
+| 名称       | scope                                                                                                                      | 说明                                                       |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| cell       | `{ value: number; type: 'hour' \| 'minute' \| 'second' \| 'period'; label: string; selected: boolean; disabled: boolean }` | 自定义时间单元格内容；不传走默认 `label`（两位补零字符串） |
+| clearIcon  | --                                                                                                                         | 自定义清除图标                                             |
+| suffixIcon | --                                                                                                                         | 自定义时钟图标                                             |
+
+## 范围选择 TimeRangePicker
+
+时间区间选择请使用独立的 [`TimeRangePicker`](/components/time-range-picker/) 组件，`v-model` 是 `[start, end]` 元组，两端各自独立的 `disabled` / `allowEmpty` / `placeholder`。
+
 ## 已知限制（未交付）
 
-- **范围选择**：与 DatePicker range 一起作为一批做。
 - **showTime 嵌入 DatePicker**：DatePicker 推到 90% 时一并接通。
 - **滚轮 snap**：打开时已可自动滚动到选中项（见上文 "自动滚动到选中"），但鼠标滚轮 / 触控板的 snap-to-cell 吸附交互暂未实现，留给后续。

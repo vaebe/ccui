@@ -1,0 +1,102 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-time-range-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 320px;
+  padding: 0 11px;
+  border: 1px solid $ccui-color-border;
+  border-radius: $ccui-border-radius;
+  background-color: $ccui-color-bg-container;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+  box-sizing: border-box;
+  min-height: 32px;
+  transition: border-color 0.2s;
+
+  @include form-control-variants-on('&');
+
+  &:hover {
+    border-color: $ccui-primary;
+  }
+
+  &.is-open {
+    border-color: $ccui-primary;
+  }
+
+  &.is-disabled {
+    background-color: $ccui-disabled-bg;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &--small {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+  }
+
+  &__start,
+  &__end {
+    flex: 1;
+    min-width: 0;
+
+    // 内嵌 TimePicker borderless，去掉自带边框/内边距
+    .#{$cls-prefix}-time-picker {
+      width: 100%;
+      display: block;
+    }
+    .#{$cls-prefix}-time-picker__input-wrap {
+      border: none;
+      padding: 0;
+      background: transparent;
+      min-height: auto;
+    }
+  }
+
+  &__separator {
+    flex: 0 0 auto;
+    padding: 0 8px;
+    color: $ccui-color-text-tertiary;
+    user-select: none;
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+}

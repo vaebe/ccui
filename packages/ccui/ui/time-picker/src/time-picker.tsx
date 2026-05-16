@@ -300,6 +300,10 @@ export default defineComponent({
         <ul class={[ns.e('column'), ns.em('column', type)]} role="listbox" aria-label={type} data-time-column={type}>
           {values.map((cell, i) => {
             const isSelected = cell.value === selected
+            const label = cellLabel(type, cell.value)
+            const inner = slots.cell
+              ? slots.cell({ value: cell.value, type, label, selected: isSelected, disabled: cell.disabled })
+              : label
             return (
               <li
                 class={[
@@ -314,7 +318,7 @@ export default defineComponent({
                 onClick={() => !cell.disabled && pickValue(type, cell.value)}
                 onKeydown={(e: KeyboardEvent) => !cell.disabled && onCellKeydown(e, type, i)}
               >
-                {cellLabel(type, cell.value)}
+                {inner}
               </li>
             )
           })}

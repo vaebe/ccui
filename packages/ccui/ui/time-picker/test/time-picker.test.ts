@@ -676,3 +676,43 @@ describe('time-picker M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('time-picker M-B3 cell slot', () => {
+  it('cell slot 替换默认 label 渲染', async () => {
+    const wrapper = mount(TimePicker, {
+      props: { modelValue: '10:30:45' },
+      slots: {
+        cell: `<template #cell="{ value, type, label }"><span class="my-cell">{{ type }}-{{ value }}-{{ label }}</span></template>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const my = wrapper.findAll('.my-cell')
+    expect(my.length).toBeGreaterThan(0)
+    // 第一个 hour cell（0）
+    const firstHour = wrapper.find('[data-time-column="hour"] .my-cell')
+    expect(firstHour.text()).toBe('hour-0-00')
+  })
+
+  it('cell slot scope 含 selected / disabled', async () => {
+    const wrapper = mount(TimePicker, {
+      props: {
+        modelValue: '10:30:45',
+        disabledHours: () => [0, 1, 2],
+      },
+      slots: {
+        cell: `<template #cell="{ value, selected, disabled }"><span class="my-cell" :data-sel="selected ? '1' : '0'" :data-dis="disabled ? '1' : '0'">{{ value }}</span></template>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll('[data-time-column="hour"] .my-cell')
+    // 0 应该 disabled
+    expect(hourCells[0].attributes('data-dis')).toBe('1')
+    // 10 应该 selected
+    expect(hourCells[10].attributes('data-sel')).toBe('1')
+    expect(hourCells[10].attributes('data-dis')).toBe('0')
+  })
+})

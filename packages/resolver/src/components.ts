@@ -93,6 +93,7 @@ export const componentMap: Record<string, ComponentEntry> = {
   CTabs: { exportName: 'Tabs', styleDir: 'tabs' },
   CTag: { exportName: 'Tag', styleDir: 'tag' },
   CTimePicker: { exportName: 'TimePicker', styleDir: 'time-picker' },
+  CTimeRangePicker: { exportName: 'TimeRangePicker', styleDir: 'time-range-picker' },
   CTimeline: { exportName: 'Timeline', styleDir: 'timeline' },
   CTimelineItem: { exportName: 'TimelineItem', styleDir: 'timeline' },
   CTooltip: { exportName: 'Tooltip', styleDir: 'tooltip' },
