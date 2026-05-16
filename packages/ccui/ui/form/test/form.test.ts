@@ -1448,6 +1448,33 @@ describe('M-A5 FormItem deprecation warn', () => {
     wrapper.unmount()
     warn.mockRestore()
   })
+
+  it('XL-1 同时传 name + prop：name 赢，校验使用 name 对应的规则', async () => {
+    const model = reactive({ picked: '', legacy: '' })
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(
+            Form,
+            {
+              ref: 'f',
+              model,
+              rules: {
+                picked: { required: true, message: 'picked required' },
+                legacy: { required: true, message: 'legacy required' },
+              },
+            },
+            () => h(FormItem, { label: 'Both', name: 'picked', prop: 'legacy' }, () => h('input')),
+          ),
+      }),
+    )
+    await nextTick()
+    const formInstance = wrapper.vm.$refs.f as { validate: () => Promise<boolean> }
+    const valid = await formInstance.validate()
+    expect(valid).toBe(false)
+    expect(wrapper.find('.ccui-form-item__message').text()).toBe('picked required')
+    wrapper.unmount()
+  })
 })
 
 describe('XL-3 Form shouldUpdate deprecation warn', () => {

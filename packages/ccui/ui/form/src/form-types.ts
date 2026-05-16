@@ -257,6 +257,9 @@ export const formProps = {
 } as const
 
 export const formItemProps = {
+  /**
+   * 字段名，对应 Form `model` 的 key；嵌套用数组（如 `['user', 'email']`）。
+   */
   name: {
     type: [String, Number, Array] as PropType<FormNamePath>,
     default: undefined,
@@ -265,6 +268,9 @@ export const formItemProps = {
     type: String,
     default: '',
   },
+  /**
+   * @deprecated 请改用 `name`。双写时 `name` 优先；旧名下一大版本移除。
+   */
   prop: {
     type: [String, Number, Array] as PropType<FormNamePath>,
     default: undefined,

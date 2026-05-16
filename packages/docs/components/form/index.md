@@ -23,10 +23,10 @@ const cityOptions = [
 
 <template>
   <c-form :model="model" label-width="88px">
-    <c-form-item label="Name" prop="name" required>
+    <c-form-item label="Name" name="name" required>
       <c-input v-model="model.name" placeholder="Enter name" />
     </c-form-item>
-    <c-form-item label="City" prop="city" extra="Choose the city used for delivery.">
+    <c-form-item label="City" name="city" extra="Choose the city used for delivery.">
       <c-select v-model="model.city" :options="cityOptions" placeholder="Select city" />
     </c-form-item>
   </c-form>
@@ -61,7 +61,7 @@ function submit() {
 
 <template>
   <c-form ref="formRef" :model="model" :rules="rules" label-width="88px" scroll-to-first-error>
-    <c-form-item label="Email" prop="email">
+    <c-form-item label="Email" name="email">
       <c-input v-model="model.email" placeholder="name@example.com" />
     </c-form-item>
     <c-form-item>
@@ -101,10 +101,10 @@ const confirmRule = {
     <c-form-item label="Email" :name="['user', 'email']" :rules="{ type: 'email' }">
       <c-input v-model="model.user.email" />
     </c-form-item>
-    <c-form-item label="Password" prop="password" required>
+    <c-form-item label="Password" name="password" required>
       <c-input v-model="model.password" type="password" />
     </c-form-item>
-    <c-form-item label="Confirm" prop="confirm" :dependencies="['password']" :rules="confirmRule">
+    <c-form-item label="Confirm" name="confirm" :dependencies="['password']" :rules="confirmRule">
       <c-input v-model="model.confirm" type="password" />
     </c-form-item>
   </c-form>
@@ -157,16 +157,16 @@ async function submit() {
 
 <template>
   <c-form ref="formRef" :model="model" label-width="100px">
-    <c-form-item label="密码" prop="password" required>
+    <c-form-item label="密码" name="password" required>
       <c-input v-model="model.password" type="password" />
     </c-form-item>
-    <c-form-item label="确认密码" prop="confirm" :rules="confirmRules" :dependencies="['password']">
+    <c-form-item label="确认密码" name="confirm" :rules="confirmRules" :dependencies="['password']">
       <c-input v-model="model.confirm" type="password" />
     </c-form-item>
-    <c-form-item label="邮箱" prop="email">
+    <c-form-item label="邮箱" name="email">
       <c-input v-model="model.email" placeholder="可选" />
     </c-form-item>
-    <c-form-item label="手机" prop="phone" :rules="phoneRules" :dependencies="['email']">
+    <c-form-item label="手机" name="phone" :rules="phoneRules" :dependencies="['email']">
       <c-input v-model="model.phone" placeholder="邮箱为空时必填" />
     </c-form-item>
     <c-form-item>
@@ -221,10 +221,10 @@ async function submit() {
 
 <template>
   <c-form ref="formRef" :model="model" :rules="rules" label-width="80px">
-    <c-form-item label="密码" prop="password">
+    <c-form-item label="密码" name="password">
       <c-input v-model="model.password" type="password" placeholder="试输入短于 8 字符" />
     </c-form-item>
-    <c-form-item label="价格" prop="price">
+    <c-form-item label="价格" name="price">
       <c-input-number v-model="model.price" />
     </c-form-item>
     <c-form-item>
@@ -262,16 +262,16 @@ const rules = {
 
 <template>
   <c-form :model="model" :rules="rules" label-width="100px" has-feedback>
-    <c-form-item label="姓名" prop="name">
+    <c-form-item label="姓名" name="name">
       <c-input v-model="model.name" placeholder="必填，校验后显示 ✓ / ✕" />
     </c-form-item>
-    <c-form-item label="邮箱" prop="email">
+    <c-form-item label="邮箱" name="email">
       <c-input v-model="model.email" placeholder="格式校验，change 触发" />
     </c-form-item>
-    <c-form-item label="年龄（不显示）" prop="age" :has-feedback="false">
+    <c-form-item label="年龄（不显示）" name="age" :has-feedback="false">
       <c-input v-model="model.age" placeholder="单字段关掉 feedback" />
     </c-form-item>
-    <c-form-item label="状态（强制 warning）" prop="status" validate-status="warning" help="单独指定 warning 演示图标">
+    <c-form-item label="状态（强制 warning）" name="status" validate-status="warning" help="单独指定 warning 演示图标">
       <c-input v-model="model.status" />
     </c-form-item>
   </c-form>
@@ -300,10 +300,10 @@ const model = reactive({ name: '', desc: '' })
     <c-segmented v-model="mark" :options="['true', 'false', 'optional']" />
   </div>
   <c-form :model="model" :required-mark="value" label-width="80px">
-    <c-form-item label="姓名" prop="name" required>
+    <c-form-item label="姓名" name="name" required>
       <c-input v-model="model.name" />
     </c-form-item>
-    <c-form-item label="简介" prop="desc">
+    <c-form-item label="简介" name="desc">
       <c-input v-model="model.desc" placeholder="非必填字段" />
     </c-form-item>
   </c-form>
@@ -368,19 +368,19 @@ const m3 = reactive({ keyword: '', status: '' })
 <template>
   <p style="margin: 0 0 6px; color: #666">layout="horizontal"（默认）</p>
   <c-form :model="m1" label-width="80px">
-    <c-form-item label="姓名" prop="name"><c-input v-model="m1.name" /></c-form-item>
+    <c-form-item label="姓名" name="name"><c-input v-model="m1.name" /></c-form-item>
   </c-form>
 
   <p style="margin: 16px 0 6px; color: #666">layout="vertical"</p>
   <c-form :model="m2" layout="vertical">
-    <c-form-item label="姓名" prop="name"><c-input v-model="m2.name" /></c-form-item>
-    <c-form-item label="邮箱" prop="email"><c-input v-model="m2.email" /></c-form-item>
+    <c-form-item label="姓名" name="name"><c-input v-model="m2.name" /></c-form-item>
+    <c-form-item label="邮箱" name="email"><c-input v-model="m2.email" /></c-form-item>
   </c-form>
 
   <p style="margin: 16px 0 6px; color: #666">layout="inline"</p>
   <c-form :model="m3" layout="inline">
-    <c-form-item label="关键词" prop="keyword"><c-input v-model="m3.keyword" /></c-form-item>
-    <c-form-item label="状态" prop="status">
+    <c-form-item label="关键词" name="keyword"><c-input v-model="m3.keyword" /></c-form-item>
+    <c-form-item label="状态" name="status">
       <c-select
         v-model="m3.status"
         :options="[
@@ -412,13 +412,13 @@ const model = reactive({ name: '', email: '', desc: '' })
 
 <template>
   <c-form :model="model" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }">
-    <c-form-item label="姓名" prop="name">
+    <c-form-item label="姓名" name="name">
       <c-input v-model="model.name" />
     </c-form-item>
-    <c-form-item label="邮箱" prop="email">
+    <c-form-item label="邮箱" name="email">
       <c-input v-model="model.email" />
     </c-form-item>
-    <c-form-item label="个人简介" prop="desc" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+    <c-form-item label="个人简介" name="desc" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
       <c-input v-model="model.desc" placeholder="本行覆盖 form 级：label 4 / wrapper 20" />
     </c-form-item>
     <c-form-item :wrapper-col="{ offset: 6, span: 16 }">
@@ -463,8 +463,8 @@ async function submit() {
 
 <template>
   <c-form ref="formRef" :model="model" :rules="rules" label-width="80px" :disabled="submitting">
-    <c-form-item label="姓名" prop="name"><c-input v-model="model.name" /></c-form-item>
-    <c-form-item label="邮箱" prop="email"><c-input v-model="model.email" /></c-form-item>
+    <c-form-item label="姓名" name="name"><c-input v-model="model.name" /></c-form-item>
+    <c-form-item label="邮箱" name="email"><c-input v-model="model.email" /></c-form-item>
     <c-form-item>
       <c-button type="primary" :loading="submitting" @click="submit">{{ submitting ? '提交中' : '提交' }}</c-button>
     </c-form-item>
@@ -513,8 +513,8 @@ function clear() {
 
 <template>
   <c-form ref="formRef" :model="model" :rules="rules" label-width="80px">
-    <c-form-item label="姓名" prop="name"><c-input v-model="model.name" /></c-form-item>
-    <c-form-item label="邮箱" prop="email"><c-input v-model="model.email" /></c-form-item>
+    <c-form-item label="姓名" name="name"><c-input v-model="model.name" /></c-form-item>
+    <c-form-item label="邮箱" name="email"><c-input v-model="model.email" /></c-form-item>
     <c-form-item>
       <c-button type="primary" @click="validate">校验</c-button>
       <c-button style="margin-inline-start: 8px" @click="reset">重置</c-button>
@@ -550,11 +550,11 @@ function onFinish(name: string, info: { values: any; forms: Record<string, any> 
 <template>
   <c-form-provider @form-finish="onFinish">
     <c-form name="profile" :model="profile">
-      <c-form-item prop="name"><c-input v-model="profile.name" /></c-form-item>
+      <c-form-item name="name"><c-input v-model="profile.name" /></c-form-item>
       <c-button html-type="submit">Save</c-button>
     </c-form>
     <c-form name="billing" :model="billing">
-      <c-form-item prop="address"><c-input v-model="billing.address" /></c-form-item>
+      <c-form-item name="address"><c-input v-model="billing.address" /></c-form-item>
     </c-form>
   </c-form-provider>
 </template>
@@ -566,10 +566,21 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ```vue
 <c-form :model="model" :preserve="false">
-  <c-form-item v-if="advanced" prop="apiKey" :preserve="true">
+  <c-form-item v-if="advanced" name="apiKey" :preserve="true">
     <c-input v-model="model.apiKey" />
   </c-form-item>
 </c-form>
+```
+
+## `prop` 兼容别名
+
+字段名使用 `name`，`prop` 是其 deprecated 别名（dev mode 触发一次性 `console.warn`）。同时传入时 `name` 优先：
+
+```vue
+<!-- name 与 prop 二选一即可 -->
+<c-form-item label="姓名" prop="user">
+  <c-input v-model="model.user" />
+</c-form-item>
 ```
 
 ## 参数
