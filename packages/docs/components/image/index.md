@@ -10,7 +10,7 @@
 
 ```vue
 <template>
-  <c-image src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" width="200" alt="示例图" />
+  <c-image src="https://picsum.photos/seed/c-image/600/400" width="200" alt="示例图" />
 </template>
 ```
 
@@ -24,13 +24,7 @@
 
 ```vue
 <template>
-  <c-image
-    src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-    :width="200"
-    :height="200"
-    fit="cover"
-    preview
-  />
+  <c-image src="https://picsum.photos/seed/c-image-preview/600/400" :width="200" :height="200" fit="cover" preview />
   <p style="margin-top: 8px; color: #666">点击图片打开预览</p>
 </template>
 ```
@@ -46,7 +40,7 @@
 ```vue
 <script setup>
 const fits = ['fill', 'contain', 'cover', 'none', 'scale-down']
-const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg'
+const url = 'https://picsum.photos/seed/c-image-fit/600/400'
 </script>
 
 <template>
@@ -73,7 +67,7 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
     src="https://invalid.example.com/x.png"
     width="160"
     height="120"
-    fallback="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
+    fallback="https://picsum.photos/seed/c-image-fallback/600/400"
   />
   &nbsp;
   <c-image src="https://invalid.example.com/y.png" :width="160" :height="120">
@@ -99,12 +93,7 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
   <div style="height: 200px; overflow: auto; border: 1px dashed #d9d9d9; padding: 8px">
     <p style="color: #666">滚动下方查看懒加载图片：</p>
     <div style="height: 240px"></div>
-    <c-image
-      src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-      :width="200"
-      lazy
-      root-margin="50px"
-    />
+    <c-image src="https://picsum.photos/seed/c-image-lazy/600/400" :width="200" lazy root-margin="50px" />
   </div>
 </template>
 ```
@@ -119,7 +108,7 @@ const url = 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-i
 
 ```vue
 <template>
-  <c-image src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" :width="200" :height="120">
+  <c-image src="https://picsum.photos/seed/c-image-ph/600/400" :width="200" :height="120">
     <template #placeholder>
       <div
         style="
@@ -174,7 +163,7 @@ function trace(type, e) {
 <template>
   <div style="display: flex; gap: 12px; align-items: flex-start">
     <c-image
-      src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
+      src="https://picsum.photos/seed/c-image-event/600/400"
       :width="160"
       :height="120"
       @load="trace('load')"
@@ -200,9 +189,9 @@ function trace(type, e) {
 ```vue
 <script setup>
 const photos = [
-  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
-  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
-  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
+  'https://picsum.photos/seed/c-image-g1/600/400',
+  'https://picsum.photos/seed/c-image-g2/600/400',
+  'https://picsum.photos/seed/c-image-g3/600/400',
 ]
 </script>
 
@@ -228,10 +217,7 @@ const photos = [
 <script setup>
 import { ref } from 'vue'
 
-const photos = [
-  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
-  'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
-]
+const photos = ['https://picsum.photos/seed/c-image-ctl1/600/400', 'https://picsum.photos/seed/c-image-ctl2/600/400']
 const previewState = ref({ visible: false, current: 0 })
 
 function openAt(idx) {
