@@ -274,7 +274,7 @@ export default defineComponent({
       )
 
       return (
-        <div ref={rootRef} class={wrapClass}>
+        <div ref={rootRef} class={[wrapClass, props.classNames?.input]} style={props.styles?.input}>
           {inputNode}
           {showClear.value && (
             <span class={ns.e('clear')} role="button" aria-label="clear" onMousedown={clear}>
@@ -323,7 +323,13 @@ export default defineComponent({
       return (
         <Teleport to={popupContainer.value as HTMLElement | null} disabled={!teleported.value}>
           <Transition name={props.transitionName} appear>
-            <div ref={popupRef} class={popupCls} style={panelStyle} id={`${ns.b()}-popup`} role="listbox">
+            <div
+              ref={popupRef}
+              class={[popupCls, props.classNames?.popup]}
+              style={[panelStyle, props.styles?.popup] as any}
+              id={`${ns.b()}-popup`}
+              role="listbox"
+            >
               {list.length === 0 ? (
                 <div class={ns.e('empty')}>{notFoundLocal.value}</div>
               ) : (
@@ -336,7 +342,10 @@ export default defineComponent({
     }
 
     return () => (
-      <div class={[ns.b(), props.variant ? ns.m(`variant-${props.variant}`) : '']}>
+      <div
+        class={[ns.b(), props.variant ? ns.m(`variant-${props.variant}`) : '', props.classNames?.root]}
+        style={props.styles?.root}
+      >
         {renderInput()}
         {renderPopup()}
       </div>

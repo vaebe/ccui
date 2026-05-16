@@ -566,7 +566,16 @@ export default defineComponent({
       )
       const body = hasPresets ? h('div', { class: ns.e('main-row') }, [renderPresets(), panels]) : panels
       const children = showTimeActive.value ? [body, renderFooter()] : [body]
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, children)
+      return h(
+        'div',
+        {
+          ref: popupRef,
+          class: [popupCls, props.classNames?.popup],
+          style: [floatingStyles.value, props.styles?.popup] as any,
+          role: 'dialog',
+        },
+        children,
+      )
     }
 
     function renderPopup() {
@@ -592,8 +601,8 @@ export default defineComponent({
     ])
 
     return () => (
-      <div ref={rootRef} class={rootCls.value}>
-        <div class={ns.e('input-wrap')}>
+      <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
+        <div class={[ns.e('input-wrap'), props.classNames?.input]} style={props.styles?.input}>
           <input
             ref={startInputRef}
             class={[ns.e('input'), ns.em('input', 'start')]}

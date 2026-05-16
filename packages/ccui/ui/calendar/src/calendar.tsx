@@ -130,7 +130,8 @@ export default defineComponent({
             onClick={() => {
               setCurrentDate(dateCellOpts.date)
             }}
-            class={className}
+            class={[className, props.classNames?.cell]}
+            style={props.styles?.cell}
           >
             {slots.dateCell ? slots.dateCell(dateCellOpts) : dateCellOpts.day}
           </div>
@@ -145,7 +146,7 @@ export default defineComponent({
 
     const defaultHeader = () => {
       return (
-        <div class={ns.e('header')}>
+        <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
           <div>{currentMonth.value}</div>
           <div>
             <c-button
@@ -191,10 +192,12 @@ export default defineComponent({
     }))
 
     return () => (
-      <div class={ns.b()}>
+      <div class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
         {slots.header ? slots.header(headerScope.value) : defaultHeader()}
         <div class={ns.e('week')}>{weekItemList}</div>
-        <div class={ns.e('day-box')}>{dateItemList.value}</div>
+        <div class={[ns.e('day-box'), props.classNames?.body]} style={props.styles?.body}>
+          {dateItemList.value}
+        </div>
       </div>
     )
   },

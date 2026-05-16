@@ -156,6 +156,8 @@ export function useMessage(): UseMessageReturn {
                 customClass: it.options.customClass ?? '',
                 role: it.options.role ?? config.role ?? 'alert',
                 pauseOnHover: it.options.pauseOnHover ?? config.pauseOnHover ?? true,
+                classNames: it.options.classNames,
+                styles: it.options.styles,
                 onClose: () => it.options.onClose?.(),
                 onDestroy: () => onDestroy(p, it.id),
               }),

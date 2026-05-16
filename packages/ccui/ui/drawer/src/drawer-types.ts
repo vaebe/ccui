@@ -1,4 +1,5 @@
 import type { ExtractPropTypes, InjectionKey, PropType, Ref, VNode } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom'
 
@@ -157,6 +158,21 @@ export const drawerProps = {
   focusTriggerAfterClose: {
     type: Boolean,
     default: true,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。
+   * 可用 key：`root` / `wrap` / `mask` / `header` / `body` / `footer`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

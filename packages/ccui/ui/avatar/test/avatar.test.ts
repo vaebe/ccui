@@ -166,4 +166,22 @@ describe('avatar', () => {
 
     wrapper.unmount()
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Avatar, {
+        props: { name: 'A', classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-avatar').classes()).toContain('my-root')
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Avatar, {
+        props: { name: 'A', styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-avatar').attributes('style') || '').toContain('red')
+      wrapper.unmount()
+    })
+  })
 })

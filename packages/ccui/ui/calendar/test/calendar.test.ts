@@ -206,4 +206,18 @@ describe('calendar', () => {
     expect(emittedDate.getDate()).toBe(25)
     wrapper.unmount()
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = createWrapper({ classNames: { root: 'my-root' } })
+      expect(wrapper.find(baseClass).classes()).toContain('my-root')
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = createWrapper({ styles: { root: { color: 'red' } } })
+      expect(wrapper.find(baseClass).attributes('style') || '').toContain('red')
+      wrapper.unmount()
+    })
+  })
 })

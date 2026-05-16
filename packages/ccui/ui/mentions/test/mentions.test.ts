@@ -399,3 +399,15 @@ describe('mentions status（M-A3：Ant 风格校验状态 + Form 联动）', () 
     expect(wrapper.find(ns.m('status-error')).exists()).toBe(false)
   })
 })
+
+describe('mentions M-A2 classNames / styles 钩子', () => {
+  it('classNames.root 注入到根节点', () => {
+    const wrapper = mountM({ classNames: { root: 'my-root' } })
+    expect(wrapper.find(ns.b()).classes()).toContain('my-root')
+  })
+
+  it('styles.root 注入到根节点 style', () => {
+    const wrapper = mountM({ styles: { root: { color: 'red' } } })
+    expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
+  })
+})

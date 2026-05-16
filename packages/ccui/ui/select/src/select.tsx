@@ -637,11 +637,12 @@ export default defineComponent({
     }
 
     const buildPopup = (): VNode => {
-      const popupCls = [ns.e('dropdown'), props.popupClassName].filter(Boolean)
+      const popupCls = [ns.e('dropdown'), props.popupClassName, props.classNames?.popup].filter(Boolean)
+      const popupStyle = [floatingStyles.value, props.styles?.popup] as any
       if (props.loading) {
         return h(
           'div',
-          { ref: popupRef, class: popupCls, style: floatingStyles.value },
+          { ref: popupRef, class: popupCls, style: popupStyle },
           h('div', { class: ns.e('loading') }, props.loadingText),
         )
       }
@@ -649,11 +650,11 @@ export default defineComponent({
         const emptyContent = slots.empty ? slots.empty() : props.noDataText
         return h(
           'div',
-          { ref: popupRef, class: popupCls, style: floatingStyles.value },
+          { ref: popupRef, class: popupCls, style: popupStyle },
           h('div', { class: ns.e('empty') }, emptyContent as never),
         )
       }
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value }, renderListContent())
+      return h('div', { ref: popupRef, class: popupCls, style: popupStyle }, renderListContent())
     }
 
     const renderDropdown = () => {
@@ -679,7 +680,8 @@ export default defineComponent({
         'div',
         {
           ref: rootRef,
-          class: cls.value,
+          class: [cls.value, props.classNames?.root],
+          style: props.styles?.root,
           tabindex: props.disabled ? undefined : 0,
           role: 'combobox',
           'aria-expanded': open.value,
@@ -694,7 +696,7 @@ export default defineComponent({
         },
         [
           slots.prefix ? h('span', { class: ns.e('prefix') }, slots.prefix()) : null,
-          h('div', { class: ns.e('selector') }, [
+          h('div', { class: [ns.e('selector'), props.classNames?.selector], style: props.styles?.selector }, [
             h(
               'div',
               { class: ns.e('selection') },

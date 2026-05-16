@@ -1,4 +1,5 @@
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 /**
  * 对标 ant `Cascader.SHOW_CHILD` / `.SHOW_PARENT`：`showCheckedStrategy` 取值。
@@ -192,6 +193,20 @@ export const cascaderProps = {
   variant: {
     type: String as PropType<CascaderVariant>,
     default: 'outlined',
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `inputWrap` / `popup`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

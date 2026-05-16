@@ -1,4 +1,5 @@
 import type { CSSProperties, ExtractPropTypes, InjectionKey, PropType, Slot, VNodeChild } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type TableRowKey = string | ((record: any, index: number) => string | number)
 export type TableSize = 'small' | 'middle' | 'default'
@@ -141,6 +142,20 @@ export const tableProps = {
   indentSize: {
     type: Number,
     default: 15,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `header` / `body` / `row`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

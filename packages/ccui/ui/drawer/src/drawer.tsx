@@ -251,7 +251,7 @@ export default defineComponent({
     const renderHeader = (): VNode | null => {
       if (!hasHeader.value) return null
       return (
-        <div class={ns.e('header')}>
+        <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
           <div class={ns.e('title')}>{slots.title ? slots.title() : props.title}</div>
           {slots.extra && <div class={ns.e('extra')}>{slots.extra()}</div>}
           {closableEnabled.value && (
@@ -271,7 +271,7 @@ export default defineComponent({
     const renderBody = (): VNode => {
       if (props.loading) {
         return (
-          <div class={[ns.e('body'), ns.em('body', 'loading')]}>
+          <div class={[ns.e('body'), ns.em('body', 'loading'), props.classNames?.body]} style={props.styles?.body}>
             <div class={ns.e('skeleton')} aria-busy="true">
               <span class={ns.em('skeleton', 'line')} />
               <span class={ns.em('skeleton', 'line')} />
@@ -280,7 +280,11 @@ export default defineComponent({
           </div>
         )
       }
-      return <div class={ns.e('body')}>{slots.default?.()}</div>
+      return (
+        <div class={[ns.e('body'), props.classNames?.body]} style={props.styles?.body}>
+          {slots.default?.()}
+        </div>
+      )
     }
 
     // footer 隐藏判定：footer=null 显式隐藏；否则有 slot 或 (旧 showFooter || footer prop) 才显示
@@ -293,17 +297,31 @@ export default defineComponent({
 
     const renderFooter = (): VNode | null => {
       if (footerIsHidden.value) return null
+      const footerClass = [ns.e('footer'), props.classNames?.footer]
+      const footerStyle = props.styles?.footer
       if (slots.footer) {
-        return <div class={ns.e('footer')}>{slots.footer()}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {slots.footer()}
+          </div>
+        )
       }
       if (typeof props.footer === 'string') {
-        return <div class={ns.e('footer')}>{props.footer}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {props.footer}
+          </div>
+        )
       }
       if (props.footer && typeof props.footer === 'object') {
-        return <div class={ns.e('footer')}>{props.footer as VNode}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {props.footer as VNode}
+          </div>
+        )
       }
       // 兼容旧 showFooter=true 但无 slot 时，渲染空 footer
-      return <div class={ns.e('footer')}></div>
+      return <div class={footerClass} style={footerStyle}></div>
     }
 
     // ── 渲染容器决策 ─────────────────────────────────────
@@ -317,13 +335,23 @@ export default defineComponent({
 
     return () => {
       const wrap = (
-        <div class={[ns.b(), ns.m(props.placement)]} style={{ zIndex: props.zIndex }} aria-modal="true" role="dialog">
+        <div
+          class={[ns.b(), ns.m(props.placement), props.classNames?.root]}
+          style={[{ zIndex: props.zIndex }, props.styles?.root] as any}
+          aria-modal="true"
+          role="dialog"
+        >
           <Transition name={`${ns.b()}-fade`}>
-            {props.mask && isOpen.value && <div class={ns.e('mask')} onClick={onMaskClick} />}
+            {props.mask && isOpen.value && (
+              <div class={[ns.e('mask'), props.classNames?.mask]} style={props.styles?.mask} onClick={onMaskClick} />
+            )}
           </Transition>
           <Transition name={`${ns.b()}-${props.placement}`} onAfterEnter={onAfterEnter} onAfterLeave={onAfterLeave}>
             {isOpen.value && (
-              <div class={ns.e('content')} style={sizeStyle.value}>
+              <div
+                class={[ns.e('content'), props.classNames?.wrap]}
+                style={[sizeStyle.value, props.styles?.wrap] as any}
+              >
                 <div class={ns.e('inner')}>
                   {renderHeader()}
                   {renderBody()}

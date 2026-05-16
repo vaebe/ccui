@@ -426,4 +426,22 @@ describe('input', () => {
       warn.mockRestore()
     })
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Input, {
+        props: { classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.classes()).toContain('my-root')
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Input, {
+        props: { styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.attributes('style') || '').toContain('color: red')
+      wrapper.unmount()
+    })
+  })
 })

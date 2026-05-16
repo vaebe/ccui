@@ -753,7 +753,16 @@ export default defineComponent({
         ? h('div', { class: ns.e('main-row') }, [renderPresets(), h('div', { class: ns.e('main-body') }, [inner])])
         : inner
       const children = showTimeActive.value ? [main, renderFooter()] : [main]
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, children)
+      return h(
+        'div',
+        {
+          ref: popupRef,
+          class: [popupCls, props.classNames?.popup],
+          style: [floatingStyles.value, props.styles?.popup] as any,
+          role: 'dialog',
+        },
+        children,
+      )
     }
 
     function renderPopup() {
@@ -780,11 +789,12 @@ export default defineComponent({
     ])
 
     return () => (
-      <div ref={rootRef} class={rootCls.value}>
+      <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
         <div class={ns.e('input-wrap')} onClick={togglePopup}>
           <input
             ref={inputRef}
-            class={ns.e('input')}
+            class={[ns.e('input'), props.classNames?.input]}
+            style={props.styles?.input}
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}

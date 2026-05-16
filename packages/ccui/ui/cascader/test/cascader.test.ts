@@ -737,3 +737,15 @@ describe('cascader multiple', () => {
     })
   })
 })
+
+describe('cascader M-A2 classNames / styles 钩子', () => {
+  it('classNames.root 注入到根节点', () => {
+    const wrapper = mountCascader({ classNames: { root: 'my-root' } })
+    expect(wrapper.find(ns.b()).classes()).toContain('my-root')
+  })
+
+  it('styles.root 注入到根节点 style', () => {
+    const wrapper = mountCascader({ styles: { root: { color: 'red' } } })
+    expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
+  })
+})

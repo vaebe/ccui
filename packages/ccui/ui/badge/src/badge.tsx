@@ -55,10 +55,10 @@ export default defineComponent({
       // 状态点 + 文本
       if (props.status || (props.color && !slots.default && !hasCount.value)) {
         return (
-          <span class={ns.b()}>
+          <span class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
             <span
-              class={[ns.e('status-dot'), props.status && ns.em('status-dot', props.status)]}
-              style={props.color ? { backgroundColor: props.color } : undefined}
+              class={[ns.e('status-dot'), props.status && ns.em('status-dot', props.status), props.classNames?.dot]}
+              style={[props.color ? { backgroundColor: props.color } : undefined, props.styles?.dot] as any}
             />
             {props.text && <span class={ns.e('status-text')}>{props.text}</span>}
           </span>
@@ -71,10 +71,18 @@ export default defineComponent({
           return null
         }
         if (props.dot) {
-          return <span class={[ns.b(), ns.m('dot-standalone')]} style={countStyle.value} />
+          return (
+            <span
+              class={[ns.b(), ns.m('dot-standalone'), props.classNames?.root, props.classNames?.dot]}
+              style={[countStyle.value, props.styles?.root, props.styles?.dot] as any}
+            />
+          )
         }
         return (
-          <span class={[ns.b(), ns.m('count-standalone')]} style={countStyle.value}>
+          <span
+            class={[ns.b(), ns.m('count-standalone'), props.classNames?.root, props.classNames?.count]}
+            style={[countStyle.value, props.styles?.root, props.styles?.count] as any}
+          >
             {displayCount.value}
           </span>
         )
@@ -82,13 +90,20 @@ export default defineComponent({
 
       // 包裹模式
       const sup = hasCount.value ? (
-        <sup class={[ns.e('sup'), props.dot && ns.em('sup', 'dot')]} style={countStyle.value}>
+        <sup
+          class={[
+            ns.e('sup'),
+            props.dot && ns.em('sup', 'dot'),
+            props.dot ? props.classNames?.dot : props.classNames?.count,
+          ]}
+          style={[countStyle.value, props.dot ? props.styles?.dot : props.styles?.count] as any}
+        >
           {props.dot ? null : displayCount.value}
         </sup>
       ) : null
 
       return (
-        <span class={ns.b()}>
+        <span class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
           {slots.default?.()}
           {sup}
         </span>

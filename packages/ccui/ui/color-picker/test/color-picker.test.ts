@@ -479,3 +479,15 @@ describe('color-picker M-A4 clearIcon 钩子', () => {
     expect(wrapper.find('i.my-clear').exists()).toBe(false)
   })
 })
+
+describe('color-picker M-A2 classNames / styles 钩子', () => {
+  it('classNames.root 注入到根节点', () => {
+    const wrapper = mountCP({ classNames: { root: 'my-root' } })
+    expect(wrapper.find(ns.b()).classes()).toContain('my-root')
+  })
+
+  it('styles.root 注入到根节点 style', () => {
+    const wrapper = mountCP({ styles: { root: { color: 'red' } } })
+    expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
+  })
+})

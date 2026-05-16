@@ -470,4 +470,27 @@ describe('drawer', () => {
       warn.mockRestore()
     })
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', async () => {
+      const wrapper = mount(Drawer, {
+        props: { visible: true, classNames: { root: 'my-root' } },
+      })
+      await nextTick()
+      const root = document.body.querySelector('.ccui-drawer.my-root')
+      expect(root).not.toBeNull()
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', async () => {
+      const wrapper = mount(Drawer, {
+        props: { visible: true, styles: { root: { color: 'red' } } },
+      })
+      await nextTick()
+      const root = document.body.querySelector('.ccui-drawer') as HTMLElement | null
+      expect(root).not.toBeNull()
+      expect(root!.getAttribute('style') || '').toContain('red')
+      wrapper.unmount()
+    })
+  })
 })

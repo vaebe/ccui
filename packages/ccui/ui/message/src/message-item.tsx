@@ -59,17 +59,23 @@ export default defineComponent({
       <Transition name={`${ns.b()}-fade`} onAfterLeave={onAfterLeave}>
         {visible.value && (
           <div
-            class={[ns.e('item'), ns.em('item', props.type), props.customClass]}
+            class={[ns.e('item'), ns.em('item', props.type), props.customClass, props.classNames?.root]}
+            style={props.styles?.root}
             role={props.role}
             aria-live={props.role === 'alert' ? 'assertive' : 'polite'}
             onMouseenter={onMouseenter}
             onMouseleave={onMouseleave}
           >
             <div class={ns.e('inner')}>
-              <span class={[ns.e('icon'), ns.em('icon', props.type)]}>
+              <span
+                class={[ns.e('icon'), ns.em('icon', props.type), props.classNames?.icon]}
+                style={props.styles?.icon}
+              >
                 {props.icon ? <i class={props.icon} /> : ICON_MAP[props.type]}
               </span>
-              <span class={ns.e('content')}>{slots.default ? slots.default() : props.content}</span>
+              <span class={[ns.e('content'), props.classNames?.content]} style={props.styles?.content}>
+                {slots.default ? slots.default() : props.content}
+              </span>
               {props.showClose && (
                 <button class={ns.e('close')} onClick={close} aria-label="Close">
                   ×

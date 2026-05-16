@@ -800,7 +800,7 @@ export default defineComponent({
       if (!hasColumnGroup.value) {
         return h(
           'thead',
-          { class: ns.e('thead') },
+          { class: [ns.e('thead'), props.classNames?.header], style: props.styles?.header },
           h('tr', null, [
             renderSelectionHeader(),
             renderExpandHeader(),
@@ -873,7 +873,10 @@ export default defineComponent({
         }
       })
 
-      return h('thead', { class: ns.e('thead') }, [h('tr', null, topRow), h('tr', null, bottomRow)])
+      return h('thead', { class: [ns.e('thead'), props.classNames?.header], style: props.styles?.header }, [
+        h('tr', null, topRow),
+        h('tr', null, bottomRow),
+      ])
     }
 
     const totalColumnCount = computed(
@@ -975,7 +978,8 @@ export default defineComponent({
           'tr',
           {
             key,
-            class: [ns.e('tr'), selectedRowKeySet.value.has(key) && ns.em('tr', 'selected')],
+            class: [ns.e('tr'), selectedRowKeySet.value.has(key) && ns.em('tr', 'selected'), props.classNames?.row],
+            style: props.styles?.row,
             onClick: trClickHandler,
           },
           [renderSelectionCell(record, rowIndex), renderExpandCell(record, rowIndex, key), ...cells],
@@ -1068,14 +1072,14 @@ export default defineComponent({
     }
 
     return () =>
-      h('div', { class: cls.value }, [
+      h('div', { class: [cls.value, props.classNames?.root], style: props.styles?.root }, [
         renderHiddenChildren(),
         h('div', { class: ns.e('container'), style: containerStyle.value }, [
           h('table', { class: ns.e('table'), style: tableStyle.value }, [
             renderHeader(),
             h(
               'tbody',
-              { class: ns.e('tbody') },
+              { class: [ns.e('tbody'), props.classNames?.body], style: props.styles?.body },
               displayData.value.length
                 ? displayData.value.flatMap((record, rowIndex) => renderRow(record, rowIndex))
                 : renderEmpty(),

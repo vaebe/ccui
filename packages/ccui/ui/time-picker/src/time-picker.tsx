@@ -369,10 +369,19 @@ export default defineComponent({
       }
       const showFooter = footerNodes.length > 0
 
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, [
-        <div class={ns.e('columns')}>{columns}</div>,
-        showFooter ? <div class={ns.e('footer')}>{footerNodes}</div> : null,
-      ])
+      return h(
+        'div',
+        {
+          ref: popupRef,
+          class: [popupCls, props.classNames?.popup],
+          style: [floatingStyles.value, props.styles?.popup] as any,
+          role: 'dialog',
+        },
+        [
+          <div class={ns.e('columns')}>{columns}</div>,
+          showFooter ? <div class={ns.e('footer')}>{footerNodes}</div> : null,
+        ],
+      )
     }
 
     function renderPopup() {
@@ -398,11 +407,12 @@ export default defineComponent({
     ])
 
     return () => (
-      <div ref={rootRef} class={rootCls.value}>
+      <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
         <div class={ns.e('input-wrap')} onClick={togglePopup}>
           <input
             ref={inputRef}
-            class={ns.e('input')}
+            class={[ns.e('input'), props.classNames?.input]}
+            style={props.styles?.input}
             type="text"
             readonly={props.inputReadOnly}
             disabled={props.disabled}

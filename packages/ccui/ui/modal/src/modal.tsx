@@ -189,20 +189,35 @@ export default defineComponent({
     const renderFooter = (): VNode | null => {
       if (footerIsHidden.value) return null
 
+      const footerClass = [ns.e('footer'), props.classNames?.footer]
+      const footerStyle = props.styles?.footer
+
       if (slots.footer) {
-        return <div class={ns.e('footer')}>{slots.footer({ ok: onOk, cancel: onCancel })}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {slots.footer({ ok: onOk, cancel: onCancel })}
+          </div>
+        )
       }
 
       if (typeof props.footer === 'string') {
-        return <div class={ns.e('footer')}>{props.footer}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {props.footer}
+          </div>
+        )
       }
       if (props.footer && typeof props.footer === 'object') {
-        return <div class={ns.e('footer')}>{props.footer as VNode}</div>
+        return (
+          <div class={footerClass} style={footerStyle}>
+            {props.footer as VNode}
+          </div>
+        )
       }
 
       // 默认 ok / cancel 按钮
       return (
-        <div class={ns.e('footer')}>
+        <div class={footerClass} style={footerStyle}>
           <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
             {cancelTextLocal.value}
           </button>
@@ -237,18 +252,21 @@ export default defineComponent({
 
       const dialog = (
         <div
-          class={[ns.b(), props.centered && ns.m('centered'), props.wrapClassName]}
-          style={wrapStyle}
+          class={[ns.b(), props.centered && ns.m('centered'), props.wrapClassName, props.classNames?.root]}
+          style={[wrapStyle, props.styles?.root] as any}
           aria-modal="true"
           role="dialog"
         >
           <Transition name={maskTransition}>
-            {props.mask && isOpen.value && <div class={ns.e('mask')} onClick={onMaskClick} />}
+            {props.mask && isOpen.value && (
+              <div class={[ns.e('mask'), props.classNames?.mask]} style={props.styles?.mask} onClick={onMaskClick} />
+            )}
           </Transition>
           <Transition name={zoomTransition} onAfterEnter={onAfterEnter} onAfterLeave={onAfterLeave}>
             {isOpen.value && (
               <div
-                class={ns.e('wrap')}
+                class={[ns.e('wrap'), props.classNames?.wrap]}
+                style={props.styles?.wrap}
                 onClick={(e: MouseEvent) => {
                   if (e.target === e.currentTarget && props.maskClosable && !props.mask) {
                     close()
@@ -267,11 +285,13 @@ export default defineComponent({
                     </button>
                   )}
                   {(props.title || slots.title) && (
-                    <div class={ns.e('header')}>
+                    <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
                       <div class={ns.e('title')}>{slots.title ? slots.title() : props.title}</div>
                     </div>
                   )}
-                  <div class={ns.e('body')}>{slots.default?.()}</div>
+                  <div class={[ns.e('body'), props.classNames?.body]} style={props.styles?.body}>
+                    {slots.default?.()}
+                  </div>
                   {renderFooter()}
                 </div>
               </div>

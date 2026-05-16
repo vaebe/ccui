@@ -200,4 +200,21 @@ describe('notification', () => {
     vi.useRealTimers()
     expect(typeof notification.destroy).toBe('function')
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到 item 根节点', async () => {
+      notification.open({ title: 'cn', duration: 0, classNames: { root: 'my-root' } })
+      await nextTick()
+      const item = document.body.querySelector('.ccui-notification__item.my-root')
+      expect(item).not.toBeNull()
+    })
+
+    it('styles.root 注入到 item 根节点 style', async () => {
+      notification.open({ title: 'st', duration: 0, styles: { root: { color: 'red' } } })
+      await nextTick()
+      const item = document.body.querySelector('.ccui-notification__item') as HTMLElement | null
+      expect(item).not.toBeNull()
+      expect(item!.getAttribute('style') || '').toContain('red')
+    })
+  })
 })

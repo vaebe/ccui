@@ -549,7 +549,16 @@ export default defineComponent({
       ) : (
         <div class={ns.e('columns')}>{columns.value.map((col, i) => renderColumn(col, i))}</div>
       )
-      return h('div', { ref: popupRef, class: popupCls, style: floatingStyles.value, role: 'dialog' }, [body])
+      return h(
+        'div',
+        {
+          ref: popupRef,
+          class: [popupCls, props.classNames?.popup],
+          style: [floatingStyles.value, props.styles?.popup] as any,
+          role: 'dialog',
+        },
+        [body],
+      )
     }
 
     function renderPopup() {
@@ -589,8 +598,18 @@ export default defineComponent({
     })
 
     return () => (
-      <div ref={rootRef} class={[...rootCls.value, props.multiple && ns.m('multiple')].filter(Boolean) as string[]}>
-        <div class={ns.e('input-wrap')} onClick={togglePopup}>
+      <div
+        ref={rootRef}
+        class={
+          [...rootCls.value, props.multiple && ns.m('multiple'), props.classNames?.root].filter(Boolean) as string[]
+        }
+        style={props.styles?.root}
+      >
+        <div
+          class={[ns.e('input-wrap'), props.classNames?.inputWrap]}
+          style={props.styles?.inputWrap}
+          onClick={togglePopup}
+        >
           {props.multiple && renderTags()}
           <input
             ref={inputRef}

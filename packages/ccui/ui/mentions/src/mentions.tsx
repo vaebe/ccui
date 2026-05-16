@@ -235,7 +235,11 @@ export default defineComponent({
         popupStyle.marginTop = '4px'
       }
       return (
-        <div class={ns.e('panel')} style={popupStyle} role="listbox">
+        <div
+          class={[ns.e('panel'), props.classNames?.popup]}
+          style={[popupStyle, props.styles?.popup] as any}
+          role="listbox"
+        >
           {list.length === 0 ? (
             <div class={ns.e('empty')}>{notFoundLocal.value}</div>
           ) : (
@@ -253,11 +257,14 @@ export default defineComponent({
           props.disabled ? ns.is('disabled') : '',
           props.variant ? ns.m(`variant-${props.variant}`) : '',
           mergedStatus.value ? ns.m(`status-${mergedStatus.value}`) : '',
+          props.classNames?.root,
         ]}
+        style={props.styles?.root}
       >
         <textarea
           ref={textareaRef}
-          class={ns.e('textarea')}
+          class={[ns.e('textarea'), props.classNames?.textarea]}
+          style={props.styles?.textarea}
           value={currentValue.value}
           rows={props.rows}
           placeholder={props.placeholder}

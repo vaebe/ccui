@@ -90,6 +90,8 @@ function ensureContainer(placement: MessagePlacement) {
             customClass: it.options.customClass ?? '',
             role: it.options.role ?? globalConfig.role ?? 'alert',
             pauseOnHover: it.options.pauseOnHover ?? globalConfig.pauseOnHover ?? true,
+            classNames: it.options.classNames,
+            styles: it.options.styles,
             onClose: () => it.options.onClose?.(),
             onDestroy: () => onDestroy(it.id),
           }),

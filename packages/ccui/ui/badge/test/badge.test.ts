@@ -69,4 +69,20 @@ describe('badge', () => {
     expect(wrapper.find(ns.e('sup')).exists()).toBe(false)
     expect(wrapper.text()).toBe('Inbox')
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Badge, {
+        props: { count: 5, classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-badge').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Badge, {
+        props: { count: 5, styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-badge').attributes('style') || '').toContain('red')
+    })
+  })
 })

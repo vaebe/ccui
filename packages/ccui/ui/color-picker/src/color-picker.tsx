@@ -343,7 +343,8 @@ export default defineComponent({
         return (
           <div
             ref={(el: any) => (rootRef.value = el as HTMLElement)}
-            class={ns.e('trigger-custom')}
+            class={[ns.e('trigger-custom'), props.classNames?.trigger]}
+            style={props.styles?.trigger}
             onClick={togglePopup}
           >
             {slots.trigger({ color: currentHex.value, open: open.value, disabled: props.disabled })}
@@ -364,7 +365,8 @@ export default defineComponent({
         <button
           ref={(el: any) => (rootRef.value = el as HTMLElement)}
           type="button"
-          class={triggerCls}
+          class={[triggerCls, props.classNames?.trigger]}
+          style={props.styles?.trigger}
           disabled={props.disabled}
           aria-haspopup="dialog"
           aria-expanded={open.value}
@@ -532,7 +534,11 @@ export default defineComponent({
       return (
         <Teleport to={popupContainer.value as HTMLElement | null} disabled={!teleported.value}>
           <Transition name={props.transitionName} appear>
-            <div ref={popupRef} class={popupCls} style={floatingStyles.value as CSSProperties}>
+            <div
+              ref={popupRef}
+              class={[popupCls, props.classNames?.popup]}
+              style={[floatingStyles.value, props.styles?.popup] as any}
+            >
               {renderSv()}
               {renderHue()}
               {renderAlpha()}
@@ -546,7 +552,13 @@ export default defineComponent({
 
     return () => (
       <div
-        class={[ns.b(), props.disabled ? ns.is('disabled') : '', props.variant ? ns.m(`variant-${props.variant}`) : '']}
+        class={[
+          ns.b(),
+          props.disabled ? ns.is('disabled') : '',
+          props.variant ? ns.m(`variant-${props.variant}`) : '',
+          props.classNames?.root,
+        ]}
+        style={props.styles?.root}
       >
         {renderTrigger()}
         {renderPopup()}

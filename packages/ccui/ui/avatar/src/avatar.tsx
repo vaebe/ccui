@@ -56,13 +56,19 @@ export default defineComponent({
         src={imgSrc.value}
         alt=""
         onError={showErrorAvatar}
-        style={{
-          width: `${width.value}px`,
-          height: `${height.value}px`,
-          verticalAlign: 'middle',
-          objectFit: fit.value,
-          borderRadius: isRound.value ? '100%' : '0',
-        }}
+        class={[props.classNames?.image]}
+        style={
+          [
+            {
+              width: `${width.value}px`,
+              height: `${height.value}px`,
+              verticalAlign: 'middle',
+              objectFit: fit.value,
+              borderRadius: isRound.value ? '100%' : '0',
+            },
+            props.styles?.image,
+          ] as any
+        }
       />
     )
 
@@ -93,14 +99,19 @@ export default defineComponent({
 
     const nameElement = (
       <span
-        class={[styleNs, backgroundNs.value]}
-        style={{
-          height: `${height.value}px`,
-          width: `${width.value}px`,
-          lineHeight: `${height.value}px`,
-          fontSize: `${fontSize.value}px`,
-          borderRadius: isRound.value ? '100%' : '0',
-        }}
+        class={[styleNs, backgroundNs.value, props.classNames?.text]}
+        style={
+          [
+            {
+              height: `${height.value}px`,
+              width: `${width.value}px`,
+              lineHeight: `${height.value}px`,
+              fontSize: `${fontSize.value}px`,
+              borderRadius: isRound.value ? '100%' : '0',
+            },
+            props.styles?.text,
+          ] as any
+        }
       >
         {nameDisplay.value}
       </span>
@@ -126,7 +137,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={ns.b()}>
+        <div class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
           {hasImgElement()}
           {hasNameElement()}
         </div>

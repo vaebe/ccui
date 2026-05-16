@@ -130,4 +130,20 @@ describe('card', () => {
 
     expect(wrapper.find(ns.e('header')).text()).toBe('Slot Header')
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Card, {
+        props: { classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-card').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Card, {
+        props: { styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-card').attributes('style') || '').toContain('red')
+    })
+  })
 })

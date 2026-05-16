@@ -248,7 +248,8 @@ export default defineComponent({
 
     const getInputAttrs = () => ({
       ref: inputRef,
-      class: inputClass.value,
+      class: [inputClass.value, props.classNames?.input],
+      style: props.styles?.input,
       placeholder: props.placeholder,
       disabled: props.disabled,
       readonly: props.readonly,
@@ -277,9 +278,11 @@ export default defineComponent({
 
       if (prependContent || appendContent) {
         return (
-          <div class={getBaseClass.value}>
+          <div class={[getBaseClass.value, props.classNames?.root]} style={props.styles?.root}>
             {prependContent}
-            <div class={getWrapperClass.value}>{mainContent}</div>
+            <div class={[getWrapperClass.value, props.classNames?.wrapper]} style={props.styles?.wrapper}>
+              {mainContent}
+            </div>
             {appendContent}
           </div>
         )
@@ -289,7 +292,14 @@ export default defineComponent({
         ...getBaseClass.value,
         ...getWrapperClass.value,
       }
-      return <div class={combinedClass}>{mainContent}</div>
+      return (
+        <div
+          class={[combinedClass, props.classNames?.root, props.classNames?.wrapper]}
+          style={[props.styles?.root, props.styles?.wrapper] as any}
+        >
+          {mainContent}
+        </div>
+      )
     }
   },
 })

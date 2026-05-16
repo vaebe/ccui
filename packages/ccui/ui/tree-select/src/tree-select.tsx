@@ -283,13 +283,22 @@ export default defineComponent({
         maxHeight: `${props.popupMaxHeight}px`,
       }
       const isEmpty = !props.treeData || props.treeData.length === 0
-      return h('div', { ref: popupRef, class: popupCls, style: popupStyle, role: 'dialog' }, [
-        isEmpty ? (
-          <div class={ns.e('empty')}>{notFoundLocal.value}</div>
-        ) : (
-          <div class={ns.e('tree-wrap')}>{buildTree()}</div>
-        ),
-      ])
+      return h(
+        'div',
+        {
+          ref: popupRef,
+          class: [popupCls, props.classNames?.popup],
+          style: [popupStyle, props.styles?.popup] as any,
+          role: 'dialog',
+        },
+        [
+          isEmpty ? (
+            <div class={ns.e('empty')}>{notFoundLocal.value}</div>
+          ) : (
+            <div class={ns.e('tree-wrap')}>{buildTree()}</div>
+          ),
+        ],
+      )
     }
 
     function renderPopup() {
@@ -372,8 +381,12 @@ export default defineComponent({
     }
 
     return () => (
-      <div ref={rootRef} class={rootCls.value}>
-        <div class={ns.e('input-wrap')} onClick={togglePopup}>
+      <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
+        <div
+          class={[ns.e('input-wrap'), props.classNames?.inputWrap]}
+          style={props.styles?.inputWrap}
+          onClick={togglePopup}
+        >
           {renderInputContent()}
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>

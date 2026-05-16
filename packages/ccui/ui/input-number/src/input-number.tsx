@@ -245,7 +245,9 @@ export default defineComponent({
               [ns.m(`variant-${props.variant}`)]: !!props.variant,
               [ns.m(`status-${mergedStatus.value}`)]: !!mergedStatus.value,
             },
+            props.classNames?.root,
           ]}
+          style={props.styles?.root}
         >
           {/* 左侧控制按钮 */}
           {props.controls && !controlsAtRight && (
@@ -261,7 +263,7 @@ export default defineComponent({
           )}
 
           {/* 输入框 */}
-          <div class={ns.e('input')}>
+          <div class={[ns.e('input'), props.classNames?.input]} style={props.styles?.input}>
             <input
               ref={inputRef}
               type="number"
@@ -296,7 +298,7 @@ export default defineComponent({
 
           {/* 右侧控制按钮 */}
           {props.controls && controlsAtRight && (
-            <div class={ns.e('controls')}>
+            <div class={[ns.e('controls'), props.classNames?.controls]} style={props.styles?.controls}>
               <span
                 class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
                 role="button"

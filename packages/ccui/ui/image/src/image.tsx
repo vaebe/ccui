@@ -113,7 +113,11 @@ export default defineComponent({
     })
 
     return () => (
-      <div ref={wrapperRef} class={ns.b()} style={wrapperStyle.value}>
+      <div
+        ref={wrapperRef}
+        class={[ns.b(), props.classNames?.root]}
+        style={[wrapperStyle.value, props.styles?.root] as any}
+      >
         {status.value === 'loading' && (
           <div class={ns.e('placeholder')}>
             {slots.placeholder ? slots.placeholder() : <span class={ns.e('loading')}>{loadingText.value}</span>}
@@ -124,7 +128,12 @@ export default defineComponent({
             {slots.error ? (
               slots.error()
             ) : props.fallback ? (
-              <img class={ns.e('inner')} src={props.fallback} alt={props.alt} />
+              <img
+                class={[ns.e('inner'), props.classNames?.image]}
+                style={props.styles?.image}
+                src={props.fallback}
+                alt={props.alt}
+              />
             ) : (
               <span>{errorText.value}</span>
             )}
@@ -133,8 +142,8 @@ export default defineComponent({
         {showSrc.value && (
           <img
             v-show={status.value !== 'error'}
-            class={[ns.e('inner'), props.preview && ns.em('inner', 'preview')]}
-            style={imgStyle.value}
+            class={[ns.e('inner'), props.preview && ns.em('inner', 'preview'), props.classNames?.image]}
+            style={[imgStyle.value, props.styles?.image] as any}
             src={showSrc.value}
             alt={props.alt}
             onLoad={onLoad}
@@ -147,7 +156,11 @@ export default defineComponent({
           <Teleport to="body">
             <Transition name={`${ns.b()}-preview-fade`}>
               {previewVisible.value && (
-                <div class={ns.e('preview-mask')} onClick={closePreview}>
+                <div
+                  class={[ns.e('preview-mask'), props.classNames?.previewMask]}
+                  style={props.styles?.previewMask}
+                  onClick={closePreview}
+                >
                   <div class={ns.e('preview-toolbar')} onClick={(e: MouseEvent) => e.stopPropagation()}>
                     <button onClick={zoomOut} aria-label="zoom out">
                       −

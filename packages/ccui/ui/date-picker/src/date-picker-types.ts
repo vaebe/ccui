@@ -1,5 +1,6 @@
 import type { Dayjs } from 'dayjs'
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 import type { DateValue } from '../../shared/utils/date'
 
 export type DatePickerSize = 'large' | 'default' | 'small'
@@ -158,6 +159,20 @@ export const datePickerProps = {
   variant: {
     type: String as PropType<DatePickerVariant>,
     default: 'outlined',
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `input` / `popup`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

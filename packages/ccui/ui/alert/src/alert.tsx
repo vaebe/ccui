@@ -41,9 +41,9 @@ export default defineComponent({
       }
       const showIcon = props.showIcon || !!slots.icon || props.banner
       return (
-        <div class={cls.value} role="alert">
+        <div class={[cls.value, props.classNames?.root]} style={props.styles?.root} role="alert">
           {showIcon && (
-            <span class={ns.e('icon')}>
+            <span class={[ns.e('icon'), props.classNames?.icon]} style={props.styles?.icon}>
               {slots.icon ? (
                 slots.icon()
               ) : (
@@ -54,9 +54,13 @@ export default defineComponent({
             </span>
           )}
           <div class={ns.e('content')}>
-            <div class={ns.e('message')}>{slots.message ? slots.message() : props.message}</div>
+            <div class={[ns.e('message'), props.classNames?.message]} style={props.styles?.message}>
+              {slots.message ? slots.message() : props.message}
+            </div>
             {(props.description || slots.description) && (
-              <div class={ns.e('description')}>{slots.description ? slots.description() : props.description}</div>
+              <div class={[ns.e('description'), props.classNames?.description]} style={props.styles?.description}>
+                {slots.description ? slots.description() : props.description}
+              </div>
             )}
           </div>
           {(props.closable || props.closeText) && (

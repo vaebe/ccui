@@ -231,4 +231,20 @@ describe('image', () => {
     await nextTick()
     expect(document.body.querySelector(ns.e('preview-mask'))).toBeNull()
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Image, {
+        props: { src: '/foo.png', classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-image').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Image, {
+        props: { src: '/foo.png', styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-image').attributes('style') || '').toContain('red')
+    })
+  })
 })

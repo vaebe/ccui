@@ -31,4 +31,20 @@ describe('alert', () => {
     expect(wrapper.emitted('close')).toBeTruthy()
     expect(wrapper.find(ns.b()).exists()).toBe(false)
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Alert, {
+        props: { message: 'm', classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-alert').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Alert, {
+        props: { message: 'm', styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-alert').attributes('style') || '').toContain('red')
+    })
+  })
 })

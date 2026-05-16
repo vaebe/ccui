@@ -238,11 +238,11 @@ export default defineComponent({
     }
 
     return () => (
-      <div class={wrapperCls.value}>
+      <div class={[wrapperCls.value, props.classNames?.root]} style={props.styles?.root}>
         <textarea
           ref={textareaRef}
-          class={ns.e('inner')}
-          style={textareaStyle.value}
+          class={[ns.e('inner'), props.classNames?.textarea]}
+          style={[textareaStyle.value, props.styles?.textarea] as any}
           placeholder={props.placeholder}
           disabled={props.disabled}
           readonly={props.readonly}
@@ -256,7 +256,11 @@ export default defineComponent({
           onKeydown={handleKeydown}
         />
         {renderClearIcon()}
-        {showCountEnabled.value && <span class={ns.e('count')}>{countText.value}</span>}
+        {showCountEnabled.value && (
+          <span class={[ns.e('count'), props.classNames?.count]} style={props.styles?.count}>
+            {countText.value}
+          </span>
+        )}
         {slots.suffix && <div class={ns.e('suffix')}>{slots.suffix()}</div>}
       </div>
     )

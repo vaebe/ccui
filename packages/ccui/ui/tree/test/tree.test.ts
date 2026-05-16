@@ -608,4 +608,16 @@ describe('tree', () => {
     expect(wrapper.findAll(ns.em('checkbox', 'indeterminate'))).toHaveLength(0)
     expect(wrapper.findAll(ns.em('checkbox', 'checked')).length).toBeGreaterThan(0)
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mountTree({ classNames: { root: 'my-root' } })
+      expect(wrapper.find('.ccui-tree').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mountTree({ styles: { root: { color: 'red' } } })
+      expect(wrapper.find('.ccui-tree').attributes('style') || '').toContain('red')
+    })
+  })
 })

@@ -377,7 +377,8 @@ export default defineComponent({
       return h(
         'span',
         {
-          class: [ns.e('switcher'), expanded && ns.em('switcher', 'open')],
+          class: [ns.e('switcher'), expanded && ns.em('switcher', 'open'), props.classNames?.switcher],
+          style: props.styles?.switcher,
         },
         expanded ? '▾' : '▸',
       )
@@ -485,6 +486,7 @@ export default defineComponent({
             dropOver && dropPos === 'after' && ns.em('node', 'drop-after'),
             props.blockNode && ns.em('node', 'block'),
             isHoverExpand && ns.em('node', 'hover-expand'),
+            props.classNames?.node,
           ],
           role: 'treeitem',
           tabindex: isFocused ? 0 : -1,
@@ -492,7 +494,7 @@ export default defineComponent({
           'aria-expanded': node.hasChildren ? expandedKeys.value.has(node.key) : undefined,
           'aria-disabled': node.disabled || undefined,
           'data-key': node.key,
-          style: indentStyle,
+          style: [indentStyle, props.styles?.node] as any,
           draggable: props.draggable && !node.disabled ? true : undefined,
           onDragstart: (event: DragEvent) => onDragStart(event, node),
           onDragover: (event: DragEvent) => onDragOver(event, node),
@@ -525,7 +527,8 @@ export default defineComponent({
           h(
             'span',
             {
-              class: ns.e('content'),
+              class: [ns.e('content'), props.classNames?.label],
+              style: props.styles?.label,
               onClick: (event: MouseEvent) => triggerSelect(node, event),
             },
             [renderIcon(node), h('span', { class: ns.e('title') }, renderTitle(node) as never)],
@@ -655,12 +658,14 @@ export default defineComponent({
         props.disabled && ns.m('disabled'),
         props.showLine && ns.m('show-line'),
         props.draggable && ns.m('draggable'),
+        props.classNames?.root,
       ]
+      const rootStyle = props.styles?.root
 
       if (visibleNodes.value.length === 0) {
         return h(
           'div',
-          { ref: treeRootRef, class: cls, role: 'tree', onKeydown },
+          { ref: treeRootRef, class: cls, style: rootStyle, role: 'tree', onKeydown },
           h('div', { class: ns.e('empty') }, 'No data'),
         )
       }
@@ -680,6 +685,7 @@ export default defineComponent({
           {
             ref: treeRootRef,
             class: cls,
+            style: rootStyle,
             role: 'tree',
             onKeydown,
           },
@@ -702,7 +708,14 @@ export default defineComponent({
 
       return h(
         'div',
-        { ref: treeRootRef, class: cls, role: 'tree', onKeydown, tabindex: focusedKey.value === undefined ? 0 : -1 },
+        {
+          ref: treeRootRef,
+          class: cls,
+          style: rootStyle,
+          role: 'tree',
+          onKeydown,
+          tabindex: focusedKey.value === undefined ? 0 : -1,
+        },
         visibleNodes.value.map((node) => renderNode(node)),
       )
     }

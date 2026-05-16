@@ -1129,4 +1129,20 @@ describe('table tree data', () => {
     })
     expect(wrapper.find(ns.e('tree-expand-icon')).exists()).toBe(true)
   })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Table, {
+        props: { columns, dataSource, classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-table').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Table, {
+        props: { columns, dataSource, styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-table').attributes('style') || '').toContain('red')
+    })
+  })
 })
