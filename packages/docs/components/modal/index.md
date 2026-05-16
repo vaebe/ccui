@@ -4,19 +4,19 @@
 
 ## 基本使用
 
-`v-model:visible` 控制开合。
+`v-model:open` 控制开合。
 
 :::demo
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-const visible = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button type="primary" @click="visible = true">打开 Modal</c-button>
-  <c-modal v-model:visible="visible" title="基本对话框">
+  <c-button type="primary" @click="open = true">打开 Modal</c-button>
+  <c-modal v-model:open="open" title="基本对话框">
     <p>这是一个对话框的内容。</p>
     <p>支持任意 vue 内容。</p>
   </c-modal>
@@ -34,12 +34,12 @@ const visible = ref(false)
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-const v = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button @click="v = true">删除...</c-button>
-  <c-modal v-model:visible="v" title="确认删除" ok-text="删除" cancel-text="再想想" ok-type="danger">
+  <c-button @click="open = true">删除...</c-button>
+  <c-modal v-model:open="open" title="确认删除" ok-text="删除" cancel-text="再想想" ok-type="danger">
     删除后无法恢复，确认要删除吗？
   </c-modal>
 </template>
@@ -49,7 +49,7 @@ const v = ref(false)
 
 ## 异步关闭（确认按钮 loading）
 
-通过 `ok-loading` 控制确认按钮的加载状态，常用于点击确认后请求服务端，请求完成再关闭。
+通过 `confirm-loading` 控制确认按钮的加载状态，常用于点击确认后请求服务端，请求完成再关闭。
 
 :::demo
 
@@ -57,21 +57,21 @@ const v = ref(false)
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const visible = ref(false)
+const open = ref(false)
 const loading = ref(false)
 
 function handleOk() {
   loading.value = true
   setTimeout(() => {
     loading.value = false
-    visible.value = false
+    open.value = false
   }, 1500)
 }
 </script>
 
 <template>
-  <c-button type="primary" @click="visible = true">打开</c-button>
-  <c-modal v-model:visible="visible" title="异步提交" :ok-loading="loading" @ok="handleOk">
+  <c-button type="primary" @click="open = true">打开</c-button>
+  <c-modal v-model:open="open" title="异步提交" :confirm-loading="loading" @ok="handleOk">
     点击「确定」后会模拟 1.5s 的请求再关闭弹窗。
   </c-modal>
 </template>
@@ -88,12 +88,12 @@ function handleOk() {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-const visible = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button @click="visible = true">居中打开</c-button>
-  <c-modal v-model:visible="visible" centered title="垂直居中"> 我在视口中央。 </c-modal>
+  <c-button @click="open = true">居中打开</c-button>
+  <c-modal v-model:open="open" centered title="垂直居中"> 我在视口中央。 </c-modal>
 </template>
 ```
 
@@ -116,8 +116,8 @@ const v2 = ref(false)
   <c-button @click="v1 = true">小弹窗</c-button>
   &nbsp;
   <c-button @click="v2 = true">大弹窗</c-button>
-  <c-modal v-model:visible="v1" :width="360" title="360px"> 紧凑型。 </c-modal>
-  <c-modal v-model:visible="v2" width="80%" title="80% 宽"> 适合表格、表单类内容。 </c-modal>
+  <c-modal v-model:open="v1" :width="360" title="360px"> 紧凑型。 </c-modal>
+  <c-modal v-model:open="v2" width="80%" title="80% 宽"> 适合表格、表单类内容。 </c-modal>
 </template>
 ```
 
@@ -125,19 +125,19 @@ const v2 = ref(false)
 
 ## 不带按钮 / 自定义页脚
 
-`hide-footer` 隐藏整个页脚；或用 `footer` 插槽完全自定义按钮区。slot 参数 `{ ok, cancel }` 是默认的关闭函数。
+`:footer="null"` 隐藏整个页脚；或用 `footer` 插槽完全自定义按钮区。slot 参数 `{ ok, cancel }` 是默认的关闭函数。
 
 :::demo
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-const v = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button @click="v = true">自定义 footer</c-button>
-  <c-modal v-model:visible="v" title="提示">
+  <c-button @click="open = true">自定义 footer</c-button>
+  <c-modal v-model:open="open" title="提示">
     <p>此 Modal 自定义了 footer 区域，提供三个动作。</p>
     <template #footer="{ cancel }">
       <c-button @click="cancel">关闭</c-button>

@@ -4,7 +4,7 @@
 
 ## 基本使用
 
-通过 `v-model:visible` 控制开合；默认从右侧滑入。
+通过 `v-model:open` 控制开合；默认从右侧滑入。
 
 :::demo
 
@@ -12,12 +12,12 @@
 <script setup>
 import { ref } from 'vue'
 
-const visible = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button type="primary" @click="visible = true">打开抽屉</c-button>
-  <c-drawer v-model:visible="visible" title="详情">
+  <c-button type="primary" @click="open = true">打开抽屉</c-button>
+  <c-drawer v-model:open="open" title="详情">
     <p>抽屉里可以放任意复杂内容：表单、表格、富文本……</p>
   </c-drawer>
 </template>
@@ -46,10 +46,10 @@ const right = ref(false)
   <c-button @click="bottom = true">下</c-button>
   <c-button @click="left = true">左</c-button>
   <c-button @click="right = true">右</c-button>
-  <c-drawer v-model:visible="top" placement="top" title="顶部">从上方滑入</c-drawer>
-  <c-drawer v-model:visible="bottom" placement="bottom" title="底部">从下方滑入</c-drawer>
-  <c-drawer v-model:visible="left" placement="left" title="左侧">从左侧滑入</c-drawer>
-  <c-drawer v-model:visible="right" placement="right" title="右侧">从右侧滑入</c-drawer>
+  <c-drawer v-model:open="top" placement="top" title="顶部">从上方滑入</c-drawer>
+  <c-drawer v-model:open="bottom" placement="bottom" title="底部">从下方滑入</c-drawer>
+  <c-drawer v-model:open="left" placement="left" title="左侧">从左侧滑入</c-drawer>
+  <c-drawer v-model:open="right" placement="right" title="右侧">从右侧滑入</c-drawer>
 </template>
 ```
 
@@ -74,9 +74,9 @@ const half = ref(false)
   <c-button @click="small = true">小 (260)</c-button>
   <c-button @click="big = true">大 (640)</c-button>
   <c-button @click="half = true">百分比 (50%)</c-button>
-  <c-drawer v-model:visible="small" :size="260" title="小抽屉">size=260</c-drawer>
-  <c-drawer v-model:visible="big" :size="640" title="大抽屉">size=640</c-drawer>
-  <c-drawer v-model:visible="half" size="50%" title="半屏">size='50%'</c-drawer>
+  <c-drawer v-model:open="small" :size="260" title="小抽屉">size=260</c-drawer>
+  <c-drawer v-model:open="big" :size="640" title="大抽屉">size=640</c-drawer>
+  <c-drawer v-model:open="half" size="50%" title="半屏">size='50%'</c-drawer>
 </template>
 ```
 
@@ -84,7 +84,7 @@ const half = ref(false)
 
 ## 自定义底部按钮
 
-带操作的抽屉常需要底部按钮区。设置 `show-footer` 后用 `#footer` slot 自定义。
+带操作的抽屉常需要底部按钮区。用 `#footer` slot 自定义即可。
 
 :::demo
 
@@ -92,23 +92,23 @@ const half = ref(false)
 <script setup>
 import { ref } from 'vue'
 
-const visible = ref(false)
+const open = ref(false)
 const result = ref('（未操作）')
 
 function ok() {
   result.value = '已保存'
-  visible.value = false
+  open.value = false
 }
 function cancel() {
   result.value = '已取消'
-  visible.value = false
+  open.value = false
 }
 </script>
 
 <template>
-  <c-button type="primary" @click="visible = true">编辑</c-button>
+  <c-button type="primary" @click="open = true">编辑</c-button>
   <span style="margin-inline-start: 12px; color: #666">最近操作：{{ result }}</span>
-  <c-drawer v-model:visible="visible" title="编辑信息" show-footer>
+  <c-drawer v-model:open="open" title="编辑信息">
     <p>这里放编辑表单……</p>
     <template #footer>
       <c-button @click="cancel">取消</c-button>
@@ -122,7 +122,7 @@ function cancel() {
 
 ## 关闭行为
 
-`mask-closable` 控制点遮罩关；`close-on-esc` 控制 Esc 键关；都设为 `false` 时只能用 × 或外部代码关。
+`mask-closable` 控制点遮罩关；`keyboard` 控制 Esc 键关；都设为 `false` 时只能用 × 或外部代码关。
 
 :::demo
 
@@ -130,12 +130,12 @@ function cancel() {
 <script setup>
 import { ref } from 'vue'
 
-const visible = ref(false)
+const open = ref(false)
 </script>
 
 <template>
-  <c-button @click="visible = true">打开（不可点蒙层关、Esc 不关）</c-button>
-  <c-drawer v-model:visible="visible" title="只能点 × 才能关" :mask-closable="false" :close-on-esc="false">
+  <c-button @click="open = true">打开（不可点蒙层关、Esc 不关）</c-button>
+  <c-drawer v-model:open="open" title="只能点 × 才能关" :mask-closable="false" :keyboard="false">
     <p>这种用法适合"必须显式确认"的流程。</p>
   </c-drawer>
 </template>
@@ -153,13 +153,13 @@ const visible = ref(false)
 <script setup>
 import { ref } from 'vue'
 
-const visible = ref(false)
+const open = ref(false)
 const text = ref('')
 </script>
 
 <template>
-  <c-button type="primary" @click="visible = true">打开</c-button>
-  <c-drawer v-model:visible="visible" title="关后销毁" destroy-on-close>
+  <c-button type="primary" @click="open = true">打开</c-button>
+  <c-drawer v-model:open="open" title="关后销毁" destroy-on-close>
     <p>关闭后下次重新打开，输入框会被清空：</p>
     <input
       v-model="text"
