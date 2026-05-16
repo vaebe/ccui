@@ -803,4 +803,35 @@ describe('select', () => {
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 图标钩子', () => {
+    it('suffixIcon prop 渲染 <i>', () => {
+      const wrapper = mountSelect({ options, suffixIcon: 'my-arrow' })
+      expect(wrapper.find(`${ns.e('arrow')} i.my-arrow`).exists()).toBe(true)
+    })
+
+    it('suffixIcon slot 优先级高于 prop', () => {
+      const wrapper = mountSelect(
+        { options, suffixIcon: 'my-arrow' },
+        { suffixIcon: () => h('span', { class: 'slot-suffix' }) },
+      )
+      expect(wrapper.find('.slot-suffix').exists()).toBe(true)
+      expect(wrapper.find('i.my-arrow').exists()).toBe(false)
+    })
+
+    it('clearIcon prop（clearable 有值时）渲染 <i>', () => {
+      const wrapper = mountSelect({ options, modelValue: 'alpha', clearable: true, clearIcon: 'my-clear' })
+      expect(wrapper.find(`${ns.e('clear')} i.my-clear`).exists()).toBe(true)
+    })
+
+    it('removeIcon prop（multiple 模式 tag 关闭按钮）渲染 <i>', () => {
+      const wrapper = mountSelect({
+        options,
+        multiple: true,
+        modelValue: ['alpha', 'beta'],
+        removeIcon: 'my-remove',
+      })
+      expect(wrapper.find(`${ns.e('tag-close')} i.my-remove`).exists()).toBe(true)
+    })
+  })
 })

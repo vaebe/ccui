@@ -462,3 +462,20 @@ describe('color-picker allowClear', () => {
     })
   })
 })
+
+describe('color-picker M-A4 clearIcon 钩子', () => {
+  it('clearIcon prop（CSS 类名）渲染 <i> 替代默认 ×', () => {
+    const wrapper = mountCP({ modelValue: '#ff0000', allowClear: true, clearIcon: 'my-clear' })
+    expect(wrapper.find(`${ns.e('clear')} i.my-clear`).exists()).toBe(true)
+    expect(wrapper.find(ns.e('clear')).text()).not.toContain('×')
+  })
+
+  it('clearIcon slot 优先级高于 prop', () => {
+    const wrapper = mount(ColorPicker, {
+      props: { modelValue: '#ff0000', allowClear: true, clearIcon: 'my-clear' },
+      slots: { clearIcon: () => h('span', { class: 'slot-clear' }, 'X') },
+    })
+    expect(wrapper.find('.slot-clear').exists()).toBe(true)
+    expect(wrapper.find('i.my-clear').exists()).toBe(false)
+  })
+})

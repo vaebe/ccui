@@ -715,4 +715,22 @@ describe('range-picker showTime', () => {
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 图标钩子', () => {
+    it('suffixIcon prop 渲染 <i>', () => {
+      const wrapper = mountRP({ suffixIcon: 'my-calendar' })
+      expect(wrapper.find(`${ns.e('suffix')} i.my-calendar`).exists()).toBe(true)
+    })
+
+    it('suffixIcon slot 优先级高于 prop', () => {
+      const wrapper = mount(RangePicker, {
+        props: { suffixIcon: 'my-calendar' },
+        slots: { suffixIcon: () => h('span', { class: 'slot-suffix' }) },
+        attachTo: document.body,
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find('.slot-suffix').exists()).toBe(true)
+      expect(wrapper.find('i.my-calendar').exists()).toBe(false)
+    })
+  })
 })

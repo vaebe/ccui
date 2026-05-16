@@ -18,6 +18,7 @@ import {
   watch,
 } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { useVirtualList } from '../../shared/hooks/use-virtual-list'
 import { useSelect } from './composables/use-select'
@@ -467,7 +468,7 @@ export default defineComponent({
               class: ns.e('tag-close'),
               onClick: (event: MouseEvent) => onRemoveTag(option.value, event),
             },
-            'x',
+            slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? 'x'),
           ),
         ],
       )
@@ -700,8 +701,16 @@ export default defineComponent({
               isMultiple.value ? renderMultipleSelection() : renderSingleSelection(),
             ),
             props.clearable && hasValue.value && !props.disabled
-              ? h('span', { class: ns.e('clear'), onClick: onClear }, 'x')
-              : h('span', { class: ns.e('arrow') }, 'v'),
+              ? h(
+                  'span',
+                  { class: ns.e('clear'), onClick: onClear },
+                  slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? 'x'),
+                )
+              : h(
+                  'span',
+                  { class: ns.e('arrow') },
+                  slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? 'v'),
+                ),
           ]),
           slots.suffix ? h('span', { class: ns.e('suffix') }, slots.suffix()) : null,
           renderDropdown(),

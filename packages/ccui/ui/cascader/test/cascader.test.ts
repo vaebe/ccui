@@ -703,4 +703,37 @@ describe('cascader multiple', () => {
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 图标钩子', () => {
+    it('suffixIcon prop 渲染 <i>', () => {
+      const wrapper = mountCascader({ suffixIcon: 'my-arrow' })
+      expect(wrapper.find(`${ns.e('suffix')} i.my-arrow`).exists()).toBe(true)
+    })
+
+    it('suffixIcon slot 优先级高于 prop', () => {
+      const wrapper = mount(Cascader, {
+        props: { options, suffixIcon: 'my-arrow' },
+        slots: { suffixIcon: () => h('span', { class: 'slot-suffix' }) },
+        attachTo: document.body,
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find('.slot-suffix').exists()).toBe(true)
+    })
+
+    it('clearIcon prop（有值时）渲染 <i>', () => {
+      const wrapper = mountCascader({ modelValue: ['jiangsu', 'nanjing'], clearable: true, clearIcon: 'my-clear' })
+      expect(wrapper.find(`${ns.e('clear')} i.my-clear`).exists()).toBe(true)
+    })
+
+    it('expandIcon slot（嵌套节点展开箭头）优先级高于 prop', async () => {
+      const wrapper = mount(Cascader, {
+        props: { options, expandIcon: '›' },
+        slots: { expandIcon: () => h('span', { class: 'slot-expand' }) },
+        attachTo: document.body,
+      })
+      wrappers.push(wrapper)
+      await openPanel(wrapper)
+      expect(wrapper.find('.slot-expand').exists()).toBe(true)
+    })
+  })
 })

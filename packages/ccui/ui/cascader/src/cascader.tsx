@@ -26,6 +26,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { cascaderProps } from './cascader-types'
 import './cascader.scss'
@@ -108,7 +109,7 @@ export default defineComponent({
   name: 'CCascader',
   props: cascaderProps,
   emits: ['update:modelValue', 'change', 'popup-visible-change', 'focus', 'blur'],
-  setup(props: CascaderProps, { emit }) {
+  setup(props: CascaderProps, { emit, slots }) {
     const ns = useNamespace('cascader')
     const cfg = useConfig()
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.Cascader?.notFoundContent || '暂无数据')
@@ -454,7 +455,7 @@ export default defineComponent({
                   aria-label="移除"
                   onClick={(e: MouseEvent) => removeTag(e, path)}
                 >
-                  ×
+                  {slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? '×')}
                 </span>
               </span>
             )
@@ -495,7 +496,13 @@ export default defineComponent({
                     ⟳
                   </span>
                 ) : (
-                  !item.isLeaf && <span class={ns.e('expand-icon')}>{props.expandIcon}</span>
+                  !item.isLeaf && (
+                    <span class={ns.e('expand-icon')}>
+                      {slots.expandIcon
+                        ? slots.expandIcon({ item, level: columnIndex })
+                        : (renderIconNode(props.expandIcon) ?? '›')}
+                    </span>
+                  )
                 )}
               </li>
             )
@@ -601,11 +608,11 @@ export default defineComponent({
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
-              ×
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              ▾
+              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '▾')}
             </span>
           )}
         </div>

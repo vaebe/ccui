@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
 
 export type AutoCompleteSize = 'large' | 'default' | 'small'
 export type AutoCompleteStatus = '' | 'error' | 'warning' | 'success' | 'validating'
@@ -42,6 +42,14 @@ export const autoCompleteProps = {
   allowClear: {
     type: Boolean,
     default: false,
+  },
+  /**
+   * Ant Design 风格自定义清除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `clearIcon` slot 优先级最高。
+   */
+  clearIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
   },
   size: {
     type: String as PropType<AutoCompleteSize>,

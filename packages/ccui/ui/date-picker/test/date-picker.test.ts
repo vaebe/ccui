@@ -985,4 +985,27 @@ describe('date-picker presets', () => {
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 图标钩子', () => {
+    it('suffixIcon prop（无值时显示日历位）渲染 <i>', () => {
+      const wrapper = mountDP({ suffixIcon: 'my-calendar' })
+      expect(wrapper.find(`${ns.e('suffix')} i.my-calendar`).exists()).toBe(true)
+    })
+
+    it('suffixIcon slot 优先级高于 prop', () => {
+      const wrapper = mount(DatePicker, {
+        props: { suffixIcon: 'my-calendar' },
+        slots: { suffixIcon: () => h('span', { class: 'slot-suffix' }) },
+        attachTo: document.body,
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find('.slot-suffix').exists()).toBe(true)
+      expect(wrapper.find('i.my-calendar').exists()).toBe(false)
+    })
+
+    it('clearIcon prop（有值时渲染清除位）', () => {
+      const wrapper = mountDP({ modelValue: dayjs('2026-05-01').valueOf(), clearable: true, clearIcon: 'my-clear' })
+      expect(wrapper.find(`${ns.e('clear')} i.my-clear`).exists()).toBe(true)
+    })
+  })
 })

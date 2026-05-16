@@ -27,6 +27,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import {
   buildTimeColumnValues,
@@ -99,7 +100,7 @@ export default defineComponent({
   name: 'CDatePicker',
   props: datePickerProps,
   emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur', 'panel-change'],
-  setup(props: DatePickerProps, { emit }) {
+  setup(props: DatePickerProps, { emit, slots }) {
     const ns = useNamespace('date-picker')
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.DatePicker ?? {})
@@ -799,11 +800,11 @@ export default defineComponent({
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
-              ×
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              📅
+              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '📅')}
             </span>
           )}
         </div>

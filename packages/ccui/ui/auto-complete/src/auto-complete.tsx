@@ -17,6 +17,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { autoCompleteProps, normalizeOption } from './auto-complete-types'
 import './auto-complete.scss'
@@ -277,7 +278,7 @@ export default defineComponent({
           {inputNode}
           {showClear.value && (
             <span class={ns.e('clear')} role="button" aria-label="clear" onMousedown={clear}>
-              ✕
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '✕')}
             </span>
           )}
         </div>

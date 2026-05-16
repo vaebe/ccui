@@ -27,6 +27,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { buildTimeColumnValues, emitValue, generateMonthGrid, isSameDay, toDayjs } from '../../shared/utils/date'
 import { RANGE_DEFAULT_TIME_FORMAT, rangePickerProps } from './range-picker-types'
@@ -68,7 +69,7 @@ export default defineComponent({
   name: 'CRangePicker',
   props: rangePickerProps,
   emits: ['update:modelValue', 'change', 'open-change', 'focus', 'blur'],
-  setup(props: RangePickerProps, { emit }) {
+  setup(props: RangePickerProps, { emit, slots }) {
     const ns = useNamespace('range-picker')
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.DatePicker ?? {})
@@ -632,11 +633,11 @@ export default defineComponent({
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
-              ×
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              📅
+              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '📅')}
             </span>
           )}
         </div>

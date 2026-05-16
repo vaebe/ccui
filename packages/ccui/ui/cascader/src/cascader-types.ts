@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
 
 /**
  * 对标 ant `Cascader.SHOW_CHILD` / `.SHOW_PARENT`：`showCheckedStrategy` 取值。
@@ -148,9 +148,37 @@ export const cascaderProps = {
     type: String,
     default: 'ccui-cascader-fade',
   },
+  /**
+   * 嵌套展开箭头图标（M-A4 增强）。原 string 形态保留向后兼容，新增 VNode 形态支持；
+   * 同名 `expandIcon` slot 优先级最高。
+   */
   expandIcon: {
-    type: String,
+    type: [String, Object] as PropType<string | VNode>,
     default: '›',
+  },
+  /**
+   * Ant Design 风格自定义清除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `clearIcon` slot 优先级最高。
+   */
+  clearIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
+  },
+  /**
+   * Ant Design 风格自定义下拉箭头图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `suffixIcon` slot 优先级最高。
+   */
+  suffixIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
+  },
+  /**
+   * Ant Design 风格自定义 multiple 模式下 tag 的删除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `removeIcon` slot 优先级最高。
+   */
+  removeIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
   },
   notFoundContent: {
     type: String,

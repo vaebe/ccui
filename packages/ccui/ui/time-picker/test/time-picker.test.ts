@@ -645,4 +645,22 @@ describe('time-picker auto-scroll', () => {
       expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 图标钩子', () => {
+    it('suffixIcon prop 渲染 <i>', () => {
+      const wrapper = mountTP({ suffixIcon: 'my-clock' })
+      expect(wrapper.find(`${ns.e('suffix')} i.my-clock`).exists()).toBe(true)
+    })
+
+    it('suffixIcon slot 优先级高于 prop', () => {
+      const wrapper = mount(TimePicker, {
+        props: { suffixIcon: 'my-clock' },
+        slots: { suffixIcon: () => h('span', { class: 'slot-suffix' }) },
+        attachTo: document.body,
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find('.slot-suffix').exists()).toBe(true)
+      expect(wrapper.find('i.my-clock').exists()).toBe(false)
+    })
+  })
 })

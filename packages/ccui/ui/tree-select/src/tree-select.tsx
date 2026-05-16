@@ -18,6 +18,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Tree } from '../../tree'
 import { treeSelectProps } from './tree-select-types'
@@ -100,7 +101,7 @@ export default defineComponent({
   name: 'CTreeSelect',
   props: treeSelectProps,
   emits: ['update:modelValue', 'change', 'popup-visible-change', 'focus', 'blur'],
-  setup(props: TreeSelectProps, { emit }) {
+  setup(props: TreeSelectProps, { emit, slots }) {
     const ns = useNamespace('tree-select')
     const cfg = useConfig()
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.TreeSelect?.notFoundContent || '暂无数据')
@@ -336,7 +337,7 @@ export default defineComponent({
                     aria-label="移除"
                     onClick={(e: MouseEvent) => removeTag(e, tag.key)}
                   >
-                    ×
+                    {slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? '×')}
                   </span>
                 )}
               </span>
@@ -376,11 +377,11 @@ export default defineComponent({
           {renderInputContent()}
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
-              ×
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              ▾
+              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '▾')}
             </span>
           )}
         </div>

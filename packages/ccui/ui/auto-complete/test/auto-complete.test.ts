@@ -421,4 +421,27 @@ describe('auto-complete trigger slot', () => {
       expect(wrapper.find(ns.em('wrap', 'status-error')).exists()).toBe(true)
     })
   })
+
+  describe('M-A4 clearIcon 钩子', () => {
+    it('clearIcon prop（CSS 类名）渲染 <i> 替代默认 ✕', () => {
+      const wrapper = mount(AutoComplete, {
+        props: { modelValue: 'hello', allowClear: true, clearIcon: 'my-clear' },
+        global: { provide: { [formItemInjectionKey as any]: null } },
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find(`${ns.e('clear')} i.my-clear`).exists()).toBe(true)
+      expect(wrapper.find(ns.e('clear')).text()).not.toContain('✕')
+    })
+
+    it('clearIcon slot 优先级高于 prop', () => {
+      const wrapper = mount(AutoComplete, {
+        props: { modelValue: 'hello', allowClear: true, clearIcon: 'my-clear' },
+        slots: { clearIcon: () => h('span', { class: 'slot-clear' }, 'X') },
+        global: { provide: { [formItemInjectionKey as any]: null } },
+      })
+      wrappers.push(wrapper)
+      expect(wrapper.find('.slot-clear').exists()).toBe(true)
+      expect(wrapper.find('i.my-clear').exists()).toBe(false)
+    })
+  })
 })
