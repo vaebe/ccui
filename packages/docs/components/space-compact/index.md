@@ -1,6 +1,6 @@
 # SpaceCompact 紧凑组合
 
-让多个输入类组件视觉上贴边拼接为一组紧凑控件，对标 Ant Design `Space.Compact`，作为独立顶层组件存在（**不挂 Space.Compact 静态属性**）。
+让多个输入类组件视觉上贴边拼接为一组紧凑控件，作为独立顶层组件存在（**不通过 Space.Compact 静态属性挂载**）。
 
 ::: tip 与 `<c-space>` 的差异
 

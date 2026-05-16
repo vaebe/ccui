@@ -14,7 +14,7 @@ interface ModalNamespace extends Record<string, unknown> {
   destroyAll: () => void
 }
 
-// 把命令式静态方法挂到 Modal 组件对象上（与 ant `Modal.confirm` 习惯一致；不挂子组件命名空间，只挂函数）
+// 把命令式静态方法挂到 Modal 组件对象上（不挂子组件命名空间，只挂函数）
 const Modal = ModalComp as typeof ModalComp & ModalNamespace
 Modal.confirm = (options: ModalFuncOptions = {}) => modalFunc({ type: 'confirm', ...options })
 Modal.info = createTypedFunc('info')

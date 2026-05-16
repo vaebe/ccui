@@ -11,7 +11,7 @@ export interface NotificationOptions {
   title?: string
   description?: string | VNode
   type?: NotificationType
-  // 单位优先「秒」（与 ant 一致），>100 自动按 ms 兼容；0 表示不自动关闭
+  // 单位优先「秒」，>100 自动按 ms 兼容；0 表示不自动关闭
   duration?: number
   placement?: NotificationPlacement
   showClose?: boolean

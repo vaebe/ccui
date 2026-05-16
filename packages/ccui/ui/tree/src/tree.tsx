@@ -529,7 +529,17 @@ export default defineComponent({
             {
               class: [ns.e('content'), props.classNames?.label],
               style: props.styles?.label,
-              onClick: (event: MouseEvent) => triggerSelect(node, event),
+              onClick: (event: MouseEvent) => {
+                triggerSelect(node, event)
+                if (
+                  props.expandAction === 'click' &&
+                  !props.disabled &&
+                  !node.disabled &&
+                  (node.hasChildren || (props.loadData && !node.isLeaf))
+                ) {
+                  void triggerExpand(node, event)
+                }
+              },
             },
             [renderIcon(node), h('span', { class: ns.e('title') }, renderTitle(node) as never)],
           ),

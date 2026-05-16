@@ -1,6 +1,6 @@
 # TableSummary 表格汇总
 
-表格汇总行，对标 Ant Design `Table.Summary`，在 `<c-table>` 底部渲染 `<tfoot>` 汇总区（**不挂 Table.Summary 静态属性**，平铺独立顶层组件）。
+表格汇总行，在 `<c-table>` 底部渲染 `<tfoot>` 汇总区（**不通过 Table.Summary 静态属性挂载**，平铺独立顶层组件）。
 
 ::: tip 使用前提
 TableSummary 必须作为 `<c-table>` 的子组件使用。default slot 内放 `<tr>` / `<td>` 原生标签（也可放多个 `<tr>` 行），由 Table 直接挂到 tfoot。

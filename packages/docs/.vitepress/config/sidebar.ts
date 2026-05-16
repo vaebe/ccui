@@ -158,26 +158,6 @@ export default {
           status: '100%',
         },
         {
-          text: 'SkeletonAvatar 头像骨架',
-          link: '/components/skeleton-avatar/',
-          status: '90%',
-        },
-        {
-          text: 'SkeletonButton 按钮骨架',
-          link: '/components/skeleton-button/',
-          status: '90%',
-        },
-        {
-          text: 'SkeletonImage 图片骨架',
-          link: '/components/skeleton-image/',
-          status: '90%',
-        },
-        {
-          text: 'SkeletonInput 输入框骨架',
-          link: '/components/skeleton-input/',
-          status: '90%',
-        },
-        {
           text: 'SkeletonNode 自定义骨架',
           link: '/components/skeleton-node/',
           status: '90%',
@@ -363,11 +343,6 @@ export default {
           status: '100%',
         },
         {
-          text: 'DirectoryTree 目录树',
-          link: '/components/directory-tree/',
-          status: '90%',
-        },
-        {
           text: 'Empty 空状态',
           link: '/components/empty/',
           status: '100%',
@@ -391,16 +366,6 @@ export default {
           text: 'Segmented 分段控制器',
           link: '/components/segmented/',
           status: '100%',
-        },
-        {
-          text: 'Statistic 统计数值',
-          link: '/components/statistic/',
-          status: '100%',
-        },
-        {
-          text: 'StatisticTimer 计时器',
-          link: '/components/statistic-timer/',
-          status: '90%',
         },
         {
           text: 'Table 表格',

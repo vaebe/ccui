@@ -337,6 +337,54 @@ const groups: Array<{ title: string; icons: string[] }> = [
 
 :::
 
+## 内置图标包 `@vue3-ccui/icons`
+
+ccui 内部所有组件用到的图标都收敛到独立 workspace 包 `@vue3-ccui/icons`：
+
+- **完全离线**：SVG 路径硬编码在源码里，安装后零网络依赖
+- **按需引入**：命名导出 + `sideEffects: false`，未使用的图标不会进打包产物
+- **独立发布**：与 `theme` 包并列，通过 `workspace:*` 被 ccui 依赖；外部用户可单独安装使用
+- **函数式组件**：接受 `size / color / rotate / spin` props，可与任意宿主样式协作
+
+下面是当前内置的全部图标，新增图标请提到这个清单中：
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { CaretRightOutlined } from '@vue3-ccui/icons'
+
+const icons = [{ name: 'CaretRightOutlined', component: CaretRightOutlined }]
+</script>
+
+<template>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+    <div
+      v-for="item in icons"
+      :key="item.name"
+      style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 120px; padding: 8px; border: 1px solid #f0f0f0; border-radius: 4px;"
+    >
+      <component :is="item.component" :size="24" color="#1677ff" />
+      <code style="font-size: 12px; color: #666;">{{ item.name }}</code>
+    </div>
+  </div>
+</template>
+```
+
+:::
+
+直接配合 `<c-icon>` 也行 —— 把图标组件当 `component` 传入即可（保留 ConfigProvider 尺寸、clickable、loading 等能力）：
+
+```vue
+<script setup lang="ts">
+import { CaretRightOutlined } from '@vue3-ccui/icons'
+</script>
+
+<template>
+  <c-icon :component="CaretRightOutlined" :size="20" />
+</template>
+```
+
 ## Props
 
 | 参数           | 类型                                                  | 默认值 | 说明                                                      |

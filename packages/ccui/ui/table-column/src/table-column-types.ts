@@ -9,7 +9,7 @@ import type {
 } from '../../table/src/table-types'
 
 /**
- * 对标 ant `Table.Column`：模板式列声明，作为 `<c-table>` 的子组件出现，
+ * 模板式表格列声明，作为 `<c-table>` 的子组件出现，
  * 在挂载阶段通过 provide/inject 把列定义注册回父 Table；本组件自身不渲染 DOM。
  *
  * 与 `<c-table :columns="...">` 数组式声明互斥（数组优先；都传时数组胜出）。

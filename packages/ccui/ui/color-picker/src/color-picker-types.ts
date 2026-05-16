@@ -7,7 +7,7 @@ export type ColorPickerPlacement = 'bottomLeft' | 'bottomRight' | 'topLeft' | 't
 /**
  * 颜色格式。
  *
- * - 推荐：`'hex' | 'rgb' | 'hsb'`（与 Ant Design 一致，HSB = Hue / Saturation / Brightness）
+ * - 推荐：`'hex' | 'rgb' | 'hsb'`（HSB = Hue / Saturation / Brightness）
  * - 兼容：`'hsv'`（旧名，运行时等价于 `'hsb'`；下一大版本移除）
  */
 export type ColorPickerFormat = 'hex' | 'rgb' | 'hsb' | 'hsv'

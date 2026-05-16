@@ -3,7 +3,7 @@ import type { ExtractPropTypes, PropType } from 'vue'
 export type TypographyType = 'secondary' | 'success' | 'warning' | 'danger'
 export type TitleLevel = 1 | 2 | 3 | 4 | 5
 
-/** copyable 复合配置（对标 ant `copyable: bool | { ... }`） */
+/** copyable 复合配置（`bool | { ... }`） */
 export interface CopyableConfig {
   /** 实际复制的文本；不传则从 default slot 拿 textContent */
   text?: string
@@ -15,7 +15,7 @@ export interface CopyableConfig {
   onCopy?: (text: string) => void
 }
 
-/** editable 复合配置（对标 ant `editable: bool | { ... }`，不照搬 React render props） */
+/** editable 复合配置（`bool | { ... }`；render props 全翻 slot） */
 export interface EditableConfig {
   /** 编辑触发方式，默认 `['icon']`；可选 `['text']` 让点击文本也进入编辑 */
   triggerType?: Array<'icon' | 'text'>
@@ -35,11 +35,11 @@ export interface EditableConfig {
   onEnd?: () => void
 }
 
-/** ellipsis 复合配置（对标 ant `ellipsis: bool | { ... }`，render props 全翻 slot） */
+/** ellipsis 复合配置（`bool | { ... }`；render props 全翻 slot） */
 export interface EllipsisConfig {
   /** 多行截断行数；默认 1 */
   rows?: number
-  /** 是否可展开/收起；true 展开后保留收起按钮；'collapsible' 同 true（向 ant 兼容） */
+  /** 是否可展开/收起；true 展开后保留收起按钮；'collapsible' 同 true */
   expandable?: boolean | 'collapsible'
   /** 受控展开态 */
   expanded?: boolean

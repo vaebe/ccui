@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 /**
- * 对标 ant `Table.Summary`：在表格底部渲染 `<tfoot>` 汇总行。
+ * 表格汇总行：在表格底部渲染 `<tfoot>` 汇总区。
  *
  * 用法：
  *

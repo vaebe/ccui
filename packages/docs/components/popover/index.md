@@ -236,9 +236,9 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-## 延迟显示 / 隐藏（新名）
+## 延迟显示 / 隐藏
 
-`mouseEnterDelay` / `mouseLeaveDelay` 是 ant 主名（ms 单位）；旧名 `showAfter` / `hideAfter` 仍兼容但已 deprecated。
+通过 `mouseEnterDelay` / `mouseLeaveDelay` 控制显隐延迟（ms）。
 
 :::demo
 
@@ -258,12 +258,12 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 :::
 
 ::: tip
-旧版本 `:show-after` / `:hide-after` 仍然兼容，运行时与新名等价。新代码请直接用 `mouseEnterDelay` / `mouseLeaveDelay`，与 ant 命名对齐。
+也支持 `:show-after` / `:hide-after`，运行时与 `mouseEnterDelay` / `mouseLeaveDelay` 等价（已 deprecated，新代码推荐 `mouse*Delay`）。
 :::
 
 ## 受控显示 v-model:open
 
-`open` 是 ant 主名，配合 `v-model:open` 双向同步；旧 `visible` / `v-model:visible` 仍兼容。
+`open` 配合 `v-model:open` 双向同步；`visible` / `v-model:visible` 仍兼容（已 deprecated）。
 
 :::demo
 
@@ -462,18 +462,18 @@ Popover 的显隐状态说明以 Vue API 为准：
 | content                   | 显示的内容，也可以通过 `slot#content` 传入    | string                                                       | —                  |
 | placement                 | Popover 的出现位置                            | 12 种方位字符串                                              | bottom             |
 | effect                    | 默认提供的主题                                | `'dark' \| 'light'`                                          | light              |
-| open / v-model:open       | 显示状态（Ant 主名）                          | boolean                                                      | false              |
+| open / v-model:open       | 显示状态                                      | boolean                                                      | false              |
 | visible / v-model:visible | @deprecated 请改用 `open`                     | boolean                                                      | false              |
 | disabled                  | Popover 是否可用                              | boolean                                                      | false              |
 | color                     | 自定义背景色（覆盖 `effect`）                 | string                                                       | —                  |
 | arrow                     | 箭头配置；对象形 `{ pointAtCenter }`          | `boolean \| { pointAtCenter: boolean }`                      | true               |
 | show-arrow                | @deprecated 请改用 `arrow`                    | boolean                                                      | true               |
 | trigger                   | 触发方式                                      | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
-| mouseEnterDelay           | 进入显示延迟（ms，Ant 主名）                  | number                                                       | 0                  |
-| mouseLeaveDelay           | 离开隐藏延迟（ms，Ant 主名）                  | number                                                       | 200                |
+| mouseEnterDelay           | 进入显示延迟（ms）                            | number                                                       | 0                  |
+| mouseLeaveDelay           | 离开隐藏延迟（ms）                            | number                                                       | 200                |
 | show-after                | @deprecated 请改用 `mouseEnterDelay`          | number                                                       | 0                  |
 | hide-after                | @deprecated 请改用 `mouseLeaveDelay`          | number                                                       | 200                |
-| overlayClassName          | 弹层 class（Ant 主名）                        | string                                                       | —                  |
+| overlayClassName          | 弹层 class                                    | string                                                       | —                  |
 | popper-class              | @deprecated 请改用 `overlayClassName`         | string                                                       | —                  |
 | fresh                     | 关闭后是否销毁内部内容                        | boolean                                                      | false              |
 | destroyTooltipOnHide      | 隐藏时销毁弹层节点                            | boolean                                                      | false              |
@@ -504,8 +504,8 @@ Popover 的显隐状态说明以 Vue API 为准：
 | show           | 显示时触发                                 | —        |
 | before-hide    | 隐藏前触发                                 | —        |
 | hide           | 隐藏时触发                                 | —        |
-| update:open    | v-model:open 同步（Ant 主名）              | open     |
-| update:visible | v-model:visible 同步（旧名，便于渐进迁移） | visible  |
+| update:open    | v-model:open 同步                          | open     |
+| update:visible | v-model:visible 同步（已 deprecated）      | visible  |
 | before-enter   | 显示动画播放前触发                         | —        |
 | after-enter    | 显示动画播放后触发                         | —        |
 | before-leave   | 隐藏动画播放前触发                         | —        |

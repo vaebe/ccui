@@ -27,7 +27,7 @@ export default defineComponent({
       warnDeprecatedProp('Popconfirm', 'confirmType', 'okType')
     }
 
-    // Ant 主名 / ccui 旧名解析：okText > confirmText、okType > confirmType、open > visible
+    // 同义 prop 解析：okText > confirmText、okType > confirmType、open > visible
     const confirmTextResolved = computed(() => props.okText || props.confirmText)
     const confirmTextLocal = computed(() => confirmTextResolved.value || cfg.locale?.Popconfirm?.okText || '确 定')
     const cancelTextLocal = computed(() => props.cancelText || cfg.locale?.Popconfirm?.cancelText || '取 消')

@@ -474,10 +474,10 @@ describe('popover', () => {
   })
 
   // ─────────────────────────────────────────────────────────────
-  // L-1.5 Ant Design API alignment
+  // 同义 prop 解析
   // ─────────────────────────────────────────────────────────────
 
-  describe('L-1.5 Ant 别名', () => {
+  describe('同义 prop 解析', () => {
     it('open=true 等价 visible=true', async () => {
       const wrapper = mount(Popover, {
         props: { open: true, content: 'X', teleported: false },

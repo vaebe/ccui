@@ -1196,7 +1196,7 @@ describe('form normalize', () => {
 })
 
 // ───────────────────────────────────────────────────────────────
-// L-1.6: Ant Design API alignment
+// labelCol / wrapperCol 栅格
 // ───────────────────────────────────────────────────────────────
 
 describe('L-1.6 labelCol / wrapperCol 栅格', () => {

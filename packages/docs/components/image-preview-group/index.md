@@ -1,6 +1,6 @@
 # ImagePreviewGroup 图片预览组
 
-多图预览组件，对标 Ant Design `Image.PreviewGroup`，作为独立顶层组件存在（不挂在 Image 命名空间下）。
+多图预览组件，作为独立顶层组件存在（不挂在 Image 命名空间下）。
 
 ## 何时使用
 

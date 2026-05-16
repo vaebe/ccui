@@ -38,7 +38,7 @@ export default defineComponent({
       warnDeprecatedProp('Tooltip', 'popperClass', 'overlayClassName')
     }
 
-    // ── Ant 主名 / ccui 旧名解析 ───────────────────────
+    // ── 同义 prop 解析 ───────────────────────
     // open / visible：显式 open 优先
     const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
     const isControlled = computed(() => externalOpen.value !== undefined)
@@ -53,7 +53,7 @@ export default defineComponent({
 
     const actualVisible = computed(() => (isControlled.value ? externalOpen.value : visible.value))
 
-    // mouseEnterDelay / mouseLeaveDelay：显式 ant 名优先；单位 ms
+    // mouseEnterDelay / mouseLeaveDelay 优先于 showAfter / hideAfter；单位 ms
     const enterDelay = computed(() => (props.mouseEnterDelay !== undefined ? props.mouseEnterDelay : props.showAfter))
     const leaveDelay = computed(() => (props.mouseLeaveDelay !== undefined ? props.mouseLeaveDelay : props.hideAfter))
 
@@ -66,7 +66,7 @@ export default defineComponent({
     })
     const arrowPointAtCenter = computed(() => (isArrowObject(props.arrow) ? !!props.arrow.pointAtCenter : false))
 
-    // overlayClassName / popperClass：显式 ant 名优先
+    // overlayClassName 优先于 popperClass
     const customClassName = computed(() => props.overlayClassName || props.popperClass)
 
     // title / content：显式 title 优先；slot 优先级最高（在 renderContent 处理）

@@ -1,6 +1,6 @@
 # DropdownButton 下拉按钮
 
-主按钮 + 下拉触发按钮的组合控件，对标 Ant Design `Dropdown.Button`，作为独立顶层组件存在（**不挂 Dropdown.Button 静态属性**）。
+主按钮 + 下拉触发按钮的组合控件，作为独立顶层组件存在（**不通过 Dropdown.Button 静态属性挂载**）。
 
 ::: tip 与 `<c-dropdown>` / `<c-button>` 的关系
 DropdownButton 是 `<c-button>` + `<c-dropdown>` 的组合外壳：

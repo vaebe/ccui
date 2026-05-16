@@ -6,7 +6,7 @@ import defaultLocale from '../../locale/zh-CN'
 import { CONFIG_INJECT_KEY, configProviderProps } from './config-provider-types'
 
 /**
- * compact 算法的尺寸 token 覆盖。对齐 Ant Design v6 compact 算法：
+ * compact 算法的尺寸 token 覆盖：
  * controlHeight 从 32 → 24，padding/margin 系列按比例缩小，font 不动。
  * 仅作用于 ConfigProvider 包裹的子树（通过 CSS 变量级联）。
  */

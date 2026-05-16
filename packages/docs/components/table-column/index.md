@@ -1,6 +1,6 @@
 # TableColumn 表格列
 
-模板式表格列声明，对标 Ant Design `Table.Column`，作为 `<c-table>` 的子组件出现（**不挂 Table.Column 静态属性**，平铺独立顶层组件）。
+模板式表格列声明，作为 `<c-table>` 的子组件出现（**不通过 Table.Column 静态属性挂载**，平铺独立顶层组件）。
 
 ::: tip 与 `columns` prop 的关系
 `<c-table>` 同时支持两种列声明，**二选一**：
@@ -15,7 +15,7 @@
 
 - 列定义需要写在模板里、配合 `v-if` 条件渲染。
 - 单元格内容需要复杂的 `scoped slot`（嵌套组件、表单控件等）。
-- 想要更贴近 Ant Design React 的模板风格。
+- 偏好把列结构写成 JSX 风格的模板而不是数组配置。
 
 ## 基本使用
 

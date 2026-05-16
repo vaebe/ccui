@@ -120,7 +120,7 @@
   // M-A1：录入组件统一 variant 形态（outlined 是默认；其余 3 个走共享 mixin）
   @include form-control-variants;
 
-  // M-A3：校验状态（Ant 风格 status='error'|'warning'），边框层与 Input 一致在根元素
+  // 校验状态（status='error'|'warning'），边框层与 Input 一致在根元素
   &--status-error {
     border-color: $ccui-color-error;
 

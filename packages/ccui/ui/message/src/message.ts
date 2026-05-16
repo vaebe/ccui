@@ -41,7 +41,7 @@ const globalConfig: MessageGlobalConfig = {
 
 // duration ms→s 归一化
 // - 0 → 0（不自动关闭，与历史一致）
-// - ≤ 100 → 视为秒（ant 主路径：3 → 3s / 1.5 → 1.5s）
+// - ≤ 100 → 视为秒（推荐写法：3 → 3s / 1.5 → 1.5s）
 // - > 100 → 视为毫秒（兼容历史 ms 写法：3000 / 4500）
 function normalizeDuration(input: number | undefined, defaultSeconds: number): number {
   const v = input === undefined ? defaultSeconds : input
@@ -141,7 +141,7 @@ const message = {
   warning: buildShortcut('warning'),
   error: buildShortcut('error'),
   loading: buildShortcut('loading'),
-  // L-3.5：模块级配置，对齐 ant `message.config({ top, duration, maxCount, ... })`
+  // 模块级配置：message.config({ top, duration, maxCount, stack, rtl })
   config(cfg: MessageGlobalConfig) {
     Object.assign(globalConfig, cfg)
     // stack class 切换：已挂载容器同步刷新

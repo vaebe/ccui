@@ -1,6 +1,6 @@
 @use 'theme/theme' as *;
 
-// M-A1：录入组件统一 variant 形态（Ant Design v5.13+：outlined / filled / borderless / underlined）。
+// 录入组件统一 variant 形态：outlined / filled / borderless / underlined。
 //
 // 两个 mixin：
 // - `form-control-variants`：根元素本身就是视觉边框层（Input / InputNumber / Textarea / Mentions）

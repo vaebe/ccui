@@ -10,7 +10,7 @@
 
 ## 基本用法
 
-最简单的用法，浮层的大小由内容区域决定。`title` 是 ant 主名，`content` 为兼容旧名。
+最简单的用法，浮层的大小由内容区域决定。文本内容可通过 `title` 或同名 slot 传入。
 
 :::demo
 
@@ -214,9 +214,9 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-## 延迟显示 / 隐藏（新名）
+## 延迟显示 / 隐藏
 
-`mouseEnterDelay` / `mouseLeaveDelay` 是 ant 主名（ms 单位）；旧名 `showAfter` / `hideAfter` 仍兼容但已 deprecated。
+通过 `mouseEnterDelay` / `mouseLeaveDelay` 控制显隐延迟（ms）。
 
 :::demo
 
@@ -236,7 +236,7 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 :::
 
 ::: tip
-旧版本 `:show-after="1000"` / `:hide-after="1000"` 仍然兼容，运行时与新名等价。新代码请直接用 `mouseEnterDelay` / `mouseLeaveDelay`，与 ant 命名对齐。
+也支持 `:show-after` / `:hide-after`，运行时与 `mouseEnterDelay` / `mouseLeaveDelay` 等价（已 deprecated，新代码推荐 `mouse*Delay`）。
 :::
 
 ## 禁用
@@ -265,7 +265,7 @@ const disabled = ref(false)
 
 ## 受控显示 v-model:open
 
-`open` 是 ant 主名，配合 `v-model:open` 双向同步；旧 `visible` / `v-model:visible` 仍兼容。
+`open` 配合 `v-model:open` 双向同步；`visible` / `v-model:visible` 仍兼容（已 deprecated）。
 
 :::demo
 
@@ -368,20 +368,20 @@ function log(type) {
 
 | 参数                 | 说明                                                               | 类型                                         | 默认值 |
 | -------------------- | ------------------------------------------------------------------ | -------------------------------------------- | ------ |
-| title                | 显示的内容（Ant 主名）。也可用 `slot#title` 传入                   | string \| VNode                              | —      |
-| content              | @deprecated 同 `title`（保留 ccui 旧名，slot 同名 `content` 可用） | string                                       | —      |
-| open / v-model:open  | 显示状态（Ant 主名）                                               | boolean                                      | false  |
+| title                | 显示的内容。也可用 `slot#title` 传入                               | string \| VNode                              | —      |
+| content              | @deprecated 请改用 `title`（slot 同名 `content` 仍可用）           | string                                       | —      |
+| open / v-model:open  | 显示状态                                                           | boolean                                      | false  |
 | visible              | @deprecated 请改用 `open`                                          | boolean                                      | false  |
 | placement            | 出现位置（12 种）                                                  | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
 | effect               | 内置主题                                                           | `'dark' \| 'light'`                          | dark   |
 | color                | 自定义背景色（覆盖 `effect`）                                      | string                                       | —      |
 | arrow                | 箭头配置；对象形 `{ pointAtCenter: true }` 对准触发器中心          | `boolean \| { pointAtCenter: boolean }`      | true   |
 | show-arrow           | @deprecated 请改用 `arrow`                                         | boolean                                      | true   |
-| mouseEnterDelay      | 鼠标进入触发显示的延迟（ms，Ant 主名）                             | number                                       | 0      |
+| mouseEnterDelay      | 鼠标进入触发显示的延迟（ms）                                       | number                                       | 0      |
 | show-after           | @deprecated 请改用 `mouseEnterDelay`                               | number                                       | 0      |
-| mouseLeaveDelay      | 鼠标离开触发隐藏的延迟（ms，Ant 主名）                             | number                                       | 200    |
+| mouseLeaveDelay      | 鼠标离开触发隐藏的延迟（ms）                                       | number                                       | 200    |
 | hide-after           | @deprecated 请改用 `mouseLeaveDelay`                               | number                                       | 200    |
-| overlayClassName     | 弹层 class（Ant 主名）                                             | string                                       | —      |
+| overlayClassName     | 弹层 class                                                         | string                                       | —      |
 | popper-class         | @deprecated 请改用 `overlayClassName`                              | string                                       | —      |
 | trigger              | 触发方式                                                           | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
 | disabled             | 是否禁用                                                           | boolean                                      | false  |
@@ -404,12 +404,12 @@ function log(type) {
 | before-hide    | 隐藏前触发                             | —        |
 | hide           | 隐藏时触发                             | —        |
 | update:open    | v-model:open 同步                      | open     |
-| update:visible | v-model:visible 同步（旧名，渐进迁移） | visible  |
+| update:visible | v-model:visible 同步（已 deprecated）  | visible  |
 
 ### Tooltip Slots
 
 | 插槽名  | 说明                                        |
 | ------- | ------------------------------------------- |
 | default | Tooltip 触发 & 引用的元素                   |
-| title   | 自定义内容（Ant 主名，优先于 `title` prop） |
-| content | 同 `title`（旧名 slot，仍可用）             |
+| title   | 自定义内容（优先于 `title` prop）           |
+| content | 同 `title`（兼容名，仍可用）                |

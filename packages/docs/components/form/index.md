@@ -1,6 +1,6 @@
 # Form 表单
 
-用于收集、校验和提交一组输入项。当前版本目标覆盖 Ant Design Form 约 95% 的高频能力，仅保留 `shouldUpdate` / `validateDebounce` / `normalize` 等少量边角能力后续迭代。
+用于收集、校验和提交一组输入项。`shouldUpdate` / `validateDebounce` / `normalize` 等边角能力后续迭代。
 
 ## 基本用法
 
@@ -115,7 +115,7 @@ const confirmRule = {
 
 ## 函数式 rules
 
-`rules` 接受工厂函数 `(model) => Rule | Rule[]`（对标 Ant Design v5+），每次校验时执行，可基于当前 form model 派生动态规则。常见场景：confirm 字段对比 password、互斥字段（A 填了 B 必填）、长度跟随类型变化。
+`rules` 接受工厂函数 `(model) => Rule | Rule[]`，每次校验时执行，可基于当前 form model 派生动态规则。常见场景：confirm 字段对比 password、互斥字段（A 填了 B 必填）、长度跟随类型变化。
 
 :::demo
 
@@ -582,7 +582,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | rules                | FormRules                                                     | {}         | 表单校验规则                                                           |
 | initialValues        | object                                                        | {}         | 表单初始值                                                             |
 | labelWidth           | string / number                                               | --         | 标签宽度（简单场景）；`labelCol` 优先级更高                            |
-| labelCol             | `{ span?: number; offset?: number; flex?: string \| number }` | --         | 24 栅格布局的 label 列配置（Ant 风），按 `(span/24)*100%` 换算为 width |
+| labelCol             | `{ span?: number; offset?: number; flex?: string \| number }` | --         | 24 栅格布局的 label 列配置，按 `(span/24)*100%` 换算为 width           |
 | wrapperCol           | 同 labelCol                                                   | --         | 表单控件区列配置                                                       |
 | labelPosition        | left / right / top                                            | right      | 标签位置                                                               |
 | layout               | horizontal / vertical / inline                                | horizontal | 表单布局                                                               |
@@ -621,7 +621,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | noStyle          | boolean                                                         | false     | 不显示标准表单项样式                                                             |
 | preserve         | boolean                                                         | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置                                               |
 
-> **不做的 Ant API（Vue 已覆盖）**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议；`shouldUpdate` —— React 渲染优化原语，Vue 响应式自动处理。
+> **未实现的 API**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议；`shouldUpdate` —— Vue 响应式自动处理依赖收集，无需手动指定。
 >
 > `FormRule.warningOnly: boolean`：失败时降级为 `warning`，不阻塞 form-level submit。
 

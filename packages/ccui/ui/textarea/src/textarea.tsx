@@ -160,7 +160,7 @@ export default defineComponent({
     const handleBlur = (e: FocusEvent) => emit('blur', e)
 
     const handleKeydown = (e: KeyboardEvent) => {
-      // Ant 与 ccui 一致：Enter（不含 shift/ctrl/alt/meta）触发 press-enter
+      // Enter（不含 shift/ctrl/alt/meta）触发 press-enter
       if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
         emit('press-enter', e)
       }

@@ -366,7 +366,7 @@ const b = ref(10)
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
 
 :::demo
 
@@ -430,7 +430,7 @@ const v3 = ref(0)
 | allow-empty       | `boolean`                                                             | `false`      | 是否允许空值                                         |
 | show-glow-style   | `boolean`                                                             | `true`       | 是否显示悬浮发光效果                                 |
 | reg               | `RegExp \| string`                                                    | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤           |
-| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）                |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `'outlined'` | 录入组件统一形态                                     |
 | status            | `'' \| 'error' \| 'warning'`                                          | `''`         | 校验状态，Form 联动会自动透传                        |
 
 ## InputNumber事件

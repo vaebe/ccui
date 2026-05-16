@@ -17,7 +17,7 @@ export type FilterOption = boolean | ((input: string, option: MentionOption) => 
 export type MentionsVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 /**
- * Ant Design 风格的校验状态。Form 联动会自动透传。
+ * 校验状态。Form 联动会自动透传。
  */
 export type MentionsStatus = '' | 'error' | 'warning'
 

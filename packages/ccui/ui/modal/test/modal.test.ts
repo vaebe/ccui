@@ -207,11 +207,11 @@ describe('modal', () => {
   })
 
   // ─────────────────────────────────────────────────────────────
-  // L-1.3: Ant Design API alignment
+  // 同义 prop 解析
   // ─────────────────────────────────────────────────────────────
 
-  describe('open（Ant 主名 + v-model:open）', () => {
-    it('open=true 等价于旧 visible=true', async () => {
+  describe('open + v-model:open', () => {
+    it('open=true 等价于 visible=true', async () => {
       const wrapper = mount(Modal, {
         props: { open: true, title: 'X' },
       })

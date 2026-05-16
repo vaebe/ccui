@@ -1,6 +1,6 @@
 # TableColumnGroup 表格列分组
 
-表格列分组，对标 Ant Design `Table.ColumnGroup`，作为 `<c-table>` 的子组件，让 thead 多生成一行「分组标题」，子叶子列在 tbody 中被展平渲染（**不挂 Table.ColumnGroup 静态属性**，平铺独立顶层组件）。
+表格列分组组件，作为 `<c-table>` 的子组件，让 thead 多生成一行「分组标题」，子叶子列在 tbody 中被展平渲染（**不通过 Table.ColumnGroup 静态属性挂载**，平铺独立顶层组件）。
 
 ::: tip 使用前提
 TableColumnGroup 必须与 [`<c-table-column>`](/components/table-column/) 一起使用（模板式列声明）。

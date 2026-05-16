@@ -78,7 +78,6 @@
   }
 
   // Processing: 与 primary 同色但加 6px 脉冲点，表达"加载中"语义。
-  // 对齐 Ant Design Tag.Processing 视觉。
   &--processing {
     background: $ccui-color-primary-bg;
     border-color: $ccui-color-primary-border;

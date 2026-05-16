@@ -10,7 +10,7 @@ export type MessageAriaRole = 'alert' | 'status'
 export interface MessageOptions {
   content: string | VNode
   type?: MessageType
-  // 单位优先「秒」（与 ant 一致），>100 自动按 ms 兼容；0 表示不自动关闭
+  // 单位优先「秒」，>100 自动按 ms 兼容；0 表示不自动关闭
   duration?: number
   showClose?: boolean
   onClose?: () => void

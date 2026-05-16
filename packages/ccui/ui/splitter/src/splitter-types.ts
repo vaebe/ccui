@@ -12,7 +12,7 @@ export const splitterProps = {
     default: undefined,
   },
   /**
-   * `layout` 的别名（对标 ant `Splitter`）。
+   * `layout` 的别名。
    * 显式传 `layout` 时优先；同时传时 `layout` 胜出。
    */
   orientation: {

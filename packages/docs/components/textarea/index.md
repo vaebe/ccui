@@ -1,6 +1,6 @@
 # Textarea 多行文本
 
-多行文本输入框，对标 Ant Design `Input.TextArea`，作为独立顶层组件存在（不挂在 Input 命名空间下）。
+多行文本输入框，作为独立顶层组件存在（不挂在 Input 命名空间下）。
 
 ## 何时使用
 
@@ -150,7 +150,7 @@ export default defineComponent({
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
 
 :::demo
 

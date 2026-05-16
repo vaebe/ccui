@@ -136,7 +136,6 @@ app.mount('#app')
 - **QRCode** - 二维码（80%，自渲 SVG / 容错 4 档 / logo 嵌入 / loading・expired・scanned 三态）
 - **Rate** - 评分
 - **Segmented** - 分段控制器
-- **Statistic** - 统计数值（含 Countdown）
 - **Table** - 表格（固定列 / 展开行 / 合并单元格 / 行选择 / 排序过滤 / 分页全部已交付）
 - **Tag** - 标签
 - **Timeline** - 时间线

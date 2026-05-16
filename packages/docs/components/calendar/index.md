@@ -76,10 +76,7 @@ const date = ref(new Date())
 
 ## 自定义 header
 
-`#header` 插槽对标 Ant Design `Calendar.headerRender` render-prop（Vue 化为 slot）。
-
-::: warning L-2.19 起：slot 作用域改为对象
-之前 slot 作用域是 `string`（仅当前日期），现在是富对象 `{ value, currentMonth, setDate, changeMonth }`，让 slot 自行调用月份切换 API 而无需从外部维护状态：
+`#header` 插槽接收作用域对象 `{ value, currentMonth, setDate, changeMonth }`，slot 内可直接调用月份切换 API，无需从外部维护状态。
 
 | 字段         | 类型                                              | 说明                         |
 | ------------ | ------------------------------------------------- | ---------------------------- |
@@ -87,9 +84,6 @@ const date = ref(new Date())
 | currentMonth | `string`                                          | 当前展示月份（`YYYY-MM`）    |
 | setDate      | `(date: string) => void`                          | 跳转到任意 `YYYY-MM-DD`      |
 | changeMonth  | `(direction: 'lastMonth' \| 'nextMonth') => void` | 上下月切换                   |
-
-**迁移**：旧 `<template #header="d">{{ d }}</template>` → 改为 `<template #header="d">{{ d.value }}</template>`。
-:::
 
 :::demo
 
@@ -202,7 +196,7 @@ const date = ref(new Date())
 
 ### Slots
 
-| 名称     | 说明                                                                                                                                                        |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| header   | 自定义日历头部。**L-2.19 起：作用域为对象** `{ value, currentMonth, setDate, changeMonth }`（详见上方 demo）；之前为字符串，旧用法需迁移到 `d.value` 访问。 |
-| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号                                                                         |
+| 名称     | 说明                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| header   | 自定义日历头部，作用域 `{ value, currentMonth, setDate, changeMonth }`（详见上方 demo）           |
+| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号               |

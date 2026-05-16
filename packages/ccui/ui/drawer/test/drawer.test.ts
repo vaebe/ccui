@@ -171,10 +171,10 @@ describe('drawer', () => {
   })
 
   // ─────────────────────────────────────────────────────────────
-  // L-1.4: Ant Design API alignment
+  // 同义 prop 解析
   // ─────────────────────────────────────────────────────────────
 
-  describe('open（Ant 主名 + v-model:open）', () => {
+  describe('open + v-model:open', () => {
     it('open=true 等价 visible=true', async () => {
       const wrapper = mount(Drawer, { props: { open: true, title: 'Z' } })
       await nextTick()

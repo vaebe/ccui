@@ -129,7 +129,7 @@ export default defineComponent({
         [ns.m('circle')]: resolvedShape.value === 'circle',
         [ns.m('loading')]: isLoading.value,
         [ns.m('disabled')]: resolvedDisabled.value || isLoading.value,
-        // 用 --dangerous（与 Ant `.ant-btn-dangerous` 对齐）避免与 type='danger' 共用同名类
+        // 用 `--dangerous` 避免与 type='danger' 共用同名类
         [ns.m('dangerous')]: props.danger,
         [ns.m('ghost')]: props.ghost,
         [ns.m('block')]: props.block,

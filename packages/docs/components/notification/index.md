@@ -58,7 +58,7 @@ function open(item) {
 
 :::
 
-## 弹出位置（L-3.5）
+## 弹出位置
 
 支持 6 个位置：`topRight` / `topLeft` / `top`（顶部居中）/ `bottomRight` / `bottomLeft` / `bottom`（底部居中）。
 
@@ -88,12 +88,12 @@ function open(placement) {
 
 ## 自定义停留时长
 
-`duration` 推荐传**秒**（与 Ant Design 对齐）；传 `0` 则不自动关闭，需要用户手动点 ×。
+`duration` 推荐传**秒**；传 `0` 则不自动关闭，需要用户手动点 ×。
 
-::: tip 单位规则（L-3.5）
+::: tip 单位规则
 
 - `duration ≤ 100` 视为「秒」（如 `4.5` → 4.5 秒）
-- `duration > 100` 视为「毫秒」（兼容历史 ms 写法，如 `4500`）
+- `duration > 100` 视为「毫秒」（如 `4500`）
 - `duration === 0` 永远表示不自动关闭
 
 :::
@@ -118,9 +118,9 @@ function sticky() {
     duration: 0,
   })
 }
-function legacyMs() {
+function msUnit() {
   notification.info({
-    title: '兼容 ms 写法',
+    title: '毫秒写法',
     description: '4500ms = 4.5s',
     duration: 4500,
   })
@@ -130,13 +130,13 @@ function legacyMs() {
 <template>
   <c-button @click="shortToast">短 (1.5s)</c-button>
   <c-button @click="sticky">常驻 (duration=0)</c-button>
-  <c-button @click="legacyMs">兼容 ms (4500)</c-button>
+  <c-button @click="msUnit">毫秒 (4500)</c-button>
 </template>
 ```
 
 :::
 
-## 全局配置 notification.config（L-3.5）
+## 全局配置 notification.config
 
 `notification.config(...)` 设置 `maxCount` / `stack` / `pauseOnHover` / `role` / `duration` / `top` / `bottom` / `placement` / `getContainer` 等全局默认值。再次调用以覆盖前一次配置。
 
@@ -240,7 +240,7 @@ function clear() {
 
 :::
 
-## useNotification composable（L-3.4）
+## useNotification composable
 
 `useNotification()` 返回 `{ notification, holder }` **对象**（**不是** React 风格元组）。容器渲染在当前 Vue 子树里，自动继承父组件 provide 的 ConfigProvider / 主题等上下文——**与模块级 `notification` 的最大差异**。
 
@@ -290,7 +290,7 @@ function show() {
 | `notification.success(...)`  | success 类型                                                  |
 | `notification.warning(...)`  | warning 类型                                                  |
 | `notification.error(...)`    | error 类型                                                    |
-| `notification.config(cfg)`   | 全局默认值配置（L-3.5）                                       |
+| `notification.config(cfg)`   | 全局默认值配置                                                |
 | `notification.destroy()`     | 关闭并卸载所有通知容器                                        |
 
 ### NotificationOptions
@@ -300,16 +300,16 @@ function show() {
 | title        | string                  | —            | 通知标题（建议必填）                                                                      |
 | description  | `string \| VNode`       | —            | 通知正文                                                                                  |
 | type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                            |
-| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`（L-3.5） |
-| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）                       |
+| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`         |
+| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒；`0` 不自动关闭                                         |
 | showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                          |
 | icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                                        |
 | customClass  | string                  | `''`         | 自定义类名                                                                                |
 | onClose      | `() => void`            | —            | 关闭时回调                                                                                |
-| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5）           |
-| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器（L-3.5）                                                       |
+| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）                   |
+| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器                                                               |
 
-### NotificationGlobalConfig（L-3.5）
+### NotificationGlobalConfig
 
 通过 `notification.config({...})` 设置；优先级低于单次 `open()` 选项。
 

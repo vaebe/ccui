@@ -12,7 +12,7 @@
   // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __textarea
   @include form-control-variants-on('.#{$cls-prefix}-mentions__textarea');
 
-  // M-A3：校验状态（Ant 风格 status='error'|'warning'），边框层与 variant 一致在 __textarea
+  // 校验状态（status='error'|'warning'），边框层与 variant 一致在 __textarea
   &--status-error {
     .#{$cls-prefix}-mentions__textarea {
       border-color: $ccui-color-error;

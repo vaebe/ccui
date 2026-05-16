@@ -5,7 +5,7 @@ export type InputType = 'text' | 'password'
 export type InputSize = 'large' | 'default' | 'small'
 
 /**
- * Ant Design 风格的校验状态。Form 联动会自动透传。
+ * 校验状态。Form 联动会自动透传。
  */
 export type InputStatus = '' | 'error' | 'warning'
 
@@ -63,14 +63,14 @@ export const inputProps = {
     default: false,
   },
   /**
-   * @deprecated 请改用 `allowClear`（Ant Design 主名）。下一大版本移除。
+   * @deprecated 请改用 `allowClear`。下一大版本移除。
    */
   clearable: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design 主名：是否显示清除按钮，支持 `{ clearIcon }` 自定义图标。
+   * 是否显示清除按钮，支持 `{ clearIcon }` 自定义图标。
    * 显式 `allowClear` 优先于 `clearable`。
    */
   allowClear: {
@@ -82,28 +82,28 @@ export const inputProps = {
     default: false,
   },
   /**
-   * @deprecated 旧 string 形式 prepend；推荐使用 `addon-before` slot 或 prop。
+   * @deprecated 请改用 `addon-before` slot 或 `addonBefore` prop。
    */
   prepend: {
     type: String,
     default: '',
   },
   /**
-   * @deprecated 旧 string 形式 append；推荐使用 `addon-after` slot 或 prop。
+   * @deprecated 请改用 `addon-after` slot 或 `addonAfter` prop。
    */
   append: {
     type: String,
     default: '',
   },
   /**
-   * Ant Design 主名：左侧 addon 内容（字符串或 slot 同名 `addon-before`）。
+   * 左侧 addon 内容（字符串或 slot 同名 `addon-before`）。
    */
   addonBefore: {
     type: String,
     default: '',
   },
   /**
-   * Ant Design 主名：右侧 addon 内容（字符串或 slot 同名 `addon-after`）。
+   * 右侧 addon 内容（字符串或 slot 同名 `addon-after`）。
    */
   addonAfter: {
     type: String,
@@ -138,7 +138,7 @@ export const inputProps = {
     default: 'outlined',
   },
   /**
-   * 非受控模式初始值。设置后首次挂载从 `defaultValue` 取值，之后忽略；与 `v-model:value` 并存。
+   * 非受控模式初始值。设置后首次挂载从 `defaultValue` 取值，之后忽略；与 `v-model` 并存。
    */
   defaultValue: {
     type: String,

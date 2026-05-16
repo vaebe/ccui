@@ -87,7 +87,7 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
             await result
             close()
           } catch {
-            // reject 不关闭，错误吞掉（与 ant 行为一致；调用方自己处理）
+            // reject 不关闭，错误吞掉（由调用方自己处理）
           } finally {
             loading.value = false
           }

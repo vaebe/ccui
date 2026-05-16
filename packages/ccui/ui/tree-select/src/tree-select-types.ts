@@ -3,14 +3,14 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
 import type { TreeNodeData, TreeNodeKey } from '../../tree/src/tree-types'
 
 /**
- * 对标 ant `TreeSelect.SHOW_PARENT` / `.SHOW_CHILD` / `.SHOW_ALL`：`showCheckedStrategy` 取值。
+ * `showCheckedStrategy` 取值常量：
  *
- * - `TREE_SELECT_SHOW_PARENT`：父子都选中时只输出父节点（默认与 Tree.SHOW_PARENT 一致）
+ * - `TREE_SELECT_SHOW_PARENT`：父子都选中时只输出父节点（默认）
  * - `TREE_SELECT_SHOW_CHILD`：只输出叶子节点
  * - `TREE_SELECT_SHOW_ALL`：输出所有选中节点（父 + 子全集）
  *
- * 与 ant 的 `TreeSelect.SHOW_*` 静态属性等价，**不挂命名空间**，从 `vue3-ccui` 顶层 export。
- * 当前 ccui TreeSelect 尚未接入 `showCheckedStrategy`，常量已 export 供外部代码提前引用。
+ * **不挂命名空间**，从 `vue3-ccui` 顶层 export。
+ * 当前 TreeSelect 尚未接入 `showCheckedStrategy`，常量已 export 供外部代码提前引用。
  */
 export const TREE_SELECT_SHOW_PARENT = 'SHOW_PARENT' as const
 export const TREE_SELECT_SHOW_CHILD = 'SHOW_CHILD' as const

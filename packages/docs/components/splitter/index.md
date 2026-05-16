@@ -157,7 +157,7 @@ function onResize(arr) {
 | 参数        | 类型                         | 默认值         | 说明                                                               |
 | ----------- | ---------------------------- | -------------- | ------------------------------------------------------------------ |
 | layout      | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向                                                           |
-| orientation | `'horizontal' \| 'vertical'` | -              | L-2.23：`layout` 的别名（对标 ant `Splitter`）；显式 `layout` 优先 |
+| orientation | `'horizontal' \| 'vertical'` | -              | `layout` 的别名；显式 `layout` 优先                                |
 
 ### Splitter Events
 
@@ -177,4 +177,4 @@ function onResize(arr) {
 | max                 | `number \| string`                              | —       | 最大尺寸                                                             |
 | resizable           | `boolean`                                       | `true`  | 是否在该面板右 / 下侧画拖拽条                                        |
 | collapsible         | `boolean \| { start?: boolean; end?: boolean }` | `false` | 是否允许折叠；对象形态分别声明两端                                   |
-| showCollapsibleIcon | `boolean`                                       | `false` | L-2.23：是否在 resizer 上渲染折叠 / 展开按钮（需配合 `collapsible`） |
+| showCollapsibleIcon | `boolean`                                       | `false` | 是否在 resizer 上渲染折叠 / 展开按钮（需配合 `collapsible`）         |

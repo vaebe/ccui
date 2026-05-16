@@ -391,7 +391,7 @@ describe('auto-complete trigger slot', () => {
     })
   })
 
-  describe('status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+  describe('status（校验状态 + Form 联动）', () => {
     it('status="error" 加 __wrap--status-error 类', () => {
       const wrapper = mountAC({ status: 'error' })
       expect(wrapper.find(ns.em('wrap', 'status-error')).exists()).toBe(true)

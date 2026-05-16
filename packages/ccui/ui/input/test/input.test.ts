@@ -147,11 +147,11 @@ describe('input', () => {
   })
 
   // ─────────────────────────────────────────────────────────────
-  // L-1.2: Ant Design API alignment
+  // allowClear / addonBefore 命名规范化
   // ─────────────────────────────────────────────────────────────
 
-  describe('allowClear（Ant 主名）', () => {
-    it('allowClear=true 等价于旧 clearable=true', async () => {
+  describe('allowClear', () => {
+    it('allowClear=true 等价于 clearable=true', async () => {
       const wrapper = mount(Input, { props: { allowClear: true, modelValue: 'hello' } })
       expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
       wrapper.unmount()
@@ -168,8 +168,8 @@ describe('input', () => {
       wrapper.unmount()
     })
 
-    it('显式 allowClear 优先于旧 clearable', () => {
-      // allowClear=false 显式关 → 旧 clearable=true 也不生效
+    it('显式 allowClear 优先于 clearable', () => {
+      // allowClear=false 显式关 → clearable=true 也不生效
       const wrapper = mount(Input, {
         props: { allowClear: false, clearable: true, modelValue: 'x' },
       })
@@ -178,7 +178,7 @@ describe('input', () => {
     })
   })
 
-  describe('addonBefore / addonAfter（Ant 主名）', () => {
+  describe('addonBefore / addonAfter', () => {
     it('addonBefore prop 渲染左侧 addon', () => {
       const wrapper = mount(Input, { props: { addonBefore: 'Http://' } })
       expect(wrapper.find(ns.e('prepend')).text()).toBe('Http://')

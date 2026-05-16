@@ -44,7 +44,7 @@ describe('button', () => {
   it('dom', () => {
     const wrapper = createShallowWrapper({}, { default: '确定' })
     expect(wrapper.find(baseClass).exists()).toBeTruthy()
-    // 注意：autoInsertSpace 默认 true（v5.17 起 Ant 默认），2 字 CJK 自动插空格
+    // 注意：autoInsertSpace 默认 true，2 字 CJK 自动插空格
     expect(wrapper.find(baseClass).text()).toBe('确 定')
     wrapper.unmount()
   })
@@ -181,16 +181,16 @@ describe('button', () => {
   })
 
   // ───────────────────────────────────────────────────────────
-  // L-1.1: Ant Design API alignment
+  // shape / htmlType / danger 等命名规范化
   // ───────────────────────────────────────────────────────────
 
   describe('shape', () => {
-    it('shape="round" 渲染 --round（与旧 round=true 等价）', () => {
+    it('shape="round" 渲染 --round（与 round=true 等价）', () => {
       const wrapper = createShallowWrapper({ shape: 'round' })
       expect(wrapper.find(roundClass).exists()).toBe(true)
     })
 
-    it('shape="circle" 渲染 --circle（与旧 circle=true 等价）', () => {
+    it('shape="circle" 渲染 --circle（与 circle=true 等价）', () => {
       const wrapper = createShallowWrapper({ shape: 'circle' })
       expect(wrapper.find(circleClass).exists()).toBe(true)
     })
@@ -203,12 +203,12 @@ describe('button', () => {
   })
 
   describe('htmlType / nativeType', () => {
-    it('htmlType 主名生效', () => {
+    it('htmlType 生效', () => {
       const wrapper = createShallowWrapper({ htmlType: 'submit' })
       expect(wrapper.find('button').attributes('type')).toBe('submit')
     })
 
-    it('htmlType 优先于旧 nativeType', () => {
+    it('htmlType 优先于 nativeType', () => {
       const wrapper = createShallowWrapper({ htmlType: 'submit', nativeType: 'reset' })
       expect(wrapper.find('button').attributes('type')).toBe('submit')
     })
@@ -220,7 +220,7 @@ describe('button', () => {
   })
 
   describe('danger / ghost / block', () => {
-    it('danger=true 加 --dangerous 类（与 Ant `.ant-btn-dangerous` 对齐）', () => {
+    it('danger=true 加 --dangerous 类', () => {
       const wrapper = createShallowWrapper({ danger: true })
       expect(wrapper.find(ns.m('dangerous')).exists()).toBe(true)
     })

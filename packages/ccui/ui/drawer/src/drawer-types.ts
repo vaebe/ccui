@@ -4,7 +4,7 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
 export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom'
 
 /**
- * `closable` 复合配置（与 Modal 对齐）。
+ * `closable` 复合配置（与 Modal 同构）。
  */
 export interface DrawerClosableObject {
   closeIcon?: VNode | string
@@ -14,7 +14,7 @@ export interface DrawerClosableObject {
 export type DrawerClosable = boolean | DrawerClosableObject
 
 /**
- * `getContainer` 函数签名（Ant Design）。
+ * `getContainer` 函数签名。
  */
 export type DrawerGetContainer = (trigger: HTMLElement | null) => HTMLElement | null
 
@@ -31,14 +31,14 @@ export type DrawerPush = boolean | DrawerPushObject
 
 export const drawerProps = {
   /**
-   * @deprecated 请改用 `open`（Ant Design 主名 + `v-model:open`）。下一大版本移除。
+   * @deprecated 请改用 `open`（支持 `v-model:open`）。下一大版本移除。
    */
   visible: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design 主名：显示抽屉。支持 `v-model:open`。显式 `open` 优先于 `visible`。
+   * 显示抽屉。支持 `v-model:open`。显式 `open` 优先于 `visible`。
    */
   open: {
     type: Boolean,
@@ -57,7 +57,7 @@ export const drawerProps = {
     default: 378,
   },
   /**
-   * 关闭按钮配置。`boolean` 或 `{ closeIcon, disabled, ariaLabel }`（与 Modal 对齐）。
+   * 关闭按钮配置。`boolean` 或 `{ closeIcon, disabled, ariaLabel }`（与 Modal 同构）。
    */
   closable: {
     type: [Boolean, Object] as PropType<DrawerClosable>,
@@ -75,7 +75,7 @@ export const drawerProps = {
     default: true,
   },
   /**
-   * Ant Design 主名：是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
+   * 是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
    */
   keyboard: {
     type: Boolean,
@@ -95,9 +95,9 @@ export const drawerProps = {
   /**
    * footer 内容。
    *
-   * - `null`：隐藏 footer（等价旧 `showFooter=false` 默认）
+   * - `null`：隐藏 footer
    * - `string` / `VNode`：直接渲染
-   * - `undefined`：仅 footer slot 决定是否显示（与旧 `showFooter` 行为兼容）
+   * - `undefined`：仅 footer slot 决定是否显示
    *
    * `footer` slot 优先级最高。
    */
@@ -117,7 +117,7 @@ export const drawerProps = {
     default: false,
   },
   /**
-   * Vue 化等价 ant `forceRender`：true 时即使未打开也渲染外层 DOM。
+   * true 时即使未打开也渲染外层 DOM（不延迟到首次打开）。
    */
   keepAlive: {
     type: Boolean,
@@ -142,7 +142,7 @@ export const drawerProps = {
     default: undefined,
   },
   /**
-   * 嵌套抽屉时父抽屉是否让位（Ant Design `push`）。
+   * 嵌套抽屉时父抽屉是否让位。
    *
    * - `true`（默认）：让位 180px
    * - `false`：不让位

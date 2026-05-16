@@ -2,7 +2,7 @@ import type { ExtractPropTypes, PropType } from 'vue'
 import type { TableCellRenderProps, TableColumn } from '../../table/src/table-types'
 
 /**
- * 对标 ant `Table.ColumnGroup`：在 thead 多生成一行「分组标题」，子列在 tbody 中被展平。
+ * 表格列分组：在 thead 多生成一行「分组标题」，子列在 tbody 中被展平。
  *
  * 模板用法：
  *

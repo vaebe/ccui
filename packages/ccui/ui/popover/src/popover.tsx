@@ -71,7 +71,7 @@ export default defineComponent({
     const hideTimer = ref<number>()
     const autoCloseTimer = ref<number>()
 
-    // Ant 主名 / ccui 旧名解析
+    // 同义 prop 解析
     const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
     const isControlled = computed(() => externalOpen.value !== undefined)
     const actualVisible = computed(() => {

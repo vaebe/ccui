@@ -1,6 +1,6 @@
 # BadgeRibbon 缎带徽标
 
-带折角缎带的徽标，对标 Ant Design `Badge.Ribbon`，作为独立顶层组件存在（不挂在 Badge 命名空间下）。
+带折角缎带的徽标，作为独立顶层组件存在（不挂在 Badge 命名空间下）。
 
 ## 何时使用
 

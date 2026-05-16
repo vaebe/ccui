@@ -219,7 +219,7 @@ export default defineComponent({
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled`（无边框 + 填充背景）/ `borderless`（无边框无背景）/ `underlined`（仅底部边框）。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled`（无边框 + 填充背景）/ `borderless`（无边框无背景）/ `underlined`（仅底部边框）。
 
 :::demo
 
@@ -276,10 +276,10 @@ const v3 = ref('')
 | readonly      | boolean                                     | false   | 是否为只读状态                                                                              |
 | modelValue    | string                                      | --      | 绑定值（v-model）                                                                           |
 | defaultValue  | string                                      | --      | 非受控初值，仅首次挂载使用                                                                  |
-| allowClear    | boolean \| { clearIcon?: VNode \| string }  | --      | 是否显示清除按钮（Ant 主名，支持 Iconify name / VNode 自定义图标）                          |
+| allowClear    | boolean \| { clearIcon?: VNode \| string }  | --      | 是否显示清除按钮（支持 Iconify name / VNode 自定义图标）                                    |
 | show-password | boolean                                     | false   | 密码输入时是否可切换可见性                                                                  |
-| addonBefore   | string                                      | ''      | 前置 addon 文本（Ant 主名）                                                                 |
-| addonAfter    | string                                      | ''      | 后置 addon 文本（Ant 主名）                                                                 |
+| addonBefore   | string                                      | ''      | 前置 addon 文本                                                                             |
+| addonAfter    | string                                      | ''      | 后置 addon 文本                                                                             |
 | maxLength     | number                                      | --      | 最大长度（透传原生 `maxlength`）                                                            |
 | showCount     | boolean \| { formatter?: (info) => string } | false   | 显示字符计数，配合 `maxLength` 显示 `N / max`；formatter 接 `({ value, count, maxLength })` |
 | status        | '' \| 'error' \| 'warning'                  | ''      | 校验状态，Form 联动会自动透传                                                               |
@@ -311,14 +311,14 @@ export type InputSize = 'large' | 'default' | 'small'
 | focus             | event         | 输入框获得焦点时触发                          |
 | blur              | event         | 输入框失去焦点时触发                          |
 | clear             | --            | 点击清除图标时触发                            |
-| press-enter       | KeyboardEvent | Enter 键按下时触发（对齐 ant `onPressEnter`） |
+| press-enter       | KeyboardEvent | Enter 键按下时触发                            |
 
 ## Input插槽
 
 | 插槽名       | 说明                          |
 | ------------ | ----------------------------- |
-| addon-before | 前置 addon 内容（Ant 主名）   |
-| addon-after  | 后置 addon 内容（Ant 主名）   |
+| addon-before | 前置 addon 内容               |
+| addon-after  | 后置 addon 内容               |
 | prefix       | 输入框内左侧前缀              |
 | suffix       | 输入框内右侧后缀              |
 | prepend      | @deprecated 同 `addon-before` |

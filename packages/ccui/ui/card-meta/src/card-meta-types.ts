@@ -1,7 +1,7 @@
 import type { ExtractPropTypes } from 'vue'
 
 /**
- * 对标 ant `Card.Meta`：
+ * 卡片元信息组件：
  *
  * - `title` / `description` 两段文字
  * - `avatar` slot 左侧 64×64 头像

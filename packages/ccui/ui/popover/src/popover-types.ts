@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 /**
- * `arrow` 复合（Ant Design）：`bool \| { pointAtCenter }`
+ * `arrow` 复合：`bool \| { pointAtCenter }`
  */
 export interface PopoverArrowObject {
   pointAtCenter?: boolean
@@ -9,7 +9,7 @@ export interface PopoverArrowObject {
 export type PopoverArrow = boolean | PopoverArrowObject
 
 /**
- * `getPopupContainer` 函数（Ant Design）。返回 null 时不 Teleport。
+ * `getPopupContainer` 函数。返回 null 时不 Teleport。
  */
 export type PopoverGetPopupContainer = (trigger: HTMLElement | null) => HTMLElement | null
 
@@ -58,21 +58,21 @@ export const popoverProps = {
     default: 'light' as PopoverEffect,
   },
   /**
-   * @deprecated 请改用 `open`（Ant Design 主名 + `v-model:open`）。
+   * @deprecated 请改用 `open`（支持 `v-model:open`）。
    */
   visible: {
     type: Boolean,
     default: undefined,
   },
   /**
-   * Ant Design 主名：受控显示。显式 `open` 优先于 `visible`。
+   * 受控显示。显式 `open` 优先于 `visible`。
    */
   open: {
     type: Boolean,
     default: undefined,
   },
   /**
-   * Ant Design `color`：浮层背景色（任意 CSS 字符串），覆盖 `effect` 的内置色。
+   * 浮层背景色（任意 CSS 字符串），覆盖 `effect` 的内置色。
    */
   color: {
     type: String,
@@ -83,14 +83,14 @@ export const popoverProps = {
     default: false,
   },
   /**
-   * @deprecated 请改用 `arrow`（Ant Design 主名，支持复合对象）。
+   * @deprecated 请改用 `arrow`（支持复合对象）。
    */
   showArrow: {
     type: Boolean,
     default: true,
   },
   /**
-   * Ant Design 主名：`bool \| { pointAtCenter }`。显式 `arrow` 优先于 `showArrow`。
+   * `bool \| { pointAtCenter }`。显式 `arrow` 优先于 `showArrow`。
    */
   arrow: {
     type: [Boolean, Object] as PropType<PopoverArrow>,
@@ -101,7 +101,7 @@ export const popoverProps = {
     default: 'click' as PopoverTrigger,
   },
   /**
-   * @deprecated 请改用 `mouseEnterDelay`（Ant Design 主名）。单位 ms。
+   * @deprecated 请改用 `mouseEnterDelay`。单位 ms。
    */
   showAfter: {
     type: Number,
@@ -115,28 +115,28 @@ export const popoverProps = {
     default: 200,
   },
   /**
-   * Ant Design 主名：mouseenter 后多少 ms 显示。显式 `mouseEnterDelay` 优先于 `showAfter`。
+   * mouseenter 后多少 ms 显示。显式 `mouseEnterDelay` 优先于 `showAfter`。
    */
   mouseEnterDelay: {
     type: Number,
     default: undefined,
   },
   /**
-   * Ant Design 主名：mouseleave 后多少 ms 隐藏。
+   * mouseleave 后多少 ms 隐藏。
    */
   mouseLeaveDelay: {
     type: Number,
     default: undefined,
   },
   /**
-   * @deprecated 请改用 `overlayClassName`（Ant Design 主名）。
+   * @deprecated 请改用 `overlayClassName`。
    */
   popperClass: {
     type: String,
     default: '',
   },
   /**
-   * Ant Design 主名：浮层根 class。显式 `overlayClassName` 优先于 `popperClass`。
+   * 浮层根 class。显式 `overlayClassName` 优先于 `popperClass`。
    */
   overlayClassName: {
     type: String,
@@ -183,14 +183,14 @@ export const popoverProps = {
     default: 0,
   },
   /**
-   * @deprecated 请改用 `getPopupContainer` 函数形（Ant Design 主名）。
+   * @deprecated 请改用 `getPopupContainer` 函数形。
    */
   teleported: {
     type: Boolean,
     default: true,
   },
   /**
-   * Ant Design 主名：浮层容器函数。返回 null 时不 Teleport（同 teleported=false）。
+   * 浮层容器函数。返回 null 时不 Teleport（同 teleported=false）。
    */
   getPopupContainer: {
     type: Function as PropType<PopoverGetPopupContainer>,
@@ -204,14 +204,14 @@ export const popoverProps = {
     default: false,
   },
   /**
-   * Ant Design：隐藏后销毁浮层 DOM（默认 false，复用 DOM）。
+   * 隐藏后销毁浮层 DOM（默认 false，复用 DOM）。
    */
   destroyTooltipOnHide: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design：浮层是否自动调整以避免溢出（默认开启，由 floating-ui flip 实现）。
+   * 浮层是否自动调整以避免溢出（默认开启，由 floating-ui flip 实现）。
    */
   autoAdjustOverflow: {
     type: Boolean,

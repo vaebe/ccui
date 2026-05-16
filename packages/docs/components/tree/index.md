@@ -2,11 +2,11 @@
 
 层级数据展示与管理：选中、勾选（含父子半选联动）、展开、异步加载、搜索高亮、自定义渲染、拖拽。
 
-> 说明：本组件相对 1.x 版本进行了 API 重构，新协议参考 Ant Design Tree 的高频用法。旧的 `level` / `open` 字段不再使用，请改用 `defaultExpandedKeys`、`expandedKeys` 或 `defaultExpandAll`。
+展开态用 `defaultExpandedKeys` / `expandedKeys` 或 `defaultExpandAll` 控制。
 
 ## 基本用法
 
-不传 `expandedKeys` 时默认全部折叠。点击左侧 switcher 展开 / 折叠。
+不传 `expandedKeys` 时默认全部折叠。默认整行可点击触发展开 / 折叠 —— 设 `expandAction="false"` 改为仅 switcher 图标响应。
 
 :::demo
 
@@ -34,6 +34,43 @@ const data = [
 
 <template>
   <c-tree :data="data" default-expand-all />
+</template>
+```
+
+:::
+
+## 展开方式 `expandAction`
+
+默认 `expandAction="click"` —— 点击节点正文（标题区域）和 switcher 图标都会切换展开。设为 `false` 后只剩 switcher 图标触发展开，正文点击退化为纯选中（更接近文件浏览器以外的传统 Tree UX）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+const data = [
+  {
+    key: 'src',
+    title: 'src',
+    children: [
+      { key: 'main.ts', title: 'main.ts' },
+      { key: 'app.vue', title: 'app.vue' },
+    ],
+  },
+  { key: 'readme', title: 'README.md' },
+]
+</script>
+
+<template>
+  <div style="display: flex; gap: 32px;">
+    <div>
+      <h4 style="margin: 0 0 8px;">默认 expandAction="click"</h4>
+      <c-tree :data="data" />
+    </div>
+    <div>
+      <h4 style="margin: 0 0 8px;">expandAction={false}</h4>
+      <c-tree :data="data" :expand-action="false" />
+    </div>
+  </div>
 </template>
 ```
 
@@ -392,6 +429,7 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 | draggable            | `boolean`                                         | `false` | 是否允许拖拽                                   |
 | showLine             | `boolean`                                         | `false` | 是否显示连接线（保留接口，样式可由消费者扩展） |
 | blockNode            | `boolean`                                         | `false` | 是否独占整行                                   |
+| expandAction         | `'click' \| false`                                | `'click'` | 点击节点正文是否切换展开；`false` 仅 switcher 图标可展开 |
 | searchValue          | `string`                                          | `''`    | 搜索关键字（默认按 title 子串匹配）            |
 | filterTreeNode       | `(node, parentKeys) => boolean`                   | --      | 自定义过滤谓词，返回 true 命中                 |
 | indentSize           | `number`                                          | `24`    | 每级缩进像素                                   |

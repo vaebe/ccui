@@ -329,7 +329,7 @@ export default defineComponent({
       }
       if (props.format === 'hsv') {
         if (!warnedHsv && typeof console !== 'undefined') {
-          console.warn(`[ccui][ColorPicker] format="hsv" 已 deprecated，请改用 "hsb"（与 Ant Design 一致）。`)
+          console.warn(`[ccui][ColorPicker] format="hsv" 已 deprecated，请改用 "hsb"。`)
           warnedHsv = true
         }
         return hsvToString(rgbToHsv(rgb))

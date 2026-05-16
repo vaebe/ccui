@@ -96,7 +96,7 @@ export default defineComponent({
       return form ? getValueByPath(form.model.value, fieldName.value) : undefined
     }
 
-    // rules 解析：支持函数式 (model) => Rule | Rule[]（Ant Design v5+）
+    // rules 解析：支持函数式 (model) => Rule | Rule[]
     const resolveItemRules = (): FormRule | FormRule[] | undefined => {
       const raw = props.rules
       if (typeof raw === 'function') {

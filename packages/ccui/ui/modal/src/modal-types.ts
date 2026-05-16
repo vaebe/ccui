@@ -20,21 +20,21 @@ export interface ModalClosableObject {
 export type ModalClosable = boolean | ModalClosableObject
 
 /**
- * `getContainer` 函数签名（Ant Design）：返回浮层容器节点。
- * 优先级：显式 `getContainer` 函数 > 旧 `appendToBody` boolean。
+ * `getContainer` 函数签名：返回浮层容器节点。
+ * 优先级：显式 `getContainer` 函数 > `appendToBody` boolean。
  */
 export type ModalGetContainer = (trigger: HTMLElement | null) => HTMLElement | null
 
 export const modalProps = {
   /**
-   * @deprecated 请改用 `open`（Ant Design 主名 + `v-model:open`）。下一大版本移除。
+   * @deprecated 请改用 `open`（支持 `v-model:open`）。下一大版本移除。
    */
   visible: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design 主名：显示对话框。支持 `v-model:open`。
+   * 显示对话框。支持 `v-model:open`。
    * 显式 `open` 优先于 `visible`。
    */
   open: {
@@ -61,14 +61,14 @@ export const modalProps = {
     default: true,
   },
   /**
-   * @deprecated 请改用 `keyboard`（Ant Design 主名）。下一大版本移除。
+   * @deprecated 请改用 `keyboard`。下一大版本移除。
    */
   closeOnEsc: {
     type: Boolean,
     default: true,
   },
   /**
-   * Ant Design 主名：是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
+   * 是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
    */
   keyboard: {
     type: Boolean,
@@ -97,14 +97,14 @@ export const modalProps = {
     default: 'primary' as const,
   },
   /**
-   * @deprecated 请改用 `confirmLoading`（Ant Design 主名）。
+   * @deprecated 请改用 `confirmLoading`。
    */
   okLoading: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design 主名：确认按钮 loading 状态。显式优先于 `okLoading`。
+   * 确认按钮 loading 状态。显式优先于 `okLoading`。
    */
   confirmLoading: {
     type: Boolean,
@@ -120,7 +120,7 @@ export const modalProps = {
   /**
    * footer 内容。
    *
-   * - `null`：隐藏 footer（等价于旧 `hideFooter=true`）
+   * - `null`：隐藏 footer
    * - `string`：纯文本 footer
    * - `VNode`：自定义内容
    * - 默认（`undefined`）：渲染内置 OK/Cancel 按钮
@@ -137,7 +137,7 @@ export const modalProps = {
   },
   /**
    * 默认 false 时由 destroyOnClose 控制；设为 true 时初次挂载即渲染内容（即使未打开），关闭后保留 DOM。
-   * 与 `<KeepAlive>` 语义对齐，命名跟 Vue 习惯。
+   * 与 `<KeepAlive>` 语义对齐。
    */
   keepAlive: {
     type: Boolean,
@@ -148,7 +148,7 @@ export const modalProps = {
     default: 1000,
   },
   /**
-   * @deprecated 请改用 `getContainer` 函数形（Ant Design 主名）。
+   * @deprecated 请改用 `getContainer` 函数形。
    */
   appendToBody: {
     type: Boolean,
@@ -164,28 +164,28 @@ export const modalProps = {
     default: undefined,
   },
   /**
-   * 对话框外层 wrap 节点的 className（Ant Design）。
+   * 对话框外层 wrap 节点的 className。
    */
   wrapClassName: {
     type: String,
     default: '',
   },
   /**
-   * 对话框 zoom transition 名（Ant Design `transitionName`）。
+   * 对话框 zoom transition 名。
    */
   transitionName: {
     type: String,
     default: '',
   },
   /**
-   * 遮罩 fade transition 名（Ant Design `maskTransitionName`）。
+   * 遮罩 fade transition 名。
    */
   maskTransitionName: {
     type: String,
     default: '',
   },
   /**
-   * 关闭后是否把焦点还给触发节点（Ant Design `focusTriggerAfterClose`）。默认 true。
+   * 关闭后是否把焦点还给触发节点。默认 true。
    * 触发节点通过 `data-ccui-modal-trigger` 自动捕获；外部也可通过 `expose.restoreFocus(el)` 显式指定。
    */
   focusTriggerAfterClose: {

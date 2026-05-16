@@ -6,7 +6,7 @@ export type InputOtpStatus = '' | 'error' | 'warning'
 export type InputOtpFormatter = (value: string) => string
 
 /**
- * 对齐 ant `Input.OTP`：单元格数量 + 单字符受控 + 自动焦点流转。
+ * 一次性密码 / 验证码输入框：单元格数量 + 单字符受控 + 自动焦点流转。
  */
 export const inputOtpProps = {
   /**

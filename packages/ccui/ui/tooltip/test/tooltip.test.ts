@@ -253,17 +253,17 @@ describe('tooltip', () => {
   })
 
   // ─────────────────────────────────────────────────────────────
-  // L-1.5: Ant Design API alignment
+  // 同义 prop 解析
   // ─────────────────────────────────────────────────────────────
 
-  describe('L-1.5 Ant 别名', () => {
+  describe('同义 prop 解析', () => {
     it('title 优先于旧 content', async () => {
       const wrapper = mount(Tooltip, {
-        props: { title: 'Ant 标题', content: '旧文案', visible: true },
+        props: { title: '新标题', content: '旧文案', visible: true },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
-      expect(wrapper.find('.ccui-tooltip__content').text()).toBe('Ant 标题')
+      expect(wrapper.find('.ccui-tooltip__content').text()).toBe('新标题')
     })
 
     it('open=true 等价 visible=true', async () => {

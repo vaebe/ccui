@@ -85,8 +85,6 @@ export const componentMap: Record<string, ComponentEntry> = {
   CSpin: { exportName: 'Spin', styleDir: 'spin' },
   CSplitter: { exportName: 'Splitter', styleDir: 'splitter' },
   CSplitterPanel: { exportName: 'Panel', styleDir: 'splitter' },
-  CStatistic: { exportName: 'Statistic', styleDir: 'statistic' },
-  CStatisticCountdown: { exportName: 'StatisticCountdown', styleDir: 'statistic' },
   CStatus: { exportName: 'Status', styleDir: 'status' },
   CSteps: { exportName: 'Steps', styleDir: 'steps' },
   CSwitch: { exportName: 'Switch', styleDir: 'switch' },

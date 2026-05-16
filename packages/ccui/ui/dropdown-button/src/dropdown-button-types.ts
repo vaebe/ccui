@@ -4,7 +4,7 @@ import type { PopoverPlacement } from '../../popover/src/popover-types'
 import type { DropdownItem } from '../../dropdown/src/dropdown-types'
 
 /**
- * 对标 ant `Dropdown.Button`：主按钮 + 下拉触发按钮组合控件。
+ * 主按钮 + 下拉触发按钮组合控件。
  *
  * - 主按钮：点击触发 `click` 事件（与普通 Button 一致，承担主操作）。
  * - 下拉触发按钮：hover / click 打开 Dropdown 菜单（与现有 `<c-dropdown>` 行为对齐）。

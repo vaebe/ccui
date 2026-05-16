@@ -1,6 +1,6 @@
 # SkeletonNode 自定义骨架
 
-自定义形状的骨架占位容器，对标 Ant Design `Skeleton.Node`，作为独立顶层组件存在（**不挂 Skeleton.Node 静态属性**）。
+自定义形状的骨架占位容器，作为独立顶层组件存在（**不通过 Skeleton.Node 静态属性挂载**）。
 
 default slot 内可放任意 VNode（最常见是一个 Icon）；本组件提供动画背景 + 居中布局。
 

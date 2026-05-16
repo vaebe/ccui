@@ -1,7 +1,7 @@
 @use '../../style-var/index.scss' as *;
 
 // dropdown 作为 popperClass 附加到 popover popper 上
-// 需要覆盖 popover 默认的 padding / border / 圆角，使其符合 Ant 风格
+// 需要覆盖 popover 默认的 padding / border / 圆角
 .#{$cls-prefix}-popover__popper.#{$cls-prefix}-dropdown {
   padding: 0;
   border: none;

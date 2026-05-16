@@ -7,7 +7,7 @@ export const inputSearchProps = {
   // 复用 Input 的所有 props（type/size/placeholder/disabled/readonly/allowClear/showCount/...）
   ...inputProps,
   /**
-   * 搜索按钮（与 Ant `Input.Search` 对齐）：
+   * 搜索按钮：
    *
    * - `false`（默认）：右侧只显示放大镜图标
    * - `true`：右侧显示默认搜索按钮

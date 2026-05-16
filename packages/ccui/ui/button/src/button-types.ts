@@ -3,9 +3,9 @@ import type { ExtractPropTypes, InjectionKey, PropType, Ref, VNode } from 'vue'
 /**
  * Button 取值集合（联合）：
  *
- * - Ant Design 主名：`'primary' | 'default' | 'dashed' | 'link' | 'text'`
- * - ccui 旧名（兼容保留，建议改用 `danger=true` / `color='success'` 等组合）：
- *   `'success' | 'warning' | 'danger' | 'info'`
+ * - 标准取值：`'primary' | 'default' | 'dashed' | 'link' | 'text'`
+ * - 语义色快捷：`'success' | 'warning' | 'danger' | 'info'`
+ *   （等价于 `danger=true` / `color='success'` 等组合，二选一即可）
  */
 export type ButtonType =
   | ''
@@ -53,7 +53,7 @@ export const buttonProps = {
     default: false,
   },
   /**
-   * @deprecated 旧 ccui 朴素按钮风格。推荐改用 `variant='outlined'` / `'filled'` 组合（v2.x 接入 SCSS）。
+   * @deprecated 请改用 `variant='outlined'` / `'filled'` 组合。
    */
   plain: {
     type: Boolean,
@@ -74,7 +74,7 @@ export const buttonProps = {
     default: false,
   },
   /**
-   * Ant 风格 shape：`'default' | 'circle' | 'round'`。显式 shape 优先于 round / circle boolean。
+   * 按钮形状：`'default' | 'circle' | 'round'`。显式 shape 优先于 round / circle boolean。
    */
   shape: {
     type: String as PropType<ButtonShape>,
@@ -92,7 +92,7 @@ export const buttonProps = {
     default: undefined,
   },
   /**
-   * Ant 风格原生 type：`'button' | 'submit' | 'reset'`。显式 htmlType 优先于 nativeType。
+   * 原生 button type：`'button' | 'submit' | 'reset'`。显式 htmlType 优先于 nativeType。
    */
   htmlType: {
     type: String as PropType<ButtonNativeType>,

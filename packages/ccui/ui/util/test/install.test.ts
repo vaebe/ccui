@@ -44,7 +44,6 @@ import * as Slider from '../../slider'
 import * as Space from '../../space'
 import * as Spin from '../../spin'
 import * as Splitter from '../../splitter'
-import * as Statistic from '../../statistic'
 import * as Status from '../../status'
 import * as Steps from '../../steps'
 import * as Switch from '../../switch'
@@ -103,7 +102,6 @@ const modules = [
   Space,
   Spin,
   Splitter,
-  Statistic,
   Status,
   Steps,
   Switch,

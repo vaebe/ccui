@@ -127,7 +127,7 @@
 
 ## 卡片元数据（c-card-meta）
 
-`<c-card-meta>` 提供「头像 + 标题 + 描述」标准三段元素，对标 ant `Card.Meta`，常用于商品 / 用户 / 文章卡片。
+`<c-card-meta>` 提供「头像 + 标题 + 描述」标准三段元素，常用于商品 / 用户 / 文章卡片。
 
 :::demo
 
@@ -174,41 +174,6 @@
       <c-button type="primary" danger>确认删除</c-button>
     </div>
   </c-card>
-</template>
-```
-
-:::
-
-## 仪表盘统计网格
-
-Card + Statistic + Row/Col 是仪表盘最常见组合：4 张卡片一行展示核心指标。
-
-:::demo
-
-```vue
-<template>
-  <c-row :gutter="12">
-    <c-col :span="6">
-      <c-card :body-style="{ padding: '16px' }">
-        <c-statistic title="今日订单" :value="3892" :value-style="{ color: '#1677ff' }" />
-      </c-card>
-    </c-col>
-    <c-col :span="6">
-      <c-card :body-style="{ padding: '16px' }">
-        <c-statistic title="GMV" :value="128400" prefix="¥" :precision="2" :value-style="{ color: '#52c41a' }" />
-      </c-card>
-    </c-col>
-    <c-col :span="6">
-      <c-card :body-style="{ padding: '16px' }">
-        <c-statistic title="客单价" :value="156" prefix="¥" suffix="/单" />
-      </c-card>
-    </c-col>
-    <c-col :span="6">
-      <c-card :body-style="{ padding: '16px' }">
-        <c-statistic title="退款率" :value="2.3" suffix="%" :value-style="{ color: '#cf1322' }" />
-      </c-card>
-    </c-col>
-  </c-row>
 </template>
 ```
 

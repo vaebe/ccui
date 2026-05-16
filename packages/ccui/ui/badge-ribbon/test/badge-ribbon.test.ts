@@ -103,7 +103,7 @@ describe('badge-ribbon', () => {
     })
 
     it('未知字符串（非预设、非看似颜色）作为 inline color 透传', () => {
-      // 与 ant 行为一致：非预设名都当 CSS color 字面量
+      // 非预设名都当作 CSS color 字面量
       const wrapper = mount(BadgeRibbon, { props: { text: 'X', color: 'hotpink' } })
       const style = wrapper.find(ns.b()).attributes('style') ?? ''
       expect(style).toContain('background-color')

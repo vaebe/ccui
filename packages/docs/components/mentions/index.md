@@ -274,7 +274,7 @@ const team = [
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
 
 :::demo
 
@@ -343,7 +343,7 @@ const opts = ['alice', 'bob', 'charlie']
 | popupMaxHeight  | number                                                   | `256`        | 浮层最大高度（px）                                |
 | autoSize        | `boolean \| { minRows?: number, maxRows?: number }`      | `false`      | 自适应 textarea 高度；`true` 无限制，对象指定范围 |
 | searchDebounce  | number                                                   | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                  |
-| variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）             |
+| variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态                                  |
 | status          | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传                     |
 
 ### Events

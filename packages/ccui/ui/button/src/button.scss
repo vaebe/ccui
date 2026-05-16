@@ -158,7 +158,7 @@ $button-info-plain-border: #dcdfe6;
     }
   }
 
-  // ── Ant Design type 取值扩展 ────────────────────────────
+  // ── type 标准取值 ────────────────────────────────────────
   // 'default'：等价于无 type 时的默认外观，主要用于 color × variant 矩阵的显式表达
   &--default {
     // 不写额外样式，复用 .ccui-button 默认值
@@ -192,8 +192,8 @@ $button-info-plain-border: #dcdfe6;
     }
   }
 
-  // ── Ant Design 行为扩展 ─────────────────────────────────
-  // dangerous（boolean prop danger=true）：与 Ant `.ant-btn-dangerous` 对齐
+  // ── danger 行为 ─────────────────────────────────────────
+  // dangerous（boolean prop danger=true）
   // 单独用：红字 + 红边框；与 type='primary' 组合：红色实色按钮
   &--dangerous {
     color: $ccui-color-error;
@@ -266,14 +266,14 @@ $button-info-plain-border: #dcdfe6;
     flex-direction: row-reverse;
   }
 
-  // ── color / variant（v5.21+，forward-compat 钩子，矩阵留 v2.x） ──
+  // ── color / variant 矩阵（占位，矩阵实现留后续 batch）──
   // 当前仅占位，避免未来 SCSS 完整接入时类名冲突
 
   // plain 朴素按钮：浅色背景 + 主色边框
   // 修复要点：
   // 1. hover 文字走 *-active（更深主色），避免 warning/danger 文字变浅与浅底融合
   // 2. focus 与 hover 视觉一致，再叠 box-shadow 做焦点暗示，避免文字纯白扣浅底不可见
-  // 3. active 保留 Ant Design plain 实色填充语义，文字白色 + *-active 深主色底，
+  // 3. active 走实色填充：白字 + *-active 深主色底，
   //    保证 ≥ 4.5:1 对比度（warning 走 *-active 而非 *-color，提升白字对比）
   &--plain-primary {
     color: $ccui-color-primary;

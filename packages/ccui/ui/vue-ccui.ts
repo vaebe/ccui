@@ -24,7 +24,6 @@ import ColorPickerInstall, { ColorPicker } from './color-picker'
 import ConfigProviderInstall, { ConfigProvider, useConfig } from './config-provider'
 import DatePickerInstall, { DatePicker } from './date-picker'
 import DescriptionsInstall, { Descriptions, DescriptionsItem } from './descriptions'
-import DirectoryTreeInstall, { DirectoryTree } from './directory-tree'
 import DividerInstall, { Divider } from './divider'
 import DrawerInstall, { Drawer } from './drawer'
 import DropdownInstall, { Dropdown } from './dropdown'
@@ -70,18 +69,12 @@ import ResultInstall, { Result } from './result'
 import SegmentedInstall, { Segmented } from './segmented'
 import SelectInstall, { Select } from './select'
 import SkeletonInstall, { Skeleton } from './skeleton'
-import SkeletonAvatarInstall, { SkeletonAvatar } from './skeleton-avatar'
-import SkeletonButtonInstall, { SkeletonButton } from './skeleton-button'
-import SkeletonImageInstall, { SkeletonImage } from './skeleton-image'
-import SkeletonInputInstall, { SkeletonInput } from './skeleton-input'
 import SkeletonNodeInstall, { SkeletonNode } from './skeleton-node'
 import SliderInstall, { Slider } from './slider'
 import SpaceInstall, { Space } from './space'
 import SpaceCompactInstall, { SpaceCompact } from './space-compact'
 import SpinInstall, { Spin } from './spin'
 import SplitterInstall, { Panel, Splitter } from './splitter'
-import StatisticInstall, { Statistic, StatisticCountdown } from './statistic'
-import StatisticTimerInstall, { StatisticTimer } from './statistic-timer'
 import StatusInstall, { Status } from './status'
 import StepsInstall, { Steps } from './steps'
 import SwitchInstall, { Switch } from './switch'
@@ -149,7 +142,6 @@ const installs = [
   ConfigProviderInstall,
   DatePickerInstall,
   DescriptionsInstall,
-  DirectoryTreeInstall,
   DividerInstall,
   DrawerInstall,
   DropdownInstall,
@@ -184,18 +176,12 @@ const installs = [
   SegmentedInstall,
   SelectInstall,
   SkeletonInstall,
-  SkeletonAvatarInstall,
-  SkeletonButtonInstall,
-  SkeletonImageInstall,
-  SkeletonInputInstall,
   SkeletonNodeInstall,
   SliderInstall,
   SpaceInstall,
   SpaceCompactInstall,
   SpinInstall,
   SplitterInstall,
-  StatisticInstall,
-  StatisticTimerInstall,
   StatusInstall,
   StepsInstall,
   SwitchInstall,
@@ -254,7 +240,6 @@ export {
   DatePicker,
   Descriptions,
   DescriptionsItem,
-  DirectoryTree,
   Divider,
   Drawer,
   Dropdown,
@@ -313,10 +298,6 @@ export {
   Segmented,
   Select,
   Skeleton,
-  SkeletonAvatar,
-  SkeletonButton,
-  SkeletonImage,
-  SkeletonInput,
   SkeletonNode,
   Slider,
   Space,
@@ -324,9 +305,6 @@ export {
   Spin,
   Panel,
   Splitter,
-  Statistic,
-  StatisticCountdown,
-  StatisticTimer,
   Status,
   Steps,
   Switch,

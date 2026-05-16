@@ -305,7 +305,7 @@ describe('inputNumber', () => {
     })
   })
 
-  describe('status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+  describe('status（校验状态 + Form 联动）', () => {
     it('status="error" 加 --status-error 类', () => {
       const wrapper = createWrapper({ status: 'error' })
       expect(wrapper.find('.ccui-input-number--status-error').exists()).toBe(true)

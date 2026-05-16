@@ -75,7 +75,7 @@ export default defineComponent({
       return isAllowClearObject(v) ? v.clearIcon : undefined
     })
 
-    // addonBefore / addonAfter：Ant 名优先，回退到 prepend / append
+    // addonBefore / addonAfter 优先，回退到 prepend / append
     const addonBeforeText = computed(() => props.addonBefore || props.prepend)
     const addonAfterText = computed(() => props.addonAfter || props.append)
     const hasAddonBefore = computed(() => !!addonBeforeText.value || !!slots['addon-before'] || !!slots.prepend)

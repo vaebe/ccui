@@ -5,7 +5,7 @@ export type SiderTheme = 'light' | 'dark'
 export type SiderBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 
 /**
- * ant breakpoint 取值对应的最大宽度（px）。
+ * 各 breakpoint 取值对应的最大宽度（px）。
  * `(max-width: {N}px)` 命中时认为「破点」，Sider 自动 collapse。
  */
 export const SIDER_BREAKPOINT_PX: Record<SiderBreakpoint, number> = {

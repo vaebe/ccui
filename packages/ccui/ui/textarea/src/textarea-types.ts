@@ -85,7 +85,7 @@ export const textareaProps = {
     default: 2,
   },
   /**
-   * 高度自适应（与 Ant `Input.TextArea` autoSize 对齐）。
+   * 高度自适应。
    */
   autoSize: {
     type: [Boolean, Object] as PropType<TextareaAutoSize>,

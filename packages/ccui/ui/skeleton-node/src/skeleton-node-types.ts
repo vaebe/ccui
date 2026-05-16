@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 /**
- * 对标 ant `Skeleton.Node`：自定义形状的骨架占位容器。
+ * 自定义形状的骨架占位容器。
  *
  * default slot 内放任意 VNode，最常见是一个 Icon；本组件提供动画背景 + 居中布局。
  */

@@ -34,12 +34,12 @@
     }
   }
 
-  // ── variant 形态（Ant Design v5.13+：outlined / filled / borderless / underlined）──
+  // ── variant 形态（outlined / filled / borderless / underlined）──
   // outlined 是默认；上面的边框 / 背景 / hover / focus 规则即 outlined 形态。
   // 其余 3 个 variant 走共享 mixin（style-var/_form-control-variant.scss）。
   @include form-control-variants;
 
-  // ── 校验状态（Ant Design 风格 status='error'|'warning'）──
+  // ── 校验状态（status='error'|'warning'）──
   &--status-error {
     border-color: $ccui-color-error;
 

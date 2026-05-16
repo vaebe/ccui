@@ -22,12 +22,12 @@
       be involved.
     </c-typography-paragraph>
     <c-typography-paragraph>
-      After massive project practice and summaries, Ant Design, a design language for background applications, is
-      refined.
+      After massive project practice and summaries, a coherent design language for background applications can
+      take shape.
     </c-typography-paragraph>
     <c-typography-title :level="2">Guidelines and Resources</c-typography-title>
     <c-typography-paragraph>
-      <c-typography-link href="#">Ant Design</c-typography-link>
+      <c-typography-link href="#">Design system</c-typography-link>
       <c-typography-text> · </c-typography-text>
       <c-typography-text type="secondary">A UI design language</c-typography-text>
     </c-typography-paragraph>
@@ -105,7 +105,7 @@
 
 ```vue
 <template>
-  <c-typography-link href="https://ant.design" target="_blank">Ant Design</c-typography-link>
+  <c-typography-link href="https://vuejs.org" target="_blank">Vue.js 官网</c-typography-link>
   <br />
   <c-typography-link href="#" type="warning">警告链接</c-typography-link>
   <br />
@@ -143,13 +143,13 @@
 
 :::
 
-## 可复制（copyable，L-3.7）
+## 可复制（copyable）
 
 文本右侧渲染复制按钮，点击调用 `navigator.clipboard.writeText`。3 秒后图标自动恢复。
 
-::: tip slot 替代 React render props
+::: tip 自定义复制图标
 
-ant `copyable.icon` (函数) → ccui **slot `copy-icon`** + scope `{ copied }`（与 [[feedback-vue-first-benchmark]] 「render props 翻 slot」原则一致）。`tooltips: [before, after]` 是数据元组保留为 prop。
+通过 **slot `copy-icon`** + scope `{ copied }` 自定义图标，渲染回调式 API 一律走 slot（数据元组 `tooltips: [before, after]` 保留为 prop）。
 
 :::
 
@@ -290,7 +290,7 @@ slot 接收 `{ copied }` 作用域参数，可根据复制态切换图标。
 | --------- | ------------ | ------------------------------------- |
 | copy-icon | `{ copied }` | 自定义复制按钮 icon（替代默认 ⎘ / ✓） |
 
-## 可编辑（editable，L-3.7）
+## 可编辑（editable）
 
 点击编辑按钮（或文本本身，配置 `triggerType: ['text']`）切入 textarea 内联编辑；Enter 提交、Escape 取消，blur 自动提交。
 
@@ -504,7 +504,7 @@ const text = ref('emit 同步')
 | --------- | ------ | --------------------------------- |
 | edit-icon | —      | 自定义编辑按钮 icon（替代默认 ✎） |
 
-## 截断（ellipsis，L-3.7）
+## 截断（ellipsis）
 
 文字超出指定行数自动截断；可配合 `expandable` 展开 / 收起，或 `tooltip` 鼠标 hover 看完整内容。
 

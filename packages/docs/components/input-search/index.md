@@ -1,6 +1,6 @@
 # InputSearch 搜索框
 
-带搜索按钮的输入框，对标 Ant Design `Input.Search`，作为独立顶层组件存在（不挂在 Input 命名空间下）。
+带搜索按钮的输入框，作为独立顶层组件存在（不挂在 Input 命名空间下）。
 
 ## 何时使用
 
@@ -121,7 +121,7 @@ export default defineComponent({
 
 ## 清除按钮 + 搜索
 
-`allowClear` 开启后，清除会同时 emit `@search('')`（对齐 Ant 行为）。
+`allowClear` 开启后，清除会同时 emit `@search('')`。
 
 :::demo
 

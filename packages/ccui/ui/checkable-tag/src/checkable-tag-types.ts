@@ -11,7 +11,7 @@ export interface CheckableTagOption {
 }
 
 /**
- * 单个可勾选标签（对标 ant `Tag.CheckableTag`）：
+ * 单个可勾选标签：
  *
  * - 独立使用：`v-model:checked` 受控；点击切换。
  * - 在 `CheckableTagGroup` 内：由 group 注入受控值，本地 `checked` 与 `v-model:checked` 仍可用作初值与同步。

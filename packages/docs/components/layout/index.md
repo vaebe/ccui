@@ -174,8 +174,8 @@ function onCollapse(val, type) {
 | collapsible           | `boolean`                                       | `false`  | 显示底部折叠按钮                                                                                                  |
 | reverseArrow          | `boolean`                                       | `false`  | 折叠按钮的箭头反向                                                                                                |
 | theme                 | `'light' \| 'dark'`                             | `'dark'` | 主题色                                                                                                            |
-| breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | **L-2.21**：响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值 |
-| zeroWidthTriggerStyle | `CSSProperties`                                 | —        | **L-2.21**：`collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                              |
+| breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | 响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值             |
+| zeroWidthTriggerStyle | `CSSProperties`                                 | —        | `collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                                          |
 
 ### LayoutSider Events
 
@@ -183,4 +183,4 @@ function onCollapse(val, type) {
 | ---------------- | -------------------------------- | ---------------------------------------------------------------------------------------- |
 | update:collapsed | `(value: boolean)`               | 折叠状态变化                                                                             |
 | collapse         | `(value: boolean, type: string)` | 折叠被触发，`type` 为 `'clickTrigger'` / `'responsive'`                                  |
-| breakpoint       | `(broken: boolean)`              | **L-2.21**：断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复 |
+| breakpoint       | `(broken: boolean)`              | 断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复             |

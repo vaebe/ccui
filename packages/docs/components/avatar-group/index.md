@@ -1,6 +1,6 @@
 # AvatarGroup 头像组
 
-头像分组组件，对标 Ant Design `Avatar.Group`，作为独立顶层组件存在（不挂在 Avatar 命名空间下）。
+头像分组组件，作为独立顶层组件存在（不挂在 Avatar 命名空间下）。
 
 ## 何时使用
 

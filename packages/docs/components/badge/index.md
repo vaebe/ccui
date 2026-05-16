@@ -249,7 +249,7 @@
 
 ## 缎带预设色
 
-`color` 接受 ant v6 预设色名（pink / red / volcano / orange / gold / yellow / lime / green / cyan / blue / geekblue / purple / magenta）。
+`color` 接受预设色名（pink / red / volcano / orange / gold / yellow / lime / green / cyan / blue / geekblue / purple / magenta）。
 
 :::demo
 

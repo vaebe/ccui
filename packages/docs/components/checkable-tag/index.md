@@ -1,6 +1,6 @@
 # CheckableTag 可勾选标签
 
-可勾选切换的标签，对标 Ant Design `Tag.CheckableTag`，作为独立顶层组件存在（不挂在 Tag 命名空间下）。配套 `CheckableTagGroup` 容器组件支持多选。
+可勾选切换的标签，作为独立顶层组件存在（不挂在 Tag 命名空间下）。配套 `CheckableTagGroup` 容器组件支持多选。
 
 ## 何时使用
 

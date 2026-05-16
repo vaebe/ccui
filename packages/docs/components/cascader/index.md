@@ -511,7 +511,7 @@ const options = [
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
 
 :::demo
 
@@ -584,9 +584,9 @@ const opts = [
 | focus                | --                                           | 输入框聚焦                         |
 | blur                 | --                                           | 输入框失焦                         |
 
-## 顶层常量（L-2.24）
+## 顶层常量
 
-对标 ant `Cascader.SHOW_CHILD` / `.SHOW_PARENT`：**不挂命名空间**，从 `vue3-ccui` 顶层 export。
+`showCheckedStrategy` 的取值常量：**不挂命名空间**，从 `vue3-ccui` 顶层 export。
 
 ```ts
 import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from 'vue3-ccui'
@@ -600,9 +600,9 @@ import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from 'vue3-ccui'
 | CASCADER_SHOW_CHILD  | `showCheckedStrategy` 取值：只输出最末级叶子节点（默认）         |
 | CASCADER_SHOW_PARENT | `showCheckedStrategy` 取值：父节点全部子节点都选中时只输出父节点 |
 
-> 当前 ccui Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
+> 当前 Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码提前引用，待后续接入实际逻辑时直接对接。
 
 ## 已知限制（未交付）
 
-- **showCheckedStrategy**：multiple 模式下当前为「all」语义（每条勾选路径独立提交），未提供 `parent` / `child` 折叠策略。**L-2.24 已顶层 export 常量符号**，待后续 batch 接入实际逻辑。
+- **showCheckedStrategy**：multiple 模式下当前为「all」语义（每条勾选路径独立提交），未提供 `parent` / `child` 折叠策略。常量符号已顶层 export，未来接入实际逻辑后即可直接使用。
 - **键盘导航**：方向键 / Enter 切换尚未实现。

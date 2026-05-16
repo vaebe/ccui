@@ -349,7 +349,7 @@ describe('mentions variant', () => {
   })
 })
 
-describe('mentions status（M-A3：Ant 风格校验状态 + Form 联动）', () => {
+describe('mentions status（校验状态 + Form 联动）', () => {
   it('status="error" 加 --status-error 类', () => {
     const wrapper = mountM({ status: 'error' })
     expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)

@@ -48,7 +48,7 @@
     line-height: $ccui-line-height-lg;
   }
 
-  // 头部右侧 extra 区（与 close 同侧），Ant Design `extra` slot
+  // 头部右侧 extra 区（与 close 同侧），对应 `extra` slot
   &__extra {
     display: inline-flex;
     align-items: center;

@@ -19,7 +19,7 @@ export type TooltipEffect = 'dark' | 'light'
 export type TooltipTrigger = 'hover' | 'click' | 'focus' | 'manual'
 
 /**
- * `arrow` 复合配置（Ant Design）：
+ * `arrow` 复合配置：
  *
  * - `boolean`：是否显示箭头
  * - `{ pointAtCenter }`：是否对齐触发节点中心（默认 false 时贴 edge）
@@ -39,21 +39,21 @@ export interface TooltipAlign {
 }
 
 /**
- * `getPopupContainer` 函数（Ant Design）。返回 null 时不 Teleport。
+ * `getPopupContainer` 函数。返回 null 时不 Teleport。
  */
 export type TooltipGetPopupContainer = (trigger: HTMLElement | null) => HTMLElement | null
 
 export const tooltipProps = {
   // ── 内容 ───────────────────────────────────────────────
   /**
-   * @deprecated 旧 ccui 名。请改用 `title`（Ant Design 主名）；同名 `title` slot 也优先。
+   * @deprecated 请改用 `title`；同名 `title` slot 也优先。
    */
   content: {
     type: String,
     default: '',
   },
   /**
-   * Ant Design 主名：tooltip 内容。显式 `title` 优先于旧 `content`。
+   * tooltip 内容。显式 `title` 优先于 `content`。
    * 同名 slot 优先级最高。
    */
   title: {
@@ -66,14 +66,14 @@ export const tooltipProps = {
     default: 'bottom' as TooltipPlacement,
   },
   /**
-   * 主题：dark / light。仍是 ccui 旧字段；ant 没有此概念，通过 `color` 表达。
+   * 主题：dark / light。色值由 `color` 表达时优先级更高。
    */
   effect: {
     type: String as PropType<TooltipEffect>,
     default: 'dark' as TooltipEffect,
   },
   /**
-   * Ant Design `color`：浮层背景色（任意 CSS color 字符串）。显式 color 会覆盖 effect 的内置背景。
+   * 浮层背景色（任意 CSS color 字符串）。显式 color 会覆盖 effect 的内置背景。
    */
   color: {
     type: String,
@@ -82,14 +82,14 @@ export const tooltipProps = {
 
   // ── 显示控制 ─────────────────────────────────────────
   /**
-   * @deprecated 请改用 `open`（Ant Design 主名 + `v-model:open`）。
+   * @deprecated 请改用 `open`（支持 `v-model:open`）。
    */
   visible: {
     type: Boolean,
     default: undefined,
   },
   /**
-   * Ant Design 主名：受控显示。显式 `open` 优先于 `visible`。
+   * 受控显示。显式 `open` 优先于 `visible`。
    */
   open: {
     type: Boolean,
@@ -102,14 +102,14 @@ export const tooltipProps = {
 
   // ── 箭头 ─────────────────────────────────────────────
   /**
-   * @deprecated 请改用 `arrow`（Ant Design 主名，支持复合对象）。
+   * @deprecated 请改用 `arrow`（支持复合对象）。
    */
   showArrow: {
     type: Boolean,
     default: true,
   },
   /**
-   * Ant Design 主名：`bool | { pointAtCenter }` 复合。显式 `arrow` 优先于 `showArrow`。
+   * `bool | { pointAtCenter }` 复合。显式 `arrow` 优先于 `showArrow`。
    */
   arrow: {
     type: [Boolean, Object] as PropType<TooltipArrow>,
@@ -122,7 +122,7 @@ export const tooltipProps = {
     default: 'hover' as TooltipTrigger,
   },
   /**
-   * @deprecated 请改用 `mouseEnterDelay`（Ant Design 主名）。单位仍为 ms（ccui 全局约定）。
+   * @deprecated 请改用 `mouseEnterDelay`。单位仍为 ms（ccui 全局约定）。
    */
   showAfter: {
     type: Number,
@@ -136,8 +136,7 @@ export const tooltipProps = {
     default: 200,
   },
   /**
-   * Ant Design 主名：mouseenter 后多少 **毫秒**显示。
-   * 注：ant 官方文档单位为秒（number=0.1=100ms），ccui 沿用本仓库 ms 统一口径。
+   * mouseenter 后多少 **毫秒**显示。
    * 显式 `mouseEnterDelay` 优先于 `showAfter`。
    */
   mouseEnterDelay: {
@@ -145,7 +144,7 @@ export const tooltipProps = {
     default: undefined,
   },
   /**
-   * Ant Design 主名：mouseleave 后多少 ms 隐藏。
+   * mouseleave 后多少 ms 隐藏。
    */
   mouseLeaveDelay: {
     type: Number,
@@ -154,14 +153,14 @@ export const tooltipProps = {
 
   // ── 样式定制 ─────────────────────────────────────────
   /**
-   * @deprecated 请改用 `overlayClassName`（Ant Design 主名）。
+   * @deprecated 请改用 `overlayClassName`。
    */
   popperClass: {
     type: String,
     default: '',
   },
   /**
-   * Ant Design 主名：浮层根节点 class。显式 `overlayClassName` 优先于 `popperClass`。
+   * 浮层根节点 class。显式 `overlayClassName` 优先于 `popperClass`。
    */
   overlayClassName: {
     type: String,
@@ -189,14 +188,14 @@ export const tooltipProps = {
     default: false,
   },
   /**
-   * Ant Design：每次隐藏后销毁 DOM。默认 false 时浮层 DOM 保留以备复用。
+   * 每次隐藏后销毁浮层 DOM。默认 false 时浮层 DOM 保留以备复用。
    */
   destroyTooltipOnHide: {
     type: Boolean,
     default: false,
   },
   /**
-   * Ant Design：浮层是否随触发节点自动调整方向以避免溢出（默认开启）。
+   * 浮层是否随触发节点自动调整方向以避免溢出（默认开启）。
    * 当前接受 prop，floating-ui 的 flip middleware 已实现该行为。
    */
   autoAdjustOverflow: {
@@ -211,7 +210,7 @@ export const tooltipProps = {
     default: undefined,
   },
   /**
-   * Ant Design 主名：浮层容器函数。返回 null 时不 Teleport（即贴近触发节点同 DOM 流）。
+   * 浮层容器函数。返回 null 时不 Teleport（即贴近触发节点同 DOM 流）。
    */
   getPopupContainer: {
     type: Function as PropType<TooltipGetPopupContainer>,

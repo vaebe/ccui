@@ -326,7 +326,7 @@ const presets = [{ label: '上次会议', value: ['2026-05-08 14:00:00', '2026-0
 
 ## Variants
 
-Ant Design v5.13+ 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
+录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
 
 :::demo
 

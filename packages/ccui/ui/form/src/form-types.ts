@@ -58,7 +58,7 @@ export interface FormRule {
 }
 
 /**
- * Ant Design 风格：rules 可以是规则对象、数组，或返回规则的工厂函数 `(form) => Rule | Rule[]`。
+ * rules 可以是规则对象、数组，或返回规则的工厂函数 `(form) => Rule | Rule[]`。
  * 工厂函数每次校验时执行，可基于当前 form model 派生规则。
  */
 export type FormRuleFactory = (model: FormModel) => FormRule | FormRule[]
@@ -67,7 +67,7 @@ export type FormItemRule = FormRule | FormRule[] | FormRuleFactory
 export type FormRules = Record<string, FormRule | FormRule[]>
 
 /**
- * Ant Design 栅格对象（与 Grid Col 一致的子集）。
+ * 栅格对象（Grid Col 子集）。
  *
  * `labelCol` / `wrapperCol` 用 24 栅格制描述 label 与控件的宽度比例。
  */
@@ -108,7 +108,7 @@ export interface FormContext {
   colon: Ref<boolean>
   requiredMark: Ref<FormRequiredMark>
   preserve: Ref<boolean>
-  /** Form 级栅格列（Ant Design 主名）。FormItem 显式 labelCol 优先。 */
+  /** Form 级栅格列。FormItem 显式 labelCol 优先。 */
   labelCol: Ref<FormColAttrs | undefined>
   /** Form 级栅格列。FormItem 显式 wrapperCol 优先。 */
   wrapperCol: Ref<FormColAttrs | undefined>
@@ -234,14 +234,14 @@ export const formProps = {
     default: true,
   },
   /**
-   * Ant Design 风格栅格 label 列宽。配合 wrapperCol 使用，覆盖 `labelWidth` 的单一宽度方案。
+   * 栅格 label 列宽。配合 wrapperCol 使用，覆盖 `labelWidth` 的单一宽度方案。
    */
   labelCol: {
     type: Object as PropType<FormColAttrs>,
     default: undefined,
   },
   /**
-   * Ant Design 风格栅格控件列宽。
+   * 栅格控件列宽。
    */
   wrapperCol: {
     type: Object as PropType<FormColAttrs>,
@@ -321,8 +321,8 @@ export const formItemProps = {
     default: undefined,
   },
   /**
-   * @deprecated React Ant Design 用于强制重渲染的 prop。Vue 端的响应式系统已经自动处理依赖收集，
-   * 通常无需指定。保留 prop 接收以兼容现有代码；新代码不建议使用。详见 docs-notes/roadmap.md 「对标原则」节。
+   * @deprecated Vue 端的响应式系统已经自动处理依赖收集，通常无需指定。
+   * 保留 prop 接收以兼容现有代码；新代码不建议使用。详见 docs-notes/roadmap.md。
    */
   shouldUpdate: {
     type: [Boolean, Function] as PropType<boolean | ((prevValues: any, curValues: any) => boolean)>,
@@ -337,14 +337,14 @@ export const formItemProps = {
     default: undefined,
   },
   /**
-   * Ant Design 栅格 label 列宽（FormItem 级，覆盖 Form 级 labelCol）。
+   * 栅格 label 列宽（FormItem 级，覆盖 Form 级 labelCol）。
    */
   labelCol: {
     type: Object as PropType<FormColAttrs>,
     default: undefined,
   },
   /**
-   * Ant Design 栅格控件列宽（FormItem 级，覆盖 Form 级 wrapperCol）。
+   * 栅格控件列宽（FormItem 级，覆盖 Form 级 wrapperCol）。
    */
   wrapperCol: {
     type: Object as PropType<FormColAttrs>,

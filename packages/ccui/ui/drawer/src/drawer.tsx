@@ -117,7 +117,7 @@ export default defineComponent({
       { immediate: true },
     )
 
-    // 自身有 active 子抽屉时主动让位（push 在父端决定，与 ant 一致）
+    // 自身有 active 子抽屉时主动让位（push 由父抽屉决定）
     const pushTransform = computed<string | undefined>(() => {
       if (!pushEnabled.value) return undefined
       if (activeChildCount.value === 0) return undefined
