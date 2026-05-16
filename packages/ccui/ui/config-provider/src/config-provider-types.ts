@@ -36,6 +36,8 @@ export interface PaginationLocale {
   nextPage?: string
   /** showTotal=true 时的默认渲染模板。占位符 {total}。 */
   total?: string
+  /** 根 nav 的 aria-label。 */
+  pagination?: string
 }
 
 export interface ImageLocale {
@@ -75,6 +77,17 @@ export interface DatePickerLocale {
   clearLabel?: string
 }
 
+export interface CalendarLocale {
+  /** 周名简写，自然顺序 [周日, 周一, …, 周六]。 */
+  weekdaysShort?: string[]
+  /** 头部按钮文案。 */
+  prevMonthLabel?: string
+  nextMonthLabel?: string
+  todayLabel?: string
+  /** 月份显示模板（dayjs format token），如 `'YYYY-MM'` / `'MMM YYYY'`。 */
+  monthFormat?: string
+}
+
 export interface Locale {
   locale: string
   Modal?: ModalLocale
@@ -88,6 +101,7 @@ export interface Locale {
   Pagination?: PaginationLocale
   Image?: ImageLocale
   DatePicker?: DatePickerLocale
+  Calendar?: CalendarLocale
   [key: string]: any
 }
 

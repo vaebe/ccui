@@ -26,6 +26,7 @@ const enUS: Locale = {
     prevPage: 'Previous Page',
     nextPage: 'Next Page',
     total: 'Total {total} items',
+    pagination: 'Pagination',
   },
   Image: {
     loading: 'Loading',
@@ -48,6 +49,13 @@ const enUS: Locale = {
     nextYearLabel: 'Next year',
     nextMonthLabel: 'Next month',
     clearLabel: 'Clear',
+  },
+  Calendar: {
+    weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    prevMonthLabel: 'Previous month',
+    nextMonthLabel: 'Next month',
+    todayLabel: 'Today',
+    monthFormat: 'MMM YYYY',
   },
 }
 

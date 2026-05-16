@@ -27,7 +27,7 @@ import './shared/styles/base.scss';
 ${imports.join('\n')}
 
 // 国际化语言包导出（cli 在 vue-ui 模板内静态注入；语言包文件不是组件、走单独路径）
-export { zhCN, enUS, defaultLocale } from './locale';
+export { zhCN, enUS, jaJP, koKR, defaultLocale } from './locale';
 
 const installs = [
   ${installs.join(',\n\t')}

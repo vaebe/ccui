@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
+import { jaJP, koKR } from '../../locale'
 import { ConfigProvider, useConfig } from '../index'
 
 const ConsumerComp = defineComponent({
@@ -107,5 +108,42 @@ describe('configProvider', () => {
     expect(txt).toContain('"cancelText":"取 消"')
     // 没覆盖的 namespace（Empty）整体回退 zhCN
     expect(txt).toContain('"description":"暂无数据"')
+  })
+
+  it('XL-5 切到 jaJP locale：注入的 ctx 走日文文案', () => {
+    const Consumer = defineComponent({
+      setup() {
+        const cfg = useConfig()
+        return () => h('div', { 'data-testid': 'c' }, JSON.stringify(cfg.locale))
+      },
+    })
+    const wrapper = mount({
+      components: { ConfigProvider, Consumer },
+      template: `<ConfigProvider :locale="jaJP"><Consumer /></ConfigProvider>`,
+      setup: () => ({ jaJP }),
+    })
+    const txt = wrapper.find('[data-testid="c"]').text()
+    expect(txt).toContain('"locale":"ja-JP"')
+    expect(txt).toContain('"okText":"OK"')
+    expect(txt).toContain('"cancelText":"キャンセル"')
+    expect(txt).toContain('"todayLabel":"今日"')
+  })
+
+  it('XL-5 切到 koKR locale：注入的 ctx 走韩文文案', () => {
+    const Consumer = defineComponent({
+      setup() {
+        const cfg = useConfig()
+        return () => h('div', { 'data-testid': 'c' }, JSON.stringify(cfg.locale))
+      },
+    })
+    const wrapper = mount({
+      components: { ConfigProvider, Consumer },
+      template: `<ConfigProvider :locale="koKR"><Consumer /></ConfigProvider>`,
+      setup: () => ({ koKR }),
+    })
+    const txt = wrapper.find('[data-testid="c"]').text()
+    expect(txt).toContain('"locale":"ko-KR"')
+    expect(txt).toContain('"okText":"확인"')
+    expect(txt).toContain('"todayLabel":"오늘"')
   })
 })

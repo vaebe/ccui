@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'vue'
 import type { ConfigContext, ConfigProviderProps, Locale } from './config-provider-types'
-import { computed, defineComponent, inject, provide } from 'vue'
+import { computed, defineComponent, inject, provide, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { setDayjsLocale } from '../../shared/utils/dayjs-locale'
 import defaultLocale from '../../locale/zh-CN'
 import { CONFIG_INJECT_KEY, configProviderProps } from './config-provider-types'
 
@@ -73,6 +74,17 @@ export const ConfigProvider = defineComponent({
     }))
 
     provide<ConfigContext>(CONFIG_INJECT_KEY, ctx.value)
+
+    // locale 变更时切全局 dayjs locale。ConfigProvider locale.locale 用 'zh-CN' / 'en-US' /
+    // 'ja-JP' / 'ko-KR' 命名，dayjs 用小写的 'zh-cn' / 'en' / 'ja' / 'ko'，做一次映射。
+    watch(
+      () => ctx.value.locale?.locale,
+      (name) => {
+        if (!name) return
+        void setDayjsLocale(name)
+      },
+      { immediate: true },
+    )
 
     const tokenStyle = computed<CSSProperties>(() => {
       const style: Record<string, string> = {}

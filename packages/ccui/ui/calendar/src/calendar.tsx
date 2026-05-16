@@ -2,10 +2,13 @@ import type { Ref } from 'vue'
 import type { CalendarProps, dateItem } from './calendar-types'
 import dayjs from 'dayjs'
 import { computed, defineComponent, ref, watch } from 'vue'
+import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emitValue, toDayjs } from '../../shared/utils/date'
 import { calendarProps } from './calendar-types'
 import './calendar.scss'
+
+const DEFAULT_WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
 export default defineComponent({
   name: 'CCalendar',
@@ -13,6 +16,17 @@ export default defineComponent({
   emits: ['change', 'update:modelValue'],
   setup(props: CalendarProps, { emit, slots }) {
     const ns = useNamespace('calendar')
+    const cfg = useConfig()
+
+    const localeCalendar = computed(() => cfg.locale?.Calendar ?? {})
+    const weekList = computed<string[]>(() => {
+      const fromLocale = localeCalendar.value.weekdaysShort
+      return fromLocale && fromLocale.length === 7 ? fromLocale : DEFAULT_WEEKDAYS
+    })
+    const monthFormat = computed(() => localeCalendar.value.monthFormat || 'YYYY-MM')
+    const prevLabel = computed(() => localeCalendar.value.prevMonthLabel || '上个月')
+    const nextLabel = computed(() => localeCalendar.value.nextMonthLabel || '下个月')
+    const todayLabel = computed(() => localeCalendar.value.todayLabel || '今天')
 
     const parseValue = () => toDayjs(props.modelValue, props.format) ?? dayjs()
 
@@ -24,7 +38,6 @@ export default defineComponent({
 
     // 当前展示的日期列表
     const curDateList: Ref<dateItem[]> = ref([])
-    const weekList = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
     // 根据月份计算当前展示日期的数组
     const generatedDate = (month?: string) => {
@@ -51,7 +64,7 @@ export default defineComponent({
             index: index + 1,
             date,
             day: dateList[dateList.length - 1],
-            week: weekList[week],
+            week: weekList.value[week],
           })
           // 返回数组
           return acc
@@ -142,14 +155,14 @@ export default defineComponent({
     })
 
     // header 周 列表
-    const weekItemList = weekList.map((item) => {
-      return <div class={ns.em('week', 'item')}>{item}</div>
-    })
+    const weekItemList = computed(() => weekList.value.map((item) => <div class={ns.em('week', 'item')}>{item}</div>))
+
+    const monthLabel = computed(() => dayjs(currentMonth.value).format(monthFormat.value))
 
     const defaultHeader = () => {
       return (
         <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
-          <div>{currentMonth.value}</div>
+          <div>{monthLabel.value}</div>
           <div>
             <c-button
               type="primary"
@@ -158,7 +171,7 @@ export default defineComponent({
                 changeMonth('lastMonth')
               }}
             >
-              上个月
+              {prevLabel.value}
             </c-button>
             <c-button
               type="primary"
@@ -167,7 +180,7 @@ export default defineComponent({
                 setCurrentDate(dayjs().format('YYYY-MM-DD'))
               }}
             >
-              今天
+              {todayLabel.value}
             </c-button>
             <c-button
               type="primary"
@@ -176,7 +189,7 @@ export default defineComponent({
                 changeMonth('nextMonth')
               }}
             >
-              下个月
+              {nextLabel.value}
             </c-button>
           </div>
         </div>
@@ -196,7 +209,7 @@ export default defineComponent({
     return () => (
       <div class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
         {slots.header ? slots.header(headerScope.value) : defaultHeader()}
-        <div class={ns.e('week')}>{weekItemList}</div>
+        <div class={ns.e('week')}>{weekItemList.value}</div>
         <div class={[ns.e('day-box'), props.classNames?.body]} style={props.styles?.body}>
           {dateItemList.value}
         </div>

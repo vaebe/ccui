@@ -69,22 +69,21 @@ describe('calendar', () => {
     const testDate = new Date(2022, 9, 10) // 2022-10-10
     const wrapper = createWrapper({ modelValue: testDate })
 
-    // Test next month
+    // Test next month — header 走 zh-CN monthFormat 'YYYY 年 M 月'
     let buttons = wrapper.find(headerClass).findAllComponents(Button)
     await buttons[2].trigger('click')
-    expect(wrapper.find(headerClass).text()).toContain('2022-11')
+    expect(wrapper.find(headerClass).text()).toContain('2022 年 11 月')
 
     // Test previous month (from November back to October)
     buttons = wrapper.find(headerClass).findAllComponents(Button)
     await buttons[0].trigger('click')
-    expect(wrapper.find(headerClass).text()).toContain('2022-10')
+    expect(wrapper.find(headerClass).text()).toContain('2022 年 10 月')
 
     // Test today button
     buttons = wrapper.find(headerClass).findAllComponents(Button)
     await buttons[1].trigger('click')
     const today = new Date()
-    const todayMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
-    expect(wrapper.find(headerClass).text()).toContain(todayMonth)
+    expect(wrapper.find(headerClass).text()).toContain(`${today.getFullYear()} 年 ${today.getMonth() + 1} 月`)
 
     wrapper.unmount()
   })
@@ -224,7 +223,7 @@ describe('calendar', () => {
         props: { modelValue: '2026-03-15' },
         global: { components: { CButton: Button } },
       })
-      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      expect(wrapper.find(headerClass).text()).toContain('2026 年 3 月')
       expect(wrapper.find(currentDateClass).text()).toBe('15')
       wrapper.unmount()
     })
@@ -234,7 +233,7 @@ describe('calendar', () => {
         props: { modelValue: new Date(2026, 2, 15) },
         global: { components: { CButton: Button } },
       })
-      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      expect(wrapper.find(headerClass).text()).toContain('2026 年 3 月')
       expect(wrapper.find(currentDateClass).text()).toBe('15')
       wrapper.unmount()
     })
@@ -245,7 +244,7 @@ describe('calendar', () => {
         props: { modelValue: ts },
         global: { components: { CButton: Button } },
       })
-      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      expect(wrapper.find(headerClass).text()).toContain('2026 年 3 月')
       wrapper.unmount()
     })
 

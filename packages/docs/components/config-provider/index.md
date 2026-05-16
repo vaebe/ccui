@@ -111,9 +111,9 @@
 
 ## 切换语言
 
-传入 `locale` 把内部组件的默认文案换成对应语言。ccui 内置 `zhCN` 与 `enUS` 两个语言包，可从 `@vaebe/ccui` 直接导出；未覆盖的 namespace 会自动回退到 `zhCN`。
+传入 `locale` 把内部组件的默认文案换成对应语言。ccui 内置 `zhCN` / `enUS` / `jaJP` / `koKR` 四个语言包，可从 `@vaebe/ccui` 直接导出；未覆盖的 namespace 会自动回退到 `zhCN`。切换 locale 时全局 `dayjs.locale()` 也会同步切换。
 
-下面用 Pagination 演示中英文切换：
+下面用 Pagination 演示四语言切换：
 
 :::demo
 
@@ -122,25 +122,30 @@
   <c-config-provider :locale="locale">
     <c-pagination :current="2" :total="55" :page-size="10" show-total show-quick-jumper />
   </c-config-provider>
-  <div style="margin-top: 12px">
-    <c-button @click="toggle">切换到 {{ locale.locale === 'zh-CN' ? 'en-US' : 'zh-CN' }}</c-button>
+  <div style="margin-top: 12px; display: flex; gap: 8px;">
+    <c-button
+      v-for="opt in locales"
+      :key="opt.locale"
+      :type="locale.locale === opt.locale ? 'primary' : 'default'"
+      @click="locale = opt"
+    >
+      {{ opt.locale }}
+    </c-button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { enUS, zhCN } from '@vaebe/ccui'
+import { enUS, jaJP, koKR, zhCN } from '@vaebe/ccui'
 
+const locales = [zhCN, enUS, jaJP, koKR]
 const locale = ref(zhCN)
-const toggle = () => {
-  locale.value = locale.value.locale === 'zh-CN' ? enUS : zhCN
-}
 </script>
 ```
 
 :::
 
-DatePicker / TimePicker / RangePicker 的 placeholder、周名、面板标题、按钮文案同样会跟着 `locale` 切换：
+DatePicker / TimePicker / RangePicker / Calendar 的 placeholder、周名、面板标题、按钮文案同样会跟着 `locale` 切换：
 
 :::demo
 

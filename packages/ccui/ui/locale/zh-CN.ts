@@ -26,6 +26,7 @@ const zhCN: Locale = {
     prevPage: '上一页',
     nextPage: '下一页',
     total: '共 {total} 条',
+    pagination: '分页',
   },
   Image: {
     loading: '加载中',
@@ -61,6 +62,13 @@ const zhCN: Locale = {
     nextYearLabel: '后一年',
     nextMonthLabel: '下个月',
     clearLabel: '清除',
+  },
+  Calendar: {
+    weekdaysShort: ['日', '一', '二', '三', '四', '五', '六'],
+    prevMonthLabel: '上个月',
+    nextMonthLabel: '下个月',
+    todayLabel: '今天',
+    monthFormat: 'YYYY 年 M 月',
   },
 }
 
