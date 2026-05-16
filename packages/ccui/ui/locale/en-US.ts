@@ -17,7 +17,7 @@ const enUS: Locale = {
   AutoComplete: { notFoundContent: 'No data' },
   Mentions: { notFoundContent: 'No data' },
   Cascader: { notFoundContent: 'No data' },
-  TreeSelect: { notFoundContent: 'No data' },
+  TreeSelect: { notFoundContent: 'No data', searchPlaceholder: 'Search' },
   Select: { notFoundContent: 'No data' },
   Pagination: {
     itemsPerPage: '/ page',

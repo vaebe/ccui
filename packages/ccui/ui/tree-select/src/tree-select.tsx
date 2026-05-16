@@ -1,7 +1,12 @@
 import type { Placement } from '@floating-ui/vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
-import type { TreeFieldNames, TreeNodeData, TreeNodeKey } from '../../tree/src/tree-types'
-import type { TreeSelectFieldNames, TreeSelectPlacement, TreeSelectProps } from './tree-select-types'
+import type { TreeFieldNames, TreeFilterPredicate, TreeNodeData, TreeNodeKey } from '../../tree/src/tree-types'
+import type {
+  TreeSelectFieldNames,
+  TreeSelectPlacement,
+  TreeSelectProps,
+  TreeSelectShowSearchConfig,
+} from './tree-select-types'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
@@ -108,11 +113,49 @@ export default defineComponent({
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
+    const searchInputRef = ref<HTMLInputElement | null>(null)
+    const treeRootRef = ref<HTMLElement | null>(null)
     const open = shallowRef(false)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const fn = computed(() => resolveFieldNames(props.fieldNames))
     const treeFieldNames = computed(() => toTreeFieldNames(fn.value))
+
+    // ===== M-B5 showSearch / loadData =====
+    const showSearchActive = computed(() => !!props.showSearch)
+    const showSearchCfg = computed<TreeSelectShowSearchConfig>(() => {
+      const raw = props.showSearch
+      return raw && typeof raw === 'object' ? raw : {}
+    })
+    const searchValue = shallowRef('')
+    // showSearch 启用时：
+    // - 用户传 filterTreeNode：包装为 c-tree 的 (node, parentKeys) 签名，input 来自 searchValue
+    // - 未传 filterTreeNode：返回 undefined → c-tree 走内置 title 子串匹配（基于 searchValue）
+    // 当用户传 treeNodeFilterProp 且 fieldNames.label 不一致时，用 prop 字段子串匹配
+    const effectiveFilter = computed<TreeFilterPredicate | undefined>(() => {
+      if (!showSearchActive.value) return undefined
+      const userFn = showSearchCfg.value.filterTreeNode
+      if (userFn) {
+        const inputVal = searchValue.value
+        return (node: TreeNodeData) => userFn(inputVal, node)
+      }
+      const customProp = showSearchCfg.value.treeNodeFilterProp
+      if (customProp && customProp !== fn.value.label) {
+        const inputVal = searchValue.value
+        return (node: TreeNodeData) => {
+          if (!inputVal) return true
+          const v = node[customProp]
+          if (v === null || v === undefined) return false
+          if (typeof v !== 'string' && typeof v !== 'number') return false
+          return String(v).toLowerCase().includes(inputVal.toLowerCase())
+        }
+      }
+      // 走 c-tree 内置 title 子串匹配
+      return undefined
+    })
+    const searchPlaceholderText = computed(
+      () => props.searchPlaceholder || cfg.locale?.TreeSelect?.searchPlaceholder || '搜索',
+    )
 
     // 节点索引：value → { key, label, disabled }，方便从 modelValue 反查 label
     const nodeIndex = computed(() => buildNodeIndex(props.treeData, fn.value))
@@ -165,11 +208,16 @@ export default defineComponent({
       if (props.disabled || open.value) return
       open.value = true
       emit('popup-visible-change', true)
+      if (showSearchActive.value) {
+        nextTick(() => searchInputRef.value?.focus())
+      }
     }
 
     function closePopup() {
       if (!open.value) return
       open.value = false
+      // 关闭时清空 search，避免下次打开仍带过滤态
+      searchValue.value = ''
       emit('popup-visible-change', false)
     }
 
@@ -255,11 +303,15 @@ export default defineComponent({
     function buildTree() {
       const usingCheckable = props.multiple && props.treeCheckable
       const baseProps = {
+        ref: treeRootRef,
         data: props.treeData,
         fieldNames: treeFieldNames.value,
         defaultExpandAll: props.treeDefaultExpandAll,
         defaultExpandedKeys: props.treeDefaultExpandedKeys,
         blockNode: true,
+        searchValue: showSearchActive.value ? searchValue.value : '',
+        filterTreeNode: effectiveFilter.value,
+        loadData: props.loadData,
       } as Record<string, unknown>
       if (usingCheckable) {
         baseProps.checkable = true
@@ -274,6 +326,25 @@ export default defineComponent({
         baseProps.onSelect = (keys: TreeNodeKey[]) => onTreeSelect(keys)
       }
       return h(Tree, baseProps)
+    }
+
+    function renderSearchBox() {
+      if (!showSearchActive.value) return null
+      return (
+        <div class={ns.e('search')}>
+          <input
+            ref={searchInputRef}
+            class={ns.e('search-input')}
+            type="text"
+            value={searchValue.value}
+            placeholder={searchPlaceholderText.value}
+            onInput={(e: Event) => {
+              searchValue.value = (e.target as HTMLInputElement).value
+            }}
+            onKeydown={onPopupKeydown}
+          />
+        </div>
+      )
     }
 
     function buildPopup() {
@@ -292,6 +363,7 @@ export default defineComponent({
           role: 'dialog',
         },
         [
+          renderSearchBox(),
           isEmpty ? (
             <div class={ns.e('empty')}>{notFoundLocal.value}</div>
           ) : (
@@ -299,6 +371,58 @@ export default defineComponent({
           ),
         ],
       )
+    }
+
+    // ===== M-B5 键盘导航 =====
+    function forwardKeydownToTree(key: string) {
+      const el = (treeRootRef.value as unknown as { $el?: HTMLElement } | HTMLElement | null) ?? null
+      const dom = (el && (el as { $el?: HTMLElement }).$el) || (el as HTMLElement | null)
+      if (!dom) return false
+      const evt = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
+      dom.dispatchEvent(evt)
+      return true
+    }
+
+    function onInputKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      const k = e.key
+      if (!open.value) {
+        if (k === 'Enter' || k === ' ' || k === 'ArrowDown') {
+          e.preventDefault()
+          openPopup()
+        }
+        return
+      }
+      if (k === 'Escape') {
+        e.preventDefault()
+        closePopup()
+        return
+      }
+      if (k === 'Tab') {
+        closePopup()
+        return
+      }
+      // 打开态且非 search 模式：把方向键 / Enter 转发到 tree
+      if (showSearchActive.value) return
+      if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter', 'Home', 'End'].includes(k)) {
+        e.preventDefault()
+        forwardKeydownToTree(k)
+      }
+    }
+
+    function onPopupKeydown(e: KeyboardEvent) {
+      const k = e.key
+      if (k === 'Escape') {
+        e.preventDefault()
+        closePopup()
+        inputRef.value?.focus()
+        return
+      }
+      if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(k)) {
+        // search 输入框聚焦时让方向键 / Enter 操作 tree 而非光标
+        e.preventDefault()
+        forwardKeydownToTree(k)
+      }
     }
 
     function renderPopup() {
@@ -376,6 +500,7 @@ export default defineComponent({
             emit('blur')
             formItem?.validate('blur')
           }}
+          onKeydown={onInputKeydown}
         />
       )
     }
@@ -385,7 +510,9 @@ export default defineComponent({
         <div
           class={[ns.e('input-wrap'), props.classNames?.inputWrap]}
           style={props.styles?.inputWrap}
+          tabindex={props.multiple ? 0 : undefined}
           onClick={togglePopup}
+          onKeydown={props.multiple ? onInputKeydown : undefined}
         >
           {renderInputContent()}
           {showClear.value ? (

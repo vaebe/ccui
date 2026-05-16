@@ -25,6 +25,7 @@ export interface EmptyLocale {
 
 export interface SelectLocale {
   notFoundContent?: string
+  searchPlaceholder?: string
 }
 
 export interface PaginationLocale {

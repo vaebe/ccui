@@ -282,31 +282,34 @@ const data = [
 
 ### Props
 
-| 参数                    | 类型                                                       | 默认值                  | 说明                                                                  |
-| ----------------------- | ---------------------------------------------------------- | ----------------------- | --------------------------------------------------------------------- |
-| modelValue              | `string \| number \| (string \| number)[] \| null`         | --                      | 选中值（单选时为单值，多选时为数组）                                  |
-| treeData                | `TreeNodeData[]`                                           | `[]`                    | 数据源（递归 children）                                               |
-| fieldNames              | `{ label?, value?, children?, disabled? }`                 | `{}`                    | 字段名映射                                                            |
-| multiple                | boolean                                                    | `false`                 | 是否多选                                                              |
-| treeCheckable           | boolean                                                    | `true`                  | 多选模式下是否在节点前展示 checkbox（false 则走 multiple selectable） |
-| treeCheckStrictly       | boolean                                                    | `false`                 | 多选 + checkable 时，父子节点是否严格独立                             |
-| treeDefaultExpandAll    | boolean                                                    | `false`                 | 默认全部展开                                                          |
-| treeDefaultExpandedKeys | `(string \| number)[]`                                     | `[]`                    | 默认展开的节点 keys                                                   |
-| placeholder             | string                                                     | `请选择`                | 占位文案                                                              |
-| disabled                | boolean                                                    | `false`                 | 是否禁用                                                              |
-| clearable               | boolean                                                    | `true`                  | 是否显示清除按钮                                                      |
-| size                    | `'small' \| 'default' \| 'large'`                          | `'default'`             | 输入框尺寸                                                            |
-| status                  | `'' \| 'error' \| 'warning' \| ...`                        | `''`                    | 校验状态；置于 `FormItem` 时自动继承                                  |
-| placement               | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`          | 浮层方位                                                              |
-| popupClassName          | string                                                     | --                      | 浮层根元素自定义 class                                                |
-| popupAppendToBody       | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                |
-| getPopupContainer       | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点                                                      |
-| autoFocus               | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                               |
-| inputReadOnly           | boolean                                                    | `true`                  | 输入框只读（仅单选模式有 input 元素）                                 |
-| transitionName          | string                                                     | `ccui-tree-select-fade` | 浮层过渡名                                                            |
-| maxTagCount             | number                                                     | `3`                     | 多选模式输入框最多渲染几个 tag                                        |
-| notFoundContent         | string                                                     | `暂无数据`              | 空数据文案                                                            |
-| popupMaxHeight          | number                                                     | `280`                   | 浮层最大高度（px）                                                    |
+| 参数                    | 类型                                                       | 默认值                  | 说明                                                                            |
+| ----------------------- | ---------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| modelValue              | `string \| number \| (string \| number)[] \| null`         | --                      | 选中值（单选时为单值，多选时为数组）                                            |
+| treeData                | `TreeNodeData[]`                                           | `[]`                    | 数据源（递归 children）                                                         |
+| fieldNames              | `{ label?, value?, children?, disabled? }`                 | `{}`                    | 字段名映射                                                                      |
+| multiple                | boolean                                                    | `false`                 | 是否多选                                                                        |
+| treeCheckable           | boolean                                                    | `true`                  | 多选模式下是否在节点前展示 checkbox（false 则走 multiple selectable）           |
+| treeCheckStrictly       | boolean                                                    | `false`                 | 多选 + checkable 时，父子节点是否严格独立                                       |
+| treeDefaultExpandAll    | boolean                                                    | `false`                 | 默认全部展开                                                                    |
+| treeDefaultExpandedKeys | `(string \| number)[]`                                     | `[]`                    | 默认展开的节点 keys                                                             |
+| placeholder             | string                                                     | `请选择`                | 占位文案                                                                        |
+| disabled                | boolean                                                    | `false`                 | 是否禁用                                                                        |
+| clearable               | boolean                                                    | `true`                  | 是否显示清除按钮                                                                |
+| size                    | `'small' \| 'default' \| 'large'`                          | `'default'`             | 输入框尺寸                                                                      |
+| status                  | `'' \| 'error' \| 'warning' \| ...`                        | `''`                    | 校验状态；置于 `FormItem` 时自动继承                                            |
+| placement               | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`          | 浮层方位                                                                        |
+| popupClassName          | string                                                     | --                      | 浮层根元素自定义 class                                                          |
+| popupAppendToBody       | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                          |
+| getPopupContainer       | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点                                                                |
+| autoFocus               | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                                         |
+| inputReadOnly           | boolean                                                    | `true`                  | 输入框只读（仅单选模式有 input 元素）                                           |
+| transitionName          | string                                                     | `ccui-tree-select-fade` | 浮层过渡名                                                                      |
+| maxTagCount             | number                                                     | `3`                     | 多选模式输入框最多渲染几个 tag                                                  |
+| notFoundContent         | string                                                     | `暂无数据`              | 空数据文案                                                                      |
+| popupMaxHeight          | number                                                     | `280`                   | 浮层最大高度（px）                                                              |
+| showSearch              | `boolean \| TreeSelectShowSearchConfig`                    | `false`                 | 是否开启搜索过滤；对象形态 `{ filterTreeNode?, treeNodeFilterProp? }`           |
+| searchPlaceholder       | string                                                     | `搜索`                  | 搜索框占位文案（`showSearch` 启用时生效；走 ConfigProvider locale 兜底）        |
+| loadData                | `(node: TreeNodeData) => Promise<void>`                    | --                      | 异步加载子节点；与节点的 `isLeaf=false` 配合，resolve 后向 node.children mutate |
 
 ### Events
 
@@ -317,6 +320,163 @@ const data = [
 | popup-visible-change | `(open: boolean)`                                         | 浮层打开 / 关闭时                 |
 | focus                | --                                                        | 输入框聚焦                        |
 | blur                 | --                                                        | 输入框失焦                        |
+
+## 搜索过滤 showSearch
+
+设置 `showSearch=true` 在浮层顶部渲染搜索框，默认按节点 label 子串匹配（大小写不敏感），命中的节点及其祖先都会显示。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<string | null>(null)
+const treeData = [
+  {
+    value: 'beijing',
+    label: '北京',
+    children: [
+      { value: 'haidian', label: '海淀区' },
+      { value: 'chaoyang', label: '朝阳区' },
+      { value: 'xicheng', label: '西城区' },
+    ],
+  },
+  {
+    value: 'shanghai',
+    label: '上海',
+    children: [
+      { value: 'pudong', label: '浦东新区' },
+      { value: 'huangpu', label: '黄浦区' },
+      { value: 'minhang', label: '闵行区' },
+    ],
+  },
+]
+</script>
+
+<template>
+  <c-tree-select v-model="value" :tree-data="treeData" show-search tree-default-expand-all />
+</template>
+```
+
+:::
+
+## 自定义过滤逻辑 filterTreeNode
+
+`showSearch` 对象形态 `{ filterTreeNode, treeNodeFilterProp }`：`filterTreeNode(input, node)` 自定义命中规则；`treeNodeFilterProp` 切到非 label 字段做子串匹配。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<string | null>(null)
+const treeData = [
+  {
+    value: 'fe',
+    label: '前端',
+    pinyin: 'qianduan',
+    children: [
+      { value: 'vue', label: 'Vue.js', pinyin: 'vue' },
+      { value: 'react', label: 'React', pinyin: 'react' },
+    ],
+  },
+  {
+    value: 'be',
+    label: '后端',
+    pinyin: 'houduan',
+    children: [
+      { value: 'go', label: 'Go', pinyin: 'go' },
+      { value: 'node', label: 'Node.js', pinyin: 'node' },
+    ],
+  },
+]
+
+// 业务：拼音 + label 双字段匹配
+function filterTreeNode(input: string, node: Record<string, unknown>) {
+  if (!input) return true
+  const kw = input.toLowerCase()
+  return String(node.label).toLowerCase().includes(kw) || String(node.pinyin).includes(kw)
+}
+</script>
+
+<template>
+  <c-tree-select v-model="value" :tree-data="treeData" :show-search="{ filterTreeNode }" tree-default-expand-all />
+</template>
+```
+
+:::
+
+## 异步加载子节点 loadData
+
+`loadData(node)` 返回 Promise；resolve 后向 node.children 写入数据并触发响应式更新。父节点须显式 `isLeaf: false` 才会触发懒加载。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+
+const value = ref<string | null>(null)
+const treeData = reactive([
+  { value: 'org-a', label: '部门 A', isLeaf: false },
+  { value: 'org-b', label: '部门 B', isLeaf: false },
+])
+
+async function loadData(node: { value: string; label: string; children?: unknown[] }) {
+  await new Promise((r) => setTimeout(r, 500))
+  // mutate 注入子节点
+  node.children = [
+    { value: `${node.value}-1`, label: `${node.label} 小组 1` },
+    { value: `${node.value}-2`, label: `${node.label} 小组 2` },
+  ]
+}
+</script>
+
+<template>
+  <c-tree-select v-model="value" :tree-data="treeData" :load-data="loadData" placeholder="点开节点触发懒加载" />
+</template>
+```
+
+:::
+
+## 键盘导航
+
+输入框聚焦后支持：
+
+- `Enter` / `Space` / `↓`：打开面板
+- `Esc` / `Tab`：关闭面板
+- 面板打开后 `↑ ↓ ← →` / `Enter` 由 `c-tree` 接管（移动 focus / 展开收起 / 选中）
+
+`showSearch` 启用时，搜索框聚焦后方向键 / `Enter` 仍会转发到 tree。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<string | null>(null)
+const treeData = [
+  {
+    value: '1',
+    label: '部门 A',
+    children: [
+      { value: '1-1', label: '小组 1' },
+      { value: '1-2', label: '小组 2' },
+    ],
+  },
+  { value: '2', label: '部门 B' },
+]
+</script>
+
+<template>
+  <c-tree-select v-model="value" :tree-data="treeData" tree-default-expand-all placeholder="聚焦后按方向键试试" />
+</template>
+```
+
+:::
 
 ## 顶层常量
 
@@ -340,8 +500,5 @@ import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT }
 
 ## 已知限制（未交付）
 
-- **showSearch 搜索过滤**：当前不支持在浮层中搜索节点。
-- **loadData 异步加载**：当前不支持懒加载子节点。
 - **showCheckedStrategy**：多选 checkable 模式下，输出的 v-model 总是 `c-tree` 的 `checkedKeys` 全集；不暴露 `SHOW_PARENT` / `SHOW_CHILD` / `SHOW_ALL` 切换。常量符号已顶层 export，未来接入实际逻辑后即可直接使用。
-- **键盘导航**：方向键 / Enter 切换尚未实现。
 - **半选 v-model 输出**：多选模式 v-model 不携带 `halfCheckedKeys`（业务需要时可监听 `c-tree` 的 check 事件自取）。

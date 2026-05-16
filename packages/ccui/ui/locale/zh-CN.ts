@@ -17,7 +17,7 @@ const zhCN: Locale = {
   AutoComplete: { notFoundContent: '暂无数据' },
   Mentions: { notFoundContent: '暂无数据' },
   Cascader: { notFoundContent: '暂无数据' },
-  TreeSelect: { notFoundContent: '暂无数据' },
+  TreeSelect: { notFoundContent: '暂无数据', searchPlaceholder: '搜索' },
   Select: { notFoundContent: '暂无数据' },
   Pagination: {
     itemsPerPage: '条/页',

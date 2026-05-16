@@ -513,3 +513,112 @@ describe('tree-select M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('tree-select M-B5 showSearch', () => {
+  it('启用 showSearch 时面板渲染搜索框', async () => {
+    const wrapper = mountTS({ showSearch: true })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('search-input')).exists()).toBe(true)
+  })
+
+  it('未启用 showSearch 时面板不渲染搜索框', async () => {
+    const wrapper = mountTS()
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('search-input')).exists()).toBe(false)
+  })
+
+  it('输入 search 值时按 label 过滤节点', async () => {
+    const wrapper = mountTS({ showSearch: true })
+    await openPanel(wrapper)
+    const input = wrapper.find(ns.e('search-input'))
+    await input.setValue('叶子 1-1')
+    await nextTick()
+    const nodes = wrapper.findAll('.ccui-tree__node')
+    const visibleLabels = nodes.map((n) => n.text())
+    expect(visibleLabels.join('|')).toContain('叶子 1-1')
+    // 不应包含 '叶子 2-1' / '叶子 2-2'
+    expect(visibleLabels.join('|')).not.toContain('叶子 2-1')
+  })
+
+  it('支持 showSearch 对象形态自定义 filterTreeNode', async () => {
+    const wrapper = mountTS({
+      showSearch: {
+        filterTreeNode: (input: string, node: Record<string, unknown>) => String(node.value).includes(input),
+      },
+    })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('search-input')).setValue('parent-1')
+    await nextTick()
+    const nodes = wrapper.findAll('.ccui-tree__node')
+    expect(nodes.map((n) => n.text()).join('|')).toContain('父节点 1')
+  })
+
+  it('关闭面板时清空 search 值', async () => {
+    const wrapper = mountTS({ showSearch: true })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('search-input')).setValue('foo')
+    await wrapper.find(ns.e('input-wrap')).trigger('click')
+    await nextTick()
+    // 重开
+    await openPanel(wrapper)
+    expect((wrapper.find(ns.e('search-input')).element as HTMLInputElement).value).toBe('')
+  })
+})
+
+describe('tree-select M-B5 loadData', () => {
+  it('loadData 转发到 c-tree，点击未加载叶子时触发', async () => {
+    const asyncData = [
+      { value: 'a', label: 'A', isLeaf: false },
+      { value: 'b', label: 'B', isLeaf: false },
+    ]
+    const loadData = vi.fn(async () => {
+      await Promise.resolve()
+    })
+    const wrapper = mount(TreeSelect, {
+      props: { treeData: asyncData, loadData: loadData as never },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    // 点开 A 的 switcher 触发 loadData
+    const switcher = wrapper.find('.ccui-tree__switcher')
+    expect(switcher.exists()).toBe(true)
+    await switcher.trigger('click')
+    await nextTick()
+    expect(loadData).toHaveBeenCalledTimes(1)
+    const calledNode = (loadData.mock.calls[0] as unknown as [{ value: string }])[0]
+    expect(calledNode.value).toBe('a')
+  })
+})
+
+describe('tree-select M-B5 键盘导航', () => {
+  it('Enter 在关闭态打开面板', async () => {
+    const wrapper = mountTS()
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('ArrowDown 在关闭态打开面板', async () => {
+    const wrapper = mountTS()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('Escape 关闭面板', async () => {
+    const wrapper = mountTS()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('Tab 关闭面板', async () => {
+    const wrapper = mountTS()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'Tab' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+})

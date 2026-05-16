@@ -35,6 +35,17 @@ export interface TreeSelectFieldNames {
   disabled?: string
 }
 
+// showSearch 对象形态：
+// - filterTreeNode：自定义命中判断，签名 `(input, node) => boolean`；默认按 label 子串匹配
+// - treeNodeFilterProp：决定 fallback 匹配字段名（默认走 fieldNames.label）
+export interface TreeSelectFilterTreeNode {
+  (input: string, node: TreeNodeData): boolean
+}
+export interface TreeSelectShowSearchConfig {
+  filterTreeNode?: TreeSelectFilterTreeNode
+  treeNodeFilterProp?: string
+}
+
 export const treeSelectProps = {
   modelValue: {
     type: [String, Number, Array] as PropType<TreeSelectModelValue>,
@@ -156,6 +167,22 @@ export const treeSelectProps = {
   popupMaxHeight: {
     type: Number,
     default: 280,
+  },
+  // 是否开启搜索过滤；接 boolean 或 { filterTreeNode, treeNodeFilterProp } 对象
+  showSearch: {
+    type: [Boolean, Object] as PropType<boolean | TreeSelectShowSearchConfig>,
+    default: false,
+  },
+  // 搜索框 placeholder（仅 showSearch 启用时生效）；为空走 locale 兜底
+  searchPlaceholder: {
+    type: String,
+    default: '',
+  },
+  // 异步加载子节点；返回 Promise，resolve 后 c-tree 自动注入 children。
+  // 与 treeData 中节点的 isLeaf=false 配合使用，未标记 isLeaf=false 的节点不会触发 loadData。
+  loadData: {
+    type: Function as PropType<(node: TreeNodeData) => Promise<void>>,
+    default: undefined,
   },
   /**
    * 录入组件统一 variant 形态。

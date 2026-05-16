@@ -181,6 +181,33 @@
     padding: 4px 0;
   }
 
+  &__search {
+    padding: 6px 6px 4px;
+    border-bottom: 1px solid $ccui-color-border-secondary;
+    margin-bottom: 4px;
+  }
+
+  &__search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    color: $ccui-text;
+    font-size: $ccui-font-size-sm;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $ccui-primary;
+    }
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+  }
+
   &__empty {
     padding: 16px;
     text-align: center;
