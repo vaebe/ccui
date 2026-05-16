@@ -203,4 +203,21 @@ describe('checkBox', () => {
     expect(beforeChange).not.toHaveBeenCalled()
     expect(wrapper.emitted('change')).toBeUndefined()
   })
+
+  describe('XL-4 ARIA', () => {
+    it('CheckBoxGroup 根加 role="group"', () => {
+      const wrapper = mount(CheckBoxGroup, {
+        props: { modelValue: [] },
+        slots: { default: () => h(CheckBox, { label: 'a' }) },
+      })
+      expect(wrapper.attributes('role')).toBe('group')
+    })
+
+    it('CheckBox input 加 aria-checked / aria-disabled', () => {
+      const wrapper = mount(CheckBox, { props: { modelValue: true, label: 'a', disabled: true } })
+      const inp = wrapper.find('input')
+      expect(inp.attributes('aria-checked')).toBe('true')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+    })
+  })
 })

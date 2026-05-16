@@ -54,7 +54,11 @@ export default defineComponent({
     })
 
     return () => {
-      return <div class={checkBoxGroupClass.value}>{slots.default && slots.default()}</div>
+      return (
+        <div class={checkBoxGroupClass.value} role="group" aria-disabled={props.disabled ? true : undefined}>
+          {slots.default && slots.default()}
+        </div>
+      )
     }
   },
 })

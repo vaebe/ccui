@@ -270,6 +270,13 @@ export default defineComponent({
               readonly={props.readonly}
               min={props.min}
               max={props.max}
+              role="spinbutton"
+              aria-valuenow={innerValue.value ?? undefined}
+              aria-valuemin={props.min}
+              aria-valuemax={props.max}
+              aria-disabled={props.disabled ? true : undefined}
+              aria-readonly={props.readonly ? true : undefined}
+              aria-invalid={mergedStatus.value === 'error' ? true : undefined}
               onInput={handleInput}
               onChange={handleInputChange}
               onFocus={handleFocus}

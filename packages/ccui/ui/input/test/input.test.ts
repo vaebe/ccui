@@ -444,4 +444,20 @@ describe('input', () => {
       wrapper.unmount()
     })
   })
+
+  describe('XL-4 ARIA', () => {
+    it('status="error" 时 input 加 aria-invalid', () => {
+      const w = mount(Input, { props: { status: 'error' } })
+      expect(w.find('input').attributes('aria-invalid')).toBe('true')
+      w.unmount()
+    })
+
+    it('disabled / readonly 时 input 加 aria-disabled / aria-readonly', () => {
+      const w = mount(Input, { props: { disabled: true, readonly: true } })
+      const inp = w.find('input')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+      expect(inp.attributes('aria-readonly')).toBe('true')
+      w.unmount()
+    })
+  })
 })

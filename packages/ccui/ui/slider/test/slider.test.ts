@@ -325,4 +325,31 @@ describe('slider', () => {
     expect(tooltip.props('content')).toBe('50')
     wrapper.unmount()
   })
+
+  describe('XL-4 ARIA', () => {
+    it('button 加 role="slider" + aria-valuenow / valuemin / valuemax / orientation', () => {
+      const wrapper = mount(Slider, { props: { modelValue: 30, min: 0, max: 100 } })
+      const btn = wrapper.find(ns.e('button'))
+      expect(btn.attributes('role')).toBe('slider')
+      expect(btn.attributes('aria-valuenow')).toBe('30')
+      expect(btn.attributes('aria-valuemin')).toBe('0')
+      expect(btn.attributes('aria-valuemax')).toBe('100')
+      expect(btn.attributes('aria-orientation')).toBe('horizontal')
+      wrapper.unmount()
+    })
+
+    it('disabled 时 button 加 aria-disabled', () => {
+      const wrapper = mount(Slider, { props: { modelValue: 30, disabled: true } })
+      const btn = wrapper.find(ns.e('button'))
+      expect(btn.attributes('aria-disabled')).toBe('true')
+      wrapper.unmount()
+    })
+
+    it('vertical 时 aria-orientation=vertical', () => {
+      const wrapper = mount(Slider, { props: { modelValue: 30, vertical: true } })
+      const btn = wrapper.find(ns.e('button'))
+      expect(btn.attributes('aria-orientation')).toBe('vertical')
+      wrapper.unmount()
+    })
+  })
 })

@@ -81,6 +81,7 @@ export default defineComponent({
         'aria-valuenow': value,
         'aria-valuetext': getAriaValueText(value),
         'aria-orientation': props.vertical ? 'vertical' : 'horizontal',
+        'aria-disabled': props.disabled ? true : undefined,
       }
 
       return props.showTooltip ? (
@@ -149,6 +150,7 @@ export default defineComponent({
         ]}
         style={this.vertical ? { height: this.height } : {}}
         aria-label={this.label || this.ariaLabel}
+        aria-disabled={this.disabled ? true : undefined}
       >
         {/* 输入框 */}
         {this.showInput && !this.range && (

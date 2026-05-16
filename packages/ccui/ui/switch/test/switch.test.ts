@@ -38,4 +38,20 @@ describe('switch', () => {
     await wrapper.trigger('click')
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['yes'])
   })
+
+  describe('XL-4 ARIA', () => {
+    it('未勾选 / 已勾选时 aria-checked 跟随', async () => {
+      const w1 = mount(Switch, { props: { modelValue: false } })
+      expect(w1.attributes('role')).toBe('switch')
+      expect(w1.attributes('aria-checked')).toBe('false')
+      const w2 = mount(Switch, { props: { modelValue: true } })
+      expect(w2.attributes('aria-checked')).toBe('true')
+    })
+
+    it('disabled / loading 时补 aria-disabled / aria-busy', () => {
+      const wrapper = mount(Switch, { props: { modelValue: false, disabled: true, loading: true } })
+      expect(wrapper.attributes('aria-disabled')).toBe('true')
+      expect(wrapper.attributes('aria-busy')).toBe('true')
+    })
+  })
 })

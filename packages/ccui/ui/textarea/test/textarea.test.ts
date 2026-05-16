@@ -266,4 +266,18 @@ describe('textarea', () => {
       expect(wrapper.attributes('style') || '').toContain('color: red')
     })
   })
+
+  describe('XL-4 ARIA', () => {
+    it('status="error" 时 textarea 加 aria-invalid', () => {
+      const w = mount(Textarea, { props: { status: 'error' } })
+      expect(w.find('textarea').attributes('aria-invalid')).toBe('true')
+    })
+
+    it('disabled / readonly 时 textarea 加 aria-disabled / aria-readonly', () => {
+      const w = mount(Textarea, { props: { disabled: true, readonly: true } })
+      const ta = w.find('textarea')
+      expect(ta.attributes('aria-disabled')).toBe('true')
+      expect(ta.attributes('aria-readonly')).toBe('true')
+    })
+  })
 })

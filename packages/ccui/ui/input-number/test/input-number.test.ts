@@ -366,4 +366,22 @@ describe('inputNumber', () => {
       expect(wrapper.attributes('style') || '').toContain('color: red')
     })
   })
+
+  describe('XL-4 ARIA', () => {
+    it('input 加 role="spinbutton" + aria-valuenow / valuemin / valuemax', () => {
+      const wrapper = createWrapper({ modelValue: 5, min: 0, max: 10 })
+      const inp = wrapper.find('.ccui-input-number__inner')
+      expect(inp.attributes('role')).toBe('spinbutton')
+      expect(inp.attributes('aria-valuenow')).toBe('5')
+      expect(inp.attributes('aria-valuemin')).toBe('0')
+      expect(inp.attributes('aria-valuemax')).toBe('10')
+    })
+
+    it('disabled / status=error 时补 aria-disabled / aria-invalid', () => {
+      const wrapper = createWrapper({ disabled: true, status: 'error' })
+      const inp = wrapper.find('.ccui-input-number__inner')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+      expect(inp.attributes('aria-invalid')).toBe('true')
+    })
+  })
 })

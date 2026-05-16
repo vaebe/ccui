@@ -186,6 +186,10 @@ export default defineComponent({
         return (
           <div
             class={[ns.e('drag'), dragOver.value ? ns.is('dragover') : '', props.disabled ? ns.is('disabled') : '']}
+            role="button"
+            tabindex={props.disabled ? -1 : 0}
+            aria-label={props.dragText}
+            aria-disabled={props.disabled ? true : undefined}
             onClick={openPicker}
             onDragenter={onDragenter}
             onDragover={onDragover}
@@ -223,7 +227,7 @@ export default defineComponent({
       const showThumb = (props.listType === 'picture' || isCard) && thumbSrc
       if (isCard) {
         return (
-          <li key={item.uid} class={cls}>
+          <li key={item.uid} class={cls} role="listitem" aria-label={item.name}>
             <div class={ns.e('item-card-inner')}>
               {showThumb ? (
                 <img
@@ -258,7 +262,7 @@ export default defineComponent({
         )
       }
       return (
-        <li key={item.uid} class={cls}>
+        <li key={item.uid} class={cls} role="listitem" aria-label={item.name}>
           {showThumb ? (
             <span class={ns.e('item-thumb')}>
               <img src={thumbSrc} alt={item.name} />

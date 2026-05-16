@@ -79,6 +79,8 @@ export default defineComponent({
             value={props.label}
             disabled={isDisabled.value}
             checked={isChecked.value}
+            aria-checked={!!isChecked.value}
+            aria-disabled={isDisabled.value ? true : undefined}
           />
           {/* 判断展示那种icon */}
           <span class={ns.e('icon')} style={iconColor.value}>

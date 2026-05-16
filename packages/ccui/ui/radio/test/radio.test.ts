@@ -173,4 +173,21 @@ describe('radio', () => {
     expect(beforeChange).not.toHaveBeenCalled()
     expect(wrapper.emitted('change')).toBeUndefined()
   })
+
+  describe('XL-4 ARIA', () => {
+    it('RadioGroup 根加 role="radiogroup"', () => {
+      const wrapper = mount(RadioGroup, {
+        props: { modelValue: 'a' },
+        slots: { default: () => h(Radio, { label: 'a' }) },
+      })
+      expect(wrapper.attributes('role')).toBe('radiogroup')
+    })
+
+    it('Radio input 加 aria-checked / aria-disabled', () => {
+      const wrapper = mount(Radio, { props: { modelValue: 'a', label: 'a', disabled: true } })
+      const inp = wrapper.find('input')
+      expect(inp.attributes('aria-checked')).toBe('true')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+    })
+  })
 })

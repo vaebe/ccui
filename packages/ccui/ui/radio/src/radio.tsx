@@ -82,6 +82,8 @@ export default defineComponent({
             value={props.label}
             disabled={isDisabled.value}
             checked={isActive.value}
+            aria-checked={isActive.value}
+            aria-disabled={isDisabled.value ? true : undefined}
           />
           {/* 判断展示那种icon */}
           <span class={ns.e('icon')}>{isActive.value ? <IconActive /> : <IconCircle />}</span>

@@ -56,18 +56,26 @@ export default defineComponent({
     const rateItem = computed(() => (slots.default ? slots.default() : iconDefault()))
 
     const iconList = () =>
-      iconStateList.value.map((item, index) => (
-        <div
-          class={ns.e('icon')}
-          onMousemove={(e: MouseEvent) => handleMouseInteraction(e, index)}
-          onClick={(e: MouseEvent) => handleMouseInteraction(e, index, true)}
-        >
-          <span>{rateItem.value}</span>
-          <span class={ns.m('active')} style={{ width: item.width, color: props.color, fill: props.color }}>
-            {rateItem.value}
-          </span>
-        </div>
-      ))
+      iconStateList.value.map((item, index) => {
+        const rank = index + 1
+        const isFullyChecked = selectedQuantity.value >= rank
+        return (
+          <div
+            class={ns.e('icon')}
+            role="radio"
+            aria-checked={isFullyChecked}
+            aria-label={`${rank} stars`}
+            aria-disabled={props.readOnly ? true : undefined}
+            onMousemove={(e: MouseEvent) => handleMouseInteraction(e, index)}
+            onClick={(e: MouseEvent) => handleMouseInteraction(e, index, true)}
+          >
+            <span>{rateItem.value}</span>
+            <span class={ns.m('active')} style={{ width: item.width, color: props.color, fill: props.color }}>
+              {rateItem.value}
+            </span>
+          </div>
+        )
+      })
 
     const rateCls = computed(() => ({
       [ns.b()]: true,
@@ -75,7 +83,13 @@ export default defineComponent({
     }))
 
     return () => (
-      <div class={rateCls.value} onMouseleave={() => setIconState(selectedQuantity.value)}>
+      <div
+        class={rateCls.value}
+        role="radiogroup"
+        aria-label="rate"
+        aria-readonly={props.readOnly ? true : undefined}
+        onMouseleave={() => setIconState(selectedQuantity.value)}
+      >
         {iconList()}
         {slots.info && <div class={ns.e('info')}>{slots.info(selectedQuantity.value)}</div>}
       </div>

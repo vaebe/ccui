@@ -38,6 +38,8 @@ export default defineComponent({
         type="button"
         role="switch"
         aria-checked={checked.value}
+        aria-disabled={props.disabled ? true : undefined}
+        aria-busy={props.loading ? true : undefined}
         autofocus={props.autofocus}
         disabled={props.disabled}
         class={cls.value}

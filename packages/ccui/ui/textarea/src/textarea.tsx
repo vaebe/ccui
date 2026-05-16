@@ -249,6 +249,9 @@ export default defineComponent({
           maxlength={props.maxLength}
           rows={autoSizeEnabled.value ? undefined : props.rows}
           value={innerValue.value}
+          aria-invalid={props.status === 'error' ? true : undefined}
+          aria-disabled={props.disabled ? true : undefined}
+          aria-readonly={props.readonly ? true : undefined}
           onInput={handleInput}
           onChange={handleChange}
           onFocus={handleFocus}

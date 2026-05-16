@@ -423,3 +423,21 @@ describe('upload M-B9 listType=picture-card', () => {
     expect(wrapper.emitted('remove')).toBeDefined()
   })
 })
+
+describe('upload XL-4 ARIA', () => {
+  it('drag 触发区加 role="button" + aria-label', () => {
+    const wrapper = mountU({ drag: true, dragText: '拖到这' })
+    const drag = wrapper.find(ns.e('drag'))
+    expect(drag.attributes('role')).toBe('button')
+    expect(drag.attributes('aria-label')).toBe('拖到这')
+  })
+
+  it('文件列表项加 role="listitem" + aria-label', () => {
+    const wrapper = mountU({
+      defaultFileList: [{ uid: '1', name: 'a.png', status: 'done' }],
+    })
+    const item = wrapper.find(ns.e('item'))
+    expect(item.attributes('role')).toBe('listitem')
+    expect(item.attributes('aria-label')).toBe('a.png')
+  })
+})

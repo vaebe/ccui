@@ -109,4 +109,25 @@ describe('rate', () => {
     await wrapper.trigger('mouseleave')
     expect(icons[4].find(ns.m('active')).attributes('style')).toContain('width: 0%')
   })
+
+  describe('XL-4 ARIA', () => {
+    it('根加 role="radiogroup"，每颗星 role="radio" + aria-label / aria-checked', () => {
+      const wrapper = createWrapper({ modelValue: 3 })
+      expect(wrapper.attributes('role')).toBe('radiogroup')
+      const icons = wrapper.findAll(iconClass)
+      expect(icons.length).toBe(5)
+      expect(icons[0].attributes('role')).toBe('radio')
+      expect(icons[0].attributes('aria-label')).toBe('1 stars')
+      // 前 3 颗为 checked，后两颗未选
+      expect(icons[2].attributes('aria-checked')).toBe('true')
+      expect(icons[3].attributes('aria-checked')).toBe('false')
+    })
+
+    it('readOnly 时根加 aria-readonly + 每颗星 aria-disabled', () => {
+      const wrapper = createWrapper({ modelValue: 2, readOnly: true })
+      expect(wrapper.attributes('aria-readonly')).toBe('true')
+      const icons = wrapper.findAll(iconClass)
+      expect(icons[0].attributes('aria-disabled')).toBe('true')
+    })
+  })
 })

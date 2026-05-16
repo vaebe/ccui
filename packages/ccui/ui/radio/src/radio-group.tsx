@@ -33,7 +33,11 @@ export default defineComponent({
     })
 
     return () => {
-      return <div class={radioGroupClass.value}>{slots.default && slots.default()}</div>
+      return (
+        <div class={radioGroupClass.value} role="radiogroup" aria-disabled={props.disabled ? true : undefined}>
+          {slots.default && slots.default()}
+        </div>
+      )
     }
   },
 })

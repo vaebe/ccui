@@ -221,4 +221,18 @@ describe('input-otp', () => {
       expect(wrapper.emitted('blur')).toBeTruthy()
     })
   })
+
+  describe('XL-4 ARIA', () => {
+    it('root 加 role="group" + aria-label', () => {
+      const wrapper = mount(InputOtp)
+      expect(wrapper.attributes('role')).toBe('group')
+      expect(wrapper.attributes('aria-label')).toBe('OTP input')
+    })
+
+    it('disabled / status=error 时补 aria-disabled / aria-invalid', () => {
+      const wrapper = mount(InputOtp, { props: { disabled: true, status: 'error' } })
+      expect(wrapper.attributes('aria-disabled')).toBe('true')
+      expect(wrapper.attributes('aria-invalid')).toBe('true')
+    })
+  })
 })

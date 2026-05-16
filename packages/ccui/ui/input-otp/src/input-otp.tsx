@@ -169,7 +169,13 @@ export default defineComponent({
     return () =>
       h(
         'div',
-        { class: wrapperCls.value, role: 'group', 'aria-label': 'OTP input' },
+        {
+          class: wrapperCls.value,
+          role: 'group',
+          'aria-label': 'OTP input',
+          'aria-disabled': props.disabled ? true : undefined,
+          'aria-invalid': props.status === 'error' ? true : undefined,
+        },
         cells.value.map((cellValue, idx) => {
           const displayValue = cellValue && maskChar.value ? maskChar.value : cellValue
           return h('input', {
@@ -183,6 +189,8 @@ export default defineComponent({
             value: displayValue,
             disabled: props.disabled,
             'aria-label': `OTP cell ${idx + 1}`,
+            'aria-disabled': props.disabled ? true : undefined,
+            'aria-invalid': props.status === 'error' ? true : undefined,
             onInput: (e: Event) => handleInput(idx, e),
             onKeydown: (e: KeyboardEvent) => handleKeydown(idx, e),
             onPaste: (e: ClipboardEvent) => handlePaste(idx, e),
