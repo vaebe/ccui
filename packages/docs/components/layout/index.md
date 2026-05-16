@@ -165,22 +165,22 @@ function onCollapse(val, type) {
 
 ### LayoutSider Props
 
-| 参数                  | 类型                                            | 默认值   | 说明                                                                                                              |
-| --------------------- | ----------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| width                 | `number \| string`                              | `200`    | 展开宽度                                                                                                          |
-| collapsedWidth        | `number \| string`                              | `80`     | 折叠后宽度。设为 `0` 时 Sider 完全消失，触发器由 `zeroWidthTriggerStyle` 定位为浮动按钮                           |
-| collapsed             | `boolean`                                       | —        | 当前折叠状态，支持 `v-model:collapsed`                                                                            |
-| defaultCollapsed      | `boolean`                                       | `false`  | 初始折叠状态                                                                                                      |
-| collapsible           | `boolean`                                       | `false`  | 显示底部折叠按钮                                                                                                  |
-| reverseArrow          | `boolean`                                       | `false`  | 折叠按钮的箭头反向                                                                                                |
-| theme                 | `'light' \| 'dark'`                             | `'dark'` | 主题色                                                                                                            |
-| breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | 响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值             |
-| zeroWidthTriggerStyle | `CSSProperties`                                 | —        | `collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                                          |
+| 参数                  | 类型                                            | 默认值   | 说明                                                                                                  |
+| --------------------- | ----------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| width                 | `number \| string`                              | `200`    | 展开宽度                                                                                              |
+| collapsedWidth        | `number \| string`                              | `80`     | 折叠后宽度。设为 `0` 时 Sider 完全消失，触发器由 `zeroWidthTriggerStyle` 定位为浮动按钮               |
+| collapsed             | `boolean`                                       | —        | 当前折叠状态，支持 `v-model:collapsed`                                                                |
+| defaultCollapsed      | `boolean`                                       | `false`  | 初始折叠状态                                                                                          |
+| collapsible           | `boolean`                                       | `false`  | 显示底部折叠按钮                                                                                      |
+| reverseArrow          | `boolean`                                       | `false`  | 折叠按钮的箭头反向                                                                                    |
+| theme                 | `'light' \| 'dark'`                             | `'dark'` | 主题色                                                                                                |
+| breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | 响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值 |
+| zeroWidthTriggerStyle | `CSSProperties`                                 | —        | `collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                              |
 
 ### LayoutSider Events
 
-| 事件             | 回调签名                         | 说明                                                                                     |
-| ---------------- | -------------------------------- | ---------------------------------------------------------------------------------------- |
-| update:collapsed | `(value: boolean)`               | 折叠状态变化                                                                             |
-| collapse         | `(value: boolean, type: string)` | 折叠被触发，`type` 为 `'clickTrigger'` / `'responsive'`                                  |
-| breakpoint       | `(broken: boolean)`              | 断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复             |
+| 事件             | 回调签名                         | 说明                                                                         |
+| ---------------- | -------------------------------- | ---------------------------------------------------------------------------- |
+| update:collapsed | `(value: boolean)`               | 折叠状态变化                                                                 |
+| collapse         | `(value: boolean, type: string)` | 折叠被触发，`type` 为 `'clickTrigger'` / `'responsive'`                      |
+| breakpoint       | `(broken: boolean)`              | 断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复 |

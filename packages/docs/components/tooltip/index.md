@@ -366,50 +366,50 @@ function log(type) {
 
 ### Tooltip Props
 
-| 参数                 | 说明                                                               | 类型                                         | 默认值 |
-| -------------------- | ------------------------------------------------------------------ | -------------------------------------------- | ------ |
-| title                | 显示的内容。也可用 `slot#title` 传入                               | string \| VNode                              | —      |
-| content              | @deprecated 请改用 `title`（slot 同名 `content` 仍可用）           | string                                       | —      |
-| open / v-model:open  | 显示状态                                                           | boolean                                      | false  |
-| visible              | @deprecated 请改用 `open`                                          | boolean                                      | false  |
-| placement            | 出现位置（12 种）                                                  | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
-| effect               | 内置主题                                                           | `'dark' \| 'light'`                          | dark   |
-| color                | 自定义背景色（覆盖 `effect`）                                      | string                                       | —      |
-| arrow                | 箭头配置；对象形 `{ pointAtCenter: true }` 对准触发器中心          | `boolean \| { pointAtCenter: boolean }`      | true   |
-| show-arrow           | @deprecated 请改用 `arrow`                                         | boolean                                      | true   |
-| mouseEnterDelay      | 鼠标进入触发显示的延迟（ms）                                       | number                                       | 0      |
-| show-after           | @deprecated 请改用 `mouseEnterDelay`                               | number                                       | 0      |
-| mouseLeaveDelay      | 鼠标离开触发隐藏的延迟（ms）                                       | number                                       | 200    |
-| hide-after           | @deprecated 请改用 `mouseLeaveDelay`                               | number                                       | 200    |
-| overlayClassName     | 弹层 class                                                         | string                                       | —      |
-| popper-class         | @deprecated 请改用 `overlayClassName`                              | string                                       | —      |
-| trigger              | 触发方式                                                           | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
-| disabled             | 是否禁用                                                           | boolean                                      | false  |
-| offset               | 距触发器的偏移量（px）                                             | number                                       | 8      |
-| enterable            | 鼠标是否可进入到 tooltip 中                                        | boolean                                      | true   |
-| raw-content          | 是否将 content 作为 HTML 字符串处理                                | boolean                                      | false  |
-| fresh                | 关闭后是否销毁内部内容                                             | boolean                                      | false  |
-| destroyTooltipOnHide | 隐藏时销毁 tooltip 节点                                            | boolean                                      | false  |
-| autoAdjustOverflow   | 自动调整方向避免溢出（接 floating-ui flip）                        | boolean                                      | true   |
-| align                | floating-ui offset / flip 等微调参数                               | object                                       | —      |
-| getPopupContainer    | 自定义弹层容器（返回 `null` 不 Teleport）                          | `(trigger) => HTMLElement \| null`           | —      |
-| aria-label           | 屏幕阅读器标签                                                     | string                                       | —      |
+| 参数                 | 说明                                                      | 类型                                         | 默认值 |
+| -------------------- | --------------------------------------------------------- | -------------------------------------------- | ------ |
+| title                | 显示的内容。也可用 `slot#title` 传入                      | string \| VNode                              | —      |
+| content              | @deprecated 请改用 `title`（slot 同名 `content` 仍可用）  | string                                       | —      |
+| open / v-model:open  | 显示状态                                                  | boolean                                      | false  |
+| visible              | @deprecated 请改用 `open`                                 | boolean                                      | false  |
+| placement            | 出现位置（12 种）                                         | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
+| effect               | 内置主题                                                  | `'dark' \| 'light'`                          | dark   |
+| color                | 自定义背景色（覆盖 `effect`）                             | string                                       | —      |
+| arrow                | 箭头配置；对象形 `{ pointAtCenter: true }` 对准触发器中心 | `boolean \| { pointAtCenter: boolean }`      | true   |
+| show-arrow           | @deprecated 请改用 `arrow`                                | boolean                                      | true   |
+| mouseEnterDelay      | 鼠标进入触发显示的延迟（ms）                              | number                                       | 0      |
+| show-after           | @deprecated 请改用 `mouseEnterDelay`                      | number                                       | 0      |
+| mouseLeaveDelay      | 鼠标离开触发隐藏的延迟（ms）                              | number                                       | 200    |
+| hide-after           | @deprecated 请改用 `mouseLeaveDelay`                      | number                                       | 200    |
+| overlayClassName     | 弹层 class                                                | string                                       | —      |
+| popper-class         | @deprecated 请改用 `overlayClassName`                     | string                                       | —      |
+| trigger              | 触发方式                                                  | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
+| disabled             | 是否禁用                                                  | boolean                                      | false  |
+| offset               | 距触发器的偏移量（px）                                    | number                                       | 8      |
+| enterable            | 鼠标是否可进入到 tooltip 中                               | boolean                                      | true   |
+| raw-content          | 是否将 content 作为 HTML 字符串处理                       | boolean                                      | false  |
+| fresh                | 关闭后是否销毁内部内容                                    | boolean                                      | false  |
+| destroyTooltipOnHide | 隐藏时销毁 tooltip 节点                                   | boolean                                      | false  |
+| autoAdjustOverflow   | 自动调整方向避免溢出（接 floating-ui flip）               | boolean                                      | true   |
+| align                | floating-ui offset / flip 等微调参数                      | object                                       | —      |
+| getPopupContainer    | 自定义弹层容器（返回 `null` 不 Teleport）                 | `(trigger) => HTMLElement \| null`           | —      |
+| aria-label           | 屏幕阅读器标签                                            | string                                       | —      |
 
 ### Tooltip Events
 
-| 事件名         | 说明                                   | 回调参数 |
-| -------------- | -------------------------------------- | -------- |
-| before-show    | 显示前触发                             | —        |
-| show           | 显示时触发                             | —        |
-| before-hide    | 隐藏前触发                             | —        |
-| hide           | 隐藏时触发                             | —        |
-| update:open    | v-model:open 同步                      | open     |
-| update:visible | v-model:visible 同步（已 deprecated）  | visible  |
+| 事件名         | 说明                                  | 回调参数 |
+| -------------- | ------------------------------------- | -------- |
+| before-show    | 显示前触发                            | —        |
+| show           | 显示时触发                            | —        |
+| before-hide    | 隐藏前触发                            | —        |
+| hide           | 隐藏时触发                            | —        |
+| update:open    | v-model:open 同步                     | open     |
+| update:visible | v-model:visible 同步（已 deprecated） | visible  |
 
 ### Tooltip Slots
 
-| 插槽名  | 说明                                        |
-| ------- | ------------------------------------------- |
-| default | Tooltip 触发 & 引用的元素                   |
-| title   | 自定义内容（优先于 `title` prop）           |
-| content | 同 `title`（兼容名，仍可用）                |
+| 插槽名  | 说明                              |
+| ------- | --------------------------------- |
+| default | Tooltip 触发 & 引用的元素         |
+| title   | 自定义内容（优先于 `title` prop） |
+| content | 同 `title`（兼容名，仍可用）      |

@@ -576,25 +576,25 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ### Form
 
-| 参数                 | 类型                                                          | 默认值     | 说明                                                                   |
-| -------------------- | ------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
-| model                | object                                                        | {}         | 表单数据对象                                                           |
-| rules                | FormRules                                                     | {}         | 表单校验规则                                                           |
-| initialValues        | object                                                        | {}         | 表单初始值                                                             |
-| labelWidth           | string / number                                               | --         | 标签宽度（简单场景）；`labelCol` 优先级更高                            |
-| labelCol             | `{ span?: number; offset?: number; flex?: string \| number }` | --         | 24 栅格布局的 label 列配置，按 `(span/24)*100%` 换算为 width           |
-| wrapperCol           | 同 labelCol                                                   | --         | 表单控件区列配置                                                       |
-| labelPosition        | left / right / top                                            | right      | 标签位置                                                               |
-| layout               | horizontal / vertical / inline                                | horizontal | 表单布局                                                               |
-| disabled             | boolean                                                       | false      | 禁用态样式标记                                                         |
-| colon                | boolean                                                       | true       | 是否显示标签冒号                                                       |
-| requiredMark         | boolean / 'optional'                                          | true       | 必填/可选标记显示策略                                                  |
-| hasFeedback          | boolean                                                       | false      | 校验状态图标（FormItem 显式优先；图标随 currentStatus 切）             |
-| validateMessages     | FormValidateMessages                                          | {}         | 校验消息模板                                                           |
-| validateOnRuleChange | boolean                                                       | true       | 规则变化时清理校验状态                                                 |
-| scrollToFirstError   | boolean / ScrollIntoViewOptions                               | false      | 校验失败时滚动到首个错误字段                                           |
-| name                 | string                                                        | --         | 表单名（接入 FormProvider）                                            |
-| preserve             | boolean                                                       | true       | 字段卸载时是否保留 model 值                                            |
+| 参数                 | 类型                                                          | 默认值     | 说明                                                         |
+| -------------------- | ------------------------------------------------------------- | ---------- | ------------------------------------------------------------ |
+| model                | object                                                        | {}         | 表单数据对象                                                 |
+| rules                | FormRules                                                     | {}         | 表单校验规则                                                 |
+| initialValues        | object                                                        | {}         | 表单初始值                                                   |
+| labelWidth           | string / number                                               | --         | 标签宽度（简单场景）；`labelCol` 优先级更高                  |
+| labelCol             | `{ span?: number; offset?: number; flex?: string \| number }` | --         | 24 栅格布局的 label 列配置，按 `(span/24)*100%` 换算为 width |
+| wrapperCol           | 同 labelCol                                                   | --         | 表单控件区列配置                                             |
+| labelPosition        | left / right / top                                            | right      | 标签位置                                                     |
+| layout               | horizontal / vertical / inline                                | horizontal | 表单布局                                                     |
+| disabled             | boolean                                                       | false      | 禁用态样式标记                                               |
+| colon                | boolean                                                       | true       | 是否显示标签冒号                                             |
+| requiredMark         | boolean / 'optional'                                          | true       | 必填/可选标记显示策略                                        |
+| hasFeedback          | boolean                                                       | false      | 校验状态图标（FormItem 显式优先；图标随 currentStatus 切）   |
+| validateMessages     | FormValidateMessages                                          | {}         | 校验消息模板                                                 |
+| validateOnRuleChange | boolean                                                       | true       | 规则变化时清理校验状态                                       |
+| scrollToFirstError   | boolean / ScrollIntoViewOptions                               | false      | 校验失败时滚动到首个错误字段                                 |
+| name                 | string                                                        | --         | 表单名（接入 FormProvider）                                  |
+| preserve             | boolean                                                       | true       | 字段卸载时是否保留 model 值                                  |
 
 ### FormItem
 

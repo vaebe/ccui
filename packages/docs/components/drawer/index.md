@@ -176,28 +176,28 @@ const text = ref('')
 
 ### Props
 
-| 参数                   | 类型                                                                                 | 默认值    | 说明                                                                                   |
-| ---------------------- | ------------------------------------------------------------------------------------ | --------- | -------------------------------------------------------------------------------------- |
-| open                   | boolean                                                                              | `false`   | 是否显示（支持 `v-model:open`）                                                        |
-| visible                | boolean                                                                              | `false`   | @deprecated 请改用 `open`                                                              |
-| title                  | string                                                                               | `''`      | 标题                                                                                   |
-| placement              | `DrawerPlacement`                                                                    | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`                                          |
-| size                   | `number \| string`                                                                   | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）                                      |
-| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`    | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label                                 |
-| maskClosable           | boolean                                                                              | `true`    | 点遮罩是否关闭                                                                         |
-| keyboard               | boolean                                                                              | `true`    | Esc 键是否关闭                                                                         |
-| closeOnEsc             | boolean                                                                              | `true`    | @deprecated 请改用 `keyboard`                                                          |
-| mask                   | boolean                                                                              | `true`    | 是否显示遮罩                                                                           |
-| loading                | boolean                                                                              | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换                        |
-| footer                 | `string \| VNode \| null \| undefined`                                               | --        | 底部内容（`null` 隐藏；string/VNode 直接渲染；undefined 启用 slot）                    |
-| showFooter             | boolean                                                                              | `false`   | @deprecated 请改用 `footer` 或 `footer` slot                                           |
-| destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                                     |
-| keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                                       |
-| focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                                           |
-| push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                                   |
-| zIndex                 | number                                                                               | `1000`    | 层级                                                                                   |
-| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                              | --        | 自定义挂载容器；返回 `null` 时内联渲染                                                 |
-| appendToBody           | boolean                                                                              | `true`    | @deprecated 请改用 `getContainer`                                                      |
+| 参数                   | 类型                                                                                 | 默认值    | 说明                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------ | --------- | ------------------------------------------------------------------- |
+| open                   | boolean                                                                              | `false`   | 是否显示（支持 `v-model:open`）                                     |
+| visible                | boolean                                                                              | `false`   | @deprecated 请改用 `open`                                           |
+| title                  | string                                                                               | `''`      | 标题                                                                |
+| placement              | `DrawerPlacement`                                                                    | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`                       |
+| size                   | `number \| string`                                                                   | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）                   |
+| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`    | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label              |
+| maskClosable           | boolean                                                                              | `true`    | 点遮罩是否关闭                                                      |
+| keyboard               | boolean                                                                              | `true`    | Esc 键是否关闭                                                      |
+| closeOnEsc             | boolean                                                                              | `true`    | @deprecated 请改用 `keyboard`                                       |
+| mask                   | boolean                                                                              | `true`    | 是否显示遮罩                                                        |
+| loading                | boolean                                                                              | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换     |
+| footer                 | `string \| VNode \| null \| undefined`                                               | --        | 底部内容（`null` 隐藏；string/VNode 直接渲染；undefined 启用 slot） |
+| showFooter             | boolean                                                                              | `false`   | @deprecated 请改用 `footer` 或 `footer` slot                        |
+| destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                  |
+| keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                    |
+| focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                        |
+| push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
+| zIndex                 | number                                                                               | `1000`    | 层级                                                                |
+| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                              | --        | 自定义挂载容器；返回 `null` 时内联渲染                              |
+| appendToBody           | boolean                                                                              | `true`    | @deprecated 请改用 `getContainer`                                   |
 
 ### Events
 

@@ -196,7 +196,7 @@ const date = ref(new Date())
 
 ### Slots
 
-| 名称     | 说明                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------- |
-| header   | 自定义日历头部，作用域 `{ value, currentMonth, setDate, changeMonth }`（详见上方 demo）           |
-| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号               |
+| 名称     | 说明                                                                                    |
+| -------- | --------------------------------------------------------------------------------------- |
+| header   | 自定义日历头部，作用域 `{ value, currentMonth, setDate, changeMonth }`（详见上方 demo） |
+| dateCell | 自定义日期 cell，参数 `{ isSelected, date, day }`：是否选中 / 完整日期串 / 单元日号     |

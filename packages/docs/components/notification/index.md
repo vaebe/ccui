@@ -295,19 +295,19 @@ function show() {
 
 ### NotificationOptions
 
-| 字段         | 类型                    | 默认         | 说明                                                                                      |
-| ------------ | ----------------------- | ------------ | ----------------------------------------------------------------------------------------- |
-| title        | string                  | —            | 通知标题（建议必填）                                                                      |
-| description  | `string \| VNode`       | —            | 通知正文                                                                                  |
-| type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                            |
-| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`         |
-| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒；`0` 不自动关闭                                         |
-| showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                          |
-| icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                                        |
-| customClass  | string                  | `''`         | 自定义类名                                                                                |
-| onClose      | `() => void`            | —            | 关闭时回调                                                                                |
-| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）                   |
-| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器                                                               |
+| 字段         | 类型                    | 默认         | 说明                                                                             |
+| ------------ | ----------------------- | ------------ | -------------------------------------------------------------------------------- |
+| title        | string                  | —            | 通知标题（建议必填）                                                             |
+| description  | `string \| VNode`       | —            | 通知正文                                                                         |
+| type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                   |
+| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft` |
+| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒；`0` 不自动关闭                                 |
+| showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                 |
+| icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                               |
+| customClass  | string                  | `''`         | 自定义类名                                                                       |
+| onClose      | `() => void`            | —            | 关闭时回调                                                                       |
+| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）           |
+| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器                                                       |
 
 ### NotificationGlobalConfig
 

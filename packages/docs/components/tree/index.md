@@ -404,38 +404,38 @@ function onDrop(info: { dragNode: any; node: any; dropPosition: 'before' | 'insi
 
 ## Props
 
-| 参数                 | 类型                                              | 默认值  | 说明                                           |
-| -------------------- | ------------------------------------------------- | ------- | ---------------------------------------------- |
-| data                 | `TreeNodeData[]`                                  | `[]`    | 树数据                                         |
-| fieldNames           | `{ key?, title?, children?, disabled?, isLeaf? }` | --      | 字段名映射                                     |
-| selectable           | `boolean`                                         | `true`  | 是否允许选中                                   |
-| multiple             | `boolean`                                         | `false` | 是否允许多选                                   |
-| selectedKeys         | `(string \| number)[]`                            | --      | 选中 key，配 `v-model:selected-keys` 接管      |
-| defaultSelectedKeys  | `(string \| number)[]`                            | `[]`    | 初始选中 key                                   |
-| checkable            | `boolean`                                         | `false` | 是否显示勾选框                                 |
-| checkedKeys          | `(string \| number)[]`                            | --      | 勾选 key，配 `v-model:checked-keys` 接管       |
-| defaultCheckedKeys   | `(string \| number)[]`                            | `[]`    | 初始勾选 key                                   |
-| checkStrictly        | `boolean`                                         | `false` | 关闭父子勾选联动                               |
-| expandedKeys         | `(string \| number)[]`                            | --      | 展开 key，配 `v-model:expanded-keys` 接管      |
-| defaultExpandedKeys  | `(string \| number)[]`                            | `[]`    | 初始展开 key                                   |
-| defaultExpandAll     | `boolean`                                         | `false` | 初始展开所有节点                               |
-| disabled             | `boolean`                                         | `false` | 整树禁用                                       |
-| loadData             | `(node) => Promise<void>`                         | --      | 异步加载子节点；展开未加载节点时调用           |
-| draggable            | `boolean`                                         | `false` | 是否允许拖拽                                   |
-| showLine             | `boolean`                                         | `false` | 是否显示连接线（保留接口，样式可由消费者扩展） |
-| blockNode            | `boolean`                                         | `false` | 是否独占整行                                   |
+| 参数                 | 类型                                              | 默认值    | 说明                                                     |
+| -------------------- | ------------------------------------------------- | --------- | -------------------------------------------------------- |
+| data                 | `TreeNodeData[]`                                  | `[]`      | 树数据                                                   |
+| fieldNames           | `{ key?, title?, children?, disabled?, isLeaf? }` | --        | 字段名映射                                               |
+| selectable           | `boolean`                                         | `true`    | 是否允许选中                                             |
+| multiple             | `boolean`                                         | `false`   | 是否允许多选                                             |
+| selectedKeys         | `(string \| number)[]`                            | --        | 选中 key，配 `v-model:selected-keys` 接管                |
+| defaultSelectedKeys  | `(string \| number)[]`                            | `[]`      | 初始选中 key                                             |
+| checkable            | `boolean`                                         | `false`   | 是否显示勾选框                                           |
+| checkedKeys          | `(string \| number)[]`                            | --        | 勾选 key，配 `v-model:checked-keys` 接管                 |
+| defaultCheckedKeys   | `(string \| number)[]`                            | `[]`      | 初始勾选 key                                             |
+| checkStrictly        | `boolean`                                         | `false`   | 关闭父子勾选联动                                         |
+| expandedKeys         | `(string \| number)[]`                            | --        | 展开 key，配 `v-model:expanded-keys` 接管                |
+| defaultExpandedKeys  | `(string \| number)[]`                            | `[]`      | 初始展开 key                                             |
+| defaultExpandAll     | `boolean`                                         | `false`   | 初始展开所有节点                                         |
+| disabled             | `boolean`                                         | `false`   | 整树禁用                                                 |
+| loadData             | `(node) => Promise<void>`                         | --        | 异步加载子节点；展开未加载节点时调用                     |
+| draggable            | `boolean`                                         | `false`   | 是否允许拖拽                                             |
+| showLine             | `boolean`                                         | `false`   | 是否显示连接线（保留接口，样式可由消费者扩展）           |
+| blockNode            | `boolean`                                         | `false`   | 是否独占整行                                             |
 | expandAction         | `'click' \| false`                                | `'click'` | 点击节点正文是否切换展开；`false` 仅 switcher 图标可展开 |
-| searchValue          | `string`                                          | `''`    | 搜索关键字（默认按 title 子串匹配）            |
-| filterTreeNode       | `(node, parentKeys) => boolean`                   | --      | 自定义过滤谓词，返回 true 命中                 |
-| indentSize           | `number`                                          | `24`    | 每级缩进像素                                   |
-| virtualScroll        | `boolean`                                         | `false` | 启用虚拟滚动                                   |
-| virtualItemHeight    | `number`                                          | `32`    | 虚拟滚动单项高度（px）                         |
-| virtualMaxHeight     | `number`                                          | `320`   | 虚拟滚动可视高度（px）                         |
-| focusedKey           | `string \| number`                                | --      | 聚焦节点 key，配 `v-model:focused-key` 接管    |
-| dragHoverExpandDelay | `number`                                          | `600`   | 拖到 inside 区停留多少 ms 后自动展开，0 关闭   |
-| dragAutoScroll       | `boolean`                                         | `true`  | 拖到滚动容器边缘自动滚动                       |
-| dragAutoScrollEdge   | `number`                                          | `32`    | 触发 auto-scroll 的边缘范围（px）              |
-| dragAutoScrollSpeed  | `number`                                          | `12`    | auto-scroll 每帧滚动距离（px）                 |
+| searchValue          | `string`                                          | `''`      | 搜索关键字（默认按 title 子串匹配）                      |
+| filterTreeNode       | `(node, parentKeys) => boolean`                   | --        | 自定义过滤谓词，返回 true 命中                           |
+| indentSize           | `number`                                          | `24`      | 每级缩进像素                                             |
+| virtualScroll        | `boolean`                                         | `false`   | 启用虚拟滚动                                             |
+| virtualItemHeight    | `number`                                          | `32`      | 虚拟滚动单项高度（px）                                   |
+| virtualMaxHeight     | `number`                                          | `320`     | 虚拟滚动可视高度（px）                                   |
+| focusedKey           | `string \| number`                                | --        | 聚焦节点 key，配 `v-model:focused-key` 接管              |
+| dragHoverExpandDelay | `number`                                          | `600`     | 拖到 inside 区停留多少 ms 后自动展开，0 关闭             |
+| dragAutoScroll       | `boolean`                                         | `true`    | 拖到滚动容器边缘自动滚动                                 |
+| dragAutoScrollEdge   | `number`                                          | `32`      | 触发 auto-scroll 的边缘范围（px）                        |
+| dragAutoScrollSpeed  | `number`                                          | `12`      | auto-scroll 每帧滚动距离（px）                           |
 
 ## 事件
 

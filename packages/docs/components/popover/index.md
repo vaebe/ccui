@@ -498,18 +498,18 @@ Popover 的显隐状态说明以 Vue API 为准：
 
 ### Popover Events
 
-| 事件名         | 说明                                       | 回调参数 |
-| -------------- | ------------------------------------------ | -------- |
-| before-show    | 显示前触发                                 | —        |
-| show           | 显示时触发                                 | —        |
-| before-hide    | 隐藏前触发                                 | —        |
-| hide           | 隐藏时触发                                 | —        |
-| update:open    | v-model:open 同步                          | open     |
-| update:visible | v-model:visible 同步（已 deprecated）      | visible  |
-| before-enter   | 显示动画播放前触发                         | —        |
-| after-enter    | 显示动画播放后触发                         | —        |
-| before-leave   | 隐藏动画播放前触发                         | —        |
-| after-leave    | 隐藏动画播放后触发                         | —        |
+| 事件名         | 说明                                  | 回调参数 |
+| -------------- | ------------------------------------- | -------- |
+| before-show    | 显示前触发                            | —        |
+| show           | 显示时触发                            | —        |
+| before-hide    | 隐藏前触发                            | —        |
+| hide           | 隐藏时触发                            | —        |
+| update:open    | v-model:open 同步                     | open     |
+| update:visible | v-model:visible 同步（已 deprecated） | visible  |
+| before-enter   | 显示动画播放前触发                    | —        |
+| after-enter    | 显示动画播放后触发                    | —        |
+| before-leave   | 隐藏动画播放前触发                    | —        |
+| after-leave    | 隐藏动画播放后触发                    | —        |
 
 ### Popover Slots
 

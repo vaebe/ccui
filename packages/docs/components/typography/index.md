@@ -22,8 +22,8 @@
       be involved.
     </c-typography-paragraph>
     <c-typography-paragraph>
-      After massive project practice and summaries, a coherent design language for background applications can
-      take shape.
+      After massive project practice and summaries, a coherent design language for background applications can take
+      shape.
     </c-typography-paragraph>
     <c-typography-title :level="2">Guidelines and Resources</c-typography-title>
     <c-typography-paragraph>
