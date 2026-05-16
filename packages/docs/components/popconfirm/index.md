@@ -31,13 +31,13 @@ function onCancel() {
 
 ## 自定义按钮文案
 
-`confirm-text` / `cancel-text` 调整按钮文字，业务话术更顺。
+`ok-text` / `cancel-text` 调整按钮文字，业务话术更顺。
 
 :::demo
 
 ```vue
 <template>
-  <c-popconfirm title="保存修改？" confirm-text="保存" cancel-text="放弃">
+  <c-popconfirm title="保存修改？" ok-text="保存" cancel-text="放弃">
     <c-button type="primary">保存</c-button>
   </c-popconfirm>
 </template>
@@ -47,21 +47,21 @@ function onCancel() {
 
 ## 不同确定按钮风格
 
-`confirm-type` 切换确定按钮风格：`primary`（默认蓝）/ `danger`（红）/ `default`（次按钮）。
+`ok-type` 切换确定按钮风格：`primary`（默认蓝）/ `danger`（红）/ `default`（次按钮）。
 
 :::demo
 
 ```vue
 <template>
-  <c-popconfirm title="确定执行？" confirm-type="primary">
+  <c-popconfirm title="确定执行？" ok-type="primary">
     <c-button type="primary">primary</c-button>
   </c-popconfirm>
   &nbsp;
-  <c-popconfirm title="确定删除？" confirm-type="danger">
+  <c-popconfirm title="确定删除？" ok-type="danger">
     <c-button type="danger">danger</c-button>
   </c-popconfirm>
   &nbsp;
-  <c-popconfirm title="保留旧数据？" confirm-type="default">
+  <c-popconfirm title="保留旧数据？" ok-type="default">
     <c-button>default</c-button>
   </c-popconfirm>
 </template>
@@ -115,7 +115,7 @@ function onCancel() {
 
 ## 受控显示
 
-通过 `v-model:visible` 自己掌控开合，常用于"先做异步校验再决定要不要弹"。
+通过 `v-model:open` 自己掌控开合，常用于"先做异步校验再决定要不要弹"。
 
 :::demo
 
@@ -124,22 +124,22 @@ function onCancel() {
 import { ref } from 'vue'
 import { message } from '@vaebe/ccui'
 
-const visible = ref(false)
+const open = ref(false)
 
 async function tryDelete() {
   // 异步校验：模拟 500ms
   await new Promise((r) => setTimeout(r, 300))
-  visible.value = true
+  open.value = true
 }
 
 function confirm() {
   message.success('已删除')
-  visible.value = false
+  open.value = false
 }
 </script>
 
 <template>
-  <c-popconfirm v-model:visible="visible" title="后端校验通过，确认删除？" trigger="manual" @confirm="confirm">
+  <c-popconfirm v-model:open="open" title="后端校验通过，确认删除？" trigger="manual" @confirm="confirm">
     <c-button type="danger" @click="tryDelete">校验后再删</c-button>
   </c-popconfirm>
 </template>

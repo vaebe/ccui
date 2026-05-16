@@ -257,13 +257,9 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-::: tip
-也支持 `:show-after` / `:hide-after`，运行时与 `mouseEnterDelay` / `mouseLeaveDelay` 等价（已 deprecated，新代码推荐 `mouse*Delay`）。
-:::
-
 ## 受控显示 v-model:open
 
-`open` 配合 `v-model:open` 双向同步；`visible` / `v-model:visible` 仍兼容（已 deprecated）。
+`open` 配合 `v-model:open` 双向同步。
 
 :::demo
 
@@ -443,14 +439,6 @@ const users = [
 ```
 
 :::
-
-## Vue 状态语义
-
-Popover 的显隐状态说明以 Vue API 为准：
-
-- 需要业务状态接管时，使用 `v-model:open`（或 `v-model:visible` 旧名）接管显隐
-- 由触发方式自行管理时，使用 `trigger="click"` / `trigger="hover"` / `trigger="focus"` 等内部状态路径
-- 文档中避免使用 React 语境的 controlled / uncontrolled 作为主要说明
 
 ## API
 

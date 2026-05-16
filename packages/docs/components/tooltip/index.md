@@ -235,10 +235,6 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-::: tip
-也支持 `:show-after` / `:hide-after`，运行时与 `mouseEnterDelay` / `mouseLeaveDelay` 等价（已 deprecated，新代码推荐 `mouse*Delay`）。
-:::
-
 ## 禁用
 
 `disabled=true` 时永远不触发显示。
@@ -265,7 +261,7 @@ const disabled = ref(false)
 
 ## 受控显示 v-model:open
 
-`open` 配合 `v-model:open` 双向同步；`visible` / `v-model:visible` 仍兼容（已 deprecated）。
+`open` 配合 `v-model:open` 双向同步。
 
 :::demo
 
