@@ -15,9 +15,7 @@
 ```vue
 <template>
   <c-badge-ribbon text="Hippies">
-    <c-card title="缎带示例" style="width: 280px">
-      内容主体...
-    </c-card>
+    <c-card title="缎带示例" style="width: 280px"> 内容主体... </c-card>
   </c-badge-ribbon>
 </template>
 ```
@@ -57,7 +55,20 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {
-      colors: ['pink', 'red', 'volcano', 'orange', 'gold', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple', 'magenta'],
+      colors: [
+        'pink',
+        'red',
+        'volcano',
+        'orange',
+        'gold',
+        'lime',
+        'green',
+        'cyan',
+        'blue',
+        'geekblue',
+        'purple',
+        'magenta',
+      ],
     }
   },
 })
@@ -115,15 +126,15 @@ export default defineComponent({
 
 ## BadgeRibbon 参数
 
-| 参数      | 类型                  | 默认 | 说明                                                              |
-| --------- | --------------------- | ---- | ----------------------------------------------------------------- |
-| text      | string                | ''   | 缎带文字（slot `text` 优先）                                      |
-| color     | string                | ''   | 预设色名 / CSS color 字符串；预设色走 modifier，其余走 inline 背景 |
-| placement | 'start' \| 'end'      | end  | 缎带位置（右上 / 左上）                                            |
+| 参数      | 类型             | 默认 | 说明                                                               |
+| --------- | ---------------- | ---- | ------------------------------------------------------------------ |
+| text      | string           | ''   | 缎带文字（slot `text` 优先）                                       |
+| color     | string           | ''   | 预设色名 / CSS color 字符串；预设色走 modifier，其余走 inline 背景 |
+| placement | 'start' \| 'end' | end  | 缎带位置（右上 / 左上）                                            |
 
 ## BadgeRibbon 插槽
 
-| 插槽名  | 说明                                       |
-| ------- | ------------------------------------------ |
-| default | 被装饰的内容（缎带浮于其右/左上角）         |
-| text    | 缎带内文字 / 节点，优先级高于 `text` prop  |
+| 插槽名  | 说明                                      |
+| ------- | ----------------------------------------- |
+| default | 被装饰的内容（缎带浮于其右/左上角）       |
+| text    | 缎带内文字 / 节点，优先级高于 `text` prop |

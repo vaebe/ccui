@@ -165,7 +165,11 @@ const justifies = ['flex-start', 'center', 'flex-end', 'space-between', 'space-a
   <c-flex vertical :gap="12">
     <div v-for="j in justifies" :key="j">
       <p style="color: #666; margin: 0 0 4px">justify="{{ j }}"</p>
-      <c-flex :justify="j" align="center" style="background: #fafafa; padding: 8px; border-radius: 6px; min-height: 40px">
+      <c-flex
+        :justify="j"
+        align="center"
+        style="background: #fafafa; padding: 8px; border-radius: 6px; min-height: 40px"
+      >
         <c-tag>A</c-tag>
         <c-tag>B</c-tag>
         <c-tag>C</c-tag>
@@ -229,12 +233,20 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 ```vue
 <template>
   <c-flex vertical style="background: #fafafa; border-radius: 6px; height: 240px; overflow: hidden">
-    <c-flex justify="space-between" align="center" style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #f0f0f0">
+    <c-flex
+      justify="space-between"
+      align="center"
+      style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #f0f0f0"
+    >
       <strong>页头</strong>
       <c-button size="small">登出</c-button>
     </c-flex>
     <c-flex flex="1" style="overflow: hidden">
-      <c-flex vertical gap="small" style="width: 120px; padding: 12px; background: #fafafa; border-right: 1px solid #f0f0f0">
+      <c-flex
+        vertical
+        gap="small"
+        style="width: 120px; padding: 12px; background: #fafafa; border-right: 1px solid #f0f0f0"
+      >
         <c-tag>菜单 1</c-tag>
         <c-tag>菜单 2</c-tag>
         <c-tag>菜单 3</c-tag>
@@ -243,7 +255,11 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
         <span style="color: #999">主内容区</span>
       </c-flex>
     </c-flex>
-    <c-flex justify="center" align="center" style="padding: 8px; background: #fff; border-top: 1px solid #f0f0f0; color: #999; font-size: 12px">
+    <c-flex
+      justify="center"
+      align="center"
+      style="padding: 8px; background: #fff; border-top: 1px solid #f0f0f0; color: #999; font-size: 12px"
+    >
       © 2026 ccui
     </c-flex>
   </c-flex>
@@ -260,7 +276,11 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 
 ```vue
 <template>
-  <c-flex justify="space-between" align="center" style="background: #fff; border: 1px solid #f0f0f0; padding: 12px 16px; border-radius: 6px">
+  <c-flex
+    justify="space-between"
+    align="center"
+    style="background: #fff; border: 1px solid #f0f0f0; padding: 12px 16px; border-radius: 6px"
+  >
     <strong>订单列表</strong>
     <c-space>
       <c-button size="small">导出</c-button>

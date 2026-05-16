@@ -274,10 +274,10 @@ function show() {
 
 ### UseNotificationReturn
 
-| 字段         | 类型              | 说明                                                              |
-| ------------ | ----------------- | ----------------------------------------------------------------- |
+| 字段         | 类型              | 说明                                                                           |
+| ------------ | ----------------- | ------------------------------------------------------------------------------ |
 | notification | `NotificationApi` | 与全局 `notification` 同 API：`info/success/warning/error/open/config/destroy` |
-| holder       | `Component`       | 必须挂到模板：`<component :is="holder" />`                        |
+| holder       | `Component`       | 必须挂到模板：`<component :is="holder" />`                                     |
 
 ## API
 
@@ -295,35 +295,35 @@ function show() {
 
 ### NotificationOptions
 
-| 字段         | 类型                    | 默认         | 说明                                                                                            |
-| ------------ | ----------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
-| title        | string                  | —            | 通知标题（建议必填）                                                                            |
-| description  | `string \| VNode`       | —            | 通知正文                                                                                        |
-| type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                                  |
-| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`（L-3.5）       |
-| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）                             |
-| showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                                |
-| icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                                              |
-| customClass  | string                  | `''`         | 自定义类名                                                                                      |
-| onClose      | `() => void`            | —            | 关闭时回调                                                                                      |
-| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5）                 |
-| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器（L-3.5）                                                             |
+| 字段         | 类型                    | 默认         | 说明                                                                                      |
+| ------------ | ----------------------- | ------------ | ----------------------------------------------------------------------------------------- |
+| title        | string                  | —            | 通知标题（建议必填）                                                                      |
+| description  | `string \| VNode`       | —            | 通知正文                                                                                  |
+| type         | `NotificationType`      | `'info'`     | 类型：`info` / `success` / `warning` / `error`                                            |
+| placement    | `NotificationPlacement` | `'topRight'` | 6 位置：`top` / `topRight` / `topLeft` / `bottom` / `bottomRight` / `bottomLeft`（L-3.5） |
+| duration     | number                  | `4.5`        | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）                       |
+| showClose    | boolean                 | `true`       | 是否显示关闭按钮                                                                          |
+| icon         | string                  | `''`         | 自定义 icon 名（覆盖默认类型图标）                                                        |
+| customClass  | string                  | `''`         | 自定义类名                                                                                |
+| onClose      | `() => void`            | —            | 关闭时回调                                                                                |
+| role         | `'alert' \| 'status'`   | `'alert'`    | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5）           |
+| pauseOnHover | boolean                 | `true`       | 鼠标悬停暂停自动关闭计时器（L-3.5）                                                       |
 
 ### NotificationGlobalConfig（L-3.5）
 
 通过 `notification.config({...})` 设置；优先级低于单次 `open()` 选项。
 
-| 字段         | 类型                    | 默认         | 说明                                       |
-| ------------ | ----------------------- | ------------ | ------------------------------------------ |
-| duration     | number                  | `4.5`        | 默认停留时长（秒）                         |
-| maxCount     | number                  | `Infinity`   | 单 placement 最多并发条数，超出顶掉最旧    |
-| stack        | boolean                 | `false`      | 视觉堆叠模式（容器加 `--stack` modifier）  |
-| pauseOnHover | boolean                 | `true`       | 全局默认 `pauseOnHover`                    |
-| role         | `'alert' \| 'status'`   | `'alert'`    | 全局默认 `role`                            |
-| placement    | `NotificationPlacement` | `'topRight'` | 全局默认弹出位置                           |
-| top          | `number \| string`      | —            | 顶部偏移（仅作用于 `top*` placement）      |
-| bottom       | `number \| string`      | —            | 底部偏移（仅作用于 `bottom*` placement）   |
-| getContainer | `() => HTMLElement`     | `body`       | 自定义挂载父节点                           |
+| 字段         | 类型                    | 默认         | 说明                                      |
+| ------------ | ----------------------- | ------------ | ----------------------------------------- |
+| duration     | number                  | `4.5`        | 默认停留时长（秒）                        |
+| maxCount     | number                  | `Infinity`   | 单 placement 最多并发条数，超出顶掉最旧   |
+| stack        | boolean                 | `false`      | 视觉堆叠模式（容器加 `--stack` modifier） |
+| pauseOnHover | boolean                 | `true`       | 全局默认 `pauseOnHover`                   |
+| role         | `'alert' \| 'status'`   | `'alert'`    | 全局默认 `role`                           |
+| placement    | `NotificationPlacement` | `'topRight'` | 全局默认弹出位置                          |
+| top          | `number \| string`      | —            | 顶部偏移（仅作用于 `top*` placement）     |
+| bottom       | `number \| string`      | —            | 底部偏移（仅作用于 `bottom*` placement）  |
+| getContainer | `() => HTMLElement`     | `body`       | 自定义挂载父节点                          |
 
 ### NotificationHandle
 

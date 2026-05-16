@@ -176,47 +176,47 @@ const text = ref('')
 
 ### Props
 
-| 参数                   | 类型                                                                                          | 默认值    | 说明                                                                            |
-| ---------------------- | --------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------- |
-| open                   | boolean                                                                                       | `false`   | 是否显示（Ant 主名，支持 `v-model:open`）                                        |
-| visible                | boolean                                                                                       | `false`   | @deprecated 请改用 `open`                                                       |
-| title                  | string                                                                                       | `''`      | 标题                                                                            |
-| placement              | `DrawerPlacement`                                                                            | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`                                    |
-| size                   | `number \| string`                                                                           | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）                                |
-| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }`          | `true`    | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label                          |
-| maskClosable           | boolean                                                                                      | `true`    | 点遮罩是否关闭                                                                  |
-| keyboard               | boolean                                                                                      | `true`    | Esc 键是否关闭（Ant 主名）                                                       |
-| closeOnEsc             | boolean                                                                                      | `true`    | @deprecated 请改用 `keyboard`                                                   |
-| mask                   | boolean                                                                                      | `true`    | 是否显示遮罩                                                                    |
-| loading                | boolean                                                                                      | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换（v5.17+）        |
-| footer                 | `string \| VNode \| null \| undefined`                                                       | --        | 底部内容（`null` 等价 `showFooter=false`；string/VNode 直接渲染；undefined 启用 slot） |
-| showFooter             | boolean                                                                                      | `false`   | @deprecated 请改用 `footer` 或 `footer` slot                                     |
-| destroyOnClose         | boolean                                                                                      | `false`   | 关闭后销毁内部 DOM                                                              |
-| keepAlive              | boolean                                                                                      | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                                 |
-| focusTriggerAfterClose | boolean                                                                                      | `true`    | 关闭后聚焦回打开前的触发元素                                                    |
-| push                   | `boolean \| { distance?: number }`                                                            | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位（与 ant 一致）              |
-| zIndex                 | number                                                                                       | `1000`    | 层级                                                                            |
-| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                                       | --        | 自定义挂载容器；返回 `null` 时内联渲染                                          |
-| appendToBody           | boolean                                                                                      | `true`    | @deprecated 请改用 `getContainer`                                                |
+| 参数                   | 类型                                                                                 | 默认值    | 说明                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------ | --------- | -------------------------------------------------------------------------------------- |
+| open                   | boolean                                                                              | `false`   | 是否显示（Ant 主名，支持 `v-model:open`）                                              |
+| visible                | boolean                                                                              | `false`   | @deprecated 请改用 `open`                                                              |
+| title                  | string                                                                               | `''`      | 标题                                                                                   |
+| placement              | `DrawerPlacement`                                                                    | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`                                          |
+| size                   | `number \| string`                                                                   | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）                                      |
+| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`    | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label                                 |
+| maskClosable           | boolean                                                                              | `true`    | 点遮罩是否关闭                                                                         |
+| keyboard               | boolean                                                                              | `true`    | Esc 键是否关闭（Ant 主名）                                                             |
+| closeOnEsc             | boolean                                                                              | `true`    | @deprecated 请改用 `keyboard`                                                          |
+| mask                   | boolean                                                                              | `true`    | 是否显示遮罩                                                                           |
+| loading                | boolean                                                                              | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换（v5.17+）              |
+| footer                 | `string \| VNode \| null \| undefined`                                               | --        | 底部内容（`null` 等价 `showFooter=false`；string/VNode 直接渲染；undefined 启用 slot） |
+| showFooter             | boolean                                                                              | `false`   | @deprecated 请改用 `footer` 或 `footer` slot                                           |
+| destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                                     |
+| keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                                       |
+| focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                                           |
+| push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位（与 ant 一致）                    |
+| zIndex                 | number                                                                               | `1000`    | 层级                                                                                   |
+| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                              | --        | 自定义挂载容器；返回 `null` 时内联渲染                                                 |
+| appendToBody           | boolean                                                                              | `true`    | @deprecated 请改用 `getContainer`                                                      |
 
 ### Events
 
-| 事件名             | 回调签名             | 触发时机                                              |
-| ------------------ | -------------------- | ----------------------------------------------------- |
-| update:open        | `(open: boolean)`    | 显示状态变化（v-model:open，Ant 主名）                |
-| update:visible     | `(visible: boolean)` | 同步触发的旧名，方便从 `v-model:visible` 渐进迁移      |
-| after-open-change  | `(open: boolean)`    | 打开 / 关闭动画完成后触发（immediate watch，首次 false） |
-| open               | `()`                 | 开启动画开始                                          |
-| opened             | `()`                 | 开启动画结束                                          |
-| close              | `()`                 | 关闭被触发                                            |
-| closed             | `()`                 | 关闭动画结束                                          |
+| 事件名            | 回调签名             | 触发时机                                                 |
+| ----------------- | -------------------- | -------------------------------------------------------- |
+| update:open       | `(open: boolean)`    | 显示状态变化（v-model:open，Ant 主名）                   |
+| update:visible    | `(visible: boolean)` | 同步触发的旧名，方便从 `v-model:visible` 渐进迁移        |
+| after-open-change | `(open: boolean)`    | 打开 / 关闭动画完成后触发（immediate watch，首次 false） |
+| open              | `()`                 | 开启动画开始                                             |
+| opened            | `()`                 | 开启动画结束                                             |
+| close             | `()`                 | 关闭被触发                                               |
+| closed            | `()`                 | 关闭动画结束                                             |
 
 ### Slots
 
-| 名称       | 说明                                         |
-| ---------- | -------------------------------------------- |
-| default    | 抽屉主体内容                                 |
-| title      | 自定义标题（覆盖 `title` 属性）              |
-| footer     | 自定义底部内容（优先级高于 `footer` prop）    |
-| extra      | 标题右侧操作区（与 `title` 同行，inline-flex） |
+| 名称       | 说明                                              |
+| ---------- | ------------------------------------------------- |
+| default    | 抽屉主体内容                                      |
+| title      | 自定义标题（覆盖 `title` 属性）                   |
+| footer     | 自定义底部内容（优先级高于 `footer` prop）        |
+| extra      | 标题右侧操作区（与 `title` 同行，inline-flex）    |
 | close-icon | 自定义关闭图标（优先级高于 `closable.closeIcon`） |

@@ -151,17 +151,9 @@
 <template>
   <c-avatar name="张三" img-src="https://invalid-url.example/x.png" />
   &nbsp;
-  <c-avatar
-    custom-text="VIP"
-    img-src="https://still-invalid.example/y.jpg"
-    gender="female"
-  />
+  <c-avatar custom-text="VIP" img-src="https://still-invalid.example/y.jpg" gender="female" />
   &nbsp;
-  <c-avatar
-    name="default fallback"
-    img-src="https://broken.example/z.png"
-    :is-round="false"
-  />
+  <c-avatar name="default fallback" img-src="https://broken.example/z.png" :is-round="false" />
 </template>
 ```
 
@@ -224,11 +216,15 @@
 ```vue
 <template>
   <div style="display: grid; gap: 12px">
-    <div v-for="u in [
-      { name: '张三', gender: 'male', desc: '前端工程师 · 上海' },
-      { name: '王芳', gender: 'female', desc: '产品经理 · 北京' },
-      { name: 'Alex Liu', desc: 'Tech Lead · 杭州' },
-    ]" :key="u.name" style="display: flex; align-items: center; gap: 12px">
+    <div
+      v-for="u in [
+        { name: '张三', gender: 'male', desc: '前端工程师 · 上海' },
+        { name: '王芳', gender: 'female', desc: '产品经理 · 北京' },
+        { name: 'Alex Liu', desc: 'Tech Lead · 杭州' },
+      ]"
+      :key="u.name"
+      style="display: flex; align-items: center; gap: 12px"
+    >
       <c-avatar :name="u.name" :gender="u.gender" />
       <div>
         <div style="font-weight: 600">{{ u.name }}</div>
@@ -252,7 +248,9 @@
   <div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #eee; border-radius: 8px">
     <c-avatar name="李四" gender="male" :width="40" :height="40" />
     <div style="flex: 1">
-      <div style="font-weight: 600">李四 <span style="color: #999; font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span></div>
+      <div style="font-weight: 600">
+        李四 <span style="color: #999; font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span>
+      </div>
       <div style="margin-top: 4px; color: #555">很好用的组件库，文档示例齐全！</div>
     </div>
   </div>

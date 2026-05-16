@@ -429,8 +429,9 @@ const rowSelection = computed(() => ({
 <template>
   <c-table :columns="columns" :data-source="dataSource" row-key="id" :row-selection="rowSelection"></c-table>
   <p style="color:#666;margin-top:8px">
-    当前已选：<b>{{ selected ? selected.name : '（未选）' }}</b>
-    ，价格：<b>¥{{ selected ? selected.price.toLocaleString() : 0 }}</b>
+    当前已选：<b>{{ selected ? selected.name : '（未选）' }}</b> ，价格：<b
+      >¥{{ selected ? selected.price.toLocaleString() : 0 }}</b
+    >
   </p>
 </template>
 
@@ -442,7 +443,13 @@ const selectedKey = ref(1)
 const columns = [
   { title: '套餐', dataIndex: 'name', key: 'name' },
   { title: '说明', dataIndex: 'desc', key: 'desc' },
-  { title: '价格', dataIndex: 'price', key: 'price', align: 'right', customRender: ({ text }) => `¥${text.toLocaleString()}` },
+  {
+    title: '价格',
+    dataIndex: 'price',
+    key: 'price',
+    align: 'right',
+    customRender: ({ text }) => `¥${text.toLocaleString()}`,
+  },
 ]
 
 const dataSource = [
@@ -477,9 +484,7 @@ const selected = computed(() => dataSource.find((r) => r.id === selectedKey.valu
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
     <c-segmented v-model="size" :options="['small', 'middle', 'default']" />
     <c-button @click="reload">刷新（模拟 loading）</c-button>
-    <label style="margin-inline-start:8px;color:#666">
-      <input v-model="showHeader" type="checkbox" /> 显示表头
-    </label>
+    <label style="margin-inline-start:8px;color:#666"> <input v-model="showHeader" type="checkbox" /> 显示表头 </label>
   </div>
   <c-table
     :columns="columns"
@@ -529,7 +534,13 @@ function reload() {
 ```vue
 <template>
   <div style="margin-bottom:8px">
-    <c-segmented v-model="mode" :options="[{ label: '空数据', value: 'empty' }, { label: '有数据', value: 'full' }]" />
+    <c-segmented
+      v-model="mode"
+      :options="[
+        { label: '空数据', value: 'empty' },
+        { label: '有数据', value: 'full' },
+      ]"
+    />
   </div>
   <c-table :columns="columns" :data-source="mode === 'empty' ? [] : dataSource" row-key="id" bordered>
     <template #empty>
@@ -579,7 +590,9 @@ function onCreate() {
     :pagination="{ pageSize: 3 }"
     @change="onChange"
   ></c-table>
-  <pre style="margin-top:8px;padding:8px;background:#f5f5f5;font-size:12px;max-height:200px;overflow:auto">{{ log }}</pre>
+  <pre style="margin-top:8px;padding:8px;background:#f5f5f5;font-size:12px;max-height:200px;overflow:auto">{{
+    log
+  }}</pre>
 </template>
 
 <script setup>
@@ -630,30 +643,30 @@ function onChange(pagination, filters, sorter, currentData) {
 
 ### Table
 
-| 参数               | 类型                               | 默认值     | 说明                                                |
-| ------------------ | ---------------------------------- | ---------- | --------------------------------------------------- |
-| columns            | TableColumn[]                      | []         | 列配置（与子组件 `<c-table-column>` 互斥；数组优先）|
-| dataSource         | any[]                              | []         | 行数据                                              |
-| rowKey             | string / (record, index) => string | 'key'      | 行唯一标识                                          |
-| bordered           | boolean                            | false      | 是否带边框                                          |
-| loading            | boolean                            | false      | 是否显示加载遮罩                                    |
-| showHeader         | boolean                            | true       | 是否显示表头                                        |
-| size               | 'small' / 'middle' / 'default'     | 'default'  | 紧凑度                                              |
-| pagination         | boolean / TablePaginationConfig    | false      | 分页配置，false 关闭                                |
-| rowSelection       | TableRowSelection                  | --         | 行选择配置                                          |
-| expandable         | TableExpandable                    | --         | 展开行配置                                          |
-| scroll             | { x?, y? }                         | --         | 横/纵向滚动；横向滚动通常配合 fixed 使用            |
-| childrenColumnName | string                             | 'children' | 树形数据子节点字段名                                |
-| indentSize         | number                             | 15         | 树形数据每层缩进 px                                 |
+| 参数               | 类型                               | 默认值     | 说明                                                 |
+| ------------------ | ---------------------------------- | ---------- | ---------------------------------------------------- |
+| columns            | TableColumn[]                      | []         | 列配置（与子组件 `<c-table-column>` 互斥；数组优先） |
+| dataSource         | any[]                              | []         | 行数据                                               |
+| rowKey             | string / (record, index) => string | 'key'      | 行唯一标识                                           |
+| bordered           | boolean                            | false      | 是否带边框                                           |
+| loading            | boolean                            | false      | 是否显示加载遮罩                                     |
+| showHeader         | boolean                            | true       | 是否显示表头                                         |
+| size               | 'small' / 'middle' / 'default'     | 'default'  | 紧凑度                                               |
+| pagination         | boolean / TablePaginationConfig    | false      | 分页配置，false 关闭                                 |
+| rowSelection       | TableRowSelection                  | --         | 行选择配置                                           |
+| expandable         | TableExpandable                    | --         | 展开行配置                                           |
+| scroll             | { x?, y? }                         | --         | 横/纵向滚动；横向滚动通常配合 fixed 使用             |
+| childrenColumnName | string                             | 'children' | 树形数据子节点字段名                                 |
+| indentSize         | number                             | 15         | 树形数据每层缩进 px                                  |
 
 ### Slots
 
-| 名称        | 作用域                                  | 说明                                                     |
-| ----------- | --------------------------------------- | -------------------------------------------------------- |
-| default     | --                                      | 模板式列声明容器，放 `<c-table-column>` 等子组件         |
-| body-cell   | `{ text, record, index, column }`       | 单元格统一自定义渲染，按 `column.key` 区分列              |
-| header-cell | `{ column, index }`                     | 表头单元格统一自定义渲染                                 |
-| empty       | --                                      | 空数据占位                                               |
+| 名称        | 作用域                            | 说明                                             |
+| ----------- | --------------------------------- | ------------------------------------------------ |
+| default     | --                                | 模板式列声明容器，放 `<c-table-column>` 等子组件 |
+| body-cell   | `{ text, record, index, column }` | 单元格统一自定义渲染，按 `column.key` 区分列     |
+| header-cell | `{ column, index }`               | 表头单元格统一自定义渲染                         |
+| empty       | --                                | 空数据占位                                       |
 
 ### TableColumn
 
@@ -677,28 +690,28 @@ function onChange(pagination, filters, sorter, currentData) {
 
 ### TablePaginationConfig
 
-| 字段            | 类型      | 说明                                       |
-| --------------- | --------- | ------------------------------------------ |
-| current         | number    | 当前页码（受控）                            |
-| pageSize        | number    | 每页条数                                    |
-| total           | number    | 总条数                                      |
-| showSizeChanger | boolean   | 是否显示「每页条数」切换器                  |
-| pageSizeOptions | number[]  | 可选每页条数                                |
+| 字段            | 类型     | 说明                       |
+| --------------- | -------- | -------------------------- |
+| current         | number   | 当前页码（受控）           |
+| pageSize        | number   | 每页条数                   |
+| total           | number   | 总条数                     |
+| showSizeChanger | boolean  | 是否显示「每页条数」切换器 |
+| pageSizeOptions | number[] | 可选每页条数               |
 
 ### TableRowSelection
 
-| 字段                   | 类型                                                          | 说明                                       |
-| ---------------------- | ------------------------------------------------------------- | ------------------------------------------ |
-| type                   | 'checkbox' / 'radio'                                          | 选择方式，默认多选                          |
-| selectedRowKeys        | (string \| number)[]                                          | 受控选中行 key                              |
-| defaultSelectedRowKeys | (string \| number)[]                                          | 非受控初始选中                              |
-| columnWidth            | string / number                                               | 选择列宽                                    |
-| hideSelectAll          | boolean                                                       | 是否隐藏「全选」表头复选框                  |
-| fixed                  | boolean                                                       | 是否固定到左侧（有 left fixed 列时自动跟随）|
-| getCheckboxProps       | (record) => { disabled?, name? }                              | 单行复选框属性扩展，最常用于禁用特定行     |
-| onChange               | (selectedRowKeys, selectedRows) => void                       | 选中变化回调                                |
-| onSelect               | (record, selected, selectedRows) => void                      | 单行勾选变化                                |
-| onSelectAll            | (selected, selectedRows, changedRows) => void                 | 表头全选 / 反选                             |
+| 字段                   | 类型                                          | 说明                                         |
+| ---------------------- | --------------------------------------------- | -------------------------------------------- |
+| type                   | 'checkbox' / 'radio'                          | 选择方式，默认多选                           |
+| selectedRowKeys        | (string \| number)[]                          | 受控选中行 key                               |
+| defaultSelectedRowKeys | (string \| number)[]                          | 非受控初始选中                               |
+| columnWidth            | string / number                               | 选择列宽                                     |
+| hideSelectAll          | boolean                                       | 是否隐藏「全选」表头复选框                   |
+| fixed                  | boolean                                       | 是否固定到左侧（有 left fixed 列时自动跟随） |
+| getCheckboxProps       | (record) => { disabled?, name? }              | 单行复选框属性扩展，最常用于禁用特定行       |
+| onChange               | (selectedRowKeys, selectedRows) => void       | 选中变化回调                                 |
+| onSelect               | (record, selected, selectedRows) => void      | 单行勾选变化                                 |
+| onSelectAll            | (selected, selectedRows, changedRows) => void | 表头全选 / 反选                              |
 
 ### TableExpandable
 
@@ -719,26 +732,26 @@ function onChange(pagination, filters, sorter, currentData) {
 
 与上表 `TableColumn` 字段一一对应，作为子组件 props 时命名调整：`key` → `column-key`（避开 Vue 保留属性）；`children` 由嵌入的 `<c-table-column>` 子组件自动收集，不需手写。
 
-| Slots         | 作用域                            | 说明                              |
-| ------------- | --------------------------------- | --------------------------------- |
-| customRender  | `{ text, record, index, column }` | 列内单元格自定义渲染（slot 优先于 customRender prop） |
+| Slots        | 作用域                            | 说明                                                  |
+| ------------ | --------------------------------- | ----------------------------------------------------- |
+| customRender | `{ text, record, index, column }` | 列内单元格自定义渲染（slot 优先于 customRender prop） |
 
 ### TableColumnGroup（子组件 `<c-table-column-group>`）
 
-| 参数         | 类型                                  | 说明                              |
-| ------------ | ------------------------------------- | --------------------------------- |
-| title        | string                                | 分组表头标题                       |
-| align        | 'left' / 'center' / 'right'           | 分组表头对齐                       |
-| fixed        | 'left' / 'right'                      | 整组固定列方向                     |
-| onHeaderCell | (column) => TableCellRenderProps      | 表头单元格属性扩展                 |
+| 参数         | 类型                             | 说明               |
+| ------------ | -------------------------------- | ------------------ |
+| title        | string                           | 分组表头标题       |
+| align        | 'left' / 'center' / 'right'      | 分组表头对齐       |
+| fixed        | 'left' / 'right'                 | 整组固定列方向     |
+| onHeaderCell | (column) => TableCellRenderProps | 表头单元格属性扩展 |
 
 默认 slot 放 `<c-table-column>` 子列；子列在 tbody 中被展平渲染，在 thead 表现为「分组标题 + 子列标题」双行结构。
 
 ### TableSummary（子组件 `<c-table-summary>`）
 
-| 参数  | 类型                          | 默认值 | 说明                                          |
-| ----- | ----------------------------- | ------ | --------------------------------------------- |
-| fixed | boolean / 'top' / 'bottom'    | false  | 汇总行是否贴底/贴顶（依赖容器 `scroll.y`）    |
+| 参数  | 类型                       | 默认值 | 说明                                       |
+| ----- | -------------------------- | ------ | ------------------------------------------ |
+| fixed | boolean / 'top' / 'bottom' | false  | 汇总行是否贴底/贴顶（依赖容器 `scroll.y`） |
 
 默认 slot 直接写 `<tr><td>...</td></tr>`，Table 渲染到 `<tfoot>`。
 

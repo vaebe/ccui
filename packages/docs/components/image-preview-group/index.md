@@ -48,10 +48,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {
-      items: [
-        'https://picsum.photos/seed/x/600/400',
-        'https://picsum.photos/seed/y/600/400',
-      ],
+      items: ['https://picsum.photos/seed/x/600/400', 'https://picsum.photos/seed/y/600/400'],
     }
   },
 })
@@ -102,11 +99,7 @@ export default defineComponent({
   <c-button @click="open(0)">看第 1 张</c-button>
   <c-button @click="open(1)" style="margin-left: 8px">看第 2 张</c-button>
   <c-button @click="open(2)" style="margin-left: 8px">看第 3 张</c-button>
-  <c-image-preview-group
-    :items="items"
-    :preview="preview"
-    @update:preview="onUpdate"
-  />
+  <c-image-preview-group :items="items" :preview="preview" @update:preview="onUpdate" />
 </template>
 ```
 
@@ -192,26 +185,26 @@ export default defineComponent({
 
 ## ImagePreviewGroup 参数
 
-| 参数    | 类型                                          | 默认 | 说明                                                       |
-| ------- | --------------------------------------------- | ---- | ---------------------------------------------------------- |
-| items   | string[] \| { src: string; alt?: string }[]   | --   | 图片数组；传则自动渲染缩略图，不传走默认 slot 模式         |
-| preview | { visible?: boolean; current?: number }       | --   | 受控预览状态；传则受控，未传则内部维护                     |
-| maxZoom | number                                        | 6    | 缩放上限                                                   |
-| minZoom | number                                        | 0.25 | 缩放下限                                                   |
+| 参数    | 类型                                        | 默认 | 说明                                               |
+| ------- | ------------------------------------------- | ---- | -------------------------------------------------- |
+| items   | string[] \| { src: string; alt?: string }[] | --   | 图片数组；传则自动渲染缩略图，不传走默认 slot 模式 |
+| preview | { visible?: boolean; current?: number }     | --   | 受控预览状态；传则受控，未传则内部维护             |
+| maxZoom | number                                      | 6    | 缩放上限                                           |
+| minZoom | number                                      | 0.25 | 缩放下限                                           |
 
 ## ImagePreviewGroup 事件
 
-| 事件名         | 参数                                       | 说明                              |
-| -------------- | ------------------------------------------ | --------------------------------- |
-| update:preview | { visible: boolean; current: number }      | 受控模式回写                      |
-| change         | current: number                            | 当前显示图片下标变化              |
-| visible-change | visible: boolean                           | 打开 / 关闭预览                   |
+| 事件名         | 参数                                  | 说明                 |
+| -------------- | ------------------------------------- | -------------------- |
+| update:preview | { visible: boolean; current: number } | 受控模式回写         |
+| change         | current: number                       | 当前显示图片下标变化 |
+| visible-change | visible: boolean                      | 打开 / 关闭预览      |
 
 ## ImagePreviewGroup 插槽
 
-| 插槽名  | 说明                                                           |
-| ------- | -------------------------------------------------------------- |
-| default | 仅未传 `items` 时生效；缩略图等内容由父组件自定义渲染          |
+| 插槽名  | 说明                                                  |
+| ------- | ----------------------------------------------------- |
+| default | 仅未传 `items` 时生效；缩略图等内容由父组件自定义渲染 |
 
 ## 行为说明
 

@@ -180,44 +180,44 @@ export default defineComponent({
 
 ## CheckableTag 参数
 
-| 参数     | 类型              | 默认  | 说明                                                 |
-| -------- | ----------------- | ----- | ---------------------------------------------------- |
-| checked  | boolean           | --    | 受控勾选状态；group 模式下由 group 注入决定          |
-| value    | string \| number  | --    | group 模式下匹配 group 的 modelValue                 |
-| disabled | boolean           | false | 是否禁用                                             |
+| 参数     | 类型             | 默认  | 说明                                        |
+| -------- | ---------------- | ----- | ------------------------------------------- |
+| checked  | boolean          | --    | 受控勾选状态；group 模式下由 group 注入决定 |
+| value    | string \| number | --    | group 模式下匹配 group 的 modelValue        |
+| disabled | boolean          | false | 是否禁用                                    |
 
 ## CheckableTag 事件
 
-| 事件名          | 参数            | 说明                                            |
-| --------------- | --------------- | ----------------------------------------------- |
-| update:checked  | boolean         | v-model:checked（仅独立使用时触发）             |
-| change          | boolean         | 状态切换（仅独立使用时触发）                    |
+| 事件名         | 参数    | 说明                                |
+| -------------- | ------- | ----------------------------------- |
+| update:checked | boolean | v-model:checked（仅独立使用时触发） |
+| change         | boolean | 状态切换（仅独立使用时触发）        |
 
 ## CheckableTag 插槽
 
-| 插槽名  | 说明           |
-| ------- | -------------- |
-| default | 标签文本内容   |
+| 插槽名  | 说明         |
+| ------- | ------------ |
+| default | 标签文本内容 |
 
 ## CheckableTagGroup 参数
 
-| 参数        | 类型                                  | 默认    | 说明                                              |
-| ----------- | ------------------------------------- | ------- | ------------------------------------------------- |
-| modelValue  | (string \| number)[]                  | []      | 已勾选值列表（v-model）                           |
-| options     | CheckableTagOption[]                  | --      | 声明式选项 `{ label, value, disabled? }`           |
-| disabled    | boolean                               | false   | 是否禁用整个 group                                |
-| maxCount    | number                                | --      | 最大勾选数量；达上限后未勾选项 click 被忽略       |
-| size        | 'large' \| 'default' \| 'small'       | default | 子标签尺寸                                        |
+| 参数       | 类型                            | 默认    | 说明                                        |
+| ---------- | ------------------------------- | ------- | ------------------------------------------- |
+| modelValue | (string \| number)[]            | []      | 已勾选值列表（v-model）                     |
+| options    | CheckableTagOption[]            | --      | 声明式选项 `{ label, value, disabled? }`    |
+| disabled   | boolean                         | false   | 是否禁用整个 group                          |
+| maxCount   | number                          | --      | 最大勾选数量；达上限后未勾选项 click 被忽略 |
+| size       | 'large' \| 'default' \| 'small' | default | 子标签尺寸                                  |
 
 ## CheckableTagGroup 事件
 
-| 事件名            | 参数                  | 说明                                         |
-| ----------------- | --------------------- | -------------------------------------------- |
-| update:modelValue | (string \| number)[]  | v-model                                      |
-| change            | (string \| number)[]  | 选中变化                                     |
+| 事件名            | 参数                 | 说明     |
+| ----------------- | -------------------- | -------- |
+| update:modelValue | (string \| number)[] | v-model  |
+| change            | (string \| number)[] | 选中变化 |
 
 ## CheckableTagGroup 插槽
 
-| 插槽名  | 说明                                                          |
-| ------- | ------------------------------------------------------------- |
-| default | 内嵌 `<c-checkable-tag :value="...">` 子标签，由 group 接管   |
+| 插槽名  | 说明                                                        |
+| ------- | ----------------------------------------------------------- |
+| default | 内嵌 `<c-checkable-tag :value="...">` 子标签，由 group 接管 |

@@ -153,13 +153,11 @@
   <c-badge :count="5">
     <span class="head-example" />
   </c-badge>
-  默认
-  &nbsp;&nbsp;&nbsp;
+  默认 &nbsp;&nbsp;&nbsp;
   <c-badge :count="5" :offset="[-4, 4]">
     <span class="head-example" />
   </c-badge>
-  offset=[-4, 4]
-  &nbsp;&nbsp;&nbsp;
+  offset=[-4, 4] &nbsp;&nbsp;&nbsp;
   <c-badge :count="5" :offset="[10, -10]">
     <span class="head-example" />
   </c-badge>
@@ -258,7 +256,25 @@
 ```vue
 <template>
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 720px">
-    <c-badge-ribbon v-for="c in ['pink', 'red', 'volcano', 'orange', 'gold', 'yellow', 'lime', 'green', 'cyan', 'blue', 'geekblue', 'purple']" :key="c" :text="c" :color="c">
+    <c-badge-ribbon
+      v-for="c in [
+        'pink',
+        'red',
+        'volcano',
+        'orange',
+        'gold',
+        'yellow',
+        'lime',
+        'green',
+        'cyan',
+        'blue',
+        'geekblue',
+        'purple',
+      ]"
+      :key="c"
+      :text="c"
+      :color="c"
+    >
       <div class="card-example">{{ c }}</div>
     </c-badge-ribbon>
   </div>

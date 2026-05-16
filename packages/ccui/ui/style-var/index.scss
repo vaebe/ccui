@@ -2,3 +2,7 @@
 @forward 'form-control-variant';
 
 $cls-prefix: ccui;
+
+// 静态颜色常量（不属于主题 token，不参与 light/dark 切换）
+$ccui-color-white: #ffffff;
+$ccui-color-black: #000000;

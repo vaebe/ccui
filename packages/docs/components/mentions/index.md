@@ -184,7 +184,13 @@ const value = ref('')
 
 <template>
   <div style="height: 80px"></div>
-  <c-mentions v-model="value" :options="['anna', 'bob', 'charlie']" placement="top" :rows="3" placeholder="评论框：浮层向上弹出" />
+  <c-mentions
+    v-model="value"
+    :options="['anna', 'bob', 'charlie']"
+    placement="top"
+    :rows="3"
+    placeholder="评论框：浮层向上弹出"
+  />
 </template>
 ```
 
@@ -320,25 +326,25 @@ const opts = ['alice', 'bob', 'charlie']
 
 ### Props
 
-| 参数            | 类型                                                | 默认值     | 说明                                              |
-| --------------- | --------------------------------------------------- | ---------- | ------------------------------------------------- |
-| modelValue      | string \| null                                      | --         | 当前输入值，支持 `v-model`                        |
-| defaultValue    | string                                              | `''`       | 非受控初始值                                      |
-| options         | `(string \| { value, label?, disabled? })[]`        | `[]`       | 候选项                                            |
-| prefix          | `string \| string[]`                                | `'@'`      | 触发字符；数组形态可同时识别多个                  |
-| split           | string                                              | `' '`      | 选中后追加的分隔符                                |
-| placeholder     | string                                              | --         | 占位文案                                          |
-| disabled        | boolean                                             | `false`    | 是否禁用                                          |
-| rows            | number                                              | `3`        | textarea 行数                                     |
-| filterOption    | `boolean \| (input, option) => boolean`             | `true`     | 过滤逻辑                                          |
-| caseSensitive   | boolean                                             | `false`    | 默认过滤是否区分大小写                            |
-| notFoundContent | string                                              | `暂无数据` | 空数据占位                                        |
-| placement       | `'top' \| 'bottom'`                                 | `'bottom'` | 浮层方位（基于 textarea）                         |
-| popupMaxHeight  | number                                              | `256`      | 浮层最大高度（px）                                |
-| autoSize        | `boolean \| { minRows?: number, maxRows?: number }` | `false`    | 自适应 textarea 高度；`true` 无限制，对象指定范围 |
-| searchDebounce  | number                                              | `0`        | 搜索防抖延迟（毫秒），`0` 不防抖                  |
-| variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）        |
-| status          | `'' \| 'error' \| 'warning'`                        | `''`       | 校验状态，Form 联动会自动透传                     |
+| 参数            | 类型                                                     | 默认值       | 说明                                              |
+| --------------- | -------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| modelValue      | string \| null                                           | --           | 当前输入值，支持 `v-model`                        |
+| defaultValue    | string                                                   | `''`         | 非受控初始值                                      |
+| options         | `(string \| { value, label?, disabled? })[]`             | `[]`         | 候选项                                            |
+| prefix          | `string \| string[]`                                     | `'@'`        | 触发字符；数组形态可同时识别多个                  |
+| split           | string                                                   | `' '`        | 选中后追加的分隔符                                |
+| placeholder     | string                                                   | --           | 占位文案                                          |
+| disabled        | boolean                                                  | `false`      | 是否禁用                                          |
+| rows            | number                                                   | `3`          | textarea 行数                                     |
+| filterOption    | `boolean \| (input, option) => boolean`                  | `true`       | 过滤逻辑                                          |
+| caseSensitive   | boolean                                                  | `false`      | 默认过滤是否区分大小写                            |
+| notFoundContent | string                                                   | `暂无数据`   | 空数据占位                                        |
+| placement       | `'top' \| 'bottom'`                                      | `'bottom'`   | 浮层方位（基于 textarea）                         |
+| popupMaxHeight  | number                                                   | `256`        | 浮层最大高度（px）                                |
+| autoSize        | `boolean \| { minRows?: number, maxRows?: number }`      | `false`      | 自适应 textarea 高度；`true` 无限制，对象指定范围 |
+| searchDebounce  | number                                                   | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                  |
+| variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）             |
+| status          | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传                     |
 
 ### Events
 

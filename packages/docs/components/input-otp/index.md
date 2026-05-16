@@ -146,26 +146,26 @@ export default defineComponent({
 
 ## InputOtp 参数
 
-| 参数         | 类型                            | 默认    | 说明                                                     |
-| ------------ | ------------------------------- | ------- | -------------------------------------------------------- |
-| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model                     |
-| defaultValue | string                          | --      | 非受控初值                                               |
-| length       | number                          | 6       | 单元格数量                                               |
-| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示             |
-| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用                           |
-| autoFocus    | boolean                         | false   | 挂载时聚焦首格                                           |
-| disabled     | boolean                         | false   | 整体禁用                                                 |
-| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                                     |
-| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                                 |
+| 参数         | 类型                            | 默认    | 说明                                         |
+| ------------ | ------------------------------- | ------- | -------------------------------------------- |
+| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model         |
+| defaultValue | string                          | --      | 非受控初值                                   |
+| length       | number                          | 6       | 单元格数量                                   |
+| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示 |
+| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用               |
+| autoFocus    | boolean                         | false   | 挂载时聚焦首格                               |
+| disabled     | boolean                         | false   | 整体禁用                                     |
+| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                         |
+| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                     |
 
 ## InputOtp 事件
 
-| 事件名            | 参数              | 说明                                       |
-| ----------------- | ----------------- | ------------------------------------------ |
-| update:modelValue | value             | v-model                                    |
-| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号   |
-| focus             | event             | 任一 cell 获得焦点                         |
-| blur              | event             | 任一 cell 失去焦点                         |
+| 事件名            | 参数               | 说明                                     |
+| ----------------- | ------------------ | ---------------------------------------- |
+| update:modelValue | value              | v-model                                  |
+| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号 |
+| focus             | event              | 任一 cell 获得焦点                       |
+| blur              | event              | 任一 cell 失去焦点                       |
 
 ## 行为说明
 

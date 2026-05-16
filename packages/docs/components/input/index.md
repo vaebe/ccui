@@ -267,25 +267,25 @@ const v3 = ref('')
 
 ## Input参数
 
-| 参数            | 类型                                          | 默认    | 说明                                                                                  |
-| --------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
-| type            | [InputType](#inputtype)                       | text    | 输入框类型                                                                            |
-| size            | [InputSize](#inputsize)                       | default | 输入框尺寸                                                                            |
-| placeholder     | string                                        | --      | 占位符                                                                                |
-| disabled        | boolean                                       | false   | 是否为禁用状态                                                                        |
-| readonly        | boolean                                       | false   | 是否为只读状态                                                                        |
-| modelValue      | string                                        | --      | 绑定值（v-model）                                                                     |
-| defaultValue    | string                                        | --      | 非受控初值，仅首次挂载使用                                                            |
-| allowClear      | boolean \| { clearIcon?: VNode \| string }    | --      | 是否显示清除按钮（Ant 主名，支持 Iconify name / VNode 自定义图标）                       |
-| show-password   | boolean                                       | false   | 密码输入时是否可切换可见性                                                            |
-| addonBefore     | string                                        | ''      | 前置 addon 文本（Ant 主名）                                                            |
-| addonAfter      | string                                        | ''      | 后置 addon 文本（Ant 主名）                                                            |
-| maxLength       | number                                        | --      | 最大长度（透传原生 `maxlength`）                                                      |
-| showCount       | boolean \| { formatter?: (info) => string }   | false   | 显示字符计数，配合 `maxLength` 显示 `N / max`；formatter 接 `({ value, count, maxLength })` |
-| status          | '' \| 'error' \| 'warning'                    | ''      | 校验状态，Form 联动会自动透传                                                          |
-| clearable       | boolean                                       | false   | @deprecated 请改用 `allowClear`                                                       |
-| prepend         | string                                        | --      | @deprecated 请改用 `addonBefore` 或 `addon-before` slot                                |
-| append          | string                                        | --      | @deprecated 请改用 `addonAfter` 或 `addon-after` slot                                  |
+| 参数          | 类型                                        | 默认    | 说明                                                                                        |
+| ------------- | ------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| type          | [InputType](#inputtype)                     | text    | 输入框类型                                                                                  |
+| size          | [InputSize](#inputsize)                     | default | 输入框尺寸                                                                                  |
+| placeholder   | string                                      | --      | 占位符                                                                                      |
+| disabled      | boolean                                     | false   | 是否为禁用状态                                                                              |
+| readonly      | boolean                                     | false   | 是否为只读状态                                                                              |
+| modelValue    | string                                      | --      | 绑定值（v-model）                                                                           |
+| defaultValue  | string                                      | --      | 非受控初值，仅首次挂载使用                                                                  |
+| allowClear    | boolean \| { clearIcon?: VNode \| string }  | --      | 是否显示清除按钮（Ant 主名，支持 Iconify name / VNode 自定义图标）                          |
+| show-password | boolean                                     | false   | 密码输入时是否可切换可见性                                                                  |
+| addonBefore   | string                                      | ''      | 前置 addon 文本（Ant 主名）                                                                 |
+| addonAfter    | string                                      | ''      | 后置 addon 文本（Ant 主名）                                                                 |
+| maxLength     | number                                      | --      | 最大长度（透传原生 `maxlength`）                                                            |
+| showCount     | boolean \| { formatter?: (info) => string } | false   | 显示字符计数，配合 `maxLength` 显示 `N / max`；formatter 接 `({ value, count, maxLength })` |
+| status        | '' \| 'error' \| 'warning'                  | ''      | 校验状态，Form 联动会自动透传                                                               |
+| clearable     | boolean                                     | false   | @deprecated 请改用 `allowClear`                                                             |
+| prepend       | string                                      | --      | @deprecated 请改用 `addonBefore` 或 `addon-before` slot                                     |
+| append        | string                                      | --      | @deprecated 请改用 `addonAfter` 或 `addon-after` slot                                       |
 
 ## Input类型定义
 
@@ -303,23 +303,23 @@ export type InputSize = 'large' | 'default' | 'small'
 
 ## Input事件
 
-| 事件名            | 参数            | 说明                                  |
-| ----------------- | --------------- | ------------------------------------- |
-| update:modelValue | value           | 绑定值改变时触发（v-model 事件）      |
-| input             | value           | 输入框值改变时触发                    |
-| change            | value           | 输入框值改变并失去焦点时触发          |
-| focus             | event           | 输入框获得焦点时触发                  |
-| blur              | event           | 输入框失去焦点时触发                  |
-| clear             | --              | 点击清除图标时触发                    |
-| press-enter       | KeyboardEvent   | Enter 键按下时触发（对齐 ant `onPressEnter`） |
+| 事件名            | 参数          | 说明                                          |
+| ----------------- | ------------- | --------------------------------------------- |
+| update:modelValue | value         | 绑定值改变时触发（v-model 事件）              |
+| input             | value         | 输入框值改变时触发                            |
+| change            | value         | 输入框值改变并失去焦点时触发                  |
+| focus             | event         | 输入框获得焦点时触发                          |
+| blur              | event         | 输入框失去焦点时触发                          |
+| clear             | --            | 点击清除图标时触发                            |
+| press-enter       | KeyboardEvent | Enter 键按下时触发（对齐 ant `onPressEnter`） |
 
 ## Input插槽
 
-| 插槽名       | 说明                              |
-| ------------ | --------------------------------- |
-| addon-before | 前置 addon 内容（Ant 主名）         |
-| addon-after  | 后置 addon 内容（Ant 主名）         |
-| prefix       | 输入框内左侧前缀                  |
-| suffix       | 输入框内右侧后缀                  |
-| prepend      | @deprecated 同 `addon-before`     |
-| append       | @deprecated 同 `addon-after`      |
+| 插槽名       | 说明                          |
+| ------------ | ----------------------------- |
+| addon-before | 前置 addon 内容（Ant 主名）   |
+| addon-after  | 后置 addon 内容（Ant 主名）   |
+| prefix       | 输入框内左侧前缀              |
+| suffix       | 输入框内右侧后缀              |
+| prepend      | @deprecated 同 `addon-before` |
+| append       | @deprecated 同 `addon-after`  |

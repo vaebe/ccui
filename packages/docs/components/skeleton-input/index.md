@@ -35,8 +35,8 @@
 
 ## SkeletonInput 参数
 
-| 参数   | 类型                                | 默认        | 说明                |
-| ------ | ----------------------------------- | ----------- | ------------------- |
-| active | `boolean`                           | `false`     | 是否启用动画        |
-| block  | `boolean`                           | `false`     | 撑满父容器宽度      |
-| size   | `'large' \| 'default' \| 'small'`   | `'default'` | 尺寸                |
+| 参数   | 类型                              | 默认        | 说明           |
+| ------ | --------------------------------- | ----------- | -------------- |
+| active | `boolean`                         | `false`     | 是否启用动画   |
+| block  | `boolean`                         | `false`     | 撑满父容器宽度 |
+| size   | `'large' \| 'default' \| 'small'` | `'default'` | 尺寸           |

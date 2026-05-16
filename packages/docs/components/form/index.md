@@ -411,11 +411,7 @@ const model = reactive({ name: '', email: '', desc: '' })
 </script>
 
 <template>
-  <c-form
-    :model="model"
-    :label-col="{ span: 6 }"
-    :wrapper-col="{ span: 16 }"
-  >
+  <c-form :model="model" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }">
     <c-form-item label="姓名" prop="name">
       <c-input v-model="model.name" />
     </c-form-item>
@@ -580,50 +576,50 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ### Form
 
-| 参数                 | 类型                                              | 默认值     | 说明                                                                |
-| -------------------- | ------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
-| model                | object                                            | {}         | 表单数据对象                                                        |
-| rules                | FormRules                                         | {}         | 表单校验规则                                                        |
-| initialValues        | object                                            | {}         | 表单初始值                                                          |
-| labelWidth           | string / number                                   | --         | 标签宽度（简单场景）；`labelCol` 优先级更高                          |
+| 参数                 | 类型                                                          | 默认值     | 说明                                                                   |
+| -------------------- | ------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| model                | object                                                        | {}         | 表单数据对象                                                           |
+| rules                | FormRules                                                     | {}         | 表单校验规则                                                           |
+| initialValues        | object                                                        | {}         | 表单初始值                                                             |
+| labelWidth           | string / number                                               | --         | 标签宽度（简单场景）；`labelCol` 优先级更高                            |
 | labelCol             | `{ span?: number; offset?: number; flex?: string \| number }` | --         | 24 栅格布局的 label 列配置（Ant 风），按 `(span/24)*100%` 换算为 width |
-| wrapperCol           | 同 labelCol                                       | --         | 表单控件区列配置                                                    |
-| labelPosition        | left / right / top                                | right      | 标签位置                                                            |
-| layout               | horizontal / vertical / inline                    | horizontal | 表单布局                                                            |
-| disabled             | boolean                                           | false      | 禁用态样式标记                                                      |
-| colon                | boolean                                           | true       | 是否显示标签冒号                                                    |
-| requiredMark         | boolean / 'optional'                              | true       | 必填/可选标记显示策略                                               |
-| hasFeedback          | boolean                                           | false      | 校验状态图标（FormItem 显式优先；图标随 currentStatus 切）           |
-| validateMessages     | FormValidateMessages                              | {}         | 校验消息模板                                                        |
-| validateOnRuleChange | boolean                                           | true       | 规则变化时清理校验状态                                              |
-| scrollToFirstError   | boolean / ScrollIntoViewOptions                   | false      | 校验失败时滚动到首个错误字段                                        |
-| name                 | string                                            | --         | 表单名（接入 FormProvider）                                         |
-| preserve             | boolean                                           | true       | 字段卸载时是否保留 model 值                                         |
+| wrapperCol           | 同 labelCol                                                   | --         | 表单控件区列配置                                                       |
+| labelPosition        | left / right / top                                            | right      | 标签位置                                                               |
+| layout               | horizontal / vertical / inline                                | horizontal | 表单布局                                                               |
+| disabled             | boolean                                                       | false      | 禁用态样式标记                                                         |
+| colon                | boolean                                                       | true       | 是否显示标签冒号                                                       |
+| requiredMark         | boolean / 'optional'                                          | true       | 必填/可选标记显示策略                                                  |
+| hasFeedback          | boolean                                                       | false      | 校验状态图标（FormItem 显式优先；图标随 currentStatus 切）             |
+| validateMessages     | FormValidateMessages                                          | {}         | 校验消息模板                                                           |
+| validateOnRuleChange | boolean                                                       | true       | 规则变化时清理校验状态                                                 |
+| scrollToFirstError   | boolean / ScrollIntoViewOptions                               | false      | 校验失败时滚动到首个错误字段                                           |
+| name                 | string                                                        | --         | 表单名（接入 FormProvider）                                            |
+| preserve             | boolean                                                       | true       | 字段卸载时是否保留 model 值                                            |
 
 ### FormItem
 
-| 参数             | 类型                                          | 默认值    | 说明                                                                  |
-| ---------------- | --------------------------------------------- | --------- | --------------------------------------------------------------------- |
-| name             | string / number / array                       | --        | 字段路径，支持数组路径                                                |
-| prop             | string / number / array                       | --        | 字段路径，兼容旧 API                                                  |
-| label            | string                                        | --        | 标签文本                                                              |
-| labelCol         | 同 Form 同名 prop                             | --        | 当前项 label 列配置（显式优先于 Form 级）                              |
-| wrapperCol       | 同 Form 同名 prop                             | --        | 当前项控件列配置                                                      |
-| initialValue     | any                                           | --        | 字段初始值                                                            |
-| required         | boolean                                       | false     | 是否必填                                                              |
-| rules            | `FormRule \| FormRule[] \| ((model) => FormRule \| FormRule[])` | --        | 字段校验规则（支持函数式动态生成）                                    |
-| help             | string                                        | --        | 帮助或外部错误文案                                                    |
-| extra            | string                                        | --        | 额外提示文案                                                          |
-| validateStatus   | success / error / warning / validating        | --        | 外部校验状态（含 warning，配合 `warningOnly` rule）                    |
-| hasFeedback      | boolean                                       | 跟随 Form | 校验状态图标（图标 ✓ / ✕ / ! / ◌ 随 currentStatus 切，input padding-right 让位） |
-| dependencies     | FormNamePath[]                                | []        | 依赖字段变化后重新校验当前项                                          |
-| validateDebounce | number                                        | --        | 触发校验的 debounce ms                                                |
-| normalize        | `(value, prevValue, allValues) => any`        | --        | 在校验/提交前 normalize 值                                            |
-| htmlFor          | string                                        | --        | label 的 for 属性                                                     |
-| colon            | boolean                                       | 跟随 Form | 是否显示当前项冒号                                                    |
-| hidden           | boolean                                       | false     | 隐藏字段但保留注册                                                    |
-| noStyle          | boolean                                       | false     | 不显示标准表单项样式                                                  |
-| preserve         | boolean                                       | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置                                    |
+| 参数             | 类型                                                            | 默认值    | 说明                                                                             |
+| ---------------- | --------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------- |
+| name             | string / number / array                                         | --        | 字段路径，支持数组路径                                                           |
+| prop             | string / number / array                                         | --        | 字段路径，兼容旧 API                                                             |
+| label            | string                                                          | --        | 标签文本                                                                         |
+| labelCol         | 同 Form 同名 prop                                               | --        | 当前项 label 列配置（显式优先于 Form 级）                                        |
+| wrapperCol       | 同 Form 同名 prop                                               | --        | 当前项控件列配置                                                                 |
+| initialValue     | any                                                             | --        | 字段初始值                                                                       |
+| required         | boolean                                                         | false     | 是否必填                                                                         |
+| rules            | `FormRule \| FormRule[] \| ((model) => FormRule \| FormRule[])` | --        | 字段校验规则（支持函数式动态生成）                                               |
+| help             | string                                                          | --        | 帮助或外部错误文案                                                               |
+| extra            | string                                                          | --        | 额外提示文案                                                                     |
+| validateStatus   | success / error / warning / validating                          | --        | 外部校验状态（含 warning，配合 `warningOnly` rule）                              |
+| hasFeedback      | boolean                                                         | 跟随 Form | 校验状态图标（图标 ✓ / ✕ / ! / ◌ 随 currentStatus 切，input padding-right 让位） |
+| dependencies     | FormNamePath[]                                                  | []        | 依赖字段变化后重新校验当前项                                                     |
+| validateDebounce | number                                                          | --        | 触发校验的 debounce ms                                                           |
+| normalize        | `(value, prevValue, allValues) => any`                          | --        | 在校验/提交前 normalize 值                                                       |
+| htmlFor          | string                                                          | --        | label 的 for 属性                                                                |
+| colon            | boolean                                                         | 跟随 Form | 是否显示当前项冒号                                                               |
+| hidden           | boolean                                                         | false     | 隐藏字段但保留注册                                                               |
+| noStyle          | boolean                                                         | false     | 不显示标准表单项样式                                                             |
+| preserve         | boolean                                                         | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置                                               |
 
 > **不做的 Ant API（Vue 已覆盖）**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议；`shouldUpdate` —— React 渲染优化原语，Vue 响应式自动处理。
 >
@@ -631,19 +627,19 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ### FormRule
 
-| 字段        | 类型                                                                 | 说明                                                       |
-| ----------- | -------------------------------------------------------------------- | ---------------------------------------------------------- |
-| required    | boolean                                                              | 是否必填                                                   |
-| message     | string                                                               | 校验失败提示文案（不传时走 validateMessages 模板）          |
-| trigger     | 'change' / 'blur' / 'submit' 或其数组                                | 触发时机                                                   |
-| type        | 'string' / 'number' / 'boolean' / 'array' / 'object' / 'email' / 'url' | 类型校验                                                   |
-| min / max   | number                                                               | 长度（string / array）或数值上下限                          |
-| len         | number                                                               | 精确长度                                                   |
-| pattern     | RegExp                                                               | 正则校验                                                   |
-| enum        | any[]                                                                | 枚举校验                                                   |
-| whitespace  | boolean                                                              | 是否拒绝纯空白字符串                                       |
-| warningOnly | boolean                                                              | 失败时降级为 warning 状态，不阻塞 form-level submit         |
-| validator   | `(rule, value, model) => boolean \| string \| Error \| Promise<...>` | 自定义同步 / 异步校验函数（返回 false / string 视为失败）   |
+| 字段        | 类型                                                                   | 说明                                                      |
+| ----------- | ---------------------------------------------------------------------- | --------------------------------------------------------- |
+| required    | boolean                                                                | 是否必填                                                  |
+| message     | string                                                                 | 校验失败提示文案（不传时走 validateMessages 模板）        |
+| trigger     | 'change' / 'blur' / 'submit' 或其数组                                  | 触发时机                                                  |
+| type        | 'string' / 'number' / 'boolean' / 'array' / 'object' / 'email' / 'url' | 类型校验                                                  |
+| min / max   | number                                                                 | 长度（string / array）或数值上下限                        |
+| len         | number                                                                 | 精确长度                                                  |
+| pattern     | RegExp                                                                 | 正则校验                                                  |
+| enum        | any[]                                                                  | 枚举校验                                                  |
+| whitespace  | boolean                                                                | 是否拒绝纯空白字符串                                      |
+| warningOnly | boolean                                                                | 失败时降级为 warning 状态，不阻塞 form-level submit       |
+| validator   | `(rule, value, model) => boolean \| string \| Error \| Promise<...>`   | 自定义同步 / 异步校验函数（返回 false / string 视为失败） |
 
 ### FormList
 

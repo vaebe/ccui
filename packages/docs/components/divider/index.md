@@ -118,9 +118,7 @@
 <template>
   <c-divider border-style="dashed">虚线居中</c-divider>
   <c-divider border-style="dashed" content-position="left">虚线靠左</c-divider>
-  <c-divider border-style="dashed" content-position="right" content-color="#1677ff">
-    可选区块 →
-  </c-divider>
+  <c-divider border-style="dashed" content-position="right" content-color="#1677ff"> 可选区块 → </c-divider>
 </template>
 ```
 

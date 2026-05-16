@@ -236,9 +236,7 @@ function onChange(curr, prev) {
   <c-input-number v-model="value" @change="onChange" />
   <p style="margin-top: 8px; color: #666">最近 5 次变更：</p>
   <ul style="margin: 4px 0; padding-left: 20px; color: #666">
-    <li v-for="(log, i) in logs" :key="i">
-      [{{ log.at }}] {{ log.prev }} → {{ log.curr }}
-    </li>
+    <li v-for="(log, i) in logs" :key="i">[{{ log.at }}] {{ log.prev }} → {{ log.curr }}</li>
   </ul>
 </template>
 ```
@@ -299,14 +297,7 @@ const price = ref(0)
 </script>
 
 <template>
-  <c-input-number
-    v-model="price"
-    :precision="2"
-    :step="0.01"
-    :min="0"
-    placeholder="¥ 0.00"
-    controls-position="right"
-  />
+  <c-input-number v-model="price" :precision="2" :step="0.01" :min="0" placeholder="¥ 0.00" controls-position="right" />
   <p style="margin-top: 8px">应付金额：¥ {{ price.toFixed(2) }}</p>
 </template>
 ```
@@ -335,13 +326,7 @@ const positiveOnly = ref(0)
     </div>
     <div>
       <p style="margin: 0 0 4px; color: #666">非负小数（reg = /^\d+(\.\d{0,2})?$/）</p>
-      <c-input-number
-        v-model="positiveOnly"
-        :reg="/^\d+(\.\d{0,2})?$/"
-        :min="0"
-        :precision="2"
-        placeholder="0.00"
-      />
+      <c-input-number v-model="positiveOnly" :reg="/^\d+(\.\d{0,2})?$/" :min="0" :precision="2" placeholder="0.00" />
     </div>
   </div>
 </template>
@@ -429,24 +414,24 @@ const v3 = ref(0)
 
 ## InputNumber参数
 
-| 参数              | 类型                                                                | 默认值      | 说明                                                            |
-| ----------------- | ------------------------------------------------------------------- | ----------- | --------------------------------------------------------------- |
-| v-model           | `number \| undefined`                                               | `undefined` | 绑定值                                                          |
-| step              | `number`                                                            | `1`         | 计数器步长                                                      |
-| placeholder       | `string`                                                            | `''`        | 输入框占位文本                                                  |
-| max               | `number`                                                            | `Infinity`  | 设置计数器允许的最大值                                          |
-| min               | `number`                                                            | `-Infinity` | 设置计数器允许的最小值                                          |
-| disabled          | `boolean`                                                           | `false`     | 是否禁用计数器                                                  |
-| readonly          | `boolean`                                                           | `false`     | 是否只读                                                        |
-| precision         | `number`                                                            | `undefined` | 数值精度                                                        |
-| size              | `'large' \| 'default' \| 'small'`（兼容 `'lg' \| 'md' \| 'sm'` 旧值）| `'default'` | 输入框尺寸，旧名运行时映射到新名并打 deprecated 警告            |
-| controls          | `boolean`                                                           | `true`      | 是否显示控制按钮                                                |
-| controls-position | `'both' \| 'right'`                                                 | `'both'`    | 控制按钮位置                                                    |
-| allow-empty       | `boolean`                                                           | `false`     | 是否允许空值                                                    |
-| show-glow-style   | `boolean`                                                           | `true`      | 是否显示悬浮发光效果                                            |
-| reg               | `RegExp \| string`                                                  | `undefined` | 输入限制的正则表达式，不匹配的字符会被过滤                      |
-| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`            | `'outlined'`| 录入组件统一形态（Ant Design v5.13+）                           |
-| status            | `'' \| 'error' \| 'warning'`                                        | `''`        | 校验状态，Form 联动会自动透传                                   |
+| 参数              | 类型                                                                  | 默认值       | 说明                                                 |
+| ----------------- | --------------------------------------------------------------------- | ------------ | ---------------------------------------------------- |
+| v-model           | `number \| undefined`                                                 | `undefined`  | 绑定值                                               |
+| step              | `number`                                                              | `1`          | 计数器步长                                           |
+| placeholder       | `string`                                                              | `''`         | 输入框占位文本                                       |
+| max               | `number`                                                              | `Infinity`   | 设置计数器允许的最大值                               |
+| min               | `number`                                                              | `-Infinity`  | 设置计数器允许的最小值                               |
+| disabled          | `boolean`                                                             | `false`      | 是否禁用计数器                                       |
+| readonly          | `boolean`                                                             | `false`      | 是否只读                                             |
+| precision         | `number`                                                              | `undefined`  | 数值精度                                             |
+| size              | `'large' \| 'default' \| 'small'`（兼容 `'lg' \| 'md' \| 'sm'` 旧值） | `'default'`  | 输入框尺寸，旧名运行时映射到新名并打 deprecated 警告 |
+| controls          | `boolean`                                                             | `true`       | 是否显示控制按钮                                     |
+| controls-position | `'both' \| 'right'`                                                   | `'both'`     | 控制按钮位置                                         |
+| allow-empty       | `boolean`                                                             | `false`      | 是否允许空值                                         |
+| show-glow-style   | `boolean`                                                             | `true`       | 是否显示悬浮发光效果                                 |
+| reg               | `RegExp \| string`                                                    | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤           |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `'outlined'` | 录入组件统一形态（Ant Design v5.13+）                |
+| status            | `'' \| 'error' \| 'warning'`                                          | `''`         | 校验状态，Form 联动会自动透传                        |
 
 ## InputNumber事件
 

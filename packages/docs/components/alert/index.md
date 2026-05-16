@@ -122,12 +122,7 @@ export default {
     close-text="知道了"
   />
   <br />
-  <c-alert
-    type="warning"
-    message="您正在测试环境"
-    closable
-    close-text="切换到生产"
-  />
+  <c-alert type="warning" message="您正在测试环境" closable close-text="切换到生产" />
 </template>
 ```
 
@@ -230,14 +225,8 @@ Alert 嵌在卡片或表单内部，作为局部提示。
 <template>
   <div style="border: 1px solid #eee; border-radius: 8px; padding: 16px; max-width: 480px">
     <h3 style="margin: 0 0 12px">API 接入配置</h3>
-    <c-alert
-      show-icon
-      type="warning"
-      message="生产环境密钥泄露将导致严重后果，请妥善保管。"
-    />
-    <div style="margin-top: 12px; color: #666; font-size: 13px">
-      App Key：sk-prod-XXXXXXXXXXXX
-    </div>
+    <c-alert show-icon type="warning" message="生产环境密钥泄露将导致严重后果，请妥善保管。" />
+    <div style="margin-top: 12px; color: #666; font-size: 13px">App Key：sk-prod-XXXXXXXXXXXX</div>
   </div>
 </template>
 ```

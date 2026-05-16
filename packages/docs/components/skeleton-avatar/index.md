@@ -41,8 +41,8 @@
 
 ## SkeletonAvatar 参数
 
-| 参数   | 类型                                              | 默认        | 说明                              |
-| ------ | ------------------------------------------------- | ----------- | --------------------------------- |
-| active | `boolean`                                         | `false`     | 是否启用动画                      |
-| size   | `'large' \| 'default' \| 'small' \| number`       | `'default'` | 尺寸；数字走 inline style          |
-| shape  | `'circle' \| 'square'`                            | `'circle'`  | 形态                              |
+| 参数   | 类型                                        | 默认        | 说明                      |
+| ------ | ------------------------------------------- | ----------- | ------------------------- |
+| active | `boolean`                                   | `false`     | 是否启用动画              |
+| size   | `'large' \| 'default' \| 'small' \| number` | `'default'` | 尺寸；数字走 inline style |
+| shape  | `'circle' \| 'square'`                      | `'circle'`  | 形态                      |

@@ -153,11 +153,7 @@ function reset() {
 
 <template>
   <c-input v-model="keyword" placeholder="试着搜点什么" style="margin-bottom: 12px" />
-  <c-empty
-    v-if="results.length === 0"
-    description="未匹配到任何结果"
-    :image-style="{ height: '48px' }"
-  >
+  <c-empty v-if="results.length === 0" description="未匹配到任何结果" :image-style="{ height: '48px' }">
     <c-button @click="reset">清除筛选条件</c-button>
   </c-empty>
 </template>

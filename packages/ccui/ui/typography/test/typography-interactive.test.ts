@@ -135,7 +135,7 @@ describe('Typography editable (L-3.7)', () => {
     expect(onCancel).toHaveBeenCalled()
   })
 
-  it('triggerType=[\'text\'] makes the text itself clickable to edit', async () => {
+  it("triggerType=['text'] makes the text itself clickable to edit", async () => {
     const wrapper = mount(Text, {
       props: { editable: { triggerType: ['text'] } },
       slots: { default: 'hi' },

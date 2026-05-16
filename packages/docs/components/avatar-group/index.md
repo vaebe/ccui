@@ -141,14 +141,14 @@
 
 ## AvatarGroup 参数
 
-| 参数                | 类型                                                                                                     | 默认    | 说明                                |
-| ------------------- | -------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------- |
-| maxCount            | number                                                                                                   | --      | 最大展示数量，超出折叠为 `+N`        |
-| maxStyle            | CSSProperties                                                                                            | --      | `+N` 头像自定义 style                |
-| maxPopoverPlacement | 'top' \| 'top-start' \| 'top-end' \| 'bottom\*' \| 'left\*' \| 'right\*'                                  | top     | popover 弹出方向（共 12 种）         |
-| maxPopoverTrigger   | 'hover' \| 'click' \| 'focus'                                                                            | hover   | popover 触发方式                     |
-| size                | number \| 'large' \| 'default' \| 'small'                                                                | default | 头像尺寸（透传 `+N` 节点）           |
-| shape               | 'circle' \| 'square'                                                                                     | circle  | 头像形状（影响 `+N` 圆角）           |
+| 参数                | 类型                                                                     | 默认    | 说明                          |
+| ------------------- | ------------------------------------------------------------------------ | ------- | ----------------------------- |
+| maxCount            | number                                                                   | --      | 最大展示数量，超出折叠为 `+N` |
+| maxStyle            | CSSProperties                                                            | --      | `+N` 头像自定义 style         |
+| maxPopoverPlacement | 'top' \| 'top-start' \| 'top-end' \| 'bottom\*' \| 'left\*' \| 'right\*' | top     | popover 弹出方向（共 12 种）  |
+| maxPopoverTrigger   | 'hover' \| 'click' \| 'focus'                                            | hover   | popover 触发方式              |
+| size                | number \| 'large' \| 'default' \| 'small'                                | default | 头像尺寸（透传 `+N` 节点）    |
+| shape               | 'circle' \| 'square'                                                     | circle  | 头像形状（影响 `+N` 圆角）    |
 
 ## AvatarGroup 插槽
 

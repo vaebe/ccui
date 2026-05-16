@@ -58,12 +58,7 @@ export default defineComponent({
 
 <template>
   <c-input-search v-model="v1" :enter-button="true" placeholder="enterButton=true" />
-  <c-input-search
-    v-model="v2"
-    enter-button="搜索"
-    placeholder="enterButton='搜索'"
-    style="margin-top: 12px"
-  />
+  <c-input-search v-model="v2" enter-button="搜索" placeholder="enterButton='搜索'" style="margin-top: 12px" />
 </template>
 ```
 
@@ -151,32 +146,32 @@ export default defineComponent({
 
 ## InputSearch 参数
 
-| 参数         | 类型                                            | 默认    | 说明                                                 |
-| ------------ | ----------------------------------------------- | ------- | ---------------------------------------------------- |
-| modelValue   | string                                          | --      | 绑定值（v-model）                                    |
-| defaultValue | string                                          | --      | 非受控初值                                           |
-| placeholder  | string                                          | --      | 占位符                                               |
-| enterButton  | boolean \| string \| VNode                      | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
-| loading      | boolean                                         | false   | 搜索中状态，按钮变 disabled                          |
-| size         | 'large' \| 'default' \| 'small'                 | default | 尺寸                                                 |
-| disabled     | boolean                                         | false   | 整体禁用                                             |
-| readonly     | boolean                                         | false   | 只读                                                 |
-| allowClear   | boolean \| { clearIcon?: VNode \| string }      | false   | 清除按钮，清除时同步 emit @search('')                |
-| maxLength    | number                                          | --      | 最大长度                                             |
-| status       | '' \| 'error' \| 'warning'                      | ''      | 校验状态                                             |
+| 参数         | 类型                                       | 默认    | 说明                                                                               |
+| ------------ | ------------------------------------------ | ------- | ---------------------------------------------------------------------------------- |
+| modelValue   | string                                     | --      | 绑定值（v-model）                                                                  |
+| defaultValue | string                                     | --      | 非受控初值                                                                         |
+| placeholder  | string                                     | --      | 占位符                                                                             |
+| enterButton  | boolean \| string \| VNode                 | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
+| loading      | boolean                                    | false   | 搜索中状态，按钮变 disabled                                                        |
+| size         | 'large' \| 'default' \| 'small'            | default | 尺寸                                                                               |
+| disabled     | boolean                                    | false   | 整体禁用                                                                           |
+| readonly     | boolean                                    | false   | 只读                                                                               |
+| allowClear   | boolean \| { clearIcon?: VNode \| string } | false   | 清除按钮，清除时同步 emit @search('')                                              |
+| maxLength    | number                                     | --      | 最大长度                                                                           |
+| status       | '' \| 'error' \| 'warning'                 | ''      | 校验状态                                                                           |
 
 ## InputSearch 事件
 
-| 事件名            | 参数             | 说明                                                        |
-| ----------------- | ---------------- | ----------------------------------------------------------- |
-| search            | (value, event?)  | 点击 enterButton / 点击 suffix 放大镜 / Enter / clear 都触发；disabled/loading 时不触发 |
-| press-enter       | event            | Enter 时触发（与 search 共存）                              |
-| update:modelValue | value            | v-model                                                     |
-| input             | value            | 输入时触发                                                  |
-| change            | value            | 失焦时触发                                                  |
-| focus             | event            | 获得焦点                                                    |
-| blur              | event            | 失去焦点                                                    |
-| clear             | --               | 点击清除按钮                                                |
+| 事件名            | 参数            | 说明                                                                                    |
+| ----------------- | --------------- | --------------------------------------------------------------------------------------- |
+| search            | (value, event?) | 点击 enterButton / 点击 suffix 放大镜 / Enter / clear 都触发；disabled/loading 时不触发 |
+| press-enter       | event           | Enter 时触发（与 search 共存）                                                          |
+| update:modelValue | value           | v-model                                                                                 |
+| input             | value           | 输入时触发                                                                              |
+| change            | value           | 失焦时触发                                                                              |
+| focus             | event           | 获得焦点                                                                                |
+| blur              | event           | 失去焦点                                                                                |
+| clear             | --              | 点击清除按钮                                                                            |
 
 ## InputSearch 插槽
 

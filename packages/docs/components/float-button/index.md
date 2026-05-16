@@ -176,9 +176,7 @@
 ```vue
 <template>
   <c-back-top :visibility-height="100" :duration="800" />
-  <div style="color: #999; font-size: 12px">
-    滚动超过 100px 即出现按钮，动画时长 800ms。
-  </div>
+  <div style="color: #999; font-size: 12px">滚动超过 100px 即出现按钮，动画时长 800ms。</div>
 </template>
 ```
 
@@ -202,24 +200,24 @@
 
 ### FloatButton Props
 
-| 参数        | 类型                    | 默认值      | 说明                                  |
-| ----------- | ----------------------- | ----------- | ------------------------------------- |
-| shape       | `'circle' \| 'square'`  | `'circle'`  | 形状                                  |
-| type        | `'default' \| 'primary'` | `'default'` | 类型                                  |
-| description | string                  | —           | 内部文字（与 icon 同时存在时在下方）  |
-| icon        | string                  | —           | 图标类名                              |
-| badge       | `number \| string`      | —           | 右上角徽标数                          |
-| href        | string                  | —           | 链接地址                              |
-| target      | string                  | —           | 链接 target（`_blank` 等）            |
-| tooltip     | string                  | —           | 悬浮提示文字                          |
+| 参数        | 类型                     | 默认值      | 说明                                 |
+| ----------- | ------------------------ | ----------- | ------------------------------------ |
+| shape       | `'circle' \| 'square'`   | `'circle'`  | 形状                                 |
+| type        | `'default' \| 'primary'` | `'default'` | 类型                                 |
+| description | string                   | —           | 内部文字（与 icon 同时存在时在下方） |
+| icon        | string                   | —           | 图标类名                             |
+| badge       | `number \| string`       | —           | 右上角徽标数                         |
+| href        | string                   | —           | 链接地址                             |
+| target      | string                   | —           | 链接 target（`_blank` 等）           |
+| tooltip     | string                   | —           | 悬浮提示文字                         |
 
 ### BackTop Props
 
-| 参数             | 类型                                                | 默认值   | 说明                                |
-| ---------------- | --------------------------------------------------- | -------- | ----------------------------------- |
-| visibilityHeight | number                                              | `400`    | 滚动条到达多少 px 时显示按钮        |
-| duration         | number                                              | `450`    | 滚回顶部的动画时长（ms）            |
-| target           | `string \| HTMLElement \| (() => HTMLElement)`      | `window` | 监听滚动的目标容器                  |
-| shape            | `'circle' \| 'square'`                              | `'circle'` | 形状                              |
-| type             | `'default' \| 'primary'`                            | `'default'` | 类型                             |
-| icon             | string                                              | —        | 图标类名                            |
+| 参数             | 类型                                           | 默认值      | 说明                         |
+| ---------------- | ---------------------------------------------- | ----------- | ---------------------------- |
+| visibilityHeight | number                                         | `400`       | 滚动条到达多少 px 时显示按钮 |
+| duration         | number                                         | `450`       | 滚回顶部的动画时长（ms）     |
+| target           | `string \| HTMLElement \| (() => HTMLElement)` | `window`    | 监听滚动的目标容器           |
+| shape            | `'circle' \| 'square'`                         | `'circle'`  | 形状                         |
+| type             | `'default' \| 'primary'`                       | `'default'` | 类型                         |
+| icon             | string                                         | —           | 图标类名                     |

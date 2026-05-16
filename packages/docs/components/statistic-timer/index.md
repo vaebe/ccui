@@ -75,12 +75,7 @@ const start = ref(Date.now()) // 从现在开始
 
 ```vue
 <template>
-  <c-statistic-timer
-    title="距活动结束"
-    :value="Date.now() + 30_000"
-    prefix="⏱"
-    suffix="后结束"
-  />
+  <c-statistic-timer title="距活动结束" :value="Date.now() + 30_000" prefix="⏱" suffix="后结束" />
 </template>
 ```
 
@@ -88,27 +83,27 @@ const start = ref(Date.now()) // 从现在开始
 
 ## 事件
 
-| 事件名  | 参数               | 触发时机                                    |
-| ------- | ------------------ | ------------------------------------------- |
-| change  | `(diffMs: number)` | 每次 tick；diff 为当前剩余 / 已过去毫秒数    |
-| finish  | -                  | 仅 `countdown` 模式：归 0 时触发，触发后停表 |
+| 事件名 | 参数               | 触发时机                                     |
+| ------ | ------------------ | -------------------------------------------- |
+| change | `(diffMs: number)` | 每次 tick；diff 为当前剩余 / 已过去毫秒数    |
+| finish | -                  | 仅 `countdown` 模式：归 0 时触发，触发后停表 |
 
 ## StatisticTimer 参数
 
-| 参数       | 类型                                       | 默认           | 说明                              |
-| ---------- | ------------------------------------------ | -------------- | --------------------------------- |
-| type       | `'countdown' \| 'countup'`                 | `'countdown'`  | 计时方向                          |
-| value      | `number \| string \| Date`                 | `0`            | 目标 / 起始时间戳                 |
-| format     | `string`                                   | `'HH:mm:ss'`   | 格式化字符串                      |
-| title      | `string`                                   | `''`           | 标题（slot 优先）                  |
-| prefix     | `string`                                   | `''`           | 前缀（slot 优先）                  |
-| suffix     | `string`                                   | `''`           | 后缀（slot 优先）                  |
-| valueStyle | `CSSProperties`                            | `{}`           | 数值元素 inline style              |
+| 参数       | 类型                       | 默认          | 说明                  |
+| ---------- | -------------------------- | ------------- | --------------------- |
+| type       | `'countdown' \| 'countup'` | `'countdown'` | 计时方向              |
+| value      | `number \| string \| Date` | `0`           | 目标 / 起始时间戳     |
+| format     | `string`                   | `'HH:mm:ss'`  | 格式化字符串          |
+| title      | `string`                   | `''`          | 标题（slot 优先）     |
+| prefix     | `string`                   | `''`          | 前缀（slot 优先）     |
+| suffix     | `string`                   | `''`          | 后缀（slot 优先）     |
+| valueStyle | `CSSProperties`            | `{}`          | 数值元素 inline style |
 
 ## StatisticTimer 插槽
 
-| 插槽名  | 说明                |
-| ------- | ------------------- |
-| title   | 自定义标题节点      |
-| prefix  | 自定义前缀节点      |
-| suffix  | 自定义后缀节点      |
+| 插槽名 | 说明           |
+| ------ | -------------- |
+| title  | 自定义标题节点 |
+| prefix | 自定义前缀节点 |
+| suffix | 自定义后缀节点 |

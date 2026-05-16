@@ -263,7 +263,14 @@ import { ref } from 'vue'
 const variant = ref('outlined')
 const value = ref('')
 const data = [
-  { key: '1', title: '父节点 1', children: [{ key: '1-1', title: '叶子 1-1' }, { key: '1-2', title: '叶子 1-2' }] },
+  {
+    key: '1',
+    title: '父节点 1',
+    children: [
+      { key: '1-1', title: '叶子 1-1' },
+      { key: '1-2', title: '叶子 1-2' },
+    ],
+  },
   { key: '2', title: '父节点 2' },
 ]
 </script>
@@ -323,11 +330,11 @@ import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT }
 // TREE_SELECT_SHOW_ALL    === 'SHOW_ALL'
 ```
 
-| 常量                    | 说明                                                 |
-| ----------------------- | ---------------------------------------------------- |
-| TREE_SELECT_SHOW_PARENT | `showCheckedStrategy` 取值：父子都选中时只输出父节点  |
-| TREE_SELECT_SHOW_CHILD  | `showCheckedStrategy` 取值：只输出叶子节点            |
-| TREE_SELECT_SHOW_ALL    | `showCheckedStrategy` 取值：输出所有选中节点（父 + 子）|
+| 常量                    | 说明                                                    |
+| ----------------------- | ------------------------------------------------------- |
+| TREE_SELECT_SHOW_PARENT | `showCheckedStrategy` 取值：父子都选中时只输出父节点    |
+| TREE_SELECT_SHOW_CHILD  | `showCheckedStrategy` 取值：只输出叶子节点              |
+| TREE_SELECT_SHOW_ALL    | `showCheckedStrategy` 取值：输出所有选中节点（父 + 子） |
 
 > 当前 ccui TreeSelect 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
 

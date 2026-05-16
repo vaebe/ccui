@@ -13,11 +13,11 @@ DirectoryTree 不重写树形渲染，而是把 Tree 的部分默认值改为更
 
 ## 默认值差异（与 Tree 对比）
 
-| Prop                 | Tree 默认 | DirectoryTree 默认 |
-| -------------------- | --------- | ------------------ |
-| `defaultExpandAll`   | `false`   | `true`             |
-| `blockNode`          | `false`   | `true`             |
-| `multiple`           | `false`   | `true`             |
+| Prop               | Tree 默认 | DirectoryTree 默认 |
+| ------------------ | --------- | ------------------ |
+| `defaultExpandAll` | `false`   | `true`             |
+| `blockNode`        | `false`   | `true`             |
+| `multiple`         | `false`   | `true`             |
 
 ## 基本使用
 
@@ -168,21 +168,21 @@ export default defineComponent({
 
 ## DirectoryTree 参数
 
-| 参数                | 类型                                            | 默认      | 说明                                                                              |
-| ------------------- | ----------------------------------------------- | --------- | --------------------------------------------------------------------------------- |
-| data                | `TreeNodeData[]`                                | `[]`      | 树形数据                                                                          |
-| fieldNames          | `TreeFieldNames`                                | -         | 字段名映射                                                                        |
-| selectable          | `boolean`                                       | `true`    | 是否可选                                                                          |
-| multiple            | `boolean`                                       | `true`    | 是否多选（DirectoryTree 默认 true）                                                |
-| v-model:selectedKeys| `TreeNodeKey[]`                                 | -         | 受控选中                                                                          |
-| checkable           | `boolean`                                       | `false`   | 是否显示 checkbox                                                                 |
-| v-model:checkedKeys | `TreeNodeKey[]`                                 | -         | 受控勾选                                                                          |
-| v-model:expandedKeys| `TreeNodeKey[]`                                 | -         | 受控展开                                                                          |
-| defaultExpandAll    | `boolean`                                       | `true`    | 初始全展开（DirectoryTree 默认 true）                                              |
-| blockNode           | `boolean`                                       | `true`    | 行宽 hover / 选中高亮（DirectoryTree 默认 true）                                   |
-| **expandAction**    | `'click' \| false`                              | `'click'` | DirectoryTree 独有。`'click'` 单击节点正文切换展开，`false` 仅 switcher 展开           |
-| **showIcon**        | `boolean`                                       | `true`    | DirectoryTree 独有。关闭后不渲染内置 folder / file SVG                              |
-| 其他                | -                                               | -         | 透传给 Tree（draggable / showLine / virtualScroll 等）                              |
+| 参数                 | 类型               | 默认      | 说明                                                                         |
+| -------------------- | ------------------ | --------- | ---------------------------------------------------------------------------- |
+| data                 | `TreeNodeData[]`   | `[]`      | 树形数据                                                                     |
+| fieldNames           | `TreeFieldNames`   | -         | 字段名映射                                                                   |
+| selectable           | `boolean`          | `true`    | 是否可选                                                                     |
+| multiple             | `boolean`          | `true`    | 是否多选（DirectoryTree 默认 true）                                          |
+| v-model:selectedKeys | `TreeNodeKey[]`    | -         | 受控选中                                                                     |
+| checkable            | `boolean`          | `false`   | 是否显示 checkbox                                                            |
+| v-model:checkedKeys  | `TreeNodeKey[]`    | -         | 受控勾选                                                                     |
+| v-model:expandedKeys | `TreeNodeKey[]`    | -         | 受控展开                                                                     |
+| defaultExpandAll     | `boolean`          | `true`    | 初始全展开（DirectoryTree 默认 true）                                        |
+| blockNode            | `boolean`          | `true`    | 行宽 hover / 选中高亮（DirectoryTree 默认 true）                             |
+| **expandAction**     | `'click' \| false` | `'click'` | DirectoryTree 独有。`'click'` 单击节点正文切换展开，`false` 仅 switcher 展开 |
+| **showIcon**         | `boolean`          | `true`    | DirectoryTree 独有。关闭后不渲染内置 folder / file SVG                       |
+| 其他                 | -                  | -         | 透传给 Tree（draggable / showLine / virtualScroll 等）                       |
 
 ## DirectoryTree 事件
 
@@ -190,9 +190,9 @@ export default defineComponent({
 
 ## DirectoryTree 插槽
 
-| 插槽名       | 作用域                              | 说明                                              |
-| ------------ | ----------------------------------- | ------------------------------------------------- |
-| icon         | `{ node, expanded }`                | 自定义节点图标，覆盖内置 folder / file SVG          |
-| title        | `{ node, data, expanded }`          | 自定义节点标题                                    |
-| switcher     | `{ node, expanded }`                | 自定义展开/折叠开关图标                            |
-| connector    | `{ depth, node }`                   | 自定义 showLine 模式下的连接线                     |
+| 插槽名    | 作用域                     | 说明                                       |
+| --------- | -------------------------- | ------------------------------------------ |
+| icon      | `{ node, expanded }`       | 自定义节点图标，覆盖内置 folder / file SVG |
+| title     | `{ node, data, expanded }` | 自定义节点标题                             |
+| switcher  | `{ node, expanded }`       | 自定义展开/折叠开关图标                    |
+| connector | `{ depth, node }`          | 自定义 showLine 模式下的连接线             |

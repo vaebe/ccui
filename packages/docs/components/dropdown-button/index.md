@@ -8,7 +8,7 @@ DropdownButton 是 `<c-button>` + `<c-dropdown>` 的组合外壳：
 - **主按钮**（左）承担主操作，点击发 `@click`；可独立配置 `loading` / `href` / `htmlType`。
 - **下拉触发按钮**（右）打开 Dropdown 菜单；trigger / placement / items / `menu` slot 与 `<c-dropdown>` 完全一致。
 - 两个按钮共享 `type` / `size` / `disabled` / `danger` 等视觉 props。
-:::
+  :::
 
 ## 何时使用
 
@@ -66,9 +66,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-dropdown-button :items="items" type="primary">
-    <i class="i-tabler-bolt" /> Quick Action
-  </c-dropdown-button>
+  <c-dropdown-button :items="items" type="primary"> <i class="i-tabler-bolt" /> Quick Action </c-dropdown-button>
 </template>
 ```
 
@@ -162,37 +160,37 @@ export default defineComponent({
 
 ## DropdownButton 参数
 
-| 参数         | 类型                                                                              | 默认             | 说明                                          |
-| ------------ | --------------------------------------------------------------------------------- | ---------------- | --------------------------------------------- |
-| items        | `DropdownItem[]`                                                                  | `[]`             | 下拉菜单项；menu slot 优先                     |
-| trigger      | `'hover' \| 'click' \| 'contextmenu'`                                             | `'hover'`        | 下拉触发方式                                   |
-| placement    | `PopoverPlacement`                                                                | `'bottom-end'`   | 下拉位置                                       |
-| visible      | `boolean`                                                                         | -                | 受控可见态（v-model:visible）                  |
-| hideOnClick  | `boolean`                                                                         | `true`           | 选中后自动关闭                                 |
-| width        | `number \| string`                                                                | `''`             | 下拉菜单宽度                                   |
-| type         | `ButtonType`                                                                      | `'default'`      | 两个按钮共享的 type                            |
-| size         | `'large' \| 'default' \| 'small'`                                                 | `'default'`      | 两个按钮共享的 size                            |
-| disabled     | `boolean`                                                                         | `false`          | 整体禁用                                       |
-| danger       | `boolean`                                                                         | `false`          | 危险型，两个按钮同时变红                        |
-| loading      | `boolean`                                                                         | `false`          | 主按钮 loading（下拉触发按钮不变）              |
-| label        | `string`                                                                          | `''`             | 主按钮文本，default slot 优先                  |
-| icon         | `string`                                                                          | `''`             | 下拉触发图标 class，icon slot 优先              |
-| htmlType     | `'button' \| 'submit' \| 'reset'`                                                 | `'button'`       | 主按钮原生 type                                |
-| href         | `string`                                                                          | `''`             | 主按钮 href（设置后渲染为 `<a>`）              |
+| 参数        | 类型                                  | 默认           | 说明                               |
+| ----------- | ------------------------------------- | -------------- | ---------------------------------- |
+| items       | `DropdownItem[]`                      | `[]`           | 下拉菜单项；menu slot 优先         |
+| trigger     | `'hover' \| 'click' \| 'contextmenu'` | `'hover'`      | 下拉触发方式                       |
+| placement   | `PopoverPlacement`                    | `'bottom-end'` | 下拉位置                           |
+| visible     | `boolean`                             | -              | 受控可见态（v-model:visible）      |
+| hideOnClick | `boolean`                             | `true`         | 选中后自动关闭                     |
+| width       | `number \| string`                    | `''`           | 下拉菜单宽度                       |
+| type        | `ButtonType`                          | `'default'`    | 两个按钮共享的 type                |
+| size        | `'large' \| 'default' \| 'small'`     | `'default'`    | 两个按钮共享的 size                |
+| disabled    | `boolean`                             | `false`        | 整体禁用                           |
+| danger      | `boolean`                             | `false`        | 危险型，两个按钮同时变红           |
+| loading     | `boolean`                             | `false`        | 主按钮 loading（下拉触发按钮不变） |
+| label       | `string`                              | `''`           | 主按钮文本，default slot 优先      |
+| icon        | `string`                              | `''`           | 下拉触发图标 class，icon slot 优先 |
+| htmlType    | `'button' \| 'submit' \| 'reset'`     | `'button'`     | 主按钮原生 type                    |
+| href        | `string`                              | `''`           | 主按钮 href（设置后渲染为 `<a>`）  |
 
 ## DropdownButton 事件
 
-| 事件名         | 参数                       | 说明                       |
-| -------------- | -------------------------- | -------------------------- |
-| click          | `MouseEvent`               | 点击主按钮                 |
-| select         | `DropdownItem`             | 选中下拉菜单项             |
-| update:visible | `boolean`                  | 下拉可见态变化（v-model）   |
-| visible-change | `boolean`                  | 下拉可见态变化              |
+| 事件名         | 参数           | 说明                      |
+| -------------- | -------------- | ------------------------- |
+| click          | `MouseEvent`   | 点击主按钮                |
+| select         | `DropdownItem` | 选中下拉菜单项            |
+| update:visible | `boolean`      | 下拉可见态变化（v-model） |
+| visible-change | `boolean`      | 下拉可见态变化            |
 
 ## DropdownButton 插槽
 
-| 插槽名  | 作用域                       | 说明                              |
-| ------- | ---------------------------- | --------------------------------- |
-| default | -                            | 主按钮内容（优先于 `label` prop） |
-| icon    | -                            | 下拉触发按钮图标                  |
-| menu    | `{ select(item) }`           | 自渲染整个菜单（透传 Dropdown）    |
+| 插槽名  | 作用域             | 说明                              |
+| ------- | ------------------ | --------------------------------- |
+| default | -                  | 主按钮内容（优先于 `label` prop） |
+| icon    | -                  | 下拉触发按钮图标                  |
+| menu    | `{ select(item) }` | 自渲染整个菜单（透传 Dropdown）   |

@@ -154,13 +154,7 @@ function reset() {
 </script>
 
 <template>
-  <c-statistic-countdown
-    title="距活动结束"
-    :value="deadline"
-    format="ss.SSS"
-    @finish="onFinish"
-    @change="onChange"
-  />
+  <c-statistic-countdown title="距活动结束" :value="deadline" format="ss.SSS" @finish="onFinish" @change="onChange" />
   <p style="margin: 8px 0 4px; color: #666">状态：{{ status }} · 上次 tick：{{ lastTick }}</p>
   <c-button size="small" @click="reset">重置 5 秒</c-button>
 </template>
@@ -297,7 +291,7 @@ const deadline = computed(() => Date.now() + 1000 * 60 * 60 * 12 + 1000 * 60 * 3
 
 ### StatisticCountdown Events
 
-| 事件名 | 回调签名               | 触发时机                          |
-| ------ | ---------------------- | --------------------------------- |
-| finish | `()`                   | 倒计时归零（剩余时间 ≤ 0）        |
-| change | `(remaining: number)`  | 每 tick 触发，回传剩余时间（ms）  |
+| 事件名 | 回调签名              | 触发时机                         |
+| ------ | --------------------- | -------------------------------- |
+| finish | `()`                  | 倒计时归零（剩余时间 ≤ 0）       |
+| change | `(remaining: number)` | 每 tick 触发，回传剩余时间（ms） |

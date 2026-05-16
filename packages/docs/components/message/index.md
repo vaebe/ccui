@@ -288,10 +288,10 @@ function show() {
 
 ### UseMessageReturn
 
-| 字段    | 类型         | 说明                                                              |
-| ------- | ------------ | ----------------------------------------------------------------- |
+| 字段    | 类型         | 说明                                                                              |
+| ------- | ------------ | --------------------------------------------------------------------------------- |
 | message | `MessageApi` | 与全局 `message` 同 API：`info/success/warning/error/loading/open/config/destroy` |
-| holder  | `Component`  | 必须挂到模板：`<component :is="holder" />`                        |
+| holder  | `Component`  | 必须挂到模板：`<component :is="holder" />`                                        |
 
 ## API
 
@@ -310,34 +310,34 @@ function show() {
 
 ### MessageOptions
 
-| 字段         | 类型                 | 默认      | 说明                                                                   |
-| ------------ | -------------------- | --------- | ---------------------------------------------------------------------- |
-| content      | `string \| VNode`    | —         | 提示内容（必填）                                                       |
-| type         | `MessageType`        | `'info'`  | 类型：`info` / `success` / `warning` / `error` / `loading`             |
-| duration     | number               | `3`       | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）    |
-| showClose    | boolean              | `false`   | 是否显示关闭按钮                                                       |
-| icon         | string               | `''`      | 自定义 icon 名（覆盖默认类型图标）                                     |
-| customClass  | string               | `''`      | 自定义类名，便于做样式覆盖                                             |
-| onClose      | `() => void`         | —         | 关闭时回调（自动 / 主动 / destroy 都会触发）                           |
-| key          | `string \| number`   | —         | 标识，便于以同一 key 替换已存在的提示                                  |
-| placement    | `MessagePlacement`   | `'top'`   | 6 位置之一：`top` / `topLeft` / `topRight` / `bottom` / `bottomLeft` / `bottomRight`（L-3.5） |
-| role         | `'alert' \| 'status'`| `'alert'` | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5） |
-| pauseOnHover | boolean              | `true`    | 鼠标悬停暂停自动关闭计时器（L-3.5）                                    |
+| 字段         | 类型                  | 默认      | 说明                                                                                          |
+| ------------ | --------------------- | --------- | --------------------------------------------------------------------------------------------- |
+| content      | `string \| VNode`     | —         | 提示内容（必填）                                                                              |
+| type         | `MessageType`         | `'info'`  | 类型：`info` / `success` / `warning` / `error` / `loading`                                    |
+| duration     | number                | `3`       | 停留时长。≤100 按秒，>100 按毫秒兼容旧用法；`0` 不自动关闭（L-3.5）                           |
+| showClose    | boolean               | `false`   | 是否显示关闭按钮                                                                              |
+| icon         | string                | `''`      | 自定义 icon 名（覆盖默认类型图标）                                                            |
+| customClass  | string                | `''`      | 自定义类名，便于做样式覆盖                                                                    |
+| onClose      | `() => void`          | —         | 关闭时回调（自动 / 主动 / destroy 都会触发）                                                  |
+| key          | `string \| number`    | —         | 标识，便于以同一 key 替换已存在的提示                                                         |
+| placement    | `MessagePlacement`    | `'top'`   | 6 位置之一：`top` / `topLeft` / `topRight` / `bottom` / `bottomLeft` / `bottomRight`（L-3.5） |
+| role         | `'alert' \| 'status'` | `'alert'` | DOM `role` + `aria-live`（`alert` → `assertive`；`status` → `polite`）（L-3.5）               |
+| pauseOnHover | boolean               | `true`    | 鼠标悬停暂停自动关闭计时器（L-3.5）                                                           |
 
 ### MessageGlobalConfig（L-3.5）
 
 通过 `message.config({...})` 设置；优先级低于单次 `open()` 选项。
 
-| 字段         | 类型                  | 默认       | 说明                                                  |
-| ------------ | --------------------- | ---------- | ----------------------------------------------------- |
-| duration     | number                | `3`        | 默认停留时长（秒）                                    |
-| maxCount     | number                | `Infinity` | 单 placement 最多并发条数，超出顶掉最旧               |
-| stack        | boolean               | `false`    | 视觉堆叠模式（容器加 `--stack` modifier）             |
-| pauseOnHover | boolean               | `true`     | 全局默认 `pauseOnHover`                               |
-| role         | `'alert' \| 'status'` | `'alert'`  | 全局默认 `role`                                       |
-| top          | `number \| string`    | —          | 顶部偏移（仅作用于 `top*` placement）                 |
-| bottom       | `number \| string`    | —          | 底部偏移（仅作用于 `bottom*` placement）              |
-| getContainer | `() => HTMLElement`   | `body`     | 自定义挂载父节点                                      |
+| 字段         | 类型                  | 默认       | 说明                                      |
+| ------------ | --------------------- | ---------- | ----------------------------------------- |
+| duration     | number                | `3`        | 默认停留时长（秒）                        |
+| maxCount     | number                | `Infinity` | 单 placement 最多并发条数，超出顶掉最旧   |
+| stack        | boolean               | `false`    | 视觉堆叠模式（容器加 `--stack` modifier） |
+| pauseOnHover | boolean               | `true`     | 全局默认 `pauseOnHover`                   |
+| role         | `'alert' \| 'status'` | `'alert'`  | 全局默认 `role`                           |
+| top          | `number \| string`    | —          | 顶部偏移（仅作用于 `top*` placement）     |
+| bottom       | `number \| string`    | —          | 底部偏移（仅作用于 `bottom*` placement）  |
+| getContainer | `() => HTMLElement`   | `body`     | 自定义挂载父节点                          |
 
 ### MessageHandle
 

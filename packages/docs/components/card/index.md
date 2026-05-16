@@ -144,7 +144,9 @@
     <c-card style="width: 240px" :body-style="{ padding: '16px' }">
       <c-card-meta title="张三 · 前端工程师" description="3 年 Vue 经验 / 北京">
         <template #avatar>
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px">
+          <div
+            style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px"
+          >
             张
           </div>
         </template>

@@ -528,7 +528,14 @@ import { ref } from 'vue'
 const variant = ref('outlined')
 const value = ref([])
 const opts = [
-  { label: '浙江', value: 'zj', children: [{ label: '杭州', value: 'hz' }, { label: '宁波', value: 'nb' }] },
+  {
+    label: '浙江',
+    value: 'zj',
+    children: [
+      { label: '杭州', value: 'hz' },
+      { label: '宁波', value: 'nb' },
+    ],
+  },
   { label: '江苏', value: 'js', children: [{ label: '南京', value: 'nj' }] },
 ]
 </script>
@@ -588,10 +595,10 @@ import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from 'vue3-ccui'
 // CASCADER_SHOW_PARENT === 'SHOW_PARENT'
 ```
 
-| 常量                 | 说明                                                         |
-| -------------------- | ------------------------------------------------------------ |
+| 常量                 | 说明                                                             |
+| -------------------- | ---------------------------------------------------------------- |
 | CASCADER_SHOW_CHILD  | `showCheckedStrategy` 取值：只输出最末级叶子节点（默认）         |
-| CASCADER_SHOW_PARENT | `showCheckedStrategy` 取值：父节点全部子节点都选中时只输出父节点  |
+| CASCADER_SHOW_PARENT | `showCheckedStrategy` 取值：父节点全部子节点都选中时只输出父节点 |
 
 > 当前 ccui Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
 

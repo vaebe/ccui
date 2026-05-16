@@ -3,6 +3,7 @@
 让多个输入类组件视觉上贴边拼接为一组紧凑控件，对标 Ant Design `Space.Compact`，作为独立顶层组件存在（**不挂 Space.Compact 静态属性**）。
 
 ::: tip 与 `<c-space>` 的差异
+
 - `<c-space>` 子项之间留 gap，视觉上是独立组件
 - `<c-space-compact>` 子项之间**贴边合并**：相邻 border 重叠（`margin: -1px`）、圆角合并（中间项 `border-radius: 0`、首尾项分别保留外侧圆角）
 
@@ -74,14 +75,14 @@
 
 ## SpaceCompact 参数
 
-| 参数      | 类型                            | 默认           | 说明                              |
-| --------- | ------------------------------- | -------------- | --------------------------------- |
-| direction | `'horizontal' \| 'vertical'`    | `'horizontal'` | 紧凑布局方向                       |
-| size      | `'large' \| 'middle' \| 'small'`| `'middle'`     | 控件尺寸（透传到子项 SCSS modifier）|
-| block     | `boolean`                       | `false`        | 撑满父容器宽度                     |
+| 参数      | 类型                             | 默认           | 说明                                 |
+| --------- | -------------------------------- | -------------- | ------------------------------------ |
+| direction | `'horizontal' \| 'vertical'`     | `'horizontal'` | 紧凑布局方向                         |
+| size      | `'large' \| 'middle' \| 'small'` | `'middle'`     | 控件尺寸（透传到子项 SCSS modifier） |
+| block     | `boolean`                        | `false`        | 撑满父容器宽度                       |
 
 ## SpaceCompact 插槽
 
 | 插槽名  | 说明                                  |
 | ------- | ------------------------------------- |
-| default | 紧凑组合的子控件（input / button 等）  |
+| default | 紧凑组合的子控件（input / button 等） |
