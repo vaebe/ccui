@@ -23,7 +23,8 @@
   "main": "lib/ccui-cli.js",
   "scripts": {
     "build:docs": "pnpm --filter docs predev && pnpm --filter docs docs:build",
-    "build:lib": "pnpm --filter @vaebe/ccui predev && pnpm build:components && pnpm changelog && pnpm prepare-release",
+    "build:lib": "pnpm build:components && pnpm changelog && pnpm prepare-release",
+    "prebuild:components": "node ./index.js create -t ccui --ignore-parse-error",
     "build:components": "node ./index.js build",
     "generate:theme": "node ./index.js generate:theme",
     "generate:dts": "node ./index.js generate:dts",
@@ -31,7 +32,6 @@
     "release": "node ./index.js prepare-release",
     "cli": "node ./index.js create",
     "cli:create": "node ./index.js create -t component",
-    "prebuild": "node ./index.js create -t ccui --ignore-parse-error",
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
