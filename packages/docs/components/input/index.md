@@ -147,7 +147,7 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" clearable placeholder="可清空的输入框" />
+    <c-input v-model="value" allow-clear placeholder="可清空的输入框" />
   </div>
 </template>
 
@@ -206,9 +206,9 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" prepend="http://" placeholder="请输入网址" class="mb-10" />
-    <c-input v-model="value" append=".com" placeholder="请输入域名" class="mb-10" />
-    <c-input v-model="value" prepend="https://" append=".org" placeholder="请输入网址" />
+    <c-input v-model="value" addon-before="http://" placeholder="请输入网址" class="mb-10" />
+    <c-input v-model="value" addon-after=".com" placeholder="请输入域名" class="mb-10" />
+    <c-input v-model="value" addon-before="https://" addon-after=".org" placeholder="请输入网址" />
   </div>
 </template>
 

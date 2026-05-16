@@ -65,9 +65,9 @@ export default defineComponent({
     <c-button type="primary" size="small"> 小型按钮 </c-button>
   </div>
   <div style="margin-top: 10px;">
-    <c-button type="success" size="large" round> 大型按钮 </c-button>
-    <c-button type="success" round> 默认按钮 </c-button>
-    <c-button type="success" size="small" round> 小型按钮 </c-button>
+    <c-button type="success" size="large" shape="round"> 大型按钮 </c-button>
+    <c-button type="success" shape="round"> 默认按钮 </c-button>
+    <c-button type="success" size="small" shape="round"> 小型按钮 </c-button>
   </div>
 </template>
 
@@ -134,9 +134,9 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" round> 圆角按钮 </c-button>
-    <c-button type="success" round> 圆角按钮 </c-button>
-    <c-button type="warning" size="small" round> 小型圆角 </c-button>
+    <c-button type="primary" shape="round"> 圆角按钮 </c-button>
+    <c-button type="success" shape="round"> 圆角按钮 </c-button>
+    <c-button type="warning" size="small" shape="round"> 小型圆角 </c-button>
   </div>
 </template>
 
@@ -166,19 +166,19 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" circle> A </c-button>
-    <c-button type="success" circle> B </c-button>
-    <c-button type="warning" circle> C </c-button>
+    <c-button type="primary" shape="circle"> A </c-button>
+    <c-button type="success" shape="circle"> B </c-button>
+    <c-button type="warning" shape="circle"> C </c-button>
   </div>
 
   <div style="margin-top: 10px;">
-    <c-button type="primary" size="large" circle> D </c-button>
-    <c-button type="primary" circle> E </c-button>
-    <c-button type="primary" size="small" circle> F </c-button>
+    <c-button type="primary" size="large" shape="circle"> D </c-button>
+    <c-button type="primary" shape="circle"> E </c-button>
+    <c-button type="primary" size="small" shape="circle"> F </c-button>
   </div>
 
   <div style="margin-top: 10px;">
-    <c-button type="primary" circle>
+    <c-button type="primary" shape="circle">
       <template #icon>
         <svg
           t="1649322922975"
@@ -204,7 +204,7 @@ export default defineComponent({
       </template>
     </c-button>
 
-    <c-button type="success" circle>
+    <c-button type="success" shape="circle">
       <template #icon>
         <svg
           t="1649322922975"
@@ -230,7 +230,7 @@ export default defineComponent({
       </template>
     </c-button>
 
-    <c-button type="warning" size="small" circle>
+    <c-button type="warning" size="small" shape="circle">
       <template #icon>
         <svg
           t="1649322922975"
@@ -284,11 +284,11 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" plain> 朴素按钮 </c-button>
-    <c-button type="success" plain> 朴素按钮 </c-button>
-    <c-button type="warning" plain> 朴素按钮 </c-button>
-    <c-button type="danger" plain> 朴素按钮 </c-button>
-    <c-button type="info" plain> 朴素按钮 </c-button>
+    <c-button type="primary" variant="filled"> 朴素按钮 </c-button>
+    <c-button type="success" variant="filled"> 朴素按钮 </c-button>
+    <c-button type="warning" variant="filled"> 朴素按钮 </c-button>
+    <c-button type="danger" variant="filled"> 朴素按钮 </c-button>
+    <c-button type="info" variant="filled"> 朴素按钮 </c-button>
   </div>
 </template>
 

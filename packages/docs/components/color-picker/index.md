@@ -1,6 +1,6 @@
 # ColorPicker 颜色选择器
 
-可视化挑选颜色，支持 HEX / RGB / HSV 三种格式显示，alpha 透明度，预设色板，和受控/非受控两种模式。基于浏览器 Pointer Events 实现 SV / hue / alpha 三段拖拽，零外部颜色库依赖。
+可视化挑选颜色，支持 HEX / RGB / HSB 三种格式显示，alpha 透明度，预设色板，和受控/非受控两种模式。基于浏览器 Pointer Events 实现 SV / hue / alpha 三段拖拽，零外部颜色库依赖。
 
 ## 基本用法
 
@@ -33,7 +33,7 @@ const color = ref('#1677ff')
 <template>
   <c-color-picker default-value="#1677ff" show-text format="hex" />
   <c-color-picker default-value="#1677ff" show-text format="rgb" />
-  <c-color-picker default-value="#1677ff" show-text format="hsv" />
+  <c-color-picker default-value="#1677ff" show-text format="hsb" />
 </template>
 ```
 
