@@ -29,11 +29,6 @@ export default {
           status: '100%',
         },
         {
-          text: 'DropdownButton 下拉按钮',
-          link: '/components/dropdown-button/',
-          status: '90%',
-        },
-        {
           text: 'FloatButton 悬浮按钮',
           link: '/components/float-button/',
           status: '100%',

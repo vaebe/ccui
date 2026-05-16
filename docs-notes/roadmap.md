@@ -16,8 +16,9 @@
 - `Statistic` / `StatisticCountdown`（含 `StatisticTimer`）
 - `SkeletonAvatar` / `SkeletonButton` / `SkeletonImage` / `SkeletonInput`（`Skeleton` / `SkeletonNode` 保留）
 - `DirectoryTree`（`Tree` 保留）
+- `DropdownButton`（`Dropdown` / `Button` 保留）
 
-下面 Tier 表中相关行（L-2.13 / L-2.15 / L-2.18）的 `[x]` 仅作历史记录保留，不代表 v2 可用。`L-4.4` demo 增量与 `Statistic` 相关条目同步失效。
+下面 Tier 表中相关行（L-2.13 / L-2.14 / L-2.15 / L-2.18）的 `[x]` 仅作历史记录保留，不代表 v2 可用。`L-4.4` demo 增量与 `Statistic` 相关条目同步失效。
 
 ---
 
