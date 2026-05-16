@@ -56,10 +56,20 @@ export const carouselProps = {
     type: Boolean,
     default: false,
   },
-  // hover 时暂停 autoplay
+  // autoplay 模式下鼠标 hover 暂停 autoplay 计时器
   pauseOnHover: {
     type: Boolean,
-    default: true,
+    default: false,
+  },
+  // 一次展示几张幻灯片（仅 effect='scrollx' 时生效）
+  slidesToShow: {
+    type: Number,
+    default: 1,
+  },
+  // 一次切换几张幻灯片（仅 effect='scrollx' 时生效）
+  slidesToScroll: {
+    type: Number,
+    default: 1,
   },
   // 切换动画时长（毫秒）
   duration: {

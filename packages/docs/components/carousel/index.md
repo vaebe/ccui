@@ -22,7 +22,7 @@
 
 ## 自动播放
 
-`autoplay` 开启自动播放，`autoplay-speed` 控制间隔。鼠标移入时默认暂停（`pause-on-hover`）。
+`autoplay` 开启自动播放，`autoplay-speed` 控制间隔。
 
 :::demo
 
@@ -32,6 +32,92 @@
     <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">A</div>
     <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">B</div>
     <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">C</div>
+  </c-carousel>
+</template>
+```
+
+:::
+
+## 悬停暂停
+
+配合 `autoplay` 启用 `pause-on-hover`，鼠标移入时挂起轮播计时器，移出后立即恢复。常用于「Banner / 推荐位」让用户可以从容查看当前帧内容。
+
+:::demo
+
+```vue
+<template>
+  <c-carousel autoplay pause-on-hover :autoplay-speed="1500" style="height: 160px">
+    <div style="height: 160px; background: #1677ff; color: #fff; line-height: 160px; text-align: center">
+      鼠标移入即暂停 1
+    </div>
+    <div style="height: 160px; background: #36ad6a; color: #fff; line-height: 160px; text-align: center">
+      鼠标移入即暂停 2
+    </div>
+    <div style="height: 160px; background: #f7b500; color: #fff; line-height: 160px; text-align: center">
+      鼠标移入即暂停 3
+    </div>
+  </c-carousel>
+</template>
+```
+
+:::
+
+## 多卡片展示（slidesToShow）
+
+`slides-to-show` 让一次显示多张帧，常用于商品卡片墙 / 头像列表横向轮播。当 `total <= slidesToShow` 时只渲染 1 个指示器。
+
+:::demo
+
+```vue
+<template>
+  <c-carousel :slides-to-show="3" arrows style="height: 140px">
+    <div
+      v-for="i in 6"
+      :key="i"
+      :style="{
+        height: '140px',
+        margin: '0 6px',
+        borderRadius: '8px',
+        background: '#f0f5ff',
+        color: '#1677ff',
+        textAlign: 'center',
+        lineHeight: '140px',
+        fontSize: '20px',
+      }"
+    >
+      商品 {{ i }}
+    </div>
+  </c-carousel>
+</template>
+```
+
+:::
+
+## 一次滚动多张（slidesToScroll）
+
+搭配 `slides-to-show` 一起使用，`slides-to-scroll` 控制 next/prev/autoplay 每次推进的步幅。下例每屏 3 张、每次切 2 张，常用于「成组翻页」式横向列表。
+
+:::demo
+
+```vue
+<template>
+  <c-carousel :slides-to-show="3" :slides-to-scroll="2" autoplay :autoplay-speed="2000" style="height: 140px">
+    <div
+      v-for="i in 8"
+      :key="i"
+      :style="{
+        height: '140px',
+        margin: '0 6px',
+        borderRadius: '8px',
+        background: i % 2 ? '#fff7e6' : '#fff1f0',
+        color: '#d4380d',
+        textAlign: 'center',
+        lineHeight: '140px',
+        fontSize: '20px',
+      }"
+    >
+      卡片 {{ i }}
+    </div>
   </c-carousel>
 </template>
 ```
@@ -225,7 +311,9 @@ const carouselRef = ref<{
 | effect         | `'scrollx' \| 'fade'`                    | `'scrollx'` | 切换动效。`scrollx` 横向位移；`fade` 透明度交替    |
 | infinite       | boolean                                  | `true`      | 是否循环；末尾点 next 回到 0、首位点 prev 跳到末尾 |
 | arrows         | boolean                                  | `false`     | 是否显示前后切换箭头                               |
-| pauseOnHover   | boolean                                  | `true`      | 鼠标悬浮时是否暂停 autoplay                        |
+| pauseOnHover   | boolean                                  | `false`     | autoplay 模式下鼠标 hover 是否暂停                 |
+| slidesToShow   | number                                   | `1`         | 一次展示几张幻灯片，仅 `effect='scrollx'` 生效     |
+| slidesToScroll | number                                   | `1`         | 一次切换几张幻灯片，仅 `effect='scrollx'` 生效     |
 | duration       | number                                   | `500`       | 切换动画时长（毫秒），同时控制 transition-duration |
 | swipeable      | boolean                                  | `true`      | 是否启用触摸/指针 swipe 手势                       |
 | swipeThreshold | number                                   | `40`        | swipe 触发阈值（像素），滑动距离超过此值才切换     |
@@ -267,4 +355,5 @@ const carouselRef = ref<{
 
 ## 已知限制（未交付）
 
-- **adaptiveHeight / 多帧并排（slidesToShow）**：当前一帧占满 viewport，多帧并排和按内容高度自适应留给后续。
+- **adaptiveHeight**：当前所有帧共用容器高度，按内容自适应留给后续。
+- **responsive 断点配置**：暂未支持按断点动态切换 `slidesToShow` / `slidesToScroll`。

@@ -202,7 +202,7 @@ describe('carousel autoplay', () => {
   })
 
   it('pauses on hover when pauseOnHover=true', async () => {
-    const wrapper = mountCarousel({ props: { autoplay: true, autoplaySpeed: 1000 } })
+    const wrapper = mountCarousel({ props: { autoplay: true, autoplaySpeed: 1000, pauseOnHover: true } })
     await wrapper.find(ns.b()).trigger('mouseenter')
     vi.advanceTimersByTime(2000)
     await nextTick()
@@ -214,13 +214,25 @@ describe('carousel autoplay', () => {
     expect(wrapper.findAll(ns.e('slide'))[1].classes()).toContain('is-active')
   })
 
-  it('keeps autoplay running on hover when pauseOnHover=false', async () => {
-    const wrapper = mountCarousel({
-      props: { autoplay: true, autoplaySpeed: 1000, pauseOnHover: false },
-    })
+  it('does not pause on hover by default (pauseOnHover=false)', async () => {
+    const wrapper = mountCarousel({ props: { autoplay: true, autoplaySpeed: 1000 } })
     await wrapper.find(ns.b()).trigger('mouseenter')
     vi.advanceTimersByTime(1000)
     await nextTick()
+    expect(wrapper.findAll(ns.e('slide'))[1].classes()).toContain('is-active')
+  })
+
+  it('resumes autoplay after mouseleave when pauseOnHover=true', async () => {
+    const wrapper = mountCarousel({ props: { autoplay: true, autoplaySpeed: 1000, pauseOnHover: true } })
+    await wrapper.find(ns.b()).trigger('mouseenter')
+    vi.advanceTimersByTime(3000)
+    await nextTick()
+    // 期间无切换
+    expect(wrapper.findComponent(Carousel).emitted('change')).toBeUndefined()
+    await wrapper.find(ns.b()).trigger('mouseleave')
+    vi.advanceTimersByTime(1000)
+    await nextTick()
+    // 离开后恢复
     expect(wrapper.findAll(ns.e('slide'))[1].classes()).toContain('is-active')
   })
 
@@ -497,6 +509,103 @@ describe('carousel customDot slot', () => {
     await wrapper.findAll(ns.e('dot'))[2].trigger('click')
     await nextTick()
     expect(wrapper.findAll(ns.e('slide'))[2].classes()).toContain('is-active')
+  })
+})
+
+describe('carousel slidesToShow', () => {
+  it('每张幻灯片宽度 = 100 / slidesToShow %', () => {
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 3 } })
+    const slides = wrapper.findAll(ns.e('slide'))
+    expect(slides).toHaveLength(6)
+    // 多帧并排时，每个 slide 应有 width 内联样式 (100/3 ≈ 33.33...%)
+    expect((slides[0].element as HTMLElement).style.width).toMatch(/^33\.3/)
+    expect((slides[1].element as HTMLElement).style.width).toMatch(/^33\.3/)
+  })
+
+  it('多帧并排时视窗内所有 slide 都标记 is-active', () => {
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 3 } })
+    const slides = wrapper.findAll(ns.e('slide'))
+    expect(slides[0].classes()).toContain('is-active')
+    expect(slides[1].classes()).toContain('is-active')
+    expect(slides[2].classes()).toContain('is-active')
+    expect(slides[3].classes()).not.toContain('is-active')
+  })
+
+  it('指示器数量 = 总页数（按 slidesToShow / slidesToScroll 计算）', () => {
+    // total=6, slidesToShow=3, slidesToScroll=1 → pages = (6-3)/1 + 1 = 4
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 3 } })
+    expect(wrapper.findAll(ns.e('dot'))).toHaveLength(4)
+  })
+
+  it('total <= slidesToShow 时只渲染 1 个指示器', () => {
+    const wrapper = mountCarousel({ slides: 2, props: { slidesToShow: 3 } })
+    expect(wrapper.findAll(ns.e('dot'))).toHaveLength(1)
+  })
+
+  it('track translate 步进 = 100 / slidesToShow %', async () => {
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 3, arrows: true } })
+    await wrapper.findAll(ns.e('arrow'))[1].trigger('click')
+    await nextTick()
+    const track = wrapper.find(ns.e('track')).element as HTMLElement
+    // 每帧 ~33.33%，next 1 步后位移约 33.33%
+    expect(track.style.transform).toMatch(/translateX\(-33\.3/)
+  })
+})
+
+describe('carousel slidesToScroll', () => {
+  it('next 一次切换 slidesToScroll 张', async () => {
+    // total=6, slidesToShow=3, slidesToScroll=2 → 一次切 2 张
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 3, slidesToScroll: 2, arrows: true } })
+    await wrapper.findAll(ns.e('arrow'))[1].trigger('click')
+    await nextTick()
+    const slides = wrapper.findAll(ns.e('slide'))
+    // active 应从 0 跳到 2
+    expect(slides[2].classes()).toContain('is-active')
+    expect(slides[3].classes()).toContain('is-active')
+    expect(slides[4].classes()).toContain('is-active')
+    expect(slides[0].classes()).not.toContain('is-active')
+  })
+
+  it('指示器数量按 slidesToScroll 步进计算', () => {
+    // total=8, slidesToShow=3, slidesToScroll=2 → pages = ceil((8-3)/2)+1 = 4
+    const wrapper = mountCarousel({ slides: 8, props: { slidesToShow: 3, slidesToScroll: 2 } })
+    expect(wrapper.findAll(ns.e('dot'))).toHaveLength(4)
+  })
+
+  it('最后一页对齐到 maxActive（保证视窗填满）', async () => {
+    // total=7, slidesToShow=3, slidesToScroll=2 → pages = ceil((7-3)/2)+1 = 3
+    // page index: 0, 2, 4 - 第三页 maxActive = 7 - 3 = 4（与 page*step 的 4 一致）
+    const wrapper = mountCarousel({ slides: 7, props: { slidesToShow: 3, slidesToScroll: 2 } })
+    const dots = wrapper.findAll(`${ns.e('dot')} button`)
+    expect(dots).toHaveLength(3)
+    await dots[2].trigger('click')
+    await nextTick()
+    const slides = wrapper.findAll(ns.e('slide'))
+    // 最后一页应显示 index 4/5/6
+    expect(slides[4].classes()).toContain('is-active')
+    expect(slides[5].classes()).toContain('is-active')
+    expect(slides[6].classes()).toContain('is-active')
+  })
+
+  it('点击指示器跳到对应页的 leading slide', async () => {
+    const wrapper = mountCarousel({ slides: 6, props: { slidesToShow: 2, slidesToScroll: 2 } })
+    // total=6, show=2, scroll=2 → pages = (6-2)/2 + 1 = 3
+    const dotButtons = wrapper.findAll(`${ns.e('dot')} button`)
+    expect(dotButtons).toHaveLength(3)
+    await dotButtons[1].trigger('click')
+    await nextTick()
+    expect(wrapper.findComponent(Carousel).emitted('update:modelValue')?.[0]).toEqual([2])
+  })
+
+  it('autoplay 步进 = slidesToScroll', async () => {
+    const wrapper = mountCarousel({
+      slides: 6,
+      props: { slidesToShow: 3, slidesToScroll: 2, autoplay: true, autoplaySpeed: 1000 },
+    })
+    vi.advanceTimersByTime(1000)
+    await nextTick()
+    const slides = wrapper.findAll(ns.e('slide'))
+    expect(slides[2].classes()).toContain('is-active')
   })
 })
 
