@@ -193,6 +193,19 @@ export default defineComponent({
       return null
     })
 
+    const customSearchSort = computed(() => {
+      const ss = props.showSearch
+      if (typeof ss === 'object' && ss && typeof ss.sort === 'function') return ss.sort
+      return null
+    })
+
+    // showSearch.limit：命中数上限，默认 50
+    const searchLimit = computed(() => {
+      const ss = props.showSearch
+      if (typeof ss === 'object' && ss && typeof ss.limit === 'number' && ss.limit > 0) return ss.limit
+      return 50
+    })
+
     // 把 options 展平为所有叶子路径（含 changeOnSelect 时的中间路径）
     function flattenPaths(opts: CascaderOption[], parents: CascaderOption[] = []): CascaderOption[][] {
       const out: CascaderOption[][] = []
@@ -214,7 +227,14 @@ export default defineComponent({
       if (!isSearching.value) return []
       const all = flattenPaths(props.options)
       const filter = customSearchFilter.value || defaultSearchFilter
-      return all.filter((path) => filter(searchValue.value, path))
+      let hits = all.filter((path) => filter(searchValue.value, path))
+      const sort = customSearchSort.value
+      if (sort) {
+        hits = [...hits].sort((a, b) => sort(a, b, searchValue.value))
+      }
+      const limit = searchLimit.value
+      if (hits.length > limit) hits = hits.slice(0, limit)
+      return hits
     })
 
     // 面板上 active 的路径，决定哪几列展开
@@ -223,6 +243,11 @@ export default defineComponent({
     watch(selectedPath, (next) => {
       activePath.value = next
     })
+
+    // 键盘导航：focusedColumn / focusedIndex 指向当前 focus 的 cell
+    // null 表示当前未走键盘导航；focusedColumn === -1 表示搜索面板（一维）
+    const focusedColumn = shallowRef<number>(-2)
+    const focusedIndex = shallowRef<number>(-1)
 
     const placement = computed(() => PLACEMENT_TO_FLOATING[props.placement])
     const popupContainer = computed<HTMLElement | null>(() => {
@@ -272,6 +297,8 @@ export default defineComponent({
       if (props.disabled || open.value) return
       activePath.value = selectedPath.value
       open.value = true
+      focusedColumn.value = -2
+      focusedIndex.value = -1
       emit('popup-visible-change', true)
     }
 
@@ -279,6 +306,8 @@ export default defineComponent({
       if (!open.value) return
       open.value = false
       searchValue.value = ''
+      focusedColumn.value = -2
+      focusedIndex.value = -1
       emit('popup-visible-change', false)
     }
 
@@ -398,6 +427,127 @@ export default defineComponent({
       closePopup()
     }
 
+    // ===== M-B4 键盘导航 =====
+    // 找下一个非 disabled cell 的 index（沿 step 方向），找不到返回原 index
+    function nextEnabledIndex(items: CascaderColumnItem[], start: number, step: number): number {
+      if (items.length === 0) return -1
+      let i = start
+      for (let n = 0; n < items.length; n += 1) {
+        i = (i + step + items.length) % items.length
+        if (!items[i].disabled) return i
+      }
+      return start
+    }
+
+    function onInputKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      const k = e.key
+      if (!open.value) {
+        if (k === 'Enter' || k === ' ' || k === 'ArrowDown') {
+          e.preventDefault()
+          openPopup()
+        }
+        return
+      }
+      // 面板已打开
+      if (k === 'Escape') {
+        e.preventDefault()
+        closePopup()
+        return
+      }
+      if (k === 'Tab') {
+        closePopup()
+        return
+      }
+      // 搜索模式：一维列表
+      if (isSearching.value) {
+        const results = searchResults.value
+        if (results.length === 0) return
+        if (k === 'ArrowDown' || k === 'ArrowUp') {
+          e.preventDefault()
+          const step = k === 'ArrowDown' ? 1 : -1
+          const cur = focusedColumn.value === -1 ? focusedIndex.value : -1
+          let next = (cur + step + results.length) % results.length
+          // 跳过 disabled 路径
+          for (let n = 0; n < results.length; n += 1) {
+            if (!results[next].some((node) => isOptionDisabled(node, fn.value))) break
+            next = (next + step + results.length) % results.length
+          }
+          focusedColumn.value = -1
+          focusedIndex.value = next
+          return
+        }
+        if (k === 'Enter') {
+          e.preventDefault()
+          if (focusedColumn.value === -1 && focusedIndex.value >= 0 && focusedIndex.value < results.length) {
+            pickSearchResult(results[focusedColumn.value === -1 ? focusedIndex.value : 0])
+          }
+        }
+        return
+      }
+      // 列模式：方向键在列间移动
+      const cols = columns.value
+      if (cols.length === 0) return
+      // 初次按方向键时把 focus 设到 activePath 对应位置，并直接消费本次按键
+      if (focusedColumn.value < 0) {
+        if (k === 'ArrowDown' || k === 'ArrowUp' || k === 'ArrowRight' || k === 'ArrowLeft' || k === 'Enter') {
+          e.preventDefault()
+          focusedColumn.value = 0
+          const node = activePath.value[0]
+          const idx = node ? cols[0].findIndex((it) => it.value === getOptionValue(node, fn.value)) : -1
+          focusedIndex.value = idx >= 0 ? idx : nextEnabledIndex(cols[0], -1, 1)
+          return
+        }
+      }
+      const col = focusedColumn.value
+      const items = cols[col] ?? []
+      if (k === 'ArrowDown' || k === 'ArrowUp') {
+        e.preventDefault()
+        if (items.length === 0) return
+        const step = k === 'ArrowDown' ? 1 : -1
+        focusedIndex.value = nextEnabledIndex(items, focusedIndex.value, step)
+        return
+      }
+      if (k === 'ArrowRight') {
+        e.preventDefault()
+        const item = items[focusedIndex.value]
+        if (!item || item.disabled) return
+        // 非叶子：展开下一列（同 click 但不 emit / 不关闭）
+        if (!item.isLeaf) {
+          const nextActive = activePath.value.slice(0, col)
+          nextActive.push(item.raw)
+          activePath.value = nextActive
+          maybeLoadData(item, activePath.value.slice(0, col))
+          nextTick(() => {
+            const newCols = columns.value
+            if (newCols[col + 1] && newCols[col + 1].length > 0) {
+              focusedColumn.value = col + 1
+              focusedIndex.value = nextEnabledIndex(newCols[col + 1], -1, 1)
+            }
+          })
+        }
+        return
+      }
+      if (k === 'ArrowLeft') {
+        e.preventDefault()
+        if (col > 0) {
+          focusedColumn.value = col - 1
+          // focusedIndex 落到 activePath 对应位置
+          const node = activePath.value[col - 1]
+          const colItems = cols[col - 1]
+          const idx = node ? colItems.findIndex((it) => it.value === getOptionValue(node, fn.value)) : -1
+          focusedIndex.value = idx >= 0 ? idx : 0
+        }
+        return
+      }
+      if (k === 'Enter') {
+        e.preventDefault()
+        const item = items[focusedIndex.value]
+        if (!item) return
+        pickOption(col, item)
+      }
+    }
+
     onMounted(() => {
       document.addEventListener('mousedown', onClickOutside, true)
       if (props.autoFocus) {
@@ -440,12 +590,26 @@ export default defineComponent({
       )
     }
 
+    // maxTagTextLength：单 tag 文本超出截断
+    function truncateTag(text: string): string {
+      const limit = props.maxTagTextLength
+      if (!limit || limit <= 0) return text
+      if (text.length <= limit) return text
+      return `${text.slice(0, limit)}…`
+    }
+
     function renderTags() {
+      const all = selectedPaths.value
+      const max = props.maxTagCount
+      const truncate = max > 0 && all.length > max
+      const visible = truncate ? all.slice(0, max) : all
+      const omitted = truncate ? all.slice(max) : []
       return (
         <div class={ns.e('tags')}>
-          {selectedPaths.value.map((path) => {
+          {visible.map((path) => {
             const labels = path.map((n) => getOptionLabel(n, fn.value))
-            const tagText = props.displayRender ? props.displayRender(labels, path) : labels[labels.length - 1] || ''
+            const raw = props.displayRender ? props.displayRender(labels, path) : labels[labels.length - 1] || ''
+            const tagText = truncateTag(raw)
             return (
               <span class={ns.e('tag')}>
                 <span class={ns.e('tag-label')}>{tagText}</span>
@@ -460,6 +624,15 @@ export default defineComponent({
               </span>
             )
           })}
+          {truncate && (
+            <span class={[ns.e('tag'), ns.em('tag', 'rest')]}>
+              <span class={ns.e('tag-label')}>
+                {slots['max-tag-placeholder']
+                  ? slots['max-tag-placeholder']({ omittedValues: omitted })
+                  : `+ ${omitted.length} ...`}
+              </span>
+            </span>
+          )}
         </div>
       )
     }
@@ -474,13 +647,15 @@ export default defineComponent({
       }
       return (
         <ul class={ns.e('column')} role="menu">
-          {items.map((item) => {
+          {items.map((item, idx) => {
             const active = isItemActive(columnIndex, item)
+            const focused = focusedColumn.value === columnIndex && focusedIndex.value === idx
             return (
               <li
                 class={[
                   ns.e('item'),
                   active && ns.em('item', 'active'),
+                  focused && ns.em('item', 'focused'),
                   item.disabled && ns.em('item', 'disabled'),
                   loadingSet.value.has(item.raw) && ns.em('item', 'loading'),
                 ]}
@@ -490,7 +665,17 @@ export default defineComponent({
                 onMouseenter={() => hoverOption(columnIndex, item)}
               >
                 {props.multiple && (item.isLeaf || props.changeOnSelect) && renderItemCheckbox(columnIndex, item)}
-                <span class={ns.e('item-label')}>{item.label}</span>
+                {slots.option ? (
+                  <span class={ns.e('item-label')}>
+                    {slots.option({
+                      option: item.raw,
+                      path: [...activePath.value.slice(0, columnIndex), item.raw],
+                      index: idx,
+                    })}
+                  </span>
+                ) : (
+                  <span class={ns.e('item-label')}>{item.label}</span>
+                )}
                 {loadingSet.value.has(item.raw) ? (
                   <span class={ns.e('expand-icon')} aria-label="loading">
                     ⟳
@@ -522,17 +707,25 @@ export default defineComponent({
       }
       return (
         <ul class={[ns.e('column'), ns.em('column', 'search')]} role="menu">
-          {results.map((path) => {
+          {results.map((path, idx) => {
             const labels = path.map((n) => getOptionLabel(n, fn.value))
             const disabled = path.some((n) => isOptionDisabled(n, fn.value))
+            const focused = focusedColumn.value === -1 && focusedIndex.value === idx
+            const leaf = path[path.length - 1]
             return (
               <li
-                class={[ns.e('search-item'), disabled && ns.em('search-item', 'disabled')]}
+                class={[
+                  ns.e('search-item'),
+                  disabled && ns.em('search-item', 'disabled'),
+                  focused && ns.em('search-item', 'focused'),
+                ]}
                 role="menuitem"
                 aria-disabled={disabled}
                 onClick={() => pickSearchResult(path)}
               >
-                {labels.join(props.separator)}
+                {slots.searchOption
+                  ? slots.searchOption({ option: leaf, path, query: searchValue.value })
+                  : labels.join(props.separator)}
               </li>
             )
           })}
@@ -549,6 +742,7 @@ export default defineComponent({
       ) : (
         <div class={ns.e('columns')}>{columns.value.map((col, i) => renderColumn(col, i))}</div>
       )
+      const content = slots.popup ? slots.popup({ default: () => body }) : body
       return h(
         'div',
         {
@@ -557,7 +751,7 @@ export default defineComponent({
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
         },
-        [body],
+        [content],
       )
     }
 
@@ -624,6 +818,7 @@ export default defineComponent({
             onFocus={() => emit('focus')}
             onBlur={() => emit('blur')}
             onInput={onInputInput}
+            onKeydown={onInputKeydown}
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>

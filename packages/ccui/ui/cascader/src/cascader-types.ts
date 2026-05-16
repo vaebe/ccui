@@ -53,6 +53,19 @@ export interface CascaderColumnItem {
   children: CascaderOption[]
 }
 
+/**
+ * `showSearch` 对象形态：
+ *
+ * - `filter`：自定义匹配判定 `(input, path) => boolean`；命中返回 true。
+ * - `sort`：自定义命中结果排序 `(a, b, input) => number`，签名按 `Array.prototype.sort` 比较器。
+ * - `limit`：最多展示多少条结果，默认 `50`；命中数超过该值时只渲染前 `limit` 条。
+ */
+export interface CascaderShowSearchConfig {
+  filter?: (input: string, path: CascaderOption[]) => boolean
+  sort?: (a: CascaderOption[], b: CascaderOption[], input: string) => number
+  limit?: number
+}
+
 export const cascaderProps = {
   modelValue: {
     type: Array as unknown as PropType<CascaderModelValue>,
@@ -89,10 +102,20 @@ export const cascaderProps = {
     type: Boolean,
     default: false,
   },
-  // 搜索匹配。true → 默认 includes 匹配；函数 → 自定义 (input, path) => boolean
+  // 搜索匹配。true → 默认 includes 匹配；对象 → 自定义 { filter, sort, limit }
   showSearch: {
-    type: [Boolean, Object] as PropType<boolean | { filter?: (input: string, path: CascaderOption[]) => boolean }>,
+    type: [Boolean, Object] as PropType<boolean | CascaderShowSearchConfig>,
     default: false,
+  },
+  // 多选模式 tag 最多显示数，超出折叠为「+N」摘要。0 / 负数 / 不传 表示不折叠。
+  maxTagCount: {
+    type: Number,
+    default: 0,
+  },
+  // 单个 tag 显示的最长字符数，超出末尾以 `…` 截断。0 / 不传 表示不截断。
+  maxTagTextLength: {
+    type: Number,
+    default: 0,
   },
   // 异步加载非叶子节点的 children。返回 Promise，组件按 path 调用并 swap loading 状态。
   loadData: {

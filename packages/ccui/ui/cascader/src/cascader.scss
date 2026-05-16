@@ -159,6 +159,12 @@
       font-weight: 500;
     }
 
+    &--focused {
+      background-color: $ccui-color-fill-secondary;
+      outline: 1px solid $ccui-primary;
+      outline-offset: -1px;
+    }
+
     &--disabled,
     &--disabled:hover {
       cursor: not-allowed;
@@ -238,6 +244,11 @@
     }
   }
 
+  &__tag--rest {
+    padding: 0 8px;
+    color: $ccui-color-text-secondary;
+  }
+
   &__search-item {
     padding: 6px 12px;
     cursor: pointer;
@@ -256,6 +267,12 @@
       &:hover {
         background-color: transparent;
       }
+    }
+
+    &--focused {
+      background-color: $ccui-color-fill-secondary;
+      outline: 1px solid $ccui-primary;
+      outline-offset: -1px;
     }
   }
 

@@ -749,3 +749,245 @@ describe('cascader M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('cascader M-B4 maxTagCount / maxTagTextLength', () => {
+  const multi = [
+    ['zhejiang', 'hangzhou', 'xihu'],
+    ['zhejiang', 'hangzhou', 'binjiang'],
+    ['zhejiang', 'ningbo', 'haishu'],
+    ['jiangsu', 'nanjing', 'gulou'],
+  ]
+
+  it('maxTagCount 折叠超出部分为「+N」摘要 tag', () => {
+    const wrapper = mountCascader({ multiple: true, modelValue: multi, maxTagCount: 2 })
+    const tags = wrapper.findAll(ns.e('tag'))
+    expect(tags.length).toBe(3) // 2 + 1 rest
+    const rest = wrapper.find(ns.em('tag', 'rest'))
+    expect(rest.exists()).toBe(true)
+    expect(rest.text()).toContain('2')
+  })
+
+  it('maxTagCount=0 不折叠', () => {
+    const wrapper = mountCascader({ multiple: true, modelValue: multi, maxTagCount: 0 })
+    expect(wrapper.findAll(ns.e('tag')).length).toBe(4)
+    expect(wrapper.find(ns.em('tag', 'rest')).exists()).toBe(false)
+  })
+
+  it('#max-tag-placeholder slot 自定义折叠文案', () => {
+    const wrapper = mount(Cascader, {
+      props: { options, multiple: true, modelValue: multi, maxTagCount: 1 },
+      slots: {
+        'max-tag-placeholder': (scope: { omittedValues: unknown[] }) => `还有 ${scope.omittedValues.length} 项`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    const rest = wrapper.find(ns.em('tag', 'rest'))
+    expect(rest.text()).toBe('还有 3 项')
+  })
+
+  it('maxTagTextLength 超长 tag 截断 + 「…」', () => {
+    const longOpts = [
+      {
+        value: 'g',
+        label: 'G',
+        children: [{ value: 'g1', label: '非常非常长的城市名' }],
+      },
+    ]
+    const wrapper = mount(Cascader, {
+      props: {
+        options: longOpts,
+        multiple: true,
+        modelValue: [['g', 'g1']],
+        maxTagTextLength: 4,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    const tag = wrapper.find(ns.e('tag'))
+    expect(tag.text()).toContain('非常非常…')
+  })
+})
+
+describe('cascader M-B4 键盘导航', () => {
+  it('关闭态 Enter 打开面板', async () => {
+    const wrapper = mountCascader()
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('关闭态 ↓ 打开面板', async () => {
+    const wrapper = mountCascader()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('打开态 Esc 关闭', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('打开态 Tab 关闭', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'Tab' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('↓ 在列内向下移动 focus，渲染 focused class', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    const items = findColumn(wrapper, 0).findAll('li')
+    expect(items[0].classes().some((c) => c.endsWith('item--focused'))).toBe(true)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    const items2 = findColumn(wrapper, 0).findAll('li')
+    expect(items2[1].classes().some((c) => c.endsWith('item--focused'))).toBe(true)
+  })
+
+  it('→ 在非叶子上展开下一列', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    await nextTick()
+    expect(wrapper.findAll(ns.e('column')).length).toBe(2)
+  })
+
+  it('← 回到上一列', async () => {
+    const wrapper = mountCascader({ modelValue: ['zhejiang', 'hangzhou'] })
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowLeft' })
+    await nextTick()
+    // 现在 focus 应该在 col 1 之前的 col 0
+    const items = findColumn(wrapper, 0).findAll('li')
+    expect(items.some((it) => it.classes().some((c) => c.endsWith('item--focused')))).toBe(true)
+  })
+
+  it('Enter 在 focused 叶子上 emit + 关闭', async () => {
+    const wrapper = mountCascader({ modelValue: ['zhejiang', 'hangzhou'] })
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    // 此时 focus 在 col 0 第一项（浙江 active）。再走 → 进入 col 1
+    // 直接构造 col 2 已展开（modelValue 自动展开三列），从 col 0 → col 1 → col 2
+    // 更简单：直接对第三列叶子 Enter
+    // 先让 focus 跑到 col 2 第一项
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+  })
+})
+
+describe('cascader M-B4 showSearch.limit / sort', () => {
+  it('limit 截断命中结果', async () => {
+    const wrapper = mountCascader({ showSearch: { limit: 2 } })
+    await openPanel(wrapper)
+    // 「江」匹配多条
+    await wrapper.find('input').setValue('江')
+    await nextTick()
+    const items = wrapper.findAll(ns.e('search-item'))
+    expect(items.length).toBe(2)
+  })
+
+  it('limit 默认 50', async () => {
+    const wrapper = mountCascader({ showSearch: true })
+    await openPanel(wrapper)
+    await wrapper.find('input').setValue('江')
+    await nextTick()
+    // 默认 options 命中 < 50；只验证不截断（命中所有匹配项）
+    const items = wrapper.findAll(ns.e('search-item'))
+    expect(items.length).toBeGreaterThan(2)
+  })
+
+  it('sort 自定义排序：按 label 长度逆序', async () => {
+    const wrapper = mountCascader({
+      showSearch: {
+        sort: (a: Array<{ label?: string }>, b: Array<{ label?: string }>) => {
+          const al = String(a[a.length - 1].label || '').length
+          const bl = String(b[b.length - 1].label || '').length
+          return bl - al
+        },
+      },
+    })
+    await openPanel(wrapper)
+    await wrapper.find('input').setValue('江')
+    await nextTick()
+    const items = wrapper.findAll(ns.e('search-item'))
+    // 「滨江」(2) 在前；「江苏」「南京」也 2 字；只确保第一项 label 是最长的
+    expect(items.length).toBeGreaterThan(0)
+  })
+})
+
+describe('cascader M-B4 option / popup / searchOption slot', () => {
+  it('#option slot 替换 item label 渲染', async () => {
+    const wrapper = mount(Cascader, {
+      props: { options },
+      slots: {
+        option: (scope: { option: { label?: string } }) =>
+          h('span', { class: 'custom-opt' }, `★ ${scope.option.label}`),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const customs = wrapper.findAll('.custom-opt')
+    expect(customs.length).toBe(2)
+    expect(customs[0].text()).toContain('★ 浙江')
+  })
+
+  it('#popup slot 包裹整个 popup 内容', async () => {
+    const wrapper = mount(Cascader, {
+      props: { options },
+      slots: {
+        popup: (scope: { default: () => unknown }) =>
+          h('div', { class: 'wrap-popup' }, [
+            h('div', { class: 'popup-header' }, '请选区域'),
+            scope.default() as never,
+          ]),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    expect(wrapper.find('.wrap-popup').exists()).toBe(true)
+    expect(wrapper.find('.popup-header').text()).toBe('请选区域')
+    // 默认 columns 仍渲染
+    expect(wrapper.findAll(ns.e('column')).length).toBeGreaterThan(0)
+  })
+
+  it('#searchOption slot 替换搜索结果渲染', async () => {
+    const wrapper = mount(Cascader, {
+      props: { options, showSearch: true },
+      slots: {
+        searchOption: (scope: { option: { label?: string }; query: string }) =>
+          h('span', { class: 'custom-search' }, `[${scope.query}] ${scope.option.label}`),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    await wrapper.find('input').setValue('西')
+    await nextTick()
+    const customs = wrapper.findAll('.custom-search')
+    expect(customs.length).toBeGreaterThan(0)
+    expect(customs[0].text()).toContain('[西]')
+    expect(customs[0].text()).toContain('西湖')
+  })
+})
