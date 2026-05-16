@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, reactive } from 'vue'
 import { Form, FormItem, FormList, FormProvider } from '../index'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const formNs = useNamespace('form', true)
@@ -1409,7 +1409,7 @@ describe('L-1.6 rules 函数式', () => {
 
 describe('M-A5 FormItem deprecation warn', () => {
   beforeEach(() => {
-    __resetDeprecationWarningsForTest()
+    __resetDeprecatedWarningsForTest()
   })
 
   it('FormItem.prop 显式传入触发 deprecation warn 一次', () => {
@@ -1445,6 +1445,47 @@ describe('M-A5 FormItem deprecation warn', () => {
       },
     })
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('prop 已 deprecated'))
+    wrapper.unmount()
+    warn.mockRestore()
+  })
+})
+
+describe('XL-3 Form shouldUpdate deprecation warn', () => {
+  beforeEach(() => {
+    __resetDeprecatedWarningsForTest()
+  })
+
+  it('Form 显式 shouldUpdate 触发 deprecation warn 一次', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Form, {
+      props: { model: { x: '' }, shouldUpdate: true } as any,
+      slots: {
+        default: () => h(FormItem, { name: 'x' }, () => h('input')),
+      },
+    })
+    expect(warn).toHaveBeenCalledWith('[ccui][Form] shouldUpdate 已 deprecated。')
+    // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
+    const w2 = mount(Form, {
+      props: { model: { y: '' }, shouldUpdate: false } as any,
+      slots: {
+        default: () => h(FormItem, { name: 'y' }, () => h('input')),
+      },
+    })
+    expect(warn).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+    w2.unmount()
+    warn.mockRestore()
+  })
+
+  it('Form 不传 shouldUpdate 不触发 deprecation warn', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(Form, {
+      props: { model: { x: '' } },
+      slots: {
+        default: () => h(FormItem, { name: 'x' }, () => h('input')),
+      },
+    })
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('shouldUpdate 已 deprecated'))
     wrapper.unmount()
     warn.mockRestore()
   })

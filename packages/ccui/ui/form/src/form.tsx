@@ -6,8 +6,21 @@ import type {
   FormValidateError,
   FormValidateTrigger,
 } from './form-types'
-import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, toRef, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  inject,
+  onMounted,
+  onUnmounted,
+  provide,
+  ref,
+  toRef,
+  watch,
+} from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { formInjectionKey, formProps, formProviderInjectionKey } from './form-types'
 import { getPathKey } from './utils'
 import './form.scss'
@@ -20,6 +33,12 @@ export default defineComponent({
     const ns = useNamespace('form')
     const fields = ref<FormItemContext[]>([])
     const provider = inject(formProviderInjectionKey, null)
+
+    // shouldUpdate deprecation warn：ccui 不实现该 prop（Vue 响应式自然处理依赖收集），保留 deprecation 信号
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'shouldUpdate', 'should-update')) {
+      warnDeprecated('shouldUpdate', undefined, 'Form')
+    }
 
     const getFieldList = (propsToHandle?: FormNamePath | FormNamePath[]) => {
       if (propsToHandle === undefined) {

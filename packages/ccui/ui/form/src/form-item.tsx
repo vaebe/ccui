@@ -19,7 +19,7 @@ import {
   ref,
   watch,
 } from 'vue'
-import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
 
@@ -60,7 +60,7 @@ export default defineComponent({
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'prop', 'prop')) {
-      warnDeprecatedProp('FormItem', 'prop', 'name')
+      warnDeprecated('prop', 'name', 'FormItem')
     }
 
     const form = inject(formInjectionKey, null)

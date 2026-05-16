@@ -601,7 +601,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | 参数             | 类型                                                            | 默认值    | 说明                                                                             |
 | ---------------- | --------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------- |
 | name             | string / number / array                                         | --        | 字段路径，支持数组路径                                                           |
-| prop             | string / number / array                                         | --        | 字段路径，兼容旧 API                                                             |
+| prop             | string / number / array                                         | --        | **(deprecated)** 请改用 `name`                                                   |
 | label            | string                                                          | --        | 标签文本                                                                         |
 | labelCol         | 同 Form 同名 prop                                               | --        | 当前项 label 列配置（显式优先于 Form 级）                                        |
 | wrapperCol       | 同 Form 同名 prop                                               | --        | 当前项控件列配置                                                                 |
