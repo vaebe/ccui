@@ -4,7 +4,7 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
 export type ModalType = 'info' | 'success' | 'warning' | 'error' | 'confirm'
 
 /**
- * `closable` 复合配置（Ant Design v5+）：
+ * `closable` 复合配置：
  *
  * - `boolean`：显示/隐藏关闭按钮
  * - `{ closeIcon, disabled, ariaLabel }`：自定义关闭按钮
@@ -50,7 +50,7 @@ export const modalProps = {
     default: 520,
   },
   /**
-   * 关闭按钮配置。`boolean` 或 `{ closeIcon, disabled, ariaLabel }` 复合对象（Ant Design v5+）。
+   * 关闭按钮配置。`boolean` 或 `{ closeIcon, disabled, ariaLabel }` 复合对象。
    */
   closable: {
     type: [Boolean, Object] as PropType<ModalClosable>,
@@ -136,8 +136,7 @@ export const modalProps = {
     default: false,
   },
   /**
-   * Ant Design v5 `forceRender` 的 Vue 化等价：默认 false 时 destroyOnClose 控制；
-   * 设为 true 时初次挂载即渲染内容（即使未打开），关闭后保留 DOM。
+   * 默认 false 时由 destroyOnClose 控制；设为 true 时初次挂载即渲染内容（即使未打开），关闭后保留 DOM。
    * 与 `<KeepAlive>` 语义对齐，命名跟 Vue 习惯。
    */
   keepAlive: {
@@ -194,15 +193,14 @@ export const modalProps = {
     default: true,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。
-   * 可用 key：`root` / `wrap` / `mask` / `header` / `body` / `footer`。
+   * 语义化 DOM className 注入。可用 key：`root` / `wrap` / `mask` / `header` / `body` / `footer`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

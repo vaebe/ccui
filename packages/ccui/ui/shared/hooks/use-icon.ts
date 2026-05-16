@@ -9,7 +9,7 @@ function isIconifyName(name: string): boolean {
 }
 
 /**
- * 渲染图标钩子的值（M-A4 通用 helper）：
+ * 渲染图标钩子的值：
  * - string + 含 `:`：当 Iconify name 渲染 `<IconifyIcon icon={value} />`
  * - string + 不含 `:`：当 CSS 类名（兼容自定义 iconfont 接入方）渲染 `<i class={value} />`
  * - VNode：直接返回

@@ -8,8 +8,7 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
  * - `CASCADER_SHOW_PARENT`：父节点全部子节点都选中时，只输出父节点
  *
  * 与 ant 的 `Cascader.SHOW_CHILD` 静态属性等价，**不挂命名空间**，从 `vue3-ccui` 顶层 export。
- * 当前 ccui Cascader 尚未接入 `showCheckedStrategy` 这条 API；常量先 export 出去，方便外部代码
- * 提前按 ant 习惯引用，待后续 batch 接入实际逻辑时直接对接。
+ * 当前 ccui Cascader 尚未接入 `showCheckedStrategy`，常量已 export 供外部代码提前引用。
  */
 export const CASCADER_SHOW_CHILD = 'SHOW_CHILD' as const
 export const CASCADER_SHOW_PARENT = 'SHOW_PARENT' as const
@@ -150,15 +149,14 @@ export const cascaderProps = {
     default: 'ccui-cascader-fade',
   },
   /**
-   * 嵌套展开箭头图标（M-A4 增强）。原 string 形态保留向后兼容，新增 VNode 形态支持；
-   * 同名 `expandIcon` slot 优先级最高。
+   * 嵌套展开箭头图标。接 string 或 VNode；同名 `expandIcon` slot 优先级最高。
    */
   expandIcon: {
     type: [String, Object] as PropType<string | VNode>,
     default: '›',
   },
   /**
-   * Ant Design 风格自定义清除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 自定义清除图标。接 string（Iconify name / CSS class）或 VNode；
    * 同名 `clearIcon` slot 优先级最高。
    */
   clearIcon: {
@@ -166,7 +164,7 @@ export const cascaderProps = {
     default: undefined,
   },
   /**
-   * Ant Design 风格自定义下拉箭头图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 自定义下拉箭头图标。接 string（Iconify name / CSS class）或 VNode；
    * 同名 `suffixIcon` slot 优先级最高。
    */
   suffixIcon: {
@@ -174,7 +172,7 @@ export const cascaderProps = {
     default: undefined,
   },
   /**
-   * Ant Design 风格自定义 multiple 模式下 tag 的删除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 自定义 multiple 模式下 tag 的删除图标。接 string（Iconify name / CSS class）或 VNode；
    * 同名 `removeIcon` slot 优先级最高。
    */
   removeIcon: {
@@ -187,22 +185,21 @@ export const cascaderProps = {
     default: '',
   },
   /**
-   * Ant Design v5.13+ 录入组件统一 variant 形态。
-   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   * 录入组件统一 variant 形态。
    */
   variant: {
     type: String as PropType<CascaderVariant>,
     default: 'outlined',
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `inputWrap` / `popup`。
+   * 语义化 DOM className 注入。可用 key：`root` / `inputWrap` / `popup`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,
@@ -212,7 +209,4 @@ export const cascaderProps = {
 
 export type CascaderProps = ExtractPropTypes<typeof cascaderProps>
 
-/**
- * Ant Design v5.13+ 录入组件统一 variant 形态。
- */
 export type CascaderVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

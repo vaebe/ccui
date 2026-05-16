@@ -17,11 +17,10 @@ export interface MessageOptions {
   icon?: string
   key?: string | number
   customClass?: string
-  // L-3.5 新增
   placement?: MessagePlacement
   role?: MessageAriaRole
   pauseOnHover?: boolean
-  // M-A2 新增：语义化 DOM 钩子
+  // 语义化 DOM 钩子
   classNames?: CcSemanticClasses
   styles?: CcSemanticStyles
 }
@@ -77,15 +76,14 @@ export const messageItemProps = {
     default: true,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。
-   * 可用 key：`root` / `icon` / `content`。
+   * 语义化 DOM className 注入。可用 key：`root` / `icon` / `content`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

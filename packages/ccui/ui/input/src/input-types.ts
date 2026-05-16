@@ -10,7 +10,7 @@ export type InputSize = 'large' | 'default' | 'small'
 export type InputStatus = '' | 'error' | 'warning'
 
 /**
- * Ant Design v5.13+ 录入组件统一 variant 形态：
+ * 录入组件统一 variant 形态：
  *
  * - `outlined`（默认）：1px solid 边框，与既有视觉一致
  * - `filled`：无边框 + 浅灰背景填充，hover 加深
@@ -131,8 +131,7 @@ export const inputProps = {
     default: '',
   },
   /**
-   * Ant Design v5.13+ 录入组件统一 variant 形态。
-   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   * 录入组件统一 variant 形态。
    */
   variant: {
     type: String as PropType<InputVariant>,
@@ -150,14 +149,14 @@ export const inputProps = {
     default: '',
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `wrapper` / `input`。
+   * 语义化 DOM className 注入。可用 key：`root` / `wrapper` / `input`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

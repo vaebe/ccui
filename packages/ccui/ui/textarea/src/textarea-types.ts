@@ -5,7 +5,7 @@ export type TextareaSize = 'large' | 'default' | 'small'
 export type TextareaStatus = '' | 'error' | 'warning'
 
 /**
- * Ant Design v5.13+ 录入组件统一 variant 形态。
+ * 录入组件统一 variant 形态。
  *
  * - `outlined`（默认）：1px solid 边框
  * - `filled`：无边框 + 浅灰背景填充
@@ -127,7 +127,7 @@ export const textareaProps = {
     default: 'vertical',
   },
   /**
-   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * 录入组件统一 variant 形态。
    * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
    */
   variant: {
@@ -135,14 +135,14 @@ export const textareaProps = {
     default: 'outlined',
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `textarea` / `count`。
+   * 语义化 DOM className 注入。可用 key：`root` / `textarea` / `count`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

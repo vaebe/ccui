@@ -86,7 +86,7 @@ export const baseTextProps = {
     type: Boolean,
     default: false,
   },
-  // L-3.7：copyable / editable / ellipsis 三大交互
+  // copyable / editable / ellipsis 三大交互
   copyable: {
     type: [Boolean, Object] as PropType<boolean | CopyableConfig>,
     default: false,

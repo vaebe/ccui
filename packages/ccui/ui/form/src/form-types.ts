@@ -48,7 +48,6 @@ export interface FormRule {
   whitespace?: boolean
   /**
    * 仅警告：校验失败时 FormItem 状态降级为 `'warning'`，不阻塞 form-level submit/validate。
-   * 对齐 Ant Design v5+ Rule.warningOnly。
    */
   warningOnly?: boolean
   validator?: (
@@ -280,7 +279,7 @@ export const formItemProps = {
   },
   rules: {
     /**
-     * 支持规则对象、数组，或工厂函数 `(model) => Rule | Rule[]`（Ant Design v5+）。
+     * 支持规则对象、数组，或工厂函数 `(model) => Rule | Rule[]`。
      */
     type: [Object, Array, Function] as PropType<FormItemRule>,
     default: undefined,

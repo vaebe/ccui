@@ -14,10 +14,6 @@ export type MentionsSourceItem = string | MentionOption
 
 export type FilterOption = boolean | ((input: string, option: MentionOption) => boolean)
 
-/**
- * Ant Design v5.13+ 录入组件统一 variant 形态。
- * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
- */
 export type MentionsVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 /**
@@ -92,7 +88,7 @@ export const mentionsProps = {
     default: 0,
   },
   /**
-   * Ant Design v5.13+ 录入组件统一 variant 形态。
+   * 录入组件统一 variant 形态。
    * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
    */
   variant: {
@@ -107,14 +103,14 @@ export const mentionsProps = {
     default: '',
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `textarea` / `popup`。
+   * 语义化 DOM className 注入。可用 key：`root` / `textarea` / `popup`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

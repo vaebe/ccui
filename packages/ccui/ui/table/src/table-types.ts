@@ -144,14 +144,14 @@ export const tableProps = {
     default: 15,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `header` / `body` / `row`。
+   * 语义化 DOM className 注入。可用 key：`root` / `header` / `body` / `row`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,
@@ -162,7 +162,7 @@ export const tableProps = {
 export type TableProps = ExtractPropTypes<typeof tableProps>
 
 /**
- * 模板式列收集器（L-2.12）：`<c-table-column>` / `<c-table-column-group>` 在挂载时把列定义
+ * 模板式列收集器：`<c-table-column>` / `<c-table-column-group>` 在挂载时把列定义
  * 注册到父 Table；卸载时清理。同一 Table 实例下的子列共享一个收集器。
  *
  * 与 `columns` prop 互斥：`columns` 非空时优先用 prop，否则用收集到的列。

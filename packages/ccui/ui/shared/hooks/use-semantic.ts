@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'vue'
 
 /**
- * Ant Design v5.18+ 的 classNames / styles 语义化 DOM 钩子（M-A2）。
+ * classNames / styles 语义化 DOM 钩子。
  *
  * 用法约定：每组件 types 文件用本通用类型暴露 `classNames` / `styles` 两个 prop；
  * tsx 在每个语义化区域用 Vue class array binding 注入：

@@ -20,7 +20,7 @@ export type DirectoryTreeExpandAction = 'click' | false
  *
  * 其他 props / events / slots 完全透传给底层 `<c-tree>`。
  *
- * **不支持 ant 的 `expandAction='doubleClick'`**（v2 演进时再加；当前 v1 用 `'click'` 或 `false`）。
+ * **不支持 ant 的 `expandAction='doubleClick'`**，当前用 `'click'` 或 `false`。
  */
 export const directoryTreeProps = {
   ...treeProps,

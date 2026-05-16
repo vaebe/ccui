@@ -106,7 +106,7 @@ export const drawerProps = {
     default: undefined,
   },
   /**
-   * 加载态。`true` 时 body 区显示骨架占位，对齐 Ant Design v5.17+。
+   * 加载态。`true` 时 body 区显示骨架占位。
    */
   loading: {
     type: Boolean,
@@ -160,15 +160,14 @@ export const drawerProps = {
     default: true,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。
-   * 可用 key：`root` / `wrap` / `mask` / `header` / `body` / `footer`。
+   * 语义化 DOM className 注入。可用 key：`root` / `wrap` / `mask` / `header` / `body` / `footer`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

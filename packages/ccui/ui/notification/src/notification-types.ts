@@ -2,7 +2,7 @@ import type { ExtractPropTypes, PropType, VNode } from 'vue'
 import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type NotificationType = 'info' | 'success' | 'warning' | 'error'
-// L-3.5：补 top / bottom 居中位
+// 补 top / bottom 居中位
 export type NotificationPlacement = 'top' | 'topRight' | 'topLeft' | 'bottom' | 'bottomRight' | 'bottomLeft'
 
 export type NotificationAriaRole = 'alert' | 'status'
@@ -18,10 +18,9 @@ export interface NotificationOptions {
   onClose?: () => void
   icon?: string
   customClass?: string
-  // L-3.5 新增
   role?: NotificationAriaRole
   pauseOnHover?: boolean
-  // M-A2 新增：语义化 DOM 钩子
+  // 语义化 DOM 钩子
   classNames?: CcSemanticClasses
   styles?: CcSemanticStyles
 }
@@ -82,15 +81,14 @@ export const notificationItemProps = {
     default: true,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。
-   * 可用 key：`root` / `icon` / `content` / `close`。
+   * 语义化 DOM className 注入。可用 key：`root` / `icon` / `content` / `close`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,

@@ -3,7 +3,7 @@ import type { ExtractPropTypes, PropType } from 'vue'
 export type BadgeRibbonPlacement = 'start' | 'end'
 
 /**
- * 与 Tag / Badge 对齐的 ant v6 预设色名（小写）。
+ * 与 Tag / Badge 对齐的预设色名（小写）。
  */
 const PRESET_COLORS = new Set<string>([
   'pink',

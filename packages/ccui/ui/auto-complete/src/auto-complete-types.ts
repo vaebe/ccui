@@ -45,7 +45,7 @@ export const autoCompleteProps = {
     default: false,
   },
   /**
-   * Ant Design 风格自定义清除图标（M-A4）。接 string（Iconify name / CSS class）或 VNode；
+   * 自定义清除图标。接 string（Iconify name / CSS class）或 VNode；
    * 同名 `clearIcon` slot 优先级最高。
    */
   clearIcon: {
@@ -116,22 +116,21 @@ export const autoCompleteProps = {
     default: 0,
   },
   /**
-   * Ant Design v5.13+ 录入组件统一 variant 形态。
-   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   * 录入组件统一 variant 形态。
    */
   variant: {
     type: String as PropType<AutoCompleteVariant>,
     default: 'outlined',
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM className 注入（M-A2）。可用 key：`root` / `input` / `popup`。
+   * 语义化 DOM className 注入。可用 key：`root` / `input` / `popup`。
    */
   classNames: {
     type: Object as PropType<CcSemanticClasses>,
     default: undefined,
   },
   /**
-   * Ant Design v5.18+ 语义化 DOM style 注入（M-A2）。可用 key 与 classNames 一致。
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
    */
   styles: {
     type: Object as PropType<CcSemanticStyles>,
@@ -141,9 +140,6 @@ export const autoCompleteProps = {
 
 export type AutoCompleteProps = ExtractPropTypes<typeof autoCompleteProps>
 
-/**
- * Ant Design v5.13+ 录入组件统一 variant 形态。
- */
 export type AutoCompleteVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
 
 // 内部规范化的 option 形态

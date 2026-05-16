@@ -24,22 +24,14 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset'
 export type ButtonShape = 'default' | 'circle' | 'round'
 export type ButtonIconPosition = 'start' | 'end'
 
-/**
- * Ant Design v5.21+ 的 color × variant 矩阵（forward-compat 接收）。
- *
- * - color：色板（v5.21+），决定 hover / active / focus 派生色。
- * - variant：视觉变体，与 Tag 的 variant 同名不同集。
- *
- * 当前 ccui 实现：prop 已接受，SCSS 仅按 `type` 维度上色，color + variant 的完整 SCSS 矩阵留 v2.x 后续 batch。
- */
 export type ButtonColor = 'default' | 'primary' | 'danger'
 export type ButtonVariant = 'outlined' | 'dashed' | 'solid' | 'filled' | 'text' | 'link'
 
 /**
  * `loading` 复合配置：
  *
- * - `boolean`：等价 ccui 旧行为，立刻进入 loading
- * - `{ delay, icon }`：v5.23+，延迟 `delay` ms 后再进入 loading；自定义 loading 图标
+ * - `boolean`：立刻进入 loading
+ * - `{ delay, icon }`：延迟 `delay` ms 后再进入 loading；自定义 loading 图标
  */
 export interface ButtonLoadingObject {
   delay?: number
@@ -115,7 +107,7 @@ export const buttonProps = {
     default: '',
   },
   /**
-   * 图标位置（v5.17+）。
+   * 图标位置。
    */
   iconPosition: {
     type: String as PropType<ButtonIconPosition>,
@@ -143,7 +135,7 @@ export const buttonProps = {
     default: false,
   },
   /**
-   * 自动在两个 CJK 字符间插入空格（v5.17+），与 Ant Design 默认行为一致。
+   * 自动在两个 CJK 字符间插入空格。
    */
   autoInsertSpace: {
     type: Boolean,
@@ -163,16 +155,10 @@ export const buttonProps = {
     type: String,
     default: undefined,
   },
-  /**
-   * Ant Design v5.21+ 新增。当前 prop 已接受，SCSS 矩阵完整接入留 v2.x。
-   */
   color: {
     type: String as PropType<ButtonColor>,
     default: undefined,
   },
-  /**
-   * Ant Design v5.21+ 新增。当前 prop 已接受，SCSS 矩阵完整接入留 v2.x。
-   */
   variant: {
     type: String as PropType<ButtonVariant>,
     default: undefined,

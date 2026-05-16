@@ -30,8 +30,7 @@ export interface TooltipArrowObject {
 export type TooltipArrow = boolean | TooltipArrowObject
 
 /**
- * `align` 偏移配置（Ant Design v4+，浮层细调）。当前接收并存储；具体 `targetOffset`
- * 等 v2.x 接入到 floating-ui middleware。
+ * `align` 偏移配置（浮层细调）。当前 prop 已接收，`targetOffset` 等暂未接入 floating-ui middleware。
  */
 export interface TooltipAlign {
   offset?: [number, number]
@@ -138,7 +137,7 @@ export const tooltipProps = {
   },
   /**
    * Ant Design 主名：mouseenter 后多少 **毫秒**显示。
-   * 注：ant 官方文档单位为秒（number=0.1=100ms），ccui 沿用本仓库 ms 统一口径；v2.0 文档明确说明。
+   * 注：ant 官方文档单位为秒（number=0.1=100ms），ccui 沿用本仓库 ms 统一口径。
    * 显式 `mouseEnterDelay` 优先于 `showAfter`。
    */
   mouseEnterDelay: {
@@ -183,7 +182,7 @@ export const tooltipProps = {
     default: true,
   },
   /**
-   * Ant Design v5.13+：每次关闭时强制重置内容（不缓存上次渲染）。
+   * 每次关闭时强制重置内容（不缓存上次渲染）。
    */
   fresh: {
     type: Boolean,
@@ -205,8 +204,7 @@ export const tooltipProps = {
     default: true,
   },
   /**
-   * Ant Design 浮层细调配置（offset / targetOffset / overflow）。当前 prop 已接受；
-   * floating-ui middleware 的完整接入留 v2.x。
+   * 浮层细调配置：offset / targetOffset / overflow。
    */
   align: {
     type: Object as PropType<TooltipAlign>,
@@ -214,7 +212,6 @@ export const tooltipProps = {
   },
   /**
    * Ant Design 主名：浮层容器函数。返回 null 时不 Teleport（即贴近触发节点同 DOM 流）。
-   * 当前 prop 已接收；与 floating-ui strategy 的完整对接留 v2.x。
    */
   getPopupContainer: {
     type: Function as PropType<TooltipGetPopupContainer>,
@@ -241,6 +238,6 @@ export interface TooltipEmits {
   hide: () => void
   /** 当 visible 状态改变时触发 */
   'update:visible': (visible: boolean) => void
-  /** Ant Design v-model:open 同步事件 */
+  /** v-model:open 同步事件 */
   'update:open': (open: boolean) => void
 }

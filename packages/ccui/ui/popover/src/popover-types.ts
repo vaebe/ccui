@@ -14,7 +14,7 @@ export type PopoverArrow = boolean | PopoverArrowObject
 export type PopoverGetPopupContainer = (trigger: HTMLElement | null) => HTMLElement | null
 
 /**
- * `align` 浮层细调（Ant Design 接收并存储，floating-ui 完整接入留 v2.x）。
+ * `align` 浮层细调（offset / targetOffset / overflow）。
  */
 export interface PopoverAlign {
   offset?: [number, number]
@@ -197,7 +197,7 @@ export const popoverProps = {
     default: undefined,
   },
   /**
-   * Ant Design v5.13+：每次关闭后强制重置内容。
+   * 每次关闭后强制重置内容。
    */
   fresh: {
     type: Boolean,
@@ -218,7 +218,7 @@ export const popoverProps = {
     default: true,
   },
   /**
-   * Ant Design 浮层细调对象（v2.x 完整接入 floating-ui middleware）。
+   * 浮层细调对象：offset / targetOffset / overflow。
    */
   align: {
     type: Object as PropType<PopoverAlign>,

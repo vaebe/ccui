@@ -3,7 +3,7 @@ import type { CSSProperties, ExtractPropTypes, PropType } from 'vue'
 export type StatisticTimerType = 'countdown' | 'countup'
 
 /**
- * 对标 ant `Statistic.Timer`（v5.25+）：基于时间戳的双向计时器。
+ * 对标 ant `Statistic.Timer`：基于时间戳的双向计时器。
  *
  * - `type: 'countdown'`：从 `value`（目标时间戳）倒计时到 0。归 0 时 emit `finish`。
  * - `type: 'countup'`：从 `value`（起始时间戳）开始正数计时（无终止）。
