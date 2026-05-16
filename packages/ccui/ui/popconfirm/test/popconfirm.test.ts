@@ -136,6 +136,17 @@ describe('popconfirm', () => {
     wrapper.unmount()
   })
 
+  it('内嵌 popover dialog role 与 trigger aria 属性继承', async () => {
+    const wrapper = makeWrapper()
+    await nextTick()
+    const popper = document.body.querySelector('.ccui-popover__popper')
+    expect(popper?.getAttribute('role')).toBe('dialog')
+    const trigger = wrapper.find('.ccui-popover__trigger')
+    expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
   it('opens from internal state in click mode and respects disabled state', async () => {
     const wrapper = mount(Popconfirm, {
       props: { title: 'Open me', visible: undefined },

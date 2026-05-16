@@ -247,8 +247,24 @@ describe('tooltip', () => {
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       const popper = wrapper.find('.ccui-tooltip__popper')
       expect(trigger.attributes('aria-label')).toBe('Test tooltip')
-      expect(trigger.attributes('aria-describedby')).toBe('ccui-tooltip__popper')
+      // aria-describedby 匹配实际的 popper id（格式 ccui-tooltip__popper-{n}）
+      const popperId = popper.attributes('id')
+      expect(popperId).toMatch(/^ccui-tooltip__popper-\d+$/)
+      expect(trigger.attributes('aria-describedby')).toBe(popperId)
       expect(popper.attributes('role')).toBe('tooltip')
+    })
+
+    it('多个 tooltip 实例 popper id 唯一', async () => {
+      const w1 = createWrapper({ content: 'A', visible: true })
+      const w2 = createWrapper({ content: 'B', visible: true })
+      await nextTick()
+      const id1 = w1.find('.ccui-tooltip__popper').attributes('id')
+      const id2 = w2.find('.ccui-tooltip__popper').attributes('id')
+      expect(id1).toBeTruthy()
+      expect(id2).toBeTruthy()
+      expect(id1).not.toBe(id2)
+      w1.unmount()
+      w2.unmount()
     })
   })
 

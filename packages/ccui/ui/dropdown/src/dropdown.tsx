@@ -52,6 +52,8 @@ export default defineComponent({
         offset={4}
         popperClass={ns.b()}
         width={props.width}
+        role="menu"
+        ariaHasPopup="menu"
         onUpdate:visible={(val: boolean) => {
           if (!isControlled.value) {
             innerVisible.value = val
@@ -62,7 +64,7 @@ export default defineComponent({
         v-slots={{
           default: () => slots.default?.(),
           content: () => (
-            <ul class={ns.e('menu')} role="menu">
+            <ul class={ns.e('menu')}>
               {slots.menu
                 ? slots.menu({ select: onSelect })
                 : props.items.map((item) => (

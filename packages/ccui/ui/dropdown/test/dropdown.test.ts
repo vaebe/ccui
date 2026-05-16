@@ -213,6 +213,36 @@ describe('dropdown', () => {
     wrapper.unmount()
   })
 
+  it('trigger 携带 aria-haspopup=menu / aria-expanded / aria-controls，popper role=menu', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        trigger: 'click',
+        items: [{ key: '1', label: 'A' }],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    const trigger = wrapper.find('.ccui-popover__trigger')
+    // 关闭态
+    expect(trigger.attributes('aria-haspopup')).toBe('menu')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+
+    await trigger.trigger('click')
+    await nextTick()
+
+    // 打开后
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    const popper = document.body.querySelector('.ccui-popover__popper') as HTMLElement
+    expect(popper.getAttribute('role')).toBe('menu')
+    expect(trigger.attributes('aria-controls')).toBe(popper.id)
+
+    // 菜单项保留 menuitem role
+    const item = popper.querySelector(`${ns.e('item')}`)
+    expect(item?.getAttribute('role')).toBe('menuitem')
+    wrapper.unmount()
+  })
+
   it('updates visible state from v-model prop changes', async () => {
     const wrapper = mount(Dropdown, {
       props: {

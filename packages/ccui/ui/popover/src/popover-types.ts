@@ -240,6 +240,20 @@ export const popoverProps = {
     type: Array as PropType<string[]>,
     default: () => ['Enter', ' '],
   },
+  /**
+   * 浮层 ARIA role（默认 dialog）。内部包装组件可指定 menu 以匹配语义。
+   */
+  role: {
+    type: String,
+    default: 'dialog',
+  },
+  /**
+   * 触发器 aria-haspopup 值（默认 dialog）。内部包装组件可指定 menu 等。
+   */
+  ariaHasPopup: {
+    type: String,
+    default: 'dialog',
+  },
 } as const
 
 export type PopoverProps = ExtractPropTypes<typeof popoverProps>

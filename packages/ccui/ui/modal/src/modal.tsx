@@ -16,6 +16,8 @@ function isClosableObject(value: unknown): value is ModalClosableObject {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
+let modalIdCounter = 0
+
 export default defineComponent({
   name: 'CModal',
   props: modalProps,
@@ -23,6 +25,9 @@ export default defineComponent({
   setup(props: ModalProps, { emit, slots }) {
     const ns = useNamespace('modal')
     const cfg = useConfig()
+    const modalUid = ++modalIdCounter
+    const titleId = `${ns.b()}-title-${modalUid}`
+    const bodyId = `${ns.b()}-body-${modalUid}`
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
@@ -250,12 +255,16 @@ export default defineComponent({
       const maskTransition = props.maskTransitionName || `${ns.b()}-mask-fade`
       const zoomTransition = props.transitionName || `${ns.b()}-zoom`
 
+      const hasTitle = !!(props.title || slots.title)
+
       const dialog = (
         <div
           class={[ns.b(), props.centered && ns.m('centered'), props.wrapClassName, props.classNames?.root]}
           style={[wrapStyle, props.styles?.root] as any}
           aria-modal="true"
           role="dialog"
+          aria-labelledby={hasTitle ? titleId : undefined}
+          aria-describedby={bodyId}
         >
           <Transition name={maskTransition}>
             {props.mask && isOpen.value && (
@@ -286,10 +295,12 @@ export default defineComponent({
                   )}
                   {(props.title || slots.title) && (
                     <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
-                      <div class={ns.e('title')}>{slots.title ? slots.title() : props.title}</div>
+                      <div class={ns.e('title')} id={titleId}>
+                        {slots.title ? slots.title() : props.title}
+                      </div>
                     </div>
                   )}
-                  <div class={[ns.e('body'), props.classNames?.body]} style={props.styles?.body}>
+                  <div class={[ns.e('body'), props.classNames?.body]} id={bodyId} style={props.styles?.body}>
                     {slots.default?.()}
                   </div>
                   {renderFooter()}

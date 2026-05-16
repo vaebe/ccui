@@ -41,6 +41,10 @@ export default defineComponent({
   setup(props: PopoverProps, { emit, slots, expose }) {
     const ns = useNamespace('popover')
     const popperId = `${ns.e('popper')}-${++popoverIdCounter}`
+    const titleId = `${popperId}-title`
+
+    // 是否存在标题（slot 或 prop），用于 aria-labelledby
+    const hasTitle = computed(() => !!slots.title || !!props.title)
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
@@ -372,7 +376,11 @@ export default defineComponent({
       const hasTitleSlot = !!slots.title
       const hasTitleProp = !!props.title
       if (!hasTitleSlot && !hasTitleProp) return null
-      return <div class={ns.e('header')}>{slots.title ? slots.title() : props.title}</div>
+      return (
+        <div class={ns.e('header')} id={titleId}>
+          {slots.title ? slots.title() : props.title}
+        </div>
+      )
     }
 
     const renderContent = () => {
@@ -411,8 +419,10 @@ export default defineComponent({
         <div
           ref={popperRef}
           class={popperClass.value}
-          role="dialog"
+          role={props.role}
           id={popperId}
+          aria-labelledby={hasTitle.value ? titleId : undefined}
+          aria-label={!hasTitle.value && props.ariaLabel ? props.ariaLabel : undefined}
           style={{
             ...floatingStyles.value,
             ...inlineColorStyle.value,
@@ -445,6 +455,9 @@ export default defineComponent({
               ref={triggerRef}
               class={ns.e('trigger')}
               aria-describedby={actualVisible.value ? popperId : undefined}
+              aria-haspopup={props.ariaHasPopup as any}
+              aria-expanded={actualVisible.value ? 'true' : 'false'}
+              aria-controls={actualVisible.value ? popperId : undefined}
               aria-label={props.ariaLabel}
               tabindex={props.trigger === 'focus' ? props.tabindex : undefined}
               {...triggerEvents}

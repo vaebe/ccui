@@ -10,12 +10,15 @@ function isArrowObject(v: unknown): v is TooltipArrowObject {
   return v !== null && typeof v === 'object' && !Array.isArray(v)
 }
 
+let tooltipIdCounter = 0
+
 export default defineComponent({
   name: 'CTooltip',
   props: tooltipProps,
   emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'update:open'],
   setup(props: TooltipProps, { emit, slots }) {
     const ns = useNamespace('tooltip')
+    const popperId = `${ns.e('popper')}-${++tooltipIdCounter}`
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
@@ -302,7 +305,7 @@ export default defineComponent({
           <div
             ref={triggerRef}
             class={ns.e('trigger')}
-            aria-describedby={actualVisible.value ? ns.e('popper') : undefined}
+            aria-describedby={actualVisible.value ? popperId : undefined}
             aria-label={props.ariaLabel}
             tabindex={props.trigger === 'focus' ? 0 : undefined}
             {...triggerEvents}
@@ -316,7 +319,7 @@ export default defineComponent({
               ref={popperRef}
               class={popperClass.value}
               role="tooltip"
-              id={ns.e('popper')}
+              id={popperId}
               style={{
                 ...floatingStyles.value,
                 ...inlineColorStyle.value,

@@ -489,6 +489,38 @@ describe('modal', () => {
     })
   })
 
+  describe('可访问性 ARIA', () => {
+    it('root 为 role=dialog aria-modal=true，并 aria-labelledby/aria-describedby 指向 title/body', async () => {
+      const wrapper = mount(Modal, {
+        props: { visible: true, title: 'Modal Title', appendToBody: true },
+        slots: { default: '<p>Body content</p>' },
+      })
+      await nextTick()
+      const root = document.body.querySelector(ns.b()) as HTMLElement
+      expect(root.getAttribute('role')).toBe('dialog')
+      expect(root.getAttribute('aria-modal')).toBe('true')
+
+      const title = document.body.querySelector(ns.e('title')) as HTMLElement
+      const body = document.body.querySelector(ns.e('body')) as HTMLElement
+      expect(title.id).toBeTruthy()
+      expect(body.id).toBeTruthy()
+      expect(root.getAttribute('aria-labelledby')).toBe(title.id)
+      expect(root.getAttribute('aria-describedby')).toBe(body.id)
+      wrapper.unmount()
+    })
+
+    it('无 title 时不设置 aria-labelledby', async () => {
+      const wrapper = mount(Modal, {
+        props: { visible: true, appendToBody: true },
+        slots: { default: '<p>x</p>' },
+      })
+      await nextTick()
+      const root = document.body.querySelector(ns.b()) as HTMLElement
+      expect(root.getAttribute('aria-labelledby')).toBeNull()
+      wrapper.unmount()
+    })
+  })
+
   describe('M-A2 classNames / styles 钩子', () => {
     it('classNames.root 注入到根节点', async () => {
       const wrapper = mount(Modal, {

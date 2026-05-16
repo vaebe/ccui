@@ -33,12 +33,17 @@ function isPushObject(value: unknown): value is DrawerPushObject {
 
 const DEFAULT_PUSH_DISTANCE = 180
 
+let drawerIdCounter = 0
+
 export default defineComponent({
   name: 'CDrawer',
   props: drawerProps,
   emits: ['update:visible', 'update:open', 'open', 'opened', 'close', 'closed', 'after-open-change'],
   setup(props: DrawerProps, { emit, slots }) {
     const ns = useNamespace('drawer')
+    const drawerUid = ++drawerIdCounter
+    const titleId = `${ns.b()}-title-${drawerUid}`
+    const bodyId = `${ns.b()}-body-${drawerUid}`
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
@@ -252,7 +257,9 @@ export default defineComponent({
       if (!hasHeader.value) return null
       return (
         <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header}>
-          <div class={ns.e('title')}>{slots.title ? slots.title() : props.title}</div>
+          <div class={ns.e('title')} id={titleId}>
+            {slots.title ? slots.title() : props.title}
+          </div>
           {slots.extra && <div class={ns.e('extra')}>{slots.extra()}</div>}
           {closableEnabled.value && (
             <button
@@ -271,7 +278,11 @@ export default defineComponent({
     const renderBody = (): VNode => {
       if (props.loading) {
         return (
-          <div class={[ns.e('body'), ns.em('body', 'loading'), props.classNames?.body]} style={props.styles?.body}>
+          <div
+            class={[ns.e('body'), ns.em('body', 'loading'), props.classNames?.body]}
+            id={bodyId}
+            style={props.styles?.body}
+          >
             <div class={ns.e('skeleton')} aria-busy="true">
               <span class={ns.em('skeleton', 'line')} />
               <span class={ns.em('skeleton', 'line')} />
@@ -281,7 +292,7 @@ export default defineComponent({
         )
       }
       return (
-        <div class={[ns.e('body'), props.classNames?.body]} style={props.styles?.body}>
+        <div class={[ns.e('body'), props.classNames?.body]} id={bodyId} style={props.styles?.body}>
           {slots.default?.()}
         </div>
       )
@@ -334,12 +345,15 @@ export default defineComponent({
     }
 
     return () => {
+      const hasTitle = !!(props.title || slots.title)
       const wrap = (
         <div
           class={[ns.b(), ns.m(props.placement), props.classNames?.root]}
           style={[{ zIndex: props.zIndex }, props.styles?.root] as any}
           aria-modal="true"
           role="dialog"
+          aria-labelledby={hasTitle ? titleId : undefined}
+          aria-describedby={bodyId}
         >
           <Transition name={`${ns.b()}-fade`}>
             {props.mask && isOpen.value && (

@@ -265,6 +265,33 @@ describe('popover', () => {
       expect(trigger.attributes('aria-describedby')).toBe(popperId)
       expect(popper.attributes('role')).toBe('dialog')
     })
+
+    it('trigger 携带 aria-haspopup / aria-expanded / aria-controls', async () => {
+      wrapper = createWrapper({ content: 'Test', trigger: 'click' })
+      await nextTick()
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      // 关闭态
+      expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+      expect(trigger.attributes('aria-expanded')).toBe('false')
+      expect(trigger.attributes('aria-controls')).toBeUndefined()
+
+      // 打开态
+      await trigger.trigger('click')
+      await nextTick()
+      expect(trigger.attributes('aria-expanded')).toBe('true')
+      const popperId = wrapper.find('.ccui-popover__popper').attributes('id')
+      expect(trigger.attributes('aria-controls')).toBe(popperId)
+    })
+
+    it('有 title 时 popper aria-labelledby 指向 header id', async () => {
+      wrapper = createWrapper({ title: 'Hello', content: 'X', visible: true })
+      await nextTick()
+      const popper = wrapper.find('.ccui-popover__popper')
+      const header = wrapper.find('.ccui-popover__header')
+      const labelledby = popper.attributes('aria-labelledby')
+      expect(labelledby).toBeTruthy()
+      expect(header.attributes('id')).toBe(labelledby)
+    })
   })
 
   describe('外部交互', () => {
