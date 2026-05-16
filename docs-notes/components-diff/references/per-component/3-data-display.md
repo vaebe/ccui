@@ -894,6 +894,7 @@
 - ccui types：`packages/ccui/ui/table/src/table-types.ts`
 - ccui docs：`packages/docs/components/table/index.md`
 - ccui 自报状态：95%
+- **设计取舍**：Table 不承担分页职责，分页改为 `<c-pagination>` + 父组件 slice `dataSource` 外部组合；下文凡涉及 `pagination` 字段 / `pagination.placement` / `onChange(pagination, ...)` 4 参签名等与分页耦合的 ant API，统一不对齐 / 不补齐，不计入 95 → 100 长尾。
 
 ### Demo 对比
 
@@ -901,7 +902,7 @@
 
 > 总数 30+（ant 段有 41 个 ### 子标题，包含「Promotion」「Using in TypeScript」等非 demo 块；实际 ## Examples 下有 30 个 demo 区段）。
 
-**ccui 文档 demo（共 7 条）**：1. Basic 2. Sort And Filter 3. Pagination 4. 固定列 5. 展开行 6. 合并单元格 7. Row Selection。
+**ccui 文档 demo（共 13 条）**：1. Basic 2. 模板式列声明 3. 自定义单元格渲染 4. 树形数据 5. Sort And Filter 6. 固定列 7. 展开行 8. 合并单元格 9. Row Selection 10. 单选 + 实时统计 11. loading / size / showHeader 12. 自定义空态 13. change 事件全量追踪。
 
 **ccui 缺失的 ant demo**（按 ant 顺序）：
 
@@ -912,7 +913,7 @@
 - 「Multiple sorter」（ant 第 9 条）—— `sorter={{ compare, multiple }}`。
 - 「Reset filters and sorters」（ant 第 10 条）—— 受控 filteredValue / sortOrder + 重置。
 - 「Customized filter panel」（ant 第 11 条）—— column.filterDropdown 自定义面板。
-- 「Ajax」（ant 第 12 条）—— 远程数据 + 受控 pagination + onChange(pagination, filters, sorter)。
+- 「Ajax」（ant 第 12 条）—— 远程数据：监听 `change` 事件 (filters, sorter, currentData) 触发后端 refetch；分页部分不对齐（见设计取舍）。
 - 「size」（ant 第 13 条）—— large/middle/small 三档。
 - 「border, title and footer」（ant 第 14 条）—— `bordered` + `title()` + `footer()`。
 - 「Order Specific Column」（ant 第 16 条）—— Table.EXPAND_COLUMN / Table.SELECTION_COLUMN 顺序占位符。
@@ -928,7 +929,6 @@
 - 「Summary」（ant 第 35 条）—— `summary(currentData)` + `Table.Summary` 静态子组件。
 - 「Virtual list」（ant 第 36 条）—— `virtual` + `scroll.y`（v5.9.0）。
 - 「Responsive」（ant 第 37 条）—— column.responsive。
-- 「Pagination Settings」（ant 第 38 条）—— `pagination.placement`（v6 推荐 topStart/bottomEnd 等，旧 position 已 deprecated）。
 - 「Fixed header and scroll bar with the page」（ant 第 39 条）—— `sticky: { offsetHeader, offsetScroll, getContainer }`。
 - 「Dynamic Settings」（ant 第 40 条）—— 综合演示。
 - 「Custom semantic dom styling」—— classNames / styles。
@@ -954,7 +954,7 @@
 - `tableLayout`（'auto' | 'fixed'）。
 - `title`（function(currentPageData)）。
 - `virtual`（boolean，v5.9.0）—— 虚拟滚动开关。
-- `onChange(pagination, filters, sorter, extra)`。
+- `onChange(pagination, filters, sorter, extra)`：**形状不对齐**，ccui `change` 为 `(filters, sorter, currentData)` 3 参（见设计取舍）。
 - `onHeaderRow(columns, index)`。
 - `onRow(record, index)` —— 行级 props（onClick / onDoubleClick / 等）。
 - `onScroll(event)`（v5.16.0）。
@@ -987,9 +987,9 @@
 
 - 完整子组件未实现（ccui 通过 column.children 实现表头分组未提供 JSX API）。
 
-**pagination 缺失**：
+**pagination 整段不对齐**：
 
-- `placement`（topStart / topCenter / topEnd / bottomStart / bottomCenter / bottomEnd / none，ant v6 新名，旧 `position` deprecated）。
+- Table 不承担分页职责，`pagination` 字段不存在。ant 的 `pagination.position / placement / showSizeChanger / pageSizeOptions / showQuickJumper / showTotal / responsive` 等统一不补齐。分页改为「父组件持 page 状态 + slice dataSource + 外置 `<c-pagination>`」组合范式。
 
 **expandable 缺失**：
 
@@ -1033,7 +1033,7 @@
 
 **缺失 events**：
 
-- `onChange(pagination, filters, sorter, extra)`（核心）。
+- `onChange(pagination, filters, sorter, extra)`：**形状不对齐**。ccui `change` 签名为 `(filters, sorter, currentData)` 3 参，无 pagination 首参，无 extra.currentDataSource（见设计取舍）。
 - `onHeaderRow(columns, index)` / `onRow(record, index)`。
 - `onScroll`（v5.16.0）。
 - `onExpand(expanded, record)` / `onExpandedRowsChange`（expandable）。

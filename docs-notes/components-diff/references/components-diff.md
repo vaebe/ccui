@@ -101,7 +101,7 @@
 > 备注：`Status` 功能上接近 Ant Design 的 `Tag`，已有独立 `Tag` 后，建议后续把 `Status` 视为别名兼容或逐步废弃。
 > `Select` 已对齐 100%（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）。
 > `Form` 已推到 95%：在原有字段注册 / 规则校验 / 依赖联动 / scrollToError / submit 流程基础上，新增 Form.List 动态字段（add / remove / move 与稳定 key）、Form.Provider 跨表单注册表（form-change / form-finish 聚合）、form-level 与 item-level 双层 preserve 卸载策略；仅 `shouldUpdate` / `validateDebounce` / `normalize` 等少量低频能力未交付。
-> `Table` 已推到 95%：在原有列渲染 / 排序 / 过滤 / 分页 / 行选择基础上，新增 column.fixed='left'|'right' 双侧粘性定位、expandable.expandedRowRender + 受控/默认全展开 + rowExpandable + expandRowByClick、column.onCell / column.onHeaderCell 合并单元格（rowSpan/colSpan=0 跳过被吞并单元格）。
+> `Table` 已推到 95%：覆盖列渲染 / 排序 / 过滤 / 行选择 / column.fixed='left'|'right' 双侧粘性 / expandable.expandedRowRender + 受控/默认全展开 + rowExpandable + expandRowByClick / column.onCell / column.onHeaderCell 合并单元格（rowSpan/colSpan=0 跳过被吞并单元格）/ 树形数据 / 模板式列声明（c-table-column / c-table-column-group / c-table-summary）。**不承担分页职责**：需要分页在外层用 c-pagination 组合并自行 slice dataSource，详见 roadmap.md。
 
 ## 二、缺失组件清单
 
@@ -235,8 +235,7 @@ Form 剩余非完整对齐项：
 - Table：支持基础列渲染、`dataIndex` 路径取值、`rowKey`、空状态、loading 遮罩、bordered、size、header/body 自定义插槽和列级 `customRender`。
 - 排序：支持 `sorter: true` 默认值排序和函数排序，按 ascend / descend / none 循环，并通过 `update:sorter` 与 `change` 暴露状态。
 - 筛选：支持列级 filters、单选/多选筛选和由外部状态接管的 `filteredValue`，通过 `update:filters` 与 `change` 暴露状态。
-- 分页：复用 Pagination 样式类，内置轻量分页渲染，支持本地分页、pageSize 切换和 `update:pagination` 联动。
-- 测试：Table 定向测试从 6 个扩展到 46 个，覆盖渲染、嵌套路径取值、缺失路径兜底、rowKey 字符串/函数/回退、customRender、header/body 插槽、非排序列点击、筛选点击不误触排序、排序三态、函数排序、外部状态接管排序、columnKey 推导、单选/多选/多列/外部状态接管筛选、数字/布尔筛选值保持、change payload、筛选后排序、排序/筛选重置分页、分页 true/object/false、上一页/下一页/边界禁用、外部 total、pageSize 切换、外部状态接管分页更新、empty/loading、自定义 empty、空列 colspan、宽度/对齐/尺寸样式和隐藏表头。
+- 测试：Table 定向测试从 6 个扩展到 46 个，覆盖渲染、嵌套路径取值、缺失路径兜底、rowKey 字符串/函数/回退、customRender、header/body 插槽、非排序列点击、筛选点击不误触排序、排序三态、函数排序、外部状态接管排序、columnKey 推导、单选/多选/多列/外部状态接管筛选、数字/布尔筛选值保持、change payload、筛选后排序、empty/loading、自定义 empty、空列 colspan、宽度/对齐/尺寸样式和隐藏表头。
 
 Table 剩余非完整对齐项：
 
@@ -251,7 +250,7 @@ Table 剩余非完整对齐项：
 - Table：新增 `rowSelection` 配置，支持 checkbox / radio 行选择、由外部状态接管的 `selectedRowKeys`、用于初始化内部状态的 `defaultSelectedRowKeys`、禁用行、选择列宽度、隐藏全选、选中行样式和 `update:selectedRowKeys`。
 - 事件协议：支持 `rowSelection.onChange`、`onSelect`、`onSelectAll`，回传 selected keys、selected rows 与本次可变更行。
 - 文档：Table 文档补充 Row Selection 示例，覆盖 `v-model`/外部状态接管选择和禁用行。
-- 测试：Table 定向测试从 46 个扩展到 52 个，新增 checkbox 单行选择、外部状态接管选择、radio 单选、全选跳过禁用行、取消全选和分页下保留非当前页选中项。
+- 测试：Table 定向测试从 46 个扩展到 52 个，新增 checkbox 单行选择、外部状态接管选择、radio 单选、全选跳过禁用行、取消全选。
 
 验证结果：
 
