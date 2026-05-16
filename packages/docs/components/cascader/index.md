@@ -586,10 +586,10 @@ const opts = [
 
 ## 顶层常量
 
-`showCheckedStrategy` 的取值常量：**不挂命名空间**，从 `vue3-ccui` 顶层 export。
+`showCheckedStrategy` 的取值常量：**不挂命名空间**，从 `@vaebe/ccui` 顶层 export。
 
 ```ts
-import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from 'vue3-ccui'
+import { CASCADER_SHOW_CHILD, CASCADER_SHOW_PARENT } from '@vaebe/ccui'
 
 // CASCADER_SHOW_CHILD === 'SHOW_CHILD'
 // CASCADER_SHOW_PARENT === 'SHOW_PARENT'

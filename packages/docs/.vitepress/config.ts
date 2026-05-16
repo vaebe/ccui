@@ -10,13 +10,13 @@ const prod = process.env.NODE_ENV === 'production'
 export default defineConfig({
   base: prod ? '/ccui/' : '/',
   lang: 'zh-CN',
-  title: 'vue3-ccui',
+  title: '@vaebe/ccui',
   description: 'vue3-ccui 组件库',
   vite: {
     resolve: {
       alias: [
         {
-          find: /^vue3-ccui$/,
+          find: /^@vaebe\/ccui$/,
           replacement: fileURLToPath(new URL('../../ccui/ui/vue-ccui.ts', import.meta.url)),
         },
       ],
@@ -31,7 +31,7 @@ export default defineConfig({
       'link',
       {
         rel: 'stylesheet',
-        href: 'https://unpkg.com/vue3-ccui/theme/darkTheme.css',
+        href: 'https://unpkg.com/@vaebe/ccui/theme/darkTheme.css',
       },
     ],
   ],

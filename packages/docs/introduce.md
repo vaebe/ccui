@@ -24,13 +24,13 @@ CSS 变量同时挂载到 `:root` 和 SCSS 变量 fallback，可直接通过 `va
 
 ```shell
 # NPM
-$ npm install vue3-ccui --save
+$ npm install @vaebe/ccui --save
 
 # Yarn
-$ yarn add vue3-ccui
+$ yarn add @vaebe/ccui
 
 # pnpm
-$ pnpm install vue3-ccui
+$ pnpm install @vaebe/ccui
 ```
 
 ## 浏览器直接引入
@@ -38,11 +38,11 @@ $ pnpm install vue3-ccui
 ```html
 <head>
   <!-- 导入样式 -->
-  <link rel="stylesheet" href="https://unpkg.com/vue3-ccui/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@vaebe/ccui/style.css" />
   <!-- 导入 Vue 3 -->
   <script src="//cdn.jsdelivr.net/npm/vue@next"></script>
   <!-- 导入组件库 -->
-  <script src="https://unpkg.com/vue3-ccui"></script>
+  <script src="https://unpkg.com/@vaebe/ccui"></script>
 </head>
 
 <script>
@@ -65,11 +65,11 @@ $ pnpm install vue3-ccui
 
 ```ts
 import { createApp } from 'vue'
-import ccui from 'vue3-ccui'
+import ccui from '@vaebe/ccui'
 import App from './App.vue'
 
 import './style.css'
-import 'vue3-ccui/style.css'
+import '@vaebe/ccui/style.css'
 
 createApp(App).use(ccui).mount('#app')
 ```

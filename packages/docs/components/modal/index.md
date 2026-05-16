@@ -164,7 +164,7 @@ ccui Vue 风格：**不挂静态属性子组件**（如 `Modal.Header` / `Modal.
 
 ```vue
 <script setup>
-import { Modal } from 'vue3-ccui'
+import { Modal } from '@vaebe/ccui'
 
 function ask() {
   Modal.confirm({
@@ -213,7 +213,7 @@ function showWarning() {
 
 ```vue
 <script setup>
-import { Modal } from 'vue3-ccui'
+import { Modal } from '@vaebe/ccui'
 
 function asyncConfirm() {
   Modal.confirm({
@@ -239,7 +239,7 @@ function asyncConfirm() {
 
 ```vue
 <script setup>
-import { Modal } from 'vue3-ccui'
+import { Modal } from '@vaebe/ccui'
 
 function progressDemo() {
   let i = 1
@@ -284,7 +284,7 @@ Modal.destroyAll() // 关闭所有当前活跃命令式 modal（不影响 <c-mod
 
 ```vue
 <script setup>
-import { useModal } from 'vue3-ccui'
+import { useModal } from '@vaebe/ccui'
 
 const { modal, holder } = useModal()
 

@@ -1,10 +1,10 @@
 /**
- * Mapping table for vue3-ccui components.
+ * Mapping table for @vaebe/ccui components.
  *
  * Each entry maps the in-template component name (`CButton`, `CFormItem`, ...)
  * to:
- * - `exportName`: the actual named export from `vue3-ccui` to be imported
- * - `styleDir`:   the kebab-case directory under `vue3-ccui/ui/<dir>` whose SCSS
+ * - `exportName`: the actual named export from `@vaebe/ccui` to be imported
+ * - `styleDir`:   the kebab-case directory under `@vaebe/ccui/ui/<dir>` whose SCSS
  *                 file contains this component's styles. Sub-components share
  *                 their parent's directory (e.g. `CFormItem` → `form`).
  *
@@ -13,7 +13,7 @@
  * intentionally excluded — those are not template components.
  */
 export interface ComponentEntry {
-  /** Named export from `vue3-ccui`. */
+  /** Named export from `@vaebe/ccui`. */
   exportName: string
   /** Kebab-case directory whose `<dir>.scss` provides this component's styles. */
   styleDir: string

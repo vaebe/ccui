@@ -111,7 +111,7 @@
 
 ## 切换语言
 
-传入 `locale` 把内部组件的默认文案换成对应语言。ccui 内置 `zhCN` 与 `enUS` 两个语言包，可从 `vue3-ccui` 直接导出；未覆盖的 namespace 会自动回退到 `zhCN`。
+传入 `locale` 把内部组件的默认文案换成对应语言。ccui 内置 `zhCN` 与 `enUS` 两个语言包，可从 `@vaebe/ccui` 直接导出；未覆盖的 namespace 会自动回退到 `zhCN`。
 
 下面用 Pagination 演示中英文切换：
 
@@ -129,7 +129,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { enUS, zhCN } from 'vue3-ccui'
+import { enUS, zhCN } from '@vaebe/ccui'
 
 const locale = ref(zhCN)
 const toggle = () => {
@@ -153,7 +153,7 @@ DatePicker / TimePicker / RangePicker 的 placeholder、周名、面板标题、
 </template>
 
 <script setup>
-import { enUS } from 'vue3-ccui'
+import { enUS } from '@vaebe/ccui'
 </script>
 ```
 
@@ -164,7 +164,7 @@ import { enUS } from 'vue3-ccui'
 业务组件用组合 API `useConfig` 读当前生效的配置。
 
 ```ts
-import { useConfig } from 'vue3-ccui'
+import { useConfig } from '@vaebe/ccui'
 
 const cfg = useConfig()
 // cfg.componentSize / cfg.direction / cfg.locale / cfg.theme / cfg.prefixCls

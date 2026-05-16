@@ -14,7 +14,7 @@ describe('Vue3CCUIResolver — basics', () => {
     const result = call(Vue3CCUIResolver(), 'CButton')
     expect(result).toMatchObject({
       name: 'Button',
-      from: 'vue3-ccui',
+      from: '@vaebe/ccui',
     })
   })
 
@@ -22,17 +22,17 @@ describe('Vue3CCUIResolver — basics', () => {
     const result = call(Vue3CCUIResolver({ importStyle: 'scss' }), 'CFormItem')
     expect(result).toMatchObject({
       name: 'FormItem',
-      from: 'vue3-ccui',
-      sideEffects: 'vue3-ccui/ui/form/src/form.scss',
+      from: '@vaebe/ccui',
+      sideEffects: '@vaebe/ccui/ui/form/src/form.scss',
     })
   })
 
   it('resolves Layout sub-components to their named exports', () => {
     const r = Vue3CCUIResolver({ importStyle: false })
-    expect(call(r, 'CLayoutHeader')).toMatchObject({ name: 'Header', from: 'vue3-ccui' })
-    expect(call(r, 'CLayoutFooter')).toMatchObject({ name: 'Footer', from: 'vue3-ccui' })
-    expect(call(r, 'CLayoutSider')).toMatchObject({ name: 'Sider', from: 'vue3-ccui' })
-    expect(call(r, 'CLayoutContent')).toMatchObject({ name: 'Content', from: 'vue3-ccui' })
+    expect(call(r, 'CLayoutHeader')).toMatchObject({ name: 'Header', from: '@vaebe/ccui' })
+    expect(call(r, 'CLayoutFooter')).toMatchObject({ name: 'Footer', from: '@vaebe/ccui' })
+    expect(call(r, 'CLayoutSider')).toMatchObject({ name: 'Sider', from: '@vaebe/ccui' })
+    expect(call(r, 'CLayoutContent')).toMatchObject({ name: 'Content', from: '@vaebe/ccui' })
   })
 
   it('returns undefined for unknown names', () => {
@@ -48,32 +48,32 @@ describe('Vue3CCUIResolver — basics', () => {
 describe('Vue3CCUIResolver — importStyle', () => {
   it("'css' imports the global bundle (default)", () => {
     const result = call(Vue3CCUIResolver(), 'CButton')
-    expect(result?.sideEffects).toBe('vue3-ccui/dist/vue3-ccui.css')
+    expect(result?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
   })
 
   it("'css' returns the same bundle for every component (so it dedupes)", () => {
     const r = Vue3CCUIResolver({ importStyle: 'css' })
-    expect(call(r, 'CButton')?.sideEffects).toBe('vue3-ccui/dist/vue3-ccui.css')
-    expect(call(r, 'CTable')?.sideEffects).toBe('vue3-ccui/dist/vue3-ccui.css')
-    expect(call(r, 'CForm')?.sideEffects).toBe('vue3-ccui/dist/vue3-ccui.css')
+    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
+    expect(call(r, 'CTable')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
+    expect(call(r, 'CForm')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
   })
 
   it("'scss' imports the per-component source file", () => {
     const r = Vue3CCUIResolver({ importStyle: 'scss' })
-    expect(call(r, 'CButton')?.sideEffects).toBe('vue3-ccui/ui/button/src/button.scss')
-    expect(call(r, 'CAutoComplete')?.sideEffects).toBe('vue3-ccui/ui/auto-complete/src/auto-complete.scss')
+    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/ui/button/src/button.scss')
+    expect(call(r, 'CAutoComplete')?.sideEffects).toBe('@vaebe/ccui/ui/auto-complete/src/auto-complete.scss')
   })
 
   it("'scss' shares the parent dir for sub-components", () => {
     const r = Vue3CCUIResolver({ importStyle: 'scss' })
-    expect(call(r, 'CCol')?.sideEffects).toBe('vue3-ccui/ui/grid/src/grid.scss')
-    expect(call(r, 'CRow')?.sideEffects).toBe('vue3-ccui/ui/grid/src/grid.scss')
-    expect(call(r, 'CTypographyText')?.sideEffects).toBe('vue3-ccui/ui/typography/src/typography.scss')
+    expect(call(r, 'CCol')?.sideEffects).toBe('@vaebe/ccui/ui/grid/src/grid.scss')
+    expect(call(r, 'CRow')?.sideEffects).toBe('@vaebe/ccui/ui/grid/src/grid.scss')
+    expect(call(r, 'CTypographyText')?.sideEffects).toBe('@vaebe/ccui/ui/typography/src/typography.scss')
   })
 
   it('false omits sideEffects entirely', () => {
     const result = call(Vue3CCUIResolver({ importStyle: false }), 'CButton')
-    expect(result).toMatchObject({ name: 'Button', from: 'vue3-ccui' })
+    expect(result).toMatchObject({ name: 'Button', from: '@vaebe/ccui' })
     expect(result?.sideEffects).toBeUndefined()
   })
 })
@@ -116,14 +116,14 @@ describe('Vue3CCUIResolver — options', () => {
 
   it('cssBundlePath override (absolute-style path)', () => {
     const r = Vue3CCUIResolver({
-      cssBundlePath: 'vue3-ccui/dist/custom-style.css',
+      cssBundlePath: '@vaebe/ccui/dist/custom-style.css',
     })
-    expect(call(r, 'CButton')?.sideEffects).toBe('vue3-ccui/dist/custom-style.css')
+    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/dist/custom-style.css')
   })
 
   it('cssBundlePath override (relative path is prefixed with package name)', () => {
     const r = Vue3CCUIResolver({ cssBundlePath: 'theme/full.css' })
-    expect(call(r, 'CButton')?.sideEffects).toBe('vue3-ccui/theme/full.css')
+    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/theme/full.css')
   })
 })
 
@@ -140,7 +140,7 @@ describe('Vue3CCUIResolver — coverage of the component map', () => {
     for (const name of componentNames) {
       const result = call(r, name)
       expect(result, `failed to resolve ${name}`).toBeDefined()
-      expect(result?.from).toBe('vue3-ccui')
+      expect(result?.from).toBe('@vaebe/ccui')
       expect(result?.name).toBe(componentMap[name]!.exportName)
     }
   })

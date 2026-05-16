@@ -68,7 +68,7 @@
 ```vue
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
-import { registerIcon } from 'vue3-ccui'
+import { registerIcon } from '@vaebe/ccui'
 
 const Logo = defineComponent({
   name: 'Logo',
@@ -224,7 +224,7 @@ const themeMap = {
 Iconify 默认按图标懒加载，需要离线场景时使用透传出的 API 把图标数据预先注入：
 
 ```ts
-import { addCollection, addIcon } from 'vue3-ccui'
+import { addCollection, addIcon } from '@vaebe/ccui'
 import mdiHome from '@iconify-icons/mdi/home'
 
 // 单图标
@@ -337,9 +337,9 @@ const groups: Array<{ title: string; icons: string[] }> = [
 
 :::
 
-## 内置图标包 `@vue3-ccui/icons`
+## 内置图标包 `@vaebe/ccui-icons`
 
-ccui 内部所有组件用到的图标都收敛到独立 workspace 包 `@vue3-ccui/icons`：
+ccui 内部所有组件用到的图标都收敛到独立 workspace 包 `@vaebe/ccui-icons`：
 
 - **完全离线**：SVG 路径硬编码在源码里，安装后零网络依赖
 - **按需引入**：命名导出 + `sideEffects: false`，未使用的图标不会进打包产物
@@ -352,7 +352,7 @@ ccui 内部所有组件用到的图标都收敛到独立 workspace 包 `@vue3-cc
 
 ```vue
 <script setup lang="ts">
-import { CaretRightOutlined } from '@vue3-ccui/icons'
+import { CaretRightOutlined } from '@vaebe/ccui-icons'
 
 const icons = [{ name: 'CaretRightOutlined', component: CaretRightOutlined }]
 </script>
@@ -377,7 +377,7 @@ const icons = [{ name: 'CaretRightOutlined', component: CaretRightOutlined }]
 
 ```vue
 <script setup lang="ts">
-import { CaretRightOutlined } from '@vue3-ccui/icons'
+import { CaretRightOutlined } from '@vaebe/ccui-icons'
 </script>
 
 <template>
@@ -422,7 +422,7 @@ import { CaretRightOutlined } from '@vue3-ccui/icons'
 
 ## Iconify 透传 API
 
-直接 `import` 自 `vue3-ccui`：
+直接 `import` 自 `@vaebe/ccui`：
 
 | 方法                             | 说明                                       |
 | -------------------------------- | ------------------------------------------ |

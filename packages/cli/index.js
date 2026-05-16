@@ -30,7 +30,14 @@ program.command('generate:theme').description('生成主题变量文件').action
 
 program.command('generate:dts').description('生成ts类型文件').action(generateDts)
 
-program.command('release').option('-v --version <version>', '版本号').description('发布npm包').action(release)
+program
+  .command('prepare-release')
+  .alias('release')
+  .option('-v --version <version>', '版本号')
+  .description(
+    '准备 @vaebe/ccui 发布产物：生成 packages/ccui/build/package.json + 拷贝 README / LICENSE / theme。不真正 npm publish —— 用根目录 `node scripts/publish.mjs`。',
+  )
+  .action(release)
 
 program
   .command('code-check')

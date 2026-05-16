@@ -1,3 +1,9 @@
+// @vaebe/ccui 发布产物准备：
+//   - 把源 package.json 抽到 packages/ccui/build/，剥 scripts/devDeps，展开 workspace: 协议
+//   - 拷贝 README / LICENSE / theme.scss / darkTheme.css
+//
+// **不**执行 npm publish。正式发包走 `node scripts/publish.mjs`（passkey 流程），
+// 它会先调用本步骤生成产物，再走 npm publish + git tag。
 import path, { dirname } from 'node:path'
 import { promises as fsp } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -12,7 +18,7 @@ const themeDir = path.resolve(__dirname, '../../theme')
 
 // workspace 包真实版本号，用于发布时替换 workspace: 协议。
 const WORKSPACE_VERSIONS = {
-  '@vue3-ccui/icons': iconsPackageJson.version,
+  '@vaebe/ccui-icons': iconsPackageJson.version,
 }
 
 function getVersion(version) {
@@ -69,5 +75,5 @@ async function copyAssets() {
 export const release = async ({ version }) => {
   await createPackageJson(version)
   await copyAssets()
-  // npm publish 由外层 changelog/release 脚本触发
+  // 真正的 npm publish 由根目录 scripts/publish.mjs 触发（passkey 流程）。
 }

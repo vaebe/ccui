@@ -10,7 +10,7 @@
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function showInfo() {
   message.info('这是一条信息')
@@ -44,7 +44,7 @@ function showError() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function showLoading() {
   message.loading('加载中…')
@@ -74,7 +74,7 @@ function showLoading() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function shortToast() {
   message.success('1 秒后消失', 1) // 秒
@@ -104,7 +104,7 @@ function msUnit() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 function pop(p) {
   message.open({ content: `placement: ${p}`, placement: p, duration: 2 })
 }
@@ -130,7 +130,7 @@ function pop(p) {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function setupStack() {
   message.config({ maxCount: 3, stack: true })
@@ -165,7 +165,7 @@ function reset() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 import { ref } from 'vue'
 
 const handle = ref(null)
@@ -200,7 +200,7 @@ function closeSticky() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 import { ref } from 'vue'
 
 const closedCount = ref(0)
@@ -234,7 +234,7 @@ function withClose() {
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function spawnFive() {
   for (let i = 1; i <= 5; i += 1) {
@@ -260,7 +260,7 @@ function destroyAll() {
 
 ::: tip 何时用模块级 vs Hook 版？
 
-- **模块级 `import { message } from 'vue3-ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（如自定义 ConfigProvider、主题、locale）。
+- **模块级 `import { message } from '@vaebe/ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（如自定义 ConfigProvider、主题、locale）。
 - **Hook `useMessage()`**：当弹层需要继承组件树上下文（深色主题、自定义 locale、自定义 ConfigProvider）时用。**必须**在模板中挂 `<component :is="holder" />`。
 
 :::
@@ -269,7 +269,7 @@ function destroyAll() {
 
 ```vue
 <script setup>
-import { useMessage } from 'vue3-ccui'
+import { useMessage } from '@vaebe/ccui'
 
 const { message, holder } = useMessage()
 

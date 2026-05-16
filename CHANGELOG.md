@@ -9,8 +9,12 @@
 
 ### BREAKING CHANGES
 
-- **包结构调整**：图标体系从 `@iconify/vue` 在线方案换为 `@vue3-ccui/icons` 独立离线包，需要单独安装 `@vue3-ccui/icons`；Tree 组件 switcher 图标默认从该包加载。
-- **新增按需引入包**：`@vue3-ccui/unplugin-vue-components` 作为独立 resolver 包发布。
+- **npm 包名迁移到 `@vaebe/` scope**：
+  - `vue3-ccui` → `@vaebe/ccui`
+  - 新增 `@vaebe/ccui-icons`（离线图标包，独立发布）
+  - 新增 `@vaebe/unplugin-vue-components-ccui`（resolver，独立发布）
+  - 旧 `vue3-ccui` 1.x 仍可装到 `latest`，2.x 全部在 `@vaebe/ccui@beta`。迁移：改 import 路径 + 改安装命令。
+- **包结构调整**：图标体系从 `@iconify/vue` 在线方案换为 `@vaebe/ccui-icons` 独立离线包，需要单独安装；Tree 组件 switcher 图标默认从该包加载。
 - **组件移除**：DropdownButton、SkeletonAvatar / SkeletonButton / SkeletonImage / SkeletonInput、DirectoryTree、Statistic、StatisticTimer 共 7 个组件移除。
 - **Table change 事件签名收紧**：从原先三参数变更为 `(filters, sorter, currentData)`，分页职责完全交回上层。
 - **主包 peerDependencies**：`vue` 从 `dependencies` 移至 `peerDependencies` (`^3.5.0`)，避免双 Vue 实例。
@@ -22,7 +26,7 @@
   - 12 色板补全 1–10 阶；Tag 预设色接入色板 token。
   - 加 `controlOutline` / `-error` / `-warning` token，统一所有 focus 光环。
   - dark 主题补全非颜色 token（圆角 / 字号 / 动效 / 间距 / 阴影 / 字体族），切到 `.dark` 类后形态稳定不依赖 `:root` 兜底。
-- **Resolver**：新增 `@vue3-ccui/unplugin-vue-components` 工具包，按需自动引入。
+- **Resolver**：新增 `@vaebe/unplugin-vue-components-ccui` 工具包，按需自动引入。
 - **Form**：`shouldUpdate` / `validateDebounce` / `normalize`、`Form.List` / `Form.Provider` / `preserve`。
 - **Table**：行选择、固定列、展开行、合并单元格、树形数据 (`childrenColumnName` + `indentSize`)。
 - **Tree**：`showLine`、拖拽 hover-expand、auto-scroll、`loadData` 错误重试、键盘导航、虚拟滚动、`focusedKey` 受控。

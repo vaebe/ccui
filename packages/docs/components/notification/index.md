@@ -10,7 +10,7 @@
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 function open() {
   notification.success({
@@ -35,7 +35,7 @@ function open() {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 const items = [
   { type: 'info', title: '提示', desc: '有一份新报表生成了。' },
@@ -66,7 +66,7 @@ function open(item) {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 const placements = ['top', 'topLeft', 'topRight', 'bottom', 'bottomLeft', 'bottomRight']
 
@@ -102,7 +102,7 @@ function open(placement) {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 function shortToast() {
   notification.success({
@@ -144,7 +144,7 @@ function msUnit() {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 function setupStack() {
   notification.config({ maxCount: 3, stack: true })
@@ -179,7 +179,7 @@ function reset() {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 import { ref } from 'vue'
 
 const handle = ref(null)
@@ -219,7 +219,7 @@ function closeManually() {
 
 ```vue
 <script setup>
-import { notification } from 'vue3-ccui'
+import { notification } from '@vaebe/ccui'
 
 function spam() {
   notification.info({ title: '左上', description: '内容', placement: 'topLeft' })
@@ -246,7 +246,7 @@ function clear() {
 
 ::: tip 何时用模块级 vs Hook 版？
 
-- **模块级 `import { notification } from 'vue3-ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（自定义 ConfigProvider、主题、locale）。
+- **模块级 `import { notification } from '@vaebe/ccui'`**：脚手架 / utils / 命令式弹一条，简单直接，但容器走独立 `createApp`，**拿不到调用方 app 的 inject**（自定义 ConfigProvider、主题、locale）。
 - **Hook `useNotification()`**：当通知需要继承组件树上下文时用。**必须**在模板中挂 `<component :is="holder" />`。
 
 :::
@@ -255,7 +255,7 @@ function clear() {
 
 ```vue
 <script setup>
-import { useNotification } from 'vue3-ccui'
+import { useNotification } from '@vaebe/ccui'
 
 const { notification, holder } = useNotification()
 

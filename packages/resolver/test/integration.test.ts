@@ -37,13 +37,13 @@ describe('integration with unplugin-vue-components', () => {
     // `unplugin-vue-components` calls `resolve(name)` and expects either
     // a string, an object with `from`, or null/undefined.
     const result = r.resolve('CButton')
-    expect(result).toMatchObject({ from: 'vue3-ccui' })
+    expect(result).toMatchObject({ from: '@vaebe/ccui' })
   })
 
   it('exclude option keeps the resolver compatible with multi-library setups', () => {
     // Simulate sharing names with another lib by excluding CIcon.
     const r = Vue3CCUIResolver({ exclude: 'CIcon' })
     expect(r.resolve('CIcon')).toBeUndefined()
-    expect(r.resolve('CButton')).toMatchObject({ from: 'vue3-ccui' })
+    expect(r.resolve('CButton')).toMatchObject({ from: '@vaebe/ccui' })
   })
 })

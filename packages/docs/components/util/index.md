@@ -37,7 +37,7 @@ vue3-ccui 内部使用的公共工具函数。
 ## 使用示例
 
 ```ts
-import { clamp, classNames, debounce } from 'vue3-ccui'
+import { clamp, classNames, debounce } from '@vaebe/ccui'
 
 const cls = classNames('a', { b: true })
 const v = clamp(15, 0, 10) // 10

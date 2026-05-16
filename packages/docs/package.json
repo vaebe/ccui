@@ -22,7 +22,7 @@
   },
   "type": "module",
   "scripts": {
-    "predev": "pnpm --filter @vue3-ccui/icons build && node ../cli/index.js create -t ccui --ignore-parse-error && node ../cli/index.js generate:theme",
+    "predev": "pnpm --filter @vaebe/ccui-icons build && node ../cli/index.js create -t ccui --ignore-parse-error && node ../cli/index.js generate:theme",
     "dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview"
@@ -30,8 +30,8 @@
   "dependencies": {
     "@vitepress-code-preview/container": "^1.0.8",
     "@vitepress-code-preview/plugin": "^1.0.6",
-    "@vue3-ccui/icons": "workspace:*",
-    "vue3-ccui": "workspace:*"
+    "@vaebe/ccui-icons": "workspace:*",
+    "@vaebe/ccui": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",

@@ -6,6 +6,8 @@
     "dev": "vp run --filter docs dev",
     "docs:build": "vp run --filter docs predev && vp run --filter docs docs:build",
     "build:lib": "vp run --filter ccui-cli build:lib",
+    "release": "node scripts/publish.mjs",
+    "release:dry": "node scripts/publish.mjs --dry-run",
     "check": "vp check",
     "test": "vp test",
     "lint": "vp lint . --fix",

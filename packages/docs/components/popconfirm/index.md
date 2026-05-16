@@ -10,7 +10,7 @@
 
 ```vue
 <script setup>
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 function onConfirm() {
   message.success('已删除')
@@ -122,7 +122,7 @@ function onCancel() {
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { message } from 'vue3-ccui'
+import { message } from '@vaebe/ccui'
 
 const visible = ref(false)
 

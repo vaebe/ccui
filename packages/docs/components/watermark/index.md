@@ -10,7 +10,7 @@
 
 ```vue
 <template>
-  <c-watermark content="vue3-ccui">
+  <c-watermark content="@vaebe/ccui">
     <div style="height: 200px; background: #f6f8fa; padding: 16px">水印保护区域，文字会随宽高密铺。</div>
   </c-watermark>
 </template>

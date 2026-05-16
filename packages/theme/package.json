@@ -1,5 +1,5 @@
 {
-  "name": "theme",
+  "name": "@vaebe/ccui-theme",
   "version": "1.2.2",
   "private": true,
   "description": "vue3-ccui components based on Vite and Vue3",

@@ -320,10 +320,10 @@ const data = [
 
 ## 顶层常量
 
-`showCheckedStrategy` 的取值常量：**不挂命名空间**，从 `vue3-ccui` 顶层 export。
+`showCheckedStrategy` 的取值常量：**不挂命名空间**，从 `@vaebe/ccui` 顶层 export。
 
 ```ts
-import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT } from 'vue3-ccui'
+import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT } from '@vaebe/ccui'
 
 // TREE_SELECT_SHOW_PARENT === 'SHOW_PARENT'
 // TREE_SELECT_SHOW_CHILD  === 'SHOW_CHILD'

@@ -8,24 +8,24 @@
 
 ```shell
 # NPM
-$ npm install vue3-ccui --save
+$ npm install @vaebe/ccui --save
 
 # Yarn
-$ yarn add vue3-ccui
+$ yarn add @vaebe/ccui
 
 # pnpm
-$ pnpm install vue3-ccui
+$ pnpm install @vaebe/ccui
 ```
 
 ### 完整引入
 
 ```ts
 import { createApp } from 'vue'
-import ccui from 'vue3-ccui'
+import ccui from '@vaebe/ccui'
 import App from './App.vue'
 
 import './style.css'
-import 'vue3-ccui/style.css'
+import '@vaebe/ccui/style.css'
 
 createApp(App).use(ccui).mount('#app')
 ```

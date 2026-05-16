@@ -43,14 +43,14 @@ export interface Vue3CCUIResolverOptions {
    *              Required if you want to override theme variables in your
    *              own Sass entry. Needs a Sass-capable build chain.
    * - `false`  — do nothing. You handle styles yourself (e.g. a single
-   *              `import 'vue3-ccui/style.css'` at app entry).
+   *              `import '@vaebe/ccui/style.css'` at app entry).
    *
    * @default 'css'
    */
   importStyle?: 'css' | 'scss' | false
   /**
    * Component prefix used in templates. Defaults to `'C'` matching the
-   * `name: 'C<Name>'` convention used by every vue3-ccui component.
+   * `name: 'C<Name>'` convention used by every @vaebe/ccui component.
    *
    * Override only if you've registered components under a different prefix
    * via a custom installer.
@@ -60,28 +60,28 @@ export interface Vue3CCUIResolverOptions {
   prefix?: string
   /**
    * Skip resolving these component names. Useful if a name collides with
-   * another library you're using together with vue3-ccui.
+   * another library you're using together with @vaebe/ccui.
    */
   exclude?: string | RegExp | (string | RegExp)[]
   /**
    * Override the package name to import from. Mostly an escape hatch for
-   * monorepos that re-export `vue3-ccui` under a different alias.
+   * monorepos that re-export `@vaebe/ccui` under a different alias.
    *
-   * @default 'vue3-ccui'
+   * @default '@vaebe/ccui'
    */
   importFrom?: string
   /**
    * Path of the global CSS bundle inside the imported package, used when
    * `importStyle: 'css'`. Override if your build customises the bundle name.
    *
-   * @default 'vue3-ccui/dist/vue3-ccui.css'
+   * @default '@vaebe/ccui/dist/vue3-ccui.css'
    */
   cssBundlePath?: string
 }
 
 const DEFAULT_PREFIX = 'C'
-const DEFAULT_PACKAGE = 'vue3-ccui'
-const DEFAULT_CSS_BUNDLE = 'vue3-ccui/dist/vue3-ccui.css'
+const DEFAULT_PACKAGE = '@vaebe/ccui'
+const DEFAULT_CSS_BUNDLE = '@vaebe/ccui/dist/vue3-ccui.css'
 
 function shouldExclude(name: string, exclude: Vue3CCUIResolverOptions['exclude']): boolean {
   if (!exclude) return false
@@ -108,13 +108,13 @@ function resolveStylePath(
 
 /**
  * Vue3CCUIResolver — register on `unplugin-vue-components` to auto-import
- * `vue3-ccui` components on demand.
+ * `@vaebe/ccui` components on demand.
  *
  * @example
  * ```ts
  * // vite.config.ts
  * import Components from 'unplugin-vue-components/vite'
- * import { Vue3CCUIResolver } from '@vue3-ccui/unplugin-vue-components'
+ * import { Vue3CCUIResolver } from '@vaebe/unplugin-vue-components-ccui'
  *
  * export default defineConfig({
  *   plugins: [

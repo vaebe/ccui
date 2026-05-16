@@ -7,7 +7,7 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
  * - `CASCADER_SHOW_CHILD`：只输出最末级叶子节点（默认）
  * - `CASCADER_SHOW_PARENT`：父节点全部子节点都选中时，只输出父节点
  *
- * **不挂命名空间**，从 `vue3-ccui` 顶层 export。
+ * **不挂命名空间**，从 `@vaebe/ccui` 顶层 export。
  * 当前 Cascader 尚未接入 `showCheckedStrategy`，常量已 export 供外部代码提前引用。
  */
 export const CASCADER_SHOW_CHILD = 'SHOW_CHILD' as const

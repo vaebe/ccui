@@ -1,5 +1,5 @@
 {
-  "name": "@vue3-ccui/unplugin-vue-components",
+  "name": "@vaebe/unplugin-vue-components-ccui",
   "version": "2.0.0-beta.0",
   "description": "vue3-ccui resolver for unplugin-vue-components — auto import on demand",
   "keywords": [
@@ -70,13 +70,13 @@
   },
   "peerDependencies": {
     "unplugin-vue-components": ">=0.26.0",
-    "vue3-ccui": "workspace:^"
+    "@vaebe/ccui": "workspace:^"
   },
   "peerDependenciesMeta": {
     "unplugin-vue-components": {
       "optional": false
     },
-    "vue3-ccui": {
+    "@vaebe/ccui": {
       "optional": false
     }
   },

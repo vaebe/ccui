@@ -1,8 +1,8 @@
 # Vue3-CCUI
 
-[![npm version](https://img.shields.io/npm/v/vue3-ccui.svg)](https://www.npmjs.com/package/vue3-ccui)
-[![license](https://img.shields.io/npm/l/vue3-ccui.svg)](https://github.com/vaebe/ccui/blob/main/LICENSE)
-[![downloads](https://img.shields.io/npm/dt/vue3-ccui.svg)](https://www.npmjs.com/package/vue3-ccui)
+[![npm version](https://img.shields.io/npm/v/@vaebe/ccui.svg)](https://www.npmjs.com/package/@vaebe/ccui)
+[![license](https://img.shields.io/npm/l/@vaebe/ccui.svg)](https://github.com/vaebe/ccui/blob/main/LICENSE)
+[![downloads](https://img.shields.io/npm/dt/@vaebe/ccui.svg)](https://www.npmjs.com/package/@vaebe/ccui)
 
 一个基于 Vue 3 + TypeScript + [Vite+](https://viteplus.dev/) 构建的现代化 UI 组件库。
 
@@ -19,13 +19,13 @@
 
 ```bash
 # NPM
-npm install vue3-ccui --save
+npm install @vaebe/ccui --save
 
 # Yarn
-yarn add vue3-ccui
+yarn add @vaebe/ccui
 
 # pnpm
-pnpm install vue3-ccui
+pnpm install @vaebe/ccui
 ```
 
 ## 🚀 快速开始
@@ -34,11 +34,11 @@ pnpm install vue3-ccui
 
 ```ts
 import { createApp } from 'vue'
-import ccui from 'vue3-ccui'
+import ccui from '@vaebe/ccui'
 import App from './App.vue'
 
 import './style.css'
-import 'vue3-ccui/style.css'
+import '@vaebe/ccui/style.css'
 
 createApp(App).use(ccui).mount('#app')
 ```
@@ -47,10 +47,10 @@ createApp(App).use(ccui).mount('#app')
 
 ```ts
 import { createApp } from 'vue'
-import { Button, Card } from 'vue3-ccui'
+import { Button, Card } from '@vaebe/ccui'
 import App from './App.vue'
 
-import 'vue3-ccui/style.css'
+import '@vaebe/ccui/style.css'
 
 const app = createApp(App)
 app.use(Button)
@@ -184,7 +184,7 @@ vp run --filter docs dev
 vp run --filter docs docs:build
 
 # 运行测试
-vp run --filter vue3-ccui test
+vp run --filter @vaebe/ccui test
 
 # 一站式格式化 + lint + 类型检查
 vp check --fix
@@ -209,6 +209,28 @@ vp lint . --fix
 | Git Hooks   | `vp config` + `.vite-hooks/`（替代 husky）                  |
 | Staged 任务 | `vite.config.ts` 的 `staged` 块（替代 lint-staged）         |
 
+## 📦 发布
+
+仓库通过根目录的 `scripts/publish.mjs` 一键发布 3 个公开包到 npm（`@vaebe/ccui` / `@vaebe/ccui-icons` / `@vaebe/unplugin-vue-components-ccui`）。
+
+```bash
+pnpm release          # 默认 dist-tag=beta
+pnpm release:dry      # 走全流程但不真正 publish
+node scripts/publish.mjs --tag latest    # 正式发版
+```
+
+脚本会自动：
+
+1. 预检 npm 登录态；缺失会引导走 `npm login --auth-type=web`（passkey / Touch ID / WebAuthn）
+2. 校验三个发布包版本号一致
+3. 按依赖顺序构建：icons → ccui → resolver
+4. 顺序 publish；2FA 失败时给出 `[r]` 重登 / `[o]` 兜底输 TOTP / `[x]` 终止三选项
+5. 打 git tag `v<version>` 并 push origin
+
+> npm 自 2025-09 起停止接受新的 TOTP 注册，全面推 WebAuthn / passkey。
+> 老 TOTP 账号仍可用，发布失败时按 `o` 输 6 位码兜底。
+> 详细流程与故障排查见 [`docs-notes/releasing.md`](./docs-notes/releasing.md)。
+
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
@@ -220,5 +242,5 @@ vp lint . --fix
 ## 🔗 相关链接
 
 - [GitHub](https://github.com/vaebe/ccui)
-- [NPM](https://www.npmjs.com/package/vue3-ccui)
+- [NPM](https://www.npmjs.com/package/@vaebe/ccui)
 - [在线文档](https://vaebe.github.io/ccui/)
