@@ -42,6 +42,14 @@
     font-size: 12px;
   }
 
+  &__header-icon {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+    line-height: 1;
+  }
+
   &__header-title {
     margin-left: auto;
     color: rgba(0, 0, 0, 0.45);

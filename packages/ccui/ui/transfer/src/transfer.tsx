@@ -3,6 +3,7 @@ import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { TransferDirection, TransferItem, TransferProps } from './transfer-types'
 import { computed, defineComponent, h, inject, shallowRef } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { DEFAULT_LOCALE, transferProps } from './transfer-types'
 import './transfer.scss'
@@ -221,6 +222,12 @@ export default defineComponent({
           ) : (
             <span class={ns.e('header-count')}>{countText}</span>
           )}
+          {(() => {
+            const iconNode = slots.selectionsIcon
+              ? slots.selectionsIcon({ direction, selectedCount, totalCount: total })
+              : renderIconNode(props.selectionsIcon)
+            return iconNode ? <span class={ns.e('header-icon')}>{iconNode}</span> : null
+          })()}
           {title && <span class={ns.e('header-title')}>{title}</span>}
         </div>
       )

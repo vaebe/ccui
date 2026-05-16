@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
 
 export type TransferDirection = 'left' | 'right'
 
@@ -72,6 +72,14 @@ export const transferProps = {
   draggable: {
     type: Boolean,
     default: false,
+  },
+  /**
+   * 头部全选区右侧的状态图标。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `selectionsIcon` slot 优先级最高，scope 为 `{ direction, selectedCount, totalCount }`。
+   */
+  selectionsIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
   },
 } as const
 

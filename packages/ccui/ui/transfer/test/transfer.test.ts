@@ -332,3 +332,59 @@ describe('transfer draggable', () => {
     expect(rightItems[0].attributes('draggable')).not.toBe('true')
   })
 })
+
+describe('transfer selectionsIcon', () => {
+  it('selectionsIcon prop（string）渲染 <i class>', () => {
+    const wrapper = mountT({ selectionsIcon: 'my-selections-icon' })
+    expect(wrapper.find(`${ns.e('header-icon')} i.my-selections-icon`).exists()).toBe(true)
+  })
+
+  it('selectionsIcon slot 优先级高于 prop，scope 含 direction / selectedCount / totalCount', () => {
+    const scopes: Array<{ direction: string; selectedCount: number; totalCount: number }> = []
+    const Comp = defineComponent({
+      setup() {
+        const target = ref<string[]>(['2'])
+        const selected = ref<string[]>(['1', '4'])
+        return () =>
+          h(
+            Transfer,
+            {
+              dataSource: SAMPLE,
+              targetKeys: target.value,
+              selectedKeys: selected.value,
+              selectionsIcon: 'my-selections-icon',
+            },
+            {
+              selectionsIcon: (scope: { direction: string; selectedCount: number; totalCount: number }) => {
+                scopes.push({ ...scope })
+                return h(
+                  'span',
+                  { class: `slot-icon-${scope.direction}` },
+                  `${scope.selectedCount}/${scope.totalCount}`,
+                )
+              },
+            },
+          )
+      },
+    })
+    const wrapper = mount(Comp, { attachTo: document.body })
+    wrappers.push(wrapper)
+    // slot 优先：prop 渲染的 <i> 不出现
+    expect(wrapper.find('i.my-selections-icon').exists()).toBe(false)
+    // 左右两列都渲染 slot
+    expect(wrapper.find('.slot-icon-left').exists()).toBe(true)
+    expect(wrapper.find('.slot-icon-right').exists()).toBe(true)
+    // scope 字段：左列 4 项 [1,3,4,5]，其中 [1,4] 被勾且 enabled → selectedCount=2；右列 1 项 [2]，未勾 → selectedCount=0
+    const leftScope = scopes.find((s) => s.direction === 'left')!
+    const rightScope = scopes.find((s) => s.direction === 'right')!
+    expect(leftScope.selectedCount).toBe(2)
+    expect(leftScope.totalCount).toBe(4)
+    expect(rightScope.selectedCount).toBe(0)
+    expect(rightScope.totalCount).toBe(1)
+  })
+
+  it('selectionsIcon 不传时不渲染 header-icon 容器', () => {
+    const wrapper = mountT({})
+    expect(wrapper.find(ns.e('header-icon')).exists()).toBe(false)
+  })
+})
