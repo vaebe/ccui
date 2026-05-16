@@ -4,6 +4,7 @@ import type {
   DatePickerPlacement,
   DatePickerProps,
   DatePickerType,
+  DisabledTimeReturn,
   PresetItem,
   TimeShowConfig,
 } from './date-picker-types'
@@ -112,6 +113,31 @@ export default defineComponent({
 
     const showTimeActive = computed(() => !!props.showTime && props.picker === 'date')
     const timeCfg = computed<TimeShowConfig>(() => normalizeTimeConfig(props.showTime))
+
+    // minDate / maxDate / disabledDate 合并：任意一条命中即 disabled。
+    // 非 date 粒度（month/year/quarter）的 cell 仅在整个周期完全落在 [minDate, maxDate] 之外时才标 disabled，
+    // 避免「minDate=2026-04-15 / picker='month'」把 4 月整月误判为禁选。
+    const minDateDayjs = computed<Dayjs | null>(() => toDayjs(props.minDate))
+    const maxDateDayjs = computed<Dayjs | null>(() => toDayjs(props.maxDate))
+    function isOutOfRange(d: Dayjs, unit: 'day' | 'month' | 'year' | 'quarter' = 'day'): boolean {
+      const min = minDateDayjs.value
+      const max = maxDateDayjs.value
+      if (unit === 'day') {
+        if (min && d.isBefore(min, 'day')) return true
+        if (max && d.isAfter(max, 'day')) return true
+        return false
+      }
+      // month / year / quarter：cell 表示一个区间，区间与 [minDate, maxDate] 无交集 → disabled。
+      const start = d.startOf(unit)
+      const end = d.endOf(unit)
+      if (min && end.isBefore(min, 'day')) return true
+      if (max && start.isAfter(max, 'day')) return true
+      return false
+    }
+    function isDateDisabled(d: Dayjs, unit: 'day' | 'month' | 'year' | 'quarter' = 'day'): boolean {
+      if (isOutOfRange(d, unit)) return true
+      return !!props.disabledDate?.(d)
+    }
     const effectiveTimeFormat = computed(() =>
       showTimeActive.value ? timeCfg.value.format || DEFAULT_TIME_FORMAT : '',
     )
@@ -133,6 +159,8 @@ export default defineComponent({
     const pendingValue = shallowRef<Dayjs | null>(null)
     // 本次 open 期间用户是否动过日期/时间格。用于 ok 按钮禁用判断（无 modelValue 且未动过时禁用）。
     const pendingDirty = shallowRef(false)
+    // 键盘导航 focus 的 cell（仅 date 面板，单元为 day）。null 表示当前未走键盘导航。
+    const focusedCellDate = shallowRef<Dayjs | null>(null)
 
     watch(selectedDayjs, (v) => {
       if (v && !isSameMonth(v, viewMonth.value)) {
@@ -208,6 +236,7 @@ export default defineComponent({
     function closePopup() {
       if (!open.value) return
       open.value = false
+      focusedCellDate.value = null
       emit('open-change', false)
     }
 
@@ -226,7 +255,7 @@ export default defineComponent({
     // ===== 各面板的选择处理 =====
 
     function pickDate(cell: Dayjs) {
-      if (props.disabledDate?.(cell)) return
+      if (isDateDisabled(cell)) return
       if (props.picker === 'week') {
         const wkStart = startOfWeek(cell, props.weekStart)
         if (selectedDayjs.value && isSameWeek(selectedDayjs.value, cell, props.weekStart)) {
@@ -301,7 +330,7 @@ export default defineComponent({
     }
 
     function pickMonth(cell: Dayjs) {
-      if (props.disabledDate?.(cell)) return
+      if (isDateDisabled(cell, 'month')) return
       if (props.picker === 'month') {
         emitChange(cell)
         closePopup()
@@ -313,7 +342,7 @@ export default defineComponent({
     }
 
     function pickYear(cell: Dayjs) {
-      if (props.disabledDate?.(cell)) return
+      if (isDateDisabled(cell, 'year')) return
       if (props.picker === 'year') {
         emitChange(cell)
         closePopup()
@@ -329,7 +358,7 @@ export default defineComponent({
     }
 
     function pickQuarter(cell: Dayjs) {
-      if (props.disabledDate?.(cell)) return
+      if (isDateDisabled(cell, 'quarter')) return
       emitChange(cell)
       closePopup()
     }
@@ -493,6 +522,79 @@ export default defineComponent({
       showTimeActive.value ? pendingValue.value : selectedDayjs.value,
     )
 
+    // disabledTime + showTime.disabled* 合并：任意一条命中即 disabled。
+    function mergedDisabledHours(): number[] {
+      const fromTime = timeCfg.value.disabledHours?.() ?? []
+      const fromDynamic = props.disabledTime?.(pendingValue.value)?.disabledHours?.() ?? []
+      if (fromTime.length === 0) return fromDynamic
+      if (fromDynamic.length === 0) return fromTime
+      return Array.from(new Set([...fromTime, ...fromDynamic]))
+    }
+    function mergedDisabledMinutes(hour: number): number[] {
+      const fromTime = timeCfg.value.disabledMinutes?.() ?? []
+      const fromDynamic = props.disabledTime?.(pendingValue.value)?.disabledMinutes?.(hour) ?? []
+      if (fromTime.length === 0) return fromDynamic
+      if (fromDynamic.length === 0) return fromTime
+      return Array.from(new Set([...fromTime, ...fromDynamic]))
+    }
+    function mergedDisabledSeconds(hour: number, minute: number): number[] {
+      const fromTime = timeCfg.value.disabledSeconds?.() ?? []
+      const fromDynamic = props.disabledTime?.(pendingValue.value)?.disabledSeconds?.(hour, minute) ?? []
+      if (fromTime.length === 0) return fromDynamic
+      if (fromDynamic.length === 0) return fromTime
+      return Array.from(new Set([...fromTime, ...fromDynamic]))
+    }
+
+    function renderCellInner(current: Dayjs, type: 'date' | 'month' | 'year' | 'quarter', fallback: string | number) {
+      if (slots.cell) {
+        return slots.cell({ current, type, today: dayjs() })
+      }
+      return <span class={ns.e('cell-inner')}>{fallback}</span>
+    }
+
+    // ===== 键盘导航（仅 date 面板） =====
+    function onInputKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      const k = e.key
+      if (!open.value) {
+        if (k === 'Enter' || k === ' ' || k === 'ArrowDown') {
+          e.preventDefault()
+          openPopup()
+        } else if (k === 'Escape' || k === 'Tab') {
+          // 关闭中按 esc 不动作；tab 走原生行为
+        }
+        return
+      }
+      // 面板已打开
+      if (k === 'Escape') {
+        e.preventDefault()
+        closePopup()
+        return
+      }
+      if (k === 'Tab') {
+        closePopup()
+        return
+      }
+      // 仅 date 面板支持方向键移动 cell
+      if (panelMode.value !== 'date') return
+      const base = focusedCellDate.value ?? panelSelected.value ?? viewMonth.value
+      let next: Dayjs | null = null
+      if (k === 'ArrowLeft') next = base.subtract(1, 'day')
+      else if (k === 'ArrowRight') next = base.add(1, 'day')
+      else if (k === 'ArrowUp') next = base.subtract(7, 'day')
+      else if (k === 'ArrowDown') next = base.add(7, 'day')
+      else if (k === 'Enter') {
+        e.preventDefault()
+        if (focusedCellDate.value) pickDate(focusedCellDate.value)
+        return
+      }
+      if (next) {
+        e.preventDefault()
+        focusedCellDate.value = next
+        if (!isSameMonth(next, viewMonth.value)) viewMonth.value = next
+      }
+    }
+
     function renderDatePanel() {
       const grid = generateMonthGrid(viewMonth.value, props.weekStart)
       const rows: ReturnType<typeof generateMonthGrid>[] = []
@@ -519,8 +621,9 @@ export default defineComponent({
                     </div>
                   )}
                   {row.map((cell) => {
-                    const disabled = !!props.disabledDate?.(cell.date)
+                    const disabled = isDateDisabled(cell.date)
                     const selected = weekPicker ? rowSelected : !!sel && isSameDay(sel, cell.date)
+                    const isFocused = !!focusedCellDate.value && isSameDay(focusedCellDate.value, cell.date)
                     const cellCls = [
                       ns.e('cell'),
                       !cell.isCurrentMonth && ns.em('cell', 'outside'),
@@ -528,6 +631,7 @@ export default defineComponent({
                       selected && ns.em('cell', 'selected'),
                       weekPicker && rowSelected && ns.em('cell', 'in-week'),
                       disabled && ns.em('cell', 'disabled'),
+                      isFocused && ns.em('cell', 'focused'),
                     ]
                     return (
                       <div
@@ -537,7 +641,7 @@ export default defineComponent({
                         aria-disabled={disabled}
                         onClick={() => !disabled && pickDate(cell.date)}
                       >
-                        <span class={ns.e('cell-inner')}>{cell.day}</span>
+                        {renderCellInner(cell.date, 'date', cell.day)}
                       </div>
                     )
                   })}
@@ -554,8 +658,14 @@ export default defineComponent({
       const range = unit === 'hour' ? 24 : 60
       const step =
         unit === 'hour' ? (cfg.hourStep ?? 1) : unit === 'minute' ? (cfg.minuteStep ?? 1) : (cfg.secondStep ?? 1)
+      const pendHour = pendingValue.value?.hour() ?? 0
+      const pendMin = pendingValue.value?.minute() ?? 0
       const disabledVals =
-        unit === 'hour' ? cfg.disabledHours?.() : unit === 'minute' ? cfg.disabledMinutes?.() : cfg.disabledSeconds?.()
+        unit === 'hour'
+          ? mergedDisabledHours()
+          : unit === 'minute'
+            ? mergedDisabledMinutes(pendHour)
+            : mergedDisabledSeconds(pendHour, pendMin)
       let cells = buildTimeColumnValues(range, step, disabledVals)
       if (cfg.hideDisabledOptions) cells = cells.filter((c) => !c.disabled)
       const cur = pendingValue.value
@@ -613,21 +723,29 @@ export default defineComponent({
     function renderFooter() {
       // ok 禁用：showTime 启用且既无已有 modelValue 又未动过任何格
       const okDisabled = showTimeActive.value && !selectedDayjs.value && !pendingDirty.value
+      const hasExtra = !!slots['extra-footer']
+      const showActions = showTimeActive.value
+      if (!hasExtra && !showActions) return null
       return (
         <div class={ns.e('footer')}>
-          {props.showNow && (
-            <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'now')]} onClick={clickNow}>
-              {locale.value.now || '此刻'}
-            </button>
+          {hasExtra && <div class={ns.e('extra-footer')}>{slots['extra-footer']!()}</div>}
+          {showActions && (
+            <div class={ns.e('footer-actions')}>
+              {props.showNow && (
+                <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'now')]} onClick={clickNow}>
+                  {locale.value.now || '此刻'}
+                </button>
+              )}
+              <button
+                type="button"
+                class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]}
+                disabled={okDisabled}
+                onClick={clickOk}
+              >
+                {locale.value.ok || '确定'}
+              </button>
+            </div>
           )}
-          <button
-            type="button"
-            class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]}
-            disabled={okDisabled}
-            onClick={clickOk}
-          >
-            {locale.value.ok || '确定'}
-          </button>
         </div>
       )
     }
@@ -637,7 +755,7 @@ export default defineComponent({
       return (
         <div class={[ns.e('grid'), ns.em('grid', 'month')]}>
           {cells.map((c) => {
-            const disabled = !!props.disabledDate?.(c.date)
+            const disabled = isDateDisabled(c.date, 'month')
             const selected = !!selectedDayjs.value && isSameMonth(selectedDayjs.value, c.date)
             const cellCls = [
               ns.e('cell'),
@@ -654,7 +772,7 @@ export default defineComponent({
                 aria-disabled={disabled}
                 onClick={() => !disabled && pickMonth(c.date)}
               >
-                <span class={ns.e('cell-inner')}>{monthNames.value[c.month]}</span>
+                {renderCellInner(c.date, 'month', monthNames.value[c.month])}
               </div>
             )
           })}
@@ -667,7 +785,7 @@ export default defineComponent({
       return (
         <div class={[ns.e('grid'), ns.em('grid', 'year')]}>
           {cells.map((c) => {
-            const disabled = !!props.disabledDate?.(c.date)
+            const disabled = isDateDisabled(c.date, 'year')
             const selected = !!selectedDayjs.value && selectedDayjs.value.year() === c.year
             const cellCls = [
               ns.e('cell'),
@@ -685,7 +803,7 @@ export default defineComponent({
                 aria-disabled={disabled}
                 onClick={() => !disabled && pickYear(c.date)}
               >
-                <span class={ns.e('cell-inner')}>{c.year}</span>
+                {renderCellInner(c.date, 'year', c.year)}
               </div>
             )
           })}
@@ -698,7 +816,7 @@ export default defineComponent({
       return (
         <div class={[ns.e('grid'), ns.em('grid', 'quarter')]}>
           {cells.map((c) => {
-            const disabled = !!props.disabledDate?.(c.date)
+            const disabled = isDateDisabled(c.date, 'quarter')
             const selected = !!selectedDayjs.value && isSameQuarter(selectedDayjs.value, c.date)
             const cellCls = [
               ns.e('cell'),
@@ -715,7 +833,7 @@ export default defineComponent({
                 aria-disabled={disabled}
                 onClick={() => !disabled && pickQuarter(c.date)}
               >
-                <span class={ns.e('cell-inner')}>{quarterNames.value[c.quarter - 1]}</span>
+                {renderCellInner(c.date, 'quarter', quarterNames.value[c.quarter - 1])}
               </div>
             )
           })}
@@ -752,7 +870,8 @@ export default defineComponent({
       const main = hasPresets
         ? h('div', { class: ns.e('main-row') }, [renderPresets(), h('div', { class: ns.e('main-body') }, [inner])])
         : inner
-      const children = showTimeActive.value ? [main, renderFooter()] : [main]
+      const footer = renderFooter()
+      const children = footer ? [main, footer] : [main]
       return h(
         'div',
         {
@@ -807,6 +926,7 @@ export default defineComponent({
               emit('blur')
               formItem?.validate('blur')
             }}
+            onKeydown={onInputKeydown}
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>

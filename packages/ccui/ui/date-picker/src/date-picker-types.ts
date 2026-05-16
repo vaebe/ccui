@@ -11,6 +11,22 @@ export type DisabledDate = (current: Dayjs) => boolean
 export type GetPopupContainer = (triggerNode: HTMLElement | null) => HTMLElement | null
 export type DateOutputFormat = 'string' | 'date' | 'number'
 
+// disabledTime 动态时间禁用：根据当前正在编辑的日期返回不可选 hour / minute / second。
+// 与 showTime.disabledHours / disabledMinutes / disabledSeconds 取并集。
+export interface DisabledTimeReturn {
+  disabledHours?: () => number[]
+  disabledMinutes?: (hour: number) => number[]
+  disabledSeconds?: (hour: number, minute: number) => number[]
+}
+export type DisabledTime = (current: Dayjs | null) => DisabledTimeReturn
+
+// cell slot 的 scope。
+export interface CellSlotScope {
+  current: Dayjs
+  today: Dayjs
+  type: 'date' | 'month' | 'year' | 'quarter'
+}
+
 // 预设项。label / value 可传函数延迟求值（例如「今天」需要每次重算）。
 export interface PresetItem {
   label: string | (() => string)
@@ -102,6 +118,21 @@ export const datePickerProps = {
   },
   disabledDate: {
     type: Function as PropType<DisabledDate>,
+    default: undefined,
+  },
+  // 最早可选日期；小于此日期的 cell 自动 disabled。与 disabledDate / maxDate 取并集。
+  minDate: {
+    type: [String, Number, Date, Object] as PropType<DateValue>,
+    default: undefined,
+  },
+  // 最晚可选日期；大于此日期的 cell 自动 disabled。
+  maxDate: {
+    type: [String, Number, Date, Object] as PropType<DateValue>,
+    default: undefined,
+  },
+  // 动态时间禁用，依赖正在编辑的日期；与 showTime.disabledHours/Minutes/Seconds 取并集。
+  disabledTime: {
+    type: Function as PropType<DisabledTime>,
     default: undefined,
   },
   placement: {

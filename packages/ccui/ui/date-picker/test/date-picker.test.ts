@@ -1021,3 +1021,199 @@ describe('date-picker M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('date-picker M-B1 minDate / maxDate', () => {
+  it('marks dates before minDate as disabled', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09', minDate: '2026-05-10' })
+    await openPanel(wrapper)
+    const cell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '5')
+    expect(cell!.classes().some((cls) => cls.endsWith('cell--disabled'))).toBe(true)
+  })
+
+  it('marks dates after maxDate as disabled', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09', maxDate: '2026-05-15' })
+    await openPanel(wrapper)
+    const cell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '20')
+    expect(cell!.classes().some((cls) => cls.endsWith('cell--disabled'))).toBe(true)
+  })
+
+  it('ignores click on minDate-disabled cell', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09', minDate: '2026-05-10' })
+    await openPanel(wrapper)
+    const cell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '5')
+    await cell!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('month picker：minDate=2026-04-15 时 4 月仍可选（粒度=month）', async () => {
+    const wrapper = mountDP({ picker: 'month', modelValue: '2026-05', minDate: '2026-04-15' })
+    await openPanel(wrapper)
+    // 4 月 cell（locale 默认中文 '4 月'）
+    const cells = wrapper.findAll(ns.em('cell', 'month'))
+    const april = cells[3]
+    expect(april.text()).toBe('4 月')
+    expect(april.classes().some((cls) => cls.endsWith('cell--disabled'))).toBe(false)
+    // 3 月应该禁用（整月在 minDate 之前）
+    const march = cells[2]
+    expect(march.text()).toBe('3 月')
+    expect(march.classes().some((cls) => cls.endsWith('cell--disabled'))).toBe(true)
+  })
+})
+
+describe('date-picker M-B1 disabledTime 动态时间禁用', () => {
+  it('disabledTime hours 进入时间列 disabled 状态', async () => {
+    const wrapper = mountDP({
+      modelValue: '2026-05-09 12:00:00',
+      showTime: true,
+      disabledTime: () => ({
+        disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      }),
+    })
+    await openPanel(wrapper)
+    // hour 列：0 ~ 8 应该 disabled
+    const hourCol = wrapper.find('.' + ns.em('time-column', 'hour').slice(1))
+    const cells = hourCol.findAll(ns.e('time-cell'))
+    expect(cells[0].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(true)
+    expect(cells[8].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(true)
+    expect(cells[9].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(false)
+  })
+
+  it('disabledTime 与 showTime.disabledHours 合并取并集', async () => {
+    const wrapper = mountDP({
+      modelValue: '2026-05-09 12:00:00',
+      showTime: { disabledHours: () => [0] },
+      disabledTime: () => ({ disabledHours: () => [23] }),
+    })
+    await openPanel(wrapper)
+    const hourCol = wrapper.find('.' + ns.em('time-column', 'hour').slice(1))
+    const cells = hourCol.findAll(ns.e('time-cell'))
+    expect(cells[0].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(true)
+    expect(cells[23].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(true)
+    expect(cells[12].classes().some((cls) => cls.endsWith('time-cell--disabled'))).toBe(false)
+  })
+})
+
+describe('date-picker M-B1 键盘导航', () => {
+  it('Enter 打开面板', async () => {
+    const wrapper = mountDP()
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('ArrowDown 在关闭态打开面板', async () => {
+    const wrapper = mountDP()
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('Escape 关闭面板', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('Arrow 方向键给 cell 添加 focused 修饰', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09' })
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    // 2026-05-10 应该 focused
+    const cell10 = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '10')
+    expect(cell10!.classes().some((cls) => cls.endsWith('cell--focused'))).toBe(true)
+  })
+
+  it('ArrowDown 移动 7 天后 Enter 选中', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09' })
+    await openPanel(wrapper)
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['2026-05-16'])
+  })
+
+  it('Arrow 跨月时自动翻 viewMonth', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-01' })
+    await openPanel(wrapper)
+    // 5-1 → ArrowLeft → 4-30 应跳到 4 月面板
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowLeft' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel-label')).text()).toContain('4 月')
+  })
+})
+
+describe('date-picker M-B1 cell slot', () => {
+  it('cell slot 替换 cell 内容（date 面板）', async () => {
+    const wrapper = mount(DatePicker, {
+      props: { modelValue: '2026-05-09' },
+      slots: {
+        cell: `<template #cell="{ current, type }"><span class="my-cell">{{ type }}:{{ current.date() }}</span></template>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const myCells = wrapper.findAll('.my-cell')
+    expect(myCells.length).toBeGreaterThan(20)
+    expect(myCells[0].text()).toMatch(/^date:\d+$/)
+  })
+
+  it('cell slot 同时传递 type=month（month 面板）', async () => {
+    const wrapper = mount(DatePicker, {
+      props: { picker: 'month', modelValue: '2026-05' },
+      slots: {
+        cell: `<template #cell="{ current, type }"><span class="my-cell">{{ type }}-{{ current.month() + 1 }}</span></template>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const myCells = wrapper.findAll('.my-cell')
+    expect(myCells.length).toBe(12)
+    expect(myCells[0].text()).toBe('month-1')
+    expect(myCells[11].text()).toBe('month-12')
+  })
+})
+
+describe('date-picker M-B1 extra-footer slot', () => {
+  it('extra-footer slot 渲染 footer 容器（即使未启用 showTime）', async () => {
+    const wrapper = mount(DatePicker, {
+      props: { modelValue: '2026-05-09' },
+      slots: {
+        'extra-footer': `<span class="my-extra">以下单时间为准</span>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('footer')).exists()).toBe(true)
+    expect(wrapper.find('.my-extra').exists()).toBe(true)
+    expect(wrapper.find('.my-extra').text()).toBe('以下单时间为准')
+    // 没启用 showTime 时不应渲染 now/ok 按钮
+    expect(wrapper.find(ns.e('footer-actions')).exists()).toBe(false)
+  })
+
+  it('extra-footer + showTime 同时渲染（extra-footer 上、actions 下）', async () => {
+    const wrapper = mount(DatePicker, {
+      props: { modelValue: '2026-05-09 12:00:00', showTime: true },
+      slots: {
+        'extra-footer': `<span class="my-extra">提示文案</span>`,
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    expect(wrapper.find('.my-extra').exists()).toBe(true)
+    expect(wrapper.find(ns.e('footer-actions')).exists()).toBe(true)
+  })
+})

@@ -223,12 +223,24 @@
 
   &__footer {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__extra-footer {
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    line-height: 1.5;
   }
 
   &__footer-btn {
@@ -420,6 +432,10 @@
 
   &__cell--selected:hover &__cell-inner {
     background-color: $ccui-primary;
+  }
+
+  &__cell--focused &__cell-inner {
+    box-shadow: inset 0 0 0 1px $ccui-primary;
   }
 
   &--picker-week &__cell--in-week:hover &__cell-inner {

@@ -95,6 +95,37 @@ function disabledDate(current: Dayjs) {
 
 :::
 
+## 限制可选范围 minDate / maxDate
+
+`minDate` / `maxDate` 接受 `string / Date / Dayjs / number`，超出区间的 cell 自动 disabled，免去自己写 `disabledDate`。三者可叠加，命中任意一条即不可选。
+
+对于 `picker='month' / 'year' / 'quarter'` 粒度，比较按对应单元进行（minDate 落在月中时不会把整月一刀切掉）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import dayjs from 'dayjs'
+import { ref } from 'vue'
+
+// 业务：预订未来 30 天内
+const reserveDate = ref('')
+const today = dayjs().startOf('day')
+const max = today.add(30, 'day')
+</script>
+
+<template>
+  <c-date-picker
+    v-model="reserveDate"
+    :min-date="today.toDate()"
+    :max-date="max.toDate()"
+    placeholder="只可选未来 30 天内"
+  />
+</template>
+```
+
+:::
+
 ## 三种尺寸
 
 `size` 支持 `small` / `default` / `large`。
@@ -338,6 +369,140 @@ const timeConfig = {
 
 :::
 
+## 动态时间禁用 disabledTime
+
+`disabledTime(current)` 接当前编辑日期（pending）作为入参，返回 `{ disabledHours, disabledMinutes, disabledSeconds }`。其中 `disabledMinutes` 接 `hour`、`disabledSeconds` 接 `hour + minute`，方便实现「8:00 后才可选 / 仅整点」等业务约束。
+
+与 `showTime.disabledHours / Minutes / Seconds`（静态）取并集 —— 静态规则用作全表禁用，动态规则按 pending 时间联动。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// 业务：营业时间 09:00 - 18:00，整点选择
+const apptTime = ref('')
+
+function disabledTime() {
+  return {
+    disabledHours: () => Array.from({ length: 24 }, (_, i) => i).filter((h) => h < 9 || h > 18),
+    disabledMinutes: () => Array.from({ length: 60 }, (_, i) => i).filter((m) => m !== 0),
+    disabledSeconds: () => Array.from({ length: 60 }, (_, i) => i).filter((s) => s !== 0),
+  }
+}
+</script>
+
+<template>
+  <c-date-picker v-model="apptTime" show-time :disabled-time="disabledTime" placeholder="选择预约时间" />
+</template>
+```
+
+:::
+
+## 面板底部说明 extra-footer slot
+
+`#extra-footer` slot 在面板底部追加自定义说明区域。未启用 `showTime` 时，footer 容器仍会渲染；启用 `showTime` 时该区域位于「此刻 / 确定」按钮上方。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <c-date-picker v-model="value">
+    <template #extra-footer> 以最终下单时间为准，订单生成后不可修改 </template>
+  </c-date-picker>
+</template>
+```
+
+:::
+
+## 自定义单元格 cell slot
+
+`#cell` slot 以 `{ current, type, today }` 作 scope，可在不打破栅格的前提下追加节假日标记、价格、状态点等业务信息。`type` 取值为 `'date' | 'month' | 'year' | 'quarter'`，根据当前面板模式联动。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import type { Dayjs } from 'dayjs'
+import { ref } from 'vue'
+
+const value = ref('2026-05-09')
+
+// 业务：节假日红点
+const HOLIDAYS = new Set(['2026-05-01', '2026-05-02', '2026-05-03'])
+
+function isHoliday(d: Dayjs) {
+  return HOLIDAYS.has(d.format('YYYY-MM-DD'))
+}
+</script>
+
+<template>
+  <c-date-picker v-model="value">
+    <template #cell="{ current, type }">
+      <span class="my-day-cell">
+        {{ type === 'date' ? current.date() : current.month() + 1 }}
+        <span v-if="type === 'date' && isHoliday(current)" class="my-holiday-dot" />
+      </span>
+    </template>
+  </c-date-picker>
+</template>
+
+<style scoped>
+.my-day-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+.my-holiday-dot {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #f5222d;
+}
+</style>
+```
+
+:::
+
+## 键盘导航
+
+输入框聚焦后支持键盘操作（`inputReadOnly=true` 仍可生效）：
+
+- `Enter` / `Space` / `↓`：打开面板
+- `Esc`：关闭面板
+- `Tab`：关闭面板并切走焦点
+- `← → ↑ ↓`：在 date 面板移动键盘 focus（跨月自动翻面板）
+- `Enter`：选中当前 focus 单元格
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref('')
+</script>
+
+<template>
+  <c-date-picker v-model="value" placeholder="聚焦后按方向键试试" />
+</template>
+```
+
+:::
+
 ## presets 预设快捷项
 
 `presets` 在面板左侧渲染一列快捷项，`label` / `value` 均支持函数形式延迟求值，便于「今天 / 昨天」这种相对时刻。
@@ -557,6 +722,9 @@ const value = ref('')
 | size              | `'small' \| 'default' \| 'large'`                          | `'default'`             | 输入框尺寸                                                                                                                                                                                                                                                                                        |
 | status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                    | 校验状态；置于 `FormItem` 时自动继承                                                                                                                                                                                                                                                              |
 | disabledDate      | `(current: Dayjs) => boolean`                              | --                      | 不可选日期回调，返回 `true` 表示禁用                                                                                                                                                                                                                                                              |
+| minDate           | `string \| Date \| Dayjs \| number`                        | --                      | 最早可选日期；超出区间的 cell 自动 disabled。与 `disabledDate` / `maxDate` 取并集；非 `date` 粒度按对应单元（月 / 年 / 季度）比较                                                                                                                                                                 |
+| maxDate           | `string \| Date \| Dayjs \| number`                        | --                      | 最晚可选日期。语义同 `minDate`                                                                                                                                                                                                                                                                    |
+| disabledTime      | `(current: Dayjs \| null) => DisabledTimeReturn`           | --                      | 动态时间禁用，依赖正在编辑的日期；与 `showTime.disabledHours / Minutes / Seconds` 取并集。`DisabledTimeReturn = { disabledHours?(): number[]; disabledMinutes?(hour: number): number[]; disabledSeconds?(hour: number, minute: number): number[] }`                                               |
 | placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`          | 浮层方位，配合 `@floating-ui/vue` 自动 flip / shift                                                                                                                                                                                                                                               |
 | popupClassName    | string                                                     | --                      | 浮层根元素自定义 class                                                                                                                                                                                                                                                                            |
 | popupAppendToBody | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                                                                                                                            |
@@ -581,11 +749,19 @@ const value = ref('')
 | blur              | --                                                                   | 输入框失焦                         |
 | panel-change      | `(mode: 'date' \| 'month' \| 'year' \| 'quarter', viewMonth: Dayjs)` | 面板模式切换时触发（含逐级上钻）   |
 
+### Slots
+
+| 名称         | scope                                                                              | 说明                                                       |
+| ------------ | ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| cell         | `{ current: Dayjs; type: 'date' \| 'month' \| 'year' \| 'quarter'; today: Dayjs }` | 自定义单元格内容，按当前面板模式取值；不传时走默认渲染     |
+| extra-footer | --                                                                                 | 面板底部追加内容；未启用 `showTime` 时也会渲染 footer 容器 |
+| clearIcon    | --                                                                                 | 自定义清除图标                                             |
+| suffixIcon   | --                                                                                 | 自定义日历图标                                             |
+
 ## 已知限制（未交付）
 
 下列能力计入后续批次：
 
-- range 区间选择（区间选择请使用独立的 `RangePicker` 组件）。
+- range 区间选择（请使用独立的 `RangePicker` 组件）。
 - `TimePicker` 组件、`format` 含时分秒时的面板分栏。
-- `renderExtraFooter`、`showToday`。
-- 键盘导航（Tab / 方向键 / Enter）。
+- `showToday`。
