@@ -9,7 +9,7 @@
 
 ## 基本使用
 
-`v-model` 绑定 Date 对象，点击单元格切换选中日。
+`v-model` 默认绑定 `YYYY-MM-DD` 字符串，点击单元格切换选中日。
 
 :::demo
 
@@ -17,12 +17,12 @@
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref(new Date().toISOString().slice(0, 10))
 </script>
 
 <template>
   <c-calendar v-model="date" />
-  <p style="margin-top: 8px; color: #666">已选：{{ date.toISOString().slice(0, 10) }}</p>
+  <p style="margin-top: 8px; color: #666">已选：{{ date }}</p>
 </template>
 ```
 
@@ -30,7 +30,7 @@ const date = ref(new Date())
 
 ## 监听变化
 
-`change` 事件返回新选中的 Date。
+`change` 事件返回新选中的日期，类型随 `valueFormat`（默认 `'string'`）。
 
 :::demo
 
@@ -38,11 +38,11 @@ const date = ref(new Date())
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref(new Date().toISOString().slice(0, 10))
 const log = ref('（无）')
 
 function onChange(val) {
-  log.value = val.toISOString().slice(0, 10)
+  log.value = String(val)
 }
 </script>
 
@@ -64,7 +64,7 @@ function onChange(val) {
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref(new Date().toISOString().slice(0, 10))
 </script>
 
 <template>
@@ -91,7 +91,7 @@ const date = ref(new Date())
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref(new Date().toISOString().slice(0, 10))
 </script>
 
 <template>
@@ -121,7 +121,7 @@ const date = ref(new Date())
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref(new Date().toISOString().slice(0, 10))
 
 const events = {
   5: '订货',
@@ -165,7 +165,7 @@ const events = {
 <script setup>
 import { ref } from 'vue'
 
-const date = ref(new Date())
+const date = ref('2026-03-15')
 </script>
 
 <template>
@@ -179,20 +179,208 @@ const date = ref(new Date())
 
 :::
 
+## valueFormat='string'（默认）
+
+字符串协议，便于 JSON 序列化和路由参数透传。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const date = ref('2026-03-15')
+</script>
+
+<template>
+  <c-calendar v-model="date" />
+  <p>当前值（string）：{{ date }}</p>
+</template>
+```
+
+:::
+
+## valueFormat='date'
+
+输出原生 `Date`，便于与既有日期 API 互操作。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const date = ref(new Date(2026, 2, 15))
+</script>
+
+<template>
+  <c-calendar v-model="date" value-format="date" />
+  <p>ISO：{{ date.toISOString() }}</p>
+</template>
+```
+
+:::
+
+## valueFormat='number' timestamp
+
+毫秒级 timestamp，便于直接落库。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const ts = ref(Date.now())
+</script>
+
+<template>
+  <c-calendar v-model="ts" value-format="number" />
+  <p>timestamp：{{ ts }}</p>
+  <p>反解：{{ new Date(ts).toLocaleDateString() }}</p>
+</template>
+```
+
+:::
+
+## 自定义 format
+
+`format` 同时控制输入解析与字符串输出。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const date = ref('2026/03/15')
+</script>
+
+<template>
+  <c-calendar v-model="date" format="YYYY/MM/DD" />
+  <p>当前值：{{ date }}</p>
+</template>
+```
+
+:::
+
+## Dayjs 实例输入
+
+直接传 `dayjs()` 实例做初始化，组件内部统一转 dayjs 处理。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+
+const date = ref(dayjs().add(7, 'day').format('YYYY-MM-DD'))
+</script>
+
+<template>
+  <c-calendar v-model="date" />
+  <p>七天后：{{ date }}</p>
+</template>
+```
+
+:::
+
+## 空值初始化
+
+`null` 时回退到当天高亮。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const date = ref(null)
+</script>
+
+<template>
+  <c-calendar v-model="date" />
+  <p>当前值：{{ date ?? '（未选择）' }}</p>
+</template>
+```
+
+:::
+
+## 周末高亮
+
+用 `dateCell` slot + dayjs 算出 `dayOfWeek`，给周六周日加视觉权重。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+
+const date = ref('2026-03-15')
+function isWeekend(d) {
+  const w = dayjs(d).day()
+  return w === 0 || w === 6
+}
+</script>
+
+<template>
+  <c-calendar v-model="date">
+    <template #dateCell="{ date: d, day }">
+      <span :style="{ color: isWeekend(d) ? 'var(--c-color-error)' : 'inherit', fontWeight: isWeekend(d) ? 600 : 400 }">
+        {{ day }}
+      </span>
+    </template>
+  </c-calendar>
+</template>
+```
+
+:::
+
+## 双月对照
+
+并列两个 Calendar 浏览跨月范围。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+
+const left = ref(dayjs().format('YYYY-MM-DD'))
+const right = ref(dayjs().add(1, 'month').format('YYYY-MM-DD'))
+</script>
+
+<template>
+  <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+    <c-calendar v-model="left" style="flex: 1; min-width: 280px;" />
+    <c-calendar v-model="right" style="flex: 1; min-width: 280px;" />
+  </div>
+</template>
+```
+
+:::
+
 ## API
 
 ### Props
 
-| 参数       | 类型    | 默认值       | 说明                |
-| ---------- | ------- | ------------ | ------------------- |
-| modelValue | `Date`  | `new Date()` | 选中日期（v-model） |
-| readOnly   | boolean | `false`      | 只读模式            |
+| 参数        | 类型                                        | 默认值         | 说明                                                                           |
+| ----------- | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| modelValue  | `string \| number \| Date \| Dayjs \| null` | --             | 选中日期（v-model）；`null` 回退到今天                                         |
+| format      | string                                      | `'YYYY-MM-DD'` | 字符串输入解析模板 + `valueFormat='string'` 时的输出模板（dayjs format token） |
+| valueFormat | `'string' \| 'date' \| 'number'`            | `'string'`     | v-model 输出协议：字符串 / 原生 `Date` / 毫秒级 timestamp                      |
+| readOnly    | boolean                                     | `false`        | 只读模式                                                                       |
+| classNames  | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM className 注入                                                      |
+| styles      | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM style 注入                                                          |
 
 ### Events
 
-| 事件   | 回调签名        | 说明               |
-| ------ | --------------- | ------------------ |
-| change | `(value: Date)` | 选中日期变化时触发 |
+| 事件   | 回调签名                                    | 说明                               |
+| ------ | ------------------------------------------- | ---------------------------------- |
+| change | `(value: string \| Date \| number \| null)` | 选中日期变化；类型随 `valueFormat` |
 
 ### Slots
 

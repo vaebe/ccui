@@ -3,6 +3,7 @@ import type { CalendarProps, dateItem } from './calendar-types'
 import dayjs from 'dayjs'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { emitValue, toDayjs } from '../../shared/utils/date'
 import { calendarProps } from './calendar-types'
 import './calendar.scss'
 
@@ -13,13 +14,13 @@ export default defineComponent({
   setup(props: CalendarProps, { emit, slots }) {
     const ns = useNamespace('calendar')
 
+    const parseValue = () => toDayjs(props.modelValue, props.format) ?? dayjs()
+
     // 当前天 选中天
-    const currentDate = ref(
-      props.modelValue ? dayjs(props.modelValue).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
-    )
+    const currentDate = ref(parseValue().format('YYYY-MM-DD'))
 
     // 当前月
-    const currentMonth = ref(props.modelValue ? dayjs(props.modelValue).format('YYYY-MM') : dayjs().format('YYYY-MM'))
+    const currentMonth = ref(parseValue().format('YYYY-MM'))
 
     // 当前展示的日期列表
     const curDateList: Ref<dateItem[]> = ref([])
@@ -71,8 +72,9 @@ export default defineComponent({
         generatedDate(currentMonth.value)
       }
 
-      emit('update:modelValue', new Date(currentDate.value))
-      emit('change', currentDate.value)
+      const out = emitValue(dayjs(currentDate.value), props.valueFormat, props.format)
+      emit('update:modelValue', out)
+      emit('change', out)
     }
 
     // 上一月 下一月 当前月
@@ -96,10 +98,10 @@ export default defineComponent({
     watch(
       () => props.modelValue,
       () => {
-        currentDate.value = dayjs(props.modelValue).format('YYYY-MM-DD')
+        currentDate.value = parseValue().format('YYYY-MM-DD')
         // 月份不同 重新生成日历
         if (!currentDate.value.includes(currentMonth.value)) {
-          currentMonth.value = dayjs(props.modelValue).format('YYYY-MM')
+          currentMonth.value = parseValue().format('YYYY-MM')
           generatedDate(currentMonth.value)
         }
       },

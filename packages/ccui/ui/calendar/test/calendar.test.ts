@@ -165,10 +165,10 @@ describe('calendar', () => {
     wrapper.unmount()
   })
 
-  it('header slot 的 changeMonth("nextMonth") 触发月份切换', async () => {
+  it('header slot 的 changeMonth("nextMonth") 触发月份切换（默认 valueFormat=string 输出 YYYY-MM-01）', async () => {
     let capturedScope: any = null
     const wrapper = mount(Calendar, {
-      props: { modelValue: new Date('2026-03-15') },
+      props: { modelValue: '2026-03-15' },
       slots: {
         header: (s: any) => {
           capturedScope = s
@@ -180,15 +180,15 @@ describe('calendar', () => {
     capturedScope.changeMonth('nextMonth')
     await wrapper.vm.$nextTick()
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    const emittedDate = wrapper.emitted('update:modelValue')![0][0] as Date
-    expect(emittedDate.getMonth()).toBe(3) // 0-indexed: 3 = April
+    const emitted = wrapper.emitted('update:modelValue')![0][0] as string
+    expect(emitted).toBe('2026-04-01')
     wrapper.unmount()
   })
 
   it('header slot 的 setDate 直接跳转到任意日期', async () => {
     let capturedScope: any = null
     const wrapper = mount(Calendar, {
-      props: { modelValue: new Date('2026-03-15') },
+      props: { modelValue: '2026-03-15' },
       slots: {
         header: (s: any) => {
           capturedScope = s
@@ -200,10 +200,7 @@ describe('calendar', () => {
     capturedScope.setDate('2026-12-25')
     await wrapper.vm.$nextTick()
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    const emittedDate = wrapper.emitted('update:modelValue')![0][0] as Date
-    expect(emittedDate.getFullYear()).toBe(2026)
-    expect(emittedDate.getMonth()).toBe(11)
-    expect(emittedDate.getDate()).toBe(25)
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-12-25')
     wrapper.unmount()
   })
 
@@ -217,6 +214,102 @@ describe('calendar', () => {
     it('styles.root 注入到根节点 style', () => {
       const wrapper = createWrapper({ styles: { root: { color: 'red' } } })
       expect(wrapper.find(baseClass).attributes('style') || '').toContain('red')
+      wrapper.unmount()
+    })
+  })
+
+  describe('XL-2 Dayjs 协议 + valueFormat', () => {
+    it('modelValue 接收 string (YYYY-MM-DD)：解析并显示', () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: '2026-03-15' },
+        global: { components: { CButton: Button } },
+      })
+      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      expect(wrapper.find(currentDateClass).text()).toBe('15')
+      wrapper.unmount()
+    })
+
+    it('modelValue 接收 Date：解析并显示', () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: new Date(2026, 2, 15) },
+        global: { components: { CButton: Button } },
+      })
+      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      expect(wrapper.find(currentDateClass).text()).toBe('15')
+      wrapper.unmount()
+    })
+
+    it('modelValue 接收 timestamp (number)：解析并显示', () => {
+      const ts = new Date(2026, 2, 15).getTime()
+      const wrapper = mount(Calendar, {
+        props: { modelValue: ts },
+        global: { components: { CButton: Button } },
+      })
+      expect(wrapper.find(headerClass).text()).toContain('2026-03')
+      wrapper.unmount()
+    })
+
+    it('modelValue=null：回退到今天', () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: null },
+        global: { components: { CButton: Button } },
+      })
+      expect(wrapper.find(currentDateClass).exists()).toBeTruthy()
+      wrapper.unmount()
+    })
+
+    it('valueFormat="string" (默认)：emit YYYY-MM-DD 字符串', async () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: '2026-03-15' },
+        global: { components: { CButton: Button } },
+      })
+      const cells = wrapper.findAll(dayClass)
+      const targetCell = cells.find((c) => c.text() === '20' && c.classes().includes('current-month'))!
+      await targetCell.trigger('click')
+      expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-03-20')
+      wrapper.unmount()
+    })
+
+    it('valueFormat="date"：emit Date 对象', async () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: '2026-03-15', valueFormat: 'date' },
+        global: { components: { CButton: Button } },
+      })
+      const cells = wrapper.findAll(dayClass)
+      const targetCell = cells.find((c) => c.text() === '20' && c.classes().includes('current-month'))!
+      await targetCell.trigger('click')
+      const out = wrapper.emitted('update:modelValue')![0][0]
+      expect(out).toBeInstanceOf(Date)
+      expect((out as Date).getFullYear()).toBe(2026)
+      expect((out as Date).getMonth()).toBe(2)
+      expect((out as Date).getDate()).toBe(20)
+      wrapper.unmount()
+    })
+
+    it('valueFormat="number"：emit timestamp', async () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: '2026-03-15', valueFormat: 'number' },
+        global: { components: { CButton: Button } },
+      })
+      const cells = wrapper.findAll(dayClass)
+      const targetCell = cells.find((c) => c.text() === '20' && c.classes().includes('current-month'))!
+      await targetCell.trigger('click')
+      const out = wrapper.emitted('update:modelValue')![0][0]
+      expect(typeof out).toBe('number')
+      expect(new Date(out as number).getDate()).toBe(20)
+      wrapper.unmount()
+    })
+
+    it('自定义 format="YYYY/MM/DD"：双向解析与输出', async () => {
+      const wrapper = mount(Calendar, {
+        props: { modelValue: '2026/03/15', format: 'YYYY/MM/DD' },
+        global: { components: { CButton: Button } },
+      })
+      expect(wrapper.find(currentDateClass).text()).toBe('15')
+      const cells = wrapper.findAll(dayClass)
+      const targetCell = cells.find((c) => c.text() === '20' && c.classes().includes('current-month'))!
+      await targetCell.trigger('click')
+      expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026/03/20')
       wrapper.unmount()
     })
   })
