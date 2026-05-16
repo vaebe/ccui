@@ -141,6 +141,46 @@ function disabledEndDate(current: Dayjs) {
 
 :::
 
+## 两端独立禁用 disabled
+
+`disabled` 支持元组 `[boolean, boolean]`，分别锁两端 input。例如「开始日期可选 / 结束日期锁定」常见于编辑订单中的「下单时间不可改、退款时间待选」场景。锁定端：input 禁用、点击不打开面板。当两端都锁定时清除按钮自动隐藏。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(['2026-05-09', '2026-05-15'])
+</script>
+
+<template>
+  <c-range-picker v-model="value" :disabled="[true, false]" />
+</template>
+```
+
+:::
+
+## 两端独立允许为空 allowEmpty
+
+`allowEmpty` 接 `[boolean, boolean]`，分别配置「开始日期可空 / 结束日期可空」。两端默认 `false`，需要全部选择后才能提交。设为 `[true, false]` 即可实现「开始日期可空 / 结束日期必填」之类的不对称需求。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const value = ref<[string, string] | null>(null)
+</script>
+
+<template>
+  <c-range-picker v-model="value" :allow-empty="[true, false]" />
+</template>
+```
+
+:::
+
 ## 自定义分隔符与占位
 
 :::demo
@@ -358,7 +398,8 @@ const value = ref([])
 | valueFormat       | `'string' \| 'date' \| 'number'`                           | `'string'`                | `v-model` 输出形态：按 format 字符串 / Date 实例 / 毫秒时间戳                                                                                                                                        |
 | placeholder       | `[string, string]`                                         | `['开始日期','结束日期']` | 起止两端占位文案                                                                                                                                                                                     |
 | separator         | string                                                     | `~`                       | 起止之间的分隔符                                                                                                                                                                                     |
-| disabled          | boolean                                                    | `false`                   | 是否禁用                                                                                                                                                                                             |
+| disabled          | `boolean \| [boolean, boolean]`                            | `false`                   | 是否禁用；元组形态分别锁两端 input。两端都锁定时 clear 自动隐藏                                                                                                                                      |
+| allowEmpty        | `boolean \| [boolean, boolean]`                            | `false`                   | 是否允许该端为空；元组分别配置两端。两端都不允许时必须选完整范围才能 ok 提交                                                                                                                         |
 | clearable         | boolean                                                    | `true`                    | 是否显示清除按钮                                                                                                                                                                                     |
 | size              | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                                                                                                                                                                           |
 | status            | `'' \| 'error' \| 'warning' \| ...`                        | `''`                      | 校验状态；置于 `FormItem` 时自动继承                                                                                                                                                                 |

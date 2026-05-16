@@ -167,8 +167,24 @@ export default defineComponent({
       return [props.placeholder[0] || base[0], props.placeholder[1] || base[1]]
     })
 
+    // disabled / allowEmpty 元组化：[startDisabled, endDisabled] / [startAllowEmpty, endAllowEmpty]
+    const disabledTuple = computed<[boolean, boolean]>(() => {
+      const d = props.disabled
+      if (Array.isArray(d) && d.length === 2) return [Boolean(d[0]), Boolean(d[1])]
+      return [Boolean(d), Boolean(d)]
+    })
+    const allowEmptyTuple = computed<[boolean, boolean]>(() => {
+      const a = props.allowEmpty
+      if (Array.isArray(a) && a.length === 2) return [Boolean(a[0]), Boolean(a[1])]
+      return [Boolean(a), Boolean(a)]
+    })
+    const allDisabled = computed(() => disabledTuple.value[0] && disabledTuple.value[1])
+    const anyDisabled = computed(() => disabledTuple.value[0] || disabledTuple.value[1])
+
     function openPopup(focus: Phase = 'start') {
-      if (props.disabled || open.value) return
+      // 全禁用（boolean=true 或 [true, true]）则不打开；按 focus 端被禁用同样不打开
+      if (allDisabled.value || open.value) return
+      if (disabledTuple.value[focus === 'start' ? 0 : 1]) return
       syncPendingFromSelected()
       hoverDate.value = null
       phase.value = focus
@@ -302,10 +318,14 @@ export default defineComponent({
     }
 
     function clickOk() {
-      if (!pendingStart.value || !pendingEnd.value) return
+      // allowEmptyTuple[i]=true 时该端可空；两端都不允许且任一为空 → 阻止 emit
+      const sNull = !pendingStart.value
+      const eNull = !pendingEnd.value
+      if (sNull && !allowEmptyTuple.value[0]) return
+      if (eNull && !allowEmptyTuple.value[1]) return
       let s = pendingStart.value
       let e = pendingEnd.value
-      if (e.isBefore(s, 'minute')) {
+      if (s && e && e.isBefore(s, 'minute')) {
         ;[s, e] = [e, s]
       }
       emitRange(s, e)
@@ -333,7 +353,7 @@ export default defineComponent({
     })
 
     const showClear = computed(
-      () => props.clearable && !props.disabled && (!!selectedStart.value || !!selectedEnd.value),
+      () => props.clearable && !allDisabled.value && (!!selectedStart.value || !!selectedEnd.value),
     )
 
     function isCellInRange(date: Dayjs): boolean {
@@ -593,7 +613,7 @@ export default defineComponent({
 
     const rootCls = computed(() => [
       ns.b(),
-      props.disabled && ns.is('disabled'),
+      anyDisabled.value && ns.is('disabled'),
       open.value && ns.is('open'),
       ns.m(props.size),
       mergedStatus.value && ns.m(`status-${mergedStatus.value}`),
@@ -608,7 +628,7 @@ export default defineComponent({
             class={[ns.e('input'), ns.em('input', 'start')]}
             type="text"
             readonly={props.inputReadOnly}
-            disabled={props.disabled}
+            disabled={disabledTuple.value[0]}
             placeholder={placeholderTexts.value[0]}
             value={startInputDisplay.value}
             aria-haspopup="dialog"
@@ -628,7 +648,7 @@ export default defineComponent({
             class={[ns.e('input'), ns.em('input', 'end')]}
             type="text"
             readonly={props.inputReadOnly}
-            disabled={props.disabled}
+            disabled={disabledTuple.value[1]}
             placeholder={placeholderTexts.value[1]}
             value={endInputDisplay.value}
             aria-haspopup="dialog"

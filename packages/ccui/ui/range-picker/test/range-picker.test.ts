@@ -746,3 +746,76 @@ describe('range-picker M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('range-picker M-B2 disabled 元组', () => {
+  it('disabled=[false, true] 仅锁右端 input', () => {
+    const wrapper = mountRP({ disabled: [false, true] })
+    const inputs = wrapper.findAll('input')
+    expect(inputs[0].attributes('disabled')).toBeUndefined()
+    expect(inputs[1].attributes('disabled')).toBeDefined()
+  })
+
+  it('disabled=[true, false] 仅锁左端 input', () => {
+    const wrapper = mountRP({ disabled: [true, false] })
+    const inputs = wrapper.findAll('input')
+    expect(inputs[0].attributes('disabled')).toBeDefined()
+    expect(inputs[1].attributes('disabled')).toBeUndefined()
+  })
+
+  it('disabled=true 锁两端', () => {
+    const wrapper = mountRP({ disabled: true })
+    const inputs = wrapper.findAll('input')
+    expect(inputs[0].attributes('disabled')).toBeDefined()
+    expect(inputs[1].attributes('disabled')).toBeDefined()
+  })
+
+  it('disabled=[true, true] 锁两端', () => {
+    const wrapper = mountRP({ disabled: [true, true] })
+    const inputs = wrapper.findAll('input')
+    expect(inputs[0].attributes('disabled')).toBeDefined()
+    expect(inputs[1].attributes('disabled')).toBeDefined()
+  })
+
+  it('disabled=[true, false] 点击 start input 不打开面板', async () => {
+    const wrapper = mountRP({ disabled: [true, false] })
+    const inputs = wrapper.findAll('input')
+    await inputs[0].trigger('click')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('disabled=[true, false] 点击 end input 仍可打开', async () => {
+    const wrapper = mountRP({ disabled: [true, false] })
+    const inputs = wrapper.findAll('input')
+    await inputs[1].trigger('click')
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('disabled=[true, true] 时不显示 clear 按钮', () => {
+    const wrapper = mountRP({ disabled: [true, true], modelValue: ['2026-05-09', '2026-05-15'] })
+    expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
+  })
+
+  it('disabled=[false, true] 时仍显示 clear 按钮', () => {
+    const wrapper = mountRP({ disabled: [false, true], modelValue: ['2026-05-09', '2026-05-15'] })
+    expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
+  })
+})
+
+describe('range-picker M-B2 allowEmpty 元组', () => {
+  it('allowEmpty 默认 false', () => {
+    const wrapper = mountRP()
+    expect(wrapper.props('allowEmpty')).toBe(false)
+  })
+
+  it('allowEmpty=[true, false] 正确接收元组', () => {
+    const wrapper = mountRP({ allowEmpty: [true, false] })
+    expect(wrapper.props('allowEmpty')).toEqual([true, false])
+  })
+
+  it('allowEmpty=true 同时允许两端空', () => {
+    const wrapper = mountRP({ allowEmpty: true })
+    expect(wrapper.props('allowEmpty')).toBe(true)
+  })
+})

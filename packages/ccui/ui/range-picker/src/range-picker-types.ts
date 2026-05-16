@@ -62,8 +62,14 @@ export const rangePickerProps = {
     type: String,
     default: '~',
   },
+  // 接 boolean 或 [boolean, boolean] 元组分别锁两端
   disabled: {
-    type: Boolean,
+    type: [Boolean, Array] as PropType<boolean | [boolean, boolean]>,
+    default: false,
+  },
+  // 是否允许该端为空；boolean | [boolean, boolean] 元组
+  allowEmpty: {
+    type: [Boolean, Array] as PropType<boolean | [boolean, boolean]>,
     default: false,
   },
   clearable: {
