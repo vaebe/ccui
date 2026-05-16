@@ -2,7 +2,7 @@ import type { PopconfirmProps } from './popconfirm-types'
 import { computed, defineComponent, getCurrentInstance, ref, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import Popover from '../../popover/src/popover'
-import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popconfirmProps } from './popconfirm-types'
 import './popconfirm.scss'
@@ -18,13 +18,13 @@ export default defineComponent({
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecatedProp('Popconfirm', 'visible', 'open（v-model:open）')
+      warnDeprecated('visible', 'open（v-model:open）', 'Popconfirm')
     }
     if (isPropExplicit(rawProps, 'confirmText', 'confirm-text')) {
-      warnDeprecatedProp('Popconfirm', 'confirmText', 'okText')
+      warnDeprecated('confirmText', 'okText', 'Popconfirm')
     }
     if (isPropExplicit(rawProps, 'confirmType', 'confirm-type')) {
-      warnDeprecatedProp('Popconfirm', 'confirmType', 'okType')
+      warnDeprecated('confirmType', 'okType', 'Popconfirm')
     }
 
     // 同义 prop 解析：okText > confirmText、okType > confirmType、open > visible

@@ -12,7 +12,7 @@ import {
   Transition,
   watch,
 } from 'vue'
-import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
@@ -45,22 +45,22 @@ export default defineComponent({
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecatedProp('Popover', 'visible', 'open（v-model:open）')
+      warnDeprecated('visible', 'open（v-model:open）', 'Popover')
     }
     if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
-      warnDeprecatedProp('Popover', 'showArrow', 'arrow')
+      warnDeprecated('showArrow', 'arrow', 'Popover')
     }
     if (isPropExplicit(rawProps, 'showAfter', 'show-after')) {
-      warnDeprecatedProp('Popover', 'showAfter', 'mouseEnterDelay')
+      warnDeprecated('showAfter', 'mouseEnterDelay', 'Popover')
     }
     if (isPropExplicit(rawProps, 'hideAfter', 'hide-after')) {
-      warnDeprecatedProp('Popover', 'hideAfter', 'mouseLeaveDelay')
+      warnDeprecated('hideAfter', 'mouseLeaveDelay', 'Popover')
     }
     if (isPropExplicit(rawProps, 'popperClass', 'popper-class')) {
-      warnDeprecatedProp('Popover', 'popperClass', 'overlayClassName')
+      warnDeprecated('popperClass', 'overlayClassName', 'Popover')
     }
     if (isPropExplicit(rawProps, 'teleported', 'teleported')) {
-      warnDeprecatedProp('Popover', 'teleported', 'getPopupContainer')
+      warnDeprecated('teleported', 'getPopupContainer', 'Popover')
     }
 
     const visible = ref(false)

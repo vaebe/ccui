@@ -1,7 +1,7 @@
 import { mount, shallowMount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { Popover } from '../index'
 
 // 测试辅助函数
@@ -560,7 +560,7 @@ describe('popover', () => {
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
-      __resetDeprecationWarningsForTest()
+      __resetDeprecatedWarningsForTest()
     })
 
     it('visible 显式传入触发 deprecation warn 一次', () => {

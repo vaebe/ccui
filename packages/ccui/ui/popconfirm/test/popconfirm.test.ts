@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Popconfirm } from '../index'
 
@@ -228,7 +228,7 @@ describe('popconfirm', () => {
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
-      __resetDeprecationWarningsForTest()
+      __resetDeprecatedWarningsForTest()
     })
 
     it('visible 显式传入触发 deprecation warn 一次', () => {
