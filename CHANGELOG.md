@@ -3,9 +3,17 @@
 本项目变更遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格。
 2.x 是当前开发分支，对照 main 主分支记录。
 
-## [Unreleased] - 2.x
+## [2.0.0-beta.0] - 2026-05-16
 
-工具链迁移到 Vite+，组件库扩到 73+ 个组件，主题层向 Ant Design v6 设计语言全量对齐。
+2.x 首个预发布版本（npm dist-tag: `beta`）。工具链迁移到 Vite+，组件库扩到 73+ 个组件，主题层向 Ant Design v6 设计语言全量对齐。
+
+### BREAKING CHANGES
+
+- **包结构调整**：图标体系从 `@iconify/vue` 在线方案换为 `@vue3-ccui/icons` 独立离线包，需要单独安装 `@vue3-ccui/icons`；Tree 组件 switcher 图标默认从该包加载。
+- **新增按需引入包**：`@vue3-ccui/unplugin-vue-components` 作为独立 resolver 包发布。
+- **组件移除**：DropdownButton、SkeletonAvatar / SkeletonButton / SkeletonImage / SkeletonInput、DirectoryTree、Statistic、StatisticTimer 共 7 个组件移除。
+- **Table change 事件签名收紧**：从原先三参数变更为 `(filters, sorter, currentData)`，分页职责完全交回上层。
+- **主包 peerDependencies**：`vue` 从 `dependencies` 移至 `peerDependencies` (`^3.5.0`)，避免双 Vue 实例。
 
 ### Added
 

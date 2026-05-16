@@ -1,6 +1,6 @@
 {
   "name": "@vue3-ccui/icons",
-  "version": "1.2.2",
+  "version": "2.0.0-beta.0",
   "description": "Tree-shakable SVG icon set for vue3-ccui — all icons inlined, no network",
   "keywords": [
     "icons",
@@ -11,21 +11,69 @@
     "tree-shaking"
   ],
   "homepage": "https://vaebe.github.io/ccui/",
+  "bugs": {
+    "url": "https://github.com/vaebe/ccui/issues"
+  },
   "license": "MIT",
+  "author": "vaebe",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vaebe/ccui.git"
+    "url": "git+https://github.com/vaebe/ccui.git",
+    "directory": "packages/icons"
   },
   "type": "module",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
-    ".": "./src/index.ts",
-    "./icons/*": "./src/icons/*.tsx"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./icons/*": {
+      "import": {
+        "types": "./dist/icons/*.d.ts",
+        "default": "./dist/icons/*.js"
+      },
+      "require": {
+        "types": "./dist/icons/*.d.cts",
+        "default": "./dist/icons/*.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
     "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsdown": "^0.18.0",
+    "typescript": "^5.9.3",
+    "vue": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.10.0"
   }
 }

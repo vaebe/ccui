@@ -1,6 +1,6 @@
 {
   "name": "vue3-ccui",
-  "version": "1.2.2",
+  "version": "2.0.0-beta.0",
   "description": "vue3-ccui components based on Vite and Vue3",
   "keywords": [
     "components",
@@ -24,7 +24,26 @@
   "type": "module",
   "main": "vue-ccui.umd.js",
   "module": "vue-ccui.es.js",
+  "types": "index.d.ts",
+  "files": [
+    "*.js",
+    "*.css",
+    "*.d.ts",
+    "theme",
+    "**/index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
+    "build:icons": "pnpm --filter @vue3-ccui/icons build",
+    "pretest": "pnpm build:icons",
+    "pretest:watch": "pnpm build:icons",
+    "precoverage": "pnpm build:icons",
     "test": "vp test run",
     "test:watch": "vp test",
     "coverage": "vp test run --coverage"
@@ -35,9 +54,10 @@
     "@iconify/vue": "^5.0.1",
     "dayjs": "^1.11.19",
     "qrcode-generator": "^2.0.4",
-    "theme": "workspace:*",
-    "@vue3-ccui/icons": "workspace:*",
-    "vue": "^3.5.33"
+    "@vue3-ccui/icons": "workspace:^"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",
@@ -47,6 +67,7 @@
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^24.1.3",
     "sass": "^1.93.3",
+    "theme": "workspace:*",
     "typescript": "^5.9.3",
     "vite": "catalog:",
     "vite-plus": "catalog:",

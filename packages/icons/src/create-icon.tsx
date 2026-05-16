@@ -1,3 +1,4 @@
+import { h } from 'vue'
 import type { CSSProperties } from 'vue'
 import type { CcuiIconComponent, IconBaseProps } from './types'
 
@@ -38,14 +39,18 @@ export function createIcon(options: CreateIconOptions): CcuiIconComponent {
 
     const mergedStyle: CSSProperties = typeof props.style === 'string' ? style : { ...style, ...props.style }
 
-    return (
-      <span class={['ccui-icon', props.spin && 'ccui-icon--spin', props.class]} style={mergedStyle} aria-hidden="true">
-        <svg viewBox={viewBox} width="1em" height="1em" fill="currentColor">
-          {paths.map((d) => (
-            <path d={d} />
-          ))}
-        </svg>
-      </span>
+    return h(
+      'span',
+      {
+        class: ['ccui-icon', props.spin && 'ccui-icon--spin', props.class],
+        style: mergedStyle,
+        'aria-hidden': 'true',
+      },
+      h(
+        'svg',
+        { viewBox, width: '1em', height: '1em', fill: 'currentColor' },
+        paths.map((d) => h('path', { d })),
+      ),
     )
   }
 

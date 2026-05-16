@@ -1,6 +1,6 @@
 {
   "name": "@vue3-ccui/unplugin-vue-components",
-  "version": "0.1.0",
+  "version": "2.0.0-beta.0",
   "description": "vue3-ccui resolver for unplugin-vue-components — auto import on demand",
   "keywords": [
     "auto-import",
@@ -49,6 +49,7 @@
   },
   "publishConfig": {
     "access": "public",
+    "tag": "beta",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
@@ -69,7 +70,7 @@
   },
   "peerDependencies": {
     "unplugin-vue-components": ">=0.26.0",
-    "vue3-ccui": "workspace:*"
+    "vue3-ccui": "workspace:^"
   },
   "peerDependenciesMeta": {
     "unplugin-vue-components": {

@@ -1,6 +1,7 @@
 {
   "name": "ccui-cli",
   "version": "1.0.0",
+  "private": true,
   "description": "ccui-cli",
   "keywords": [
     "cli"
