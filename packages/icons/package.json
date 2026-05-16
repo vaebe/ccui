@@ -1,0 +1,31 @@
+{
+  "name": "@vue3-ccui/icons",
+  "version": "1.2.2",
+  "description": "Tree-shakable SVG icon set for vue3-ccui — all icons inlined, no network",
+  "keywords": [
+    "icons",
+    "svg",
+    "vue",
+    "vue3",
+    "vue3-ccui",
+    "tree-shaking"
+  ],
+  "homepage": "https://vaebe.github.io/ccui/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaebe/ccui.git"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./icons/*": "./src/icons/*.tsx"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

@@ -60,6 +60,8 @@ export interface TreeExpandInfo {
   node: FlattenedTreeNode
 }
 
+export type TreeExpandAction = 'click' | false
+
 export type TreeDropPosition = 'before' | 'inside' | 'after'
 
 export interface TreeDropInfo {
@@ -145,6 +147,13 @@ export const treeProps = {
   blockNode: {
     type: Boolean,
     default: false,
+  },
+  // 点击节点正文是否同时切换展开：
+  // - `'click'`（默认）：单击行（标题区域）切换展开 / 收起
+  // - `false`：仅 switcher 图标点击触发展开
+  expandAction: {
+    type: [String, Boolean] as PropType<TreeExpandAction>,
+    default: 'click',
   },
   searchValue: {
     type: String,

@@ -36,6 +36,7 @@
     "dayjs": "^1.11.19",
     "qrcode-generator": "^2.0.4",
     "theme": "workspace:*",
+    "@vue3-ccui/icons": "workspace:*",
     "vue": "^3.5.33"
   },
   "devDependencies": {

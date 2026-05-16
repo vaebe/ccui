@@ -41,12 +41,15 @@ const data = [
 
 ## 展开方式 `expandAction`
 
-默认 `expandAction="click"` —— 点击节点正文（标题区域）和 switcher 图标都会切换展开。设为 `false` 后只剩 switcher 图标触发展开，正文点击退化为纯选中（更接近文件浏览器以外的传统 Tree UX）。
+`'click'`（默认）整行点击切换展开；`false` 仅 switcher 图标响应，行点击退化为纯选中。
 
 :::demo
 
 ```vue
 <script setup lang="ts">
+import { ref } from 'vue'
+
+const rowClick = ref(true)
 const data = [
   {
     key: 'src',
@@ -61,16 +64,8 @@ const data = [
 </script>
 
 <template>
-  <div style="display: flex; gap: 32px;">
-    <div>
-      <h4 style="margin: 0 0 8px;">默认 expandAction="click"</h4>
-      <c-tree :data="data" />
-    </div>
-    <div>
-      <h4 style="margin: 0 0 8px;">expandAction={false}</h4>
-      <c-tree :data="data" :expand-action="false" />
-    </div>
-  </div>
+  <c-switch v-model="rowClick" checked-children="整行" unchecked-children="仅图标" />
+  <c-tree :data="data" :expand-action="rowClick ? 'click' : false" default-expand-all style="margin-top: 12px;" />
 </template>
 ```
 

@@ -74,6 +74,33 @@ describe('tree', () => {
     expect(wrapper.findAll(ns.e('node'))).toHaveLength(2)
   })
 
+  it('expandAction="click" (default): clicking row content toggles expand', async () => {
+    const wrapper = mountTree()
+    await wrapper.findAll(ns.e('content'))[0].trigger('click')
+    expect(wrapper.emitted('update:expandedKeys')?.[0]).toEqual([['root-1']])
+    expect(wrapper.findAll(ns.e('node'))).toHaveLength(4)
+  })
+
+  it('expandAction=false: clicking row content does not toggle expand', async () => {
+    const wrapper = mountTree({ expandAction: false })
+    await wrapper.findAll(ns.e('content'))[0].trigger('click')
+    expect(wrapper.emitted('update:expandedKeys')).toBeUndefined()
+    expect(wrapper.findAll(ns.e('node'))).toHaveLength(2)
+
+    await wrapper.find(ns.e('switcher-wrap')).trigger('click')
+    expect(wrapper.emitted('update:expandedKeys')?.[0]).toEqual([['root-1']])
+  })
+
+  it('expandAction="click" does not expand a leaf without children', async () => {
+    const wrapper = mountTree({ defaultExpandedKeys: ['root-1'] })
+    const childContent = wrapper
+      .findAll(ns.e('node'))
+      .find((node) => node.attributes('data-key') === 'child-1-1')!
+      .find(ns.e('content'))
+    await childContent.trigger('click')
+    expect(wrapper.emitted('update:expandedKeys')).toBeUndefined()
+  })
+
   it('defaultExpandAll expands every parent', () => {
     const wrapper = mountTree({ defaultExpandAll: true })
     // 6 nodes: 2 roots + 1 + 2 + 2 = 7
