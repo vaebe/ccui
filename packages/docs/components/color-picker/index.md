@@ -55,7 +55,7 @@ const color = ref('#1677ff')
 
 ## 预设色板
 
-`presets` 在面板下方显示预设色，点击直接套用。
+`presets` 在面板上方显示预设色，点击直接套用。最简单形态是 hex 字符串列表。
 
 :::demo
 
@@ -66,6 +66,78 @@ const presets = ['#1677ff', '#36ad6a', '#f7b500', '#ff4d4f', '#722ed1', '#13c2c2
 
 <template>
   <c-color-picker default-value="#1677ff" :presets="presets" show-text />
+</template>
+```
+
+:::
+
+## 分组预设 / 带标签
+
+`presets` 也接受 `{ label?, colors }[]` 分组形态。`colors` 内每一项可以是 hex 字符串，也可以是 `{ color, label? }` 对象（`label` 会写入按钮的 `aria-label` / `title`，便于无障碍）。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const color = ref('#1677ff')
+
+const presets = [
+  {
+    label: '品牌色板',
+    colors: [
+      { color: '#1677ff', label: '主品牌蓝' },
+      { color: '#36ad6a', label: '辅助绿' },
+      { color: '#f7b500', label: '强调黄' },
+    ],
+  },
+  {
+    label: '中性灰阶',
+    colors: ['#000000', '#595959', '#bfbfbf', '#f0f0f0', '#ffffff'],
+  },
+]
+</script>
+
+<template>
+  <c-color-picker v-model="color" :presets="presets" show-text />
+</template>
+```
+
+:::
+
+## 自定义面板 panel slot
+
+`panel` slot 完全接管面板内容，scope 提供 `{ color, components }`，其中 `components.picker` / `components.presets` / `components.footer` 是渲染函数 —— 可以按需调用、重新排版、外面套自己的说明区。下例把预设放到拾色器右侧，并在底部追加一段提示。
+
+:::demo
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const color = ref('#1677ff')
+const presets = [{ label: '主题色快选', colors: ['#1677ff', '#36ad6a', '#f7b500', '#ff4d4f', '#722ed1', '#13c2c2'] }]
+</script>
+
+<template>
+  <c-color-picker v-model="color" :presets="presets" show-text>
+    <template #panel="{ color: hex, components }">
+      <div style="display: flex; gap: 12px; align-items: flex-start">
+        <div style="flex: 1; min-width: 220px">
+          <component :is="components.picker" />
+        </div>
+        <div style="width: 140px">
+          <component :is="components.presets" />
+        </div>
+      </div>
+      <div
+        style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; color: rgba(0,0,0,.65); font-size: 12px"
+      >
+        当前选中：{{ hex }} —— 上线前请走品牌色规范评审
+      </div>
+    </template>
+  </c-color-picker>
 </template>
 ```
 
@@ -167,29 +239,31 @@ const value = ref('#1677ff')
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                   | 说明                                             |
-| ----------------- | ---------------------------------------------------------- | ------------------------ | ------------------------------------------------ |
-| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`           |
-| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                |
-| format            | `'hex' \| 'rgb' \| 'hsv'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）       |
-| disabled          | boolean                                                    | `false`                  | 是否禁用                                         |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                     |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承             |
-| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                     |
-| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex     |
-| presets           | string[]                                                   | `[]`                     | 预设色板，每项 hex 字符串                        |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                         |
-| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                           |
-| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`           |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody` |
-| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                       |
-| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）           |
+| 参数              | 类型                                                       | 默认值                   | 说明                                                                        |
+| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------- |
+| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                      |
+| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                           |
+| format            | `'hex' \| 'rgb' \| 'hsv'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                  |
+| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                    |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                        |
+| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                |
+| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                |
+| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表 |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                    |
+| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                      |
+| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                      |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                            |
+| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                  |
+| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                      |
 
 ### Slots
 
-| 名称    | 作用域                                                | 说明                               |
-| ------- | ----------------------------------------------------- | ---------------------------------- |
-| trigger | `{ color: string, open: boolean, disabled: boolean }` | 自定义触发器，替代默认 swatch 按钮 |
+| 名称    | 作用域                                                                                                              | 说明                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| trigger | `{ color: string, open: boolean, disabled: boolean }`                                                               | 自定义触发器，替代默认 swatch 按钮                                                               |
+| panel   | `{ color: string, components: { picker: () => VNode, presets: () => VNode \| null, footer: () => VNode \| null } }` | 自定义面板内容；`components.*` 为面板各子片段的渲染函数，可按需调用、重新排版                    |
+| footer  | `{ color: string }`                                                                                                 | 面板底部追加区。默认面板：放在 picker 之后渲染；`panel` slot 内：通过 `components.footer()` 调用 |
 
 ### Events
 
@@ -213,4 +287,3 @@ const value = ref('#1677ff')
 ## 已知限制（未交付）
 
 - **eyedropper（取色器）**：浏览器 EyeDropper API 集成留给后续。
-- **panelRender slot**：自定义面板内容（在 SV / 滑块周围插入额外区域）暂不支持。

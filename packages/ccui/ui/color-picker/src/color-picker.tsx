@@ -2,7 +2,12 @@ import type { Placement } from '@floating-ui/vue'
 import type { CSSProperties, VNode } from 'vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { HSV, RGB } from '../../shared/utils/color'
-import type { ColorPickerPlacement, ColorPickerProps } from './color-picker-types'
+import type {
+  ColorPickerPlacement,
+  ColorPickerPresetColor,
+  ColorPickerPresetGroup,
+  ColorPickerProps,
+} from './color-picker-types'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
   computed,
@@ -510,27 +515,90 @@ export default defineComponent({
       )
     }
 
+    // 解析 presets：兼容 string[] / 对象数组 / 分组数组三种形态，统一为 group 列表
+    const normalizedPresets = computed<ColorPickerPresetGroup[]>(() => {
+      const raw = props.presets
+      if (!raw || raw.length === 0) return []
+      // 整组形态：每项都是 { colors: [...] }
+      const isGrouped = raw.every(
+        (item) => item && typeof item === 'object' && Array.isArray((item as ColorPickerPresetGroup).colors),
+      )
+      if (isGrouped) {
+        return raw as ColorPickerPresetGroup[]
+      }
+      // 扁平形态：string | { color, label? }
+      return [{ colors: raw as ColorPickerPresetColor[] }]
+    })
+
+    function presetHex(item: ColorPickerPresetColor): string {
+      return typeof item === 'string' ? item : item.color
+    }
+    function presetLabel(item: ColorPickerPresetColor): string {
+      return typeof item === 'string' ? item : (item.label ?? item.color)
+    }
+
     function renderPresets(): VNode | null {
-      if (!props.presets || props.presets.length === 0) return null
+      const groups = normalizedPresets.value
+      if (groups.length === 0) return null
       return (
         <div class={ns.e('presets')}>
-          {props.presets.map((hex) => (
-            <button
-              key={hex}
-              type="button"
-              class={ns.e('preset')}
-              style={{ backgroundColor: hex }}
-              aria-label={hex}
-              onClick={() => clickPreset(hex)}
-            />
+          {groups.map((group, gi) => (
+            <div class={ns.e('preset-group')} key={group.label ?? `group-${gi}`}>
+              {group.label && <div class={ns.e('preset-group-label')}>{group.label}</div>}
+              <div class={ns.e('preset-group-colors')}>
+                {group.colors.map((item) => {
+                  const hex = presetHex(item)
+                  return (
+                    <button
+                      key={hex}
+                      type="button"
+                      class={ns.e('preset')}
+                      style={{ backgroundColor: hex }}
+                      aria-label={presetLabel(item)}
+                      title={presetLabel(item)}
+                      onClick={() => clickPreset(hex)}
+                    />
+                  )
+                })}
+              </div>
+            </div>
           ))}
         </div>
       )
     }
 
+    // 拾色器主体（SV / hue / alpha / 数值输入），不含 presets / footer
+    function renderPicker(): VNode {
+      return (
+        <div class={ns.e('picker')}>
+          {renderSv()}
+          {renderHue()}
+          {renderAlpha()}
+          {renderInputs()}
+        </div>
+      )
+    }
+
+    // footer 槽位：默认面板无 footer，仅当用户传 footer slot 时渲染
+    function renderFooter(): VNode | null {
+      if (!slots.footer) return null
+      return <div class={ns.e('footer')}>{slots.footer({ color: currentHex.value })}</div>
+    }
+
     function renderPopup(): VNode | null {
       if (!open.value) return null
       const popupCls = [ns.e('panel'), props.popupClassName].filter(Boolean) as string[]
+      const panelSlot = slots.panel
+      const body = panelSlot
+        ? panelSlot({
+            color: currentHex.value,
+            components: {
+              picker: renderPicker,
+              presets: renderPresets,
+              footer: renderFooter,
+            },
+          })
+        : [renderPresets(), renderPicker(), renderFooter()]
       return (
         <Teleport to={popupContainer.value as HTMLElement | null} disabled={!teleported.value}>
           <Transition name={props.transitionName} appear>
@@ -539,11 +607,7 @@ export default defineComponent({
               class={[popupCls, props.classNames?.popup]}
               style={[floatingStyles.value, props.styles?.popup] as any}
             >
-              {renderSv()}
-              {renderHue()}
-              {renderAlpha()}
-              {renderInputs()}
-              {renderPresets()}
+              {body}
             </div>
           </Transition>
         </Teleport>

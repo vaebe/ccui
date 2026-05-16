@@ -4,6 +4,19 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
 export type ColorPickerSize = 'large' | 'default' | 'small'
 export type ColorPickerStatus = '' | 'error' | 'warning' | 'success' | 'validating'
 export type ColorPickerPlacement = 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight'
+
+/**
+ * 预设色板单项。
+ *
+ * - 单色：`string`（hex）或 `{ color, label? }`
+ * - 分组：`{ label?, colors: Array<string | { color, label? }> }`，多组按 label 区分
+ */
+export type ColorPickerPresetColor = string | { color: string; label?: string }
+export interface ColorPickerPresetGroup {
+  label?: string
+  colors: ColorPickerPresetColor[]
+}
+export type ColorPickerPresetItem = string | ColorPickerPresetGroup
 /**
  * 颜色格式。
  *
@@ -51,9 +64,12 @@ export const colorPickerProps = {
     type: Boolean,
     default: false,
   },
-  // 预设色板，每项 hex 字符串
+  // 预设色板。支持三种形态：
+  // 1) `string[]`：扁平 hex 列表，作为单组无 label 渲染
+  // 2) `Array<{ color, label? }>`：单色对象列表，作为单组无 label 渲染
+  // 3) `Array<{ label?, colors: ColorPickerPresetColor[] }>`：多组（label 区分组别）
   presets: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<ColorPickerPresetItem[]>,
     default: () => [],
   },
   placement: {

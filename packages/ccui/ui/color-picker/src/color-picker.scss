@@ -279,9 +279,27 @@
 
   &__presets {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__preset-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__preset-group-label {
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  &__preset-group-colors {
+    display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    margin-top: 12px;
   }
 
   &__preset {
@@ -296,6 +314,16 @@
     &:hover {
       transform: scale(1.1);
     }
+  }
+
+  &__picker {
+    display: contents;
+  }
+
+  &__footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
   }
 }
 

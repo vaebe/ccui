@@ -491,3 +491,81 @@ describe('color-picker M-A2 classNames / styles 钩子', () => {
     expect(wrapper.find(ns.b()).attributes('style') || '').toContain('color: red')
   })
 })
+
+describe('color-picker M-B6 presets 分组 / 对象项', () => {
+  it('支持 `{ label, colors }` 分组形态：渲染每组的 label 和色块', async () => {
+    const wrapper = mountCP({
+      presets: [
+        { label: '品牌色', colors: ['#1677ff', '#36ad6a'] },
+        { label: '强调色', colors: [{ color: '#ff4d4f', label: '错误红' }] },
+      ],
+    })
+    await openPanel(wrapper)
+    const groups = wrapper.findAll(ns.e('preset-group'))
+    expect(groups).toHaveLength(2)
+    const labels = wrapper.findAll(ns.e('preset-group-label')).map((w) => w.text())
+    expect(labels).toEqual(['品牌色', '强调色'])
+    // 3 个色块在两组中
+    expect(wrapper.findAll(ns.e('preset')).length).toBe(3)
+  })
+
+  it('点击 `{ color, label }` 对象项以 color 字段提交，并把 label 写入 aria-label', async () => {
+    const wrapper = mountCP({
+      presets: [{ colors: [{ color: '#36ad6a', label: '主题绿' }] }],
+    })
+    await openPanel(wrapper)
+    const btn = wrapper.find(ns.e('preset'))
+    expect(btn.attributes('aria-label')).toBe('主题绿')
+    await btn.trigger('click')
+    await nextTick()
+    const last = wrapper.emitted('update:modelValue')!.slice(-1)[0][0] as string
+    expect(last.toLowerCase()).toBe('#36ad6a')
+  })
+})
+
+describe('color-picker M-B6 panel slot', () => {
+  it('panel slot 替换默认面板，scope 暴露 components.picker / presets / footer', async () => {
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(
+            ColorPicker,
+            { modelValue: '#1677ff', presets: ['#ff0000', '#00ff00'] },
+            {
+              panel: ({
+                color,
+                components,
+              }: {
+                color: string
+                components: { picker: () => any; presets: () => any; footer: () => any }
+              }) =>
+                h('div', { class: 'my-panel' }, [
+                  h('div', { class: 'my-panel-color' }, color),
+                  components.presets(),
+                  components.picker(),
+                ]),
+            },
+          )
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    await wrapper.find(ns.e('trigger')).trigger('click')
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.my-panel').exists()).toBe(true)
+    expect(wrapper.find('.my-panel-color').text().toLowerCase()).toBe('#1677ff')
+    // picker / presets 子片段被渲染出来
+    expect(wrapper.find(ns.e('sv')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('presets')).exists()).toBe(true)
+    expect(wrapper.findAll(ns.e('preset')).length).toBe(2)
+  })
+
+  it('不传 panel slot 时默认面板照常渲染（presets + picker）', async () => {
+    const wrapper = mountCP({ presets: ['#1677ff'] })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('sv')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('presets')).exists()).toBe(true)
+  })
+})
