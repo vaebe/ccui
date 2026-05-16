@@ -216,12 +216,6 @@
     animation: ccui-table-spin 0.8s linear infinite;
   }
 
-  &__pagination {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 16px;
-  }
-
   &--bordered {
     .#{$cls-prefix}-table__container {
       border: 1px solid $ccui-color-border-secondary;

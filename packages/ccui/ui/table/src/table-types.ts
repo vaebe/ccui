@@ -43,14 +43,6 @@ export interface TableColumn {
   children?: TableColumn[]
 }
 
-export interface TablePaginationConfig {
-  current?: number
-  pageSize?: number
-  total?: number
-  showSizeChanger?: boolean
-  pageSizeOptions?: number[]
-}
-
 export interface TableSorter {
   column?: TableColumn
   columnKey?: string
@@ -116,10 +108,6 @@ export const tableProps = {
   size: {
     type: String as PropType<TableSize>,
     default: 'default',
-  },
-  pagination: {
-    type: [Boolean, Object] as PropType<boolean | TablePaginationConfig>,
-    default: false,
   },
   rowSelection: {
     type: Object as PropType<TableRowSelection>,

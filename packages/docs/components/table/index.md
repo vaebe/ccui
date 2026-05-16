@@ -1,6 +1,6 @@
 # Table 表格
 
-展示结构化数据，覆盖列渲染、排序、过滤、分页、行选择、固定列、展开行和合并单元格等高频能力。
+展示结构化数据，覆盖列渲染、排序、过滤、行选择、固定列、展开行和合并单元格等高频能力。
 
 ## Basic
 
@@ -208,83 +208,6 @@ const dataSource = [
   { id: 2, name: 'Tom', role: 'member', age: 28 },
   { id: 3, name: 'Bob', role: 'member', age: 24 },
 ]
-</script>
-```
-
-:::
-
-## Pagination
-
-:::demo
-
-```vue
-<template>
-  <c-table :columns="columns" :data-source="dataSource" row-key="id" :pagination="{ pageSize: 2 }"></c-table>
-</template>
-
-<script setup>
-const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name' },
-  { title: 'Role', dataIndex: 'role', key: 'role' },
-]
-
-const dataSource = [
-  { id: 1, name: 'Alice', role: 'Admin' },
-  { id: 2, name: 'Tom', role: 'Member' },
-  { id: 3, name: 'Bob', role: 'Member' },
-]
-</script>
-```
-
-:::
-
-## 受控分页
-
-`pagination` 传入完整对象（`current` / `pageSize` / `total` / `showSizeChanger` / `pageSizeOptions`），配合 `@update:pagination` 实现 current / pageSize 受控；适合分页与后端 API 联动。
-
-:::demo
-
-```vue
-<template>
-  <c-table
-    :columns="columns"
-    :data-source="dataSource"
-    row-key="id"
-    :pagination="pagination"
-    @update:pagination="onPaginationChange"
-  ></c-table>
-  <p style="color:#666;margin-top:8px">
-    当前页：{{ pagination.current }} / 每页：{{ pagination.pageSize }} / 总计：{{ pagination.total }}
-  </p>
-</template>
-
-<script setup>
-import { reactive } from 'vue'
-
-const columns = [
-  { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '部门', dataIndex: 'dept', key: 'dept' },
-]
-
-const dataSource = Array.from({ length: 28 }, (_, i) => ({
-  id: i + 1,
-  name: `用户${i + 1}`,
-  dept: ['研发', '市场', '运营'][i % 3],
-}))
-
-const pagination = reactive({
-  current: 1,
-  pageSize: 5,
-  total: dataSource.length,
-  showSizeChanger: true,
-  pageSizeOptions: [5, 10, 20],
-})
-
-function onPaginationChange(next) {
-  pagination.current = next.current
-  pagination.pageSize = next.pageSize
-}
 </script>
 ```
 
@@ -577,19 +500,13 @@ function onCreate() {
 
 ## change 事件全量追踪
 
-`@change` 在分页 / 过滤 / 排序任意一项变化时触发，回调签名 `(pagination, filters, sorter, currentData)`。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
+`@change` 在过滤 / 排序任意一项变化时触发，回调签名 `(filters, sorter, currentData)`。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
 
 :::demo
 
 ```vue
 <template>
-  <c-table
-    :columns="columns"
-    :data-source="dataSource"
-    row-key="id"
-    :pagination="{ pageSize: 3 }"
-    @change="onChange"
-  ></c-table>
+  <c-table :columns="columns" :data-source="dataSource" row-key="id" @change="onChange"></c-table>
   <pre style="margin-top:8px;padding:8px;background:#f5f5f5;font-size:12px;max-height:200px;overflow:auto">{{
     log
   }}</pre>
@@ -598,7 +515,7 @@ function onCreate() {
 <script setup>
 import { ref } from 'vue'
 
-const log = ref('（操作分页 / 过滤 / 排序后查看回调参数）')
+const log = ref('（操作过滤 / 排序后查看回调参数）')
 
 const columns = [
   { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
@@ -622,10 +539,9 @@ const dataSource = [
   { id: 5, name: 'Dan', role: 'member', age: 36 },
 ]
 
-function onChange(pagination, filters, sorter, currentData) {
+function onChange(filters, sorter, currentData) {
   log.value = JSON.stringify(
     {
-      pagination: { current: pagination?.current, pageSize: pagination?.pageSize },
       filters,
       sorter: { columnKey: sorter?.columnKey, order: sorter?.order },
       currentDataCount: currentData?.length,
@@ -652,7 +568,6 @@ function onChange(pagination, filters, sorter, currentData) {
 | loading            | boolean                            | false      | 是否显示加载遮罩                                     |
 | showHeader         | boolean                            | true       | 是否显示表头                                         |
 | size               | 'small' / 'middle' / 'default'     | 'default'  | 紧凑度                                               |
-| pagination         | boolean / TablePaginationConfig    | false      | 分页配置，false 关闭                                 |
 | rowSelection       | TableRowSelection                  | --         | 行选择配置                                           |
 | expandable         | TableExpandable                    | --         | 展开行配置                                           |
 | scroll             | { x?, y? }                         | --         | 横/纵向滚动；横向滚动通常配合 fixed 使用             |
@@ -687,16 +602,6 @@ function onChange(pagination, filters, sorter, currentData) {
 | onCell         | (record, index) => { rowSpan?, colSpan?, style?, class? } | 合并单元格 / 单元格属性扩展 |
 | onHeaderCell   | (column) => { rowSpan?, colSpan?, style?, class? }        | 表头单元格属性扩展          |
 | children       | TableColumn[]                                             | 子列（仅 ColumnGroup 生成） |
-
-### TablePaginationConfig
-
-| 字段            | 类型     | 说明                       |
-| --------------- | -------- | -------------------------- |
-| current         | number   | 当前页码（受控）           |
-| pageSize        | number   | 每页条数                   |
-| total           | number   | 总条数                     |
-| showSizeChanger | boolean  | 是否显示「每页条数」切换器 |
-| pageSizeOptions | number[] | 可选每页条数               |
 
 ### TableRowSelection
 
@@ -757,12 +662,11 @@ function onChange(pagination, filters, sorter, currentData) {
 
 ## 事件
 
-| 事件                   | 说明                                       |
-| ---------------------- | ------------------------------------------ |
-| change                 | (pagination, filters, sorter, currentData) |
-| update:pagination      | 分页变化                                   |
-| update:filters         | 过滤变化                                   |
-| update:sorter          | 排序变化                                   |
-| update:selectedRowKeys | 行选择变化                                 |
-| update:expandedRowKeys | 展开行变化                                 |
-| expand                 | (expanded, record) — 单行展开/收起         |
+| 事件                   | 说明                               |
+| ---------------------- | ---------------------------------- |
+| change                 | (filters, sorter, currentData)     |
+| update:filters         | 过滤变化                           |
+| update:sorter          | 排序变化                           |
+| update:selectedRowKeys | 行选择变化                         |
+| update:expandedRowKeys | 展开行变化                         |
+| expand                 | (expanded, record) — 单行展开/收起 |

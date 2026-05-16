@@ -5,7 +5,6 @@ import type {
   TableColumnsCollector,
   TableFilterValue,
   TableFilters,
-  TablePaginationConfig,
   TableProps,
   TableSelectionKey,
   TableSorter,
@@ -14,7 +13,6 @@ import type {
 import { computed, defineComponent, h, provide, ref, shallowRef, triggerRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tableColumnsCollectorKey, tableProps, tableSummaryCollectorKey } from './table-types'
-import '../../pagination/src/pagination.scss'
 import './table.scss'
 
 interface OrderedColumn {
@@ -67,16 +65,6 @@ function compareValues(a: any, b: any): number {
   return String(a).localeCompare(String(b))
 }
 
-function normalizePagination(pagination: TableProps['pagination']): TablePaginationConfig | null {
-  if (!pagination) {
-    return null
-  }
-  if (pagination === true) {
-    return {}
-  }
-  return pagination
-}
-
 function toPx(value: string | number | undefined): number {
   if (value === undefined) {
     return 0
@@ -98,19 +86,9 @@ function widthStyle(value: string | number | undefined): string | undefined {
 export default defineComponent({
   name: 'CTable',
   props: tableProps,
-  emits: [
-    'change',
-    'update:pagination',
-    'update:filters',
-    'update:sorter',
-    'update:selectedRowKeys',
-    'update:expandedRowKeys',
-    'expand',
-  ],
+  emits: ['change', 'update:filters', 'update:sorter', 'update:selectedRowKeys', 'update:expandedRowKeys', 'expand'],
   setup(props: TableProps, { emit, slots }) {
     const ns = useNamespace('table')
-    const innerCurrent = ref(1)
-    const innerPageSize = ref(10)
     const innerFilters = ref<TableFilters>({})
     const innerSorter = ref<TableSorter>({ order: null })
     const innerSelectedRowKeys = ref<TableSelectionKey[]>([])
@@ -172,20 +150,6 @@ export default defineComponent({
     // 是否存在分组（任一顶层列带 children）—— 决定 thead 是否双行渲染。
     const hasColumnGroup = computed(() =>
       effectiveColumns.value.some((column) => column.children && column.children.length > 0),
-    )
-
-    watch(
-      () => props.pagination,
-      (pagination) => {
-        const config = normalizePagination(pagination)
-        if (config?.current) {
-          innerCurrent.value = config.current
-        }
-        if (config?.pageSize) {
-          innerPageSize.value = config.pageSize
-        }
-      },
-      { immediate: true, deep: true },
     )
 
     watch(
@@ -372,24 +336,6 @@ export default defineComponent({
       })
     })
 
-    const paginationConfig = computed(() => normalizePagination(props.pagination))
-    const paginationState = computed(() => ({
-      current: innerCurrent.value,
-      pageSize: innerPageSize.value,
-      total: paginationConfig.value?.total ?? sortedData.value.length,
-      showSizeChanger: paginationConfig.value?.showSizeChanger ?? false,
-      pageSizeOptions: paginationConfig.value?.pageSizeOptions ?? [10, 20, 50, 100],
-    }))
-
-    const displayData = computed(() => {
-      if (!paginationConfig.value) {
-        return sortedData.value
-      }
-      const { current, pageSize } = paginationState.value
-      const start = (current - 1) * pageSize
-      return sortedData.value.slice(start, start + pageSize)
-    })
-
     const selectedRowKeySet = computed(() => new Set(props.rowSelection?.selectedRowKeys ?? innerSelectedRowKeys.value))
 
     const expandedRowKeySet = computed(() => new Set(props.expandable?.expandedRowKeys ?? innerExpandedRowKeys.value))
@@ -404,7 +350,7 @@ export default defineComponent({
     const isRowSelectionDisabled = (record: any) => Boolean(getRowSelectionProps(record).disabled)
 
     const selectableDisplayRows = computed(() =>
-      displayData.value
+      sortedData.value
         .map((record, index) => ({ record, index, key: getRowKey(record, index, props.rowKey) }))
         .filter(({ record }) => !isRowSelectionDisabled(record)),
     )
@@ -505,7 +451,7 @@ export default defineComponent({
     }
 
     const emitChange = () => {
-      emit('change', paginationState.value, activeFilters.value, activeSorter.value, sortedData.value)
+      emit('change', activeFilters.value, activeSorter.value, sortedData.value)
     }
 
     const handleSort = (column: TableColumn, originalIndex: number) => {
@@ -517,7 +463,6 @@ export default defineComponent({
       const nextOrder: TableSortOrder = current === 'ascend' ? 'descend' : current === 'descend' ? null : 'ascend'
       const sorter = { column: nextOrder ? column : undefined, columnKey, order: nextOrder }
       innerSorter.value = sorter
-      innerCurrent.value = 1
       emit('update:sorter', sorter)
       emitChange()
     }
@@ -525,24 +470,7 @@ export default defineComponent({
     const handleFilter = (column: TableColumn, originalIndex: number, values: TableFilterValue[]) => {
       const key = getColumnKey(column, originalIndex)
       innerFilters.value = { ...innerFilters.value, [key]: values }
-      innerCurrent.value = 1
       emit('update:filters', innerFilters.value)
-      emitChange()
-    }
-
-    const handlePageChange = (current: number, pageSize: number) => {
-      innerCurrent.value = current
-      innerPageSize.value = pageSize
-      const nextPagination = { ...paginationState.value, current, pageSize }
-      emit('update:pagination', nextPagination)
-      emitChange()
-    }
-
-    const handlePageSizeChange = (pageSize: number) => {
-      innerCurrent.value = 1
-      innerPageSize.value = pageSize
-      const nextPagination = { ...paginationState.value, current: 1, pageSize }
-      emit('update:pagination', nextPagination)
       emitChange()
     }
 
@@ -997,67 +925,6 @@ export default defineComponent({
       return rows
     }
 
-    const renderPagination = () => {
-      if (!paginationConfig.value) {
-        return null
-      }
-      const paginationNs = useNamespace('pagination')
-      const { current, pageSize, total, showSizeChanger, pageSizeOptions } = paginationState.value
-      const totalPages = Math.max(1, Math.ceil(total / pageSize))
-      const prevDisabled = current <= 1
-      const nextDisabled = current >= totalPages
-      return h(
-        'div',
-        { class: ns.e('pagination') },
-        h('ul', { class: paginationNs.b() }, [
-          h(
-            'li',
-            {
-              class: [paginationNs.e('prev'), prevDisabled && paginationNs.is('disabled')],
-              'aria-disabled': prevDisabled,
-              onClick: () => {
-                if (!prevDisabled) {
-                  handlePageChange(current - 1, pageSize)
-                }
-              },
-            },
-            h('span', { class: paginationNs.e('arrow') }, '<'),
-          ),
-          h('li', { class: [paginationNs.e('item'), paginationNs.em('item', 'active')] }, current),
-          h(
-            'li',
-            {
-              class: [paginationNs.e('next'), nextDisabled && paginationNs.is('disabled')],
-              'aria-disabled': nextDisabled,
-              onClick: () => {
-                if (!nextDisabled) {
-                  handlePageChange(current + 1, pageSize)
-                }
-              },
-            },
-            h('span', { class: paginationNs.e('arrow') }, '>'),
-          ),
-          showSizeChanger
-            ? h(
-                'li',
-                { class: paginationNs.e('size-changer') },
-                h(
-                  'select',
-                  {
-                    class: paginationNs.e('size-select'),
-                    value: pageSize,
-                    onChange: (event: Event) => {
-                      handlePageSizeChange(Number((event.target as HTMLSelectElement).value))
-                    },
-                  },
-                  pageSizeOptions.map((option) => h('option', { key: option, value: option }, `${option} / page`)),
-                ),
-              )
-            : null,
-        ]),
-      )
-    }
-
     const renderSummary = () => {
       if (!summarySlot.value) return null
       return h('tfoot', { class: ns.e('summary') }, [summarySlot.value()])
@@ -1080,15 +947,14 @@ export default defineComponent({
             h(
               'tbody',
               { class: [ns.e('tbody'), props.classNames?.body], style: props.styles?.body },
-              displayData.value.length
-                ? displayData.value.flatMap((record, rowIndex) => renderRow(record, rowIndex))
+              sortedData.value.length
+                ? sortedData.value.flatMap((record, rowIndex) => renderRow(record, rowIndex))
                 : renderEmpty(),
             ),
             renderSummary(),
           ]),
           props.loading ? h('div', { class: ns.e('loading') }, [h('span', { class: ns.e('loading-dot') })]) : null,
         ]),
-        renderPagination(),
       ])
   },
 })

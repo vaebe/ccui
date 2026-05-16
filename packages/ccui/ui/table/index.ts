@@ -12,7 +12,6 @@ export type {
   TableExpandable,
   TableFilterOption,
   TableFilters,
-  TablePaginationConfig,
   TableRowSelection,
   TableSelectionKey,
   TableSelectionType,

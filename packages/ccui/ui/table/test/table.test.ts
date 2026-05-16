@@ -4,7 +4,6 @@ import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Table } from '../index'
 
 const ns = useNamespace('table', true)
-const paginationNs = useNamespace('pagination', true)
 
 const columns = [
   { title: 'Name', dataIndex: 'name', key: 'name', sorter: true },
@@ -426,32 +425,30 @@ describe('table', () => {
     expect(rowTexts(wrapper)).toEqual(['Tomuser28', 'Bobuser24'])
   })
 
-  it('emits change with pagination, filters, sorter, and current data', async () => {
+  it('emits change with filters, sorter, and current data on sort', async () => {
     const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 1, pageSize: 2 } },
+      props: { columns, dataSource },
     })
 
     await wrapper.findAll('th')[0].trigger('click')
     const payload = wrapper.emitted('change')?.[0]
 
-    expect(payload?.[0]).toMatchObject({ current: 1, pageSize: 2, total: 3 })
-    expect(payload?.[1]).toEqual({})
-    expect(payload?.[2]).toMatchObject({ columnKey: 'name', order: 'ascend' })
-    const sortedPayload = payload?.[3] as any[]
+    expect(payload?.[0]).toEqual({})
+    expect(payload?.[1]).toMatchObject({ columnKey: 'name', order: 'ascend' })
+    const sortedPayload = payload?.[2] as any[]
     expect(sortedPayload.map((item: any) => item.name)).toEqual(['Alice', 'Bob', 'Tom'])
   })
 
   it('emits change with filtered data after filtering', async () => {
     const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 2, pageSize: 1 } },
+      props: { columns, dataSource },
     })
 
     await wrapper.find('select').setValue('0')
     const payload = wrapper.emitted('change')?.[0]
 
-    expect(payload?.[0]).toMatchObject({ current: 1, pageSize: 1, total: 1 })
-    expect(payload?.[1]).toEqual({ role: ['admin'] })
-    const filteredPayload = payload?.[3] as any[]
+    expect(payload?.[0]).toEqual({ role: ['admin'] })
+    const filteredPayload = payload?.[2] as any[]
     expect(filteredPayload.map((item) => item.name)).toEqual(['Alice'])
     expect(rowTexts(wrapper)).toEqual(['Aliceadmin32'])
   })
@@ -465,140 +462,6 @@ describe('table', () => {
     await wrapper.findAll('th')[2].trigger('click')
 
     expect(rowTexts(wrapper)).toEqual(['Bobuser24', 'Tomuser28'])
-  })
-
-  it('resets paginated view to first page after sorting', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 2, pageSize: 1 } },
-    })
-
-    await wrapper.findAll('th')[0].trigger('click')
-
-    expect(rowTexts(wrapper)).toEqual(['Aliceadmin32'])
-    expect(wrapper.find(paginationNs.em('item', 'active')).text()).toBe('1')
-  })
-
-  it('paginates data and emits pagination updates', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 1, pageSize: 2 } },
-    })
-
-    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
-    await wrapper.find('.ccui-pagination__next').trigger('click')
-    expect(wrapper.emitted('update:pagination')?.[0][0]).toMatchObject({ current: 2, pageSize: 2, total: 3 })
-    expect(rowTexts(wrapper)).toHaveLength(1)
-    expect(rowTexts(wrapper)[0]).toContain('Bob')
-  })
-
-  it('moves to the previous page from a later page', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 2, pageSize: 1 } },
-    })
-
-    await wrapper.find(paginationNs.e('prev')).trigger('click')
-
-    expect(wrapper.emitted('update:pagination')?.[0][0]).toMatchObject({ current: 1, pageSize: 1, total: 3 })
-    expect(rowTexts(wrapper)).toEqual(['Tomuser28'])
-  })
-
-  it('marks pagination next as disabled on the last page', () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 3, pageSize: 1 } },
-    })
-
-    expect(wrapper.find(paginationNs.e('next')).classes()).toContain('is-disabled')
-    expect(wrapper.find(paginationNs.em('item', 'active')).text()).toBe('3')
-  })
-
-  it('renders default pagination when pagination is true', () => {
-    const rows = Array.from({ length: 12 }, (_, index) => ({
-      key: index,
-      name: `Row ${index}`,
-      role: 'user',
-      age: index,
-    }))
-    const wrapper = mount(Table, {
-      props: { columns, dataSource: rows, pagination: true },
-    })
-
-    expect(rowTexts(wrapper)).toHaveLength(10)
-    expect(wrapper.find(paginationNs.b()).exists()).toBe(true)
-  })
-
-  it('does not render pagination when pagination is false', () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: false },
-    })
-
-    expect(wrapper.find(paginationNs.b()).exists()).toBe(false)
-  })
-
-  it('prevents prev and next clicks at pagination boundaries', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 1, pageSize: 10 } },
-    })
-
-    await wrapper.find(paginationNs.e('prev')).trigger('click')
-    await wrapper.find(paginationNs.e('next')).trigger('click')
-
-    expect(wrapper.emitted('update:pagination')).toBeUndefined()
-  })
-
-  it('uses pagination total from config for emitted pagination state', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 1, pageSize: 2, total: 99 } },
-    })
-
-    await wrapper.find(paginationNs.e('next')).trigger('click')
-
-    expect(wrapper.emitted('update:pagination')?.[0][0]).toMatchObject({ current: 2, pageSize: 2, total: 99 })
-  })
-
-  it('changes page size and resets current page', async () => {
-    const rows = Array.from({ length: 8 }, (_, index) => ({
-      key: index,
-      name: `Row ${index}`,
-      role: 'user',
-      age: index,
-    }))
-    const wrapper = mount(Table, {
-      props: {
-        columns,
-        dataSource: rows,
-        pagination: { current: 2, pageSize: 2, showSizeChanger: true, pageSizeOptions: [2, 4] },
-      },
-    })
-
-    await wrapper.find(paginationNs.e('size-select')).setValue('4')
-
-    expect(wrapper.emitted('update:pagination')?.[0][0]).toMatchObject({ current: 1, pageSize: 4, total: 8 })
-  })
-
-  it('responds to externally provided pagination prop changes', async () => {
-    const wrapper = mount(Table, {
-      props: { columns, dataSource, pagination: { current: 1, pageSize: 2 } },
-    })
-
-    await wrapper.setProps({ pagination: { current: 2, pageSize: 2 } })
-
-    expect(rowTexts(wrapper)).toHaveLength(1)
-    expect(rowTexts(wrapper)[0]).toContain('Bob')
-  })
-
-  it('responds to externally provided pageSize prop changes', async () => {
-    const rows = Array.from({ length: 6 }, (_, index) => ({
-      key: index,
-      name: `Row ${index}`,
-      role: 'user',
-      age: index,
-    }))
-    const wrapper = mount(Table, {
-      props: { columns, dataSource: rows, pagination: { current: 1, pageSize: 2 } },
-    })
-
-    await wrapper.setProps({ pagination: { current: 1, pageSize: 4 } })
-
-    expect(rowTexts(wrapper)).toHaveLength(4)
   })
 
   it('renders empty and loading states', () => {
@@ -780,26 +643,6 @@ describe('table', () => {
 
     expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual([])
     expect(wrapper.findAll('tbody input[type="checkbox"]').every((input) => !asInput(input.element).checked)).toBe(true)
-  })
-
-  it('keeps selected row keys outside the current page when selecting all visible rows', async () => {
-    const rows = [
-      { key: '1', name: 'Alice', role: 'admin', age: 32 },
-      { key: '2', name: 'Tom', role: 'user', age: 28 },
-      { key: '3', name: 'Bob', role: 'user', age: 24 },
-    ]
-    const wrapper = mount(Table, {
-      props: {
-        columns,
-        dataSource: rows,
-        pagination: { current: 1, pageSize: 2 },
-        rowSelection: { defaultSelectedRowKeys: ['3'] },
-      },
-    })
-
-    await wrapper.find('thead input[type="checkbox"]').setValue(true)
-
-    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['3', '1', '2'])
   })
 
   it('reorders columns so left-fixed appear first and right-fixed last', () => {
