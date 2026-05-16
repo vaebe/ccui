@@ -14,7 +14,7 @@ import {
   Transition,
   watch,
 } from 'vue'
-import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { drawerParentInjectionKey, drawerProps } from './drawer-types'
 import './drawer.scss'
@@ -43,16 +43,16 @@ export default defineComponent({
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecatedProp('Drawer', 'visible', 'open（v-model:open）')
+      warnDeprecated('visible', 'open（v-model:open）', 'Drawer')
     }
     if (isPropExplicit(rawProps, 'closeOnEsc', 'close-on-esc')) {
-      warnDeprecatedProp('Drawer', 'closeOnEsc', 'keyboard')
+      warnDeprecated('closeOnEsc', 'keyboard', 'Drawer')
     }
     if (isPropExplicit(rawProps, 'showFooter', 'show-footer')) {
-      warnDeprecatedProp('Drawer', 'showFooter', 'footer slot 或 footer prop')
+      warnDeprecated('showFooter', 'footer slot 或 footer prop', 'Drawer')
     }
     if (isPropExplicit(rawProps, 'appendToBody', 'append-to-body')) {
-      warnDeprecatedProp('Drawer', 'appendToBody', 'getContainer')
+      warnDeprecated('appendToBody', 'getContainer', 'Drawer')
     }
 
     // ── open / visible 受控解析 ───────────────────────────

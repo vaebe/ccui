@@ -4,7 +4,7 @@ import type { InputAllowClearObject, InputProps, InputShowCountObject } from './
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { computed, defineComponent, getCurrentInstance, inject, ref, watch } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { isPropExplicit, warnDeprecatedProp } from '../../shared/hooks/use-deprecation-warning'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputProps } from './input-types'
 import './input.scss'
@@ -35,13 +35,13 @@ export default defineComponent({
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'clearable', 'clearable')) {
-      warnDeprecatedProp('Input', 'clearable', 'allowClear')
+      warnDeprecated('clearable', 'allowClear', 'Input')
     }
     if (isPropExplicit(rawProps, 'prepend', 'prepend')) {
-      warnDeprecatedProp('Input', 'prepend', 'addonBefore')
+      warnDeprecated('prepend', 'addonBefore', 'Input')
     }
     if (isPropExplicit(rawProps, 'append', 'append')) {
-      warnDeprecatedProp('Input', 'append', 'addonAfter')
+      warnDeprecated('append', 'addonAfter', 'Input')
     }
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────

@@ -283,9 +283,9 @@ const v3 = ref('')
 | maxLength     | number                                      | --      | 最大长度（透传原生 `maxlength`）                                                            |
 | showCount     | boolean \| { formatter?: (info) => string } | false   | 显示字符计数，配合 `maxLength` 显示 `N / max`；formatter 接 `({ value, count, maxLength })` |
 | status        | '' \| 'error' \| 'warning'                  | ''      | 校验状态，Form 联动会自动透传                                                               |
-| clearable     | boolean                                     | false   | @deprecated 请改用 `allowClear`                                                             |
-| prepend       | string                                      | --      | @deprecated 请改用 `addonBefore` 或 `addon-before` slot                                     |
-| append        | string                                      | --      | @deprecated 请改用 `addonAfter` 或 `addon-after` slot                                       |
+| clearable     | boolean                                     | false   | **(deprecated)** 请改用 `allowClear`                                                        |
+| prepend       | string                                      | --      | **(deprecated)** 请改用 `addonBefore` 或 `addon-before` slot                                |
+| append        | string                                      | --      | **(deprecated)** 请改用 `addonAfter` 或 `addon-after` slot                                  |
 
 ## Input类型定义
 

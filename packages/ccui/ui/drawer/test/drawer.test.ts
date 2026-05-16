@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Drawer } from '../index'
 
@@ -428,7 +428,7 @@ describe('drawer', () => {
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
-      __resetDeprecationWarningsForTest()
+      __resetDeprecatedWarningsForTest()
     })
 
     it('visible 显式传入触发 deprecation warn 一次', () => {

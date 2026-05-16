@@ -3,7 +3,7 @@ import { mount, shallowMount } from '@vue/test-utils'
 import { ref } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Input } from '../index'
 
@@ -393,7 +393,7 @@ describe('input', () => {
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
-      __resetDeprecationWarningsForTest()
+      __resetDeprecatedWarningsForTest()
     })
 
     it('clearable 显式传入触发 deprecation warn 一次', () => {
