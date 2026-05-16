@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { Tag } from '../index'
 
 const ns = useNamespace('tag', true)
@@ -56,5 +57,29 @@ describe('tag', () => {
     // variant 显式 outlined → 仍然渲染 outlined，不退回 filled
     expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
     expect(wrapper.find(ns.m('borderless')).exists()).toBe(false)
+  })
+
+  describe('deprecation warn', () => {
+    beforeEach(() => {
+      __resetDeprecatedWarningsForTest()
+    })
+
+    it('bordered 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      mount(Tag, { props: { bordered: false }, slots: { default: 'x' } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('bordered 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('variant'))
+      // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
+      mount(Tag, { props: { bordered: true }, slots: { default: 'y' } })
+      expect(warn).toHaveBeenCalledTimes(1)
+      warn.mockRestore()
+    })
+
+    it('不传 bordered 不 warn', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      mount(Tag, { slots: { default: 'x' } })
+      expect(warn).not.toHaveBeenCalled()
+      warn.mockRestore()
+    })
   })
 })

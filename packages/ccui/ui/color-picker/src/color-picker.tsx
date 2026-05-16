@@ -24,6 +24,7 @@ import {
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { warnDeprecated } from '../../shared/utils/deprecated'
 import {
   DEFAULT_COLOR_HEX,
   hexToRgb,
@@ -323,7 +324,6 @@ export default defineComponent({
     }
 
     // ---- 显示文本 ----
-    let warnedHsv = false
     const displayText = computed<string>(() => {
       const rgb = currentRgb.value
       if (props.format === 'rgb') return rgbToString(rgb)
@@ -333,10 +333,7 @@ export default defineComponent({
         return `hsb(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`
       }
       if (props.format === 'hsv') {
-        if (!warnedHsv && typeof console !== 'undefined') {
-          console.warn(`[ccui][ColorPicker] format="hsv" 已 deprecated，请改用 "hsb"。`)
-          warnedHsv = true
-        }
+        warnDeprecated('format="hsv"', 'hsb', 'ColorPicker')
         return hsvToString(rgbToHsv(rgb))
       }
       return rgbToHex(rgb, !props.disabledAlpha && rgb.a < 1).toUpperCase()

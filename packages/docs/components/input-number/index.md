@@ -414,24 +414,24 @@ const v3 = ref(0)
 
 ## InputNumber参数
 
-| 参数              | 类型                                                                  | 默认值       | 说明                                                 |
-| ----------------- | --------------------------------------------------------------------- | ------------ | ---------------------------------------------------- |
-| v-model           | `number \| undefined`                                                 | `undefined`  | 绑定值                                               |
-| step              | `number`                                                              | `1`          | 计数器步长                                           |
-| placeholder       | `string`                                                              | `''`         | 输入框占位文本                                       |
-| max               | `number`                                                              | `Infinity`   | 设置计数器允许的最大值                               |
-| min               | `number`                                                              | `-Infinity`  | 设置计数器允许的最小值                               |
-| disabled          | `boolean`                                                             | `false`      | 是否禁用计数器                                       |
-| readonly          | `boolean`                                                             | `false`      | 是否只读                                             |
-| precision         | `number`                                                              | `undefined`  | 数值精度                                             |
-| size              | `'large' \| 'default' \| 'small'`（兼容 `'lg' \| 'md' \| 'sm'` 旧值） | `'default'`  | 输入框尺寸，旧名运行时映射到新名并打 deprecated 警告 |
-| controls          | `boolean`                                                             | `true`       | 是否显示控制按钮                                     |
-| controls-position | `'both' \| 'right'`                                                   | `'both'`     | 控制按钮位置                                         |
-| allow-empty       | `boolean`                                                             | `false`      | 是否允许空值                                         |
-| show-glow-style   | `boolean`                                                             | `true`       | 是否显示悬浮发光效果                                 |
-| reg               | `RegExp \| string`                                                    | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤           |
-| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `'outlined'` | 录入组件统一形态                                     |
-| status            | `'' \| 'error' \| 'warning'`                                          | `''`         | 校验状态，Form 联动会自动透传                        |
+| 参数              | 类型                                                             | 默认值       | 说明                                                                                         |
+| ----------------- | ---------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------- |
+| v-model           | `number \| undefined`                                            | `undefined`  | 绑定值                                                                                       |
+| step              | `number`                                                         | `1`          | 计数器步长                                                                                   |
+| placeholder       | `string`                                                         | `''`         | 输入框占位文本                                                                               |
+| max               | `number`                                                         | `Infinity`   | 设置计数器允许的最大值                                                                       |
+| min               | `number`                                                         | `-Infinity`  | 设置计数器允许的最小值                                                                       |
+| disabled          | `boolean`                                                        | `false`      | 是否禁用计数器                                                                               |
+| readonly          | `boolean`                                                        | `false`      | 是否只读                                                                                     |
+| precision         | `number`                                                         | `undefined`  | 数值精度                                                                                     |
+| size              | `'large' \| 'default' \| 'small'`（兼容 `'lg' \| 'md' \| 'sm'`） | `'default'`  | 输入框尺寸；`'lg' \| 'md' \| 'sm'` **(deprecated)** 请改用 `'large' \| 'default' \| 'small'` |
+| controls          | `boolean`                                                        | `true`       | 是否显示控制按钮                                                                             |
+| controls-position | `'both' \| 'right'`                                              | `'both'`     | 控制按钮位置                                                                                 |
+| allow-empty       | `boolean`                                                        | `false`      | 是否允许空值                                                                                 |
+| show-glow-style   | `boolean`                                                        | `true`       | 是否显示悬浮发光效果                                                                         |
+| reg               | `RegExp \| string`                                               | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤                                                   |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`         | `'outlined'` | 录入组件统一形态                                                                             |
+| status            | `'' \| 'error' \| 'warning'`                                     | `''`         | 校验状态，Form 联动会自动透传                                                                |
 
 ## InputNumber事件
 

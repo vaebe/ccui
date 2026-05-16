@@ -1,6 +1,7 @@
 import type { TagProps, TagVariant } from './tag-types'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, getCurrentInstance } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { isPresetColor, tagProps } from './tag-types'
 import './tag.scss'
 
@@ -10,6 +11,11 @@ export default defineComponent({
   emits: ['close'],
   setup(props: TagProps, { slots, emit }) {
     const ns = useNamespace('tag')
+
+    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
+    if (isPropExplicit(rawProps, 'bordered', 'bordered')) {
+      warnDeprecated('bordered', "variant='outlined' / 'filled'", 'Tag')
+    }
 
     const isPreset = computed(() => isPresetColor(props.color))
 

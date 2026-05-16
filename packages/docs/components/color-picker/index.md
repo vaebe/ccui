@@ -239,23 +239,23 @@ const value = ref('#1677ff')
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                   | 说明                                                                        |
-| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------- |
-| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                      |
-| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                           |
-| format            | `'hex' \| 'rgb' \| 'hsv'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                  |
-| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                    |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                        |
-| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                |
-| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                |
-| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表 |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                    |
-| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                      |
-| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                      |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                            |
-| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                  |
-| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                      |
+| 参数              | 类型                                                       | 默认值                   | 说明                                                                              |
+| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------- |
+| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                            |
+| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                                 |
+| format            | `'hex' \| 'rgb' \| 'hsb' \| 'hsv'`                         | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）；`'hsv'` **(deprecated)** 请改用 `hsb` |
+| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                          |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                      |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                              |
+| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                      |
+| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                      |
+| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表       |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                          |
+| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                            |
+| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                            |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                  |
+| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                        |
+| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                            |
 
 ### Slots
 

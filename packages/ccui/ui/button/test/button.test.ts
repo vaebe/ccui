@@ -1,7 +1,7 @@
 import type { ButtonSizeType, ButtonType } from '../src/button-types'
 import { mount, shallowMount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { __resetDeprecationWarningsForTest } from '../../shared/hooks/use-deprecation-warning'
+import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Button } from '../index'
 
@@ -400,7 +400,7 @@ describe('button', () => {
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
-      __resetDeprecationWarningsForTest()
+      __resetDeprecatedWarningsForTest()
     })
 
     it('nativeType 显式传入触发 deprecation warn 一次', () => {
@@ -427,6 +427,17 @@ describe('button', () => {
       createShallowWrapper({ circle: true })
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('circle 已 deprecated'))
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('shape="circle"'))
+      warn.mockRestore()
+    })
+
+    it('plain=true 显式传入触发 deprecation warn 一次', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      createShallowWrapper({ plain: true })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('plain 已 deprecated'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('variant'))
+      // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
+      createShallowWrapper({ plain: true })
+      expect(warn).toHaveBeenCalledTimes(1)
       warn.mockRestore()
     })
   })

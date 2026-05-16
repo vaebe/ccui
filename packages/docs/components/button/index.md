@@ -430,10 +430,10 @@ export default defineComponent({
 | loading         | boolean \| { delay?: number; icon?: VNode \| string }             | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
 | color           | string                                                            | --      | 自定义按钮主色（与 `variant` 配合形成色变体矩阵）                                                                       |
 | variant         | 'outlined' \| 'dashed' \| 'solid' \| 'filled' \| 'text' \| 'link' | --      | 视觉变体                                                                                                                |
-| plain           | boolean                                                           | false   | @deprecated 请改用 `variant`                                                                                            |
-| round           | boolean                                                           | false   | @deprecated 请改用 `shape="round"`                                                                                      |
-| circle          | boolean                                                           | false   | @deprecated 请改用 `shape="circle"`                                                                                     |
-| native-type     | [ButtonNativeType](#buttonnativetype)                             | button  | @deprecated 请改用 `htmlType`                                                                                           |
+| plain           | boolean                                                           | false   | **(deprecated)** 请改用 `variant`                                                                                       |
+| round           | boolean                                                           | false   | **(deprecated)** 请改用 `shape="round"`                                                                                 |
+| circle          | boolean                                                           | false   | **(deprecated)** 请改用 `shape="circle"`                                                                                |
+| native-type     | [ButtonNativeType](#buttonnativetype)                             | button  | **(deprecated)** 请改用 `htmlType`                                                                                      |
 
 ## ButtonGroup 参数
 
