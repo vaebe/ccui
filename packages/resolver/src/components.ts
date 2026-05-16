@@ -106,6 +106,7 @@ export const componentMap: Record<string, ComponentEntry> = {
   CTypographyText: { exportName: 'Text', styleDir: 'typography' },
   CTypographyTitle: { exportName: 'Title', styleDir: 'typography' },
   CUpload: { exportName: 'Upload', styleDir: 'upload' },
+  CUploadDragger: { exportName: 'UploadDragger', styleDir: 'upload-dragger' },
   CWatermark: { exportName: 'Watermark', styleDir: 'watermark' },
 }
 

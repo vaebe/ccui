@@ -359,3 +359,67 @@ describe('upload preview event', () => {
     expect((wrapper.emitted('preview')![0][0] as any).name).toBe('doc.txt')
   })
 })
+
+describe('upload M-B9 listType=picture-card', () => {
+  it('list 添加 picture-card 修饰', () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'a.png', status: 'done', url: 'x.png' }],
+    })
+    expect(wrapper.find(ns.em('list', 'picture-card')).exists()).toBe(true)
+  })
+
+  it('每个 item 渲染 card-inner 容器与 card-name', () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'photo.jpg', status: 'done', url: 'photo.jpg' }],
+    })
+    expect(wrapper.find(ns.e('item-card-inner')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('item-card-name')).text()).toBe('photo.jpg')
+  })
+
+  it('有 url 时渲染缩略图 img', () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'photo.jpg', status: 'done', url: 'photo.jpg' }],
+    })
+    const img = wrapper.find(ns.e('item-card-thumb'))
+    expect(img.exists()).toBe(true)
+    expect(img.attributes('src')).toBe('photo.jpg')
+  })
+
+  it('无 url 时渲染 card-icon 占位', () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'doc.txt', status: 'done' }],
+    })
+    expect(wrapper.find(ns.e('item-card-icon')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('item-card-thumb')).exists()).toBe(false)
+  })
+
+  it('uploading 状态显示百分比', () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'a.png', status: 'uploading', percent: 42, url: 'a.png' }],
+    })
+    expect(wrapper.find(ns.e('item-card-percent')).text()).toBe('42%')
+  })
+
+  it('点击缩略图 emit preview', async () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'a.png', status: 'done', url: 'a.png' }],
+    })
+    await wrapper.find(ns.e('item-card-thumb')).trigger('click')
+    expect(wrapper.emitted('preview')).toBeDefined()
+  })
+
+  it('点击删除按钮触发 remove', async () => {
+    const wrapper = mountU({
+      listType: 'picture-card',
+      defaultFileList: [{ uid: '1', name: 'a.png', status: 'done', url: 'a.png' }],
+    })
+    await wrapper.find(ns.e('item-card-remove')).trigger('click')
+    expect(wrapper.emitted('remove')).toBeDefined()
+  })
+})

@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export type UploadStatus = 'uploading' | 'done' | 'error' | 'removed'
-export type UploadListType = 'text' | 'picture'
+export type UploadListType = 'text' | 'picture' | 'picture-card'
 
 export interface UploadFile {
   uid: string

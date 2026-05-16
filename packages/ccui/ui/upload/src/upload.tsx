@@ -212,6 +212,7 @@ export default defineComponent({
 
     function renderItem(item: UploadFile): VNode {
       if (slots.itemRender) return slots.itemRender({ item, remove: () => removeItem(item) }) as unknown as VNode
+      const isCard = props.listType === 'picture-card'
       const cls = [
         ns.e('item'),
         ns.em('item', `status-${item.status ?? 'done'}`),
@@ -219,7 +220,43 @@ export default defineComponent({
       ]
       const icon = item.status === 'uploading' ? '⌛' : item.status === 'error' ? '⚠' : '✓'
       const thumbSrc = item.thumbUrl || item.url
-      const showThumb = props.listType === 'picture' && thumbSrc
+      const showThumb = (props.listType === 'picture' || isCard) && thumbSrc
+      if (isCard) {
+        return (
+          <li key={item.uid} class={cls}>
+            <div class={ns.e('item-card-inner')}>
+              {showThumb ? (
+                <img
+                  class={ns.e('item-card-thumb')}
+                  src={thumbSrc}
+                  alt={item.name}
+                  onClick={() => emit('preview', item)}
+                />
+              ) : (
+                <span class={ns.e('item-card-icon')}>{icon}</span>
+              )}
+              {item.status === 'uploading' && (
+                <span class={ns.e('item-card-percent')}>{Math.round(item.percent ?? 0)}%</span>
+              )}
+              <div class={ns.e('item-card-actions')}>
+                {!props.disabled && (
+                  <button
+                    type="button"
+                    class={ns.e('item-card-remove')}
+                    aria-label={props.removeText}
+                    onClick={() => removeItem(item)}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+            <span class={ns.e('item-card-name')} title={item.name}>
+              {item.name}
+            </span>
+          </li>
+        )
+      }
       return (
         <li key={item.uid} class={cls}>
           {showThumb ? (
@@ -252,8 +289,9 @@ export default defineComponent({
       if (!props.showUploadList) return null
       const list = currentList.value
       if (list.length === 0) return null
+      const isCard = props.listType === 'picture-card'
       return (
-        <ul class={ns.e('list')} role="list">
+        <ul class={[ns.e('list'), isCard && ns.em('list', 'picture-card')]} role="list">
           {list.map((item) => renderItem(item))}
         </ul>
       )
