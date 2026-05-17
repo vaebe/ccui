@@ -4,7 +4,7 @@
 
 ## 基本使用
 
-`v-model:open` 控制开合。
+`v-model:visible` 控制开合。
 
 :::demo
 
@@ -16,7 +16,7 @@ const open = ref(false)
 
 <template>
   <c-button type="primary" @click="open = true">打开 Modal</c-button>
-  <c-modal v-model:open="open" title="基本对话框">
+  <c-modal v-model:visible="open" title="基本对话框">
     <p>这是一个对话框的内容。</p>
     <p>支持任意 vue 内容。</p>
   </c-modal>
@@ -39,7 +39,7 @@ const open = ref(false)
 
 <template>
   <c-button @click="open = true">删除...</c-button>
-  <c-modal v-model:open="open" title="确认删除" ok-text="删除" cancel-text="再想想" ok-type="danger">
+  <c-modal v-model:visible="open" title="确认删除" ok-text="删除" cancel-text="再想想" ok-type="danger">
     删除后无法恢复，确认要删除吗？
   </c-modal>
 </template>
@@ -71,7 +71,7 @@ function handleOk() {
 
 <template>
   <c-button type="primary" @click="open = true">打开</c-button>
-  <c-modal v-model:open="open" title="异步提交" :confirm-loading="loading" @ok="handleOk">
+  <c-modal v-model:visible="open" title="异步提交" :confirm-loading="loading" @ok="handleOk">
     点击「确定」后会模拟 1.5s 的请求再关闭弹窗。
   </c-modal>
 </template>
@@ -93,7 +93,7 @@ const open = ref(false)
 
 <template>
   <c-button @click="open = true">居中打开</c-button>
-  <c-modal v-model:open="open" centered title="垂直居中"> 我在视口中央。 </c-modal>
+  <c-modal v-model:visible="open" centered title="垂直居中"> 我在视口中央。 </c-modal>
 </template>
 ```
 
@@ -116,8 +116,8 @@ const v2 = ref(false)
   <c-button @click="v1 = true">小弹窗</c-button>
   &nbsp;
   <c-button @click="v2 = true">大弹窗</c-button>
-  <c-modal v-model:open="v1" :width="360" title="360px"> 紧凑型。 </c-modal>
-  <c-modal v-model:open="v2" width="80%" title="80% 宽"> 适合表格、表单类内容。 </c-modal>
+  <c-modal v-model:visible="v1" :width="360" title="360px"> 紧凑型。 </c-modal>
+  <c-modal v-model:visible="v2" width="80%" title="80% 宽"> 适合表格、表单类内容。 </c-modal>
 </template>
 ```
 
@@ -137,7 +137,7 @@ const open = ref(false)
 
 <template>
   <c-button @click="open = true">自定义 footer</c-button>
-  <c-modal v-model:open="open" title="提示">
+  <c-modal v-model:visible="open" title="提示">
     <p>此 Modal 自定义了 footer 区域，提供三个动作。</p>
     <template #footer="{ cancel }">
       <c-button @click="cancel">关闭</c-button>
@@ -324,7 +324,7 @@ function ask() {
 | centered      | boolean                              | `false`      | 垂直居中                                                         |
 | mask          | boolean                              | `true`       | 遮罩                                                             |
 | maskClosable  | boolean                              | `false`      | 点击遮罩关闭（confirm 系列默认 false）                           |
-| keyboard      | boolean                              | `true`       | Esc 关闭                                                         |
+| closeOnEsc    | boolean                              | `true`       | Esc 关闭                                                         |
 | closable      | boolean                              | `false`      | 显示右上角关闭按钮                                               |
 | okText        | string                               | `'确 定'`    | OK 按钮文字                                                      |
 | cancelText    | string                               | `'取 消'`    | Cancel 按钮文字（仅 type='confirm' 渲染）                        |
@@ -334,7 +334,6 @@ function ask() {
 | afterClose    | `() => void`                         | —            | 弹窗完全关闭并卸载 DOM 后触发（含离场动画完成）                  |
 | zIndex        | number                               | —            | 透传 Modal `zIndex`                                              |
 | wrapClassName | string                               | —            | 透传 Modal `wrapClassName`                                       |
-| getContainer  | `(trigger) => HTMLElement \| null`   | `body`       | 透传 Modal `getContainer`                                        |
 
 ### ModalFuncReturn
 
@@ -347,41 +346,37 @@ function ask() {
 
 ### Props
 
-| 参数                   | 类型                                                                                 | 默认值      | 说明                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------ | ----------- | ---------------------------------------------------------- |
-| open                   | boolean                                                                              | `false`     | 是否可见（支持 `v-model:open`）                            |
-| visible                | boolean                                                                              | `false`     | **(deprecated)** 请改用 `open`（仍可用 `v-model:visible`） |
-| title                  | string                                                                               | `''`        | 标题（也可用 `title` slot 自定义）                         |
-| width                  | `number \| string`                                                                   | `520`       | 宽度，数字为 px                                            |
-| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`      | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label     |
-| maskClosable           | boolean                                                                              | `true`      | 点击蒙层是否关闭                                           |
-| keyboard               | boolean                                                                              | `true`      | 按 Esc 是否关闭                                            |
-| closeOnEsc             | boolean                                                                              | `true`      | **(deprecated)** 请改用 `keyboard`                         |
-| centered               | boolean                                                                              | `false`     | 是否垂直居中显示                                           |
-| mask                   | boolean                                                                              | `true`      | 是否显示蒙层                                               |
-| okText                 | string                                                                               | `'确 定'`   | 确认按钮文案                                               |
-| cancelText             | string                                                                               | `'取 消'`   | 取消按钮文案                                               |
-| okType                 | `'primary' \| 'danger' \| 'default'`                                                 | `'primary'` | 确认按钮类型                                               |
-| confirmLoading         | boolean                                                                              | `false`     | 确认按钮加载态                                             |
-| okLoading              | boolean                                                                              | `false`     | **(deprecated)** 请改用 `confirmLoading`                   |
-| footer                 | `string \| VNode \| null \| undefined`                                               | --          | 底部按钮区：`null` 隐藏；`string` / VNode 直接渲染         |
-| hideFooter             | boolean                                                                              | `false`     | **(deprecated)** 请改用 `footer={null}`                    |
-| destroyOnClose         | boolean                                                                              | `false`     | 关闭时销毁内部内容（与 `keepAlive` 互斥）                  |
-| keepAlive              | boolean                                                                              | `false`     | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）           |
-| wrapClassName          | string                                                                               | --          | 自定义根节点 class                                         |
-| transitionName         | string                                                                               | --          | 自定义 Transition 名（空走内置 `-zoom`）                   |
-| maskTransitionName     | string                                                                               | --          | mask 自定义 Transition 名（空走内置 `-mask-fade`）         |
-| focusTriggerAfterClose | boolean                                                                              | `true`      | 关闭后聚焦回打开前的触发元素                               |
-| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                              | --          | 自定义挂载容器函数；返回 `null` 时内联渲染不 Teleport      |
-| appendToBody           | boolean                                                                              | `true`      | **(deprecated)** 请改用 `getContainer`                     |
-| zIndex                 | number                                                                               | `1000`      | z-index                                                    |
+| 参数                   | 类型                                                                                 | 默认值      | 说明                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------ |
+| visible                | boolean                                                                              | `false`     | 是否可见（支持 `v-model:visible`）                     |
+| title                  | string                                                                               | `''`        | 标题（也可用 `title` slot 自定义）                     |
+| width                  | `number \| string`                                                                   | `520`       | 宽度，数字为 px                                        |
+| closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`      | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label |
+| maskClosable           | boolean                                                                              | `true`      | 点击蒙层是否关闭                                       |
+| closeOnEsc             | boolean                                                                              | `true`      | 按 Esc 是否关闭                                        |
+| centered               | boolean                                                                              | `false`     | 是否垂直居中显示                                       |
+| mask                   | boolean                                                                              | `true`      | 是否显示蒙层                                           |
+| okText                 | string                                                                               | `'确 定'`   | 确认按钮文案                                           |
+| cancelText             | string                                                                               | `'取 消'`   | 取消按钮文案                                           |
+| okType                 | `'primary' \| 'danger' \| 'default'`                                                 | `'primary'` | 确认按钮类型                                           |
+| confirmLoading         | boolean                                                                              | `false`     | 确认按钮加载态                                         |
+| okLoading              | boolean                                                                              | `false`     | **(deprecated)** 请改用 `confirmLoading`               |
+| footer                 | `string \| VNode \| null \| undefined`                                               | --          | 底部按钮区：`null` 隐藏；`string` / VNode 直接渲染     |
+| hideFooter             | boolean                                                                              | `false`     | **(deprecated)** 请改用 `footer={null}`                |
+| destroyOnClose         | boolean                                                                              | `false`     | 关闭时销毁内部内容（与 `keepAlive` 互斥）              |
+| keepAlive              | boolean                                                                              | `false`     | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）       |
+| wrapClassName          | string                                                                               | --          | 自定义根节点 class                                     |
+| transitionName         | string                                                                               | --          | 自定义 Transition 名（空走内置 `-zoom`）               |
+| maskTransitionName     | string                                                                               | --          | mask 自定义 Transition 名（空走内置 `-mask-fade`）     |
+| focusTriggerAfterClose | boolean                                                                              | `true`      | 关闭后聚焦回打开前的触发元素                           |
+| appendToBody           | boolean                                                                              | `true`      | 是否把浮层 Teleport 到 `document.body`                 |
+| zIndex                 | number                                                                               | `1000`      | z-index                                                |
 
 ### Events
 
 | 事件名            | 回调签名             | 触发时机                                                 |
 | ----------------- | -------------------- | -------------------------------------------------------- |
-| update:open       | `(open: boolean)`    | 显示状态变化（v-model:open）                             |
-| update:visible    | `(visible: boolean)` | 同步触发，便于 `v-model:visible` 使用                    |
+| update:visible    | `(visible: boolean)` | 显示状态变化（v-model:visible）                          |
 | after-open-change | `(open: boolean)`    | 打开 / 关闭动画完成后触发（immediate watch，首次 false） |
 | ok                | `()`                 | 点击确认按钮                                             |
 | cancel            | `()`                 | 点击取消 / 关闭 / Esc                                    |

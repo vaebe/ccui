@@ -14,11 +14,6 @@ export interface DrawerClosableObject {
 export type DrawerClosable = boolean | DrawerClosableObject
 
 /**
- * `getContainer` 函数签名。
- */
-export type DrawerGetContainer = (trigger: HTMLElement | null) => HTMLElement | null
-
-/**
  * `push` 嵌套抽屉配置：
  *
  * - `boolean`：开启 / 关闭嵌套让位（默认 true）
@@ -31,18 +26,11 @@ export type DrawerPush = boolean | DrawerPushObject
 
 export const drawerProps = {
   /**
-   * @deprecated 请改用 `open`（支持 `v-model:open`）。下一大版本移除。
+   * 显示抽屉。支持 `v-model:visible`。
    */
   visible: {
     type: Boolean,
     default: false,
-  },
-  /**
-   * 显示抽屉。支持 `v-model:open`。显式 `open` 优先于 `visible`。
-   */
-  open: {
-    type: Boolean,
-    default: undefined,
   },
   title: {
     type: String,
@@ -68,18 +56,11 @@ export const drawerProps = {
     default: true,
   },
   /**
-   * @deprecated 请改用 `keyboard`。
+   * 是否支持键盘 Esc 关闭。
    */
   closeOnEsc: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * 是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
-   */
-  keyboard: {
-    type: Boolean,
-    default: undefined,
   },
   mask: {
     type: Boolean,
@@ -128,18 +109,11 @@ export const drawerProps = {
     default: 1000,
   },
   /**
-   * @deprecated 请改用 `getContainer` 函数形。
+   * 是否把浮层 Teleport 到 `document.body`。
    */
   appendToBody: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * 浮层容器函数。返回 `null` 等价 `appendToBody=false`。
-   */
-  getContainer: {
-    type: Function as PropType<DrawerGetContainer>,
-    default: undefined,
   },
   /**
    * 嵌套抽屉时父抽屉是否让位。

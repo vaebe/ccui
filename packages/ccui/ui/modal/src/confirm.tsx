@@ -161,19 +161,18 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
         return h(
           Modal,
           {
-            open: open.value,
-            'onUpdate:open': (v: boolean) => {
+            visible: open.value,
+            'onUpdate:visible': (v: boolean) => {
               open.value = v
             },
             width: state.width ?? 416,
             centered: state.centered ?? false,
             mask: state.mask ?? true,
             maskClosable: state.maskClosable ?? false,
-            keyboard: state.keyboard ?? true,
+            closeOnEsc: state.closeOnEsc ?? true,
             closable: state.closable ?? false,
             zIndex: state.zIndex,
             wrapClassName: state.wrapClassName,
-            getContainer: state.getContainer,
             confirmLoading: loading.value,
             onClosed,
           },

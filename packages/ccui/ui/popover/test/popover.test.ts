@@ -505,18 +505,18 @@ describe('popover', () => {
   // ─────────────────────────────────────────────────────────────
 
   describe('同义 prop 解析', () => {
-    it('open=true 等价 visible=true', async () => {
+    it('visible=true 显示浮层', async () => {
       const wrapper = mount(Popover, {
-        props: { open: true, content: 'X', teleported: false },
+        props: { visible: true, content: 'X', teleported: false },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
     })
 
-    it('显式 open 优先于 visible', async () => {
+    it('visible=false 隐藏浮层', async () => {
       const wrapper = mount(Popover, {
-        props: { open: false, visible: true, content: 'X', teleported: false },
+        props: { visible: false, content: 'X', teleported: false },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
@@ -573,33 +573,21 @@ describe('popover', () => {
       host.remove()
     })
 
-    it('update:open 与 update:visible 同步', async () => {
+    it('update:visible 同步触发', async () => {
       const wrapper = mount(Popover, {
         props: { content: 'X', trigger: 'click', teleported: false },
         slots: { default: '<button>T</button>' },
       })
       await wrapper.find('.ccui-popover__trigger').trigger('click')
       await nextTick()
-      expect(wrapper.emitted('update:open')).toBeTruthy()
-      expect(wrapper.emitted('update:open')![0]).toEqual([true])
+      expect(wrapper.emitted('update:visible')).toBeTruthy()
+      expect(wrapper.emitted('update:visible')![0]).toEqual([true])
     })
   })
 
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
       __resetDeprecatedWarningsForTest()
-    })
-
-    it('visible 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, { props: { visible: true, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
-      const w2 = mount(Popover, { props: { visible: true, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledTimes(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
     })
 
     it('showArrow 显式传入触发 deprecation warn 一次', () => {

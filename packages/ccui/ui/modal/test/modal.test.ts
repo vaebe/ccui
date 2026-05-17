@@ -206,58 +206,23 @@ describe('modal', () => {
     wrapper.unmount()
   })
 
-  // ─────────────────────────────────────────────────────────────
-  // 同义 prop 解析
-  // ─────────────────────────────────────────────────────────────
-
-  describe('open + v-model:open', () => {
-    it('open=true 等价于 visible=true', async () => {
-      const wrapper = mount(Modal, {
-        props: { open: true, title: 'X' },
-      })
-      await nextTick()
-      expect(document.body.textContent).toContain('X')
-      wrapper.unmount()
-    })
-
-    it('显式 open 优先于 visible', async () => {
-      const wrapper = mount(Modal, {
-        props: { open: false, visible: true },
-      })
-      await nextTick()
-      // open=false 关闭，visible=true 被忽略
-      expect(document.body.querySelector(ns.e('content'))).toBeNull()
-      wrapper.unmount()
-    })
-
-    it('关闭时同时 emit update:open 和 update:visible', async () => {
-      const wrapper = mount(Modal, { props: { open: true } })
-      await nextTick()
-      const closeBtn = document.body.querySelector(ns.e('close')) as HTMLElement
-      closeBtn?.click()
-      expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
-      expect(wrapper.emitted('update:visible')?.[0]).toEqual([false])
-      wrapper.unmount()
-    })
-  })
-
   describe('closable 复合对象', () => {
     it('closable={ disabled: true } 关闭按钮渲染但点击无效', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, closable: { disabled: true } },
+        props: { visible: true, closable: { disabled: true } },
       })
       await nextTick()
       const closeBtn = document.body.querySelector(ns.e('close')) as HTMLButtonElement
       expect(closeBtn).not.toBeNull()
       expect(closeBtn.disabled).toBe(true)
       closeBtn.click()
-      expect(wrapper.emitted('update:open')).toBeUndefined()
+      expect(wrapper.emitted('update:visible')).toBeUndefined()
       wrapper.unmount()
     })
 
     it('closable={ ariaLabel: "关闭弹窗" } 自定义 aria-label', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, closable: { ariaLabel: '关闭弹窗' } },
+        props: { visible: true, closable: { ariaLabel: '关闭弹窗' } },
       })
       await nextTick()
       const closeBtn = document.body.querySelector(ns.e('close'))
@@ -267,7 +232,7 @@ describe('modal', () => {
 
     it('close-icon slot 优先于 closable.closeIcon', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, closable: { closeIcon: 'mdi:close' } },
+        props: { visible: true, closable: { closeIcon: 'mdi:close' } },
         slots: { 'close-icon': '<i class="custom-x">X</i>' },
       })
       await nextTick()
@@ -278,14 +243,14 @@ describe('modal', () => {
 
   describe('footer prop + slot', () => {
     it('footer=null 隐藏 footer（等价 hideFooter=true）', async () => {
-      const wrapper = mount(Modal, { props: { open: true, footer: null } })
+      const wrapper = mount(Modal, { props: { visible: true, footer: null } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))).toBeNull()
       wrapper.unmount()
     })
 
     it('footer 接 string 渲染纯文本', async () => {
-      const wrapper = mount(Modal, { props: { open: true, footer: '自定义页脚文字' } })
+      const wrapper = mount(Modal, { props: { visible: true, footer: '自定义页脚文字' } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))?.textContent).toBe('自定义页脚文字')
       wrapper.unmount()
@@ -293,7 +258,7 @@ describe('modal', () => {
 
     it('footer slot 优先于 prop', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, footer: 'fallback' },
+        props: { visible: true, footer: 'fallback' },
         slots: { footer: '<div class="custom-footer">slot wins</div>' },
       })
       await nextTick()
@@ -305,15 +270,15 @@ describe('modal', () => {
 
   describe('after-open-change 事件', () => {
     it('打开 / 关闭都触发 after-open-change，payload 是新状态', async () => {
-      const wrapper = mount(Modal, { props: { open: false } })
-      await wrapper.setProps({ open: true })
+      const wrapper = mount(Modal, { props: { visible: false } })
+      await wrapper.setProps({ visible: true })
       await nextTick()
       const events = wrapper.emitted('after-open-change')!
       // immediate watch 触发一次 false（初始），打开后再一次 true
       expect(events.length).toBeGreaterThanOrEqual(2)
       expect(events.at(-1)).toEqual([true])
 
-      await wrapper.setProps({ open: false })
+      await wrapper.setProps({ visible: false })
       await nextTick()
       const events2 = wrapper.emitted('after-open-change')!
       expect(events2.at(-1)).toEqual([false])
@@ -321,43 +286,24 @@ describe('modal', () => {
     })
   })
 
-  describe('keyboard 别名 close-on-esc', () => {
-    it('keyboard=false 禁用 Esc 关闭', async () => {
-      const wrapper = mount(Modal, { props: { open: true, keyboard: false } })
-      await nextTick()
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-      expect(wrapper.emitted('update:open')).toBeUndefined()
-      wrapper.unmount()
-    })
-
-    it('显式 keyboard 优先于 closeOnEsc', async () => {
-      // closeOnEsc=true（默认）但 keyboard=false → 不应关闭
-      const wrapper = mount(Modal, { props: { open: true, keyboard: false, closeOnEsc: true } })
-      await nextTick()
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-      expect(wrapper.emitted('update:open')).toBeUndefined()
-      wrapper.unmount()
-    })
-  })
-
   describe('keep-alive', () => {
     it('keep-alive=true 关闭后保留内部 DOM', async () => {
       const wrapper = mount(Modal, {
-        props: { open: false, keepAlive: true, title: 'KA' },
+        props: { visible: false, keepAlive: true, title: 'KA' },
         slots: { default: '<p class="ka-body">body</p>' },
       })
       await nextTick()
-      // 即使 open=false，因 keep-alive 渲染外层 dialog（内部 v-if 控制 wrap 不显示，但 ns.b() 节点存在）
+      // 即使 visible=false，因 keep-alive 渲染外层 dialog（内部 v-if 控制 wrap 不显示，但 ns.b() 节点存在）
       expect(document.body.querySelector(ns.b())).not.toBeNull()
       wrapper.unmount()
     })
 
     it('keep-alive=true 时 destroyOnClose 不生效', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, keepAlive: true, destroyOnClose: true },
+        props: { visible: true, keepAlive: true, destroyOnClose: true },
       })
       await nextTick()
-      await wrapper.setProps({ open: false })
+      await wrapper.setProps({ visible: false })
       await nextTick()
       // 外层节点仍保留（keep-alive 覆盖 destroyOnClose）
       expect(document.body.querySelector(ns.b())).not.toBeNull()
@@ -368,7 +314,7 @@ describe('modal', () => {
   describe('wrap-class-name', () => {
     it('wrap-class-name 加到根节点', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, wrapClassName: 'my-modal-wrap' },
+        props: { visible: true, wrapClassName: 'my-modal-wrap' },
       })
       await nextTick()
       expect(document.body.querySelector('.my-modal-wrap')).not.toBeNull()
@@ -376,36 +322,9 @@ describe('modal', () => {
     })
   })
 
-  describe('getContainer 函数', () => {
-    it('getContainer 返回容器节点时 Teleport 到该节点', async () => {
-      const container = document.createElement('div')
-      container.id = 'modal-custom-host'
-      document.body.appendChild(container)
-
-      const wrapper = mount(Modal, {
-        props: { open: true, getContainer: () => container },
-      })
-      await nextTick()
-      expect(container.querySelector(ns.b())).not.toBeNull()
-      // body 直接子不再有 modal（被 Teleport 到 container）
-      expect(document.body.children[0].id).toBe('modal-custom-host')
-      wrapper.unmount()
-    })
-
-    it('getContainer 返回 null 时不 Teleport', async () => {
-      const wrapper = mount(Modal, {
-        props: { open: true, getContainer: () => null },
-      })
-      await nextTick()
-      // 此时直接渲染在 wrapper 内
-      expect(wrapper.find(ns.b()).exists()).toBe(true)
-      wrapper.unmount()
-    })
-  })
-
   describe('confirmLoading 别名', () => {
     it('confirmLoading=true 等价于 okLoading=true', async () => {
-      const wrapper = mount(Modal, { props: { open: true, confirmLoading: true } })
+      const wrapper = mount(Modal, { props: { visible: true, confirmLoading: true } })
       await nextTick()
       const okBtn = document.body.querySelector(ns.em('btn', 'primary')) as HTMLButtonElement
       expect(okBtn?.disabled).toBe(true)
@@ -415,7 +334,7 @@ describe('modal', () => {
 
     it('显式 confirmLoading 优先于 okLoading', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, confirmLoading: false, okLoading: true },
+        props: { visible: true, confirmLoading: false, okLoading: true },
       })
       await nextTick()
       const okBtn = document.body.querySelector(ns.em('btn', 'primary')) as HTMLButtonElement
@@ -427,7 +346,7 @@ describe('modal', () => {
   describe('transitionName / maskTransitionName', () => {
     it('自定义 transitionName 透传到内部 Transition（运行时 DOM 不可直接验证，断言不报错即可）', async () => {
       const wrapper = mount(Modal, {
-        props: { open: true, transitionName: 'my-zoom', maskTransitionName: 'my-fade' },
+        props: { visible: true, transitionName: 'my-zoom', maskTransitionName: 'my-fade' },
       })
       await nextTick()
       expect(document.body.querySelector(ns.b())).not.toBeNull()
@@ -435,30 +354,9 @@ describe('modal', () => {
     })
   })
 
-  describe('deprecation warn (M-A5)', () => {
+  describe('deprecation warn', () => {
     beforeEach(() => {
       __resetDeprecatedWarningsForTest()
-    })
-
-    it('visible 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Modal, { props: { visible: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
-      const w2 = mount(Modal, { props: { visible: true } })
-      expect(warn).toHaveBeenCalledTimes(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
-    })
-
-    it('closeOnEsc 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Modal, { props: { closeOnEsc: false } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('closeOnEsc 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('keyboard'))
-      w.unmount()
-      warn.mockRestore()
     })
 
     it('okLoading 显式传入触发 deprecation warn 一次', () => {
@@ -475,15 +373,6 @@ describe('modal', () => {
       const w = mount(Modal, { props: { hideFooter: true } })
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('hideFooter 已 deprecated'))
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer={null}'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('appendToBody 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Modal, { props: { appendToBody: false } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('appendToBody 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('getContainer'))
       w.unmount()
       warn.mockRestore()
     })

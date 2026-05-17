@@ -306,7 +306,7 @@ const open = ref(false)
 
 <template>
   <c-button type="primary" @click="open = true">完成订单</c-button>
-  <c-modal v-model:open="open" :footer="null" :width="520" :closable="false">
+  <c-modal v-model:visible="open" :footer="null" :width="520" :closable="false">
     <c-result status="success" title="支付成功" sub-title="您的订单已生成，预计 3 个工作日内发货。">
       <template #extra>
         <c-button type="primary" @click="open = false">查看订单</c-button>

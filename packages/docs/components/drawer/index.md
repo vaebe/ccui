@@ -4,7 +4,7 @@
 
 ## 基本使用
 
-通过 `v-model:open` 控制开合；默认从右侧滑入。
+通过 `v-model:visible` 控制开合；默认从右侧滑入。
 
 :::demo
 
@@ -17,7 +17,7 @@ const open = ref(false)
 
 <template>
   <c-button type="primary" @click="open = true">打开抽屉</c-button>
-  <c-drawer v-model:open="open" title="详情">
+  <c-drawer v-model:visible="open" title="详情">
     <p>抽屉里可以放任意复杂内容：表单、表格、富文本……</p>
   </c-drawer>
 </template>
@@ -46,10 +46,10 @@ const right = ref(false)
   <c-button @click="bottom = true">下</c-button>
   <c-button @click="left = true">左</c-button>
   <c-button @click="right = true">右</c-button>
-  <c-drawer v-model:open="top" placement="top" title="顶部">从上方滑入</c-drawer>
-  <c-drawer v-model:open="bottom" placement="bottom" title="底部">从下方滑入</c-drawer>
-  <c-drawer v-model:open="left" placement="left" title="左侧">从左侧滑入</c-drawer>
-  <c-drawer v-model:open="right" placement="right" title="右侧">从右侧滑入</c-drawer>
+  <c-drawer v-model:visible="top" placement="top" title="顶部">从上方滑入</c-drawer>
+  <c-drawer v-model:visible="bottom" placement="bottom" title="底部">从下方滑入</c-drawer>
+  <c-drawer v-model:visible="left" placement="left" title="左侧">从左侧滑入</c-drawer>
+  <c-drawer v-model:visible="right" placement="right" title="右侧">从右侧滑入</c-drawer>
 </template>
 ```
 
@@ -74,9 +74,9 @@ const half = ref(false)
   <c-button @click="small = true">小 (260)</c-button>
   <c-button @click="big = true">大 (640)</c-button>
   <c-button @click="half = true">百分比 (50%)</c-button>
-  <c-drawer v-model:open="small" :size="260" title="小抽屉">size=260</c-drawer>
-  <c-drawer v-model:open="big" :size="640" title="大抽屉">size=640</c-drawer>
-  <c-drawer v-model:open="half" size="50%" title="半屏">size='50%'</c-drawer>
+  <c-drawer v-model:visible="small" :size="260" title="小抽屉">size=260</c-drawer>
+  <c-drawer v-model:visible="big" :size="640" title="大抽屉">size=640</c-drawer>
+  <c-drawer v-model:visible="half" size="50%" title="半屏">size='50%'</c-drawer>
 </template>
 ```
 
@@ -108,7 +108,7 @@ function cancel() {
 <template>
   <c-button type="primary" @click="open = true">编辑</c-button>
   <span style="margin-inline-start: 12px; color: #666">最近操作：{{ result }}</span>
-  <c-drawer v-model:open="open" title="编辑信息">
+  <c-drawer v-model:visible="open" title="编辑信息">
     <p>这里放编辑表单……</p>
     <template #footer>
       <c-button @click="cancel">取消</c-button>
@@ -122,7 +122,7 @@ function cancel() {
 
 ## 关闭行为
 
-`mask-closable` 控制点遮罩关；`keyboard` 控制 Esc 键关；都设为 `false` 时只能用 × 或外部代码关。
+`mask-closable` 控制点遮罩关；`close-on-esc` 控制 Esc 键关；都设为 `false` 时只能用 × 或外部代码关。
 
 :::demo
 
@@ -135,7 +135,7 @@ const open = ref(false)
 
 <template>
   <c-button @click="open = true">打开（不可点蒙层关、Esc 不关）</c-button>
-  <c-drawer v-model:open="open" title="只能点 × 才能关" :mask-closable="false" :keyboard="false">
+  <c-drawer v-model:visible="open" title="只能点 × 才能关" :mask-closable="false" :close-on-esc="false">
     <p>这种用法适合"必须显式确认"的流程。</p>
   </c-drawer>
 </template>
@@ -159,7 +159,7 @@ const text = ref('')
 
 <template>
   <c-button type="primary" @click="open = true">打开</c-button>
-  <c-drawer v-model:open="open" title="关后销毁" destroy-on-close>
+  <c-drawer v-model:visible="open" title="关后销毁" destroy-on-close>
     <p>关闭后下次重新打开，输入框会被清空：</p>
     <input
       v-model="text"
@@ -178,15 +178,13 @@ const text = ref('')
 
 | 参数                   | 类型                                                                                 | 默认值    | 说明                                                                |
 | ---------------------- | ------------------------------------------------------------------------------------ | --------- | ------------------------------------------------------------------- |
-| open                   | boolean                                                                              | `false`   | 是否显示（支持 `v-model:open`）                                     |
-| visible                | boolean                                                                              | `false`   | **(deprecated)** 请改用 `open`                                      |
+| visible                | boolean                                                                              | `false`   | 是否显示（支持 `v-model:visible`）                                  |
 | title                  | string                                                                               | `''`      | 标题                                                                |
 | placement              | `DrawerPlacement`                                                                    | `'right'` | 弹出方向：`left` / `right` / `top` / `bottom`                       |
 | size                   | `number \| string`                                                                   | `378`     | 横向时为宽，纵向时为高（数字按 px，字符串按原值）                   |
 | closable               | `boolean \| { closeIcon?: VNode \| string; disabled?: boolean; ariaLabel?: string }` | `true`    | 关闭按钮配置；对象形支持自定义图标 / 禁用 / aria-label              |
 | maskClosable           | boolean                                                                              | `true`    | 点遮罩是否关闭                                                      |
-| keyboard               | boolean                                                                              | `true`    | Esc 键是否关闭                                                      |
-| closeOnEsc             | boolean                                                                              | `true`    | **(deprecated)** 请改用 `keyboard`                                  |
+| closeOnEsc             | boolean                                                                              | `true`    | Esc 键是否关闭                                                      |
 | mask                   | boolean                                                                              | `true`    | 是否显示遮罩                                                        |
 | loading                | boolean                                                                              | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换     |
 | footer                 | `string \| VNode \| null \| undefined`                                               | --        | 底部内容（`null` 隐藏；string/VNode 直接渲染；undefined 启用 slot） |
@@ -196,15 +194,13 @@ const text = ref('')
 | focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                        |
 | push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
 | zIndex                 | number                                                                               | `1000`    | 层级                                                                |
-| getContainer           | `(trigger: HTMLElement \| null) => HTMLElement \| null`                              | --        | 自定义挂载容器；返回 `null` 时内联渲染                              |
-| appendToBody           | boolean                                                                              | `true`    | **(deprecated)** 请改用 `getContainer`                              |
+| appendToBody           | boolean                                                                              | `true`    | 是否把浮层 Teleport 到 `document.body`                              |
 
 ### Events
 
 | 事件名            | 回调签名             | 触发时机                                                 |
 | ----------------- | -------------------- | -------------------------------------------------------- |
-| update:open       | `(open: boolean)`    | 显示状态变化（v-model:open）                             |
-| update:visible    | `(visible: boolean)` | 同步触发，便于 `v-model:visible` 使用                    |
+| update:visible    | `(visible: boolean)` | 显示状态变化（v-model:visible）                          |
 | after-open-change | `(open: boolean)`    | 打开 / 关闭动画完成后触发（immediate watch，首次 false） |
 | open              | `()`                 | 开启动画开始                                             |
 | opened            | `()`                 | 开启动画结束                                             |

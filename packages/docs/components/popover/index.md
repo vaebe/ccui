@@ -257,25 +257,30 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-## 受控显示 v-model:open
+## 受控显示 v-model:visible
 
-`open` 配合 `v-model:open` 双向同步。
+`visible` 配合 `v-model:visible` 双向同步。
 
 :::demo
 
 ```vue
 <script setup>
 import { ref } from 'vue'
-const open = ref(false)
+const visible = ref(false)
 </script>
 
 <template>
   <div style="display: flex; gap: 12px; align-items: center">
-    <c-popover v-model:open="open" title="v-model:open" content="通过 v-model:open 接管显隐状态" trigger="manual">
+    <c-popover
+      v-model:visible="visible"
+      title="v-model:visible"
+      content="通过 v-model:visible 接管显隐状态"
+      trigger="manual"
+    >
       <c-button type="primary" plain>受控触发器</c-button>
     </c-popover>
-    <c-button type="primary" plain @click="open = !open">{{ open ? '隐藏' : '显示' }}</c-button>
-    <span style="color: #666">open = {{ open }}</span>
+    <c-button type="primary" plain @click="visible = !visible">{{ visible ? '隐藏' : '显示' }}</c-button>
+    <span style="color: #666">visible = {{ visible }}</span>
   </div>
 </template>
 ```
@@ -358,7 +363,7 @@ const visible = ref(false)
       </div>
     </div>
     <c-popover
-      v-model:open="visible"
+      v-model:visible="visible"
       :virtual-triggering="true"
       :virtual-ref="triggerRef"
       trigger="manual"
@@ -450,8 +455,7 @@ const users = [
 | content                   | 显示的内容，也可以通过 `slot#content` 传入  | string                                                       | —                  |
 | placement                 | Popover 的出现位置                          | 12 种方位字符串                                              | bottom             |
 | effect                    | 默认提供的主题                              | `'dark' \| 'light'`                                          | light              |
-| open / v-model:open       | 显示状态                                    | boolean                                                      | false              |
-| visible / v-model:visible | **(deprecated)** 请改用 `open`              | boolean                                                      | false              |
+| visible / v-model:visible | 受控显示状态                                | boolean                                                      | false              |
 | disabled                  | Popover 是否可用                            | boolean                                                      | false              |
 | color                     | 自定义背景色（覆盖 `effect`）               | string                                                       | —                  |
 | arrow                     | 箭头配置；对象形 `{ pointAtCenter }`        | `boolean \| { pointAtCenter: boolean }`                      | true               |
@@ -486,18 +490,17 @@ const users = [
 
 ### Popover Events
 
-| 事件名         | 说明                                  | 回调参数 |
-| -------------- | ------------------------------------- | -------- |
-| before-show    | 显示前触发                            | —        |
-| show           | 显示时触发                            | —        |
-| before-hide    | 隐藏前触发                            | —        |
-| hide           | 隐藏时触发                            | —        |
-| update:open    | v-model:open 同步                     | open     |
-| update:visible | v-model:visible 同步（已 deprecated） | visible  |
-| before-enter   | 显示动画播放前触发                    | —        |
-| after-enter    | 显示动画播放后触发                    | —        |
-| before-leave   | 隐藏动画播放前触发                    | —        |
-| after-leave    | 隐藏动画播放后触发                    | —        |
+| 事件名         | 说明                 | 回调参数 |
+| -------------- | -------------------- | -------- |
+| before-show    | 显示前触发           | —        |
+| show           | 显示时触发           | —        |
+| before-hide    | 隐藏前触发           | —        |
+| hide           | 隐藏时触发           | —        |
+| update:visible | v-model:visible 同步 | visible  |
+| before-enter   | 显示动画播放前触发   | —        |
+| after-enter    | 显示动画播放后触发   | —        |
+| before-leave   | 隐藏动画播放前触发   | —        |
+| after-leave    | 隐藏动画播放后触发   | —        |
 
 ### Popover Slots
 

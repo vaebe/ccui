@@ -82,16 +82,9 @@ export const tooltipProps = {
 
   // ── 显示控制 ─────────────────────────────────────────
   /**
-   * @deprecated 请改用 `open`（支持 `v-model:open`）。
+   * 受控显示。支持 `v-model:visible`。
    */
   visible: {
-    type: Boolean,
-    default: undefined,
-  },
-  /**
-   * 受控显示。显式 `open` 优先于 `visible`。
-   */
-  open: {
     type: Boolean,
     default: undefined,
   },
@@ -237,6 +230,4 @@ export interface TooltipEmits {
   hide: () => void
   /** 当 visible 状态改变时触发 */
   'update:visible': (visible: boolean) => void
-  /** v-model:open 同步事件 */
-  'update:open': (open: boolean) => void
 }

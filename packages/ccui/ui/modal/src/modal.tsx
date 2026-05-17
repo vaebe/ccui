@@ -21,7 +21,7 @@ let modalIdCounter = 0
 export default defineComponent({
   name: 'CModal',
   props: modalProps,
-  emits: ['update:visible', 'update:open', 'ok', 'cancel', 'close', 'open', 'opened', 'closed', 'after-open-change'],
+  emits: ['update:visible', 'ok', 'cancel', 'close', 'open', 'opened', 'closed', 'after-open-change'],
   setup(props: ModalProps, { emit, slots }) {
     const ns = useNamespace('modal')
     const cfg = useConfig()
@@ -29,27 +29,16 @@ export default defineComponent({
     const titleId = `${ns.b()}-title-${modalUid}`
     const bodyId = `${ns.b()}-body-${modalUid}`
 
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    // 旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecated('visible', 'open（v-model:open）', 'Modal')
-    }
-    if (isPropExplicit(rawProps, 'closeOnEsc', 'close-on-esc')) {
-      warnDeprecated('closeOnEsc', 'keyboard', 'Modal')
-    }
     if (isPropExplicit(rawProps, 'okLoading', 'ok-loading')) {
       warnDeprecated('okLoading', 'confirmLoading', 'Modal')
     }
     if (isPropExplicit(rawProps, 'hideFooter', 'hide-footer')) {
       warnDeprecated('hideFooter', 'footer={null}', 'Modal')
     }
-    if (isPropExplicit(rawProps, 'appendToBody', 'append-to-body')) {
-      warnDeprecated('appendToBody', 'getContainer', 'Modal')
-    }
 
-    // ── open / visible 受控值统一 ──────────────────────────
-    // 显式 open 优先于旧 visible
-    const isOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    const isOpen = computed(() => props.visible)
 
     // 触发节点：用于 focusTriggerAfterClose
     const trigger = ref<HTMLElement | null>(null)
@@ -66,8 +55,6 @@ export default defineComponent({
     const closeDisabled = computed(() => !!closableObj.value?.disabled)
     const closeAriaLabel = computed(() => closableObj.value?.ariaLabel || 'Close')
 
-    // ── 解析其他别名 ──────────────────────────────────────
-    const keyboardEnabled = computed(() => (props.keyboard !== undefined ? props.keyboard : props.closeOnEsc))
     const confirmLoadingEffective = computed(() =>
       props.confirmLoading !== undefined ? props.confirmLoading : props.okLoading,
     )
@@ -89,14 +76,9 @@ export default defineComponent({
     })
 
     // ── 关闭流程 ────────────────────────────────────────
-    const emitOpen = (val: boolean) => {
-      emit('update:visible', val)
-      emit('update:open', val)
-    }
-
     const close = () => {
       if (closeDisabled.value) return
-      emitOpen(false)
+      emit('update:visible', false)
       emit('close')
     }
 
@@ -111,7 +93,7 @@ export default defineComponent({
     }
 
     const onKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && keyboardEnabled.value && isOpen.value) {
+      if (e.key === 'Escape' && props.closeOnEsc && isOpen.value) {
         close()
       }
     }
@@ -240,11 +222,6 @@ export default defineComponent({
 
     // ── 渲染容器决策 ─────────────────────────────────────
     const renderContainer = (dialog: VNode): VNode | null => {
-      // getContainer 函数优先；返回 null = 不 Teleport
-      if (props.getContainer) {
-        const target = props.getContainer(null)
-        return target ? <Teleport to={target}>{dialog}</Teleport> : dialog
-      }
       return props.appendToBody ? <Teleport to="body">{dialog}</Teleport> : dialog
     }
 

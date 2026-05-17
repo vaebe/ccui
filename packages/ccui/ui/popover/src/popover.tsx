@@ -32,7 +32,6 @@ export default defineComponent({
     'before-hide',
     'hide',
     'update:visible',
-    'update:open',
     'before-enter',
     'after-enter',
     'before-leave',
@@ -48,9 +47,6 @@ export default defineComponent({
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecated('visible', 'open（v-model:open）', 'Popover')
-    }
     if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
       warnDeprecated('showArrow', 'arrow', 'Popover')
     }
@@ -75,8 +71,8 @@ export default defineComponent({
     const hideTimer = ref<number>()
     const autoCloseTimer = ref<number>()
 
-    // 同义 prop 解析
-    const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    // visible 受控
+    const externalOpen = computed(() => props.visible)
     const isControlled = computed(() => externalOpen.value !== undefined)
     const actualVisible = computed(() => {
       const val = isControlled.value ? externalOpen.value : visible.value
@@ -171,7 +167,6 @@ export default defineComponent({
           visible.value = false
         }
         emit('update:visible', false)
-        emit('update:open', false)
         emit('hide')
       }
       if (leaveDelay.value > 0 && props.trigger !== 'click') {
@@ -190,7 +185,6 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
-        emit('update:open', true)
         void nextTick(() => {
           update()
           emit('show')

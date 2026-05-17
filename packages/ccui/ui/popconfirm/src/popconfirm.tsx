@@ -10,16 +10,13 @@ import './popconfirm.scss'
 export default defineComponent({
   name: 'CPopconfirm',
   props: popconfirmProps,
-  emits: ['confirm', 'cancel', 'update:visible', 'update:open'],
+  emits: ['confirm', 'cancel', 'update:visible'],
   setup(props: PopconfirmProps, { emit, slots }) {
     const ns = useNamespace('popconfirm')
     const cfg = useConfig()
 
     // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecated('visible', 'open（v-model:open）', 'Popconfirm')
-    }
     if (isPropExplicit(rawProps, 'confirmText', 'confirm-text')) {
       warnDeprecated('confirmText', 'okText', 'Popconfirm')
     }
@@ -27,13 +24,13 @@ export default defineComponent({
       warnDeprecated('confirmType', 'okType', 'Popconfirm')
     }
 
-    // 同义 prop 解析：okText > confirmText、okType > confirmType、open > visible
+    // 同义 prop 解析：okText > confirmText、okType > confirmType
     const confirmTextResolved = computed(() => props.okText || props.confirmText)
     const confirmTextLocal = computed(() => confirmTextResolved.value || cfg.locale?.Popconfirm?.okText || '确 定')
     const cancelTextLocal = computed(() => props.cancelText || cfg.locale?.Popconfirm?.cancelText || '取 消')
     const confirmTypeResolved = computed(() => props.okType || props.confirmType)
 
-    const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    const externalOpen = computed(() => props.visible)
 
     const popoverRef = ref<{ hide?: () => void } | null>(null)
     const innerVisible = ref(false)
@@ -52,7 +49,6 @@ export default defineComponent({
         innerVisible.value = false
       }
       emit('update:visible', false)
-      emit('update:open', false)
       popoverRef.value?.hide?.()
     }
 
@@ -71,16 +67,15 @@ export default defineComponent({
         trigger={props.trigger}
         placement={props.placement}
         disabled={props.disabled}
-        open={popoverVisible.value}
+        visible={popoverVisible.value}
         width={props.width}
         overlayClassName={ns.b()}
         arrow={true}
-        onUpdate:open={(val: boolean) => {
+        onUpdate:visible={(val: boolean) => {
           if (!isControlled.value) {
             innerVisible.value = val
           }
           emit('update:visible', val)
-          emit('update:open', val)
         }}
         v-slots={{
           default: () => slots.default?.(),

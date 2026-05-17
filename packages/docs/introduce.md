@@ -12,19 +12,19 @@
 
 ### 命名变更（旧名保留为 deprecated 别名，运行时仍可用）
 
-| 组件        | 旧名                                                                               | 新名                                                                                                |
-| ----------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Modal       | `visible` / `closeOnEsc` / `okLoading` / `hideFooter` / `appendToBody`             | `open` / `keyboard` / `confirmLoading` / `footer` / `getContainer`                                  |
-| Drawer      | `visible` / `closeOnEsc` / `showFooter` / `appendToBody`                           | `open` / `keyboard` / `footer` / `getContainer`                                                     |
-| Tooltip     | `content` / `visible` / `showArrow` / `showAfter` / `hideAfter` / `popperClass`    | `title` / `open` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName`             |
-| Popover     | `visible` / `showArrow` / `showAfter` / `hideAfter` / `popperClass` / `teleported` | `open` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `getPopupContainer` |
-| Popconfirm  | `visible` / `confirmText` / `confirmType`                                          | `open` / `okText` / `okType`                                                                        |
-| Button      | `nativeType` / `round` / `circle` / `plain`                                        | `htmlType` / `shape='round'` / `shape='circle'` / `variant`                                         |
-| Input       | `clearable` / `prepend` / `append`                                                 | `allowClear` / `addonBefore` / `addonAfter`                                                         |
-| InputNumber | `size='lg'` / `'md'` / `'sm'`                                                      | `size='large'` / `'default'` / `'small'`                                                            |
-| Tag         | `bordered`                                                                         | `variant='outlined' \| 'filled'`                                                                    |
-| ColorPicker | `format='hsv'`                                                                     | `format='hsb'`                                                                                      |
-| FormItem    | `prop`                                                                             | `name`                                                                                              |
+| 组件        | 旧名                                                                   | 新名                                                                                       |
+| ----------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Modal       | `okLoading` / `hideFooter`                                             | `confirmLoading` / `footer`                                                                |
+| Drawer      | `showFooter`                                                           | `footer`                                                                                   |
+| Tooltip     | `content` / `showArrow` / `showAfter` / `hideAfter` / `popperClass`    | `title` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName`             |
+| Popover     | `showArrow` / `showAfter` / `hideAfter` / `popperClass` / `teleported` | `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `getPopupContainer` |
+| Popconfirm  | `confirmText` / `confirmType`                                          | `okText` / `okType`                                                                        |
+| Button      | `nativeType` / `round` / `circle` / `plain`                            | `htmlType` / `shape='round'` / `shape='circle'` / `variant`                                |
+| Input       | `clearable` / `prepend` / `append`                                     | `allowClear` / `addonBefore` / `addonAfter`                                                |
+| InputNumber | `size='lg'` / `'md'` / `'sm'`                                          | `size='large'` / `'default'` / `'small'`                                                   |
+| Tag         | `bordered`                                                             | `variant='outlined' \| 'filled'`                                                           |
+| ColorPicker | `format='hsv'`                                                         | `format='hsb'`                                                                             |
+| FormItem    | `prop`                                                                 | `name`                                                                                     |
 
 旧名在 dev mode 触发一次性 `console.warn`，prod 静默。下一大版本（v3.0）将移除旧名。
 
@@ -34,7 +34,7 @@
 
 ### 视觉与心智
 
-- 基础组件 API 命名已统一切到 Ant Design 协议（`open` / `title` / `htmlType` 等），同时保留 Element Plus 风格命名作为 deprecated 兼容层。
+- 基础组件 API 命名已统一切到 Ant Design 协议（`title` / `htmlType` / `allowClear` 等），同时保留 Element Plus 风格命名作为 deprecated 兼容层。浮层组件 `v-model:visible` / `closeOnEsc` / `appendToBody` 保持 Vue 圈惯例命名。
 - 复杂组件（DatePicker / RangePicker / Cascader / Tree / TreeSelect / Upload 等）从 v2 首版即为 Ant 协议，无旧名包袱。
 - 全量 ARIA + 键盘审计已覆盖 30+ 组件，提升 screen reader 与键盘用户体验。
 

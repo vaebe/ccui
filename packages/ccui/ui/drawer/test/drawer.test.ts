@@ -170,52 +170,22 @@ describe('drawer', () => {
     wrapper.unmount()
   })
 
-  // ─────────────────────────────────────────────────────────────
-  // 同义 prop 解析
-  // ─────────────────────────────────────────────────────────────
-
-  describe('open + v-model:open', () => {
-    it('open=true 等价 visible=true', async () => {
-      const wrapper = mount(Drawer, { props: { open: true, title: 'Z' } })
-      await nextTick()
-      expect(document.body.textContent).toContain('Z')
-      wrapper.unmount()
-    })
-
-    it('显式 open 优先于 visible', async () => {
-      const wrapper = mount(Drawer, { props: { open: false, visible: true } })
-      await nextTick()
-      expect(document.body.querySelector(ns.e('content'))).toBeNull()
-      wrapper.unmount()
-    })
-
-    it('关闭时同时 emit update:open 和 update:visible', async () => {
-      const wrapper = mount(Drawer, { props: { open: true } })
-      await nextTick()
-      const closeBtn = document.body.querySelector(ns.e('close')) as HTMLElement
-      closeBtn?.click()
-      expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
-      expect(wrapper.emitted('update:visible')?.[0]).toEqual([false])
-      wrapper.unmount()
-    })
-  })
-
   describe('closable 复合对象', () => {
     it('closable={ disabled: true } 渲染但 click 无效', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, closable: { disabled: true } },
+        props: { visible: true, closable: { disabled: true } },
       })
       await nextTick()
       const closeBtn = document.body.querySelector(ns.e('close')) as HTMLButtonElement
       expect(closeBtn.disabled).toBe(true)
       closeBtn.click()
-      expect(wrapper.emitted('update:open')).toBeUndefined()
+      expect(wrapper.emitted('update:visible')).toBeUndefined()
       wrapper.unmount()
     })
 
     it('closable={ ariaLabel } 自定义 aria-label', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, closable: { ariaLabel: '关闭抽屉' } },
+        props: { visible: true, closable: { ariaLabel: '关闭抽屉' } },
       })
       await nextTick()
       const closeBtn = document.body.querySelector(ns.e('close'))
@@ -225,7 +195,7 @@ describe('drawer', () => {
 
     it('close-icon slot 优先于 closeIcon prop', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, closable: { closeIcon: 'mdi:close' } },
+        props: { visible: true, closable: { closeIcon: 'mdi:close' } },
         slots: { 'close-icon': '<i class="custom-x">X</i>' },
       })
       await nextTick()
@@ -237,7 +207,7 @@ describe('drawer', () => {
   describe('extra slot', () => {
     it('extra slot 渲染到头部右侧', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, title: 'T' },
+        props: { visible: true, title: 'T' },
         slots: { extra: '<button class="extra-btn">操作</button>' },
       })
       await nextTick()
@@ -248,7 +218,7 @@ describe('drawer', () => {
     })
 
     it('无 extra slot 时不渲染 extra 区', async () => {
-      const wrapper = mount(Drawer, { props: { open: true, title: 'T' } })
+      const wrapper = mount(Drawer, { props: { visible: true, title: 'T' } })
       await nextTick()
       expect(document.body.querySelector(ns.e('extra'))).toBeNull()
       wrapper.unmount()
@@ -258,7 +228,7 @@ describe('drawer', () => {
   describe('loading', () => {
     it('loading=true 显示骨架占位 + aria-busy', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, loading: true },
+        props: { visible: true, loading: true },
         slots: { default: '<p class="real-body">真实内容</p>' },
       })
       await nextTick()
@@ -272,7 +242,7 @@ describe('drawer', () => {
 
     it('loading=false 渲染真实 body', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, loading: false },
+        props: { visible: true, loading: false },
         slots: { default: '<p class="real-body">x</p>' },
       })
       await nextTick()
@@ -284,14 +254,14 @@ describe('drawer', () => {
 
   describe('footer prop + slot', () => {
     it('footer=null 隐藏 footer', async () => {
-      const wrapper = mount(Drawer, { props: { open: true, footer: null } })
+      const wrapper = mount(Drawer, { props: { visible: true, footer: null } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))).toBeNull()
       wrapper.unmount()
     })
 
     it('footer 接 string 渲染纯文本', async () => {
-      const wrapper = mount(Drawer, { props: { open: true, footer: '底部文字' } })
+      const wrapper = mount(Drawer, { props: { visible: true, footer: '底部文字' } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))?.textContent).toBe('底部文字')
       wrapper.unmount()
@@ -299,7 +269,7 @@ describe('drawer', () => {
 
     it('footer slot 优先于 prop', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: true, footer: 'fallback' },
+        props: { visible: true, footer: 'fallback' },
         slots: { footer: '<div class="custom-footer">slot wins</div>' },
       })
       await nextTick()
@@ -308,7 +278,7 @@ describe('drawer', () => {
     })
 
     it('未传 footer 且 showFooter=false 不渲染', async () => {
-      const wrapper = mount(Drawer, { props: { open: true } })
+      const wrapper = mount(Drawer, { props: { visible: true } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))).toBeNull()
       wrapper.unmount()
@@ -316,26 +286,16 @@ describe('drawer', () => {
   })
 
   describe('after-open-change 事件', () => {
-    it('open 切换时各 emit 一次', async () => {
-      const wrapper = mount(Drawer, { props: { open: false } })
-      await wrapper.setProps({ open: true })
+    it('visible 切换时各 emit 一次', async () => {
+      const wrapper = mount(Drawer, { props: { visible: false } })
+      await wrapper.setProps({ visible: true })
       await nextTick()
       const events = wrapper.emitted('after-open-change')!
       expect(events.at(-1)).toEqual([true])
 
-      await wrapper.setProps({ open: false })
+      await wrapper.setProps({ visible: false })
       await nextTick()
       expect(wrapper.emitted('after-open-change')!.at(-1)).toEqual([false])
-      wrapper.unmount()
-    })
-  })
-
-  describe('keyboard 别名', () => {
-    it('keyboard=false 禁用 Esc 关闭', async () => {
-      const wrapper = mount(Drawer, { props: { open: true, keyboard: false } })
-      await nextTick()
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-      expect(wrapper.emitted('update:open')).toBeUndefined()
       wrapper.unmount()
     })
   })
@@ -343,24 +303,10 @@ describe('drawer', () => {
   describe('keep-alive', () => {
     it('keep-alive=true 关闭后保留外层 DOM', async () => {
       const wrapper = mount(Drawer, {
-        props: { open: false, keepAlive: true },
+        props: { visible: false, keepAlive: true },
       })
       await nextTick()
       expect(document.body.querySelector(ns.b())).not.toBeNull()
-      wrapper.unmount()
-    })
-  })
-
-  describe('getContainer 函数', () => {
-    it('getContainer 返回容器节点 Teleport 到该节点', async () => {
-      const container = document.createElement('div')
-      container.id = 'drawer-host'
-      document.body.appendChild(container)
-      const wrapper = mount(Drawer, {
-        props: { open: true, getContainer: () => container },
-      })
-      await nextTick()
-      expect(container.querySelector(ns.b())).not.toBeNull()
       wrapper.unmount()
     })
   })
@@ -371,8 +317,8 @@ describe('drawer', () => {
         components: { Drawer },
         props: ['childOpen'],
         template: `
-          <Drawer :open="true" placement="right" :size="400">
-            <Drawer :open="childOpen" placement="right" :size="300" />
+          <Drawer :visible="true" placement="right" :size="400">
+            <Drawer :visible="childOpen" placement="right" :size="300" />
           </Drawer>
         `,
       }
@@ -396,8 +342,8 @@ describe('drawer', () => {
         components: { Drawer },
         props: ['childOpen'],
         template: `
-          <Drawer :open="true" placement="right" :push="{ distance: 80 }">
-            <Drawer :open="childOpen" placement="right" />
+          <Drawer :visible="true" placement="right" :push="{ distance: 80 }">
+            <Drawer :visible="childOpen" placement="right" />
           </Drawer>
         `,
       }
@@ -413,8 +359,8 @@ describe('drawer', () => {
         components: { Drawer },
         props: ['childOpen'],
         template: `
-          <Drawer :open="true" :push="false">
-            <Drawer :open="childOpen" />
+          <Drawer :visible="true" :push="false">
+            <Drawer :visible="childOpen" />
           </Drawer>
         `,
       }
@@ -426,30 +372,9 @@ describe('drawer', () => {
     })
   })
 
-  describe('deprecation warn (M-A5)', () => {
+  describe('deprecation warn', () => {
     beforeEach(() => {
       __resetDeprecatedWarningsForTest()
-    })
-
-    it('visible 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Drawer, { props: { visible: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
-      const w2 = mount(Drawer, { props: { visible: true } })
-      expect(warn).toHaveBeenCalledTimes(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
-    })
-
-    it('closeOnEsc 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Drawer, { props: { closeOnEsc: false } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('closeOnEsc 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('keyboard'))
-      w.unmount()
-      warn.mockRestore()
     })
 
     it('showFooter 显式传入触发 deprecation warn 一次', () => {
@@ -457,15 +382,6 @@ describe('drawer', () => {
       const w = mount(Drawer, { props: { showFooter: true } })
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('showFooter 已 deprecated'))
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('appendToBody 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Drawer, { props: { appendToBody: false } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('appendToBody 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('getContainer'))
       w.unmount()
       warn.mockRestore()
     })

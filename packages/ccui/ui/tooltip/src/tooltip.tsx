@@ -15,7 +15,7 @@ let tooltipIdCounter = 0
 export default defineComponent({
   name: 'CTooltip',
   props: tooltipProps,
-  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'update:open'],
+  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible'],
   setup(props: TooltipProps, { emit, slots }) {
     const ns = useNamespace('tooltip')
     const popperId = `${ns.e('popper')}-${++tooltipIdCounter}`
@@ -24,9 +24,6 @@ export default defineComponent({
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
     if (isPropExplicit(rawProps, 'content', 'content')) {
       warnDeprecated('content', 'title', 'Tooltip')
-    }
-    if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecated('visible', 'open（v-model:open）', 'Tooltip')
     }
     if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
       warnDeprecated('showArrow', 'arrow', 'Tooltip')
@@ -41,9 +38,8 @@ export default defineComponent({
       warnDeprecated('popperClass', 'overlayClassName', 'Tooltip')
     }
 
-    // ── 同义 prop 解析 ───────────────────────
-    // open / visible：显式 open 优先
-    const externalOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    // visible 受控
+    const externalOpen = computed(() => props.visible)
     const isControlled = computed(() => externalOpen.value !== undefined)
 
     // 状态管理
@@ -151,7 +147,6 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
-        emit('update:open', true)
         void nextTick(() => {
           update()
           emit('show')
@@ -174,7 +169,6 @@ export default defineComponent({
           visible.value = false
         }
         emit('update:visible', false)
-        emit('update:open', false)
         emit('hide')
       }
 
@@ -247,7 +241,7 @@ export default defineComponent({
       cleanup?.()
     })
 
-    // 监听 visible / open prop 变化（外部受控）
+    // 监听 visible prop 变化（外部受控）
     watch(externalOpen, (newVal) => {
       if (newVal !== undefined && newVal) {
         void nextTick(() => update())

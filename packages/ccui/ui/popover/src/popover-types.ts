@@ -58,16 +58,9 @@ export const popoverProps = {
     default: 'light' as PopoverEffect,
   },
   /**
-   * @deprecated 请改用 `open`（支持 `v-model:open`）。
+   * 受控显示。支持 `v-model:visible`。
    */
   visible: {
-    type: Boolean,
-    default: undefined,
-  },
-  /**
-   * 受控显示。显式 `open` 优先于 `visible`。
-   */
-  open: {
     type: Boolean,
     default: undefined,
   },

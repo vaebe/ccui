@@ -177,9 +177,9 @@ describe('popconfirm', () => {
   // ─────────────────────────────────────────────────────────────
 
   describe('同义 prop 解析', () => {
-    it('open=true 等价 visible=true', async () => {
+    it('visible=true 显示浮层', async () => {
       const wrapper = mount(Popconfirm, {
-        props: { open: true, title: '确认删除？' },
+        props: { visible: true, title: '确认删除？' },
         slots: { default: '<button>删除</button>' },
         attachTo: document.body,
       })
@@ -188,9 +188,9 @@ describe('popconfirm', () => {
       wrapper.unmount()
     })
 
-    it('显式 open 优先于 visible', async () => {
+    it('visible=false 隐藏浮层', async () => {
       const wrapper = mount(Popconfirm, {
-        props: { open: false, visible: true, title: '隐藏' },
+        props: { visible: false, title: '隐藏' },
         slots: { default: '<button>X</button>' },
         attachTo: document.body,
       })
@@ -223,7 +223,7 @@ describe('popconfirm', () => {
       wrapper.unmount()
     })
 
-    it('update:open 与 update:visible 同步触发', async () => {
+    it('update:visible 同步触发', async () => {
       const wrapper = mount(Popconfirm, {
         props: { title: 'X' },
         slots: { default: '<button>btn</button>' },
@@ -232,7 +232,6 @@ describe('popconfirm', () => {
       await wrapper.find('.ccui-popover__trigger').trigger('click')
       await nextTick()
       expect(wrapper.emitted('update:visible')).toBeTruthy()
-      expect(wrapper.emitted('update:open')).toBeTruthy()
       wrapper.unmount()
     })
   })
@@ -240,21 +239,6 @@ describe('popconfirm', () => {
   describe('deprecation warn (M-A5)', () => {
     beforeEach(() => {
       __resetDeprecatedWarningsForTest()
-    })
-
-    it('visible 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popconfirm, { props: { visible: true, title: 'X' }, slots: { default: '<button>btn</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Popconfirm'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('visible 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('open'))
-      const w2 = mount(Popconfirm, { props: { visible: true, title: 'X' }, slots: { default: '<button>btn</button>' } })
-      // 全局 Set 缓存，Popconfirm.visible 只 warn 一次（注：Popover.visible 在内部用 open 传入，不会触发）
-      const visibleCalls = warn.mock.calls.filter((c) => String(c[0]).includes('[ccui][Popconfirm] visible'))
-      expect(visibleCalls).toHaveLength(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
     })
 
     it('confirmText 显式传入触发 deprecation warn 一次', () => {

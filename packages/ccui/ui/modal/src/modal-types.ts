@@ -19,27 +19,13 @@ export interface ModalClosableObject {
 }
 export type ModalClosable = boolean | ModalClosableObject
 
-/**
- * `getContainer` 函数签名：返回浮层容器节点。
- * 优先级：显式 `getContainer` 函数 > `appendToBody` boolean。
- */
-export type ModalGetContainer = (trigger: HTMLElement | null) => HTMLElement | null
-
 export const modalProps = {
   /**
-   * @deprecated 请改用 `open`（支持 `v-model:open`）。下一大版本移除。
+   * 显示对话框。支持 `v-model:visible`。
    */
   visible: {
     type: Boolean,
     default: false,
-  },
-  /**
-   * 显示对话框。支持 `v-model:open`。
-   * 显式 `open` 优先于 `visible`。
-   */
-  open: {
-    type: Boolean,
-    default: undefined,
   },
   title: {
     type: String,
@@ -61,18 +47,11 @@ export const modalProps = {
     default: true,
   },
   /**
-   * @deprecated 请改用 `keyboard`。下一大版本移除。
+   * 是否支持键盘 Esc 关闭。
    */
   closeOnEsc: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * 是否支持键盘 Esc 关闭。显式 `keyboard` 优先于 `closeOnEsc`。
-   */
-  keyboard: {
-    type: Boolean,
-    default: undefined,
   },
   centered: {
     type: Boolean,
@@ -148,20 +127,11 @@ export const modalProps = {
     default: 1000,
   },
   /**
-   * @deprecated 请改用 `getContainer` 函数形。
+   * 是否把浮层 Teleport 到 `document.body`。
    */
   appendToBody: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * 浮层容器函数：`(trigger) => HTMLElement | null`。
-   * 返回 `null` 等价于 `appendToBody=false`（不 Teleport）。
-   * 显式 `getContainer` 优先于 `appendToBody`。
-   */
-  getContainer: {
-    type: Function as PropType<ModalGetContainer>,
-    default: undefined,
   },
   /**
    * 对话框外层 wrap 节点的 className。

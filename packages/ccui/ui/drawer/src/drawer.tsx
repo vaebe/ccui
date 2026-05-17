@@ -38,30 +38,20 @@ let drawerIdCounter = 0
 export default defineComponent({
   name: 'CDrawer',
   props: drawerProps,
-  emits: ['update:visible', 'update:open', 'open', 'opened', 'close', 'closed', 'after-open-change'],
+  emits: ['update:visible', 'open', 'opened', 'close', 'closed', 'after-open-change'],
   setup(props: DrawerProps, { emit, slots }) {
     const ns = useNamespace('drawer')
     const drawerUid = ++drawerIdCounter
     const titleId = `${ns.b()}-title-${drawerUid}`
     const bodyId = `${ns.b()}-body-${drawerUid}`
 
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
+    // 旧 prop 一次性 deprecation warn（全局 per-key 一次）
     const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'visible', 'visible')) {
-      warnDeprecated('visible', 'open（v-model:open）', 'Drawer')
-    }
-    if (isPropExplicit(rawProps, 'closeOnEsc', 'close-on-esc')) {
-      warnDeprecated('closeOnEsc', 'keyboard', 'Drawer')
-    }
     if (isPropExplicit(rawProps, 'showFooter', 'show-footer')) {
       warnDeprecated('showFooter', 'footer slot 或 footer prop', 'Drawer')
     }
-    if (isPropExplicit(rawProps, 'appendToBody', 'append-to-body')) {
-      warnDeprecated('appendToBody', 'getContainer', 'Drawer')
-    }
 
-    // ── open / visible 受控解析 ───────────────────────────
-    const isOpen = computed(() => (props.open !== undefined ? props.open : props.visible))
+    const isOpen = computed(() => props.visible)
 
     const trigger = ref<HTMLElement | null>(null)
     const rendered = ref(isOpen.value || props.keepAlive)
@@ -76,9 +66,6 @@ export default defineComponent({
     })
     const closeDisabled = computed(() => !!closableObj.value?.disabled)
     const closeAriaLabel = computed(() => closableObj.value?.ariaLabel || 'Close')
-
-    // ── 别名 ──────────────────────────────────────────────
-    const keyboardEnabled = computed(() => (props.keyboard !== undefined ? props.keyboard : props.closeOnEsc))
 
     // ── 嵌套抽屉 push（父被子推开） ─────────────────────
     const parent = inject(drawerParentInjectionKey, null)
@@ -152,14 +139,9 @@ export default defineComponent({
     })
 
     // ── 关闭流程 ──────────────────────────────────────────
-    const emitOpen = (val: boolean) => {
-      emit('update:visible', val)
-      emit('update:open', val)
-    }
-
     const close = () => {
       if (closeDisabled.value) return
-      emitOpen(false)
+      emit('update:visible', false)
       emit('close')
     }
 
@@ -168,7 +150,7 @@ export default defineComponent({
     }
 
     const onKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && keyboardEnabled.value && isOpen.value) {
+      if (e.key === 'Escape' && props.closeOnEsc && isOpen.value) {
         close()
       }
     }
@@ -337,10 +319,6 @@ export default defineComponent({
 
     // ── 渲染容器决策 ─────────────────────────────────────
     const renderContainer = (wrap: VNode): VNode | null => {
-      if (props.getContainer) {
-        const target = props.getContainer(null)
-        return target ? <Teleport to={target}>{wrap}</Teleport> : wrap
-      }
       return props.appendToBody ? <Teleport to="body">{wrap}</Teleport> : wrap
     }
 

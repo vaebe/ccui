@@ -1,5 +1,4 @@
 import type { VNode } from 'vue'
-import type { ModalGetContainer } from './modal-types'
 
 export type ModalFuncType = 'confirm' | 'info' | 'success' | 'error' | 'warning'
 
@@ -12,7 +11,7 @@ export interface ModalFuncOptions {
   centered?: boolean
   mask?: boolean
   maskClosable?: boolean
-  keyboard?: boolean
+  closeOnEsc?: boolean
   closable?: boolean
   okText?: string
   cancelText?: string
@@ -25,7 +24,6 @@ export interface ModalFuncOptions {
   afterClose?: () => void
   zIndex?: number
   wrapClassName?: string
-  getContainer?: ModalGetContainer
 }
 
 export interface ModalFuncReturn {
