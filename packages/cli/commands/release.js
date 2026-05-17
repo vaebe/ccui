@@ -1,8 +1,7 @@
 // @vaebe/ccui 发布产物准备：
 //   - 把源 package.json 抽到 packages/ccui/build/，剥 scripts/devDeps，展开 workspace: 协议
-//   - 程序化注入 exports map（主入口 + 每个 ready 组件 + style.css），加 sideEffects
+//   - 程序化注入 exports map（主入口 + 每个组件 + style.css），加 sideEffects
 //   - 收紧 files 字段（明列产物，避免误带 stage 临时 chunk）
-//   - 修正无样式组件子目录 package.json 里的 style 字段
 //   - 拷贝 README / LICENSE / theme.scss / darkTheme.css
 //
 // **不**执行 npm publish。正式发包走 `node scripts/publish.mjs`（passkey 流程），
@@ -121,22 +120,6 @@ function buildFilesField(components) {
   return [...files].sort()
 }
 
-// 子目录 package.json 是 build.js 用统一模板写的，每个都带 "style": "style.css"。
-// 对没产出 style.css 的组件目录（如 config-provider），删掉 style 字段，避免下游
-// 工具按 "style" 字段加载时撞到不存在的文件。
-async function fixSubdirPackageJsons(components) {
-  for (const { name, hasStyle } of components) {
-    if (hasStyle) continue
-    const pj = path.resolve(outputDir, name, 'package.json')
-    if (!existsSync(pj)) continue
-    const raw = await fsp.readFile(pj, 'utf8')
-    const obj = JSON.parse(raw)
-    if (obj.style === undefined) continue
-    delete obj.style
-    await fsp.writeFile(pj, `${JSON.stringify(obj, null, 2)}\n`)
-  }
-}
-
 async function createPackageJson(version) {
   const components = resolveReleasableComponents()
 
@@ -155,7 +138,6 @@ async function createPackageJson(version) {
   rest.files = buildFilesField(components)
 
   await outputFile(path.resolve(outputDir, 'package.json'), JSON.stringify(rest, null, 2))
-  await fixSubdirPackageJsons(components)
 }
 
 async function copyAssets() {

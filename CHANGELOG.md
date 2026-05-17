@@ -19,6 +19,8 @@
 
   单组件样式同步变化（`@vaebe/ccui/<comp>/ccui-cli.css` → `@vaebe/ccui/<comp>/style.css`），通常只有手写按需引入的用户会受影响——走 `@vaebe/unplugin-vue-components-ccui` resolver 的项目升级后无需改动。
 
+- **移除每个组件目录下的 legacy `package.json`**。主包 `exports` map 已经完整登记 `./<comp>` / `./<comp>/style.css`，子目录里 `{ "main": "index.umd.js", "module": "index.es.js", "style": "style.css" }` 这种早期 subpath 解析机制不再保留。现代 ESM-aware 工具链（Vite 5+ / Webpack 5+ / Rolldown / TypeScript `moduleResolution: bundler|nodenext|node16`）走 `exports` 即可。**不再支持** Webpack 4 / TypeScript `moduleResolution: node`（老配置）下的 subpath import——这两者已停滞或被官方下线。
+
 ### Added
 
 - **完整 `exports` map**。主包 `package.json` 增加 `.` / `./<comp>` / `./<comp>/style.css` / `./theme/*` / `./style.css` 等导出条目。IDE 跳转、TypeScript `moduleResolution: 'bundler'` 项目的 subpath 解析、以及 `babel-plugin-import` 一类按需插件现在可以稳定工作。
