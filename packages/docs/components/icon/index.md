@@ -147,28 +147,6 @@ function handleClick() {
 
 :::
 
-## 主题 → Iconify 前缀映射
-
-`themePrefixMap` 让 `theme` 切换时自动选用不同的 Iconify 图标集，常用于「同一图标的 outlined / filled 走不同图标包」：
-
-```vue
-<script setup lang="ts">
-const themeMap = {
-  outlined: 'material-symbols',
-  filled: 'mdi',
-}
-</script>
-
-<template>
-  <!-- name="home" + theme="outlined" -> material-symbols:home -->
-  <c-icon name="home" theme="outlined" :theme-prefix-map="themeMap" />
-  <!-- name="home" + theme="filled" -> mdi:home -->
-  <c-icon name="home" theme="filled" :theme-prefix-map="themeMap" />
-</template>
-```
-
-优先级：`name` 含 `:` > `themePrefixMap` 命中当前 theme > `iconifyPrefix`。
-
 ## 旋转方向
 
 `spinDirection` 控制 spin 动画方向：`cw`（默认顺时针）或 `ccw`（逆时针）。
@@ -180,26 +158,6 @@ const themeMap = {
   <div style="display: flex; gap: 16px;">
     <c-icon name="mdi:loading" spin :size="24" />
     <c-icon name="mdi:loading" spin spin-direction="ccw" :size="24" />
-  </div>
-</template>
-```
-
-:::
-
-## Iconify 前缀简化
-
-`iconifyPrefix` 让你少写一遍 `:`。常用一组图标时设置一次前缀，后续用裸名称：
-
-:::demo
-
-```vue
-<template>
-  <div style="display: flex; gap: 16px;">
-    <c-icon iconify-prefix="mdi" name="home" :size="20" />
-    <c-icon iconify-prefix="mdi" name="cog" :size="20" />
-    <c-icon iconify-prefix="mdi" name="account" :size="20" />
-    <!-- 已含冒号时 prefix 失效 -->
-    <c-icon iconify-prefix="mdi" name="material-symbols:menu" :size="20" />
   </div>
 </template>
 ```
@@ -352,58 +310,34 @@ ccui 全部组件、demo 与文档统一使用 Iconify 的 [`mdi`](https://icon-
 
 ## 内置图标包 `@vaebe/ccui-icons`
 
-独立 workspace 包 `@vaebe/ccui-icons`，承担两个职责：
+独立 workspace 包，两块职责：
 
-1. **Iconify mdi 离线 collection**：把 ccui 组件源码用到的 14 个 mdi 图标 SVG 数据 inline，通过 `installCcuiMdiIcons()` 注入到 `@iconify/vue` 全局 collection；ccui 入口自动调用，**下游接入 ccui 时无需手动配置**即可在无网环境渲染 `<c-icon name="mdi:..." />`。包内还导出 `ccuiMdiCollection`（原始 `IconifyJSON` 对象），可在自定义 Iconify 集成场景下复用。
-2. **Tree-shakable SVG 函数组件**：少量 ccui 直接使用的非 mdi 形态图标以独立 ESM 组件导出（命名 export + `sideEffects` 仅包含 install 入口），用户按需 import 不会带其他组件进 bundle。
+- **mdi 离线 collection** — 详见 [离线 / 自带图标包](#离线-自带图标包) 节，ccui 入口已自动注入，**业务层无感**。需要在 ccui 之外的早期阶段强制注入时，可手动 `installCcuiMdiIcons()` 或副作用 `import '@vaebe/ccui-icons/install'`。
+- **SVG 函数组件** — 少量需要静态打包、不走 Iconify 体系的图标以独立 ESM 命名导出，`sideEffects` 仅含 install 入口，未使用的导出全程 tree-shake。
 
-```ts
-// 手动调用（ccui 入口已自动 install，业务层一般无需重复）
-import { installCcuiMdiIcons } from '@vaebe/ccui-icons'
-installCcuiMdiIcons()
-
-// 或纯副作用 import：
-import '@vaebe/ccui-icons/install'
-```
-
-下面是当前 SVG 函数组件形态的内置图标：
+| 导出                    | 说明                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| `installCcuiMdiIcons()` | 幂等注册 `ccuiMdiCollection` 到 Iconify，ccui 入口已自动调用         |
+| `ccuiMdiCollection`     | 原始 `IconifyJSON` 数据对象，自定义 Iconify 集成时可复用             |
+| `CaretRightOutlined`    | SVG 函数组件，可独立渲染，也可塞进 `<c-icon :component="..." />`     |
+| `createIcon({ ... })`   | 自定义 SVG 函数组件构造器，与内置组件同 `size / color / rotate` 协议 |
 
 :::demo
 
 ```vue
 <script setup lang="ts">
 import { CaretRightOutlined } from '@vaebe/ccui-icons'
-
-const icons = [{ name: 'CaretRightOutlined', component: CaretRightOutlined }]
 </script>
 
 <template>
-  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-    <div
-      v-for="item in icons"
-      :key="item.name"
-      style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 120px; padding: 8px; border: 1px solid #f0f0f0; border-radius: 4px;"
-    >
-      <component :is="item.component" :size="24" color="#1677ff" />
-      <code style="font-size: 12px; color: #666;">{{ item.name }}</code>
-    </div>
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <CaretRightOutlined :size="20" color="#1677ff" />
+    <c-icon :component="CaretRightOutlined" :size="20" />
   </div>
 </template>
 ```
 
 :::
-
-直接配合 `<c-icon>` 也行 —— 把图标组件当 `component` 传入即可（保留 ConfigProvider 尺寸、clickable、loading 等能力）：
-
-```vue
-<script setup lang="ts">
-import { CaretRightOutlined } from '@vaebe/ccui-icons'
-</script>
-
-<template>
-  <c-icon :component="CaretRightOutlined" :size="20" />
-</template>
-```
 
 ## Props
 
