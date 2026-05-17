@@ -197,10 +197,13 @@ function ensureVersionsAligned() {
 // ── changelog（conventional-changelog） ──────────────────────────────────────
 // cli 里早就接了 `pnpm changelog`（conventional-changelog-cli），
 // 这里复用它，避免在 root 再装一份重复依赖。
+// 注意：packages/cli/CHANGELOG.md 在仓库 .gitignore 列表里（packages/*/CHANGELOG.md），
+// 是「本地生成的参考产物」，不入库。脚本只生成不 add，给作者手写
+// 根目录 CHANGELOG.md 时做参考。
 function generateChangelog() {
   step('Regenerate CHANGELOG (conventional-changelog)')
   runOrFatal('pnpm', ['--filter', 'ccui-cli', 'changelog'])
-  ok('packages/cli/CHANGELOG.md 已更新')
+  ok('packages/cli/CHANGELOG.md 已更新（本地参考，不入库）')
 }
 
 // ── 主流程 ───────────────────────────────────────────────────────────────────
@@ -341,21 +344,23 @@ if (DRY_RUN) {
   if (tagExists) {
     warn(`tag v${VERSION} 已存在，跳过`)
   } else {
-    runOrFatal('git', ['tag', `v${VERSION}`])
+    runOrFatal('git', ['tag', '-a', `v${VERSION}`, '-m', `Release v${VERSION}`])
     runOrFatal('git', ['push', 'origin', `v${VERSION}`])
     ok(`tag v${VERSION} 已推送`)
   }
 } else {
   step(`提交 release: v${VERSION}`)
+  // 只 add 三个发布包的 package.json。
+  // packages/cli/CHANGELOG.md 在 .gitignore 里，是本地参考产物，不入库。
   const addPaths = PACKAGES.map((p) => p.pkgJson)
-  if (!SKIP_CHANGELOG) addPaths.push('packages/cli/CHANGELOG.md')
   runOrFatal('git', ['add', ...addPaths])
   runOrFatal('git', ['commit', '-m', `chore: release v${VERSION}`])
+  // 必须 annotated tag (-a)，lightweight tag 不会被 push --follow-tags 推上去。
   const tagExists = spawnSync('git', ['rev-parse', `v${VERSION}`], { stdio: 'ignore' }).status === 0
   if (tagExists) {
     warn(`tag v${VERSION} 已存在，跳过 tag`)
   } else {
-    runOrFatal('git', ['tag', `v${VERSION}`])
+    runOrFatal('git', ['tag', '-a', `v${VERSION}`, '-m', `Release v${VERSION}`])
   }
   runOrFatal('git', ['push', '--follow-tags'])
   ok(`commit + tag v${VERSION} 已推送`)
