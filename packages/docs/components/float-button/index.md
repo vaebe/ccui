@@ -55,24 +55,27 @@
 
 ## 图标按钮
 
-`icon` 接收图标类名（CSS 字体图标），`description` 同时存在时图标在上、文字在下。
+通过 `#icon` slot 放入任意图标组件（推荐 `<c-icon>`）；`description` 同时存在时图标在上、文字在下。`icon` prop 仅适用于 iconfont 类名（无内置字体图标时为空，按需使用）。
 
 :::demo
 
 ```vue
 <template>
   <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button
-      icon="iconify-icon-question"
-      description="?"
-      :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    <c-float-button description="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+      <template #icon>
+        <c-icon name="mdi:help-circle-outline" :size="20" />
+      </template>
+    </c-float-button>
     <c-float-button
       type="primary"
-      icon="iconify-icon-message"
       description="客服"
       :style="{ insetBlockEnd: '80px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    >
+      <template #icon>
+        <c-icon name="mdi:message-text-outline" :size="20" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -200,24 +203,31 @@
 
 ### FloatButton Props
 
-| 参数        | 类型                     | 默认值      | 说明                                 |
-| ----------- | ------------------------ | ----------- | ------------------------------------ |
-| shape       | `'circle' \| 'square'`   | `'circle'`  | 形状                                 |
-| type        | `'default' \| 'primary'` | `'default'` | 类型                                 |
-| description | string                   | —           | 内部文字（与 icon 同时存在时在下方） |
-| icon        | string                   | —           | 图标类名                             |
-| badge       | `number \| string`       | —           | 右上角徽标数                         |
-| href        | string                   | —           | 链接地址                             |
-| target      | string                   | —           | 链接 target（`_blank` 等）           |
-| tooltip     | string                   | —           | 悬浮提示文字                         |
+| 参数        | 类型                     | 默认值      | 说明                                                   |
+| ----------- | ------------------------ | ----------- | ------------------------------------------------------ |
+| shape       | `'circle' \| 'square'`   | `'circle'`  | 形状                                                   |
+| type        | `'default' \| 'primary'` | `'default'` | 类型                                                   |
+| description | string                   | —           | 内部文字（与 icon 同时存在时在下方）                   |
+| icon        | string                   | —           | iconfont CSS 类名；推荐改用 `#icon` slot 放 `<c-icon>` |
+| badge       | `number \| string`       | —           | 右上角徽标数                                           |
+| href        | string                   | —           | 链接地址                                               |
+| target      | string                   | —           | 链接 target（`_blank` 等）                             |
+| tooltip     | string                   | —           | 悬浮提示文字                                           |
+
+### FloatButton Slots
+
+| 名称        | 说明                                            |
+| ----------- | ----------------------------------------------- |
+| icon        | 自定义图标（覆盖 `icon` prop，推荐 `<c-icon>`） |
+| description | 自定义文字内容（覆盖 `description` prop）       |
 
 ### BackTop Props
 
-| 参数             | 类型                                           | 默认值      | 说明                         |
-| ---------------- | ---------------------------------------------- | ----------- | ---------------------------- |
-| visibilityHeight | number                                         | `400`       | 滚动条到达多少 px 时显示按钮 |
-| duration         | number                                         | `450`       | 滚回顶部的动画时长（ms）     |
-| target           | `string \| HTMLElement \| (() => HTMLElement)` | `window`    | 监听滚动的目标容器           |
-| shape            | `'circle' \| 'square'`                         | `'circle'`  | 形状                         |
-| type             | `'default' \| 'primary'`                       | `'default'` | 类型                         |
-| icon             | string                                         | —           | 图标类名                     |
+| 参数             | 类型                                           | 默认值      | 说明                                                   |
+| ---------------- | ---------------------------------------------- | ----------- | ------------------------------------------------------ |
+| visibilityHeight | number                                         | `400`       | 滚动条到达多少 px 时显示按钮                           |
+| duration         | number                                         | `450`       | 滚回顶部的动画时长（ms）                               |
+| target           | `string \| HTMLElement \| (() => HTMLElement)` | `window`    | 监听滚动的目标容器                                     |
+| shape            | `'circle' \| 'square'`                         | `'circle'`  | 形状                                                   |
+| type             | `'default' \| 'primary'`                       | `'default'` | 类型                                                   |
+| icon             | string                                         | —           | iconfont CSS 类名；推荐改用 `#icon` slot 放 `<c-icon>` |
