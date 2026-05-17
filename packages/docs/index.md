@@ -12,9 +12,6 @@ hero:
       text: 快速开始
       link: /introduce
     - theme: alt
-      text: 组件总览
-      link: /components/button/
-    - theme: alt
       text: GitHub
       link: https://github.com/vaebe/ccui
 features:
