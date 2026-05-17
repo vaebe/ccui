@@ -9,7 +9,11 @@
 ```vue
 <template>
   <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button description="?" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }" />
+    <c-float-button :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+      <template #icon>
+        <c-icon name="mdi:help-circle-outline" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -25,10 +29,13 @@
   <div style="position: relative; height: 200px; background: #f6f8fa">
     <c-float-button
       type="primary"
-      description="★"
       :badge="5"
       :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    >
+      <template #icon>
+        <c-icon name="mdi:bell-outline" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -42,11 +49,11 @@
 ```vue
 <template>
   <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button
-      shape="square"
-      description="HOME"
-      :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    <c-float-button shape="square" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+      <template #icon>
+        <c-icon name="mdi:home-outline" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -92,11 +99,14 @@
 <template>
   <div style="position: relative; height: 200px; background: #f6f8fa">
     <c-float-button
-      description="DOC"
       href="https://github.com/vaebe/ccui"
       target="_blank"
       :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    >
+      <template #icon>
+        <c-icon name="mdi:file-document-outline" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -114,10 +124,13 @@
   <div style="position: relative; height: 200px; background: #f6f8fa">
     <c-float-button
       type="primary"
-      description="?"
       tooltip="点击查看帮助文档"
       :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    >
+      <template #icon>
+        <c-icon name="mdi:help-circle-outline" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
@@ -133,23 +146,26 @@
 ```vue
 <template>
   <div style="position: relative; height: 280px; background: #f6f8fa">
-    <c-float-button
-      description="?"
-      tooltip="帮助"
-      :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
-    <c-float-button
-      description="✉"
-      tooltip="反馈"
-      :style="{ insetBlockEnd: '80px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    <c-float-button tooltip="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+      <template #icon>
+        <c-icon name="mdi:help-circle-outline" />
+      </template>
+    </c-float-button>
+    <c-float-button tooltip="反馈" :style="{ insetBlockEnd: '80px', insetInlineEnd: '16px', position: 'absolute' }">
+      <template #icon>
+        <c-icon name="mdi:email-outline" />
+      </template>
+    </c-float-button>
     <c-float-button
       type="primary"
-      description="+"
       :badge="3"
       tooltip="新建工单"
       :style="{ insetBlockEnd: '144px', insetInlineEnd: '16px', position: 'absolute' }"
-    />
+    >
+      <template #icon>
+        <c-icon name="mdi:plus" />
+      </template>
+    </c-float-button>
   </div>
 </template>
 ```
