@@ -55,7 +55,10 @@ export const createVitepressSidebarTemplates = (componentsInfo = []) => {
     const rootItem = {
       text: nav.text,
       link: nav.link,
-      items: [{ text: '简介', link: '/introduce' }],
+      items: [
+        { text: '简介', link: '/introduce' },
+        { text: 'AI 接入', link: '/for-ai' },
+      ],
     }
     const sidebar = [rootItem, ...nav.handler(componentsInfo)]
     // 输出原样的 JS 字面量；后续 lint/Prettier 会再格式化为最终风格。

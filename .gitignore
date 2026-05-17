@@ -31,6 +31,8 @@ packages/ccui/build
 **/.vitepress/config/enSidebar.ts
 **/.vitepress/config.ts.js
 **/.vitepress/cache
+packages/docs/public/llms.txt
+packages/docs/public/llms-full.txt
 
 packages/*/CHANGELOG.md
 # test
