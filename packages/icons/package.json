@@ -1,9 +1,12 @@
 {
   "name": "@vaebe/ccui-icons",
   "version": "2.0.0-beta.0",
-  "description": "Tree-shakable SVG icon set for vue3-ccui — all icons inlined, no network",
+  "description": "Offline icon assets for vue3-ccui — Iconify mdi collection inlined + tree-shakable SVG components, no CDN",
   "keywords": [
     "icons",
+    "iconify",
+    "mdi",
+    "offline",
     "svg",
     "vue",
     "vue3",
@@ -25,7 +28,10 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/install.js",
+    "./dist/install.cjs"
+  ],
   "files": [
     "dist",
     "README.md",
@@ -52,6 +58,16 @@
         "default": "./dist/icons/*.cjs"
       }
     },
+    "./install": {
+      "import": {
+        "types": "./dist/install.d.ts",
+        "default": "./dist/install.js"
+      },
+      "require": {
+        "types": "./dist/install.d.cts",
+        "default": "./dist/install.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -65,9 +81,12 @@
     "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
+    "@iconify/vue": "^5.0.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@iconify-icons/mdi": "^1.2.48",
+    "@iconify/vue": "^5.0.1",
     "@types/node": "^22.19.0",
     "tsdown": "^0.18.0",
     "typescript": "^5.9.3",

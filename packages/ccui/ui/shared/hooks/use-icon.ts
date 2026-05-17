@@ -1,6 +1,9 @@
 import type { VNode } from 'vue'
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { h } from 'vue'
+// 副作用 import：把 ccui 内置 mdi 图标注册到 Iconify 本地数据源，
+// 让 `mdi:check` 等内置图标无需联网即可渲染（覆盖所有走 renderIconNode 的组件）。
+import '@vaebe/ccui-icons/install'
 
 export type CcIconValue = VNode | string
 

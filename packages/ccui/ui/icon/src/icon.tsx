@@ -8,6 +8,9 @@ import { useNamespace } from '../../shared/hooks/use-namespace'
 import { resolveIcon } from './icon-registry'
 import { iconProps } from './icon-types'
 import './icon.scss'
+// 副作用 import：覆盖只用 `<c-icon>` 但没走 renderIconNode 的场景
+// （use-icon.ts 也有相同 import，重复触发幂等无副作用）。
+import '@vaebe/ccui-icons/install'
 
 const DEFAULT_CONFIG: ConfigContext = {
   prefixCls: 'ccui',

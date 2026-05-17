@@ -48,6 +48,7 @@
     "@floating-ui/dom": "^1.7.4",
     "@floating-ui/vue": "^1.1.9",
     "@iconify/vue": "^5.0.1",
+    "@vaebe/ccui-icons": "workspace:*",
     "dayjs": "^1.11.19",
     "qrcode-generator": "^2.0.4"
   },

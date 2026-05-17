@@ -221,7 +221,11 @@ const themeMap = {
 
 ## 离线 / 自带图标包
 
-Iconify 默认按图标懒加载，需要离线场景时使用透传出的 API 把图标数据预先注入：
+**ccui 内部使用的 mdi 图标默认已离线**。`@vaebe/ccui-icons` 把项目源码运行时使用的 14 个 mdi 图标 SVG 数据 inline 进包（gzip ~1.8 KB），ccui 入口在加载时自动 `addCollection` 注册到 Iconify 本地数据源。内网 / 无网环境下，浮层、表单状态、Tree 展开、上传进度、回顶按钮等组件的内置图标无需任何配置即可渲染。
+
+> 内置覆盖清单详见下方「项目内 mdi 图标一览」节。
+
+**扩展非 ccui 内置的图标**（业务层引入新 mdi / 其他 Iconify 图标集）时，仍可通过透传出的 API 把图标数据预先注入：
 
 ```ts
 import { addCollection, addIcon } from '@vaebe/ccui'
@@ -348,16 +352,21 @@ ccui 全部组件、demo 与文档统一使用 Iconify 的 [`mdi`](https://icon-
 
 ## 内置图标包 `@vaebe/ccui-icons`
 
-> ccui 内部已统一改用 `<c-icon name="mdi:..." />`（Iconify mdi）渲染图标；`@vaebe/ccui-icons` 面向需要更小离线打包体积、不想引入 Iconify 运行时的下游使用，按需独立安装即可。
+独立 workspace 包 `@vaebe/ccui-icons`，承担两个职责：
 
-独立 workspace 包 `@vaebe/ccui-icons`：
+1. **Iconify mdi 离线 collection**：把 ccui 组件源码用到的 14 个 mdi 图标 SVG 数据 inline，通过 `installCcuiMdiIcons()` 注入到 `@iconify/vue` 全局 collection；ccui 入口自动调用，**下游接入 ccui 时无需手动配置**即可在无网环境渲染 `<c-icon name="mdi:..." />`。包内还导出 `ccuiMdiCollection`（原始 `IconifyJSON` 对象），可在自定义 Iconify 集成场景下复用。
+2. **Tree-shakable SVG 函数组件**：少量 ccui 直接使用的非 mdi 形态图标以独立 ESM 组件导出（命名 export + `sideEffects` 仅包含 install 入口），用户按需 import 不会带其他组件进 bundle。
 
-- **完全离线**：SVG 路径硬编码在源码里，安装后零网络依赖
-- **按需引入**：命名导出 + `sideEffects: false`，未使用的图标不会进打包产物
-- **独立发布**：与 `theme` 包并列；外部用户可单独安装使用
-- **函数式组件**：接受 `size / color / rotate / spin` props，可与任意宿主样式协作
+```ts
+// 手动调用（ccui 入口已自动 install，业务层一般无需重复）
+import { installCcuiMdiIcons } from '@vaebe/ccui-icons'
+installCcuiMdiIcons()
 
-下面是当前内置的全部图标，新增图标请提到这个清单中：
+// 或纯副作用 import：
+import '@vaebe/ccui-icons/install'
+```
+
+下面是当前 SVG 函数组件形态的内置图标：
 
 :::demo
 
