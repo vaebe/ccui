@@ -348,11 +348,13 @@ ccui 全部组件、demo 与文档统一使用 Iconify 的 [`mdi`](https://icon-
 
 ## 内置图标包 `@vaebe/ccui-icons`
 
-ccui 内部所有组件用到的图标都收敛到独立 workspace 包 `@vaebe/ccui-icons`：
+> ccui 内部已统一改用 `<c-icon name="mdi:..." />`（Iconify mdi）渲染图标；`@vaebe/ccui-icons` 面向需要更小离线打包体积、不想引入 Iconify 运行时的下游使用，按需独立安装即可。
+
+独立 workspace 包 `@vaebe/ccui-icons`：
 
 - **完全离线**：SVG 路径硬编码在源码里，安装后零网络依赖
 - **按需引入**：命名导出 + `sideEffects: false`，未使用的图标不会进打包产物
-- **独立发布**：与 `theme` 包并列，通过 `workspace:*` 被 ccui 依赖；外部用户可单独安装使用
+- **独立发布**：与 `theme` 包并列；外部用户可单独安装使用
 - **函数式组件**：接受 `size / color / rotate / spin` props，可与任意宿主样式协作
 
 下面是当前内置的全部图标，新增图标请提到这个清单中：

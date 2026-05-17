@@ -1,7 +1,7 @@
 import type { CSSProperties, VNode } from 'vue'
 import type { FlattenedTreeNode, TreeDropInfo, TreeDropPosition, TreeNodeKey, TreeProps } from './tree-types'
 import { computed, defineComponent, h, nextTick, onUnmounted, ref, shallowRef, toRef, watch } from 'vue'
-import { CaretRightOutlined } from '@vaebe/ccui-icons'
+import CIcon from '../../icon/src/icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { useVirtualList } from '../../shared/hooks/use-virtual-list'
 import { computeNextCheckedKeys, useCheckedDerived } from './composables/use-tree-check'
@@ -381,7 +381,7 @@ export default defineComponent({
           class: [ns.e('switcher'), expanded && ns.em('switcher', 'open'), props.classNames?.switcher],
           style: props.styles?.switcher,
         },
-        h(CaretRightOutlined, { size: 12 }),
+        h(CIcon, { name: 'mdi:menu-right', size: 12 }),
       )
     }
 

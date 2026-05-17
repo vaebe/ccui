@@ -40,10 +40,6 @@
     "tag": "latest"
   },
   "scripts": {
-    "build:icons": "pnpm --filter @vaebe/ccui-icons build",
-    "pretest": "pnpm build:icons",
-    "pretest:watch": "pnpm build:icons",
-    "precoverage": "pnpm build:icons",
     "test": "vp test run",
     "test:watch": "vp test",
     "coverage": "vp test run --coverage"
@@ -52,7 +48,6 @@
     "@floating-ui/dom": "^1.7.4",
     "@floating-ui/vue": "^1.1.9",
     "@iconify/vue": "^5.0.1",
-    "@vaebe/ccui-icons": "workspace:^",
     "dayjs": "^1.11.19",
     "qrcode-generator": "^2.0.4"
   },
