@@ -1,6 +1,6 @@
 {
   "name": "@vaebe/ccui",
-  "version": "2.0.1-beta.2",
+  "version": "2.0.1-beta.3",
   "description": "vue3-ccui components based on Vite and Vue3",
   "keywords": [
     "components",
