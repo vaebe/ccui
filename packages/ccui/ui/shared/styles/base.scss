@@ -1,9 +1,7 @@
 // ccui 组件库基础样式重置
-// 清除 ccui 组件内部 ul / ol 默认列表标记（包含被 Teleport 到 body 的弹层）
-[class^='ccui-'] ul,
-[class^='ccui-'] ol,
-[class*=' ccui-'] ul,
-[class*=' ccui-'] ol {
+// 全局清除 ul / ol 默认列表标记（小圆点 / 序号）与内外边距
+ul,
+ol {
   list-style: none;
   margin: 0;
   padding: 0;

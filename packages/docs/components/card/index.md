@@ -135,10 +135,11 @@
 <template>
   <div style="display: flex; gap: 16px; flex-wrap: wrap">
     <c-card style="width: 240px" :body-style="{ padding: '16px' }">
-      <img
-        src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-        style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 12px"
-      />
+      <div
+        style="width: 100%; height: 120px; border-radius: 4px; margin-bottom: 12px; background: linear-gradient(135deg, #1677ff 0%, #69c0ff 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 500"
+      >
+        Vue 3
+      </div>
       <c-card-meta title="Vue 3 实战课" description="60 节系统课程，附完整源码" />
     </c-card>
     <c-card style="width: 240px" :body-style="{ padding: '16px' }">

@@ -15,6 +15,15 @@
   margin-block-end: 8px;
 }
 
+/* demo 渲染区按"App 环境"对待：抹掉 VitePress .vp-doc ul/ol 的正文样式，
+   避免示例里的列表被套上小圆点和缩进。正文 markdown 列表不受影响。 */
+.vp-doc [class*='_example-showcase_'] ul,
+.vp-doc [class*='_example-showcase_'] ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .mt-10 {
   margin-top: 10px;
 }
