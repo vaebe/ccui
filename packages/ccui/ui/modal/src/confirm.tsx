@@ -1,6 +1,7 @@
 import type { AppContext, VNode } from 'vue'
 import type { ModalFuncOptions, ModalFuncReturn, ModalFuncType } from './confirm-types'
 import { createApp, defineComponent, h, reactive, ref } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import Modal from './modal'
 
@@ -12,9 +13,17 @@ interface ParentContext {
 const ICON_MAP: Record<ModalFuncType, string> = {
   confirm: '?',
   info: 'ⓘ',
-  success: '✓',
-  error: '✕',
+  success: 'mdi:check-circle',
+  error: 'mdi:close-circle',
   warning: '!',
+}
+
+function renderTypeIcon(type: ModalFuncType): VNode | string {
+  const value = ICON_MAP[type]
+  if (value.includes(':')) {
+    return renderIconNode(value) ?? value
+  }
+  return value
 }
 
 const TYPE_OK_TYPE: Record<ModalFuncType, 'primary' | 'danger'> = {
@@ -116,7 +125,7 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
 
         const renderIcon = (): VNode => {
           if (state.icon === undefined) {
-            return <span class={[ns.e('icon'), ns.em('icon', type)]}>{ICON_MAP[type]}</span>
+            return <span class={[ns.e('icon'), ns.em('icon', type)]}>{renderTypeIcon(type)}</span>
           }
           if (typeof state.icon === 'string') {
             return state.icon ? (

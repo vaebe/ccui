@@ -8,6 +8,7 @@ import type {
   TitleProps,
 } from './typography-types'
 import { computed, defineComponent, h, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { linkProps, paragraphProps, textProps, titleProps } from './typography-types'
 import './typography.scss'
@@ -227,7 +228,7 @@ function createTypographyComponent(
             title={titleAttr}
             onClick={triggerCopy}
           >
-            {copied.value ? '✓' : '⎘'}
+            {copied.value ? renderIconNode('mdi:check') : renderIconNode('mdi:content-copy')}
           </span>
         )
       }

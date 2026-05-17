@@ -19,6 +19,7 @@ import {
   ref,
   watch,
 } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
@@ -364,24 +365,24 @@ export default defineComponent({
       if (!effectiveHasFeedback.value) return null
       const status = currentStatus.value
       if (!status) return null
-      const symbol =
+      const iconName =
         status === 'success'
-          ? '✓'
+          ? 'mdi:check-circle'
           : status === 'error'
-            ? '✕'
+            ? 'mdi:close-circle'
             : status === 'warning'
-              ? '!'
-              : status === 'validating'
-                ? '◌'
-                : ''
-      if (!symbol) return null
+              ? 'mdi:alert-circle'
+              : ''
+      const fallback = status === 'validating' ? '◌' : ''
+      const content = iconName ? renderIconNode(iconName) : fallback
+      if (!content) return null
       return h(
         'span',
         {
           class: [ns.e('feedback'), ns.em('feedback', status)],
           'aria-hidden': 'true',
         },
-        symbol,
+        content,
       )
     }
 

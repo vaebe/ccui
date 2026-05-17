@@ -1,6 +1,7 @@
 import type { VNode } from 'vue'
 import type { UploadFile, UploadProps } from './upload-types'
 import { computed, defineComponent, h, ref, shallowRef } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { fileToUploadFile, uploadProps } from './upload-types'
 import './upload.scss'
@@ -222,7 +223,9 @@ export default defineComponent({
         ns.em('item', `status-${item.status ?? 'done'}`),
         ns.em('item', `list-${props.listType}`),
       ]
-      const icon = item.status === 'uploading' ? '⌛' : item.status === 'error' ? '⚠' : '✓'
+      const iconName =
+        item.status === 'uploading' ? 'mdi:loading' : item.status === 'error' ? 'mdi:alert-circle' : 'mdi:check-circle'
+      const icon = renderIconNode(iconName)
       const thumbSrc = item.thumbUrl || item.url
       const showThumb = (props.listType === 'picture' || isCard) && thumbSrc
       if (isCard) {

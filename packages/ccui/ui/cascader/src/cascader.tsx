@@ -622,7 +622,9 @@ export default defineComponent({
                   aria-label="移除"
                   onClick={(e: MouseEvent) => removeTag(e, path)}
                 >
-                  {slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? '×')}
+                  {slots.removeIcon
+                    ? slots.removeIcon()
+                    : (renderIconNode(props.removeIcon) ?? renderIconNode('mdi:close'))}
                 </span>
               </span>
             )
@@ -690,7 +692,7 @@ export default defineComponent({
                     <span class={ns.e('expand-icon')}>
                       {slots.expandIcon
                         ? slots.expandIcon({ item, level: columnIndex })
-                        : (renderIconNode(props.expandIcon) ?? '›')}
+                        : (renderIconNode(props.expandIcon) ?? renderIconNode('mdi:chevron-right'))}
                     </span>
                   )
                 )}
@@ -832,11 +834,13 @@ export default defineComponent({
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
-              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close'))}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '▾')}
+              {slots.suffixIcon
+                ? slots.suffixIcon()
+                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:menu-down'))}
             </span>
           )}
         </div>

@@ -475,7 +475,9 @@ export default defineComponent({
                     aria-label="移除"
                     onClick={(e: MouseEvent) => removeTag(e, tag.key)}
                   >
-                    {slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? '×')}
+                    {slots.removeIcon
+                      ? slots.removeIcon()
+                      : (renderIconNode(props.removeIcon) ?? renderIconNode('mdi:close'))}
                   </span>
                 )}
               </span>
@@ -528,11 +530,13 @@ export default defineComponent({
           {renderInputContent()}
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
-              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
+              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close'))}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '▾')}
+              {slots.suffixIcon
+                ? slots.suffixIcon()
+                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:menu-down'))}
             </span>
           )}
         </div>

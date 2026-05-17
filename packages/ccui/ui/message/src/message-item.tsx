@@ -1,14 +1,24 @@
 import type { MessageItemProps } from './message-types'
 import { defineComponent, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { messageItemProps } from './message-types'
 
 const ICON_MAP: Record<string, string> = {
   info: 'ⓘ',
-  success: '✓',
+  success: 'mdi:check-circle',
   warning: '!',
-  error: '✕',
+  error: 'mdi:close-circle',
   loading: '⟳',
+}
+
+function renderTypeIcon(type: string) {
+  const value = ICON_MAP[type]
+  if (!value) return null
+  if (value.includes(':')) {
+    return renderIconNode(value) ?? value
+  }
+  return value
 }
 
 export default defineComponent({
@@ -71,7 +81,7 @@ export default defineComponent({
                 class={[ns.e('icon'), ns.em('icon', props.type), props.classNames?.icon]}
                 style={props.styles?.icon}
               >
-                {props.icon ? <i class={props.icon} /> : ICON_MAP[props.type]}
+                {props.icon ? <i class={props.icon} /> : renderTypeIcon(props.type)}
               </span>
               <span class={[ns.e('content'), props.classNames?.content]} style={props.styles?.content}>
                 {slots.default ? slots.default() : props.content}

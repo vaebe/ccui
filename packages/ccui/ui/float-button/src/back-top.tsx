@@ -1,5 +1,6 @@
 import type { BackTopProps } from './float-button-types'
 import { defineComponent, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { backTopProps } from './float-button-types'
 import './float-button.scss'
@@ -86,7 +87,13 @@ export default defineComponent({
             <span class={ns.e('body')}>
               <span class={ns.e('content')}>
                 <span class={ns.e('icon')}>
-                  {slots.default ? slots.default() : props.icon ? <i class={props.icon} /> : '↑'}
+                  {slots.default ? (
+                    slots.default()
+                  ) : props.icon ? (
+                    <i class={props.icon} />
+                  ) : (
+                    renderIconNode('mdi:arrow-up')
+                  )}
                 </span>
               </span>
             </span>

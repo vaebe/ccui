@@ -284,7 +284,9 @@ export default defineComponent({
           {inputNode}
           {showClear.value && (
             <span class={ns.e('clear')} role="button" aria-label="clear" onMousedown={clear}>
-              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '✕')}
+              {slots.clearIcon
+                ? slots.clearIcon()
+                : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close-circle'))}
             </span>
           )}
         </div>

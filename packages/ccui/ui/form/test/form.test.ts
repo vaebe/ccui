@@ -1,6 +1,7 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { Icon as IconifyIcon } from '@iconify/vue'
 import { defineComponent, h, nextTick, reactive } from 'vue'
 import { Form, FormItem, FormList, FormProvider } from '../index'
 import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
@@ -1265,7 +1266,7 @@ describe('L-1.6 labelCol / wrapperCol 栅格', () => {
 })
 
 describe('L-1.6 hasFeedback', () => {
-  it('FormItem hasFeedback=true 校验成功时显示 ✓ 图标', async () => {
+  it('FormItem hasFeedback=true 校验成功时显示 mdi:check-circle 图标', async () => {
     const model = reactive({ name: '' })
     const wrapper = mount(
       defineComponent({
@@ -1286,10 +1287,10 @@ describe('L-1.6 hasFeedback', () => {
     const feedback = wrapper.find('.ccui-form-item__feedback')
     expect(feedback.exists()).toBe(true)
     expect(feedback.classes()).toContain('ccui-form-item__feedback--success')
-    expect(feedback.text()).toBe('✓')
+    expect(feedback.findComponent(IconifyIcon).props('icon')).toBe('mdi:check-circle')
   })
 
-  it('校验失败时显示 ✕ 图标 + error 类', async () => {
+  it('校验失败时显示 mdi:close-circle 图标 + error 类', async () => {
     const model = reactive({ name: 'x' })
     const wrapper = mount(
       defineComponent({
@@ -1309,7 +1310,7 @@ describe('L-1.6 hasFeedback', () => {
     const feedback = wrapper.find('.ccui-form-item__feedback')
     expect(feedback.exists()).toBe(true)
     expect(feedback.classes()).toContain('ccui-form-item__feedback--error')
-    expect(feedback.text()).toBe('✕')
+    expect(feedback.findComponent(IconifyIcon).props('icon')).toBe('mdi:close-circle')
   })
 
   it('Form 级 hasFeedback 默认应用到所有 FormItem', async () => {

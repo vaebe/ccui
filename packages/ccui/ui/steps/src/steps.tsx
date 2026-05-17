@@ -1,5 +1,6 @@
 import type { StepItem, StepsProps, StepStatus } from './steps-types'
 import { computed, defineComponent } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { stepsProps } from './steps-types'
 import './steps.scss'
@@ -49,10 +50,10 @@ export default defineComponent({
         return <i class={[ns.e('icon-custom'), item.icon]} />
       }
       if (status === 'finish') {
-        return <span class={ns.e('check')}>✓</span>
+        return <span class={ns.e('check')}>{renderIconNode('mdi:check')}</span>
       }
       if (status === 'error') {
-        return <span class={ns.e('check')}>✕</span>
+        return <span class={ns.e('check')}>{renderIconNode('mdi:close')}</span>
       }
       return <span class={ns.e('number')}>{index + 1}</span>
     }

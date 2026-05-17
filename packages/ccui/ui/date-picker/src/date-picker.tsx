@@ -940,7 +940,9 @@ export default defineComponent({
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              {slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? '📅')}
+              {slots.suffixIcon
+                ? slots.suffixIcon()
+                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:calendar-outline'))}
             </span>
           )}
         </div>
