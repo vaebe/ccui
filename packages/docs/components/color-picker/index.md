@@ -283,7 +283,3 @@ const value = ref('#1677ff')
 | SV    | Arrow Up/Down            | 明度 ±1（Shift ±10）       |
 | Hue   | Arrow Right/Left/Up/Down | 色相 ±1（Shift ±10）       |
 | Alpha | Arrow Right/Left/Up/Down | 透明度 ±0.01（Shift ±0.1） |
-
-## 已知限制（未交付）
-
-- **eyedropper（取色器）**：浏览器 EyeDropper API 集成留给后续。
