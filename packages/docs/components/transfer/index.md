@@ -178,8 +178,8 @@ const selected = ref<string[]>([])
     :titles="['可选角色', '已分配']"
   >
     <template #selections-icon="{ direction, selectedCount, totalCount }">
-      <span v-if="direction === 'right'">★ {{ selectedCount }}/{{ totalCount }}</span>
-      <span v-else>☐ {{ selectedCount }}/{{ totalCount }}</span>
+      <span v-if="direction === 'right'"><c-icon name="mdi:star" /> {{ selectedCount }}/{{ totalCount }}</span>
+      <span v-else><c-icon name="mdi:checkbox-blank-outline" /> {{ selectedCount }}/{{ totalCount }}</span>
     </template>
   </c-transfer>
 </template>

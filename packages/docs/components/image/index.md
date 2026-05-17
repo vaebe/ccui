@@ -73,7 +73,7 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
   <c-image src="https://invalid.example.com/y.png" :width="160" :height="120">
     <template #error>
       <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ff4d4f">
-        资源已下线 ✕
+        资源已下线 <c-icon name="mdi:close-circle" />
       </div>
     </template>
   </c-image>
@@ -264,7 +264,7 @@ function openAt(idx) {
           gap: 4px;
         "
       >
-        <span>⚠️</span>
+        <c-icon name="mdi:alert" />
         <span>主图与备份图均失败</span>
       </div>
     </template>

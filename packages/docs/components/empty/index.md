@@ -173,7 +173,7 @@ function reset() {
     <template #description>
       <div style="color: rgba(0, 0, 0, 0.65); line-height: 1.6">
         当前账户尚未开通任何应用 <br />
-        <a href="#" style="color: #1677ff">查看接入指引 →</a>
+        <a href="#" style="color: #1677ff">查看接入指引 <c-icon name="mdi:arrow-right" /></a>
       </div>
     </template>
     <c-button type="primary">立即开通</c-button>

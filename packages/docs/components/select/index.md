@@ -226,12 +226,12 @@ const options = [
   <c-select v-model="value" mode="multiple" clearable :options="options">
     <template #option="{ option, selected }">
       <span>{{ option.raw.avatar }} {{ option.label }}</span>
-      <span v-if="selected" style="margin-left: 8px;">✓</span>
+      <c-icon v-if="selected" name="mdi:check" style="margin-left: 8px;" />
     </template>
     <template #tag="{ option, onClose }">
       <span style="display: inline-flex; gap: 4px; padding: 0 8px; background: #e6f4ff; border-radius: 12px;">
         {{ option.raw.avatar }} {{ option.label }}
-        <span style="cursor: pointer;" @click.stop="onClose">×</span>
+        <c-icon style="cursor: pointer;" name="mdi:close" @click.stop="onClose" />
       </span>
     </template>
     <template #empty>

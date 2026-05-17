@@ -67,7 +67,9 @@
 <template>
   <c-progress :percent="50" :format="(p) => `${p} / 100`" />
   <c-progress :percent="80" :format="(p) => `进度 ${p}%`" />
-  <c-progress :percent="100" :format="() => '已完成 ✓'" />
+  <c-progress :percent="100">
+    <template #format>已完成 <c-icon name="mdi:check" /></template>
+  </c-progress>
 </template>
 ```
 

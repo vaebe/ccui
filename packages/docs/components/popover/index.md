@@ -309,7 +309,7 @@ function cancel() {
 <template>
   <c-popover ref="popRef" trigger="click" :width="280">
     <template #title>
-      <span style="color: #f5222d">⚠️ 确认删除</span>
+      <span style="color: #f5222d"><c-icon name="mdi:alert" /> 确认删除</span>
     </template>
     <template #content>
       <p style="margin: 0 0 12px; color: #595959">此操作将永久删除该文件，是否继续？</p>

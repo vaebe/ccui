@@ -338,7 +338,7 @@ const model = reactive<{ users: Array<{ name: string; email: string }> }>({
           <c-form-item :name="[field.name, 'email']" :rules="{ type: 'email' }">
             <c-input v-model="model.users[field.name].email" placeholder="email" />
           </c-form-item>
-          <c-button @click="move(field.name, Math.max(0, field.name - 1))">↑</c-button>
+          <c-button @click="move(field.name, Math.max(0, field.name - 1))"><c-icon name="mdi:arrow-up" /></c-button>
           <c-button @click="remove(field.name)">remove</c-button>
         </div>
         <c-button @click="add({ name: '', email: '' })">add user</c-button>

@@ -108,7 +108,7 @@
           justify-content: center;
         "
       >
-        ✓
+        <c-icon name="mdi:check" />
       </div>
     </template>
     <template #extra>

@@ -171,7 +171,8 @@ const date = ref('2026-03-15')
 <template>
   <c-calendar v-model="date">
     <template #dateCell="{ isSelected, day }">
-      {{ isSelected ? '✓' : day }}
+      <c-icon v-if="isSelected" name="mdi:check" />
+      <template v-else>{{ day }}</template>
     </template>
   </c-calendar>
 </template>

@@ -175,7 +175,9 @@
 
 ```vue
 <template>
-  <c-typography-text :copyable="{ text: 'sk-fullsecret123456' }"> sk-***456（点 ⎘ 复制完整 token） </c-typography-text>
+  <c-typography-text :copyable="{ text: 'sk-fullsecret123456' }">
+    sk-***456（点 <c-icon name="mdi:content-copy" /> 复制完整 token）
+  </c-typography-text>
 </template>
 ```
 
