@@ -28,10 +28,10 @@
     "docs:preview": "vitepress preview"
   },
   "dependencies": {
-    "@vitepress-code-preview/container": "^1.0.8",
-    "@vitepress-code-preview/plugin": "^1.0.6",
+    "@vaebe/ccui": "workspace:*",
     "@vaebe/ccui-icons": "workspace:*",
-    "@vaebe/ccui": "workspace:*"
+    "@vitepress-code-preview/container": "^1.0.8",
+    "@vitepress-code-preview/plugin": "^1.0.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
