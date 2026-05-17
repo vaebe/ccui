@@ -102,9 +102,21 @@ function buildExportsMap(components) {
 function buildFilesField(components) {
   // 主入口 + vite 拆出来的根级 lazy chunk + 单组件目录 + 资产 + 主题。
   // 不能只列 vue-ccui.{es,umd}.js —— 主 bundle 会动态 import 一组 hash 化
-  // 的 chunk-*.js / <locale>-*.js（locale 拆分用），漏掉它们会让运行时
-  // ERR_MODULE_NOT_FOUND。outDir 由 vite emptyOutDir 接管，不会混入 stage 文件。
-  const files = new Set(['*.js', 'style.css', 'index.d.ts', 'theme', 'README.md', 'LICENSE'])
+  // 的 chunk-*.js / <locale>-*.js（dayjs locale 拆分），漏掉它们会让运行时
+  // ERR_MODULE_NOT_FOUND。
+  //
+  // 用 `*-*.js` 通配 hash 后缀的拆分文件（`chunk-<hash>.js` / `en-<hash>.js` 等），
+  // 比 `*.js` 精确——避免开发者临时落到 build/ 的脚本被一起带进 npm 包。
+  const files = new Set([
+    'vue-ccui.es.js',
+    'vue-ccui.umd.js',
+    '*-*.js',
+    'style.css',
+    'index.d.ts',
+    'theme',
+    'README.md',
+    'LICENSE',
+  ])
   for (const { name } of components) files.add(`${name}/**`)
   return [...files].sort()
 }

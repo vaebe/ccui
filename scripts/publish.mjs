@@ -72,7 +72,8 @@ const RELEASE = argOf('--release', null) // 透传给 bumpp：patch / minor / ma
 // ── 发布矩阵 ─────────────────────────────────────────────────────────────────
 // 每项描述一个可发布包：从哪里读版本、用哪个工具发、从哪个工作目录发。
 //   tool:  'pnpm' 自动展开 workspace: 协议；'npm' 直接发已生成 build/ 的产物。
-//   build: 该包的构建命令（数组），相对 ROOT 工作目录。null 表示无需额外构建。
+//   build: 构建命令——可以是一组 [cmd, ...args]，或多组（数组的数组）；
+//          为空数组时跳过构建（已有别处提前 build 好）。
 //   pubDir: publish 命令的工作目录（相对 ROOT）。
 //   pkgJson: 读取版本号的 package.json（相对 ROOT）。
 const PACKAGES = [
@@ -243,6 +244,10 @@ if (YES) {
 // ── 构建 ─────────────────────────────────────────────────────────────────────
 for (const [i, pkg] of PACKAGES.entries()) {
   step(`[Build ${i + 1}/${PACKAGES.length}] ${pkg.name}`)
+  if (!pkg.build || pkg.build.length === 0) {
+    ok(`${pkg.name} 无 build 步骤，跳过`)
+    continue
+  }
   const buildCwd = pkg.buildCwd ? resolve(ROOT, pkg.buildCwd) : ROOT
   const steps = Array.isArray(pkg.build[0]) ? pkg.build : [pkg.build]
   for (const [cmd, ...rest] of steps) {

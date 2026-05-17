@@ -21,7 +21,7 @@ const open = ref(false)
     <section>
       <h2>Path 1 — main + tree-shake</h2>
       <MainButton type="primary" @click="open = true">open modal</MainButton>
-      <MainModal v-model:open="open" title="hi from main bundle">
+      <MainModal v-model:visible="open" title="hi from main bundle">
         <p>Tree-shaken from `@vaebe/ccui`.</p>
       </MainModal>
     </section>

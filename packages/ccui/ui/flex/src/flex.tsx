@@ -1,3 +1,4 @@
+// 强制 vue-tsc 在 flex.d.ts 里写明 csstype 引用，避免下游 TS2742 portable types。
 import type {} from 'csstype'
 import type { CSSProperties } from 'vue'
 import type { FlexProps } from './flex-types'
