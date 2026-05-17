@@ -255,87 +255,96 @@ addCollection(mdiSet)
 
 :::
 
-## 常用图标速览
+## 项目内 mdi 图标一览
 
-下面是 ~40 个高频 Iconify 图标，按场景分组。完整图标集可在 [icon-sets.iconify.design](https://icon-sets.iconify.design/) 查询。
+ccui 全部组件、demo 与文档统一使用 Iconify 的 [`mdi`](https://icon-sets.iconify.design/mdi/) 图标集（Material Design Icons），下表覆盖项目目前使用的全部图标，**按所属组件分组**。点击卡片复制图标名。
 
-:::demo
+<ClientOnly>
+  <IconShowcase
+    :groups="[
+      {
+        title: '反馈状态（Alert / Message / Notification / Modal.Confirm / Form / Steps / Upload / Result / Progress）',
+        icons: [
+          'mdi:check',
+          'mdi:check-circle',
+          'mdi:check-circle-outline',
+          'mdi:close',
+          'mdi:close-circle',
+          'mdi:close-circle-outline',
+          'mdi:alert',
+          'mdi:alert-circle',
+          'mdi:alert-circle-outline',
+          'mdi:information',
+          'mdi:information-outline',
+          'mdi:help-circle',
+          'mdi:help-circle-outline',
+        ],
+      },
+      {
+        title: '输入与选择（AutoComplete / Select / Cascader / Tree / TreeSelect / DatePicker / TimePicker / InputSearch）',
+        icons: [
+          'mdi:magnify',
+          'mdi:close',
+          'mdi:close-circle',
+          'mdi:chevron-down',
+          'mdi:chevron-up',
+          'mdi:chevron-left',
+          'mdi:chevron-right',
+          'mdi:menu-right',
+          'mdi:menu-down',
+          'mdi:calendar-outline',
+          'mdi:clock-outline',
+        ],
+      },
+      {
+        title: '导航 / 链接（BackTop / Carousel / Empty / Pagination / Anchor）',
+        icons: [
+          'mdi:arrow-up',
+          'mdi:arrow-down',
+          'mdi:arrow-left',
+          'mdi:arrow-right',
+          'mdi:open-in-new',
+          'mdi:link-variant',
+        ],
+      },
+      {
+        title: '操作（Typography / Tabs / Drawer / Modal / Upload / FloatButton）',
+        icons: [
+          'mdi:content-copy',
+          'mdi:pencil-outline',
+          'mdi:delete-outline',
+          'mdi:plus',
+          'mdi:minus',
+          'mdi:reload',
+          'mdi:upload',
+          'mdi:cloud-upload-outline',
+          'mdi:download',
+          'mdi:file-document-outline',
+          'mdi:eye-outline',
+          'mdi:eye-off-outline',
+        ],
+      },
+      {
+        title: '账号 / 通用（FloatButton demo / Layout / Menu）',
+        icons: [
+          'mdi:account-circle-outline',
+          'mdi:bell-outline',
+          'mdi:home-outline',
+          'mdi:cog-outline',
+          'mdi:menu',
+          'mdi:email-outline',
+          'mdi:message-text-outline',
+          'mdi:star',
+          'mdi:star-outline',
+          'mdi:heart',
+          'mdi:loading',
+        ],
+      },
+    ]"
+  />
+</ClientOnly>
 
-```vue
-<script setup lang="ts">
-const groups: Array<{ title: string; icons: string[] }> = [
-  {
-    title: '通用',
-    icons: [
-      'mdi:home',
-      'mdi:menu',
-      'mdi:close',
-      'mdi:cog',
-      'mdi:bell',
-      'mdi:help-circle',
-      'mdi:magnify',
-      'mdi:filter-variant',
-    ],
-  },
-  {
-    title: '账号',
-    icons: ['mdi:account', 'mdi:account-group', 'mdi:login', 'mdi:logout', 'mdi:lock', 'mdi:key'],
-  },
-  {
-    title: '操作',
-    icons: [
-      'mdi:plus',
-      'mdi:minus',
-      'mdi:check',
-      'mdi:pencil',
-      'mdi:delete',
-      'mdi:content-copy',
-      'mdi:content-paste',
-      'mdi:reload',
-    ],
-  },
-  {
-    title: '导航',
-    icons: [
-      'mdi:chevron-left',
-      'mdi:chevron-right',
-      'mdi:chevron-up',
-      'mdi:chevron-down',
-      'mdi:arrow-left',
-      'mdi:arrow-right',
-    ],
-  },
-  {
-    title: '反馈',
-    icons: ['mdi:information', 'mdi:alert', 'mdi:check-circle', 'mdi:close-circle'],
-  },
-  {
-    title: '文件 & 媒体',
-    icons: ['mdi:file', 'mdi:folder', 'mdi:download', 'mdi:upload', 'mdi:cloud', 'mdi:image', 'mdi:video', 'mdi:music'],
-  },
-]
-</script>
-
-<template>
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-    <section v-for="group in groups" :key="group.title">
-      <h4 style="margin: 0 0 8px;">{{ group.title }}</h4>
-      <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-        <div
-          v-for="name in group.icons"
-          :key="name"
-          style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 96px; padding: 8px; border: 1px solid #f0f0f0; border-radius: 4px;"
-        >
-          <c-icon :name="name" :size="24" />
-          <code style="font-size: 12px; color: #666;">{{ name }}</code>
-        </div>
-      </div>
-    </section>
-  </div>
-</template>
-```
-
-:::
+> 在 [icon-sets.iconify.design/mdi](https://icon-sets.iconify.design/mdi/) 可在线检索新图标，命名规则即 `mdi:<kebab-case-name>`。新增使用前先在此速览补登记。
 
 ## 内置图标包 `@vaebe/ccui-icons`
 
