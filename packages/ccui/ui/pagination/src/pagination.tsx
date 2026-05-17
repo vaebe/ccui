@@ -35,7 +35,7 @@ export default defineComponent({
 
     const innerCurrent = ref(props.current)
     const innerPageSize = ref(props.pageSize)
-    const jumperValue = ref('')
+    const jumperValue = ref(String(props.current))
 
     watch(
       () => props.current,
@@ -43,6 +43,9 @@ export default defineComponent({
         innerCurrent.value = val
       },
     )
+    watch(innerCurrent, (val) => {
+      jumperValue.value = String(val)
+    })
     watch(
       () => props.pageSize,
       (val) => {
@@ -119,7 +122,8 @@ export default defineComponent({
       if (!Number.isNaN(num) && num >= 1) {
         goTo(Math.floor(num))
       }
-      jumperValue.value = ''
+      // 若输入非法或被夹紧，回填到当前页
+      jumperValue.value = String(innerCurrent.value)
     }
 
     const renderTotal = () => {
