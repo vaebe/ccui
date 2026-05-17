@@ -1,3 +1,4 @@
+import type {} from 'csstype'
 import type { CSSProperties } from 'vue'
 import type { FlexProps } from './flex-types'
 import { computed, defineComponent, h } from 'vue'

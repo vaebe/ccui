@@ -111,6 +111,19 @@ export const parseComponentInfo = (name) => {
   return componentInfo
 }
 
+// 历史 gate：是否进入 prod build/release 范围。
+//
+// 当前（2.x）已经**不再用于** build.js / release.js / generate-dts.js——
+// 这三处都改为以 discoverComponents 为唯一范围（见 shared/discover-components.js），
+// 让产物范围保持一致。
+//
+// 仍保留供以下调用方使用：
+//   - commands/create.js  ：生成 vue-ccui.ts 时按 env=prod 过滤展示给最终用户的组件清单
+//   - commands/create.js  ：生成 VitePress 侧边栏时按 isProd 过滤 alpha 组件
+//   - commands/code-check.js：定义 lint/unit-test 默认覆盖的"已完成组件"集合
+//
+// 长期看 status / WHITE_LIST 应该被组件维度的 stability flag 取代；在此之前这三个调用方
+// 仍依赖该函数语义，不要直接删。
 export const isReadyToRelease = (componentName) => {
   return parseComponentInfo(componentName).status === '100%' || WHITE_LIST_READY_COMPONENTS.includes(componentName)
 }

@@ -3,6 +3,33 @@
 本项目变更遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格。
 2.x 是当前开发分支，对照 main 主分支记录。
 
+## [2.0.1-beta.3] (unreleased)
+
+发包链路重做：修正主包 `exports` map、补真实 `.d.ts`、统一 CSS 文件名、修复 resolver 默认 CSS 路径。
+
+### BREAKING CHANGES
+
+- **CSS import 路径变更**。全局样式与单组件样式的文件名统一改为 `style.css`：
+
+  ```diff
+  - import '@vaebe/ccui/ccui-cli.css'
+  - import '@vaebe/ccui/dist/vue3-ccui.css'  // 如果你照 resolver 旧 JSDoc 写死过
+  + import '@vaebe/ccui/style.css'
+  ```
+
+  单组件样式同步变化（`@vaebe/ccui/<comp>/ccui-cli.css` → `@vaebe/ccui/<comp>/style.css`），通常只有手写按需引入的用户会受影响——走 `@vaebe/unplugin-vue-components-ccui` resolver 的项目升级后无需改动。
+
+### Added
+
+- **完整 `exports` map**。主包 `package.json` 增加 `.` / `./<comp>` / `./<comp>/style.css` / `./theme/*` / `./style.css` 等导出条目。IDE 跳转、TypeScript `moduleResolution: 'bundler'` 项目的 subpath 解析、以及 `babel-plugin-import` 一类按需插件现在可以稳定工作。
+- **真实 `.d.ts` 类型产物**。由 `vue-tsc` 产出的真实声明文件随包发布，替换掉之前的占位壳——所有 `import { Xxx } from '@vaebe/ccui'` 不再回退到 `any`。
+- **Tree-shake 生效**。主包加 `sideEffects: ['**/*.css', '**/*.scss']`：未使用的组件代码会被打包工具裁掉，CSS / SCSS 文件继续保留副作用标记，不会被误删。
+
+### Fixed
+
+- **Resolver 默认 CSS 路径**：`@vaebe/unplugin-vue-components-ccui` 的 `cssBundlePath` 默认值由旧的 `'@vaebe/ccui/dist/vue3-ccui.css'`（指向一个并不存在的路径）修正为 `'@vaebe/ccui/style.css'`。之前未显式传 `cssBundlePath` 的用户实际上并没有拿到全局样式，升级到 v2.0.1-beta.3 之后会自动注入正确的 CSS bundle——此前可能存在的「部分样式缺失 / 视觉异常」会随之消失，对这类项目视为视觉变更，请在升级后回归一次。
+- **Resolver 组件元数据**：`ComponentEntry` 增加 `hasStyle?: boolean` 字段；`CConfigProvider` 标记为 `hasStyle: false`，避免 `importStyle: 'scss'` 模式下为没有样式资产的组件生成无效的 side-effect import。
+
 ## [2.0.0-beta.0] - 2026-05-16
 
 2.x 首个预发布版本（npm dist-tag: `beta`）。工具链迁移到 Vite+，组件库扩到 73+ 个组件，主题层向 Ant Design v6 设计语言全量对齐。

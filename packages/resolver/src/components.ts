@@ -17,6 +17,13 @@ export interface ComponentEntry {
   exportName: string
   /** Kebab-case directory whose `<dir>.scss` provides this component's styles. */
   styleDir: string
+  /**
+   * Set to `false` for components that ship no `.scss` (e.g. `ConfigProvider`).
+   * When `false`, `importStyle: 'scss'` mode skips side-effect style import to
+   * avoid resolving a non-existent file.
+   * @default true
+   */
+  hasStyle?: boolean
 }
 
 export const componentMap: Record<string, ComponentEntry> = {
@@ -40,7 +47,7 @@ export const componentMap: Record<string, ComponentEntry> = {
   CCollapse: { exportName: 'Collapse', styleDir: 'collapse' },
   CCollapseItem: { exportName: 'CollapseItem', styleDir: 'collapse' },
   CColorPicker: { exportName: 'ColorPicker', styleDir: 'color-picker' },
-  CConfigProvider: { exportName: 'ConfigProvider', styleDir: 'config-provider' },
+  CConfigProvider: { exportName: 'ConfigProvider', styleDir: 'config-provider', hasStyle: false },
   CDatePicker: { exportName: 'DatePicker', styleDir: 'date-picker' },
   CDescriptions: { exportName: 'Descriptions', styleDir: 'descriptions' },
   CDescriptionsItem: { exportName: 'DescriptionsItem', styleDir: 'descriptions' },

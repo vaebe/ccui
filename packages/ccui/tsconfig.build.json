@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "build/types",
+    "declarationDir": "build/types",
+    "rootDir": ".",
+    "noEmit": false,
+    "composite": false,
+    "skipLibCheck": true
+  },
+  "include": ["ui/**/*.ts", "ui/**/*.tsx", "ui/**/*.vue", "./index.d.ts", "./env.d.ts"],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/test/**",
+    "**/__tests__/**"
+  ]
+}

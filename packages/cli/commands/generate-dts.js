@@ -1,37 +1,129 @@
+// 真实生成 .d.ts —— vue-tsc 跑 tsconfig.build.json，把组件类型逐个落到
+// build/<comp>/index.d.ts，主入口落到 build/index.d.ts。
+//
+// 历史：之前是把一段硬编码的 "install + version" 壳字符串 copy 给每个组件目录，
+// 用户在 TS 项目里完全拿不到组件 props/emits 类型（TS7016 implicit-any）。
+// 已废弃的旧实现还有一个 entryDir bug —— 写成了 packages/ccui 而非 packages/ccui/ui，
+// 导致 discoverComponents 永远返回空数组，实际只生成根 index.d.ts 一个壳。
 import path, { dirname } from 'node:path'
 import { promises as fsp } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import logger from '../shared/logger.js'
 import { discoverComponents } from '../shared/discover-components.js'
-import { outputFile } from '../shared/fs.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const entryDir = path.resolve(__dirname, '../../ccui')
-const outputDir = path.resolve(__dirname, '../../ccui/build')
+const pkgRoot = path.resolve(__dirname, '../../ccui')
+const entryDir = path.resolve(pkgRoot, 'ui')
+const outputDir = path.resolve(pkgRoot, 'build')
+const typesDir = path.resolve(outputDir, 'types') // vue-tsc 的中间产物，最后会清掉
 
-const INDEX_DTS_CONTENT = `import { App } from 'vue';
-  declare function install(app: App): void
-  declare const _default: {
-      install: typeof install;
-      version: string;
-  };
-  export default _default;`
+async function pathExists(p) {
+  try {
+    await fsp.access(p)
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function moveDts(from, to) {
+  if (!(await pathExists(from))) return false
+  await fsp.mkdir(path.dirname(to), { recursive: true })
+  await fsp.rename(from, to)
+  return true
+}
+
+// 搬整个目录（含 src/*.d.ts），rename 跨设备时 fallback 到 cp+rm
+async function moveDir(from, to) {
+  if (!(await pathExists(from))) return false
+  await fsp.mkdir(path.dirname(to), { recursive: true })
+  try {
+    await fsp.rename(from, to)
+  } catch (err) {
+    if (err.code === 'EXDEV' || err.code === 'ENOTEMPTY') {
+      await fsp.cp(from, to, { recursive: true, force: true })
+      await fsp.rm(from, { recursive: true, force: true })
+    } else {
+      throw err
+    }
+  }
+  return true
+}
 
 export const generateDts = async () => {
-  const srcDts = path.resolve(outputDir, 'index.d.ts')
-  await outputFile(srcDts, INDEX_DTS_CONTENT)
+  // 1) 跑 vue-tsc 把所有声明文件落到 build/types/
+  const result = spawnSync('pnpm', ['exec', 'vue-tsc', '-p', 'tsconfig.build.json'], { cwd: pkgRoot, stdio: 'inherit' })
+  if (result.status !== 0) {
+    throw new Error(`vue-tsc 退出码 ${result.status}，类型生成失败`)
+  }
 
+  // 2) 主入口：build/types/ui/vue-ccui.d.ts → build/index.d.ts
+  const rootMoved = await moveDts(path.resolve(typesDir, 'ui/vue-ccui.d.ts'), path.resolve(outputDir, 'index.d.ts'))
+  if (!rootMoved) {
+    throw new Error('vue-tsc 未产出 ui/vue-ccui.d.ts，请检查 tsconfig.build.json include')
+  }
+
+  // 3) 每个组件目录：整个 build/types/ui/<comp>/ 搬到 build/<comp>/
+  //    必须连 src/*.d.ts 一并搬（index.d.ts 里 `import X from './src/x'` 才能 resolve）。
+  //    目标目录可能已经有 build.js 写的 package.json + index.{es,umd}.js + style.css —— 我们只覆盖 d.ts。
   const components = discoverComponents(entryDir)
+  let movedCount = 0
+  for (const name of components) {
+    const src = path.resolve(typesDir, 'ui', name)
+    if (!(await pathExists(src))) continue
+    const dest = path.resolve(outputDir, name)
+    await fsp.mkdir(dest, { recursive: true })
+    // 把整个 src/ 子树（含 src/*.d.ts）搬过去，加 index.d.ts
+    const subSrc = path.resolve(src, 'src')
+    if (await pathExists(subSrc)) {
+      await moveDir(subSrc, path.resolve(dest, 'src'))
+    }
+    const idx = path.resolve(src, 'index.d.ts')
+    if (await pathExists(idx)) {
+      await fsp.rename(idx, path.resolve(dest, 'index.d.ts'))
+    }
+    movedCount += 1
+  }
 
-  await Promise.all(
-    components.map(async (name) => {
-      const destDts = path.resolve(outputDir, `${name}/index.d.ts`)
+  // 4) 清理中间目录
+  await fsp.rm(typesDir, { recursive: true, force: true })
+
+  // 5) post-process：去掉 d.ts 里对 .scss/.css 的副作用 import —— 下游 TS 项目
+  //    通常没声明 *.scss / *.css ambient module，会报 "Cannot find module './x.scss'"。
+  //    这些副作用 import 在类型上零意义，只是 vue-tsc 把源码里 `import './x.scss'`
+  //    原样保留下来了。
+  const sideEffectStyleRe = /^\s*import\s+["'][^"']+\.(scss|css)["'];?\s*$/gm
+  let strippedFiles = 0
+  const stripFile = async (full) => {
+    const content = await fsp.readFile(full, 'utf8')
+    const stripped = content.replace(sideEffectStyleRe, '')
+    if (stripped !== content) {
+      await fsp.writeFile(full, stripped)
+      strippedFiles += 1
+    }
+  }
+  // 根 index.d.ts 也要剥（vue-ccui.ts 顶部有 `import './shared/styles/base.scss'`）
+  await stripFile(path.resolve(outputDir, 'index.d.ts'))
+  for (const name of components) {
+    const dir = path.resolve(outputDir, name)
+    const stripFromDir = async (d) => {
+      let entries
       try {
-        await fsp.mkdir(path.dirname(destDts), { recursive: true })
-        await fsp.copyFile(srcDts, destDts)
-      } catch (err) {
-        logger.error(`拷贝组件 ${name} 的 ts 类型文件失败！${err?.message ?? err}`)
+        entries = await fsp.readdir(d, { withFileTypes: true })
+      } catch {
+        return
       }
-    }),
+      for (const e of entries) {
+        const full = path.resolve(d, e.name)
+        if (e.isDirectory()) await stripFromDir(full)
+        else if (e.name.endsWith('.d.ts')) await stripFile(full)
+      }
+    }
+    await stripFromDir(dir)
+  }
+
+  logger.success(
+    `vue-tsc 生成完成：根 index.d.ts + ${movedCount}/${components.length} 个组件 d.ts（剥离 ${strippedFiles} 处样式副作用 import）`,
   )
 }

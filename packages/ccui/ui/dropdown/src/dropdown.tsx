@@ -48,9 +48,9 @@ export default defineComponent({
         placement={props.placement}
         disabled={props.disabled}
         visible={popoverVisible.value}
-        showArrow={false}
+        arrow={false}
         offset={4}
-        popperClass={ns.b()}
+        overlayClassName={ns.b()}
         width={props.width}
         role="menu"
         ariaHasPopup="menu"

@@ -14,6 +14,7 @@
 - 🛠️ 全量接入 Vite+ 工具链：`vp dev / build / test / check / lint / fmt`
 - 📦 支持按需引入，减小包体积
 - 🎨 视觉规范对齐 Ant Design
+- 🧩 API 采用 Vue-first 命名（如 `visible` / `closeOnEsc` / `appendToBody`），与 Vue 生态习惯一致
 
 ## 📦 安装
 
@@ -60,7 +61,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。当前已交付 **73 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
+视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。**API 命名采用 Vue-first 习惯**（受控显示用 `visible` / `v-model:visible`，而非 React 生态的 `open`），完整命名约定见 [`docs-notes/roadmap.md`](./docs-notes/roadmap.md)。当前已交付 **73 个组件 / 工具入口**，详细覆盖度与剩余项见 [`docs-notes/components-diff/references/components-diff.md`](./docs-notes/components-diff/references/components-diff.md)。
 
 ### 通用
 

@@ -67,21 +67,21 @@ Vue3CCUIResolver({
   prefix: 'C', //                         默认 'C'
   exclude: [/^CIcon/], // string | RegExp | (string | RegExp)[]
   importFrom: '@vaebe/ccui',
-  cssBundlePath: '@vaebe/ccui/dist/vue3-ccui.css',
+  cssBundlePath: '@vaebe/ccui/style.css',
 })
 ```
 
 ### `importStyle`
 
-| 值              | 行为                                                            | 适用场景                                              |
-| --------------- | --------------------------------------------------------------- | ----------------------------------------------------- |
-| `'css'`（默认） | 注入一次 `vue3-ccui/dist/vue3-ccui.css`（被 unplugin 自动去重） | 大多数项目，无需 Sass 构建链                          |
-| `'scss'`        | 每个组件按需注入 `@vaebe/ccui/ui/<dir>/src/<dir>.scss` 源文件     | 需要在自己工程里覆盖主题变量、且构建链已支持 Sass     |
-| `false`         | 不注入任何样式                                                  | 你在入口手动 `import '@vaebe/ccui/style.css'`，自己掌控 |
+| 值              | 行为                                                              | 适用场景                                                |
+| --------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| `'css'`（默认） | 注入一次 `@vaebe/ccui/style.css`（被 unplugin 自动去重）           | 大多数项目，无需 Sass 构建链                            |
+| `'scss'`        | 每个组件按需注入 `@vaebe/ccui/ui/<dir>/src/<dir>.scss` 源文件     | 需要在自己工程里覆盖主题变量、且构建链已支持 Sass       |
+| `false`         | 不注入任何样式                                                    | 你在入口手动 `import '@vaebe/ccui/style.css'`，自己掌控 |
 
-> 当前主包仅产出整体 CSS bundle（`dist/vue3-ccui.css`），尚未拆分为「每个组件一个 CSS 文件」。
-> 这意味着 `'css'` 模式下任意一个组件被使用时，整体样式会被一次性引入；JavaScript 部分仍按需 tree-shake。
-> 后续主包若产出 per-component CSS，本 resolver 的 API 不会变，只会让 `'css'` 也变成真正的「按组件粒度引入」。
+> 当前主包产出一个整体 CSS bundle（`@vaebe/ccui/style.css`）以及与组件一一对应的单组件 CSS（`@vaebe/ccui/<comp>/style.css`）。
+> `'css'` 模式默认走整体 bundle：任一组件被使用时整包样式会被一次性引入，JavaScript 部分仍按需 tree-shake。
+> 若希望按组件粒度引入 CSS，可把 `importStyle` 切到 `'scss'`，或在自己的入口手动 `import '@vaebe/ccui/<comp>/style.css'`。
 
 ### `prefix`
 

@@ -48,14 +48,14 @@ describe('Vue3CCUIResolver — basics', () => {
 describe('Vue3CCUIResolver — importStyle', () => {
   it("'css' imports the global bundle (default)", () => {
     const result = call(Vue3CCUIResolver(), 'CButton')
-    expect(result?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
+    expect(result?.sideEffects).toBe('@vaebe/ccui/style.css')
   })
 
   it("'css' returns the same bundle for every component (so it dedupes)", () => {
     const r = Vue3CCUIResolver({ importStyle: 'css' })
-    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
-    expect(call(r, 'CTable')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
-    expect(call(r, 'CForm')?.sideEffects).toBe('@vaebe/ccui/dist/vue3-ccui.css')
+    expect(call(r, 'CButton')?.sideEffects).toBe('@vaebe/ccui/style.css')
+    expect(call(r, 'CTable')?.sideEffects).toBe('@vaebe/ccui/style.css')
+    expect(call(r, 'CForm')?.sideEffects).toBe('@vaebe/ccui/style.css')
   })
 
   it("'scss' imports the per-component source file", () => {
@@ -128,11 +128,12 @@ describe('Vue3CCUIResolver — options', () => {
 })
 
 describe('Vue3CCUIResolver — coverage of the component map', () => {
-  it('has 92 entries covering top-level + sub-components', () => {
-    // 70 component dirs in template-resolvable scope (73 dirs minus message/
-    // notification/util) and 23 named sub-components. Grid only contributes
-    // CCol + CRow (no top-level CGrid), so the total is 69 + 23 = 92.
-    expect(componentNames.length).toBe(92)
+  it('component map and exported names stay in sync', () => {
+    // 数字硬编码每次新增/删除 sub-component 都要同步改，太脆。改成做自一致性
+    // 校验 + 维护一个上下限，发现明显漂移再人工对账。
+    expect(componentNames.length).toBe(Object.keys(componentMap).length)
+    expect(componentNames.length).toBeGreaterThanOrEqual(80)
+    expect(componentNames.length).toBeLessThanOrEqual(120)
   })
 
   it('every entry resolves with default options', () => {

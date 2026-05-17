@@ -1,3 +1,4 @@
+import type { ComponentEntry } from './components'
 import { componentMap } from './components'
 
 /**
@@ -74,14 +75,14 @@ export interface Vue3CCUIResolverOptions {
    * Path of the global CSS bundle inside the imported package, used when
    * `importStyle: 'css'`. Override if your build customises the bundle name.
    *
-   * @default '@vaebe/ccui/dist/vue3-ccui.css'
+   * @default '@vaebe/ccui/style.css'
    */
   cssBundlePath?: string
 }
 
 const DEFAULT_PREFIX = 'C'
 const DEFAULT_PACKAGE = '@vaebe/ccui'
-const DEFAULT_CSS_BUNDLE = '@vaebe/ccui/dist/vue3-ccui.css'
+const DEFAULT_CSS_BUNDLE = '@vaebe/ccui/style.css'
 
 function shouldExclude(name: string, exclude: Vue3CCUIResolverOptions['exclude']): boolean {
   if (!exclude) return false
@@ -90,15 +91,19 @@ function shouldExclude(name: string, exclude: Vue3CCUIResolverOptions['exclude']
 }
 
 function resolveStylePath(
-  styleDir: string,
+  entry: ComponentEntry,
   importStyle: Vue3CCUIResolverOptions['importStyle'],
   pkg: string,
   cssBundle: string,
 ): string | undefined {
   if (importStyle === false) return undefined
+  // hasStyle:false 的组件（如 ConfigProvider）没有 .scss / .css 资产，
+  // 跳过 side-effect 注入避免 resolver 制造一个不存在的导入路径。
+  // 'css' 模式注入的是全局 bundle，不受单组件 hasStyle 影响。
   if (importStyle === 'scss') {
+    if (entry.hasStyle === false) return undefined
     // Source SCSS is shipped under `<pkg>/ui/<dir>/src/<dir>.scss`.
-    return `${pkg}/ui/${styleDir}/src/${styleDir}.scss`
+    return `${pkg}/ui/${entry.styleDir}/src/${entry.styleDir}.scss`
   }
   // 'css' — single global bundle (deduped by unplugin-vue-components).
   return cssBundle.startsWith(pkg) || cssBundle.startsWith('.') || cssBundle.startsWith('/')
@@ -140,7 +145,7 @@ export function Vue3CCUIResolver(options: Vue3CCUIResolverOptions = {}): Compone
       const entry = componentMap[name]
       if (!entry) return
 
-      const stylePath = resolveStylePath(entry.styleDir, importStyle, pkg, cssBundle)
+      const stylePath = resolveStylePath(entry, importStyle, pkg, cssBundle)
 
       return {
         name: entry.exportName,

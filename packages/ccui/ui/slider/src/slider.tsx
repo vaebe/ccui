@@ -86,13 +86,13 @@ export default defineComponent({
 
       return props.showTooltip ? (
         <Tooltip
-          content={getTooltipContent(index)}
+          title={getTooltipContent(index)}
           visible={getTooltipVisible(index)}
           placement={getTooltipPlacement()}
           effect="dark"
-          showArrow={true}
+          arrow={true}
           trigger="manual"
-          popperClass={props.tooltipClass}
+          overlayClassName={props.tooltipClass}
         >
           <div {...buttonProps} />
         </Tooltip>
