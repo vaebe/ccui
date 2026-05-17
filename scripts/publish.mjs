@@ -1,12 +1,24 @@
 #!/usr/bin/env node
 /**
- * 预发布/正式发布脚本：按依赖顺序构建并发布 workspace 内可发布的包，然后打 git tag。
+ * 预发布 / 正式发布脚本。
  *
- * 用法：
- *   node scripts/publish.mjs                  # 默认 dist-tag=beta
- *   node scripts/publish.mjs --tag latest     # 正式发版
- *   node scripts/publish.mjs --dry-run        # 走完整流程但不真正 publish
- *   node scripts/publish.mjs --skip-login     # 已确认 session 有效，跳过登录预检
+ * 工作流（默认全自动，必要节点会交互确认）：
+ *   1. npm 登录预检（passkey / 2FA）
+ *   2. 工作区干净校验
+ *   3. bumpp 同步 bump 三个发布包的版本号
+ *   4. conventional-changelog 重新生成 packages/cli/CHANGELOG.md
+ *   5. 用户确认后构建 → 发布到 npm
+ *   6. 创建 `chore: release vX.Y.Z` 提交（版本号 + changelog）+ 打 tag
+ *   7. `git push --follow-tags` 推送
+ *
+ * 常用：
+ *   node scripts/publish.mjs                              # 交互式选版本，dist-tag=beta
+ *   node scripts/publish.mjs --release patch              # 非交互式 patch 升版
+ *   node scripts/publish.mjs --release 2.1.0 --tag latest # 指定版本 + 正式发版
+ *   node scripts/publish.mjs --dry-run                    # 跳过 bump/changelog，只走构建发布预演
+ *   node scripts/publish.mjs --skip-bump                  # 复用已 bump 好的版本号
+ *   node scripts/publish.mjs --skip-changelog             # 不重新生成 changelog
+ *   node scripts/publish.mjs --skip-login                 # 已确认 session 有效
  *
  * 2FA / 鉴权（2026 年起的 npm 新流程）：
  *   - npm 自 2025-09 起停止接受新的 TOTP 注册，改用 WebAuthn / passkey。
@@ -51,6 +63,9 @@ const argOf = (k, fallback) => {
 const TAG = argOf('--tag', 'beta')
 const DRY_RUN = args.includes('--dry-run')
 const SKIP_LOGIN = args.includes('--skip-login')
+const SKIP_BUMP = args.includes('--skip-bump')
+const SKIP_CHANGELOG = args.includes('--skip-changelog')
+const RELEASE = argOf('--release', null) // 透传给 bumpp：patch / minor / major / 2.1.0 / ...
 
 // ── 发布矩阵 ─────────────────────────────────────────────────────────────────
 // 每项描述一个可发布包：从哪里读版本、用哪个工具发、从哪个工作目录发。
@@ -142,20 +157,75 @@ async function ensureLoggedIn() {
   ok('登录成功（2 小时会话）')
 }
 
+// ── 工作区干净校验 ────────────────────────────────────────────────────────────
+function ensureCleanGit() {
+  const r = runCapture('git', ['status', '--porcelain'])
+  if ((r.stdout || '').trim()) {
+    console.log(r.stdout)
+    fatal('工作区有未提交改动。请先 commit / stash，或加 --skip-bump 跳过版本号自动更新')
+  }
+}
+
+// ── 版本号同步（bumpp） ───────────────────────────────────────────────────────
+// bumpp 一把更新三个发布包的 package.json，自己不做 commit/tag/push，
+// 由本脚本在 publish 成功后统一打 commit + tag + push（含 changelog）。
+async function bumpVersions() {
+  step('Bump versions (bumpp)')
+  const pkgFiles = PACKAGES.map((p) => p.pkgJson)
+  const bumppArgs = [
+    'bumpp',
+    ...pkgFiles,
+    '--no-commit',
+    '--no-tag',
+    '--no-push',
+  ]
+  if (RELEASE) bumppArgs.push('--release', RELEASE)
+  if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
+}
+
+function ensureVersionsAligned() {
+  const versions = PACKAGES.map((p) => ({ name: p.name, version: readJson(p.pkgJson).version }))
+  const uniq = [...new Set(versions.map((v) => v.version))]
+  if (uniq.length !== 1) {
+    console.log('版本号不一致：')
+    versions.forEach((v) => console.log(`  ${v.name}: ${v.version}`))
+    fatal('请先把三个发布包的版本号对齐（或不要 --skip-bump）')
+  }
+  return uniq[0]
+}
+
+// ── changelog（conventional-changelog） ──────────────────────────────────────
+// cli 里早就接了 `pnpm changelog`（conventional-changelog-cli），
+// 这里复用它，避免在 root 再装一份重复依赖。
+function generateChangelog() {
+  step('Regenerate CHANGELOG (conventional-changelog)')
+  runOrFatal('pnpm', ['--filter', 'ccui-cli', 'changelog'])
+  ok('packages/cli/CHANGELOG.md 已更新')
+}
+
+// ── 主流程 ───────────────────────────────────────────────────────────────────
 await ensureLoggedIn()
 
-// 版本号一致性校验
-const versions = PACKAGES.map((p) => ({ name: p.name, version: readJson(p.pkgJson).version }))
-const uniqVersions = [...new Set(versions.map((v) => v.version))]
-if (uniqVersions.length !== 1) {
-  console.log('版本号不一致：')
-  versions.forEach((v) => console.log(`  ${v.name}: ${v.version}`))
-  fatal('请先把三个发布包的版本号对齐')
+if (DRY_RUN) {
+  // dry-run 不改动任何文件，仅验证现有版本号一致并走构建/发布预演
+  ensureVersionsAligned()
+} else if (SKIP_BUMP) {
+  ensureVersionsAligned()
+} else {
+  ensureCleanGit()
+  await bumpVersions()
+  ensureVersionsAligned()
+  if (!SKIP_CHANGELOG) generateChangelog()
 }
-const VERSION = uniqVersions[0]
+
+const VERSION = ensureVersionsAligned()
 
 console.log(`\n发布版本：${green(VERSION)}    dist-tag：${green(TAG)}    ${DRY_RUN ? yellow('(dry-run)') : ''}`)
-const confirm = await ask('确认发布？[y/N] ')
+if (!DRY_RUN && !SKIP_BUMP) {
+  console.log(dim('版本号 + CHANGELOG 已落到工作区但未提交。需要手改 CHANGELOG 现在打开编辑器，'))
+  console.log(dim('回到这里再按 y 继续；脚本会在 publish 成功后统一 commit + tag + push。'))
+}
+const confirm = await ask('确认开始构建并发布？[y/N] ')
 if (!/^y$/i.test(confirm.trim())) {
   rl.close()
   fatal('已取消')
@@ -261,10 +331,11 @@ for (const [i, pkg] of PACKAGES.entries()) {
 
 rl.close()
 
-// ── git tag ──────────────────────────────────────────────────────────────────
+// ── 收尾：commit + tag + push ────────────────────────────────────────────────
 if (DRY_RUN) {
-  warn('dry-run 模式不打 tag')
-} else {
+  warn('dry-run 模式不打 tag、不 commit、不 push')
+} else if (SKIP_BUMP) {
+  // 用户自己 bump 的，自己负责 commit；这里只补 tag + push tag
   step(`打 git tag v${VERSION}`)
   const tagExists = spawnSync('git', ['rev-parse', `v${VERSION}`], { stdio: 'ignore' }).status === 0
   if (tagExists) {
@@ -274,6 +345,20 @@ if (DRY_RUN) {
     runOrFatal('git', ['push', 'origin', `v${VERSION}`])
     ok(`tag v${VERSION} 已推送`)
   }
+} else {
+  step(`提交 release: v${VERSION}`)
+  const addPaths = PACKAGES.map((p) => p.pkgJson)
+  if (!SKIP_CHANGELOG) addPaths.push('packages/cli/CHANGELOG.md')
+  runOrFatal('git', ['add', ...addPaths])
+  runOrFatal('git', ['commit', '-m', `chore: release v${VERSION}`])
+  const tagExists = spawnSync('git', ['rev-parse', `v${VERSION}`], { stdio: 'ignore' }).status === 0
+  if (tagExists) {
+    warn(`tag v${VERSION} 已存在，跳过 tag`)
+  } else {
+    runOrFatal('git', ['tag', `v${VERSION}`])
+  }
+  runOrFatal('git', ['push', '--follow-tags'])
+  ok(`commit + tag v${VERSION} 已推送`)
 }
 
 // ── 收尾 ─────────────────────────────────────────────────────────────────────
