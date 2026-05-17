@@ -1,5 +1,9 @@
 # consumer-fixture
 
+> **Prereq**: this fixture's Vite alias points at `packages/ccui/build/`, **not**
+> at the source. You **must** run the ccui build pipeline first or the fixture
+> will fail to resolve `@vaebe/ccui` / `@vaebe/ccui/<comp>`. See [How to run](#how-to-run).
+
 End-to-end smoke fixture for `@vaebe/ccui` as consumed by a downstream Vite +
 TS + Vue 3 app. The CI / publish pipeline builds this to assert all three
 documented consumption paths still resolve and bundle cleanly after a

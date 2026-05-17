@@ -184,6 +184,9 @@ importers:
       '@vaebe/ccui-icons':
         specifier: workspace:*
         version: link:../icons
+      '@vaebe/ccui-theme':
+        specifier: workspace:*
+        version: link:../theme
       '@vitepress-code-preview/container':
         specifier: ^1.0.8
         version: 1.0.8(vue@3.5.33(typescript@5.9.3))

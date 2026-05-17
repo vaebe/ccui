@@ -27,13 +27,8 @@ export default defineConfig({
   head: [
     // 这里的路径没有被自动更改 手动更改路径
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${prod ? '/ccui/' : '/'}logo.svg` }],
-    [
-      'link',
-      {
-        rel: 'stylesheet',
-        href: 'https://unpkg.com/@vaebe/ccui/theme/darkTheme.css',
-      },
-    ],
+    // darkTheme.css 通过 theme/index.ts 作为 workspace 源码侧引入，不再走
+    // unpkg CDN——CDN 既无 SRI 完整性校验、又会和 workspace 源码版本错位。
   ],
   markdown: {
     config(md) {

@@ -207,6 +207,11 @@ export default defineComponent({
     })
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)
+      // flush 搜索 debounce，避免卸载后仍触发一次 emit('search')
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+        debounceTimer = null
+      }
     })
 
     function renderOption(opt: NormalizedOption, index: number): VNode {

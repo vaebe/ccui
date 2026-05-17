@@ -772,7 +772,7 @@ const options = [
 
 ```vue
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const value = ref([])
 const options = [
@@ -794,18 +794,32 @@ const options = [
   { value: 'jiangsu', label: '江苏', children: [{ value: 'nanjing', label: '南京' }] },
 ]
 
-function highlight(label: string, q: string) {
-  if (!q) return label
+// 把 label 切成 [{ text, match }] 段；用 <mark> 渲染命中段、文本节点渲染其它段。
+// 不要直接 v-html 拼字符串——一旦 label 是服务端返回的不可信值就会变 XSS。
+function splitForHighlight(label: string, q: string) {
+  if (!q) return [{ text: label, match: false }]
   const idx = label.indexOf(q)
-  if (idx < 0) return label
-  return [label.slice(0, idx), `<mark>${q}</mark>`, label.slice(idx + q.length)].join('')
+  if (idx < 0) return [{ text: label, match: false }]
+  return [
+    { text: label.slice(0, idx), match: false },
+    { text: q, match: true },
+    { text: label.slice(idx + q.length), match: false },
+  ]
 }
 </script>
 
 <template>
   <c-cascader v-model="value" :options="options" show-search placeholder="输入「江」试试高亮">
     <template #search-option="{ path, query }">
-      <span v-html="path.map((n) => highlight(n.label, query)).join(' / ')" />
+      <span>
+        <template v-for="(node, i) in path" :key="i">
+          <span v-if="i > 0"> / </span>
+          <template v-for="(seg, j) in splitForHighlight(node.label, query)" :key="j">
+            <mark v-if="seg.match">{{ seg.text }}</mark>
+            <template v-else>{{ seg.text }}</template>
+          </template>
+        </template>
+      </span>
     </template>
   </c-cascader>
 </template>

@@ -228,6 +228,13 @@ export default defineComponent({
     })
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)
+      // 卸载时 flush debounce —— 否则延迟回调会在已销毁实例上 emit('search'),
+      // Vue 视为 no-op 不会崩，但会让"组件已离开页面但后端还多收一次搜索"
+      // 的浪费请求穿过去。
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+        debounceTimer = null
+      }
     })
 
     // 当 options 变化或 keyword 变化时，如果当前 active index 越界，重置
