@@ -73,11 +73,11 @@ Vue3CCUIResolver({
 
 ### `importStyle`
 
-| 值              | 行为                                                              | 适用场景                                                |
-| --------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
-| `'css'`（默认） | 注入一次 `@vaebe/ccui/style.css`（被 unplugin 自动去重）           | 大多数项目，无需 Sass 构建链                            |
-| `'scss'`        | 每个组件按需注入 `@vaebe/ccui/ui/<dir>/src/<dir>.scss` 源文件     | 需要在自己工程里覆盖主题变量、且构建链已支持 Sass       |
-| `false`         | 不注入任何样式                                                    | 你在入口手动 `import '@vaebe/ccui/style.css'`，自己掌控 |
+| 值              | 行为                                                          | 适用场景                                                |
+| --------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| `'css'`（默认） | 注入一次 `@vaebe/ccui/style.css`（被 unplugin 自动去重）      | 大多数项目，无需 Sass 构建链                            |
+| `'scss'`        | 每个组件按需注入 `@vaebe/ccui/ui/<dir>/src/<dir>.scss` 源文件 | 需要在自己工程里覆盖主题变量、且构建链已支持 Sass       |
+| `false`         | 不注入任何样式                                                | 你在入口手动 `import '@vaebe/ccui/style.css'`，自己掌控 |
 
 > 当前主包产出一个整体 CSS bundle（`@vaebe/ccui/style.css`）以及与组件一一对应的单组件 CSS（`@vaebe/ccui/<comp>/style.css`）。
 > `'css'` 模式默认走整体 bundle：任一组件被使用时整包样式会被一次性引入，JavaScript 部分仍按需 tree-shake。

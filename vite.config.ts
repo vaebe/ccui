@@ -63,6 +63,9 @@ export default defineConfig({
       'packages/docs/.vitepress/config/sidebar.ts',
       'packages/docs/.vitepress/config/enSidebar.ts',
       'packages/cli/**',
+      // examples/ 是消费 fixture，import 走 build/ 产物（alias 仅在 vite 解析层），
+      // TS 直接 resolve 会撞 source 包没 exports map 的边界；本身不是库代码。
+      'examples/**',
     ],
     overrides: [
       {

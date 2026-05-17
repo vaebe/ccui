@@ -34,24 +34,6 @@ const CREATE_SUPPORT_TYPE_MAP = Object.freeze({
 })
 const CREATE_SUPPORT_TYPES = Object.keys(CREATE_SUPPORT_TYPE_MAP)
 
-// 历史临时白名单：在组件 status 字段未补齐时，强行把它们视为 ready-to-release。
-// 现状（2.x）：build/release/generate-dts 已经不再用 isReadyToRelease 做范围过滤——
-// 所有 discovered 组件都进入 pipeline。该名单当前只影响 create.js 的 vue-ccui.ts 输出
-// 范围（env=prod）和 VitePress 侧边栏（isProd）以及 code-check 的默认覆盖集合。
-// 长期看应该用组件维度的 stability 标记取代它；在此之前先保留并标注语义。
-const WHITE_LIST_READY_COMPONENTS = [
-  'select',
-  'tooltip',
-  'table',
-  'tabs',
-  'form',
-  'dropdown',
-  'drawer',
-  'date-picker',
-  'input-number',
-  'tree',
-]
-
 export const VERSION = pkg.version
 export const isProd = process.env.NODE_ENV === 'production'
 export {
@@ -74,7 +56,6 @@ export {
   COMPONENT_PARTS_MAP,
   CREATE_SUPPORT_TYPE_MAP,
   CREATE_SUPPORT_TYPES,
-  WHITE_LIST_READY_COMPONENTS,
 }
 export const UI_NAMESPACE = 'c'
 export const CSS_CLASS_PREFIX = 'ccui'

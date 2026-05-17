@@ -1,7 +1,6 @@
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
-import { isReadyToRelease } from '../shared/utils.js'
 import { discoverComponents } from '../shared/discover-components.js'
 import { runCommand } from '../shared/run-command.js'
 
@@ -13,10 +12,11 @@ const chalkUnitTest = chalk.hex('#99425b')
 const entryDir = path.resolve(__dirname, '../../ccui/ui')
 
 // 懒求值：只有 code-check 真正运行时才扫描组件，避免每次 --help 触发组件解析。
+// 范围 = discovered 全集；与 build / release / dts pipeline 对齐，不再用 ready-to-release gate。
 let _completeComponents
 function getCompleteComponents() {
   if (!_completeComponents) {
-    _completeComponents = discoverComponents(entryDir).filter(isReadyToRelease)
+    _completeComponents = discoverComponents(entryDir)
   }
   return _completeComponents
 }

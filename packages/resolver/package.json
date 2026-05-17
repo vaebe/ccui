@@ -49,8 +49,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "beta",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta"
   },
   "scripts": {
     "build": "tsdown",
@@ -69,8 +69,8 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "unplugin-vue-components": ">=0.26.0",
-    "@vaebe/ccui": "workspace:^"
+    "@vaebe/ccui": "workspace:^",
+    "unplugin-vue-components": ">=0.26.0"
   },
   "peerDependenciesMeta": {
     "unplugin-vue-components": {

@@ -1,0 +1,24 @@
+{
+  "name": "consumer-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "description": "End-to-end consumer fixture for @vaebe/ccui — exercises the three published consumption paths (main + tree-shake, subpath, unplugin resolver auto-import).",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vaebe/ccui": "workspace:*",
+    "vue": "3.5.33"
+  },
+  "devDependencies": {
+    "@vaebe/unplugin-vue-components-ccui": "workspace:*",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "typescript": "^5.9.3",
+    "unplugin-vue-components": "^28.0.0",
+    "vite": "catalog:",
+    "vue-tsc": "^3.2.7"
+  }
+}

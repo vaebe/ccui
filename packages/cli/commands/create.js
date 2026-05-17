@@ -3,13 +3,7 @@ import { promises as fsp } from 'node:fs'
 import { isEmpty, kebabCase } from 'lodash-es'
 import inquirer from 'inquirer'
 import logger from '../shared/logger.js'
-import {
-  bigCamelCase,
-  resolveDirFilesInfo,
-  parseExportByFileInfo,
-  parseComponentInfo,
-  isReadyToRelease,
-} from '../shared/utils.js'
+import { bigCamelCase, resolveDirFilesInfo, parseExportByFileInfo, readComponentMeta } from '../shared/utils.js'
 import {
   UI_DIR,
   TESTS_DIR_NAME,
@@ -25,7 +19,6 @@ import {
   VITEPRESS_SIDEBAR_FILE_NAME,
   VITEPRESS_SIDEBAR_FILE_EN,
   VITEPRESS_SIDEBAR_FILE_NAME_EN,
-  isProd,
 } from '../shared/constant.js'
 import { withSpinner } from '../shared/with-spinner.js'
 import { existsSync } from '../shared/fs.js'
@@ -126,10 +119,10 @@ async function createComponent(params = {}) {
   logger.info(`组件目录：${componentDir}`)
 }
 
-async function createVueUi(params, { ignoreParseError, env } = {}) {
-  const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS).filter(
-    ({ name }) => (env === 'prod' && isReadyToRelease(kebabCase(name))) || !env || env === 'dev',
-  )
+async function createVueUi(params, { ignoreParseError } = {}) {
+  // 不再按 env=prod / ready-to-release 过滤——build / release / dts pipeline 都已经
+  // 以 discoverComponents 为唯一范围，vue-ccui.ts 也跟齐：所有 discovered 组件全部 include。
+  const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS)
 
   const exportModules = []
   for (const f of fileInfo) {
@@ -158,8 +151,10 @@ async function createVitepressSidebar() {
   const fileInfo = resolveDirFilesInfo(UI_DIR, VUE_UI_IGNORE_DIRS)
   const componentsInfo = []
   for (const f of fileInfo) {
-    const info = parseComponentInfo(f.dirname)
-    if (isEmpty(info) || (isProd && !isReadyToRelease(f.dirname))) continue
+    // 用轻量 readComponentMeta 读 title / category / status；不再按 isProd / ready 过滤——
+    // sidebar 范围 = discovered 全集。category 缺失的组件由 vitepress-sidebar 模板自身
+    // 通过 categoryMap 判断决定是否落入分组（缺失会被 warning 提示）。
+    const info = readComponentMeta(f.dirname)
     componentsInfo.push(info)
   }
 

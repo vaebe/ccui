@@ -19,6 +19,7 @@
  *   node scripts/publish.mjs --skip-bump                  # 复用已 bump 好的版本号
  *   node scripts/publish.mjs --skip-changelog             # 不重新生成 changelog
  *   node scripts/publish.mjs --skip-login                 # 已确认 session 有效
+ *   node scripts/publish.mjs --dry-run --yes              # 全自动 dry-run，用于 CI / fixture 烟雾测试
  *
  * 2FA / 鉴权（2026 年起的 npm 新流程）：
  *   - npm 自 2025-09 起停止接受新的 TOTP 注册，改用 WebAuthn / passkey。
@@ -65,6 +66,7 @@ const DRY_RUN = args.includes('--dry-run')
 const SKIP_LOGIN = args.includes('--skip-login')
 const SKIP_BUMP = args.includes('--skip-bump')
 const SKIP_CHANGELOG = args.includes('--skip-changelog')
+const YES = args.includes('--yes') || args.includes('-y')
 const RELEASE = argOf('--release', null) // 透传给 bumpp：patch / minor / major / 2.1.0 / ...
 
 // ── 发布矩阵 ─────────────────────────────────────────────────────────────────
@@ -228,10 +230,14 @@ if (!DRY_RUN && !SKIP_BUMP) {
   console.log(dim('版本号 + CHANGELOG 已落到工作区但未提交。需要手改 CHANGELOG 现在打开编辑器，'))
   console.log(dim('回到这里再按 y 继续；脚本会在 publish 成功后统一 commit + tag + push。'))
 }
-const confirm = await ask('确认开始构建并发布？[y/N] ')
-if (!/^y$/i.test(confirm.trim())) {
-  rl.close()
-  fatal('已取消')
+if (YES) {
+  ok('--yes / -y：跳过开始确认')
+} else {
+  const confirm = await ask('确认开始构建并发布？[y/N] ')
+  if (!/^y$/i.test(confirm.trim())) {
+    rl.close()
+    fatal('已取消')
+  }
 }
 
 // ── 构建 ─────────────────────────────────────────────────────────────────────

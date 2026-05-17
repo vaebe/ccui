@@ -69,6 +69,32 @@ describe('Vue3CCUIResolver — importStyle', () => {
     expect(call(r, 'CCol')?.sideEffects).toBe('@vaebe/ccui/ui/grid/src/grid.scss')
     expect(call(r, 'CRow')?.sideEffects).toBe('@vaebe/ccui/ui/grid/src/grid.scss')
     expect(call(r, 'CTypographyText')?.sideEffects).toBe('@vaebe/ccui/ui/typography/src/typography.scss')
+    // Table sub-components share the table dir (their own dirs ship no .scss).
+    expect(call(r, 'CTableColumn')?.sideEffects).toBe('@vaebe/ccui/ui/table/src/table.scss')
+    expect(call(r, 'CTableColumnGroup')?.sideEffects).toBe('@vaebe/ccui/ui/table/src/table.scss')
+    expect(call(r, 'CTableSummary')?.sideEffects).toBe('@vaebe/ccui/ui/table/src/table.scss')
+    // ButtonGroup falls back to the button dir (sibling button-group.scss is
+    // not addressable by the `<dir>/src/<dir>.scss` resolver template).
+    expect(call(r, 'CButtonGroup')?.sideEffects).toBe('@vaebe/ccui/ui/button/src/button.scss')
+    // CheckableTagGroup shares the checkable-tag dir with CheckableTag.
+    expect(call(r, 'CCheckableTagGroup')?.sideEffects).toBe('@vaebe/ccui/ui/checkable-tag/src/checkable-tag.scss')
+  })
+
+  it("'scss' resolves stand-alone sub-component dirs to their own .scss", () => {
+    const r = Vue3CCUIResolver({ importStyle: 'scss' })
+    // These sub-components live in their own directory which ships its own
+    // <dir>.scss — so they resolve to that file, not the parent's.
+    expect(call(r, 'CAvatarGroup')?.sideEffects).toBe('@vaebe/ccui/ui/avatar-group/src/avatar-group.scss')
+    expect(call(r, 'CBadgeRibbon')?.sideEffects).toBe('@vaebe/ccui/ui/badge-ribbon/src/badge-ribbon.scss')
+    expect(call(r, 'CCardMeta')?.sideEffects).toBe('@vaebe/ccui/ui/card-meta/src/card-meta.scss')
+    expect(call(r, 'CImagePreviewGroup')?.sideEffects).toBe(
+      '@vaebe/ccui/ui/image-preview-group/src/image-preview-group.scss',
+    )
+    expect(call(r, 'CInputOtp')?.sideEffects).toBe('@vaebe/ccui/ui/input-otp/src/input-otp.scss')
+    expect(call(r, 'CInputSearch')?.sideEffects).toBe('@vaebe/ccui/ui/input-search/src/input-search.scss')
+    expect(call(r, 'CSkeletonNode')?.sideEffects).toBe('@vaebe/ccui/ui/skeleton-node/src/skeleton-node.scss')
+    expect(call(r, 'CSpaceCompact')?.sideEffects).toBe('@vaebe/ccui/ui/space-compact/src/space-compact.scss')
+    expect(call(r, 'CTextarea')?.sideEffects).toBe('@vaebe/ccui/ui/textarea/src/textarea.scss')
   })
 
   it('false omits sideEffects entirely', () => {

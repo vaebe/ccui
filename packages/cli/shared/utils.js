@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { camelCase, upperFirst } from 'lodash-es'
 import _traverse from '@babel/traverse'
 import * as babelParser from '@babel/parser'
-import { INDEX_FILE_NAME, UI_DIR, WHITE_LIST_READY_COMPONENTS } from './constant.js'
+import { INDEX_FILE_NAME, UI_DIR } from './constant.js'
 import logger from './logger.js'
 
 // @babel/traverse 是 CJS，主入口同时挂在 default 与函数本身上。
@@ -82,48 +82,23 @@ export const parseExportByFileInfo = (fileInfo, ignoreParseError) => {
   return exportModule
 }
 
-export const parseComponentInfo = (name) => {
-  const componentInfo = { name: bigCamelCase(name) }
-  let hasExportDefault = false
-  const indexContent = readFileSync(resolve(UI_DIR, name, INDEX_FILE_NAME), { encoding: 'utf-8' })
+// 轻量读取组件 index.ts 中 `export default { ... }` 对象内的字面量字段（title / category / status）。
+//
+// 历史上这里走 babel AST（`parseComponentInfo`）顺带强制了 "must have export default" 警告；
+// 现在 sidebar / vue-ccui 生成都基于 discoverComponents 全集，不再做 ready/未 ready gate，
+// 所以只需要按字段名取 string 字面量即可——所有组件 index.ts 都遵循模板规范，正则足够稳健。
+// 取不到字段时返回 undefined，调用方按自身需要 fallback。
+export const readComponentMeta = (name) => {
+  const meta = { name: bigCamelCase(name) }
+  const filepath = resolve(UI_DIR, name, INDEX_FILE_NAME)
+  if (!existsSync(filepath)) return meta
 
-  const ast = babelParser.parse(indexContent, {
-    sourceType: 'module',
-    plugins: ['typescript'],
-  })
-  traverse(ast, {
-    ExportDefaultDeclaration({ node }) {
-      hasExportDefault = true
-      if (node.declaration && node.declaration.properties) {
-        node.declaration.properties.forEach((pro) => {
-          if (pro.type === 'ObjectProperty') {
-            componentInfo[pro.key.name] = pro.value.value
-          }
-        })
-      }
-    },
-  })
-
-  if (!hasExportDefault) {
-    logger.warning(`${componentInfo.name} must have "export default" and component info.`)
+  const content = readFileSync(filepath, { encoding: 'utf-8' })
+  // 只匹配 `key: 'value'` / `key: "value"` 三个白名单字段，避免误命中 install / 嵌套对象。
+  for (const key of ['title', 'category', 'status']) {
+    const re = new RegExp(`\\b${key}\\s*:\\s*(['"\`])([^'"\`]*)\\1`)
+    const m = content.match(re)
+    if (m) meta[key] = m[2]
   }
-
-  return componentInfo
-}
-
-// 历史 gate：是否进入 prod build/release 范围。
-//
-// 当前（2.x）已经**不再用于** build.js / release.js / generate-dts.js——
-// 这三处都改为以 discoverComponents 为唯一范围（见 shared/discover-components.js），
-// 让产物范围保持一致。
-//
-// 仍保留供以下调用方使用：
-//   - commands/create.js  ：生成 vue-ccui.ts 时按 env=prod 过滤展示给最终用户的组件清单
-//   - commands/create.js  ：生成 VitePress 侧边栏时按 isProd 过滤 alpha 组件
-//   - commands/code-check.js：定义 lint/unit-test 默认覆盖的"已完成组件"集合
-//
-// 长期看 status / WHITE_LIST 应该被组件维度的 stability flag 取代；在此之前这三个调用方
-// 仍依赖该函数语义，不要直接删。
-export const isReadyToRelease = (componentName) => {
-  return parseComponentInfo(componentName).status === '100%' || WHITE_LIST_READY_COMPONENTS.includes(componentName)
+  return meta
 }
