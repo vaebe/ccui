@@ -65,9 +65,9 @@ export default defineComponent({
     <c-button type="primary" size="small"> 小型按钮 </c-button>
   </div>
   <div style="margin-top: 10px;">
-    <c-button type="success" size="large" shape="round"> 大型按钮 </c-button>
-    <c-button type="success" shape="round"> 默认按钮 </c-button>
-    <c-button type="success" size="small" shape="round"> 小型按钮 </c-button>
+    <c-button type="success" size="large" round> 大型按钮 </c-button>
+    <c-button type="success" round> 默认按钮 </c-button>
+    <c-button type="success" size="small" round> 小型按钮 </c-button>
   </div>
 </template>
 
@@ -134,9 +134,9 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" shape="round"> 圆角按钮 </c-button>
-    <c-button type="success" shape="round"> 圆角按钮 </c-button>
-    <c-button type="warning" size="small" shape="round"> 小型圆角 </c-button>
+    <c-button type="primary" round> 圆角按钮 </c-button>
+    <c-button type="success" round> 圆角按钮 </c-button>
+    <c-button type="warning" size="small" round> 小型圆角 </c-button>
   </div>
 </template>
 
@@ -166,19 +166,19 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" shape="circle"> A </c-button>
-    <c-button type="success" shape="circle"> B </c-button>
-    <c-button type="warning" shape="circle"> C </c-button>
+    <c-button type="primary" circle> A </c-button>
+    <c-button type="success" circle> B </c-button>
+    <c-button type="warning" circle> C </c-button>
   </div>
 
   <div style="margin-top: 10px;">
-    <c-button type="primary" size="large" shape="circle"> D </c-button>
-    <c-button type="primary" shape="circle"> E </c-button>
-    <c-button type="primary" size="small" shape="circle"> F </c-button>
+    <c-button type="primary" size="large" circle> D </c-button>
+    <c-button type="primary" circle> E </c-button>
+    <c-button type="primary" size="small" circle> F </c-button>
   </div>
 
   <div style="margin-top: 10px;">
-    <c-button type="primary" shape="circle">
+    <c-button type="primary" circle>
       <template #icon>
         <svg
           t="1649322922975"
@@ -204,7 +204,7 @@ export default defineComponent({
       </template>
     </c-button>
 
-    <c-button type="success" shape="circle">
+    <c-button type="success" circle>
       <template #icon>
         <svg
           t="1649322922975"
@@ -230,7 +230,7 @@ export default defineComponent({
       </template>
     </c-button>
 
-    <c-button type="warning" size="small" shape="circle">
+    <c-button type="warning" size="small" circle>
       <template #icon>
         <svg
           t="1649322922975"
@@ -284,11 +284,11 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-button type="primary" variant="filled"> 朴素按钮 </c-button>
-    <c-button type="success" variant="filled"> 朴素按钮 </c-button>
-    <c-button type="warning" variant="filled"> 朴素按钮 </c-button>
-    <c-button type="danger" variant="filled"> 朴素按钮 </c-button>
-    <c-button type="info" variant="filled"> 朴素按钮 </c-button>
+    <c-button type="primary" plain> 朴素按钮 </c-button>
+    <c-button type="success" plain> 朴素按钮 </c-button>
+    <c-button type="warning" plain> 朴素按钮 </c-button>
+    <c-button type="danger" plain> 朴素按钮 </c-button>
+    <c-button type="info" plain> 朴素按钮 </c-button>
   </div>
 </template>
 
@@ -409,31 +409,49 @@ export default defineComponent({
 
 :::
 
+## 自定义颜色 color
+
+`color` 接受任意 CSS color 字符串。实心 type（`primary`/`success`/`warning`/`danger`/`info`）注入 `background-color + border-color`；描边 type（`''`/`default`/`dashed`）注入 `color + border-color`；`text`/`link` 仅注入 `color`。hover/active 联动由使用方用 CSS class 自兜底。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px">
+    <c-button type="primary" color="#722ed1">实心紫</c-button>
+    <c-button type="success" color="#13c2c2">青色 success</c-button>
+    <c-button color="#fa541c">描边橙</c-button>
+    <c-button type="dashed" color="#eb2f96">描边粉</c-button>
+    <c-button type="text" color="#1677ff">文字蓝</c-button>
+    <c-button type="link" color="#52c41a">链接绿</c-button>
+  </div>
+</template>
+```
+
+:::
+
 ## Button参数
 
-| 参数            | 类型                                                              | 默认    | 说明                                                                                                                    |
-| --------------- | ----------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------- |
-| size            | [ButtonSizeType](#buttonsizetype)                                 | --      | 尺寸                                                                                                                    |
-| type            | [ButtonType](#buttontype)                                         | --      | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
-| shape           | 'default' \| 'circle' \| 'round'                                  | default | 形状（替代 boolean `round` / `circle`）                                                                                 |
-| htmlType        | [ButtonNativeType](#buttonnativetype)                             | button  | 原生 type 属性                                                                                                          |
-| danger          | boolean                                                           | false   | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
-| ghost           | boolean                                                           | false   | 幽灵按钮（透明背景 + 描边色）                                                                                           |
-| block           | boolean                                                           | false   | 撑满父宽度                                                                                                              |
-| autoInsertSpace | boolean                                                           | true    | 两个 CJK 字符之间自动插入空格                                                                                           |
-| href            | string                                                            | --      | 设置后用 `<a role="button">` 渲染                                                                                       |
-| target          | string                                                            | --      | 配合 `href` 透传 `target`                                                                                               |
-| icon            | string \| VNode                                                   | --      | 图标（也可用 `icon` slot）                                                                                              |
-| iconPosition    | 'start' \| 'end'                                                  | start   | 图标位置                                                                                                                |
-| disabled        | boolean                                                           | false   | 是否为禁用状态                                                                                                          |
-| autofocus       | boolean                                                           | false   | 原生 autofocus 属性                                                                                                     |
-| loading         | boolean \| { delay?: number; icon?: VNode \| string }             | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
-| color           | string                                                            | --      | 自定义按钮主色（与 `variant` 配合形成色变体矩阵）                                                                       |
-| variant         | 'outlined' \| 'dashed' \| 'solid' \| 'filled' \| 'text' \| 'link' | --      | 视觉变体                                                                                                                |
-| plain           | boolean                                                           | false   | **(deprecated)** 请改用 `variant`                                                                                       |
-| round           | boolean                                                           | false   | **(deprecated)** 请改用 `shape="round"`                                                                                 |
-| circle          | boolean                                                           | false   | **(deprecated)** 请改用 `shape="circle"`                                                                                |
-| native-type     | [ButtonNativeType](#buttonnativetype)                             | button  | **(deprecated)** 请改用 `htmlType`                                                                                      |
+| 参数            | 类型                                                  | 默认    | 说明                                                                                                                    |
+| --------------- | ----------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------- |
+| size            | [ButtonSizeType](#buttonsizetype)                     | --      | 尺寸                                                                                                                    |
+| type            | [ButtonType](#buttontype)                             | --      | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
+| plain           | boolean                                               | false   | 朴素按钮：背景透明，文字与边框跟主色                                                                                    |
+| round           | boolean                                               | false   | 圆角按钮                                                                                                                |
+| circle          | boolean                                               | false   | 圆形按钮（常用于纯图标场景）                                                                                            |
+| native-type     | [ButtonNativeType](#buttonnativetype)                 | button  | 原生 `<button>` 的 type 属性                                                                                            |
+| danger          | boolean                                               | false   | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
+| ghost           | boolean                                               | false   | 幽灵按钮（透明背景 + 描边色）                                                                                           |
+| block           | boolean                                               | false   | 撑满父宽度                                                                                                              |
+| autoInsertSpace | boolean                                               | true    | 两个 CJK 字符之间自动插入空格                                                                                           |
+| href            | string                                                | --      | 设置后用 `<a role="button">` 渲染                                                                                       |
+| target          | string                                                | --      | 配合 `href` 透传 `target`                                                                                               |
+| icon            | string \| VNode                                       | --      | 图标（也可用 `icon` slot）                                                                                              |
+| iconPosition    | 'start' \| 'end'                                      | start   | 图标位置                                                                                                                |
+| disabled        | boolean                                               | false   | 是否为禁用状态                                                                                                          |
+| autofocus       | boolean                                               | false   | 原生 autofocus 属性                                                                                                     |
+| loading         | boolean \| { delay?: number; icon?: VNode \| string } | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
+| color           | string                                                | --      | 自定义按钮颜色（任意 CSS color 字符串）；实心型 type 注入 bg + border；描边型注入 color + border；text/link 仅 color    |
 
 ## ButtonGroup 参数
 

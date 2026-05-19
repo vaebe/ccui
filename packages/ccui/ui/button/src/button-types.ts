@@ -21,11 +21,7 @@ export type ButtonType =
 
 export type ButtonSizeType = '' | 'large' | 'default' | 'small'
 export type ButtonNativeType = 'button' | 'submit' | 'reset'
-export type ButtonShape = 'default' | 'circle' | 'round'
 export type ButtonIconPosition = 'start' | 'end'
-
-export type ButtonColor = 'default' | 'primary' | 'danger'
-export type ButtonVariant = 'outlined' | 'dashed' | 'solid' | 'filled' | 'text' | 'link'
 
 /**
  * `loading` 复合配置：
@@ -53,50 +49,36 @@ export const buttonProps = {
     default: false,
   },
   /**
-   * @deprecated 请改用 `variant='outlined'` / `'filled'` 组合。
+   * 朴素按钮：背景透明，文字与边框跟主色。
    */
   plain: {
     type: Boolean,
     default: false,
   },
   /**
-   * @deprecated 请改用 `shape='round'`。下一大版本移除。
+   * 圆角按钮。
    */
   round: {
     type: Boolean,
     default: false,
   },
   /**
-   * @deprecated 请改用 `shape='circle'`。下一大版本移除。
+   * 圆形按钮（常用于纯图标场景）。
    */
   circle: {
     type: Boolean,
     default: false,
-  },
-  /**
-   * 按钮形状：`'default' | 'circle' | 'round'`。显式 shape 优先于 round / circle boolean。
-   */
-  shape: {
-    type: String as PropType<ButtonShape>,
-    default: undefined,
   },
   autofocus: {
     type: Boolean,
     default: false,
   },
   /**
-   * @deprecated 请改用 `htmlType`。下一大版本移除。
+   * 原生 `<button>` 的 type 属性。
    */
   nativeType: {
     type: String as PropType<ButtonNativeType>,
-    default: undefined,
-  },
-  /**
-   * 原生 button type：`'button' | 'submit' | 'reset'`。显式 htmlType 优先于 nativeType。
-   */
-  htmlType: {
-    type: String as PropType<ButtonNativeType>,
-    default: undefined,
+    default: 'button',
   },
   loading: {
     type: [Boolean, Object] as PropType<ButtonLoading>,
@@ -155,13 +137,15 @@ export const buttonProps = {
     type: String,
     default: undefined,
   },
+  /**
+   * 自定义按钮颜色。接受任意 CSS color 字符串（含 `#hex` / `rgb()` / `hsl()` / 命名色 / 渐变非法 — 仅纯色）。
+   * 实心型 type（`primary`/`success`/`warning`/`danger`/`info`）注入 background-color + border-color；
+   * 描边型 type（`''` / `default` / `dashed`）注入 color + border-color；
+   * `text` / `link` 仅注入 color。hover / active 联动由用户用 CSS class 自兜底。
+   */
   color: {
-    type: String as PropType<ButtonColor>,
-    default: undefined,
-  },
-  variant: {
-    type: String as PropType<ButtonVariant>,
-    default: undefined,
+    type: String,
+    default: '',
   },
 } as const
 

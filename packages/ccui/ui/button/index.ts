@@ -12,17 +12,14 @@ Button.install = function (app: App): void {
 export { Button, ButtonGroup }
 
 export type {
-  ButtonColor,
   ButtonGroupProps,
   ButtonIconPosition,
   ButtonLoading,
   ButtonLoadingObject,
   ButtonNativeType,
   ButtonProps,
-  ButtonShape,
   ButtonSizeType,
   ButtonType,
-  ButtonVariant,
 } from './src/button-types'
 
 export default {

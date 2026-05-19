@@ -135,32 +135,30 @@
 
 #### F.1 删旧名替代物
 
-- [ ] `button-types.ts` 删 `htmlType` prop（保 `nativeType`）
-- [ ] `button-types.ts` 删 `shape` prop **整段**（保 `round` boolean、`circle` boolean）
-- [ ] `button-types.ts` 删 `variant` prop **整段** + `ButtonVariant` 类型（保 `plain` boolean）
-- [ ] `button-types.ts` 删 `ButtonShape` 类型导出（不再有 prop 用它）
-- [ ] `button.tsx:35-58` 删 4 段 warn + `resolvedShape` computed（直接用 `circle/round` boolean）+ `resolvedHtmlType` 简化为 `props.nativeType ?? 'button'`
-- [ ] `button.tsx:125-143` butCls 计算里删 `variant-${variant}`、shape 改用 boolean 判断
-- [ ] `button.tsx:142` 删 `if (props.variant) cls[ns.m(\`variant-${props.variant}\`)] = true`
+- [x] `button-types.ts` 删 `htmlType` prop（保 `nativeType`，默认 `'button'`）
+- [x] `button-types.ts` 删 `shape` prop **整段**（保 `round` boolean、`circle` boolean）
+- [x] `button-types.ts` 删 `variant` prop **整段** + `ButtonVariant` 类型（保 `plain` boolean）
+- [x] `button-types.ts` 删 `ButtonShape` 类型导出
+- [x] `button.tsx` 删 4 段 warn + `resolvedShape` computed + `resolvedHtmlType` 简化为直用 `props.nativeType`
+- [x] `button.tsx` butCls 计算里删 `variant-${variant}` / shape 改用 boolean 判断
+- [x] `button/index.ts` 删 ButtonColor/ButtonShape/ButtonVariant 三个 type 导出
 
 #### F.2 改造 `color` 为任意 CSS color（新功能）
 
-- [ ] `button-types.ts` `color` 类型从 `'default' | 'primary' | 'danger'` 联合改为 `String`（任意 CSS color）
-- [ ] `button-types.ts` 删 `ButtonColor` 类型导出
-- [ ] `button.tsx:141` 删 `cls[ns.m(\`color-${props.color}\`)] = true` 这行 className 注入
-- [ ] `button.tsx` 在 setup 里新增 `customColorStyle` computed：
-  - 当 `props.color` 非空且 `type` 属于实心型（primary/success/warning/danger/info）→ 注入 `{ backgroundColor: props.color, borderColor: props.color }`
-  - 当 `props.color` 非空且 `type` 属于描边型（''/default/dashed）→ 注入 `{ color: props.color, borderColor: props.color }`
-  - 当 `type` 是 `text`/`link` → 仅注入 `color`
-  - 当 `props.color` 为空字符串 → 返回 undefined（不污染 style attr）
-- [ ] `button.tsx` `<button>` / `<a>` 的 style 属性合并 customColorStyle
-- [ ] hover/active 不做联动（用户用 CSS class 自己兜底，文档说明此限制）
+- [x] `button-types.ts` `color` 类型从 `'default' | 'primary' | 'danger'` 联合改为 `String`（任意 CSS color），默认 `''`
+- [x] `button-types.ts` 删 `ButtonColor` 类型导出
+- [x] `button.tsx` 删 `cls[ns.m('color-${props.color}')]` className 注入
+- [x] `button.tsx` setup 新增 `customColorStyle` computed（实心/描边/text-link 三类 type 分支 + 空 color 返回 undefined）
+- [x] `button.tsx` `<button>` / `<a>` style 属性合并 customColorStyle
+- [x] hover/active 不做联动（文档说明，使用方用 CSS class 自兜底）
 
 #### F.3 测试 / 文档
 
-- [ ] `button/test/button.test.ts` 删 deprecation describe（4 段）+ 改新名为旧名
-- [ ] 新增 button color 自定义颜色的测试（实心/描边/text 三类 type）
-- [ ] `docs/components/button/index.md` API 表反转 + 新增 color 自定义颜色 demo
+- [x] `button/test/button.test.ts` 删 deprecation describe（4 段）+ 删 shape/htmlType/variant/color-`primary` 测试
+- [x] 新增 button color 自定义颜色的 5 个测试（实心/描边/text/未传/`<a>`）
+- [x] `docs/components/button/index.md` API 表反转 + 新增 color 自定义颜色 demo
+- [x] **级联**：`docs/button/index.md` 旧 demo 改回 boolean（`shape="round"` → `round`、`shape="circle"` → `circle`、`variant="filled"` → `plain`）
+- [x] **级联**：`docs/form/index.md` `<c-button html-type="submit">` → `native-type="submit"`
 
 **验收**：grep `htmlType|ButtonShape|ButtonVariant|ButtonColor` 在 packages 零命中；新加的 customColorStyle 测试通过。
 

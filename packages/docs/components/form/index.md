@@ -551,7 +551,7 @@ function onFinish(name: string, info: { values: any; forms: Record<string, any> 
   <c-form-provider @form-finish="onFinish">
     <c-form name="profile" :model="profile">
       <c-form-item name="name"><c-input v-model="profile.name" /></c-form-item>
-      <c-button html-type="submit">Save</c-button>
+      <c-button native-type="submit">Save</c-button>
     </c-form>
     <c-form name="billing" :model="billing">
       <c-form-item name="address"><c-input v-model="billing.address" /></c-form-item>

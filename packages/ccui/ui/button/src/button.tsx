@@ -1,11 +1,15 @@
-import type { VNode } from 'vue'
-import type { ButtonLoadingObject, ButtonProps, ButtonShape } from './button-types'
+import type { CSSProperties, VNode } from 'vue'
+import type { ButtonLoadingObject, ButtonProps } from './button-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, getCurrentInstance, h, inject, onBeforeUnmount, ref, watch } from 'vue'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
+import { computed, defineComponent, h, inject, onBeforeUnmount, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { buttonGroupInjectionKey, buttonProps } from './button-types'
 import './button.scss'
+
+// 实心型 type：注入 background-color + border-color
+const SOLID_TYPES = new Set(['primary', 'success', 'warning', 'danger', 'info'])
+// 仅注入文字色（无边框/无背景）
+const TEXT_LIKE_TYPES = new Set(['text', 'link'])
 
 // Iconify 命名规范：`<collection>:<icon>`，例如 `mdi:magnify`。
 // 含 `:` 时按 Iconify 渲染 SVG；否则当 CSS 类名（兼容自定义 iconfont 接入方）。
@@ -29,33 +33,6 @@ export default defineComponent({
 
     // Group 注入：size / disabled 透传到子按钮
     const group = inject(buttonGroupInjectionKey, null)
-
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'nativeType', 'native-type')) {
-      warnDeprecated('nativeType', 'htmlType', 'Button')
-    }
-    if (isPropExplicit(rawProps, 'round', 'round')) {
-      warnDeprecated('round', 'shape="round"', 'Button')
-    }
-    if (isPropExplicit(rawProps, 'circle', 'circle')) {
-      warnDeprecated('circle', 'shape="circle"', 'Button')
-    }
-    if (isPropExplicit(rawProps, 'plain', 'plain')) {
-      warnDeprecated('plain', "variant='outlined' / 'filled' 组合", 'Button')
-    }
-
-    // ── 兼容映射 ─────────────────────────────────────────
-    // shape：显式 prop > circle boolean > round boolean > 'default'
-    const resolvedShape = computed<ButtonShape>(() => {
-      if (props.shape) return props.shape
-      if (props.circle) return 'circle'
-      if (props.round) return 'round'
-      return 'default'
-    })
-
-    // htmlType：显式 prop > nativeType > 'button'
-    const resolvedHtmlType = computed(() => props.htmlType ?? props.nativeType ?? 'button')
 
     // size：Group 注入优先级低于显式 prop
     const resolvedSize = computed(() => props.size || group?.size.value || '')
@@ -123,13 +100,13 @@ export default defineComponent({
 
     // ── class 计算 ───────────────────────────────────────
     const butCls = computed(() => {
-      const cls: Record<string, boolean> = {
+      return {
         [ns.b()]: true,
         [ns.m(props.type)]: !!props.type,
         [ns.m(`plain-${props.type}`)]: !!props.plain && !!props.type,
         [ns.m(resolvedSize.value)]: !!resolvedSize.value,
-        [ns.m('round')]: resolvedShape.value === 'round',
-        [ns.m('circle')]: resolvedShape.value === 'circle',
+        [ns.m('round')]: props.round,
+        [ns.m('circle')]: props.circle,
         [ns.m('loading')]: isLoading.value,
         [ns.m('disabled')]: resolvedDisabled.value || isLoading.value,
         // 用 `--dangerous` 避免与 type='danger' 共用同名类
@@ -138,9 +115,19 @@ export default defineComponent({
         [ns.m('block')]: props.block,
         [ns.m('icon-end')]: props.iconPosition === 'end',
       }
-      if (props.color) cls[ns.m(`color-${props.color}`)] = true
-      if (props.variant) cls[ns.m(`variant-${props.variant}`)] = true
-      return cls
+    })
+
+    // ── 自定义颜色 inline style（支持任意 CSS color） ────
+    const customColorStyle = computed<CSSProperties | undefined>(() => {
+      if (!props.color) return undefined
+      if (TEXT_LIKE_TYPES.has(props.type)) {
+        return { color: props.color }
+      }
+      if (SOLID_TYPES.has(props.type)) {
+        return { backgroundColor: props.color, borderColor: props.color }
+      }
+      // 描边型（'' / 'default' / 'dashed'）
+      return { color: props.color, borderColor: props.color }
     })
 
     // ── 事件 ─────────────────────────────────────────────
@@ -195,6 +182,7 @@ export default defineComponent({
           'a',
           {
             class: butCls.value,
+            style: customColorStyle.value,
             href: resolvedDisabled.value || isLoading.value ? undefined : props.href,
             target: props.target,
             // disabled <a> 没有原生支持，用 aria-disabled + click 拦截
@@ -211,7 +199,8 @@ export default defineComponent({
         'button',
         {
           class: butCls.value,
-          type: resolvedHtmlType.value,
+          style: customColorStyle.value,
+          type: props.nativeType,
           autofocus: props.autofocus || undefined,
           disabled: resolvedDisabled.value || isLoading.value,
           onClick,

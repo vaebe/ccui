@@ -1,7 +1,6 @@
 import type { ButtonSizeType, ButtonType } from '../src/button-types'
 import { mount, shallowMount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Button } from '../index'
 
@@ -180,42 +179,20 @@ describe('button', () => {
     expect(wrapper.find(ns.e('content')).exists()).toBe(false)
   })
 
-  // ───────────────────────────────────────────────────────────
-  // shape / htmlType / danger 等命名规范化
-  // ───────────────────────────────────────────────────────────
-
-  describe('shape', () => {
-    it('shape="round" 渲染 --round（与 round=true 等价）', () => {
-      const wrapper = createShallowWrapper({ shape: 'round' })
-      expect(wrapper.find(roundClass).exists()).toBe(true)
-    })
-
-    it('shape="circle" 渲染 --circle（与 circle=true 等价）', () => {
-      const wrapper = createShallowWrapper({ shape: 'circle' })
-      expect(wrapper.find(circleClass).exists()).toBe(true)
-    })
-
-    it('显式 shape 优先于 round / circle boolean', () => {
-      const wrapper = createShallowWrapper({ shape: 'round', circle: true })
-      expect(wrapper.find(roundClass).exists()).toBe(true)
-      expect(wrapper.find(circleClass).exists()).toBe(false)
-    })
-  })
-
-  describe('htmlType / nativeType', () => {
-    it('htmlType 生效', () => {
-      const wrapper = createShallowWrapper({ htmlType: 'submit' })
+  describe('nativeType', () => {
+    it('nativeType="submit" 透传到 <button type>', () => {
+      const wrapper = createShallowWrapper({ nativeType: 'submit' })
       expect(wrapper.find('button').attributes('type')).toBe('submit')
     })
 
-    it('htmlType 优先于 nativeType', () => {
-      const wrapper = createShallowWrapper({ htmlType: 'submit', nativeType: 'reset' })
-      expect(wrapper.find('button').attributes('type')).toBe('submit')
-    })
-
-    it('nativeType 仍可工作（兼容）', () => {
+    it('nativeType="reset" 透传到 <button type>', () => {
       const wrapper = createShallowWrapper({ nativeType: 'reset' })
       expect(wrapper.find('button').attributes('type')).toBe('reset')
+    })
+
+    it('默认 nativeType="button"', () => {
+      const wrapper = createShallowWrapper()
+      expect(wrapper.find('button').attributes('type')).toBe('button')
     })
   })
 
@@ -386,59 +363,40 @@ describe('button', () => {
     })
   })
 
-  describe('color / variant (forward-compat)', () => {
-    it('color="primary" 加 --color-primary 类（SCSS 矩阵留 v2.x）', () => {
-      const wrapper = createShallowWrapper({ color: 'primary' })
-      expect(wrapper.find(ns.m('color-primary')).exists()).toBe(true)
+  describe('自定义 color（任意 CSS 字符串）', () => {
+    it('实心型 type 注入 background-color + border-color', () => {
+      const wrapper = createShallowWrapper({ type: 'primary', color: '#ff7875' })
+      const style = wrapper.find('button').attributes('style') || ''
+      expect(style).toContain('background-color: rgb(255, 120, 117)')
+      expect(style).toContain('border-color: rgb(255, 120, 117)')
     })
 
-    it('variant="solid" 加 --variant-solid 类', () => {
-      const wrapper = createShallowWrapper({ variant: 'solid' })
-      expect(wrapper.find(ns.m('variant-solid')).exists()).toBe(true)
-    })
-  })
-
-  describe('deprecation warn (M-A5)', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
+    it('描边型 type（默认）注入 color + border-color', () => {
+      const wrapper = createShallowWrapper({ color: '#1677ff' })
+      const style = wrapper.find('button').attributes('style') || ''
+      expect(style).toContain('color: rgb(22, 119, 255)')
+      expect(style).toContain('border-color: rgb(22, 119, 255)')
     })
 
-    it('nativeType 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      createShallowWrapper({ nativeType: 'submit' })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('nativeType 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('htmlType'))
-      // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
-      createShallowWrapper({ nativeType: 'submit' })
-      expect(warn).toHaveBeenCalledTimes(1)
-      warn.mockRestore()
+    it('text / link type 仅注入 color', () => {
+      const wrapper = createShallowWrapper({ type: 'text', color: '#52c41a' })
+      const style = wrapper.find('button').attributes('style') || ''
+      expect(style).toContain('color: rgb(82, 196, 26)')
+      expect(style).not.toContain('background-color')
+      expect(style).not.toContain('border-color')
     })
 
-    it('round=true 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      createShallowWrapper({ round: true })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('round 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('shape="round"'))
-      warn.mockRestore()
+    it('未传 color 不污染 style 属性', () => {
+      const wrapper = createShallowWrapper({ type: 'primary' })
+      // 没设置 style 时属性应为空或不存在
+      const style = wrapper.find('button').attributes('style')
+      expect(style === undefined || style === '').toBe(true)
     })
 
-    it('circle=true 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      createShallowWrapper({ circle: true })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('circle 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('shape="circle"'))
-      warn.mockRestore()
-    })
-
-    it('plain=true 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      createShallowWrapper({ plain: true })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('plain 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('variant'))
-      // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
-      createShallowWrapper({ plain: true })
-      expect(warn).toHaveBeenCalledTimes(1)
-      warn.mockRestore()
+    it('color 在 <a>（href 设置）上同样生效', () => {
+      const wrapper = createShallowWrapper({ href: 'https://example.com', color: '#ff7875' })
+      const style = wrapper.find('a').attributes('style') || ''
+      expect(style).toContain('color: rgb(255, 120, 117)')
     })
   })
 })
