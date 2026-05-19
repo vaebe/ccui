@@ -91,7 +91,6 @@ export default defineComponent({
 | 参数     | 类型    | 默认值    | 说明                                 |
 | -------- | ------- | --------- | ------------------------------------ |
 | color    | string  | 'default' | 颜色：预设色板名 / 状态色 / 任意 hex |
-| bordered | boolean | true      | **(deprecated)** 请改用 `variant`    |
 | closable | boolean | false     | 是否可关闭                           |
 | icon     | string  | --        | 图标类名                             |
 
