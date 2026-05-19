@@ -65,13 +65,14 @@
 
 **改动**：删 Ant 风格新名，保留 Vue 习惯旧名。
 
-- [ ] `input-types.ts` 删 `allowClear` / `addonBefore` / `addonAfter` 三个 prop 声明 + JSDoc，保留 `clearable` / `prepend` / `append`
-- [ ] `input.tsx:38-44` 删 3 段 `warnDeprecated` 调用 + isPropExplicit 检查
-- [ ] `input.tsx` 内部用到 `props.allowClear ?? props.clearable` 等回退逻辑：简化为直接用 `props.clearable` / `props.prepend` / `props.append`
-- [ ] 清理未用 import (`isPropExplicit`、`warnDeprecated`、`getCurrentInstance`)
-- [ ] slot 名同步：addon-before / addon-after 是否也要改回某个 vue-friendly 名？**默认不改 slot 名**——slot 名跟 prop 名解耦，沿用 ccui 现有 `prepend` / `append` slot
-- [ ] `input/test/input.test.ts` 删 deprecation describe + 改测试中使用的新名为旧名
-- [ ] `docs/components/input/index.md` API 表把旧名设为主、删新名行
+- [x] `input-types.ts` 删 `allowClear` / `addonBefore` / `addonAfter` 三个 prop 声明 + JSDoc，保留 `clearable` / `prepend` / `append`
+- [x] `input.tsx:38-44` 删 3 段 `warnDeprecated` 调用 + isPropExplicit 检查
+- [x] `input.tsx` 内部用到 `props.allowClear ?? props.clearable` 等回退逻辑：简化为直接用 `props.clearable` / `props.prepend` / `props.append`
+- [x] 清理未用 import (`isPropExplicit`、`warnDeprecated`、`getCurrentInstance`、`VNode`、`IconifyIcon`)
+- [x] slot 名同步：~~addon-before / addon-after~~ 已删除新 slot 名，沿用 `prepend` / `append` slot
+- [x] `input/test/input.test.ts` 删 deprecation describe + 改测试中使用的新名为旧名
+- [x] `docs/components/input/index.md` API 表把旧名设为主、删新名行
+- [x] **级联**：InputSearch 透传 inputProps，同步把 `props.allowClear` / 测试 / docs 改为 `clearable`（**计划外但必要**）
 
 **验收**：grep `allowClear|addonBefore|addonAfter` 在 packages/ccui 零命中。
 

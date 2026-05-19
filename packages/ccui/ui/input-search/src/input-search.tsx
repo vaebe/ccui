@@ -75,7 +75,7 @@ export default defineComponent({
 
     const renderClear = () => {
       const isInteractive = !props.disabled && !props.readonly
-      const showClear = isInteractive && !!props.allowClear && !!innerValue.value
+      const showClear = isInteractive && !!props.clearable && !!innerValue.value
       if (!showClear) return null
       return h('i', { class: ns.e('clear'), onClick: handleClear, 'aria-label': 'clear' }, '×')
     }

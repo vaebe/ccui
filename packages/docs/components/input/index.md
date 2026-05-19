@@ -147,7 +147,7 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" allow-clear placeholder="可清空的输入框" />
+    <c-input v-model="value" clearable placeholder="可清空的输入框" />
   </div>
 </template>
 
@@ -206,9 +206,9 @@ export default defineComponent({
 
 <template>
   <div>
-    <c-input v-model="value" addon-before="http://" placeholder="请输入网址" class="mb-10" />
-    <c-input v-model="value" addon-after=".com" placeholder="请输入域名" class="mb-10" />
-    <c-input v-model="value" addon-before="https://" addon-after=".org" placeholder="请输入网址" />
+    <c-input v-model="value" prepend="http://" placeholder="请输入网址" class="mb-10" />
+    <c-input v-model="value" append=".com" placeholder="请输入域名" class="mb-10" />
+    <c-input v-model="value" prepend="https://" append=".org" placeholder="请输入网址" />
   </div>
 </template>
 
@@ -276,16 +276,13 @@ const v3 = ref('')
 | readonly      | boolean                                     | false   | 是否为只读状态                                                                              |
 | modelValue    | string                                      | --      | 绑定值（v-model）                                                                           |
 | defaultValue  | string                                      | --      | 非受控初值，仅首次挂载使用                                                                  |
-| allowClear    | boolean \| { clearIcon?: VNode \| string }  | --      | 是否显示清除按钮（支持 Iconify name / VNode 自定义图标）                                    |
+| clearable     | boolean                                     | false   | 是否显示清除按钮                                                                            |
 | show-password | boolean                                     | false   | 密码输入时是否可切换可见性                                                                  |
-| addonBefore   | string                                      | ''      | 前置 addon 文本                                                                             |
-| addonAfter    | string                                      | ''      | 后置 addon 文本                                                                             |
+| prepend       | string                                      | ''      | 前置 addon 文本（也可用同名 `prepend` slot）                                                |
+| append        | string                                      | ''      | 后置 addon 文本（也可用同名 `append` slot）                                                 |
 | maxLength     | number                                      | --      | 最大长度（透传原生 `maxlength`）                                                            |
 | showCount     | boolean \| { formatter?: (info) => string } | false   | 显示字符计数，配合 `maxLength` 显示 `N / max`；formatter 接 `({ value, count, maxLength })` |
 | status        | '' \| 'error' \| 'warning'                  | ''      | 校验状态，Form 联动会自动透传                                                               |
-| clearable     | boolean                                     | false   | **(deprecated)** 请改用 `allowClear`                                                        |
-| prepend       | string                                      | --      | **(deprecated)** 请改用 `addonBefore` 或 `addon-before` slot                                |
-| append        | string                                      | --      | **(deprecated)** 请改用 `addonAfter` 或 `addon-after` slot                                  |
 
 ## Input类型定义
 
@@ -315,11 +312,9 @@ export type InputSize = 'large' | 'default' | 'small'
 
 ## Input插槽
 
-| 插槽名       | 说明                          |
-| ------------ | ----------------------------- |
-| addon-before | 前置 addon 内容               |
-| addon-after  | 后置 addon 内容               |
-| prefix       | 输入框内左侧前缀              |
-| suffix       | 输入框内右侧后缀              |
-| prepend      | @deprecated 同 `addon-before` |
-| append       | @deprecated 同 `addon-after`  |
+| 插槽名  | 说明              |
+| ------- | ----------------- |
+| prepend | 前置 addon 内容   |
+| append  | 后置 addon 内容   |
+| prefix  | 输入框内左侧前缀  |
+| suffix  | 输入框内右侧后缀  |

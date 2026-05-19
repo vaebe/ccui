@@ -138,7 +138,7 @@ describe('input-search', () => {
     })
 
     it('清除按钮也会触发 search("")', async () => {
-      const wrapper = mount(InputSearch, { props: { allowClear: true, modelValue: 'kw' } })
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'kw' } })
       await wrapper.find(ns.e('clear')).trigger('click')
       expect(wrapper.emitted('clear')).toBeTruthy()
       const emitted = wrapper.emitted('search')
@@ -173,24 +173,24 @@ describe('input-search', () => {
     })
   })
 
-  describe('allowClear', () => {
-    it('allowClear=true 有内容时显示清除按钮', () => {
-      const wrapper = mount(InputSearch, { props: { allowClear: true, modelValue: 'x' } })
+  describe('clearable', () => {
+    it('clearable=true 有内容时显示清除按钮', () => {
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'x' } })
       expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
     })
 
-    it('allowClear=true 无内容时不显示', () => {
-      const wrapper = mount(InputSearch, { props: { allowClear: true, modelValue: '' } })
+    it('clearable=true 无内容时不显示', () => {
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: '' } })
       expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
     })
 
     it('disabled 时不显示清除按钮', () => {
-      const wrapper = mount(InputSearch, { props: { allowClear: true, modelValue: 'x', disabled: true } })
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'x', disabled: true } })
       expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
     })
 
     it('点击清除按钮清空内容', async () => {
-      const wrapper = mount(InputSearch, { props: { allowClear: true, modelValue: 'x' } })
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'x' } })
       await wrapper.find(ns.e('clear')).trigger('click')
       expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
     })

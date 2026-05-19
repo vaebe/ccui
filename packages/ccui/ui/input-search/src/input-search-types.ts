@@ -4,7 +4,7 @@ import { inputProps } from '../../input/src/input-types'
 export type InputSearchEnterButton = boolean | string | VNode
 
 export const inputSearchProps = {
-  // 复用 Input 的所有 props（type/size/placeholder/disabled/readonly/allowClear/showCount/...）
+  // 复用 Input 的所有 props（type/size/placeholder/disabled/readonly/clearable/showCount/...）
   ...inputProps,
   /**
    * 搜索按钮：

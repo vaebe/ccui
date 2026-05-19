@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType, VNode } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
 import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type InputType = 'text' | 'password'
@@ -18,17 +18,6 @@ export type InputStatus = '' | 'error' | 'warning'
  * - `underlined`：仅底部 1px 边框，类似 Material 风
  */
 export type InputVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
-
-/**
- * `allowClear` 复合配置：
- *
- * - `boolean`：开启/关闭清除按钮
- * - `{ clearIcon }`：自定义清除图标（接 Iconify name / VNode）
- */
-export interface InputAllowClearObject {
-  clearIcon?: VNode | string
-}
-export type InputAllowClear = boolean | InputAllowClearObject
 
 /**
  * `showCount` 复合配置：
@@ -63,49 +52,27 @@ export const inputProps = {
     default: false,
   },
   /**
-   * @deprecated 请改用 `allowClear`。下一大版本移除。
+   * 是否显示清除按钮。
    */
   clearable: {
     type: Boolean,
     default: false,
-  },
-  /**
-   * 是否显示清除按钮，支持 `{ clearIcon }` 自定义图标。
-   * 显式 `allowClear` 优先于 `clearable`。
-   */
-  allowClear: {
-    type: [Boolean, Object] as PropType<InputAllowClear>,
-    default: undefined,
   },
   showPassword: {
     type: Boolean,
     default: false,
   },
   /**
-   * @deprecated 请改用 `addon-before` slot 或 `addonBefore` prop。
+   * 左侧 addon 文本（也可用同名 `prepend` slot 自定义内容）。
    */
   prepend: {
     type: String,
     default: '',
   },
   /**
-   * @deprecated 请改用 `addon-after` slot 或 `addonAfter` prop。
+   * 右侧 addon 文本（也可用同名 `append` slot 自定义内容）。
    */
   append: {
-    type: String,
-    default: '',
-  },
-  /**
-   * 左侧 addon 内容（字符串或 slot 同名 `addon-before`）。
-   */
-  addonBefore: {
-    type: String,
-    default: '',
-  },
-  /**
-   * 右侧 addon 内容（字符串或 slot 同名 `addon-after`）。
-   */
-  addonAfter: {
     type: String,
     default: '',
   },

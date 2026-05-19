@@ -1,21 +1,10 @@
-import type { VNode } from 'vue'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
-import type { InputAllowClearObject, InputProps, InputShowCountObject } from './input-types'
-import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, getCurrentInstance, inject, ref, watch } from 'vue'
+import type { InputProps, InputShowCountObject } from './input-types'
+import { computed, defineComponent, inject, ref, watch } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputProps } from './input-types'
 import './input.scss'
-
-function isIconifyName(name: string): boolean {
-  return name.includes(':')
-}
-
-function isAllowClearObject(value: unknown): value is InputAllowClearObject {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
-}
 
 function isShowCountObject(value: unknown): value is InputShowCountObject {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -31,18 +20,6 @@ export default defineComponent({
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
     const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
     const mergedStatus = computed(() => props.status || validationStatus.value)
-
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'clearable', 'clearable')) {
-      warnDeprecated('clearable', 'allowClear', 'Input')
-    }
-    if (isPropExplicit(rawProps, 'prepend', 'prepend')) {
-      warnDeprecated('prepend', 'addonBefore', 'Input')
-    }
-    if (isPropExplicit(rawProps, 'append', 'append')) {
-      warnDeprecated('append', 'addonAfter', 'Input')
-    }
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────
     const initial = props.modelValue !== '' ? props.modelValue : (props.defaultValue ?? '')
@@ -60,26 +37,8 @@ export default defineComponent({
       return props.type
     })
 
-    // allowClear：显式 prop > clearable 旧布尔
-    const allowClearResolved = computed(() => {
-      if (props.allowClear !== undefined) return props.allowClear
-      return props.clearable
-    })
-    const allowClearEnabled = computed(() => {
-      const v = allowClearResolved.value
-      if (typeof v === 'boolean') return v
-      return v !== undefined && v !== null
-    })
-    const customClearIcon = computed<VNode | string | undefined>(() => {
-      const v = allowClearResolved.value
-      return isAllowClearObject(v) ? v.clearIcon : undefined
-    })
-
-    // addonBefore / addonAfter 优先，回退到 prepend / append
-    const addonBeforeText = computed(() => props.addonBefore || props.prepend)
-    const addonAfterText = computed(() => props.addonAfter || props.append)
-    const hasAddonBefore = computed(() => !!addonBeforeText.value || !!slots['addon-before'] || !!slots.prepend)
-    const hasAddonAfter = computed(() => !!addonAfterText.value || !!slots['addon-after'] || !!slots.append)
+    const hasAddonBefore = computed(() => !!props.prepend || !!slots.prepend)
+    const hasAddonAfter = computed(() => !!props.append || !!slots.append)
 
     // showCount：boolean | { formatter }
     const showCountEnabled = computed(() => {
@@ -104,7 +63,7 @@ export default defineComponent({
     // ── class ──────────────────────────────────────────
     const getBaseClass = computed(() => {
       const isInteractive = !props.disabled && !props.readonly
-      const hasInteractiveSuffix = isInteractive && (allowClearEnabled.value || showPasswordVisible.value)
+      const hasInteractiveSuffix = isInteractive && (props.clearable || showPasswordVisible.value)
       const hasSuffix = hasInteractiveSuffix || !!slots.suffix || showCountEnabled.value
       const hasPrefix = !!slots.prefix
 
@@ -113,7 +72,7 @@ export default defineComponent({
         [ns.m(props.size)]: !!props.size,
         [ns.m('disabled')]: props.disabled,
         [ns.m('readonly')]: props.readonly,
-        [ns.m('clearable')]: allowClearEnabled.value,
+        [ns.m('clearable')]: props.clearable,
         [ns.m('suffix')]: hasSuffix,
         [ns.m('prefix')]: hasPrefix,
         [ns.m(`status-${mergedStatus.value}`)]: !!mergedStatus.value,
@@ -189,42 +148,21 @@ export default defineComponent({
       },
     )
 
-    // ── 渲染辅助 ──────────────────────────────────────────
-    const renderClearIcon = () => {
-      const custom = customClearIcon.value
-      if (!custom) return <i class={ns.e('clear')} onClick={clearInput}></i>
-      if (typeof custom === 'string') {
-        return isIconifyName(custom) ? (
-          <span class={ns.e('clear')} onClick={clearInput}>
-            <IconifyIcon icon={custom} />
-          </span>
-        ) : (
-          <i class={[ns.e('clear'), custom]} onClick={clearInput}></i>
-        )
-      }
-      return (
-        <span class={ns.e('clear')} onClick={clearInput}>
-          {custom as VNode}
-        </span>
-      )
-    }
-
     const renderAddonBefore = () => {
       if (!hasAddonBefore.value) return null
-      // slot 优先：addon-before 主名 > prepend 旧名 > string prop
-      const slotContent = slots['addon-before'] ? slots['addon-before']() : slots.prepend?.()
-      return <div class={ns.e('prepend')}>{slotContent ?? <span>{addonBeforeText.value}</span>}</div>
+      const slotContent = slots.prepend?.()
+      return <div class={ns.e('prepend')}>{slotContent ?? <span>{props.prepend}</span>}</div>
     }
 
     const renderAddonAfter = () => {
       if (!hasAddonAfter.value) return null
-      const slotContent = slots['addon-after'] ? slots['addon-after']() : slots.append?.()
-      return <div class={ns.e('append')}>{slotContent ?? <span>{addonAfterText.value}</span>}</div>
+      const slotContent = slots.append?.()
+      return <div class={ns.e('append')}>{slotContent ?? <span>{props.append}</span>}</div>
     }
 
     const renderSuffix = () => {
       const isInteractive = !props.disabled && !props.readonly
-      const hasClear = isInteractive && allowClearEnabled.value && !!inputValue.value
+      const hasClear = isInteractive && props.clearable && !!inputValue.value
       const hasPasswordToggle = isInteractive && showPasswordVisible.value
       const hasSuffixSlot = !!slots.suffix
       const hasCount = showCountEnabled.value
@@ -233,7 +171,7 @@ export default defineComponent({
 
       return (
         <div class={ns.e('suffix')}>
-          {hasClear && renderClearIcon()}
+          {hasClear && <i class={ns.e('clear')} onClick={clearInput}></i>}
           {hasPasswordToggle && (
             <i
               class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
