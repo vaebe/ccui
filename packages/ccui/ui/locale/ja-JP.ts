@@ -8,7 +8,7 @@ const jaJP: Locale = {
     justOkText: 'OK',
   },
   Popconfirm: {
-    okText: 'OK',
+    confirmText: 'OK',
     cancelText: 'キャンセル',
   },
   Empty: {

@@ -17,17 +17,9 @@ export const popconfirmProps = {
     default: 'top' as PopoverPlacement,
   },
   /**
-   * @deprecated 请改用 `okText`。
-   * 运行时从 ConfigProvider.locale.Popconfirm 取值；用户显式传 ok-text 仍优先。
+   * 确认按钮文案。未传时取 ConfigProvider.locale.Popconfirm.confirmText。
    */
   confirmText: {
-    type: String,
-    default: '',
-  },
-  /**
-   * 确认按钮文案。显式 `okText` 优先于 `confirmText`。
-   */
-  okText: {
     type: String,
     default: '',
   },
@@ -36,18 +28,11 @@ export const popconfirmProps = {
     default: '',
   },
   /**
-   * @deprecated 请改用 `okType`。
+   * 确认按钮 type。
    */
   confirmType: {
     type: String as PropType<PopconfirmType>,
     default: 'primary' as PopconfirmType,
-  },
-  /**
-   * 确认按钮 type。
-   */
-  okType: {
-    type: String as PropType<PopconfirmType>,
-    default: undefined,
   },
   icon: {
     type: String,

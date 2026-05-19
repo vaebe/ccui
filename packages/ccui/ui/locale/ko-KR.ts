@@ -8,7 +8,7 @@ const koKR: Locale = {
     justOkText: '확인',
   },
   Popconfirm: {
-    okText: '확인',
+    confirmText: '확인',
     cancelText: '취소',
   },
   Empty: {

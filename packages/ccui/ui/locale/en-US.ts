@@ -8,7 +8,7 @@ const enUS: Locale = {
     justOkText: 'Got it',
   },
   Popconfirm: {
-    okText: 'OK',
+    confirmText: 'OK',
     cancelText: 'Cancel',
   },
   Empty: {

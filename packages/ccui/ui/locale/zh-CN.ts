@@ -8,7 +8,7 @@ const zhCN: Locale = {
     justOkText: '知道了',
   },
   Popconfirm: {
-    okText: '确 定',
+    confirmText: '确 定',
     cancelText: '取 消',
   },
   Empty: {

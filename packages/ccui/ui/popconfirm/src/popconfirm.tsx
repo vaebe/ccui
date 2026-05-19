@@ -1,8 +1,7 @@
 import type { PopconfirmProps } from './popconfirm-types'
-import { computed, defineComponent, getCurrentInstance, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import Popover from '../../popover/src/popover'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popconfirmProps } from './popconfirm-types'
 import './popconfirm.scss'
@@ -15,20 +14,8 @@ export default defineComponent({
     const ns = useNamespace('popconfirm')
     const cfg = useConfig()
 
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'confirmText', 'confirm-text')) {
-      warnDeprecated('confirmText', 'okText', 'Popconfirm')
-    }
-    if (isPropExplicit(rawProps, 'confirmType', 'confirm-type')) {
-      warnDeprecated('confirmType', 'okType', 'Popconfirm')
-    }
-
-    // 同义 prop 解析：okText > confirmText、okType > confirmType
-    const confirmTextResolved = computed(() => props.okText || props.confirmText)
-    const confirmTextLocal = computed(() => confirmTextResolved.value || cfg.locale?.Popconfirm?.okText || '确 定')
+    const confirmTextLocal = computed(() => props.confirmText || cfg.locale?.Popconfirm?.confirmText || '确 定')
     const cancelTextLocal = computed(() => props.cancelText || cfg.locale?.Popconfirm?.cancelText || '取 消')
-    const confirmTypeResolved = computed(() => props.okType || props.confirmType)
 
     const externalOpen = computed(() => props.visible)
 
@@ -102,7 +89,7 @@ export default defineComponent({
                     <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
                       {cancelTextLocal.value}
                     </button>
-                    <button class={[ns.e('btn'), ns.em('btn', confirmTypeResolved.value)]} onClick={onConfirm}>
+                    <button class={[ns.e('btn'), ns.em('btn', props.confirmType)]} onClick={onConfirm}>
                       {confirmTextLocal.value}
                     </button>
                   </>

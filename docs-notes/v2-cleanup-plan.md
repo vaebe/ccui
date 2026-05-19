@@ -116,18 +116,14 @@
 
 **改动**：2 项 prop 反向 + 4 个 locale 包 key 同步改回。
 
-- [ ] `popconfirm-types.ts` 删 `okText` / `okType` prop 声明 + JSDoc；保留 `confirmText` / `confirmType`
-- [ ] `popconfirm.tsx:21-24` 删 2 段 warn
-- [ ] `popconfirm.tsx` 模板：locale 取值从 `cfg.locale?.Popconfirm?.okText` 改为 `cfg.locale?.Popconfirm?.confirmText`
-- [ ] locale 4 个文件改 key：
-  - [ ] `locale/zh-CN.ts:11` `Popconfirm.okText: '确 定'` → `Popconfirm.confirmText: '确 定'`
-  - [ ] `locale/en-US.ts:11` 同
-  - [ ] `locale/ja-JP.ts:11` 同
-  - [ ] `locale/ko-KR.ts:11` 同
-- [ ] `locale/index.ts` 或 locale 类型定义里 `PopconfirmLocale.okText` 也改为 `confirmText`
-- [ ] 顶层 `okText`（Modal 用）保持不变——只动 `Popconfirm.*` 节
-- [ ] `popconfirm/test/popconfirm.test.ts` 删 deprecation describe + 改新名为旧名
-- [ ] `docs/components/popconfirm/index.md` API 表反转
+- [x] `popconfirm-types.ts` 删 `okText` / `okType` prop 声明 + JSDoc；保留 `confirmText` / `confirmType`
+- [x] `popconfirm.tsx:21-24` 删 2 段 warn
+- [x] `popconfirm.tsx` 模板：locale 取值从 `cfg.locale?.Popconfirm?.okText` 改为 `cfg.locale?.Popconfirm?.confirmText`
+- [x] locale 4 个文件改 key（zh-CN / en-US / ja-JP / ko-KR：`Popconfirm.okText` → `Popconfirm.confirmText`）
+- [x] `config-provider-types.ts` 里 `PopconfirmLocale.okText` 改为 `confirmText`
+- [x] 顶层 `Modal.okText` 保持不变——只动 `Popconfirm.*` 节
+- [x] `popconfirm/test/popconfirm.test.ts` 删 deprecation describe + 改新名为旧名
+- [x] `docs/components/popconfirm/index.md` API 表反转
 
 **验收**：grep `Popconfirm.*okText|Popconfirm\.okText` 在 packages 全仓零命中；`Popconfirm.confirmText` 在 4 个 locale 都有。
 
