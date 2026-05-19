@@ -12,7 +12,7 @@
  *   7. `git push --follow-tags` 推送
  *
  * 常用：
- *   node scripts/publish.mjs                              # 交互式选版本，dist-tag=beta
+ *   node scripts/publish.mjs                              # 交互式选版本（脚本自己问，兼容 Windows），dist-tag=beta
  *   node scripts/publish.mjs --release patch              # 非交互式 patch 升版
  *   node scripts/publish.mjs --release 2.1.0 --tag latest # 指定版本 + 正式发版
  *   node scripts/publish.mjs --dry-run                    # 跳过 bump/changelog，只走构建发布预演
@@ -172,12 +172,70 @@ function ensureCleanGit() {
 // ── 版本号同步（bumpp） ───────────────────────────────────────────────────────
 // bumpp 一把更新三个发布包的 package.json，自己不做 commit/tag/push，
 // 由本脚本在 publish 成功后统一打 commit + tag + push（含 changelog）。
+// 计算下一版本预览。仅做菜单展示，真正的 bump 仍由 bumpp（即 semver.inc）执行。
+function previewNext(current, kind) {
+  const [base, pre] = current.split('-')
+  const parts = base.split('.').map(Number)
+  const [maj = 0, min = 0, pat = 0] = parts
+  switch (kind) {
+    case 'major':
+      return `${maj + 1}.0.0`
+    case 'minor':
+      return `${maj}.${min + 1}.0`
+    case 'patch':
+      // 当前是 prerelease 时，patch 落到对应 release（丢 prerelease 段）；否则 +1
+      return pre ? base : `${maj}.${min}.${pat + 1}`
+    case 'prerelease': {
+      if (!pre) return `${base}-beta.0`
+      const segs = pre.split('.')
+      const lastIdx = segs.length - 1
+      const last = Number(segs[lastIdx])
+      if (Number.isFinite(last)) {
+        segs[lastIdx] = String(last + 1)
+        return `${base}-${segs.join('.')}`
+      }
+      return `${current}.0`
+    }
+    default:
+      return '?'
+  }
+}
+
+// pnpm release 直接跑（无 --release）时，由本脚本自己提示选版本。
+// 原因：bumpp 的 picker / 确认 prompt 在 Windows + spawnSync 下拿不到 stdin raw mode，会 EOF 退出。
+// 把交互留在 publish.mjs（readline 已就绪），版本选好通过 --release 传给 bumpp，bumpp 全程非交互。
+async function pickRelease(currentVersion) {
+  console.log(dim(`\n选择版本类型 (current: ${currentVersion})：`))
+  const items = [
+    { key: '1', kind: 'prerelease', label: 'prerelease' },
+    { key: '2', kind: 'patch', label: 'patch     ' },
+    { key: '3', kind: 'minor', label: 'minor     ' },
+    { key: '4', kind: 'major', label: 'major     ' },
+  ]
+  for (const it of items) {
+    console.log(`  ${it.key}) ${it.label}  ${dim('→ ' + previewNext(currentVersion, it.kind))}`)
+  }
+  console.log(`  5) ${dim('自定义版本号')}`)
+  const ans = (await ask('选择 [1-5 / 或直接输入版本号]: ')).trim()
+  if (!ans) fatal('未选择，退出')
+  const hit = items.find((it) => it.key === ans)
+  if (hit) return hit.kind
+  if (ans === '5') {
+    const v = (await ask('输入版本号 (如 2.0.1-beta.4): ')).trim()
+    if (!v) fatal('未输入版本号')
+    return v
+  }
+  // 没匹配编号 → 当作直接输入的 release 关键字或版本号
+  return ans
+}
+
 async function bumpVersions() {
   step('Bump versions (bumpp)')
+  // 未传 --release 时由 publish.mjs 自己挑（兼容 Windows）。
+  const current = readJson(PACKAGES[0].pkgJson).version
+  const release = RELEASE || (await pickRelease(current))
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
-  // -y / --yes：跳过 bumpp 自己的 "Bump? (Y/n)" 确认。
-  // Windows + spawnSync 下该 prompt 拿不到 stdin raw mode 直接 EOF 退出非零（Mac 下没这个问题）。
-  // 本脚本后面有自己的总确认（"确认开始构建并发布？"），bumpp 的二次确认是冗余的。
+  // --yes：跳过 bumpp 的 "Bump? (Y/n)" 二次确认（脚本后面有自己的总确认）。
   const bumppArgs = [
     'bumpp',
     ...pkgFiles,
@@ -185,8 +243,9 @@ async function bumpVersions() {
     '--no-tag',
     '--no-push',
     '--yes',
+    '--release',
+    release,
   ]
-  if (RELEASE) bumppArgs.push('--release', RELEASE)
   if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
 }
 
