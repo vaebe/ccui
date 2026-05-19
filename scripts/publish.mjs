@@ -36,9 +36,6 @@ import { stdin, stdout, exit, cwd } from 'node:process'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -240,9 +237,14 @@ async function bumpVersions() {
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
   // --yes：跳过 bumpp 的 "Bump? (Y/n)" 二次确认（脚本后面有自己的总确认）。
   // 直接走 bumpp 的 bin 入口（node node_modules/bumpp/bin/bumpp.mjs），
-  // 绕开 `pnpm exec`/cmd shim —— Windows 下 `pnpm exec bumpp` 通过 .CMD 包一层后
+  // 绕开 `pnpm exec` / .CMD shim —— Windows 下 `pnpm exec bumpp` 通过 .CMD 包一层后
   // bumpp 直接报 exit 1（即便 --yes 也躲不开），直接 node 调入口稳定。
-  const bumppBin = require.resolve('bumpp/bin/bumpp.mjs')
+  //
+  // 用 fs 路径而非 require.resolve：bumpp 的 package.json 在 exports 里没暴露 bin 路径
+  // （Node 解析会抛 ERR_PACKAGE_PATH_NOT_EXPORTED），但 `bin` 字段映射本身可信。
+  const bumppPkg = readJson('node_modules/bumpp/package.json')
+  const binEntry = typeof bumppPkg.bin === 'string' ? bumppPkg.bin : bumppPkg.bin.bumpp
+  const bumppBin = resolve(ROOT, 'node_modules/bumpp', binEntry)
   const bumppArgs = [
     bumppBin,
     ...pkgFiles,
