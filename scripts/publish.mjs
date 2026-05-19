@@ -12,7 +12,7 @@
  *   7. `git push --follow-tags` 推送
  *
  * 常用：
- *   node scripts/publish.mjs                              # 交互式选版本（脚本自己问，兼容 Windows），dist-tag=beta
+ *   node scripts/publish.mjs                              # 交互式选版本，dist-tag=beta
  *   node scripts/publish.mjs --release patch              # 非交互式 patch 升版
  *   node scripts/publish.mjs --release 2.1.0 --tag latest # 指定版本 + 正式发版
  *   node scripts/publish.mjs --dry-run                    # 跳过 bump/changelog，只走构建发布预演
@@ -36,6 +36,11 @@ import { stdin, stdout, exit, cwd } from 'node:process'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+// 屏蔽 Node 20+ 的 DEP0190 警告（shell: true + 参数数组的安全提示）。
+// 本脚本 Windows 必须 shell: true 才能找到 pnpm.cmd / npm.cmd 这类 shim，
+// 参数全部是本仓库可信常量（包名 / 版本号 / 固定 flag），不存在用户输入注入风险。
+process.noDeprecation = true
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -182,90 +187,12 @@ function ensureCleanGit() {
 // ── 版本号同步（bumpp） ───────────────────────────────────────────────────────
 // bumpp 一把更新三个发布包的 package.json，自己不做 commit/tag/push，
 // 由本脚本在 publish 成功后统一打 commit + tag + push（含 changelog）。
-// 计算下一版本预览。仅做菜单展示，真正的 bump 仍由 bumpp（即 semver.inc）执行。
-function previewNext(current, kind) {
-  const [base, pre] = current.split('-')
-  const parts = base.split('.').map(Number)
-  const [maj = 0, min = 0, pat = 0] = parts
-  switch (kind) {
-    case 'major':
-      return `${maj + 1}.0.0`
-    case 'minor':
-      return `${maj}.${min + 1}.0`
-    case 'patch':
-      // 当前是 prerelease 时，patch 落到对应 release（丢 prerelease 段）；否则 +1
-      return pre ? base : `${maj}.${min}.${pat + 1}`
-    case 'prerelease': {
-      if (!pre) return `${base}-beta.0`
-      const segs = pre.split('.')
-      const lastIdx = segs.length - 1
-      const last = Number(segs[lastIdx])
-      if (Number.isFinite(last)) {
-        segs[lastIdx] = String(last + 1)
-        return `${base}-${segs.join('.')}`
-      }
-      return `${current}.0`
-    }
-    default:
-      return '?'
-  }
-}
-
-// pnpm release 直接跑（无 --release）时，由本脚本自己提示选版本。
-// 原因：bumpp 的 picker / 确认 prompt 在 Windows + spawnSync 下拿不到 stdin raw mode，会 EOF 退出。
-// 把交互留在 publish.mjs（readline 已就绪），版本选好通过 --release 传给 bumpp，bumpp 全程非交互。
-async function pickRelease(currentVersion) {
-  console.log(dim(`\n选择版本类型 (current: ${currentVersion})：`))
-  const items = [
-    { key: '1', kind: 'prerelease', label: 'prerelease' },
-    { key: '2', kind: 'patch', label: 'patch     ' },
-    { key: '3', kind: 'minor', label: 'minor     ' },
-    { key: '4', kind: 'major', label: 'major     ' },
-  ]
-  for (const it of items) {
-    console.log(`  ${it.key}) ${it.label}  ${dim('→ ' + previewNext(currentVersion, it.kind))}`)
-  }
-  console.log(`  5) ${dim('自定义版本号')}`)
-  const ans = (await ask('选择 [1-5 / 或直接输入版本号]: ')).trim()
-  if (!ans) fatal('未选择，退出')
-  const hit = items.find((it) => it.key === ans)
-  if (hit) return hit.kind
-  if (ans === '5') {
-    const v = (await ask('输入版本号 (如 2.0.1-beta.4): ')).trim()
-    if (!v) fatal('未输入版本号')
-    return v
-  }
-  // 没匹配编号 → 当作直接输入的 release 关键字或版本号
-  return ans
-}
-
 async function bumpVersions() {
   step('Bump versions (bumpp)')
-  // 未传 --release 时由 publish.mjs 自己挑（兼容 Windows）。
-  const current = readJson(PACKAGES[0].pkgJson).version
-  const release = RELEASE || (await pickRelease(current))
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
-  // --yes：跳过 bumpp 的 "Bump? (Y/n)" 二次确认（脚本后面有自己的总确认）。
-  // 直接走 bumpp 的 bin 入口（node node_modules/bumpp/bin/bumpp.mjs），
-  // 绕开 `pnpm exec` / .CMD shim —— Windows 下 `pnpm exec bumpp` 通过 .CMD 包一层后
-  // bumpp 直接报 exit 1（即便 --yes 也躲不开），直接 node 调入口稳定。
-  //
-  // 用 fs 路径而非 require.resolve：bumpp 的 package.json 在 exports 里没暴露 bin 路径
-  // （Node 解析会抛 ERR_PACKAGE_PATH_NOT_EXPORTED），但 `bin` 字段映射本身可信。
-  const bumppPkg = readJson('node_modules/bumpp/package.json')
-  const binEntry = typeof bumppPkg.bin === 'string' ? bumppPkg.bin : bumppPkg.bin.bumpp
-  const bumppBin = resolve(ROOT, 'node_modules/bumpp', binEntry)
-  const bumppArgs = [
-    bumppBin,
-    ...pkgFiles,
-    '--no-commit',
-    '--no-tag',
-    '--no-push',
-    '--yes',
-    '--release',
-    release,
-  ]
-  if (!run('node', bumppArgs)) fatal('bumpp 失败')
+  const bumppArgs = ['bumpp', ...pkgFiles, '--no-commit', '--no-tag', '--no-push']
+  if (RELEASE) bumppArgs.push('--release', RELEASE)
+  if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
 }
 
 function ensureVersionsAligned() {
@@ -280,33 +207,14 @@ function ensureVersionsAligned() {
 }
 
 // ── changelog（conventional-changelog） ──────────────────────────────────────
-// 直接调 conventional-changelog 的 cli.js（pnpm hoist 到 root node_modules）。
-//
-// 不走 `pnpm --filter ccui-cli changelog`：cli/package.json 里那条 script 用了
-// 单引号 `'../ccui/package.json'`——Mac 下 sh 把单引号脱掉没问题，Windows 下 pnpm
-// 用 cmd 执行 script，cmd 把单引号当字面量、整段路径变成 'unknown'，
-// conventional-changelog 报路径不存在退出 1。改 cli 的 script 会破坏 Mac/CI 用法，
-// 这里在 publish.mjs 这一侧绕开整条 wrapper 链，跨平台稳定。
-//
-// 注意：packages/cli/CHANGELOG.md 在仓库 .gitignore 列表里，是「本地生成的参考产物」，
-// 不入库。脚本只生成不 add，给作者手写根目录 CHANGELOG.md 时做参考。
+// cli 里早就接了 `pnpm changelog`（conventional-changelog-cli），
+// 这里复用它，避免在 root 再装一份重复依赖。
+// 注意：packages/cli/CHANGELOG.md 在仓库 .gitignore 列表里（packages/*/CHANGELOG.md），
+// 是「本地生成的参考产物」，不入库。脚本只生成不 add，给作者手写
+// 根目录 CHANGELOG.md 时做参考。
 function generateChangelog() {
   step('Regenerate CHANGELOG (conventional-changelog)')
-  // conventional-changelog-cli 在 packages/cli 的 devDependencies 里，pnpm 隔离安装到
-  // packages/cli/node_modules/，不在仓库 root node_modules。直接定位过去：
-  const ccPkgRel = 'packages/cli/node_modules/conventional-changelog-cli/package.json'
-  const ccPkg = readJson(ccPkgRel)
-  const ccBinRel = typeof ccPkg.bin === 'string' ? ccPkg.bin : ccPkg.bin['conventional-changelog']
-  const ccBin = resolve(ROOT, 'packages/cli/node_modules/conventional-changelog-cli', ccBinRel)
-  // conventional-changelog 的 -i 解析相对路径基于 cwd，传绝对路径在某些版本下会被再次拼接，
-  // 故直接把 cwd 切到 packages/cli，输入/输出全用相对路径。
-  runOrFatal('node', [
-    ccBin,
-    '-k', '../ccui/package.json',
-    '-p', 'angular',
-    '-i', 'CHANGELOG.md',
-    '-s',
-  ], { cwd: resolve(ROOT, 'packages/cli') })
+  runOrFatal('pnpm', ['--filter', 'ccui-cli', 'changelog'])
   ok('packages/cli/CHANGELOG.md 已更新（本地参考，不入库）')
 }
 
