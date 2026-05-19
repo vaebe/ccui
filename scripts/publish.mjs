@@ -270,14 +270,33 @@ function ensureVersionsAligned() {
 }
 
 // ── changelog（conventional-changelog） ──────────────────────────────────────
-// cli 里早就接了 `pnpm changelog`（conventional-changelog-cli），
-// 这里复用它，避免在 root 再装一份重复依赖。
-// 注意：packages/cli/CHANGELOG.md 在仓库 .gitignore 列表里（packages/*/CHANGELOG.md），
-// 是「本地生成的参考产物」，不入库。脚本只生成不 add，给作者手写
-// 根目录 CHANGELOG.md 时做参考。
+// 直接调 conventional-changelog 的 cli.js（pnpm hoist 到 root node_modules）。
+//
+// 不走 `pnpm --filter ccui-cli changelog`：cli/package.json 里那条 script 用了
+// 单引号 `'../ccui/package.json'`——Mac 下 sh 把单引号脱掉没问题，Windows 下 pnpm
+// 用 cmd 执行 script，cmd 把单引号当字面量、整段路径变成 'unknown'，
+// conventional-changelog 报路径不存在退出 1。改 cli 的 script 会破坏 Mac/CI 用法，
+// 这里在 publish.mjs 这一侧绕开整条 wrapper 链，跨平台稳定。
+//
+// 注意：packages/cli/CHANGELOG.md 在仓库 .gitignore 列表里，是「本地生成的参考产物」，
+// 不入库。脚本只生成不 add，给作者手写根目录 CHANGELOG.md 时做参考。
 function generateChangelog() {
   step('Regenerate CHANGELOG (conventional-changelog)')
-  runOrFatal('pnpm', ['--filter', 'ccui-cli', 'changelog'])
+  // conventional-changelog-cli 在 packages/cli 的 devDependencies 里，pnpm 隔离安装到
+  // packages/cli/node_modules/，不在仓库 root node_modules。直接定位过去：
+  const ccPkgRel = 'packages/cli/node_modules/conventional-changelog-cli/package.json'
+  const ccPkg = readJson(ccPkgRel)
+  const ccBinRel = typeof ccPkg.bin === 'string' ? ccPkg.bin : ccPkg.bin['conventional-changelog']
+  const ccBin = resolve(ROOT, 'packages/cli/node_modules/conventional-changelog-cli', ccBinRel)
+  // conventional-changelog 的 -i 解析相对路径基于 cwd，传绝对路径在某些版本下会被再次拼接，
+  // 故直接把 cwd 切到 packages/cli，输入/输出全用相对路径。
+  runOrFatal('node', [
+    ccBin,
+    '-k', '../ccui/package.json',
+    '-p', 'angular',
+    '-i', 'CHANGELOG.md',
+    '-s',
+  ], { cwd: resolve(ROOT, 'packages/cli') })
   ok('packages/cli/CHANGELOG.md 已更新（本地参考，不入库）')
 }
 
