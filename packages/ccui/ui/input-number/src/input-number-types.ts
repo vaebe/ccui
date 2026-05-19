@@ -9,12 +9,9 @@ import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use
 export type InputNumberValue = number | undefined
 
 /**
- * 输入框尺寸类型。
- *
- * - 推荐：`'large' | 'default' | 'small'`（与库内其他录入组件统一）
- * - 兼容：`'lg' | 'md' | 'sm'`（旧值，运行时自动映射到推荐值；下一大版本移除）
+ * 输入框尺寸类型。与库内其他录入组件（Input / Select 等）统一。
  */
-export type ISize = 'large' | 'default' | 'small' | 'lg' | 'md' | 'sm'
+export type ISize = 'large' | 'default' | 'small'
 
 /**
  * 控制按钮位置类型

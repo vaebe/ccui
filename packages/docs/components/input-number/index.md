@@ -131,9 +131,9 @@ const value = ref(1.0)
 
 :::
 
-## 尺寸（推荐用 large/default/small）
+## 尺寸
 
-推荐使用 `large` / `default` / `small`，与库内其他录入组件（Input / Select 等）统一。旧值 `lg` / `md` / `sm` 仍兼容但会在控制台打 deprecated 警告，下一大版本移除。
+支持 `large` / `default` / `small` 三档，与库内其他录入组件（Input / Select 等）统一。
 
 :::demo
 
@@ -153,10 +153,6 @@ const value = ref(0)
 </template>
 ```
 
-:::
-
-::: tip
-旧版本写法 `size="lg" | "md" | "sm"` 仍然可用，运行时会自动映射到 `large` / `default` / `small`，但控制台会输出一条 deprecated 警告。新代码请直接使用新值。
 :::
 
 ## 控制按钮位置
@@ -424,7 +420,7 @@ const v3 = ref(0)
 | disabled          | `boolean`                                                        | `false`      | 是否禁用计数器                                                                               |
 | readonly          | `boolean`                                                        | `false`      | 是否只读                                                                                     |
 | precision         | `number`                                                         | `undefined`  | 数值精度                                                                                     |
-| size              | `'large' \| 'default' \| 'small'`（兼容 `'lg' \| 'md' \| 'sm'`） | `'default'`  | 输入框尺寸；`'lg' \| 'md' \| 'sm'` **(deprecated)** 请改用 `'large' \| 'default' \| 'small'` |
+| size              | `'large' \| 'default' \| 'small'`                                | `'default'`  | 输入框尺寸                                                                                   |
 | controls          | `boolean`                                                        | `true`       | 是否显示控制按钮                                                                             |
 | controls-position | `'both' \| 'right'`                                              | `'both'`     | 控制按钮位置                                                                                 |
 | allow-empty       | `boolean`                                                        | `false`      | 是否允许空值                                                                                 |

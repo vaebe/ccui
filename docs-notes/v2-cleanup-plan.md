@@ -51,11 +51,11 @@
 
 **改动**：删 `'lg' | 'md' | 'sm'` 三个旧值；类型联合从 6 值缩到 3 值，对齐 Button。
 
-- [ ] `input-number-types.ts:17` `ISize` 联合 `'large' | 'default' | 'small' | 'lg' | 'md' | 'sm'` → `'large' | 'default' | 'small'`
-- [ ] `input-number.tsx:25-34` 删 `sizeAliasMap` + `normalizedSize` computed，模板里直接用 `props.size`
-- [ ] `input-number/test/input-number.test.ts` 删 deprecation 测试 + 把 `size: 'lg'/'md'/'sm'` 改成 `'large'/'default'/'small'`
-- [ ] `docs/components/input-number/index.md` API 表删旧值
-- [ ] `packages/ccui/ui/shared/utils/deprecated.ts` 调用方减少，但 util 本身保留（其他组件还在用）
+- [x] `input-number-types.ts:17` `ISize` 联合 `'large' | 'default' | 'small' | 'lg' | 'md' | 'sm'` → `'large' | 'default' | 'small'`
+- [x] `input-number.tsx:25-34` 删 `sizeAliasMap` + `normalizedSize` computed，模板里直接用 `props.size`
+- [x] `input-number/test/input-number.test.ts` 删 deprecation 测试 + 把 `size: 'lg'/'md'/'sm'` 改成 `'large'/'default'/'small'`
+- [x] `docs/components/input-number/index.md` API 表删旧值
+- [x] `packages/ccui/ui/shared/utils/deprecated.ts` 调用方减少，但 util 本身保留（其他组件还在用）
 
 **验收**：`pnpm --filter @vaebe/ccui test` 全过；grep `'lg'|'md'|'sm'` 在 input-number 目录零命中。
 

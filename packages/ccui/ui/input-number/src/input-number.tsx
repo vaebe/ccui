@@ -3,7 +3,6 @@ import type { InputNumberInstance, InputNumberProps, InputNumberValue } from './
 import { computed, defineComponent, inject, nextTick, ref, watch } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { warnDeprecated } from '../../shared/utils/deprecated'
 import { inputNumberProps } from './input-number-types'
 import './input-number.scss'
 
@@ -21,17 +20,6 @@ export default defineComponent({
     // 内部值状态
     const innerValue = ref<InputNumberValue>(props.modelValue)
     const focused = ref(false)
-
-    // size 兼容旧值 'lg' | 'md' | 'sm'，统一映射到 'large' | 'default' | 'small'
-    const sizeAliasMap = { lg: 'large', md: 'default', sm: 'small' } as const
-    const normalizedSize = computed(() => {
-      const raw = props.size
-      if (raw === 'lg' || raw === 'md' || raw === 'sm') {
-        warnDeprecated(`size="${raw}"`, sizeAliasMap[raw], 'InputNumber')
-        return sizeAliasMap[raw]
-      }
-      return raw
-    })
 
     // 计算显示值
     const displayValue = computed(() => {
@@ -234,7 +222,7 @@ export default defineComponent({
               [ns.m('readonly')]: props.readonly,
               [ns.m('without-controls')]: !props.controls,
               [ns.m('controls-right')]: controlsAtRight,
-              [ns.m(normalizedSize.value)]: normalizedSize.value !== 'default',
+              [ns.m(props.size)]: props.size !== 'default',
               [ns.m('focused')]: focused.value,
               [ns.m('glow')]: props.showGlowStyle && focused.value,
               [ns.m(`variant-${props.variant}`)]: !!props.variant,
