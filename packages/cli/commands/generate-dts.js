@@ -53,7 +53,12 @@ async function moveDir(from, to) {
 
 export const generateDts = async () => {
   // 1) 跑 vue-tsc 把所有声明文件落到 build/types/
-  const result = spawnSync('pnpm', ['exec', 'vue-tsc', '-p', 'tsconfig.build.json'], { cwd: pkgRoot, stdio: 'inherit' })
+  // Windows shell: Node 20+ CVE-2024-27980 后 spawnSync 不再自动解析 pnpm.cmd（同 run-command.js 处理）
+  const result = spawnSync('pnpm', ['exec', 'vue-tsc', '-p', 'tsconfig.build.json'], {
+    cwd: pkgRoot,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  })
   // result.error 单独看：PATH 找不到 `pnpm` 时 status === null，否则
   // 错误会被 "退出码 null" 这种无信息抛错盖掉真实的 ENOENT。
   if (result.error) {
