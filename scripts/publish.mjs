@@ -36,6 +36,9 @@ import { stdin, stdout, exit, cwd } from 'node:process'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -236,8 +239,12 @@ async function bumpVersions() {
   const release = RELEASE || (await pickRelease(current))
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
   // --yes：跳过 bumpp 的 "Bump? (Y/n)" 二次确认（脚本后面有自己的总确认）。
+  // 直接走 bumpp 的 bin 入口（node node_modules/bumpp/bin/bumpp.mjs），
+  // 绕开 `pnpm exec`/cmd shim —— Windows 下 `pnpm exec bumpp` 通过 .CMD 包一层后
+  // bumpp 直接报 exit 1（即便 --yes 也躲不开），直接 node 调入口稳定。
+  const bumppBin = require.resolve('bumpp/bin/bumpp.mjs')
   const bumppArgs = [
-    'bumpp',
+    bumppBin,
     ...pkgFiles,
     '--no-commit',
     '--no-tag',
@@ -246,7 +253,7 @@ async function bumpVersions() {
     '--release',
     release,
   ]
-  if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
+  if (!run('node', bumppArgs)) fatal('bumpp 失败')
 }
 
 function ensureVersionsAligned() {
