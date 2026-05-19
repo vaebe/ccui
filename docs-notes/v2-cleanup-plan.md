@@ -82,12 +82,14 @@
 
 **改动**：5 项 prop 反向（保旧名删新名），slot 名也改回。
 
-- [ ] `tooltip-types.ts` 删 `title` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` 5 prop + JSDoc；保留 `content` / `showArrow`（boolean）/ `showAfter` / `hideAfter` / `popperClass`
-- [ ] `tooltip-types.ts` 同时删 `TooltipArrowObject` / `TooltipArrow` 复合类型（pointAtCenter 舍弃）；`showArrow` 类型回到纯 `Boolean`
-- [ ] `tooltip.tsx:26-38` 删 5 段 deprecation warn 块 + 兼容映射 computed（resolvedTitle / resolvedArrow 等）
-- [ ] `tooltip.tsx` 模板：`title` slot 改用 `slots.default?.()` 渲染浮层内容
-- [ ] `tooltip/test/tooltip.test.ts` 删 deprecation describe + 改测试用的新名为旧名（包括把 `title` prop 改成 `content`、`title` slot 改成 default slot）
-- [ ] `docs/components/tooltip/index.md` API 表反转
+- [x] `tooltip-types.ts` 删 `title` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` 5 prop + JSDoc；保留 `content` / `showArrow`（boolean）/ `showAfter` / `hideAfter` / `popperClass`
+- [x] `tooltip-types.ts` 同时删 `TooltipArrowObject` / `TooltipArrow` 复合类型（pointAtCenter 舍弃）；`showArrow` 类型回到纯 `Boolean`
+- [x] `tooltip.tsx:26-38` 删 5 段 deprecation warn 块 + 兼容映射 computed（resolvedTitle / resolvedArrow 等）
+- [x] ~~`tooltip.tsx` 模板：`title` slot 改用 `slots.default?.()` 渲染浮层内容~~ → 调整为：`default` slot 仍为 trigger（不破坏 Vue 习惯），`title` slot 删除，`content` slot 保留为浮层内容 slot
+- [x] `tooltip/test/tooltip.test.ts` 删 deprecation describe + 改测试用的新名为旧名
+- [x] `docs/components/tooltip/index.md` API 表反转
+- [x] **级联**：Slider 内部 `<Tooltip title= arrow= overlayClassName=>` → `content= showArrow= popperClass=`；slider.test.ts 4 处 `props('title')` → `props('content')`
+- [x] **级联**：`no-self-deprecated.test.ts` Tooltip 已 canonical 的 4 pattern 暂时移除（Popover 用同名 prop 待 Task D 一起清；保留 `teleported` 项给 Popover）
 
 **注意**：Tooltip 还有 `color`/`fresh`/`destroyTooltipOnHide`/`autoAdjustOverflow`/`align`/`getPopupContainer` 等 L-1.5 引入的新能力——**这些不删**（不是 deprecated，是真功能）。仅删上面列出的 5 项。
 

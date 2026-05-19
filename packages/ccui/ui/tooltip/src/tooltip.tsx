@@ -1,14 +1,9 @@
-import type { TooltipArrowObject, TooltipProps } from './tooltip-types'
+import type { TooltipProps } from './tooltip-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tooltipProps } from './tooltip-types'
 import './tooltip.scss'
-
-function isArrowObject(v: unknown): v is TooltipArrowObject {
-  return v !== null && typeof v === 'object' && !Array.isArray(v)
-}
 
 let tooltipIdCounter = 0
 
@@ -19,24 +14,6 @@ export default defineComponent({
   setup(props: TooltipProps, { emit, slots }) {
     const ns = useNamespace('tooltip')
     const popperId = `${ns.e('popper')}-${++tooltipIdCounter}`
-
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'content', 'content')) {
-      warnDeprecated('content', 'title', 'Tooltip')
-    }
-    if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
-      warnDeprecated('showArrow', 'arrow', 'Tooltip')
-    }
-    if (isPropExplicit(rawProps, 'showAfter', 'show-after')) {
-      warnDeprecated('showAfter', 'mouseEnterDelay', 'Tooltip')
-    }
-    if (isPropExplicit(rawProps, 'hideAfter', 'hide-after')) {
-      warnDeprecated('hideAfter', 'mouseLeaveDelay', 'Tooltip')
-    }
-    if (isPropExplicit(rawProps, 'popperClass', 'popper-class')) {
-      warnDeprecated('popperClass', 'overlayClassName', 'Tooltip')
-    }
 
     // visible 受控
     const externalOpen = computed(() => props.visible)
@@ -52,25 +29,6 @@ export default defineComponent({
 
     const actualVisible = computed(() => (isControlled.value ? externalOpen.value : visible.value))
 
-    // mouseEnterDelay / mouseLeaveDelay 优先于 showAfter / hideAfter；单位 ms
-    const enterDelay = computed(() => (props.mouseEnterDelay !== undefined ? props.mouseEnterDelay : props.showAfter))
-    const leaveDelay = computed(() => (props.mouseLeaveDelay !== undefined ? props.mouseLeaveDelay : props.hideAfter))
-
-    // arrow：复合对象优先于旧 showArrow boolean
-    const arrowEnabled = computed(() => {
-      if (props.arrow !== undefined) {
-        return typeof props.arrow === 'boolean' ? props.arrow : true
-      }
-      return props.showArrow
-    })
-    const arrowPointAtCenter = computed(() => (isArrowObject(props.arrow) ? !!props.arrow.pointAtCenter : false))
-
-    // overlayClassName 优先于 popperClass
-    const customClassName = computed(() => props.overlayClassName || props.popperClass)
-
-    // title / content：显式 title 优先；slot 优先级最高（在 renderContent 处理）
-    const contentText = computed(() => props.title || props.content)
-
     // color：覆盖 effect 的内置背景
     const inlineColorStyle = computed(() => {
       if (!props.color) return {}
@@ -82,8 +40,7 @@ export default defineComponent({
         ns.e('popper'),
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
-        arrowPointAtCenter.value && ns.em('popper', 'arrow-center'),
-        customClassName.value,
+        props.popperClass,
       ]
         .filter(Boolean)
         .join(' ')
@@ -97,13 +54,13 @@ export default defineComponent({
         offset(props.offset),
         ...(props.autoAdjustOverflow ? [flip()] : []),
         shift({ padding: 8 }),
-        ...(arrowEnabled.value ? [arrow({ element: arrowRef })] : []),
+        ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
       ],
     })
 
     // 箭头位置计算
     const arrowStyles = computed(() => {
-      if (!arrowEnabled.value || !middlewareData.value.arrow) {
+      if (!props.showArrow || !middlewareData.value.arrow) {
         return {}
       }
 
@@ -153,8 +110,8 @@ export default defineComponent({
         })
       }
 
-      if (enterDelay.value > 0) {
-        showTimer.value = window.setTimeout(showTooltip, enterDelay.value)
+      if (props.showAfter > 0) {
+        showTimer.value = window.setTimeout(showTooltip, props.showAfter)
       } else {
         showTooltip()
       }
@@ -172,8 +129,8 @@ export default defineComponent({
         emit('hide')
       }
 
-      if (leaveDelay.value > 0 && props.trigger !== 'click') {
-        hideTimer.value = window.setTimeout(hideTooltip, leaveDelay.value)
+      if (props.hideAfter > 0 && props.trigger !== 'click') {
+        hideTimer.value = window.setTimeout(hideTooltip, props.hideAfter)
       } else {
         hideTooltip()
       }
@@ -263,21 +220,20 @@ export default defineComponent({
 
     // 渲染箭头
     const renderArrow = () => {
-      if (!arrowEnabled.value) return null
+      if (!props.showArrow) return null
 
       const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
 
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
 
-    // 渲染弹出层内容：title slot > content slot > title prop > content prop
+    // 渲染弹出层内容：content slot > content prop（rawContent 时按 HTML 渲染）
     const renderContent = () => {
-      if (slots.title) return slots.title()
       if (slots.content) return slots.content()
       if (props.rawContent) {
-        return <div innerHTML={contentText.value}></div>
+        return <div innerHTML={props.content}></div>
       }
-      return contentText.value
+      return props.content
     }
 
     return () => {

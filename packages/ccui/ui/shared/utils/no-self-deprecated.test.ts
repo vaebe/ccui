@@ -21,15 +21,8 @@ interface Pattern {
 }
 
 const DEPRECATED_PATTERNS: Pattern[] = [
-  // Tooltip / Popover
-  { key: 'showArrow', replacement: 'arrow', re: /\bshowArrow=/ },
-  { key: 'show-arrow', replacement: 'arrow', re: /\bshow-arrow=/ },
-  { key: 'popperClass', replacement: 'overlayClassName', re: /\bpopperClass=/ },
-  { key: 'popper-class', replacement: 'overlay-class-name', re: /\bpopper-class=/ },
-  { key: 'showAfter', replacement: 'mouseEnterDelay', re: /\bshowAfter=/ },
-  { key: 'show-after', replacement: 'mouse-enter-delay', re: /\bshow-after=/ },
-  { key: 'hideAfter', replacement: 'mouseLeaveDelay', re: /\bhideAfter=/ },
-  { key: 'hide-after', replacement: 'mouse-leave-delay', re: /\bhide-after=/ },
+  // Popover（这些 pattern 与 Tooltip 同名但仅 Popover 还在 deprecation 阶段；Task D 完成后整组删除）
+  // - showArrow/popperClass/showAfter/hideAfter 在 Tooltip 已是 canonical，pattern 暂时拆出去等 Task D
   { key: 'teleported', replacement: 'getPopupContainer', re: /\bteleported=/ },
 ]
 
