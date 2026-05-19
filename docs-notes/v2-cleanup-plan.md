@@ -168,15 +168,12 @@
 
 **前提**：A-F 都完成后做。
 
-- [ ] **codemod 反向重写**：`scripts/codemod-v1-to-v2.mjs` → `scripts/codemod-pre-v2-to-v2.mjs`（或类似命名），把 Button/Input/Tooltip/Popover/Popconfirm 5 组件的映射方向反转（新→旧），保留 Modal/Drawer/Tag/ColorPicker/FormItem 5 组件方向不变（旧→新）
-- [ ] `scripts/CODEMOD.md` 同步更新（或如果对内开发不需要保留 v1 codemod，**直接删 codemod-v1-to-v2.mjs 和 CODEMOD.md**——v2 还没正式 GA，没有 v1 升级用户）
-- [ ] `docs-notes/roadmap.md` 的 V3 节（行 1192-1218）重写：
-  - 由于本批清理已经在 v2 beta 内完成，"Tier V3 删旧名" 这一节**整段删除**或改为「已在 v2 beta 阶段做完」
-  - 同时清理 roadmap 里所有「下一大版本移除」相关字样
-- [ ] `CHANGELOG.md` 加一条 v2.0.1-beta.4（或下一 beta）的 entry，列出所有 breaking 改动
-- [ ] **不变** version 号（v2.0.1-beta.x 持续）
-- [ ] `packages/ccui/ui/shared/utils/deprecated.ts` 文件**保留**（util 设计为通用，可能未来其他场景还会用）；但如果所有 `warnDeprecated` 调用都没了，**删 `isPropExplicit` 和 `warnDeprecated` 两个 export**，只保留 `__resetDeprecatedWarningsForTest` 给测试用。先 grep 确认全仓没有 warnDeprecated 调用后再删。
-- [ ] 删除 `__resetDeprecatedWarningsForTest` 在 test 文件中的残留 import
+- [x] ~~codemod 反向重写~~ 选 **直接删 `codemod-v1-to-v2.mjs` + `CODEMOD.md` + 5 个 fixtures + test**（v2 未 GA 无 v1 升级用户，反转后映射表方向反向也乱）
+- [x] `docs-notes/roadmap.md` 的 "Tier V3 删旧名" 整段删除，改写为「v2 beta 阶段已整批清掉」简短记录
+- [x] `CHANGELOG.md` 加 `[2.0.1-beta.4] (unreleased)` entry，列 BREAKING / Removed / Migration 三节
+- [x] **不变** version 号（package.json 仍是 `2.0.1-beta.3`，待手动 release 时再 bump 到 beta.4）
+- [x] `packages/ccui/ui/shared/utils/deprecated.ts` **整文件保留不动**（小且通用，未来 deprecation 周期复用，比删后再加更省事）；前面 A-F 已逐 commit 删完所有 `warnDeprecated` 调用，util 自身测试仍跑过
+- [x] `__resetDeprecatedWarningsForTest` 残留 import 已在 A-F 各 commit 中清理（grep 验证：仅 `deprecated.ts` / `deprecated.test.ts` 自身引用）
 
 ---
 
