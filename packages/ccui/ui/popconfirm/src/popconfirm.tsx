@@ -69,8 +69,8 @@ export default defineComponent({
         disabled={props.disabled}
         visible={popoverVisible.value}
         width={props.width}
-        overlayClassName={ns.b()}
-        arrow={true}
+        popperClass={ns.b()}
+        showArrow={true}
         onUpdate:visible={(val: boolean) => {
           if (!isControlled.value) {
             innerVisible.value = val

@@ -1,25 +1,9 @@
-import type { PopoverArrowObject, PopoverProps } from './popover-types'
+import type { PopoverProps } from './popover-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  Teleport,
-  Transition,
-  watch,
-} from 'vue'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, Teleport, Transition, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
-
-function isPopoverArrowObject(v: unknown): v is PopoverArrowObject {
-  return v !== null && typeof v === 'object' && !Array.isArray(v)
-}
 
 let popoverIdCounter = 0
 
@@ -45,24 +29,6 @@ export default defineComponent({
     // 是否存在标题（slot 或 prop），用于 aria-labelledby
     const hasTitle = computed(() => !!slots.title || !!props.title)
 
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'showArrow', 'show-arrow')) {
-      warnDeprecated('showArrow', 'arrow', 'Popover')
-    }
-    if (isPropExplicit(rawProps, 'showAfter', 'show-after')) {
-      warnDeprecated('showAfter', 'mouseEnterDelay', 'Popover')
-    }
-    if (isPropExplicit(rawProps, 'hideAfter', 'hide-after')) {
-      warnDeprecated('hideAfter', 'mouseLeaveDelay', 'Popover')
-    }
-    if (isPropExplicit(rawProps, 'popperClass', 'popper-class')) {
-      warnDeprecated('popperClass', 'overlayClassName', 'Popover')
-    }
-    if (isPropExplicit(rawProps, 'teleported', 'teleported')) {
-      warnDeprecated('teleported', 'getPopupContainer', 'Popover')
-    }
-
     const visible = ref(false)
     const triggerRef = ref<HTMLElement>()
     const popperRef = ref<HTMLElement>()
@@ -79,17 +45,6 @@ export default defineComponent({
       return Boolean(val)
     })
 
-    // 别名解析
-    const enterDelay = computed(() => (props.mouseEnterDelay !== undefined ? props.mouseEnterDelay : props.showAfter))
-    const leaveDelay = computed(() => (props.mouseLeaveDelay !== undefined ? props.mouseLeaveDelay : props.hideAfter))
-    const arrowEnabled = computed(() => {
-      if (props.arrow !== undefined) {
-        return typeof props.arrow === 'boolean' ? props.arrow : true
-      }
-      return props.showArrow
-    })
-    const arrowPointAtCenter = computed(() => (isPopoverArrowObject(props.arrow) ? !!props.arrow.pointAtCenter : false))
-    const customClassName = computed(() => props.overlayClassName || props.popperClass)
     const inlineColorStyle = computed(() => (props.color ? { backgroundColor: props.color } : {}))
 
     // 虚拟触发支持
@@ -105,8 +60,7 @@ export default defineComponent({
         ns.e('popper'),
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
-        arrowPointAtCenter.value && ns.em('popper', 'arrow-center'),
-        customClassName.value,
+        props.popperClass,
       ]
         .filter(Boolean)
         .join(' ')
@@ -121,13 +75,13 @@ export default defineComponent({
           offset(props.offset),
           ...(props.autoAdjustOverflow ? [flip()] : []),
           shift({ padding: 8 }),
-          ...(arrowEnabled.value ? [arrow({ element: arrowRef })] : []),
+          ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
         ],
       },
     )
 
     const arrowStyles = computed(() => {
-      if (!arrowEnabled.value || !middlewareData.value.arrow) return {}
+      if (!props.showArrow || !middlewareData.value.arrow) return {}
       const { x, y } = middlewareData.value.arrow
       const staticSide = {
         top: 'bottom',
@@ -169,8 +123,8 @@ export default defineComponent({
         emit('update:visible', false)
         emit('hide')
       }
-      if (leaveDelay.value > 0 && props.trigger !== 'click') {
-        hideTimer.value = window.setTimeout(hidePopover, leaveDelay.value)
+      if (props.hideAfter > 0 && props.trigger !== 'click') {
+        hideTimer.value = window.setTimeout(hidePopover, props.hideAfter)
       } else {
         hidePopover()
       }
@@ -196,8 +150,8 @@ export default defineComponent({
           }
         })
       }
-      if (enterDelay.value > 0) {
-        showTimer.value = window.setTimeout(showPopover, enterDelay.value)
+      if (props.showAfter > 0) {
+        showTimer.value = window.setTimeout(showPopover, props.showAfter)
       } else {
         showPopover()
       }
@@ -361,7 +315,7 @@ export default defineComponent({
     })
 
     const renderArrow = () => {
-      if (!arrowEnabled.value) return null
+      if (!props.showArrow) return null
       const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
@@ -433,12 +387,8 @@ export default defineComponent({
         </div>
       )
 
-      // 渲染容器决策：getPopupContainer 显式 > 旧 teleported boolean
+      // 渲染容器决策：teleported=true 时挂到 body，否则同 DOM 流
       const renderPopperWithContainer = () => {
-        if (props.getPopupContainer) {
-          const target = props.getPopupContainer(triggerRef.value ?? null)
-          return target ? <Teleport to={target}>{popperContent}</Teleport> : popperContent
-        }
         return props.teleported ? <Teleport to="body">{popperContent}</Teleport> : popperContent
       }
 

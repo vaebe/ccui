@@ -1,7 +1,6 @@
 import { mount, shallowMount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { Popover } from '../index'
 
 // 测试辅助函数
@@ -533,44 +532,22 @@ describe('popover', () => {
       expect(popper.attributes('style')).toContain('background-color: rgb(0, 0, 0)')
     })
 
-    it('arrow=false 不渲染箭头', async () => {
+    it('showArrow=false 不渲染箭头', async () => {
       const wrapper = mount(Popover, {
-        props: { visible: true, content: 'X', arrow: false, teleported: false },
+        props: { visible: true, content: 'X', showArrow: false, teleported: false },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
       expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(false)
     })
 
-    it('overlayClassName 优先于 popperClass', async () => {
+    it('popperClass 注入 popper 根类', async () => {
       const wrapper = mount(Popover, {
-        props: {
-          visible: true,
-          content: 'X',
-          overlayClassName: 'new-cls',
-          popperClass: 'old-cls',
-          teleported: false,
-        },
+        props: { visible: true, content: 'X', popperClass: 'custom-popper', teleported: false },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
-      const popper = wrapper.find('.ccui-popover__popper')
-      expect(popper.classes()).toContain('new-cls')
-      expect(popper.classes()).not.toContain('old-cls')
-    })
-
-    it('getPopupContainer 返回容器节点 Teleport 到该节点', async () => {
-      const host = document.createElement('div')
-      host.id = 'popover-host'
-      document.body.appendChild(host)
-      const wrapper = mount(Popover, {
-        props: { visible: true, content: 'X', getPopupContainer: () => host },
-        slots: { default: '<button>T</button>' },
-      })
-      await nextTick()
-      expect(host.querySelector('.ccui-popover__popper')).not.toBeNull()
-      wrapper.unmount()
-      host.remove()
+      expect(wrapper.find('.ccui-popover__popper').classes()).toContain('custom-popper')
     })
 
     it('update:visible 同步触发', async () => {
@@ -582,60 +559,6 @@ describe('popover', () => {
       await nextTick()
       expect(wrapper.emitted('update:visible')).toBeTruthy()
       expect(wrapper.emitted('update:visible')![0]).toEqual([true])
-    })
-  })
-
-  describe('deprecation warn (M-A5)', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('showArrow 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, { props: { showArrow: false, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showArrow 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('arrow'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('showAfter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, { props: { showAfter: 100, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showAfter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('mouseEnterDelay'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('hideAfter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, { props: { hideAfter: 100, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('hideAfter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('mouseLeaveDelay'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('popperClass 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, {
-        props: { popperClass: 'old-name', content: 'X' },
-        slots: { default: '<button>T</button>' },
-      })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('popperClass 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('overlayClassName'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('teleported 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popover, { props: { teleported: false, content: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('teleported 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('getPopupContainer'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 })

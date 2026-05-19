@@ -101,14 +101,14 @@
 
 **改动**：5 项反向，与 Tooltip 联动。
 
-- [ ] `popover-types.ts` 删 `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `getPopupContainer` 5 prop（注：Popover 没有 `title` deprecation 因为旧版 Popover 用 `title` 表示标题不是内容）
-- [ ] `popover-types.ts` 删 `PopoverArrow` 复合类型（同 Tooltip）
-- [ ] `getPopupContainer` 删除后 `teleported`（boolean）回归为唯一控制项；如果用户需要自定义容器，提示用 portal 组件包装
-- [ ] `popover.tsx:51-63` 删 5 段 warn + 兼容 computed
-- [ ] `popover/test/popover.test.ts` 删 deprecation describe + 改新名为旧名
-- [ ] `docs/components/popover/index.md` API 表反转
-
-**验收**：同 Tooltip。
+- [x] `popover-types.ts` 删 `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `getPopupContainer` 5 prop（注：Popover 没有 `title` deprecation 因为旧版 Popover 用 `title` 表示标题不是内容）
+- [x] `popover-types.ts` 删 `PopoverArrow` + `PopoverArrowObject` + `PopoverGetPopupContainer` 复合类型
+- [x] `getPopupContainer` 删除后 `teleported`（boolean）回归为唯一控制项
+- [x] `popover.tsx:51-63` 删 5 段 warn + 兼容 computed（enterDelay / leaveDelay / arrowEnabled / arrowPointAtCenter / customClassName）
+- [x] `popover/test/popover.test.ts` 删 deprecation describe + 改新名为旧名
+- [x] `docs/components/popover/index.md` API 表反转
+- [x] **级联**：Dropdown / Popconfirm 内部 `<Popover arrow= overlayClassName=>` → `showArrow= popperClass=`
+- [x] **收尾**：`no-self-deprecated.test.ts` patterns 清空（Tooltip + Popover 全部收敛完成）
 
 ---
 
