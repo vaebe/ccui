@@ -111,13 +111,18 @@ function readJson(rel) {
   return JSON.parse(readFileSync(resolve(ROOT, rel), 'utf8'))
 }
 
+// Windows: Node 20+ 因 CVE-2024-27980 不再自动解析 .cmd / .bat shim，必须 shell: true 才能找到
+// pnpm.cmd / bumpp.cmd 这类 npm script shim（.exe 类如 node / npm.exe 不受影响）。
+// Unix 下保持 shell: false，避免不必要的 shell 解析。
+const IS_WIN = process.platform === 'win32'
+
 function run(cmd, args, opts = {}) {
-  const r = spawnSync(cmd, args, { stdio: 'inherit', cwd: ROOT, ...opts })
+  const r = spawnSync(cmd, args, { stdio: 'inherit', cwd: ROOT, shell: IS_WIN, ...opts })
   return r.status === 0
 }
 
 function runCapture(cmd, args, opts = {}) {
-  return spawnSync(cmd, args, { encoding: 'utf8', cwd: ROOT, ...opts })
+  return spawnSync(cmd, args, { encoding: 'utf8', cwd: ROOT, shell: IS_WIN, ...opts })
 }
 
 function runOrFatal(cmd, args, opts = {}) {
@@ -363,10 +368,12 @@ async function publish(pkg, idx) {
     if (DRY_RUN) baseArgs.push('--dry-run')
 
     // capture stderr 用于诊断；同时 inherit stdout/stderr 让用户看到全程
+    // shell: IS_WIN —— 与 run() 一致，Windows 下 pnpm.cmd / npm.cmd 需要 shell 才能找到
     const result = spawnSync(pkg.tool, baseArgs, {
       cwd: resolve(ROOT, pkg.pubDir),
       stdio: ['inherit', 'inherit', 'pipe'],
       encoding: 'utf8',
+      shell: IS_WIN,
     })
     const stderr = result.stderr || ''
     process.stderr.write(stderr)
