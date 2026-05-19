@@ -175,12 +175,16 @@ function ensureCleanGit() {
 async function bumpVersions() {
   step('Bump versions (bumpp)')
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
+  // -y / --yes：跳过 bumpp 自己的 "Bump? (Y/n)" 确认。
+  // Windows + spawnSync 下该 prompt 拿不到 stdin raw mode 直接 EOF 退出非零（Mac 下没这个问题）。
+  // 本脚本后面有自己的总确认（"确认开始构建并发布？"），bumpp 的二次确认是冗余的。
   const bumppArgs = [
     'bumpp',
     ...pkgFiles,
     '--no-commit',
     '--no-tag',
     '--no-push',
+    '--yes',
   ]
   if (RELEASE) bumppArgs.push('--release', RELEASE)
   if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
