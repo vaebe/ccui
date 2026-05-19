@@ -87,8 +87,13 @@ const PACKAGES = [
   {
     name: '@vaebe/ccui',
     pkgJson: 'packages/ccui/package.json',
-    // ccui 走 cli：predev 生成入口 → 组件分包构建 → release.js 生成发布用 package.json
+    // ccui 走 cli：先 generate:theme 刷新 packages/theme/theme.scss（gitignore 的自动产物，
+    // 首次 clone / 长期未跑构建时 stale，组件 scss 引用的 $ccui-control-outline 等 token
+    // 缺失会让 vite:css 报 Undefined variable）→ create 生成入口 → build 组件分包
+    // → release 生成发布用 package.json。
+    // 不依赖 build 的 postAction hook 来重生 theme，那是 build 完了才跑、救不了自身的 sass 阶段。
     build: [
+      ['node', './index.js', 'generate:theme'],
       ['node', './index.js', 'create', '-t', 'ccui', '--ignore-parse-error'],
       ['node', './index.js', 'build'],
       ['node', './index.js', 'release'],
