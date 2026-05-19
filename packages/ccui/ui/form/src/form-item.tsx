@@ -7,20 +7,8 @@ import type {
   FormRule,
   FormValidateTrigger,
 } from './form-types'
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  h,
-  inject,
-  onMounted,
-  onUnmounted,
-  provide,
-  ref,
-  watch,
-} from 'vue'
+import { computed, defineComponent, h, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { renderIconNode } from '../../shared/hooks/use-icon'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { formInjectionKey, formItemInjectionKey, formItemProps, formListInjectionKey } from './form-types'
 
@@ -58,21 +46,14 @@ export default defineComponent({
   setup(props: FormItemProps, { expose, slots }) {
     const ns = useNamespace('form-item')
 
-    // M-A5：旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'prop', 'prop')) {
-      warnDeprecated('prop', 'name', 'FormItem')
-    }
-
     const form = inject(formInjectionKey, null)
     const formList = inject(formListInjectionKey, null)
     const validateState = ref<'validating' | 'success' | 'error' | ''>('')
     const validateMessage = ref('')
     const warningState = ref(false)
     const itemRef = ref<HTMLElement | null>(null)
-    const rawName = computed<FormNamePath | undefined>(() => props.name ?? props.prop)
     const fieldName = computed<FormNamePath | undefined>(() => {
-      const raw = rawName.value
+      const raw = props.name
       if (!formList) {
         return raw
       }
@@ -243,7 +224,7 @@ export default defineComponent({
     }
 
     const fieldContext: FormItemContext = {
-      get prop() {
+      get name() {
         return fieldName.value
       },
       get field() {
@@ -313,25 +294,9 @@ export default defineComponent({
       validate,
     })
 
-    let prevModelSnapshot: any = undefined
-
     watch(
       () => form?.model.value,
-      (cur) => {
-        // shouldUpdate 控制是否在 model 变化时触发校验
-        if (props.shouldUpdate !== undefined) {
-          if (typeof props.shouldUpdate === 'function') {
-            if (!props.shouldUpdate(prevModelSnapshot, cur)) {
-              prevModelSnapshot = cloneValue(cur)
-              return
-            }
-          } else if (!props.shouldUpdate) {
-            prevModelSnapshot = cloneValue(cur)
-            return
-          }
-        }
-        prevModelSnapshot = cloneValue(cur)
-
+      () => {
         if (props.dependencies.length > 0) {
           void validate()
         }

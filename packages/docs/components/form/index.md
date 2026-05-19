@@ -1,6 +1,6 @@
 # Form 表单
 
-用于收集、校验和提交一组输入项。`shouldUpdate` / `validateDebounce` / `normalize` 等边角能力后续迭代。
+用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代。
 
 ## 基本用法
 
@@ -632,7 +632,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | noStyle          | boolean                                                         | false     | 不显示标准表单项样式                                                             |
 | preserve         | boolean                                                         | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置                                               |
 
-> **未实现的 API**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议；`shouldUpdate` —— Vue 响应式自动处理依赖收集，无需手动指定。
+> **未实现的 API**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议。Vue 响应式自动处理依赖收集，无需 `shouldUpdate`。
 >
 > `FormRule.warningOnly: boolean`：失败时降级为 `warning`，不阻塞 form-level submit。
 
@@ -710,7 +710,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ## 缺失功能
 
-- `shouldUpdate`、render props 级别的复杂条件渲染。
+- render props 级别的复杂条件渲染。
 - `validateDebounce`、`normalize`、`getValueProps` 等少量高级字段配置。
 - 完整无障碍实现和与所有录入组件的深度状态联动。
 - 更完整的滚动容器定位、复杂错误聚合展示和国际化包级别默认文案。

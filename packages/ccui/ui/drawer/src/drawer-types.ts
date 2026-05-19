@@ -67,13 +67,6 @@ export const drawerProps = {
     default: true,
   },
   /**
-   * @deprecated 请改用 `footer` slot 或 `footer` prop。
-   */
-  showFooter: {
-    type: Boolean,
-    default: false,
-  },
-  /**
    * footer 内容。
    *
    * - `null`：隐藏 footer

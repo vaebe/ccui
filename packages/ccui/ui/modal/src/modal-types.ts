@@ -76,23 +76,9 @@ export const modalProps = {
     default: 'primary' as const,
   },
   /**
-   * @deprecated 请改用 `confirmLoading`。
-   */
-  okLoading: {
-    type: Boolean,
-    default: false,
-  },
-  /**
-   * 确认按钮 loading 状态。显式优先于 `okLoading`。
+   * 确认按钮 loading 状态。
    */
   confirmLoading: {
-    type: Boolean,
-    default: undefined,
-  },
-  /**
-   * @deprecated 请改用 `footer` slot 或 `footer={null}`。
-   */
-  hideFooter: {
     type: Boolean,
     default: false,
   },

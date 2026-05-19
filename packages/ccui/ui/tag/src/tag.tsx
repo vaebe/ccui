@@ -1,7 +1,6 @@
-import type { TagProps, TagVariant } from './tag-types'
-import { computed, defineComponent, getCurrentInstance } from 'vue'
+import type { TagProps } from './tag-types'
+import { computed, defineComponent } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { isPresetColor, tagProps } from './tag-types'
 import './tag.scss'
 
@@ -12,25 +11,13 @@ export default defineComponent({
   setup(props: TagProps, { slots, emit }) {
     const ns = useNamespace('tag')
 
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'bordered', 'bordered')) {
-      warnDeprecated('bordered', "variant='outlined' / 'filled'", 'Tag')
-    }
-
     const isPreset = computed(() => isPresetColor(props.color))
-
-    // 解析有效 variant：显式 prop > bordered=false → 'filled' > 默认 'outlined'
-    const effectiveVariant = computed<TagVariant>(() => {
-      if (props.variant) return props.variant
-      return props.bordered ? 'outlined' : 'filled'
-    })
 
     const cls = computed(() => ({
       [ns.b()]: true,
       [ns.m(props.color)]: isPreset.value,
-      [ns.m(`variant-${effectiveVariant.value}`)]: true,
-      // 兼容旧类：variant='filled' 等价于历史 bordered=false 输出的 --borderless 类
-      [ns.m('borderless')]: effectiveVariant.value !== 'outlined',
+      [ns.m(`variant-${props.variant}`)]: true,
+      [ns.m('borderless')]: props.variant !== 'outlined',
       [ns.m('has-color')]: !isPreset.value && !!props.color,
     }))
 

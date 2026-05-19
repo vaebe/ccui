@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { defineComponent, h, nextTick, reactive } from 'vue'
 import { Form, FormItem, FormList, FormProvider } from '../index'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const formNs = useNamespace('form', true)
@@ -29,7 +28,7 @@ describe('form', () => {
         labelPosition: 'left',
       },
       slots: {
-        default: () => h(FormItem, { label: 'Name', prop: 'name', required: true }, () => h('input')),
+        default: () => h(FormItem, { label: 'Name', name: 'name', required: true }, () => h('input')),
       },
     })
 
@@ -49,8 +48,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { label: 'Name', prop: 'name' }, () => h('input')),
-          h(FormItem, { label: 'Code', prop: 'code' }, () => h('input')),
+          h(FormItem, { label: 'Name', name: 'name' }, () => h('input')),
+          h(FormItem, { label: 'Code', name: 'code' }, () => h('input')),
         ],
       },
     })
@@ -75,7 +74,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'status' }, () => h('input')),
+        default: () => h(FormItem, { name: 'status' }, () => h('input')),
       },
     })
 
@@ -99,8 +98,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'name' }, () => h('input')),
-          h(FormItem, { prop: 'age' }, () => h('input')),
+          h(FormItem, { name: 'name' }, () => h('input')),
+          h(FormItem, { name: 'age' }, () => h('input')),
         ],
       },
     })
@@ -119,7 +118,7 @@ describe('form', () => {
     const wrapper = mount(Form, {
       props: { model },
       slots: {
-        default: () => h(FormItem, { prop: 'user.name' }, () => h('input')),
+        default: () => h(FormItem, { name: 'user.name' }, () => h('input')),
       },
     })
 
@@ -143,7 +142,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'email' }, () => h('input', { value: model.email })),
+        default: () => h(FormItem, { name: 'email' }, () => h('input', { value: model.email })),
       },
     })
 
@@ -165,7 +164,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'name' }, () => h('button', { type: 'submit' }, 'Submit')),
+        default: () => h(FormItem, { name: 'name' }, () => h('button', { type: 'submit' }, 'Submit')),
       },
     })
 
@@ -211,11 +210,11 @@ describe('form', () => {
       props: { model },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'password' }, () => h('input')),
+          h(FormItem, { name: 'password' }, () => h('input')),
           h(
             FormItem,
             {
-              prop: 'confirm',
+              name: 'confirm',
               dependencies: ['password'],
               rules: {
                 validator: (_rule: unknown, value: string) => value === model.password || 'Passwords differ',
@@ -249,11 +248,11 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { label: 'Name', prop: 'name', rules: { required: true }, extra: 'Visible hint' }, () =>
+          h(FormItem, { label: 'Name', name: 'name', rules: { required: true }, extra: 'Visible hint' }, () =>
             h('input'),
           ),
-          h(FormItem, { label: 'Nickname', prop: 'nickname', hidden: true }, () => h('input')),
-          h(FormItem, { prop: 'raw', noStyle: true }, () => h('input')),
+          h(FormItem, { label: 'Nickname', name: 'nickname', hidden: true }, () => h('input')),
+          h(FormItem, { name: 'raw', noStyle: true }, () => h('input')),
         ],
       },
     })
@@ -276,7 +275,7 @@ describe('form', () => {
         labelPosition: 'top',
       },
       slots: {
-        default: () => h(FormItem, { label: 'Name', prop: 'name' }, () => h('input')),
+        default: () => h(FormItem, { label: 'Name', name: 'name' }, () => h('input')),
       },
     })
 
@@ -292,7 +291,7 @@ describe('form', () => {
         layout: 'inline',
       },
       slots: {
-        default: () => h(FormItem, { label: 'Keyword', prop: 'keyword' }, () => h('input')),
+        default: () => h(FormItem, { label: 'Keyword', name: 'keyword' }, () => h('input')),
       },
     })
 
@@ -306,7 +305,7 @@ describe('form', () => {
         requiredMark: false,
       },
       slots: {
-        default: () => h(FormItem, { label: 'Name', prop: 'name', required: true }, () => h('input')),
+        default: () => h(FormItem, { label: 'Name', name: 'name', required: true }, () => h('input')),
       },
     })
 
@@ -320,7 +319,7 @@ describe('form', () => {
         requiredMark: 'optional',
       },
       slots: {
-        default: () => h(FormItem, { label: 'Nickname', prop: 'nickname' }, () => h('input')),
+        default: () => h(FormItem, { label: 'Nickname', name: 'nickname' }, () => h('input')),
       },
     })
 
@@ -335,8 +334,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { label: 'First', prop: 'first' }, () => h('input')),
-          h(FormItem, { label: 'Second', prop: 'second', colon: true }, () => h('input')),
+          h(FormItem, { label: 'First', name: 'first' }, () => h('input')),
+          h(FormItem, { label: 'Second', name: 'second', colon: true }, () => h('input')),
         ],
       },
     })
@@ -352,7 +351,7 @@ describe('form', () => {
         model: { email: '' },
       },
       slots: {
-        default: () => h(FormItem, { label: 'Email', prop: 'email', htmlFor: 'email-input' }, () => h('input')),
+        default: () => h(FormItem, { label: 'Email', name: 'email', htmlFor: 'email-input' }, () => h('input')),
       },
     })
 
@@ -366,7 +365,7 @@ describe('form', () => {
       },
       slots: {
         default: () =>
-          h(FormItem, { label: 'Email', prop: 'email', validateStatus: 'error', help: 'External error' }, () =>
+          h(FormItem, { label: 'Email', name: 'email', validateStatus: 'error', help: 'External error' }, () =>
             h('input'),
           ),
       },
@@ -387,8 +386,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'name' }, () => h('input')),
-          h(FormItem, { prop: 'age' }, () => h('input')),
+          h(FormItem, { name: 'name' }, () => h('input')),
+          h(FormItem, { name: 'age' }, () => h('input')),
         ],
       },
     })
@@ -408,8 +407,8 @@ describe('form', () => {
       props: { model },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'name' }, () => h('input')),
-          h(FormItem, { prop: 'age' }, () => h('input')),
+          h(FormItem, { name: 'name' }, () => h('input')),
+          h(FormItem, { name: 'age' }, () => h('input')),
         ],
       },
     })
@@ -435,9 +434,9 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'name' }, () => h('input')),
-          h(FormItem, { prop: 'age' }, () => h('input')),
-          h(FormItem, { prop: 'city' }, () => h('input')),
+          h(FormItem, { name: 'name' }, () => h('input')),
+          h(FormItem, { name: 'age' }, () => h('input')),
+          h(FormItem, { name: 'city' }, () => h('input')),
         ],
       },
     })
@@ -456,7 +455,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'name' }, () => h('button', { type: 'submit' }, 'Submit')),
+        default: () => h(FormItem, { name: 'name' }, () => h('button', { type: 'submit' }, 'Submit')),
       },
     })
 
@@ -473,7 +472,7 @@ describe('form', () => {
         model: { name: '' },
       },
       slots: {
-        default: () => [h(FormItem, null, () => h('input')), h(FormItem, { prop: 'name' }, () => h('input'))],
+        default: () => [h(FormItem, null, () => h('input')), h(FormItem, { name: 'name' }, () => h('input'))],
       },
     })
 
@@ -490,7 +489,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'code', rules: { min: 3, message: 'Too short' } }, () => h('input')),
+        default: () => h(FormItem, { name: 'code', rules: { min: 3, message: 'Too short' } }, () => h('input')),
       },
     })
 
@@ -509,7 +508,7 @@ describe('form', () => {
         rules,
       },
       slots: {
-        default: () => h(FormItem, { prop: 'name' }, () => h('input')),
+        default: () => h(FormItem, { name: 'name' }, () => h('input')),
       },
     })
 
@@ -529,7 +528,7 @@ describe('form', () => {
         validateOnRuleChange: false,
       },
       slots: {
-        default: () => h(FormItem, { prop: 'name' }, () => h('input')),
+        default: () => h(FormItem, { name: 'name' }, () => h('input')),
       },
     })
 
@@ -559,11 +558,11 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'title' }, () => h('input')),
-          h(FormItem, { prop: 'count' }, () => h('input')),
-          h(FormItem, { prop: 'enabled' }, () => h('input')),
-          h(FormItem, { prop: 'tags' }, () => h('input')),
-          h(FormItem, { prop: 'profile' }, () => h('input')),
+          h(FormItem, { name: 'title' }, () => h('input')),
+          h(FormItem, { name: 'count' }, () => h('input')),
+          h(FormItem, { name: 'enabled' }, () => h('input')),
+          h(FormItem, { name: 'tags' }, () => h('input')),
+          h(FormItem, { name: 'profile' }, () => h('input')),
         ],
       },
     })
@@ -590,8 +589,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'email' }, () => h('input')),
-          h(FormItem, { prop: 'site' }, () => h('input')),
+          h(FormItem, { name: 'email' }, () => h('input')),
+          h(FormItem, { name: 'site' }, () => h('input')),
         ],
       },
     })
@@ -612,8 +611,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'role' }, () => h('input')),
-          h(FormItem, { prop: 'title' }, () => h('input')),
+          h(FormItem, { name: 'role' }, () => h('input')),
+          h(FormItem, { name: 'title' }, () => h('input')),
         ],
       },
     })
@@ -640,9 +639,9 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { label: 'Code', prop: 'code' }, () => h('input')),
-          h(FormItem, { label: 'Score', prop: 'score' }, () => h('input')),
-          h(FormItem, { label: 'Tags', prop: 'tags' }, () => h('input')),
+          h(FormItem, { label: 'Code', name: 'code' }, () => h('input')),
+          h(FormItem, { label: 'Score', name: 'score' }, () => h('input')),
+          h(FormItem, { label: 'Tags', name: 'tags' }, () => h('input')),
         ],
       },
     })
@@ -667,8 +666,8 @@ describe('form', () => {
       },
       slots: {
         default: () => [
-          h(FormItem, { prop: 'first' }, () => h('input')),
-          h(FormItem, { prop: 'second' }, () => h('input')),
+          h(FormItem, { name: 'first' }, () => h('input')),
+          h(FormItem, { name: 'second' }, () => h('input')),
         ],
       },
     })
@@ -687,7 +686,7 @@ describe('form', () => {
         },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'token', hidden: true }, () => h('input')),
+        default: () => h(FormItem, { name: 'token', hidden: true }, () => h('input')),
       },
     })
 
@@ -705,7 +704,7 @@ describe('form', () => {
         model: { name: '' },
       },
       slots: {
-        default: () => h(FormItem, { prop: 'name' }, () => h('input')),
+        default: () => h(FormItem, { name: 'name' }, () => h('input')),
       },
     })
 
@@ -906,8 +905,8 @@ describe('form preserve', () => {
             { model },
             {
               default: () => [
-                h(FormItem, { prop: 'name' }, () => h('input')),
-                props.showDraft ? h(FormItem, { prop: 'draft' }, () => h('input')) : null,
+                h(FormItem, { name: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { name: 'draft' }, () => h('input')) : null,
               ],
             },
           )
@@ -932,8 +931,8 @@ describe('form preserve', () => {
             { model },
             {
               default: () => [
-                h(FormItem, { prop: 'name' }, () => h('input')),
-                props.showDraft ? h(FormItem, { prop: 'draft', preserve: false }, () => h('input')) : null,
+                h(FormItem, { name: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { name: 'draft', preserve: false }, () => h('input')) : null,
               ],
             },
           )
@@ -958,8 +957,8 @@ describe('form preserve', () => {
             { model, preserve: false },
             {
               default: () => [
-                h(FormItem, { prop: 'name' }, () => h('input')),
-                props.showDraft ? h(FormItem, { prop: 'draft' }, () => h('input')) : null,
+                h(FormItem, { name: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { name: 'draft' }, () => h('input')) : null,
               ],
             },
           )
@@ -984,8 +983,8 @@ describe('form preserve', () => {
             { model, preserve: false },
             {
               default: () => [
-                h(FormItem, { prop: 'name' }, () => h('input')),
-                props.showDraft ? h(FormItem, { prop: 'draft', preserve: true }, () => h('input')) : null,
+                h(FormItem, { name: 'name' }, () => h('input')),
+                props.showDraft ? h(FormItem, { name: 'draft', preserve: true }, () => h('input')) : null,
               ],
             },
           )
@@ -1016,7 +1015,7 @@ describe('form provider', () => {
               model,
               rules: { name: { required: true, message: 'Missing name' } },
             },
-            { default: () => h(FormItem, { prop: 'name' }, () => h('input')) },
+            { default: () => h(FormItem, { name: 'name' }, () => h('input')) },
           ),
       },
     })
@@ -1042,7 +1041,7 @@ describe('form provider', () => {
               model,
               rules: { name: { required: true, message: 'Missing name' } },
             },
-            { default: () => h(FormItem, { prop: 'name' }, () => h('input')) },
+            { default: () => h(FormItem, { name: 'name' }, () => h('input')) },
           ),
       },
     })
@@ -1065,14 +1064,14 @@ describe('form provider', () => {
             Form,
             { name: 'one', model: modelA },
             {
-              default: () => h(FormItem, { prop: 'value' }, () => h('input')),
+              default: () => h(FormItem, { name: 'value' }, () => h('input')),
             },
           ),
           h(
             Form,
             { name: 'two', model: modelB },
             {
-              default: () => h(FormItem, { prop: 'value' }, () => h('input')),
+              default: () => h(FormItem, { name: 'value' }, () => h('input')),
             },
           ),
         ],
@@ -1099,7 +1098,7 @@ describe('form provider', () => {
             Form,
             { name: 'profile', model },
             {
-              default: () => h(FormItem, { prop: 'name' }, () => h('input')),
+              default: () => h(FormItem, { name: 'name' }, () => h('input')),
             },
           ),
       },
@@ -1116,30 +1115,6 @@ describe('form provider', () => {
   })
 })
 
-describe('form shouldUpdate', () => {
-  it('shouldUpdate prop is accepted on FormItem', () => {
-    const model = reactive({ a: '' })
-    const wrapper = mount(
-      defineComponent({
-        setup: () => () => h(Form, { model }, () => h(FormItem, { prop: 'a', shouldUpdate: false }, () => h('input'))),
-      }),
-    )
-    // FormItem 接受 shouldUpdate prop 不报错
-    expect(wrapper.find(itemNs.b()).exists()).toBe(true)
-  })
-
-  it('shouldUpdate as function is accepted', () => {
-    const model = reactive({ a: '' })
-    const wrapper = mount(
-      defineComponent({
-        setup: () => () =>
-          h(Form, { model }, () => h(FormItem, { prop: 'a', shouldUpdate: () => true }, () => h('input'))),
-      }),
-    )
-    expect(wrapper.find(itemNs.b()).exists()).toBe(true)
-  })
-})
-
 describe('form validateDebounce', () => {
   it('delays validation by specified milliseconds', async () => {
     vi.useFakeTimers()
@@ -1149,7 +1124,7 @@ describe('form validateDebounce', () => {
       defineComponent({
         setup: () => () =>
           h(Form, { model, rules }, () =>
-            h(FormItem, { prop: 'name', validateDebounce: 200 }, () =>
+            h(FormItem, { name: 'name', validateDebounce: 200 }, () =>
               h('input', {
                 value: model.name,
                 onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
@@ -1180,7 +1155,7 @@ describe('form normalize', () => {
       defineComponent({
         setup: () => () =>
           h(Form, { model }, () =>
-            h(FormItem, { prop: 'tag', normalize: (v: string) => v.trim().toUpperCase() }, () =>
+            h(FormItem, { name: 'tag', normalize: (v: string) => v.trim().toUpperCase() }, () =>
               h('input', {
                 value: model.tag,
                 onInput: (e: Event) => (model.tag = (e.target as HTMLInputElement).value),
@@ -1272,7 +1247,7 @@ describe('L-1.6 hasFeedback', () => {
       defineComponent({
         setup: () => () =>
           h(Form, { model }, () =>
-            h(FormItem, { prop: 'name', hasFeedback: true, rules: { required: true } }, () =>
+            h(FormItem, { name: 'name', hasFeedback: true, rules: { required: true } }, () =>
               h('input', {
                 value: model.name,
                 onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
@@ -1296,7 +1271,7 @@ describe('L-1.6 hasFeedback', () => {
       defineComponent({
         setup: () => () =>
           h(Form, { model }, () =>
-            h(FormItem, { prop: 'name', hasFeedback: true, rules: { min: 5, message: '太短' } }, () =>
+            h(FormItem, { name: 'name', hasFeedback: true, rules: { min: 5, message: '太短' } }, () =>
               h('input', {
                 value: model.name,
                 onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
@@ -1319,7 +1294,7 @@ describe('L-1.6 hasFeedback', () => {
       defineComponent({
         setup: () => () =>
           h(Form, { model, hasFeedback: true }, () =>
-            h(FormItem, { prop: 'name', rules: { required: true } }, () =>
+            h(FormItem, { name: 'name', rules: { required: true } }, () =>
               h('input', {
                 value: model.name,
                 onInput: (e: Event) => (model.name = (e.target as HTMLInputElement).value),
@@ -1350,7 +1325,7 @@ describe('L-1.6 warningOnly rule', () => {
               h(
                 FormItem,
                 {
-                  prop: 'name',
+                  name: 'name',
                   rules: { min: 5, message: '太短', warningOnly: true },
                 },
                 () =>
@@ -1386,7 +1361,7 @@ describe('L-1.6 rules 函数式', () => {
             h(
               FormItem,
               {
-                prop: 'confirm',
+                name: 'confirm',
                 // 函数式 rules：要求 confirm === pwd
                 rules: (m: any) => ({
                   validator: (_r: any, v: any) => (v === m.pwd ? true : new Error('两次密码不一致')),
@@ -1405,116 +1380,5 @@ describe('L-1.6 rules 函数式', () => {
     await nextTick()
     expect(wrapper.find('.ccui-form-item').classes()).toContain('ccui-form-item--error')
     expect(wrapper.find('.ccui-form-item__message').text()).toBe('两次密码不一致')
-  })
-})
-
-describe('M-A5 FormItem deprecation warn', () => {
-  beforeEach(() => {
-    __resetDeprecatedWarningsForTest()
-  })
-
-  it('FormItem.prop 显式传入触发 deprecation warn 一次', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(Form, {
-      props: { model: { x: '' } },
-      slots: {
-        default: () => h(FormItem, { label: 'X', prop: 'x' }, () => h('input')),
-      },
-    })
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('FormItem'))
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('prop 已 deprecated'))
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('name'))
-    // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
-    const w2 = mount(Form, {
-      props: { model: { y: '' } },
-      slots: {
-        default: () => h(FormItem, { label: 'Y', prop: 'y' }, () => h('input')),
-      },
-    })
-    expect(warn).toHaveBeenCalledTimes(1)
-    wrapper.unmount()
-    w2.unmount()
-    warn.mockRestore()
-  })
-
-  it('FormItem.name（新名）不触发 deprecation warn', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(Form, {
-      props: { model: { x: '' } },
-      slots: {
-        default: () => h(FormItem, { label: 'X', name: 'x' }, () => h('input')),
-      },
-    })
-    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('prop 已 deprecated'))
-    wrapper.unmount()
-    warn.mockRestore()
-  })
-
-  it('XL-1 同时传 name + prop：name 赢，校验使用 name 对应的规则', async () => {
-    const model = reactive({ picked: '', legacy: '' })
-    const wrapper = mount(
-      defineComponent({
-        setup: () => () =>
-          h(
-            Form,
-            {
-              ref: 'f',
-              model,
-              rules: {
-                picked: { required: true, message: 'picked required' },
-                legacy: { required: true, message: 'legacy required' },
-              },
-            },
-            () => h(FormItem, { label: 'Both', name: 'picked', prop: 'legacy' }, () => h('input')),
-          ),
-      }),
-    )
-    await nextTick()
-    const formInstance = wrapper.vm.$refs.f as { validate: () => Promise<boolean> }
-    const valid = await formInstance.validate()
-    expect(valid).toBe(false)
-    expect(wrapper.find('.ccui-form-item__message').text()).toBe('picked required')
-    wrapper.unmount()
-  })
-})
-
-describe('XL-3 Form shouldUpdate deprecation warn', () => {
-  beforeEach(() => {
-    __resetDeprecatedWarningsForTest()
-  })
-
-  it('Form 显式 shouldUpdate 触发 deprecation warn 一次', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(Form, {
-      props: { model: { x: '' }, shouldUpdate: true } as any,
-      slots: {
-        default: () => h(FormItem, { name: 'x' }, () => h('input')),
-      },
-    })
-    expect(warn).toHaveBeenCalledWith('[ccui][Form] shouldUpdate 已 deprecated。')
-    // 第二次 mount 同 prop：全局 Set 缓存，仍只 warn 1 次
-    const w2 = mount(Form, {
-      props: { model: { y: '' }, shouldUpdate: false } as any,
-      slots: {
-        default: () => h(FormItem, { name: 'y' }, () => h('input')),
-      },
-    })
-    expect(warn).toHaveBeenCalledTimes(1)
-    wrapper.unmount()
-    w2.unmount()
-    warn.mockRestore()
-  })
-
-  it('Form 不传 shouldUpdate 不触发 deprecation warn', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(Form, {
-      props: { model: { x: '' } },
-      slots: {
-        default: () => h(FormItem, { name: 'x' }, () => h('input')),
-      },
-    })
-    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('shouldUpdate 已 deprecated'))
-    wrapper.unmount()
-    warn.mockRestore()
   })
 })

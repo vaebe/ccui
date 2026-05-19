@@ -25,16 +25,7 @@ import {
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { warnDeprecated } from '../../shared/utils/deprecated'
-import {
-  DEFAULT_COLOR_HEX,
-  hexToRgb,
-  hsvToRgb,
-  hsvToString,
-  rgbToHex,
-  rgbToHsv,
-  rgbToString,
-} from '../../shared/utils/color'
+import { DEFAULT_COLOR_HEX, hexToRgb, hsvToRgb, rgbToHex, rgbToHsv, rgbToString } from '../../shared/utils/color'
 import { colorPickerProps } from './color-picker-types'
 import './color-picker.scss'
 
@@ -331,13 +322,8 @@ export default defineComponent({
       const rgb = currentRgb.value
       if (props.format === 'rgb') return rgbToString(rgb)
       if (props.format === 'hsb') {
-        // HSB 与 HSV 是同一色彩空间（不同命名），输出 `hsb(h, s%, b%)`
         const hsv = rgbToHsv(rgb)
         return `hsb(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`
-      }
-      if (props.format === 'hsv') {
-        warnDeprecated('format="hsv"', 'hsb', 'ColorPicker')
-        return hsvToString(rgbToHsv(rgb))
       }
       return rgbToHex(rgb, !props.disabledAlpha && rgb.a < 1).toUpperCase()
     })
