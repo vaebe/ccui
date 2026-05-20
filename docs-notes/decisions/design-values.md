@@ -48,7 +48,7 @@
 - 主题层 SeedToken / MapToken 双层结构（`themes/light.ts` / `dark.ts`），新增 token 不破坏既有消费。
 - 12 色板 × 10 阶（commit `05663a7`）覆盖 Tag / Badge / Avatar / Status 的色彩需求，组件可按调色阶任意取色而无需新增 hex。
 - `ConfigProvider` 提供运行时 token 定制能力，使用方升级 ccui 主版本不影响品牌色 / 圆角 / 字号等定制项。
-- 组件按完整度分层验收（80% / 95% / 100%，详见 `docs-notes/components-diff/`），允许在低频边界能力上延期交付。
+- 组件按完整度分层验收（80% / 95% / 100%），v2.0 已全部 95%+ 收口，交付历史见 [archive/components-diff.md](../archive/components-diff.md)。
 
 ## 与 Ant Design 的差异化
 
