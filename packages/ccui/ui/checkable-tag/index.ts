@@ -24,7 +24,7 @@ export { checkableTagGroupInjectionKey } from './src/checkable-tag-types'
 
 export default {
   title: 'CheckableTag 可勾选标签',
-  category: '数据展示',
+  category: '通用',
   status: '90%',
   install,
 }

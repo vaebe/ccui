@@ -9,7 +9,7 @@ export { Status }
 
 export default {
   title: 'Status 状态',
-  category: '通用',
+  category: '数据展示',
   status: '100%',
   install(app: App): void {
     app.component(Status.name!, Status)
