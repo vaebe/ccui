@@ -36,6 +36,7 @@ export const componentMap: Record<string, ComponentEntry> = {
   CBackTop: { exportName: 'BackTop', styleDir: 'float-button' },
   CBadge: { exportName: 'Badge', styleDir: 'badge' },
   CBadgeRibbon: { exportName: 'BadgeRibbon', styleDir: 'badge-ribbon' },
+  CBorderBeam: { exportName: 'BorderBeam', styleDir: 'border-beam' },
   CBreadcrumb: { exportName: 'Breadcrumb', styleDir: 'breadcrumb' },
   CBreadcrumbItem: { exportName: 'BreadcrumbItem', styleDir: 'breadcrumb' },
   CButton: { exportName: 'Button', styleDir: 'button' },
