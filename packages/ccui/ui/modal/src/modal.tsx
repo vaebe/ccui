@@ -1,9 +1,8 @@
 import type { VNode } from 'vue'
 import type { ModalClosableObject, ModalProps } from './modal-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
+import { computed, defineComponent, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { modalProps } from './modal-types'
 import './modal.scss'
@@ -29,15 +28,6 @@ export default defineComponent({
     const titleId = `${ns.b()}-title-${modalUid}`
     const bodyId = `${ns.b()}-body-${modalUid}`
 
-    // 旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'okLoading', 'ok-loading')) {
-      warnDeprecated('okLoading', 'confirmLoading', 'Modal')
-    }
-    if (isPropExplicit(rawProps, 'hideFooter', 'hide-footer')) {
-      warnDeprecated('hideFooter', 'footer={null}', 'Modal')
-    }
-
     const isOpen = computed(() => props.visible)
 
     // 触发节点：用于 focusTriggerAfterClose
@@ -55,15 +45,10 @@ export default defineComponent({
     const closeDisabled = computed(() => !!closableObj.value?.disabled)
     const closeAriaLabel = computed(() => closableObj.value?.ariaLabel || 'Close')
 
-    const confirmLoadingEffective = computed(() =>
-      props.confirmLoading !== undefined ? props.confirmLoading : props.okLoading,
-    )
-
-    // hideFooter（旧）+ footer=null（新）都视为隐藏
+    // footer=null 视为显式隐藏
     const footerIsHidden = computed(() => {
       if (slots.footer) return false
-      if (props.footer === null) return true
-      return props.hideFooter
+      return props.footer === null
     })
 
     // ── 主题 / locale 文案 ───────────────────────────────
@@ -209,11 +194,11 @@ export default defineComponent({
             {cancelTextLocal.value}
           </button>
           <button
-            class={[ns.e('btn'), ns.em('btn', props.okType), confirmLoadingEffective.value && ns.is('loading')]}
-            disabled={confirmLoadingEffective.value}
+            class={[ns.e('btn'), ns.em('btn', props.okType), props.confirmLoading && ns.is('loading')]}
+            disabled={props.confirmLoading}
             onClick={onOk}
           >
-            {confirmLoadingEffective.value && <span class={ns.e('spinner')} />}
+            {props.confirmLoading && <span class={ns.e('spinner')} />}
             {okTextLocal.value}
           </button>
         </div>

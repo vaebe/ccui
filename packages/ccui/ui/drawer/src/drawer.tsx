@@ -4,7 +4,6 @@ import { Icon as IconifyIcon } from '@iconify/vue'
 import {
   computed,
   defineComponent,
-  getCurrentInstance,
   inject,
   onBeforeUnmount,
   provide,
@@ -14,7 +13,6 @@ import {
   Transition,
   watch,
 } from 'vue'
-import { isPropExplicit, warnDeprecated } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { drawerParentInjectionKey, drawerProps } from './drawer-types'
 import './drawer.scss'
@@ -44,12 +42,6 @@ export default defineComponent({
     const drawerUid = ++drawerIdCounter
     const titleId = `${ns.b()}-title-${drawerUid}`
     const bodyId = `${ns.b()}-body-${drawerUid}`
-
-    // 旧 prop 一次性 deprecation warn（全局 per-key 一次）
-    const rawProps = getCurrentInstance()?.vnode.props as Record<string, unknown> | undefined
-    if (isPropExplicit(rawProps, 'showFooter', 'show-footer')) {
-      warnDeprecated('showFooter', 'footer slot 或 footer prop', 'Drawer')
-    }
 
     const isOpen = computed(() => props.visible)
 
@@ -280,12 +272,11 @@ export default defineComponent({
       )
     }
 
-    // footer 隐藏判定：footer=null 显式隐藏；否则有 slot 或 (旧 showFooter || footer prop) 才显示
+    // footer 隐藏判定：slot / prop 都没传 → 隐藏；footer=null 显式隐藏；其余显示
     const footerIsHidden = computed(() => {
       if (slots.footer) return false
       if (props.footer === null) return true
-      if (props.footer === undefined && !props.showFooter) return true
-      return false
+      return props.footer === undefined
     })
 
     const renderFooter = (): VNode | null => {
@@ -313,8 +304,7 @@ export default defineComponent({
           </div>
         )
       }
-      // 兼容旧 showFooter=true 但无 slot 时，渲染空 footer
-      return <div class={footerClass} style={footerStyle}></div>
+      return null
     }
 
     // ── 渲染容器决策 ─────────────────────────────────────

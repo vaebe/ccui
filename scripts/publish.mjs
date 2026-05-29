@@ -37,6 +37,11 @@ import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+// 屏蔽 Node 20+ 的 DEP0190 警告（shell: true + 参数数组的安全提示）。
+// 本脚本 Windows 必须 shell: true 才能找到 pnpm.cmd / npm.cmd 这类 shim，
+// 参数全部是本仓库可信常量（包名 / 版本号 / 固定 flag），不存在用户输入注入风险。
+process.noDeprecation = true
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 // ── 终端配色 ─────────────────────────────────────────────────────────────────
@@ -87,8 +92,13 @@ const PACKAGES = [
   {
     name: '@vaebe/ccui',
     pkgJson: 'packages/ccui/package.json',
-    // ccui 走 cli：predev 生成入口 → 组件分包构建 → release.js 生成发布用 package.json
+    // ccui 走 cli：先 generate:theme 刷新 packages/theme/theme.scss（gitignore 的自动产物，
+    // 首次 clone / 长期未跑构建时 stale，组件 scss 引用的 $ccui-control-outline 等 token
+    // 缺失会让 vite:css 报 Undefined variable）→ create 生成入口 → build 组件分包
+    // → release 生成发布用 package.json。
+    // 不依赖 build 的 postAction hook 来重生 theme，那是 build 完了才跑、救不了自身的 sass 阶段。
     build: [
+      ['node', './index.js', 'generate:theme'],
       ['node', './index.js', 'create', '-t', 'ccui', '--ignore-parse-error'],
       ['node', './index.js', 'build'],
       ['node', './index.js', 'release'],
@@ -111,13 +121,21 @@ function readJson(rel) {
   return JSON.parse(readFileSync(resolve(ROOT, rel), 'utf8'))
 }
 
+// Windows + Node 20+ (CVE-2024-27980) spawnSync 不再自动解析 .cmd / .bat。
+// pnpm.cmd / npm.cmd / bumpp.cmd 这类 npm shim 必须 shell: true 才能找到；
+// 但 shell: true 会把 args 数组拼成 "a b c" 由 cmd 重切，含空格的参数（如 git commit -m "..."）会被打散。
+// 因此**只对真正是 shim 的命令开 shell**，git / node / npm（.exe）保持 shell:false。
+const IS_WIN = process.platform === 'win32'
+const WIN_SHIM_CMDS = new Set(['pnpm', 'npx', 'bumpp', 'pnpx'])
+const winShell = (cmd) => IS_WIN && WIN_SHIM_CMDS.has(cmd)
+
 function run(cmd, args, opts = {}) {
-  const r = spawnSync(cmd, args, { stdio: 'inherit', cwd: ROOT, ...opts })
+  const r = spawnSync(cmd, args, { stdio: 'inherit', cwd: ROOT, shell: winShell(cmd), ...opts })
   return r.status === 0
 }
 
 function runCapture(cmd, args, opts = {}) {
-  return spawnSync(cmd, args, { encoding: 'utf8', cwd: ROOT, ...opts })
+  return spawnSync(cmd, args, { encoding: 'utf8', cwd: ROOT, shell: winShell(cmd), ...opts })
 }
 
 function runOrFatal(cmd, args, opts = {}) {
@@ -175,13 +193,7 @@ function ensureCleanGit() {
 async function bumpVersions() {
   step('Bump versions (bumpp)')
   const pkgFiles = PACKAGES.map((p) => p.pkgJson)
-  const bumppArgs = [
-    'bumpp',
-    ...pkgFiles,
-    '--no-commit',
-    '--no-tag',
-    '--no-push',
-  ]
+  const bumppArgs = ['bumpp', ...pkgFiles, '--no-commit', '--no-tag', '--no-push']
   if (RELEASE) bumppArgs.push('--release', RELEASE)
   if (!run('pnpm', ['exec', ...bumppArgs])) fatal('bumpp 失败')
 }
@@ -276,6 +288,7 @@ async function publish(pkg, idx) {
       cwd: resolve(ROOT, pkg.pubDir),
       stdio: ['inherit', 'inherit', 'pipe'],
       encoding: 'utf8',
+      shell: winShell(pkg.tool),
     })
     const stderr = result.stderr || ''
     process.stderr.write(stderr)

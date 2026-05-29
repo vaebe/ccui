@@ -1,7 +1,6 @@
 import { mount, shallowMount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { Tooltip } from '../index'
 
 // 测试辅助函数
@@ -268,23 +267,10 @@ describe('tooltip', () => {
     })
   })
 
-  // ─────────────────────────────────────────────────────────────
-  // 同义 prop 解析
-  // ─────────────────────────────────────────────────────────────
-
-  describe('同义 prop 解析', () => {
-    it('title 优先于旧 content', async () => {
-      const wrapper = mount(Tooltip, {
-        props: { title: '新标题', content: '旧文案', visible: true },
-        slots: { default: '<button>T</button>' },
-      })
-      await nextTick()
-      expect(wrapper.find('.ccui-tooltip__content').text()).toBe('新标题')
-    })
-
+  describe('visible & 样式', () => {
     it('visible=true 显示浮层', async () => {
       const wrapper = mount(Tooltip, {
-        props: { visible: true, title: 'X' },
+        props: { visible: true, content: 'X' },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
@@ -293,7 +279,7 @@ describe('tooltip', () => {
 
     it('visible=false 隐藏浮层', async () => {
       const wrapper = mount(Tooltip, {
-        props: { visible: false, title: 'X' },
+        props: { visible: false, content: 'X' },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
@@ -302,7 +288,7 @@ describe('tooltip', () => {
 
     it('color 应用到 popper 背景 inline style', async () => {
       const wrapper = mount(Tooltip, {
-        props: { visible: true, title: 'X', color: '#ff7875' },
+        props: { visible: true, content: 'X', color: '#ff7875' },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
@@ -310,106 +296,24 @@ describe('tooltip', () => {
       expect(popper.attributes('style')).toContain('background-color: rgb(255, 120, 117)')
     })
 
-    it('arrow=false 不渲染箭头', async () => {
+    it('popperClass 注入 popper 根类', async () => {
       const wrapper = mount(Tooltip, {
-        props: { visible: true, title: 'X', arrow: false },
+        props: { visible: true, content: 'X', popperClass: 'custom-popper' },
         slots: { default: '<button>T</button>' },
       })
       await nextTick()
-      expect(wrapper.find('.ccui-tooltip__arrow').exists()).toBe(false)
-    })
-
-    it('arrow={ pointAtCenter } 加 arrow-center 类', async () => {
-      const wrapper = mount(Tooltip, {
-        props: { visible: true, title: 'X', arrow: { pointAtCenter: true } },
-        slots: { default: '<button>T</button>' },
-      })
-      await nextTick()
-      expect(wrapper.find('.ccui-tooltip__popper--arrow-center').exists()).toBe(true)
-    })
-
-    it('overlayClassName 覆盖 popperClass 时优先', async () => {
-      const wrapper = mount(Tooltip, {
-        props: {
-          visible: true,
-          title: 'X',
-          overlayClassName: 'new-name',
-          popperClass: 'old-name',
-        },
-        slots: { default: '<button>T</button>' },
-      })
-      await nextTick()
-      const popper = wrapper.find('.ccui-tooltip__popper')
-      expect(popper.classes()).toContain('new-name')
-      expect(popper.classes()).not.toContain('old-name')
+      expect(wrapper.find('.ccui-tooltip__popper').classes()).toContain('custom-popper')
     })
 
     it('update:visible 同步触发', async () => {
       const wrapper = mount(Tooltip, {
-        props: { title: 'X', trigger: 'click' },
+        props: { content: 'X', trigger: 'click' },
         slots: { default: '<button>T</button>' },
       })
       await wrapper.find('.ccui-tooltip__trigger').trigger('click')
       await nextTick()
       expect(wrapper.emitted('update:visible')).toBeTruthy()
       expect(wrapper.emitted('update:visible')![0]).toEqual([true])
-    })
-  })
-
-  describe('deprecation warn (M-A5)', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('content 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Tooltip, { props: { content: 'old' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('content 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('title'))
-      const w2 = mount(Tooltip, { props: { content: 'old' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledTimes(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
-    })
-
-    it('showArrow 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Tooltip, { props: { showArrow: false, title: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showArrow 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('arrow'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('showAfter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Tooltip, { props: { showAfter: 100, title: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showAfter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('mouseEnterDelay'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('hideAfter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Tooltip, { props: { hideAfter: 100, title: 'X' }, slots: { default: '<button>T</button>' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('hideAfter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('mouseLeaveDelay'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('popperClass 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Tooltip, {
-        props: { popperClass: 'old-name', title: 'X' },
-        slots: { default: '<button>T</button>' },
-      })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('popperClass 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('overlayClassName'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 })

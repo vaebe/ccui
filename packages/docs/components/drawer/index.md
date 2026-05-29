@@ -188,7 +188,6 @@ const text = ref('')
 | mask                   | boolean                                                                              | `true`    | 是否显示遮罩                                                        |
 | loading                | boolean                                                                              | `false`   | 加载状态：渲染 3 行骨架占位 + `aria-busy="true"`，body 区被替换     |
 | footer                 | `string \| VNode \| null \| undefined`                                               | --        | 底部内容（`null` 隐藏；string/VNode 直接渲染；undefined 启用 slot） |
-| showFooter             | boolean                                                                              | `false`   | **(deprecated)** 请改用 `footer` 或 `footer` slot                   |
 | destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                  |
 | keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                    |
 | focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                        |

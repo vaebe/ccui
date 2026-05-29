@@ -19,17 +19,6 @@ export type TooltipEffect = 'dark' | 'light'
 export type TooltipTrigger = 'hover' | 'click' | 'focus' | 'manual'
 
 /**
- * `arrow` 复合配置：
- *
- * - `boolean`：是否显示箭头
- * - `{ pointAtCenter }`：是否对齐触发节点中心（默认 false 时贴 edge）
- */
-export interface TooltipArrowObject {
-  pointAtCenter?: boolean
-}
-export type TooltipArrow = boolean | TooltipArrowObject
-
-/**
  * `align` 偏移配置（浮层细调）。当前 prop 已接收，`targetOffset` 等暂未接入 floating-ui middleware。
  */
 export interface TooltipAlign {
@@ -46,17 +35,9 @@ export type TooltipGetPopupContainer = (trigger: HTMLElement | null) => HTMLElem
 export const tooltipProps = {
   // ── 内容 ───────────────────────────────────────────────
   /**
-   * @deprecated 请改用 `title`；同名 `title` slot 也优先。
+   * tooltip 内容。也可用同名 `content` slot 传入富文本。
    */
   content: {
-    type: String,
-    default: '',
-  },
-  /**
-   * tooltip 内容。显式 `title` 优先于 `content`。
-   * 同名 slot 优先级最高。
-   */
-  title: {
     type: String,
     default: '',
   },
@@ -95,18 +76,11 @@ export const tooltipProps = {
 
   // ── 箭头 ─────────────────────────────────────────────
   /**
-   * @deprecated 请改用 `arrow`（支持复合对象）。
+   * 是否显示箭头。
    */
   showArrow: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * `bool | { pointAtCenter }` 复合。显式 `arrow` 优先于 `showArrow`。
-   */
-  arrow: {
-    type: [Boolean, Object] as PropType<TooltipArrow>,
-    default: undefined,
   },
 
   // ── 交互 ─────────────────────────────────────────────
@@ -115,47 +89,25 @@ export const tooltipProps = {
     default: 'hover' as TooltipTrigger,
   },
   /**
-   * @deprecated 请改用 `mouseEnterDelay`。单位仍为 ms（ccui 全局约定）。
+   * mouseenter 后多少 ms 显示。
    */
   showAfter: {
     type: Number,
     default: 0,
   },
   /**
-   * @deprecated 请改用 `mouseLeaveDelay`。单位 ms。
+   * mouseleave 后多少 ms 隐藏。
    */
   hideAfter: {
     type: Number,
     default: 200,
   },
-  /**
-   * mouseenter 后多少 **毫秒**显示。
-   * 显式 `mouseEnterDelay` 优先于 `showAfter`。
-   */
-  mouseEnterDelay: {
-    type: Number,
-    default: undefined,
-  },
-  /**
-   * mouseleave 后多少 ms 隐藏。
-   */
-  mouseLeaveDelay: {
-    type: Number,
-    default: undefined,
-  },
 
   // ── 样式定制 ─────────────────────────────────────────
   /**
-   * @deprecated 请改用 `overlayClassName`。
+   * 浮层根节点 class。
    */
   popperClass: {
-    type: String,
-    default: '',
-  },
-  /**
-   * 浮层根节点 class。显式 `overlayClassName` 优先于 `popperClass`。
-   */
-  overlayClassName: {
     type: String,
     default: '',
   },

@@ -10,6 +10,9 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
+      link: /quick-start
+    - theme: alt
+      text: 简介
       link: /introduce
     - theme: alt
       text: GitHub
@@ -21,7 +24,7 @@ features:
 
   - icon: 🧩
     title: 83 个组件
-    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 六大类 83 个组件，Ant Design 风格。
+    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，Ant Design 风格。
 
   - icon: 🛠️
     title: TypeScript 优先

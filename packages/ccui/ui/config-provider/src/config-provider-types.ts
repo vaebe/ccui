@@ -15,7 +15,7 @@ export interface ModalLocale {
 }
 
 export interface PopconfirmLocale {
-  okText?: string
+  confirmText?: string
   cancelText?: string
 }
 

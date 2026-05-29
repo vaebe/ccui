@@ -21,16 +21,8 @@ interface Pattern {
 }
 
 const DEPRECATED_PATTERNS: Pattern[] = [
-  // Tooltip / Popover
-  { key: 'showArrow', replacement: 'arrow', re: /\bshowArrow=/ },
-  { key: 'show-arrow', replacement: 'arrow', re: /\bshow-arrow=/ },
-  { key: 'popperClass', replacement: 'overlayClassName', re: /\bpopperClass=/ },
-  { key: 'popper-class', replacement: 'overlay-class-name', re: /\bpopper-class=/ },
-  { key: 'showAfter', replacement: 'mouseEnterDelay', re: /\bshowAfter=/ },
-  { key: 'show-after', replacement: 'mouse-enter-delay', re: /\bshow-after=/ },
-  { key: 'hideAfter', replacement: 'mouseLeaveDelay', re: /\bhideAfter=/ },
-  { key: 'hide-after', replacement: 'mouse-leave-delay', re: /\bhide-after=/ },
-  { key: 'teleported', replacement: 'getPopupContainer', re: /\bteleported=/ },
+  // v2 beta 清理完成后，Tooltip / Popover 的 prop 命名已全部收敛为 Vue 习惯（showArrow / popperClass / showAfter / hideAfter / teleported 等为 canonical），
+  // 该 guard 暂无规则需要拦截；之后再有新 deprecation 时往这里追加。
 ]
 
 // "content=" 这类太通用的字面量不可靠 (任何带 content prop 的组件都会假阳)，

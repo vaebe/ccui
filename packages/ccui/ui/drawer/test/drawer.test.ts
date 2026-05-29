@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Drawer } from '../index'
 
@@ -95,7 +94,7 @@ describe('drawer', () => {
 
   it('renders title and footer slots', async () => {
     const wrapper = mount(Drawer, {
-      props: { visible: true, showFooter: true },
+      props: { visible: true },
       slots: {
         title: '<span class="custom-title">Custom title</span>',
         footer: '<button class="custom-footer">Save</button>',
@@ -277,7 +276,7 @@ describe('drawer', () => {
       wrapper.unmount()
     })
 
-    it('未传 footer 且 showFooter=false 不渲染', async () => {
+    it('未传 footer 也未传 slot 时不渲染 footer', async () => {
       const wrapper = mount(Drawer, { props: { visible: true } })
       await nextTick()
       expect(document.body.querySelector(ns.e('footer'))).toBeNull()
@@ -369,21 +368,6 @@ describe('drawer', () => {
       const parentContent = document.body.querySelectorAll(`${ns.e('content')}`)[0] as HTMLElement
       expect(parentContent.style.transform).toBe('')
       wrapper.unmount()
-    })
-  })
-
-  describe('deprecation warn', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('showFooter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Drawer, { props: { showFooter: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('showFooter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 

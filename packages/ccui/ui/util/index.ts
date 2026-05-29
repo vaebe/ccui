@@ -21,7 +21,7 @@ export {
 
 export default {
   title: 'Util 工具集',
-  category: '通用',
+  category: '其他',
   status: '100%',
   install(_: App): void {
     // util 仅导出函数，无需注册组件

@@ -360,9 +360,7 @@ function ask() {
 | cancelText             | string                                                                               | `'取 消'`   | 取消按钮文案                                           |
 | okType                 | `'primary' \| 'danger' \| 'default'`                                                 | `'primary'` | 确认按钮类型                                           |
 | confirmLoading         | boolean                                                                              | `false`     | 确认按钮加载态                                         |
-| okLoading              | boolean                                                                              | `false`     | **(deprecated)** 请改用 `confirmLoading`               |
 | footer                 | `string \| VNode \| null \| undefined`                                               | --          | 底部按钮区：`null` 隐藏；`string` / VNode 直接渲染     |
-| hideFooter             | boolean                                                                              | `false`     | **(deprecated)** 请改用 `footer={null}`                |
 | destroyOnClose         | boolean                                                                              | `false`     | 关闭时销毁内部内容（与 `keepAlive` 互斥）              |
 | keepAlive              | boolean                                                                              | `false`     | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）       |
 | wrapClassName          | string                                                                               | --          | 自定义根节点 class                                     |

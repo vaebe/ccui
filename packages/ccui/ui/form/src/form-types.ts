@@ -86,7 +86,7 @@ export interface FormValidateError {
 }
 
 export interface FormItemContext {
-  prop?: FormNamePath
+  name?: FormNamePath
   field: string
   dependencies: FormNamePath[]
   validate: (trigger?: FormValidateTrigger) => Promise<boolean>
@@ -268,13 +268,6 @@ export const formItemProps = {
     type: String,
     default: '',
   },
-  /**
-   * @deprecated 请改用 `name`。双写时 `name` 优先；旧名下一大版本移除。
-   */
-  prop: {
-    type: [String, Number, Array] as PropType<FormNamePath>,
-    default: undefined,
-  },
   initialValue: {
     type: null as unknown as PropType<any>,
     default: undefined,
@@ -324,14 +317,6 @@ export const formItemProps = {
   },
   preserve: {
     type: Boolean,
-    default: undefined,
-  },
-  /**
-   * @deprecated Vue 端的响应式系统已经自动处理依赖收集，通常无需指定。
-   * 保留 prop 接收以兼容现有代码；新代码不建议使用。详见 docs-notes/roadmap.md。
-   */
-  shouldUpdate: {
-    type: [Boolean, Function] as PropType<boolean | ((prevValues: any, curValues: any) => boolean)>,
     default: undefined,
   },
   /**

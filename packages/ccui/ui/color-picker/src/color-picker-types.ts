@@ -18,12 +18,9 @@ export interface ColorPickerPresetGroup {
 }
 export type ColorPickerPresetItem = string | ColorPickerPresetGroup
 /**
- * 颜色格式。
- *
- * - 推荐：`'hex' | 'rgb' | 'hsb'`（HSB = Hue / Saturation / Brightness）
- * - 兼容：`'hsv'`（旧名，运行时等价于 `'hsb'`；下一大版本移除）
+ * 颜色格式：`'hex' | 'rgb' | 'hsb'`（HSB = Hue / Saturation / Brightness）。
  */
-export type ColorPickerFormat = 'hex' | 'rgb' | 'hsb' | 'hsv'
+export type ColorPickerFormat = 'hex' | 'rgb' | 'hsb'
 export type GetPopupContainer = (triggerNode: HTMLElement | null) => HTMLElement | null
 
 export const colorPickerProps = {

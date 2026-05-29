@@ -31,13 +31,13 @@ function onCancel() {
 
 ## 自定义按钮文案
 
-`ok-text` / `cancel-text` 调整按钮文字，业务话术更顺。
+`confirm-text` / `cancel-text` 调整按钮文字，业务话术更顺。
 
 :::demo
 
 ```vue
 <template>
-  <c-popconfirm title="保存修改？" ok-text="保存" cancel-text="放弃">
+  <c-popconfirm title="保存修改？" confirm-text="保存" cancel-text="放弃">
     <c-button type="primary">保存</c-button>
   </c-popconfirm>
 </template>
@@ -47,21 +47,21 @@ function onCancel() {
 
 ## 不同确定按钮风格
 
-`ok-type` 切换确定按钮风格：`primary`（默认蓝）/ `danger`（红）/ `default`（次按钮）。
+`confirm-type` 切换确定按钮风格：`primary`（默认蓝）/ `danger`（红）/ `default`（次按钮）。
 
 :::demo
 
 ```vue
 <template>
-  <c-popconfirm title="确定执行？" ok-type="primary">
+  <c-popconfirm title="确定执行？" confirm-type="primary">
     <c-button type="primary">primary</c-button>
   </c-popconfirm>
   &nbsp;
-  <c-popconfirm title="确定删除？" ok-type="danger">
+  <c-popconfirm title="确定删除？" confirm-type="danger">
     <c-button type="danger">danger</c-button>
   </c-popconfirm>
   &nbsp;
-  <c-popconfirm title="保留旧数据？" ok-type="default">
+  <c-popconfirm title="保留旧数据？" confirm-type="default">
     <c-button>default</c-button>
   </c-popconfirm>
 </template>
@@ -156,11 +156,9 @@ function confirm() {
 | title                     | string                                      | `''`        | 主问句                                         |
 | description               | string                                      | `''`        | 补充说明（可选）                               |
 | placement                 | `PopoverPlacement`                          | `'top'`     | 12 方位之一                                    |
-| okText                    | string                                      | `'确 定'`   | 确定按钮文案（未传时走 ConfigProvider locale） |
-| confirmText               | string                                      | `''`        | **(deprecated)** 请改用 `okText`               |
+| confirmText               | string                                      | `'确 定'`   | 确定按钮文案（未传时走 ConfigProvider locale） |
 | cancelText                | string                                      | `'取 消'`   | 取消按钮文案                                   |
-| okType                    | `'primary' \| 'danger' \| 'default'`        | `'primary'` | 确定按钮类型                                   |
-| confirmType               | `'primary' \| 'danger' \| 'default'`        | `'primary'` | **(deprecated)** 请改用 `okType`               |
+| confirmType               | `'primary' \| 'danger' \| 'default'`        | `'primary'` | 确定按钮类型                                   |
 | icon                      | string                                      | `''`        | 自定义 icon 类名（覆盖默认感叹号）             |
 | iconColor                 | string                                      | `'#faad14'` | 图标颜色                                       |
 | hideIcon                  | boolean                                     | `false`     | 隐藏前置图标                                   |

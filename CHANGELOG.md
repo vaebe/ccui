@@ -3,6 +3,43 @@
 本项目变更遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格。
 2.x 是当前开发分支，对照 main 主分支记录。
 
+## [2.0.1-beta.4] (unreleased)
+
+v2 beta 阶段集中清理：把 v2 引入的 Ant 风格新名（v2 beta 期间引入的 deprecation 兼容层）整批删除，prop 命名按"哪种更顺 Vue 习惯"做反向决策。**v2 还未 GA，按 beta 内部演进处理，不 bump major**。
+
+> 上一批清理见 `2089965`（Form `shouldUpdate` / Modal `okLoading` / Modal `hideFooter` / Drawer `showFooter` / Tag `bordered` / ColorPicker `format='hsv'` / FormItem `prop` 共 6 组件 9 项）；本批继续收尾以下组件。
+
+### BREAKING CHANGES
+
+- **InputNumber `size`**：旧值 `'lg' | 'md' | 'sm'` 三个别名删除；类型联合收窄到 `'large' | 'default' | 'small'`。
+- **Input** 删 Ant 风格新名 `allowClear` / `addonBefore` / `addonAfter`，保留 `clearable` / `prepend` / `append`。`{ clearIcon }` 复合配置（自定义清除图标）随 `allowClear` 一并删除。`addon-before` / `addon-after` slot 删除，浮层 addon 内容走 `prepend` / `append` slot。
+- **InputSearch** 因透传 `inputProps`，`allowClear` → `clearable` 同步迁移。
+- **Tooltip** 删 Ant 风格新名 `title` / `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName`，保留 `content` / `showArrow` / `showAfter` / `hideAfter` / `popperClass`。`arrow` 复合类型 `{ pointAtCenter }`（箭头对准触发节点中心）一并删除；`title` slot 删除，浮层内容走 `content` slot。
+- **Popover** 删 Ant 风格新名 `arrow` / `mouseEnterDelay` / `mouseLeaveDelay` / `overlayClassName` / `getPopupContainer`，保留 `showArrow` / `showAfter` / `hideAfter` / `popperClass` / `teleported`。`teleported` boolean 重新成为浮层容器的唯一控制项。
+- **Popconfirm** 删 Ant 风格新名 `okText` / `okType`，保留 `confirmText` / `confirmType`。
+- **locale 4 个语言包（zh-CN / en-US / ja-JP / ko-KR）** `Popconfirm.okText` → `Popconfirm.confirmText`（顶层 `Modal.okText` 不动）；`PopconfirmLocale` 类型定义同改。
+- **Button** 删 Ant 风格新名 `htmlType` / `shape` / `variant`，保留 `nativeType` / `round` boolean / `circle` boolean / `plain` boolean。`ButtonShape` / `ButtonVariant` 类型导出一并删除。
+- **Button `color`** 类型从 `'default' | 'primary' | 'danger'` 联合改造为 **任意 CSS color 字符串**：实心型 type（`primary`/`success`/`warning`/`danger`/`info`）注入 `background-color + border-color`；描边型（`''`/`default`/`dashed`）注入 `color + border-color`；`text` / `link` 仅注入 `color`。hover / active 联动由使用方用 CSS class 自兜底。`ButtonColor` 类型导出删除。
+
+### Removed
+
+- **scripts/codemod-v1-to-v2.mjs + CODEMOD.md** 删除。v2 未 GA 无 v1 升级用户；本批反向清理也让原映射表方向反转，留着更乱。
+
+### Migration
+
+模板批量替换（kebab-case 与 PascalCase 同时改）：
+
+| 组件 | 删除（新名） | 替换为（旧名） |
+|---|---|---|
+| Input | `allow-clear` / `addon-before` / `addon-after` | `clearable` / `prepend` / `append` |
+| Tooltip | `title` / `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name` | `content` / `show-arrow` / `show-after` / `hide-after` / `popper-class` |
+| Popover | `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name` / `get-popup-container` | `show-arrow` / `show-after` / `hide-after` / `popper-class` / `teleported` |
+| Popconfirm | `ok-text` / `ok-type` | `confirm-text` / `confirm-type` |
+| Button | `html-type` / `shape="round"` / `shape="circle"` / `variant="..."` | `native-type` / `round` boolean / `circle` boolean / `plain` boolean |
+| InputNumber | `size="lg"` / `"md"` / `"sm"` | `size="large"` / `"default"` / `"small"` |
+
+`<c-tooltip>` / `<c-popover>` 自定义浮层内容：原来用 `<template #title>` 的需要改为 `<template #content>`；Tooltip 浮层箭头 `pointAtCenter` 复合用法以及 Tooltip / Popover 的 `getPopupContainer` 容器函数已无替代——继续依赖请评估自行 fork 或在外层 portal 组件包装。
+
 ## [2.0.1-beta.3] (unreleased)
 
 发包链路重做：修正主包 `exports` map、补真实 `.d.ts`、统一 CSS 文件名、修复 resolver 默认 CSS 路径。

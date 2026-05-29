@@ -47,8 +47,8 @@ function generateEnMenus(componentsInfo) {
 
 export const createVitepressSidebarTemplates = (componentsInfo = []) => {
   const rootNavs = [
-    { text: '快速开始', link: '/', handler: generateZhMenus, lang: 'zh' },
-    { text: 'Quick Start', link: '/en-US/', handler: generateEnMenus, lang: 'en' },
+    { text: '指南', link: '/', handler: generateZhMenus, lang: 'zh' },
+    { text: 'Guide', link: '/en-US/', handler: generateEnMenus, lang: 'en' },
   ]
 
   return rootNavs.map((nav) => {
@@ -57,6 +57,7 @@ export const createVitepressSidebarTemplates = (componentsInfo = []) => {
       link: nav.link,
       items: [
         { text: '简介', link: '/introduce' },
+        { text: '快速开始', link: '/quick-start' },
         { text: 'AI 接入', link: '/for-ai' },
       ],
     }

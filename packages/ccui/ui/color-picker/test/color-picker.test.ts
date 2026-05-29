@@ -98,14 +98,6 @@ describe('color-picker rendering', () => {
     expect(wrapper.find(ns.e('value-text')).text()).toMatch(/^hsb\(/)
   })
 
-  it('accepts deprecated format="hsv" and warns once', async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mountCP({ defaultValue: '#1677ff', showText: true, format: 'hsv' })
-    expect(wrapper.find(ns.e('value-text')).text()).toMatch(/^hsv\(/)
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('format="hsv" 已 deprecated'))
-    warn.mockRestore()
-  })
-
   it('hides showText by default', () => {
     const wrapper = mountCP()
     expect(wrapper.find(ns.e('value-text')).exists()).toBe(false)

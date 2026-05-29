@@ -1,9 +1,8 @@
 import type { InputSize } from '../src/input-types'
 import { mount, shallowMount } from '@vue/test-utils'
 import { ref } from 'vue'
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Input } from '../index'
 
@@ -146,49 +145,11 @@ describe('input', () => {
     wrapper.unmount()
   })
 
-  // ─────────────────────────────────────────────────────────────
-  // allowClear / addonBefore 命名规范化
-  // ─────────────────────────────────────────────────────────────
-
-  describe('allowClear', () => {
-    it('allowClear=true 等价于 clearable=true', async () => {
-      const wrapper = mount(Input, { props: { allowClear: true, modelValue: 'hello' } })
-      expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
-      wrapper.unmount()
-    })
-
-    it('allowClear={ clearIcon: "mdi:close-circle" } 用 Iconify 自定义图标', () => {
+  describe('prepend / append slot', () => {
+    it('prepend slot 覆盖 prop', () => {
       const wrapper = mount(Input, {
-        props: { allowClear: { clearIcon: 'mdi:close-circle' }, modelValue: 'x' },
-      })
-      const clearWrap = wrapper.find(ns.e('clear'))
-      expect(clearWrap.exists()).toBe(true)
-      // Iconify 渲染会注入 svg
-      expect(clearWrap.html()).toContain('svg')
-      wrapper.unmount()
-    })
-
-    it('显式 allowClear 优先于 clearable', () => {
-      // allowClear=false 显式关 → clearable=true 也不生效
-      const wrapper = mount(Input, {
-        props: { allowClear: false, clearable: true, modelValue: 'x' },
-      })
-      expect(wrapper.find(ns.e('clear')).exists()).toBe(false)
-      wrapper.unmount()
-    })
-  })
-
-  describe('addonBefore / addonAfter', () => {
-    it('addonBefore prop 渲染左侧 addon', () => {
-      const wrapper = mount(Input, { props: { addonBefore: 'Http://' } })
-      expect(wrapper.find(ns.e('prepend')).text()).toBe('Http://')
-      wrapper.unmount()
-    })
-
-    it('addon-before slot 优先于 prop', () => {
-      const wrapper = mount(Input, {
-        props: { addonBefore: 'fallback' },
-        slots: { 'addon-before': '<i class="custom-icon">@</i>' },
+        props: { prepend: 'fallback' },
+        slots: { prepend: '<i class="custom-icon">@</i>' },
       })
       const prepend = wrapper.find(ns.e('prepend'))
       expect(prepend.find('.custom-icon').exists()).toBe(true)
@@ -196,20 +157,12 @@ describe('input', () => {
       wrapper.unmount()
     })
 
-    it('旧 prepend prop 仍兼容', () => {
-      const wrapper = mount(Input, { props: { prepend: 'old' } })
-      expect(wrapper.find(ns.e('prepend')).text()).toBe('old')
-      wrapper.unmount()
-    })
-
-    it('addonAfter prop + addon-after slot 行为对称', () => {
-      const w1 = mount(Input, { props: { addonAfter: '.com' } })
-      expect(w1.find(ns.e('append')).text()).toBe('.com')
-
-      const w2 = mount(Input, {
-        slots: { 'addon-after': '<i class="suffix-icon">$</i>' },
+    it('append slot 覆盖 prop', () => {
+      const wrapper = mount(Input, {
+        slots: { append: '<i class="suffix-icon">$</i>' },
       })
-      expect(w2.find(ns.e('append')).find('.suffix-icon').exists()).toBe(true)
+      expect(wrapper.find(ns.e('append')).find('.suffix-icon').exists()).toBe(true)
+      wrapper.unmount()
     })
   })
 
@@ -388,42 +341,6 @@ describe('input', () => {
       const wrapper = mount(Input, { props: { modelValue: 'real', defaultValue: 'preset' } })
       expect((wrapper.find('input').element as HTMLInputElement).value).toBe('real')
       wrapper.unmount()
-    })
-  })
-
-  describe('deprecation warn (M-A5)', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('clearable 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Input, { props: { clearable: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('clearable 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('allowClear'))
-      const w2 = mount(Input, { props: { clearable: true } })
-      expect(warn).toHaveBeenCalledTimes(1)
-      w.unmount()
-      w2.unmount()
-      warn.mockRestore()
-    })
-
-    it('prepend 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Input, { props: { prepend: 'http://' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('prepend 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('addonBefore'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('append 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Input, { props: { append: '.com' } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('append 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('addonAfter'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 

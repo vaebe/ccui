@@ -203,7 +203,7 @@ describe('slider', () => {
     const tooltip = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltip.exists()).toBe(true)
     expect(tooltip.props('visible')).toBe(true)
-    expect(tooltip.props('title')).toBe('50')
+    expect(tooltip.props('content')).toBe('50')
     wrapper.unmount()
   })
 
@@ -218,7 +218,7 @@ describe('slider', () => {
       props: { modelValue: 5, tipsRenderer: (v: number) => `${v} apples`, showTooltip: true },
     })
     await wrapper.find(ns.e('button')).trigger('mouseenter')
-    expect(wrapper.findComponent({ name: 'CTooltip' }).props('title')).toBe('5 apples')
+    expect(wrapper.findComponent({ name: 'CTooltip' }).props('content')).toBe('5 apples')
     wrapper.unmount()
   })
 
@@ -226,7 +226,7 @@ describe('slider', () => {
     const wrapper = mount(Slider, { props: { modelValue: 50, tipsRenderer: null } })
     const tooltip = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltip.exists()).toBe(true)
-    expect(tooltip.props('title')).toBe('')
+    expect(tooltip.props('content')).toBe('')
     wrapper.unmount()
   })
 
@@ -322,7 +322,7 @@ describe('slider', () => {
     await wrapper.find(ns.e('button')).trigger('mouseenter')
     const tooltip = wrapper.findComponent({ name: 'CTooltip' })
     expect(tooltip.props('visible')).toBe(true)
-    expect(tooltip.props('title')).toBe('50')
+    expect(tooltip.props('content')).toBe('50')
     wrapper.unmount()
   })
 

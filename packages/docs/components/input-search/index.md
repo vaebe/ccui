@@ -121,7 +121,7 @@ export default defineComponent({
 
 ## 清除按钮 + 搜索
 
-`allowClear` 开启后，清除会同时 emit `@search('')`。
+`clearable` 开启后，清除会同时 emit `@search('')`。
 
 :::demo
 
@@ -138,7 +138,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-input-search v-model="value" allow-clear enter-button="搜索" />
+  <c-input-search v-model="value" clearable enter-button="搜索" />
 </template>
 ```
 
@@ -156,7 +156,7 @@ export default defineComponent({
 | size         | 'large' \| 'default' \| 'small'            | default | 尺寸                                                                               |
 | disabled     | boolean                                    | false   | 整体禁用                                                                           |
 | readonly     | boolean                                    | false   | 只读                                                                               |
-| allowClear   | boolean \| { clearIcon?: VNode \| string } | false   | 清除按钮，清除时同步 emit @search('')                                              |
+| clearable    | boolean                                    | false   | 清除按钮，清除时同步 emit @search('')                                              |
 | maxLength    | number                                     | --      | 最大长度                                                                           |
 | status       | '' \| 'error' \| 'warning'                 | ''      | 校验状态                                                                           |
 

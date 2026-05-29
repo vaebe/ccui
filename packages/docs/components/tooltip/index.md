@@ -10,13 +10,13 @@
 
 ## 基本用法
 
-最简单的用法，浮层的大小由内容区域决定。文本内容可通过 `title` 或同名 slot 传入。
+最简单的用法，浮层的大小由内容区域决定。文本内容可通过 `content` 或同名 slot 传入。
 
 :::demo
 
 ```vue
 <template>
-  <c-tooltip title="这是一段提示文字">
+  <c-tooltip content="这是一段提示文字">
     <c-button type="primary" plain>鼠标悬停显示</c-button>
   </c-tooltip>
 </template>
@@ -41,24 +41,24 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 <template>
   <div class="demo-tooltip-placement">
     <div class="row">
-      <c-tooltip v-for="p in tops" :key="p" :title="`title ${p}`" :placement="p">
+      <c-tooltip v-for="p in tops" :key="p" :content="`tooltip ${p}`" :placement="p">
         <c-button type="primary" plain>{{ p }}</c-button>
       </c-tooltip>
     </div>
     <div class="center">
       <div class="col">
-        <c-tooltip v-for="p in lefts" :key="p" :title="`title ${p}`" :placement="p">
+        <c-tooltip v-for="p in lefts" :key="p" :content="`tooltip ${p}`" :placement="p">
           <c-button type="primary" plain>{{ p }}</c-button>
         </c-tooltip>
       </div>
       <div class="col">
-        <c-tooltip v-for="p in rights" :key="p" :title="`title ${p}`" :placement="p">
+        <c-tooltip v-for="p in rights" :key="p" :content="`tooltip ${p}`" :placement="p">
           <c-button type="primary" plain>{{ p }}</c-button>
         </c-tooltip>
       </div>
     </div>
     <div class="row">
-      <c-tooltip v-for="p in bottoms" :key="p" :title="`title ${p}`" :placement="p">
+      <c-tooltip v-for="p in bottoms" :key="p" :content="`tooltip ${p}`" :placement="p">
         <c-button type="primary" plain>{{ p }}</c-button>
       </c-tooltip>
     </div>
@@ -102,10 +102,10 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="Dark 主题" effect="dark">
+    <c-tooltip content="Dark 主题" effect="dark">
       <c-button type="primary" plain>Dark</c-button>
     </c-tooltip>
-    <c-tooltip title="Light 主题" effect="light">
+    <c-tooltip content="Light 主题" effect="light">
       <c-button type="primary" plain>Light</c-button>
     </c-tooltip>
   </div>
@@ -123,16 +123,16 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="品牌蓝" color="#1677ff">
+    <c-tooltip content="品牌蓝" color="#1677ff">
       <c-button type="primary" plain>蓝</c-button>
     </c-tooltip>
-    <c-tooltip title="成功绿" color="#52c41a">
+    <c-tooltip content="成功绿" color="#52c41a">
       <c-button type="primary" plain>绿</c-button>
     </c-tooltip>
-    <c-tooltip title="警告红" color="#f5222d">
+    <c-tooltip content="警告红" color="#f5222d">
       <c-button type="primary" plain>红</c-button>
     </c-tooltip>
-    <c-tooltip title="紫色渐变" color="linear-gradient(135deg, #722ed1, #eb2f96)">
+    <c-tooltip content="紫色渐变" color="linear-gradient(135deg, #722ed1, #eb2f96)">
       <c-button type="primary" plain>渐变</c-button>
     </c-tooltip>
   </div>
@@ -141,22 +141,19 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-## 箭头配置 arrow
+## 显隐箭头 show-arrow
 
-`arrow` 接受布尔（显隐）或对象 `{ pointAtCenter: true }`（箭头对准触发节点中心而非贴 edge）。
+通过 `show-arrow` 控制箭头显示/隐藏。
 
 :::demo
 
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="默认箭头（贴 edge）" placement="top">
-      <c-button type="primary" plain>默认</c-button>
+    <c-tooltip content="默认带箭头" placement="top">
+      <c-button type="primary" plain>带箭头</c-button>
     </c-tooltip>
-    <c-tooltip title="对准中心" placement="top" :arrow="{ pointAtCenter: true }">
-      <c-button type="primary" plain>pointAtCenter</c-button>
-    </c-tooltip>
-    <c-tooltip title="无箭头" placement="top" :arrow="false">
+    <c-tooltip content="无箭头" placement="top" :show-arrow="false">
       <c-button type="primary" plain>无箭头</c-button>
     </c-tooltip>
   </div>
@@ -167,7 +164,7 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 ## 多行 / HTML 内容
 
-`#title` slot 支持任意 VNode；要把字符串当 HTML 渲染用 `rawContent`。
+`#content` slot 支持任意 VNode；要把字符串当 HTML 渲染用 `rawContent`。
 
 :::demo
 
@@ -175,13 +172,13 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 <template>
   <div style="display: flex; gap: 12px">
     <c-tooltip placement="top">
-      <template #title>
+      <template #content>
         <div>多行信息</div>
         <div>第二行信息</div>
       </template>
       <c-button type="primary" plain>多行</c-button>
     </c-tooltip>
-    <c-tooltip title="<div style='color: #fff700'>HTML 内容</div>" :raw-content="true">
+    <c-tooltip content="<div style='color: #fff700'>HTML 内容</div>" :raw-content="true">
       <c-button type="primary" plain>HTML</c-button>
     </c-tooltip>
   </div>
@@ -199,13 +196,13 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="鼠标悬停触发" trigger="hover">
+    <c-tooltip content="鼠标悬停触发" trigger="hover">
       <c-button type="primary" plain>Hover</c-button>
     </c-tooltip>
-    <c-tooltip title="点击触发" trigger="click">
+    <c-tooltip content="点击触发" trigger="click">
       <c-button type="primary" plain>Click</c-button>
     </c-tooltip>
-    <c-tooltip title="聚焦触发" trigger="focus">
+    <c-tooltip content="聚焦触发" trigger="focus">
       <c-button type="primary" plain>Focus</c-button>
     </c-tooltip>
   </div>
@@ -216,17 +213,17 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 ## 延迟显示 / 隐藏
 
-通过 `mouseEnterDelay` / `mouseLeaveDelay` 控制显隐延迟（ms）。
+通过 `show-after` / `hide-after` 控制显隐延迟（ms）。
 
 :::demo
 
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="延迟 1 秒显示" :mouse-enter-delay="1000">
+    <c-tooltip content="延迟 1 秒显示" :show-after="1000">
       <c-button type="primary" plain>延迟显示</c-button>
     </c-tooltip>
-    <c-tooltip title="延迟 1 秒隐藏" :mouse-leave-delay="1000">
+    <c-tooltip content="延迟 1 秒隐藏" :hide-after="1000">
       <c-button type="primary" plain>延迟隐藏</c-button>
     </c-tooltip>
   </div>
@@ -249,7 +246,7 @@ const disabled = ref(false)
 
 <template>
   <div style="display: flex; gap: 12px">
-    <c-tooltip title="禁用状态" :disabled="disabled">
+    <c-tooltip content="禁用状态" :disabled="disabled">
       <c-button type="primary" plain>{{ disabled ? '禁用' : '启用' }}</c-button>
     </c-tooltip>
     <c-button type="primary" plain @click="disabled = !disabled">切换状态</c-button>
@@ -273,7 +270,7 @@ const visible = ref(false)
 
 <template>
   <div style="display: flex; gap: 12px; align-items: center">
-    <c-tooltip v-model:visible="visible" title="手动控制显示" trigger="manual">
+    <c-tooltip v-model:visible="visible" content="手动控制显示" trigger="manual">
       <c-button type="primary" plain>受控触发器</c-button>
     </c-tooltip>
     <c-button type="primary" plain @click="visible = !visible">
@@ -305,7 +302,7 @@ function log(type) {
 <template>
   <div style="display: flex; gap: 16px; align-items: flex-start">
     <c-tooltip
-      title="hover 我观察事件"
+      content="hover 我观察事件"
       @before-show="log('before-show')"
       @show="log('show')"
       @before-hide="log('before-hide')"
@@ -334,7 +331,7 @@ function log(type) {
   <div style="display: flex; flex-direction: column; gap: 12px">
     <div style="display: flex; align-items: center; gap: 6px">
       <span>邮箱地址</span>
-      <c-tooltip title="用于接收账号通知与重置密码邮件" placement="right">
+      <c-tooltip content="用于接收账号通知与重置密码邮件" placement="right">
         <span
           style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: #f0f0f0; color: #666; align-items: center; justify-content: center; font-size: 11px; cursor: help"
         >
@@ -344,7 +341,7 @@ function log(type) {
     </div>
     <div style="display: flex; align-items: center; gap: 6px">
       <span>API 密钥</span>
-      <c-tooltip title="密钥泄露后请立即重置；不要提交到代码仓库" color="#f5222d" placement="right">
+      <c-tooltip content="密钥泄露后请立即重置；不要提交到代码仓库" color="#f5222d" placement="right">
         <span
           style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: #fff1f0; color: #cf1322; align-items: center; justify-content: center; font-size: 11px; cursor: help"
         >
@@ -362,33 +359,28 @@ function log(type) {
 
 ### Tooltip Props
 
-| 参数                      | 说明                                                          | 类型                                         | 默认值 |
-| ------------------------- | ------------------------------------------------------------- | -------------------------------------------- | ------ |
-| title                     | 显示的内容。也可用 `slot#title` 传入                          | string \| VNode                              | —      |
-| content                   | **(deprecated)** 请改用 `title`（slot 同名 `content` 仍可用） | string                                       | —      |
-| visible / v-model:visible | 受控显示状态                                                  | boolean                                      | false  |
-| placement                 | 出现位置（12 种）                                             | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
-| effect                    | 内置主题                                                      | `'dark' \| 'light'`                          | dark   |
-| color                     | 自定义背景色（覆盖 `effect`）                                 | string                                       | —      |
-| arrow                     | 箭头配置；对象形 `{ pointAtCenter: true }` 对准触发器中心     | `boolean \| { pointAtCenter: boolean }`      | true   |
-| show-arrow                | **(deprecated)** 请改用 `arrow`                               | boolean                                      | true   |
-| mouseEnterDelay           | 鼠标进入触发显示的延迟（ms）                                  | number                                       | 0      |
-| show-after                | **(deprecated)** 请改用 `mouseEnterDelay`                     | number                                       | 0      |
-| mouseLeaveDelay           | 鼠标离开触发隐藏的延迟（ms）                                  | number                                       | 200    |
-| hide-after                | **(deprecated)** 请改用 `mouseLeaveDelay`                     | number                                       | 200    |
-| overlayClassName          | 弹层 class                                                    | string                                       | —      |
-| popper-class              | **(deprecated)** 请改用 `overlayClassName`                    | string                                       | —      |
-| trigger                   | 触发方式                                                      | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
-| disabled                  | 是否禁用                                                      | boolean                                      | false  |
-| offset                    | 距触发器的偏移量（px）                                        | number                                       | 8      |
-| enterable                 | 鼠标是否可进入到 tooltip 中                                   | boolean                                      | true   |
-| raw-content               | 是否将 content 作为 HTML 字符串处理                           | boolean                                      | false  |
-| fresh                     | 关闭后是否销毁内部内容                                        | boolean                                      | false  |
-| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                                       | boolean                                      | false  |
-| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）                   | boolean                                      | true   |
-| align                     | floating-ui offset / flip 等微调参数                          | object                                       | —      |
-| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）                     | `(trigger) => HTMLElement \| null`           | —      |
-| aria-label                | 屏幕阅读器标签                                                | string                                       | —      |
+| 参数                      | 说明                                                  | 类型                                         | 默认值 |
+| ------------------------- | ----------------------------------------------------- | -------------------------------------------- | ------ |
+| content                   | 浮层显示文本。也可用同名 `content` slot 传入富文本    | string                                       | —      |
+| visible / v-model:visible | 受控显示状态                                          | boolean                                      | false  |
+| placement                 | 出现位置（12 种）                                     | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
+| effect                    | 内置主题                                              | `'dark' \| 'light'`                          | dark   |
+| color                     | 自定义背景色（覆盖 `effect`）                         | string                                       | —      |
+| show-arrow                | 是否显示箭头                                          | boolean                                      | true   |
+| show-after                | 鼠标进入触发显示的延迟（ms）                          | number                                       | 0      |
+| hide-after                | 鼠标离开触发隐藏的延迟（ms）                          | number                                       | 200    |
+| popper-class              | 浮层根节点 class                                      | string                                       | —      |
+| trigger                   | 触发方式                                              | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
+| disabled                  | 是否禁用                                              | boolean                                      | false  |
+| offset                    | 距触发器的偏移量（px）                                | number                                       | 8      |
+| enterable                 | 鼠标是否可进入到 tooltip 中                           | boolean                                      | true   |
+| raw-content               | 是否将 content 作为 HTML 字符串处理                   | boolean                                      | false  |
+| fresh                     | 关闭后是否销毁内部内容                                | boolean                                      | false  |
+| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                               | boolean                                      | false  |
+| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）           | boolean                                      | true   |
+| align                     | floating-ui offset / flip 等微调参数                  | object                                       | —      |
+| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）             | `(trigger) => HTMLElement \| null`           | —      |
+| aria-label                | 屏幕阅读器标签                                        | string                                       | —      |
 
 ### Tooltip Events
 
@@ -402,8 +394,7 @@ function log(type) {
 
 ### Tooltip Slots
 
-| 插槽名  | 说明                              |
-| ------- | --------------------------------- |
-| default | Tooltip 触发 & 引用的元素         |
-| title   | 自定义内容（优先于 `title` prop） |
-| content | 同 `title`（兼容名，仍可用）      |
+| 插槽名  | 说明                                |
+| ------- | ----------------------------------- |
+| default | Tooltip 触发 & 引用的元素           |
+| content | 自定义浮层内容（优先于 `content` prop） |

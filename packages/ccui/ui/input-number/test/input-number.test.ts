@@ -116,23 +116,6 @@ describe('inputNumber', () => {
     expect(wrapper.classes()).toContain('ccui-input-number--small')
   })
 
-  it('should still accept deprecated size literals lg/md/sm and map them', async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = createWrapper({ size: 'lg' })
-    expect(wrapper.classes()).toContain('ccui-input-number--large')
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('size="lg" 已 deprecated'))
-
-    await wrapper.setProps({ size: 'sm' })
-    expect(wrapper.classes()).toContain('ccui-input-number--small')
-
-    await wrapper.setProps({ size: 'md' })
-    // 'default' 不写 modifier 类
-    expect(wrapper.classes()).not.toContain('ccui-input-number--default')
-    expect(wrapper.classes()).not.toContain('ccui-input-number--md')
-
-    warn.mockRestore()
-  })
-
   it('should handle controls position', async () => {
     const wrapper = createWrapper({ controlsPosition: 'right' })
 

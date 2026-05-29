@@ -1,19 +1,6 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 /**
- * `arrow` 复合：`bool \| { pointAtCenter }`
- */
-export interface PopoverArrowObject {
-  pointAtCenter?: boolean
-}
-export type PopoverArrow = boolean | PopoverArrowObject
-
-/**
- * `getPopupContainer` 函数。返回 null 时不 Teleport。
- */
-export type PopoverGetPopupContainer = (trigger: HTMLElement | null) => HTMLElement | null
-
-/**
  * `align` 浮层细调（offset / targetOffset / overflow）。
  */
 export interface PopoverAlign {
@@ -76,62 +63,34 @@ export const popoverProps = {
     default: false,
   },
   /**
-   * @deprecated 请改用 `arrow`（支持复合对象）。
+   * 是否显示箭头。
    */
   showArrow: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * `bool \| { pointAtCenter }`。显式 `arrow` 优先于 `showArrow`。
-   */
-  arrow: {
-    type: [Boolean, Object] as PropType<PopoverArrow>,
-    default: undefined,
   },
   trigger: {
     type: String as PropType<PopoverTrigger>,
     default: 'click' as PopoverTrigger,
   },
   /**
-   * @deprecated 请改用 `mouseEnterDelay`。单位 ms。
+   * mouseenter 后多少 ms 显示。
    */
   showAfter: {
     type: Number,
     default: 0,
   },
   /**
-   * @deprecated 请改用 `mouseLeaveDelay`。单位 ms。
+   * mouseleave 后多少 ms 隐藏。
    */
   hideAfter: {
     type: Number,
     default: 200,
   },
   /**
-   * mouseenter 后多少 ms 显示。显式 `mouseEnterDelay` 优先于 `showAfter`。
-   */
-  mouseEnterDelay: {
-    type: Number,
-    default: undefined,
-  },
-  /**
-   * mouseleave 后多少 ms 隐藏。
-   */
-  mouseLeaveDelay: {
-    type: Number,
-    default: undefined,
-  },
-  /**
-   * @deprecated 请改用 `overlayClassName`。
+   * 浮层根节点 class。
    */
   popperClass: {
-    type: String,
-    default: '',
-  },
-  /**
-   * 浮层根 class。显式 `overlayClassName` 优先于 `popperClass`。
-   */
-  overlayClassName: {
     type: String,
     default: '',
   },
@@ -176,18 +135,11 @@ export const popoverProps = {
     default: 0,
   },
   /**
-   * @deprecated 请改用 `getPopupContainer` 函数形。
+   * 是否 Teleport 到 body。`false` 时贴近触发节点同 DOM 流。
    */
   teleported: {
     type: Boolean,
     default: true,
-  },
-  /**
-   * 浮层容器函数。返回 null 时不 Teleport（同 teleported=false）。
-   */
-  getPopupContainer: {
-    type: Function as PropType<PopoverGetPopupContainer>,
-    default: undefined,
   },
   /**
    * 每次关闭后强制重置内容。

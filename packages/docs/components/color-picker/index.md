@@ -243,7 +243,7 @@ const value = ref('#1677ff')
 | ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------- |
 | modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                            |
 | defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                                 |
-| format            | `'hex' \| 'rgb' \| 'hsb' \| 'hsv'`                         | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）；`'hsv'` **(deprecated)** 请改用 `hsb` |
+| format            | `'hex' \| 'rgb' \| 'hsb'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                        |
 | disabled          | boolean                                                    | `false`                  | 是否禁用                                                                          |
 | size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                      |
 | status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                              |

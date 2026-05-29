@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Popconfirm } from '../index'
 
@@ -172,11 +171,7 @@ describe('popconfirm', () => {
     disabled.unmount()
   })
 
-  // ─────────────────────────────────────────────────────────────
-  // 同义 prop 解析
-  // ─────────────────────────────────────────────────────────────
-
-  describe('同义 prop 解析', () => {
+  describe('visible 控制', () => {
     it('visible=true 显示浮层', async () => {
       const wrapper = mount(Popconfirm, {
         props: { visible: true, title: '确认删除？' },
@@ -199,30 +194,6 @@ describe('popconfirm', () => {
       wrapper.unmount()
     })
 
-    it('okText 优先于旧 confirmText', async () => {
-      const wrapper = mount(Popconfirm, {
-        props: { visible: true, title: 'X', okText: 'OK!', confirmText: '旧' },
-        slots: { default: '<button>btn</button>' },
-        attachTo: document.body,
-      })
-      await nextTick()
-      expect(document.body.innerHTML).toContain('OK!')
-      expect(document.body.innerHTML).not.toContain('旧')
-      wrapper.unmount()
-    })
-
-    it('okType 优先于旧 confirmType（class 按 okType 走）', async () => {
-      const wrapper = mount(Popconfirm, {
-        props: { visible: true, title: 'X', okType: 'danger', confirmType: 'primary' },
-        slots: { default: '<button>btn</button>' },
-        attachTo: document.body,
-      })
-      await nextTick()
-      const confirmBtn = document.body.querySelector('.ccui-popconfirm__btn--danger')
-      expect(confirmBtn).not.toBeNull()
-      wrapper.unmount()
-    })
-
     it('update:visible 同步触发', async () => {
       const wrapper = mount(Popconfirm, {
         props: { title: 'X' },
@@ -233,36 +204,6 @@ describe('popconfirm', () => {
       await nextTick()
       expect(wrapper.emitted('update:visible')).toBeTruthy()
       wrapper.unmount()
-    })
-  })
-
-  describe('deprecation warn (M-A5)', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('confirmText 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popconfirm, {
-        props: { confirmText: '好的', title: 'X' },
-        slots: { default: '<button>btn</button>' },
-      })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmText 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okText'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('confirmType 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Popconfirm, {
-        props: { confirmType: 'danger', title: 'X' },
-        slots: { default: '<button>btn</button>' },
-      })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmType 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okType'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 })

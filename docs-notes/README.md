@@ -1,33 +1,41 @@
 # Docs Notes
 
-> **vue3-ccui 是一个 Vue 3 组件库。** 与 Ant Design 的关系是「对标」而不是「移植」——视觉/Token/心智模型对齐，但 React-only 模式（render props / forwardRef / shouldUpdate / 受控-非受控二分法 / Hook 元组返回 等）一律不照搬，要么不做，要么翻译成 Vue 习惯（v-model / slot / composable / KeepAlive）。详见 [roadmap.md](./roadmap.md) 顶部「对标原则」一节。
+vue3-ccui 工程层的 **shared memory**：决策约束、发布流程、维护基线。面向开发者本人 / AI / 未来贡献者，**不进入 VitePress 文档站**。
 
-跨组件 / 跨主题的内部协作笔记。**不进入 VitePress 文档站发布产物**，是工程层的「shared memory」：批次交付记录、设计决策、视觉审查、API diff 等。
+> 与 [`packages/docs/`](../packages/docs/)（VitePress 文档站）的分工：
+> - `packages/docs/` —— 面向使用方，写 demo / props / events。
+> - `docs-notes/` —— 面向贡献者，写决策、约束、流程、未决项。
+>
+> 一句话判别：读者是「写业务的工程师」→ `packages/docs/`；读者是「下一次会话的我自己 / Claude / Codex」→ `docs-notes/`。
 
 ## 目录
 
-| 子目录 / 文件                                  | SKILL                 | 用途                                                      | 最新状态                                                         |
-| ---------------------------------------------- | --------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| [components-diff/](./components-diff/SKILL.md) | components-diff-notes | Ant Design API/Demo diff、组件批次交付记录、剩余 gap      | 截至 Batch 40（2026-05-14），含 73 组件逐项明细 `per-component/` |
-| [design-audit/](./design-audit/SKILL.md)       | design-audit-notes    | 主题 token、品牌色、locale、设计原则等决策 + 视觉对齐审查 | 2026-05-10 审查的 P0/P1/P2 均已落地                              |
-| [roadmap.md](./roadmap.md)                     | —                     | 后续任务清单，按 T-Shirt Size（S/M/L/XL）分级             | 2026-05-14 初版，5 大 Tier 共 60+ 可执行 batch                   |
+| 文件 / 目录                                                | 用途                                              |
+| ---------------------------------------------------------- | ------------------------------------------------- |
+| [decisions/](./decisions/)                                 | 不变性约束（一旦合入，后续工作必须遵守）          |
+| [releasing.md](./releasing.md)                             | npm 发布流程、2FA / passkey、故障排查             |
+| [bundle-size-baseline.md](./bundle-size-baseline.md)       | 当前体积基线（v2.0.0 snapshot）                   |
+| [archive/](./archive/)                                     | v2.0 之前的历史档（roadmap / diff / 审查报告）    |
 
-## 何时进 docs-notes vs 进 packages/docs
+## decisions/
 
-- **packages/docs/** — 面向库使用方的 VitePress 站，写组件 demo / props / events / 类型表。
-- **docs-notes/** — 面向开发者本人/AI/未来贡献者的协作笔记。写「为什么这样做」「跨组件视角」「批次交付记录」「未决项」。
+约束类决策。**和「修复记录」严格区分**：只有具备「反向决策成本」与「长期不变性约束」的内容才进。
 
-如果一份笔记的读者是「下一次启动会话的我自己 / Codex / Claude」，放 docs-notes；如果读者是「用 vue3-ccui 写业务的工程师」，放 packages/docs。
+| 文件                                                                       | 主题                                                  |
+| -------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [benchmark-principles.md](./decisions/benchmark-principles.md)             | 对标 Ant Design 的边界：不照搬 React-only，翻译 Vue 化 |
+| [brand-color.md](./decisions/brand-color.md)                               | 默认主色 `#1677ff` 全量对齐 v6                        |
+| [design-values.md](./decisions/design-values.md)                           | 自然 / 确定 / 意义 / 生长 四原则在 ccui 的体现        |
+| [config-provider-locale.md](./decisions/config-provider-locale.md)         | ConfigProvider locale / theme.algorithm 接通承诺      |
+| [testing-principles.md](./decisions/testing-principles.md)                 | 测试术语用 Vue 语境 + 测试优先级（先测真实行为）       |
 
 ## 写新笔记的约定
 
-1. **每个新 skill 起一个目录**，目录里放 `SKILL.md`（前言 + 入口） + `references/`（横向资料） + 可选 `decisions/`（不变性约束） + 可选 `history/`（已合入的 fix log）。
-2. **SKILL.md 用前言 YAML**（`name` / `description`），方便 Claude Code skill 系统识别。
-3. **决策 vs 修复区分**：
-   - `decisions/`：有「反向决策成本」+「不变性约束」段的才进。
-   - `history/`：只是记录"做了哪些 fix"，没有决策性约束。
-4. **过期文档处理**：不删除，加状态前言（参考 [ant-design-alignment.md](./design-audit/references/ant-design-alignment.md) 顶部"状态更新"节）。
+1. **决策**：进 `decisions/`，文件名 `<topic>.md`。顶部写「决策日期 / 状态 / 反向决策开销 / 不变性约束」。
+2. **流程 / 基线**：直接放顶层（如 `releasing.md` / `bundle-size-baseline.md`）。
+3. **修复记录 / 批次记录**：**不再单独写**。提交 PR / 走 git log 即可，避免和 `decisions/` 混淆。
+4. **过期文档**：不删，整目录 `git mv` 到 [`archive/`](./archive/)，并在 `archive/README.md` 加一行说明。
 
-## 已废弃的目录
+## 状态（2026-05-20）
 
-- ~~`menu-vue-api/`~~ — 2026-05-14 移除。该目录仅含 14 行 Menu API 对齐说明，信息已合入 `components-diff/references/per-component/5-nav-general.md` 与 Menu 组件源码。
+v2.0.0 已发布；[`archive/roadmap-v2.0.md`](./archive/roadmap-v2.0.md) Tier S / M-A / M-B / L-1..4 / XL-1..6 全部收官。后续工作走 issue / PR 节奏，本目录转为长期维护模式。

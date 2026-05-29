@@ -34,19 +34,15 @@ export const tagProps = {
     default: 'default',
   },
   /**
-   * 视觉变体（推荐使用）。
-   * 未传时若 `bordered=false` 自动映射为 `'filled'`，否则 `'outlined'`。
+   * 视觉变体。
+   *
+   * - `'outlined'`（默认）：描边款
+   * - `'filled'`：填充款，无外边框
+   * - `'solid'`：实色款，预设色更饱和
    */
   variant: {
     type: String as PropType<TagVariant>,
-    default: undefined,
-  },
-  /**
-   * @deprecated 请改用 `variant`。`bordered=false` 等价于 `variant='filled'`，下一大版本移除。
-   */
-  bordered: {
-    type: Boolean,
-    default: true,
+    default: 'outlined',
   },
   closable: {
     type: Boolean,

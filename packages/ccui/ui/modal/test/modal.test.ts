@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
-import { __resetDeprecatedWarningsForTest } from '../../shared/utils/deprecated'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Modal } from '../index'
 
@@ -133,7 +132,7 @@ describe('modal', () => {
         centered: true,
         width: 640,
         zIndex: 3000,
-        okLoading: true,
+        confirmLoading: true,
         okType: 'danger',
       },
     })
@@ -153,7 +152,7 @@ describe('modal', () => {
 
   it('can hide footer and close button', async () => {
     const wrapper = mount(Modal, {
-      props: { visible: true, appendToBody: true, hideFooter: true, closable: false },
+      props: { visible: true, appendToBody: true, footer: null, closable: false },
     })
     await nextTick()
 
@@ -322,8 +321,8 @@ describe('modal', () => {
     })
   })
 
-  describe('confirmLoading 别名', () => {
-    it('confirmLoading=true 等价于 okLoading=true', async () => {
+  describe('confirmLoading', () => {
+    it('confirmLoading=true 禁用确认按钮并显示 spinner', async () => {
       const wrapper = mount(Modal, { props: { visible: true, confirmLoading: true } })
       await nextTick()
       const okBtn = document.body.querySelector(ns.em('btn', 'primary')) as HTMLButtonElement
@@ -332,10 +331,8 @@ describe('modal', () => {
       wrapper.unmount()
     })
 
-    it('显式 confirmLoading 优先于 okLoading', async () => {
-      const wrapper = mount(Modal, {
-        props: { visible: true, confirmLoading: false, okLoading: true },
-      })
+    it('confirmLoading=false 时确认按钮可点击', async () => {
+      const wrapper = mount(Modal, { props: { visible: true, confirmLoading: false } })
       await nextTick()
       const okBtn = document.body.querySelector(ns.em('btn', 'primary')) as HTMLButtonElement
       expect(okBtn?.disabled).toBe(false)
@@ -351,30 +348,6 @@ describe('modal', () => {
       await nextTick()
       expect(document.body.querySelector(ns.b())).not.toBeNull()
       wrapper.unmount()
-    })
-  })
-
-  describe('deprecation warn', () => {
-    beforeEach(() => {
-      __resetDeprecatedWarningsForTest()
-    })
-
-    it('okLoading 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Modal, { props: { okLoading: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('okLoading 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('confirmLoading'))
-      w.unmount()
-      warn.mockRestore()
-    })
-
-    it('hideFooter 显式传入触发 deprecation warn 一次', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const w = mount(Modal, { props: { hideFooter: true } })
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('hideFooter 已 deprecated'))
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('footer={null}'))
-      w.unmount()
-      warn.mockRestore()
     })
   })
 

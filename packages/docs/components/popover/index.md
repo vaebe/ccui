@@ -159,22 +159,19 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 :::
 
-## 箭头配置 arrow
+## 显隐箭头 show-arrow
 
-`arrow` 接受布尔（显隐）或对象 `{ pointAtCenter: true }`（箭头对准触发节点中心）。
+通过 `show-arrow` 控制箭头显示/隐藏。
 
 :::demo
 
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-popover content="默认箭头" placement="top" trigger="hover">
-      <c-button type="primary" plain>默认</c-button>
+    <c-popover content="默认带箭头" placement="top" trigger="hover">
+      <c-button type="primary" plain>带箭头</c-button>
     </c-popover>
-    <c-popover content="对准中心" placement="top" trigger="hover" :arrow="{ pointAtCenter: true }">
-      <c-button type="primary" plain>pointAtCenter</c-button>
-    </c-popover>
-    <c-popover content="无箭头" placement="top" trigger="hover" :arrow="false">
+    <c-popover content="无箭头" placement="top" trigger="hover" :show-arrow="false">
       <c-button type="primary" plain>无箭头</c-button>
     </c-popover>
   </div>
@@ -238,17 +235,17 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 ## 延迟显示 / 隐藏
 
-通过 `mouseEnterDelay` / `mouseLeaveDelay` 控制显隐延迟（ms）。
+通过 `show-after` / `hide-after` 控制显隐延迟（ms）。
 
 :::demo
 
 ```vue
 <template>
   <div style="display: flex; gap: 12px">
-    <c-popover content="延迟 800ms 显示" :mouse-enter-delay="800" trigger="hover">
+    <c-popover content="延迟 800ms 显示" :show-after="800" trigger="hover">
       <c-button type="primary" plain>延迟显示</c-button>
     </c-popover>
-    <c-popover content="延迟 800ms 隐藏" :mouse-leave-delay="800" trigger="hover">
+    <c-popover content="延迟 800ms 隐藏" :hide-after="800" trigger="hover">
       <c-button type="primary" plain>延迟隐藏</c-button>
     </c-popover>
   </div>
@@ -458,20 +455,15 @@ const users = [
 | visible / v-model:visible | 受控显示状态                                | boolean                                                      | false              |
 | disabled                  | Popover 是否可用                            | boolean                                                      | false              |
 | color                     | 自定义背景色（覆盖 `effect`）               | string                                                       | —                  |
-| arrow                     | 箭头配置；对象形 `{ pointAtCenter }`        | `boolean \| { pointAtCenter: boolean }`                      | true               |
-| show-arrow                | **(deprecated)** 请改用 `arrow`             | boolean                                                      | true               |
+| show-arrow                | 是否显示箭头                                | boolean                                                      | true               |
 | trigger                   | 触发方式                                    | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
-| mouseEnterDelay           | 进入显示延迟（ms）                          | number                                                       | 0                  |
-| mouseLeaveDelay           | 离开隐藏延迟（ms）                          | number                                                       | 200                |
-| show-after                | **(deprecated)** 请改用 `mouseEnterDelay`   | number                                                       | 0                  |
-| hide-after                | **(deprecated)** 请改用 `mouseLeaveDelay`   | number                                                       | 200                |
-| overlayClassName          | 弹层 class                                  | string                                                       | —                  |
-| popper-class              | **(deprecated)** 请改用 `overlayClassName`  | string                                                       | —                  |
+| show-after                | 鼠标进入显示延迟（ms）                      | number                                                       | 0                  |
+| hide-after                | 鼠标离开隐藏延迟（ms）                      | number                                                       | 200                |
+| popper-class              | 浮层根节点 class                            | string                                                       | —                  |
 | fresh                     | 关闭后是否销毁内部内容                      | boolean                                                      | false              |
 | destroyTooltipOnHide      | 隐藏时销毁弹层节点                          | boolean                                                      | false              |
 | autoAdjustOverflow        | 自动调整方向避免溢出                        | boolean                                                      | true               |
 | align                     | floating-ui 微调对象                        | object                                                       | —                  |
-| getPopupContainer         | 自定义弹层容器；返回 `null` 内联不 Teleport | `(trigger) => HTMLElement \| null`                           | —                  |
 | offset                    | 出现位置的偏移量                            | number                                                       | 4                  |
 | raw-content               | 是否将 content 作为 HTML 字符串处理         | boolean                                                      | false              |
 | enterable                 | 鼠标是否可进入到 popover 中                 | boolean                                                      | true               |
@@ -482,7 +474,7 @@ const users = [
 | transition                | 定义渐变动画                                | string                                                       | ccui-popover-fade  |
 | auto-close                | 自动关闭时间，单位毫秒                      | number                                                       | 0                  |
 | tabindex                  | Popover 组件的 tabindex                     | `number \| string`                                           | 0                  |
-| teleported                | **(deprecated)** 请改用 `getPopupContainer` | boolean                                                      | true               |
+| teleported                | 是否 Teleport 到 body                       | boolean                                                      | true               |
 | persistent                | 是否持久化                                  | boolean                                                      | true               |
 | virtual-triggering        | 是否启用虚拟触发器                          | boolean                                                      | false              |
 | virtual-ref               | 虚拟触发器的参照元素                        | HTMLElement                                                  | —                  |

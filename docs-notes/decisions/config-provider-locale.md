@@ -2,7 +2,7 @@
 
 > 决策日期：2026-05-10
 > 状态：**已实施**
-> 关联：审查报告 `docs-notes/design-audit/references/ant-design-alignment.md`、设计审查后的"对齐缺口扫描"
+> 关联：审查报告 [archive/ant-design-alignment-2026-05-10.md](../archive/ant-design-alignment-2026-05-10.md)、设计审查后的「对齐缺口扫描」
 
 ## 背景
 

@@ -1,6 +1,6 @@
 # Form 表单
 
-用于收集、校验和提交一组输入项。`shouldUpdate` / `validateDebounce` / `normalize` 等边角能力后续迭代。
+用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代。
 
 ## 基本用法
 
@@ -551,7 +551,7 @@ function onFinish(name: string, info: { values: any; forms: Record<string, any> 
   <c-form-provider @form-finish="onFinish">
     <c-form name="profile" :model="profile">
       <c-form-item name="name"><c-input v-model="profile.name" /></c-form-item>
-      <c-button html-type="submit">Save</c-button>
+      <c-button native-type="submit">Save</c-button>
     </c-form>
     <c-form name="billing" :model="billing">
       <c-form-item name="address"><c-input v-model="billing.address" /></c-form-item>
@@ -570,17 +570,6 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
     <c-input v-model="model.apiKey" />
   </c-form-item>
 </c-form>
-```
-
-## `prop` 兼容别名
-
-字段名使用 `name`，`prop` 是其 deprecated 别名（dev mode 触发一次性 `console.warn`）。同时传入时 `name` 优先：
-
-```vue
-<!-- name 与 prop 二选一即可 -->
-<c-form-item label="姓名" prop="user">
-  <c-input v-model="model.user" />
-</c-form-item>
 ```
 
 ## 参数
@@ -612,7 +601,6 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | 参数             | 类型                                                            | 默认值    | 说明                                                                             |
 | ---------------- | --------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------- |
 | name             | string / number / array                                         | --        | 字段路径，支持数组路径                                                           |
-| prop             | string / number / array                                         | --        | **(deprecated)** 请改用 `name`                                                   |
 | label            | string                                                          | --        | 标签文本                                                                         |
 | labelCol         | 同 Form 同名 prop                                               | --        | 当前项 label 列配置（显式优先于 Form 级）                                        |
 | wrapperCol       | 同 Form 同名 prop                                               | --        | 当前项控件列配置                                                                 |
@@ -632,7 +620,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | noStyle          | boolean                                                         | false     | 不显示标准表单项样式                                                             |
 | preserve         | boolean                                                         | 跟随 Form | 字段卸载是否保留值，覆盖表单级配置                                               |
 
-> **未实现的 API**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议；`shouldUpdate` —— Vue 响应式自动处理依赖收集，无需手动指定。
+> **未实现的 API**：`valuePropName` / `getValueFromEvent` / `getValueProps` —— Vue 的 `v-model` 已统一协议。Vue 响应式自动处理依赖收集，无需 `shouldUpdate`。
 >
 > `FormRule.warningOnly: boolean`：失败时降级为 `warning`，不阻塞 form-level submit。
 
@@ -710,7 +698,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 
 ## 缺失功能
 
-- `shouldUpdate`、render props 级别的复杂条件渲染。
+- render props 级别的复杂条件渲染。
 - `validateDebounce`、`normalize`、`getValueProps` 等少量高级字段配置。
 - 完整无障碍实现和与所有录入组件的深度状态联动。
 - 更完整的滚动容器定位、复杂错误聚合展示和国际化包级别默认文案。

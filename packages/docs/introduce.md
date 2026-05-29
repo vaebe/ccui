@@ -1,5 +1,15 @@
 # 简介
 
+`@vaebe/ccui` 是一套基于 **Vue 3 + TypeScript** 的开箱即用组件库，视觉与心智模型对齐 [Ant Design v6](https://ant-design.antgroup.com/)，覆盖通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他七类、80+ 个组件。
+
+## 设计取向
+
+- **对标而非照搬**：能力覆盖到、迁移成本低，但 React-only 的 API 形态（render props / forwardRef / 静态属性挂子组件等）会全部翻译成 Vue 习惯（slot、`v-model:*`、平铺导出）。详见 [对标原则](https://github.com/vaebe/ccui/blob/main/docs-notes/decisions/benchmark-principles.md)。
+- **TypeScript 优先**：完整 `.d.ts` 类型导出，组件 props / events / slots 全量可推导。
+- **主题原生 CSS 变量**：SeedToken / MapToken 双层体系，CSS 变量挂 `:root`，切换 `.dark` 类即启用暗色。
+- **可访问性**：浮层 / 选择 / 列表 / 录入 等关键组件已完成 ARIA + 键盘审计。
+- **国际化**：内置 zhCN / enUS / jaJP / koKR 四个语言包，`ConfigProvider` 切换同步驱动 dayjs locale 按需懒加载。
+
 ## 主题 Token
 
 | Token         | 默认值                        |
@@ -13,99 +23,13 @@
 | fontSize      | `14px`（行高 1.5714）         |
 | controlHeight | `32px`（large 40 / small 24） |
 
-CSS 变量同时挂载到 `:root` 和 SCSS 变量 fallback，可直接通过 `var(--ccui-color-primary)` 等方式消费；切换到 `.dark` 类即可启用暗色主题。
+CSS 变量同时挂载到 `:root` 和 SCSS 变量 fallback，可直接通过 `var(--ccui-color-primary)` 等方式消费；切换到 `.dark` 类即可启用暗色主题。完整 token 列表与定制方式见 [ConfigProvider 全局配置](/components/config-provider/)。
 
-## 使用包管理器
+## 浏览器支持
 
-```shell
-# NPM
-$ npm install @vaebe/ccui --save
+跟随 Vue 3 官方支持范围：现代浏览器、不再支持 IE11。
 
-# Yarn
-$ yarn add @vaebe/ccui
+## 下一步
 
-# pnpm
-$ pnpm install @vaebe/ccui
-```
-
-## 浏览器直接引入
-
-```html
-<head>
-  <!-- 导入样式 -->
-  <link rel="stylesheet" href="https://unpkg.com/@vaebe/ccui/style.css" />
-  <!-- 导入 Vue 3 -->
-  <script src="//cdn.jsdelivr.net/npm/vue@next"></script>
-  <!-- 导入组件库 -->
-  <script src="https://unpkg.com/@vaebe/ccui"></script>
-</head>
-
-<script>
-  const App = {
-    data() {
-      return {
-        message: 'Hello vue3-ccui',
-      }
-    },
-  }
-  const app = Vue.createApp(App)
-  app.use(VueCcui.default)
-  app.mount('#app')
-</script>
-```
-
-## 快速开始
-
-### 完整引入
-
-```ts
-import { createApp } from 'vue'
-import ccui from '@vaebe/ccui'
-import App from './App.vue'
-
-import './style.css'
-import '@vaebe/ccui/style.css'
-
-createApp(App).use(ccui).mount('#app')
-```
-
-### 按需引入
-
-搭配 [`unplugin-vue-components`](https://github.com/unplugin/unplugin-vue-components) 与官方 resolver 包 `@vaebe/unplugin-vue-components-ccui`，模板里直接写 `<c-button>` 即可，组件代码与样式由插件按需注入，未使用的组件会被 tree-shake。
-
-```bash
-pnpm add @vaebe/ccui
-pnpm add -D @vaebe/unplugin-vue-components-ccui unplugin-vue-components
-```
-
-```ts
-// vite.config.ts
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import Components from 'unplugin-vue-components/vite'
-import { Vue3CCUIResolver } from '@vaebe/unplugin-vue-components-ccui'
-
-export default defineConfig({
-  plugins: [
-    vue(),
-    Components({
-      resolvers: [Vue3CCUIResolver()],
-    }),
-  ],
-})
-```
-
-```vue
-<template>
-  <c-form :model="form">
-    <c-form-item label="用户名">
-      <c-input v-model="form.username" />
-    </c-form-item>
-    <c-form-item>
-      <c-button type="primary" @click="submit">提交</c-button>
-    </c-form-item>
-  </c-form>
-</template>
-```
-
-Webpack / Rspack / Rollup / esbuild 把 `Vue3CCUIResolver()` 注册到对应构建工具的 `Components` 插件 `resolvers` 数组即可，配置方式一致。完整 Options（`importStyle` / `prefix` / `exclude` / `importFrom` / `cssBundlePath`）见 [resolver 包 README](https://github.com/vaebe/ccui/tree/main/packages/resolver#readme)。
+- 安装与引入方式见 [快速开始](/quick-start)
+- 给 AI / Copilot 接入 ccui 的索引文件见 [AI 接入](/for-ai)
