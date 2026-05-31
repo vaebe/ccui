@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import pkg from '../package.json' with { type: 'json' }
+import ccuiPkg from '../../ccui/package.json' with { type: 'json' }
 
 const CWD = process.cwd()
 const UI_DIR = resolve(CWD, '../ccui/ui')
@@ -42,7 +43,10 @@ const CREATE_SUPPORT_TYPE_MAP = Object.freeze({
 })
 const CREATE_SUPPORT_TYPES = Object.keys(CREATE_SUPPORT_TYPE_MAP)
 
+// cli 工具自身版本（program.version 使用）
 export const VERSION = pkg.version
+// 组件库版本：注入到生成的 vue-ccui.ts 默认导出，随 @vaebe/ccui 的 package.json 走
+export const CCUI_VERSION = ccuiPkg.version
 export const isProd = process.env.NODE_ENV === 'production'
 export {
   CWD,

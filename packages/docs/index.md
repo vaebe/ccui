@@ -23,12 +23,12 @@ features:
     details: Vite 8 + Rolldown + OXC 全链路加速，开发服务秒级冷启，生产构建按组件维度自动 split。
 
   - icon: 🧩
-    title: 83 个组件
-    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，Ant Design 风格。
+    title: 84 个组件
+    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，致敬 Ant Design 视觉风格。
 
   - icon: 🛠️
     title: TypeScript 优先
-    details: 完整 .d.ts 类型导出，2077 个单测覆盖 94 个测试文件，CI 全绿门槛上线。
+    details: 完整 .d.ts 类型导出，2000+ 个单测覆盖 96 个测试文件，CI 全绿门槛上线。
 
   - icon: 🎨
     title: 主题与暗色

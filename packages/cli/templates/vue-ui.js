@@ -1,5 +1,5 @@
 import { relative } from 'node:path'
-import { INDEX_FILE_NAME, VERSION, VUE_UI_FILE } from '../shared/constant.js'
+import { CCUI_VERSION, INDEX_FILE_NAME, VUE_UI_FILE } from '../shared/constant.js'
 
 export const createUiTemplate = (exportModules = []) => {
   const packages = []
@@ -38,7 +38,7 @@ export {
 };
 
 export default {
-  version: '${VERSION}',
+  version: '${CCUI_VERSION}',
   install(app: App): void {
     installs.forEach((p) => app.use(p));
   }

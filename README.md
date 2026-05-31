@@ -13,7 +13,7 @@
 - ⚡ Vite 8 + Rolldown 构建，OXC 全链路加速
 - 🛠️ 全量接入 Vite+ 工具链：`vp dev / build / test / check / lint / fmt`
 - 📦 支持按需引入，减小包体积
-- 🎨 视觉规范对齐 Ant Design
+- 🎨 视觉设计致敬 Ant Design，沉淀为一套完整的主题 Token 体系
 - 🧩 API 采用 Vue-first 命名（如 `visible` / `closeOnEsc` / `appendToBody`），与 Vue 生态习惯一致
 
 ## 📦 安装
@@ -61,101 +61,9 @@ app.mount('#app')
 
 ## 📚 组件
 
-视觉规范对齐 [Ant Design v6.3.7](https://ant.design)，主题 Token 已按官方默认 Seed/Map Token 实现。**API 命名采用 Vue-first 习惯**（受控显示用 `visible` / `v-model:visible`，而非 React 生态的 `open`），完整命名约定见 [`docs-notes/decisions/benchmark-principles.md`](./docs-notes/decisions/benchmark-principles.md)。当前已交付 **73 个组件 / 工具入口**，v2.0 交付历史见 [`docs-notes/archive/components-diff.md`](./docs-notes/archive/components-diff.md)。
+覆盖通用 / 导航 / 反馈 / 数据录入 / 数据展示 / 布局 / 其他七大类，共 **84 个组件 / 工具入口**。**API 命名采用 Vue-first 习惯**（受控显示用 `visible` / `v-model:visible`，而非 React 生态的 `open`），完整命名约定见 [`docs-notes/decisions/benchmark-principles.md`](./docs-notes/decisions/benchmark-principles.md)。
 
-### 通用
-
-- **Button** - 按钮
-- **Button3D** - 3D 按钮（项目特色）
-- **ConfigProvider** - 全局配置
-- **FloatButton** / **BackTop** - 悬浮按钮
-- **Icon** - 图标（内置 [Iconify](https://iconify.design/) 200+ 图标集适配）
-- **Status** - 状态
-- **Typography** - 排版（Text / Title / Paragraph / Link）
-- **Util** - 工具集（classNames / debounce / throttle / clamp 等）
-
-### 导航
-
-- **Affix** - 固钉
-- **Anchor** - 锚点
-- **Breadcrumb** - 面包屑
-- **Dropdown** - 下拉菜单
-- **Menu** - 导航菜单
-- **Pagination** - 分页
-- **Steps** - 步骤条
-- **Tabs** - 标签页
-
-### 反馈
-
-- **Alert** - 警告提示
-- **Drawer** - 抽屉
-- **Message** - 全局提示
-- **Modal** - 对话框
-- **Notification** - 通知
-- **Popconfirm** - 气泡确认框
-- **Popover** - 气泡卡片
-- **Progress** - 进度条
-- **Result** - 结果
-- **Skeleton** - 骨架屏
-- **Spin** - 加载中
-- **Tooltip** - 文字提示
-- **Tour** - 漫游引导（80%，多步骤 + 蒙层镂空 + floating-ui 浮层 + Esc 关闭）
-
-### 数据录入
-
-- **AutoComplete** - 自动完成（80%，options + filterOption + 键盘导航 + allowClear + Form 联动 + Teleport）
-- **Cascader** - 级联选择（80%，多列联动 + fieldNames + changeOnSelect + Form 联动 + Teleport）
-- **CheckBox** - 多选框
-- **ColorPicker** - 颜色选择器（80%，HEX/RGB/HSV 显示 + alpha + 预设色板 + Form 联动 + Teleport）
-- **DatePicker** - 日期选择框（date 单选 80%，含 v-model / format / valueFormat / disabledDate / Form 联动 / Teleport）
-- **Form** - 表单（Form.List 动态字段 / Form.Provider 跨表单 / preserve 卸载策略均已补齐）
-- **Input** - 输入框
-- **InputNumber** - 数字输入框
-- **Mentions** - 提及（80%，textarea + @ 触发 + 多 prefix + 键盘导航 + 自定义过滤）
-- **Radio** - 单选框
-- **RangePicker** - 日期范围（80%，双面板 + hover 预览 + 自动调换 + Form 联动 + Teleport）
-- **Select** - 选择器（虚拟列表 / 嵌套分组 / Teleport / labelInValue / 拖拽排序 / 完整 ARIA）
-- **Slider** - 滑块
-- **Switch** - 开关
-- **TimePicker** - 时间选择框（80%，含 hourStep / disabledHours / showHour-Minute-Second / now+ok / Form 联动 / Teleport）
-- **Transfer** - 穿梭框（80%，双列 + 全选 + 双向移动 + 搜索 + render slot + Form 联动）
-- **TreeSelect** - 树选择（80%，单选 / 多选 checkable / treeCheckStrictly / fieldNames / Form 联动 / Teleport）
-- **Upload** - 上传（80%，文件选择 + 拖拽 + maxCount/maxSize/beforeUpload + 列表 + 状态四态）
-
-### 数据展示
-
-- **Avatar** - 头像
-- **Badge** - 徽标数
-- **Calendar** - 日历
-- **Card** - 卡片
-- **Carousel** - 走马灯（80%，scrollx + fade / autoplay / 4 向 dots / infinite / prev・next・goTo expose）
-- **Collapse** - 折叠面板
-- **Descriptions** - 描述列表
-- **Empty** - 空状态
-- **Image** - 图片
-- **List** - 列表
-- **QRCode** - 二维码（80%，自渲 SVG / 容错 4 档 / logo 嵌入 / loading・expired・scanned 三态）
-- **Rate** - 评分
-- **Segmented** - 分段控制器
-- **Table** - 表格（固定列 / 展开行 / 合并单元格 / 行选择 / 排序过滤 / 分页全部已交付）
-- **Tag** - 标签
-- **Timeline** - 时间线
-- **Tree** - 树形控件（受控选中/勾选/展开 / 异步 loadData / 搜索高亮 / 拖拽 / 键盘导航 / 虚拟滚动 / showLine）
-- **Watermark** - 水印
-
-### 布局
-
-- **Divider** - 分割线
-- **Flex** - 弹性布局
-- **Grid** - 栅格（24 列 / 5 断点响应式）
-- **Layout** - 布局（Header / Sider / Content / Footer）
-- **Masonry** - 瀑布流
-- **Space** - 间距
-- **Splitter** - 分隔面板
-
-### 与 Ant Design 的能力覆盖
-
-> v2.0.0 已收官，Ant Design v6.3.7 常见组件全量 95%+ 收口（少数 100%）。批次交付历史见 [`docs-notes/archive/components-diff.md`](./docs-notes/archive/components-diff.md)、整体路线图见 [`docs-notes/archive/roadmap-v2.0.md`](./docs-notes/archive/roadmap-v2.0.md)。
+完整组件列表、API 与在线示例见 [📖 在线文档](https://vaebe.github.io/ccui/)。
 
 ## 📖 文档
 

@@ -758,9 +758,9 @@ const value = ref('')
 | clearIcon    | --                                                                                 | 自定义清除图标                                             |
 | suffixIcon   | --                                                                                 | 自定义日历图标                                             |
 
-## 已知限制（未交付）
+## 已知限制
 
-下列能力计入后续批次：
+以下能力当前未覆盖：
 
 - range 区间选择（请使用独立的 `RangePicker` 组件）。
 - `TimePicker` 组件、`format` 含时分秒时的面板分栏。
