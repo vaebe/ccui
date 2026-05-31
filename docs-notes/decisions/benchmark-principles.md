@@ -1,7 +1,6 @@
 # 对标 Ant Design 的设计原则（Benchmark, 不是 100% 对齐）
 
 > 状态：**已采纳，作为长期不变性约束**
-> 抽离自 v2.0 收官的 roadmap.md「对标原则」节（参见 [archive/roadmap-v2.0.md](../archive/roadmap-v2.0.md)）
 > 适用范围：新增 / 重写组件、添加 prop、为 issue / PR 做范围裁决时
 
 ccui 与 Ant Design 的关系是 **对标**：能力覆盖到、心智模型对齐、迁移成本低，但 **不照搬 React-only 模式**。下面这些清单决定每条任务怎么落地。

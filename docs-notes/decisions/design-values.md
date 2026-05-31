@@ -1,8 +1,6 @@
 # vue3-ccui 设计原则
 
-> 决策日期：2026-05-10
 > 状态：**已采纳**
-> 关联：审查报告 P2 #1
 > 参考：[Ant Design 设计价值观](https://ant.design/docs/spec/values-cn)
 
 参考 Ant Design 提出的「自然 / 确定 / 意义 / 生长」四大原则，结合 ccui 作为「构建示例」型组件库的定位，我们采用同一价值观，但在执行细节上做相应裁剪。
@@ -36,7 +34,7 @@
 **在 ccui 的体现**：
 
 - 默认禁用所有非功能性动效：没有"为了好看的"渐变、阴影、缩放。仅在传递状态变化（loading / processing / hover / disabled）时启用。
-- Tag.Processing 的 6px 脉冲点（commit `53b5b46`）是必要语义：传达"持续中"，不是装饰。
+- Tag.Processing 的 6px 脉冲点是必要语义：传达"持续中"，不是装饰。
 - 阴影分 5 档（`box-shadow` / `-secondary` / `-tertiary`），用于区分浮层层级，不滥用。
 
 ## 四、生长（Growing）
@@ -46,9 +44,8 @@
 **在 ccui 的体现**：
 
 - 主题层 SeedToken / MapToken 双层结构（`themes/light.ts` / `dark.ts`），新增 token 不破坏既有消费。
-- 12 色板 × 10 阶（commit `05663a7`）覆盖 Tag / Badge / Avatar / Status 的色彩需求，组件可按调色阶任意取色而无需新增 hex。
+- 12 色板 × 10 阶覆盖 Tag / Badge / Avatar / Status 的色彩需求，组件可按调色阶任意取色而无需新增 hex。
 - `ConfigProvider` 提供运行时 token 定制能力，使用方升级 ccui 主版本不影响品牌色 / 圆角 / 字号等定制项。
-- 组件按完整度分层验收（80% / 95% / 100%），v2.0 已全部 95%+ 收口，交付历史见 [archive/components-diff.md](../archive/components-diff.md)。
 
 ## 与 Ant Design 的差异化
 
@@ -57,7 +54,7 @@ ccui 在以下几点做差异化决策（详见对应文档）：
 | 项                  | Ant Design | ccui               | 决策记录                           |
 | ------------------- | ---------- | ------------------ | ---------------------------------- |
 | 默认主色            | `#1677ff`  | `#1677ff`（对齐）  | [brand-color.md](./brand-color.md) |
-| 状态 Tag.Processing | 内置脉冲   | 内置脉冲（已对齐） | commit `53b5b46`                   |
-| 12 色板默认值       | 官方算法   | 官方算法（对齐）   | commit `05663a7`                   |
+| 状态 Tag.Processing | 内置脉冲   | 内置脉冲（已对齐） | —                                  |
+| 12 色板默认值       | 官方算法   | 官方算法（对齐）   | —                                  |
 
 > 本文档随大版本升级时复审；如有原则级偏离，需在此文档增加修订记录。

@@ -1,90 +1,25 @@
-# ConfigProvider locale / algorithm 接通 + Form scss 复审
+# ConfigProvider locale / theme.algorithm 接通
 
-> 决策日期：2026-05-10
 > 状态：**已实施**
-> 关联：审查报告 [archive/ant-design-alignment-2026-05-10.md](../archive/ant-design-alignment-2026-05-10.md)、设计审查后的「对齐缺口扫描」
 
 ## 背景
 
-审查报告把主题层和样式层的对齐缺口推完后，往里再走一层会撞上几条"已声明但未兑现"的接口：
-
-1. **`ConfigProvider.theme.algorithm`**：类型上接受 `'default' | 'dark' | 'compact'`，但 `config-provider.tsx` 只处理 `theme.token`，`algorithm` 字段读都没读。
-2. **`ConfigProvider.locale`**：被 `inject` 进 ctx，但仓库里 grep 不到任何组件消费它（除了 Transfer，那是组件自身的 `locale` prop，不是 ConfigProvider 的）。Modal / Popconfirm / Empty 等内置中文文案完全是 props default 字面量。
-3. **Form scss "严重不对齐"**：审查报告原标 P1，commit `1a4ec62` 改过一轮 fallback 颜色，但还残留：
-   - 没 `@use style-var`，类名直接写 `.ccui-form` 字面量。
-   - 用 `var(--ccui-text)` / `var(--ccui-text-weak)` / `var(--ccui-danger)` / `var(--ccui-success)` —— 这些是 ccui 1.x 的 alias，v6 标准是 `var(--ccui-color-text)` / `--ccui-color-text-secondary` / `--ccui-color-error` / `--ccui-color-success`。ConfigProvider 的 token 注入是按 v6 名字下发的，不会触达 1.x alias。
-   - 字面量 `14px / 12px / 32px / 18px` 全裸出现，不消费 token。
+`ConfigProvider` 的 `theme.algorithm` 与 `locale` 一度是「声明了但未兑现」的死接口：类型上接受值，组件却根本不读。声明了的 prop 必须工作——死接口让用户传值后毫无反馈，比「功能没做」更糟，因为它会被信任。
 
 ## 决策
 
 **全部接通，不留死接口。**
 
-### 1. theme.algorithm
-
-- `'dark'`：在 ConfigProvider wrapper 上叠加 `.dark` 类。`darkTheme.css` 里 `.dark { --ccui-color-text: ...; --ccui-border-radius: 6px; ... }` 自动级联到子树（颜色 + 非颜色 token 都覆盖，因为上一轮 cli 已经把 light 非颜色 token 合并进 dark 输出）。
-- `'compact'`：注入紧凑尺寸 token 集，对齐 Ant Design v6 compact 算法：`controlHeight 32 → 24`，`padding/margin` 各档缩小一档。font 不动（ant 的 compact 也只改尺寸）。
-- `'default'`：保留现行行为。
-- 用户 `theme.token` 在 compact 之后被 `Object.assign` 覆盖，仍然胜过 compact 默认值。
-
-### 2. locale
-
-- 新增 `packages/ccui/ui/locale/{zh-CN,en-US,index}.ts`。`Locale` 接口加 namespace（`Modal` / `Popconfirm` / `Empty` / `AutoComplete` / `Mentions` / `Cascader` / `TreeSelect` / `Select`），每个 namespace 是 `{ key: text }` 对象。
-- `useConfig` 在 `inject` 时跑 `mergeLocale(user)`，按 namespace 浅合并：用户没覆盖的 key 自动回退 zhCN。这样 `cfg.locale.Modal?.okText` 永远不会变 `undefined`。
-- 7 个组件改读 locale：Modal / Popconfirm 的 ok / cancel 文案，Empty 的 description，AutoComplete / Mentions / Cascader / TreeSelect 的 notFoundContent。
-- prop 默认值由 `'确 定'` 等 → `''`。运行时优先级：**用户显式 prop > cfg.locale > 内置 zhCN 兜底**。
-- cli `vue-ui` 模板静态注入 `export { zhCN, enUS, defaultLocale } from './locale'`，让顶层包能 `import { zhCN, enUS } from 'vue3-ccui'`。
-
-### 3. Form scss 重写
-
-- 加 `@use '../../style-var/index.scss' as *;`，类名走 `#{$cls-prefix}-form`。
-- 9 处 var 名对齐：`--ccui-text` → `$ccui-color-text`、`--ccui-text-weak` → `$ccui-color-text-secondary`、`--ccui-danger` → `$ccui-color-error`、`--ccui-success` → `$ccui-color-success`。
-- 字面量全部 → token：`14px` → `$ccui-font-size`，`12px` → `$ccui-font-size-sm`，`32px` → `$ccui-control-height`，padding / margin 系列对应 token。
-- form-item `margin-bottom` 由 18px 调到 24px（`$ccui-margin-lg`），与 Ant Design v6 `Form.Item` 默认间距对齐。是有意的视觉调整。
-
-## 理由
-
-1. **接口诚实**：声明了的 prop 必须工作。`algorithm` 和 `locale` 的死接口让用户传值后毫无反馈，比"功能没做"更糟糕——它会被信任。
-2. **国际化基础设施先于多语言落地**：先把 zhCN / enUS 两端打通做 PoC，再往里铺 DatePicker 月份名 / Pagination 文案这种重活。基础设施不立起来，重活越拖越散。
-3. **Form scss 的样式 token 化**是品牌色注入能不能在 Form 里生效的前提。否则 ConfigProvider 改 colorPrimary，Form 内的输入框边框还是 1.x 老色。
-
-## 影响范围
-
-落地的 4 个 commit：
-
-- `586c4e3` `refactor(form): form.scss 全量改走 SCSS token`
-- `eed2024` `feat(locale): ConfigProvider.locale 接通，新增 zhCN/enUS 语言包`
-- `84e7600` `feat(config-provider): 实现 theme.algorithm（dark / compact / default）`
-- `2378078` `docs(form): 补 layout / methods 两个 :::demo`
-
-测试：1289 → 1294（+5 个 algorithm / locale 浅合并测试）。vue-tsc 0 错。
-
-## P1 跟进项落地（2026-05-12，Batch 36）
-
-第二轮收口，把上节列出的所有"暂未做"项接通：
-
-- **Pagination 接通 locale**：扩 `PaginationLocale`（`itemsPerPage` / `jumpTo` / `page` / `prevPage` / `nextPage` / `total` 模板）。`total` 用 `{total}` 占位符替换，自定义函数 `showTotal` 仍优先；prev/next 按钮新挂 `aria-label`。
-- **Image 接通 locale**：扩 `ImageLocale`（`loading` / `error`）。组件内 `加载中` / `加载失败` 字面量改读 `cfg.locale.Image`。slots 仍优先（custom placeholder / error slot 不受影响）。
-- **DatePicker / RangePicker / TimePicker 接通 locale**：扩 `DatePickerLocale`（`placeholder` / `rangePlaceholder` / `timePlaceholder` / `weekdaysShort` / `panelLabelFormat` / `now` / `ok` / `prev*Label` / `next*Label` / `clearLabel`）。
-  - 三个组件 prop 默认值 `'请选择日期'` / `['开始日期','结束日期']` / `'请选择时间'` / `'此刻'` / `'确定'` 全部改成 `''`，走 fallback 链：**用户 prop > locale > 内置 zhCN 字面量**。这是有意的 breaking：纯空字符串 props 现在等于"用 locale 默认值"。
-  - `weekdaysShort` 以"周日开头"自然顺序存储；`weekStart=1` 时组件层 `[...base.slice(1), base[0]]` 把首项后置。
-  - `panelLabelFormat` 用 dayjs format 字符串：zhCN `'YYYY 年 M 月'`、enUS `'MMM YYYY'`。dayjs 默认英文 month 名生效；不引入 dayjs/locale 包以保最小体积。
-- **正向消费方文档**：`packages/docs/components/config-provider/index.md` 新增"切换语言"两块 :::demo：Pagination 中英文切换 + DatePicker/TimePicker enUS。
-- **vue-ccui.ts** 静态 `export { zhCN, enUS, defaultLocale } from './locale'` 已落地（之前 cli 模板已注入但实际文件未同步生成）。
-
-测试：1289 → 1301（+12 用例，分布：Pagination +2 / Image +2 / DatePicker +1 / RangePicker +1 / TimePicker +1，余 5 来自之前迭代）。vue-tsc 0 错。
-
-> **Drawer**：当前仍无默认文案，留待真正引入默认底部按钮时再接 locale。
-
-## 反向决策开销
-
-如未来想"反对接通 locale / algorithm"：
-
-- **algorithm**：删 `wrapperClass` 计算属性 + `COMPACT_TOKENS` 即可。零兼容代价。
-- **locale**：组件内 `cfg.locale.{ns}.{key}` 调用是 fallback 链的中间一档，去掉只会让 prop 默认 `''` → 走最后兜底 `'确 定'`。但 prop 默认从 `'确 定'` 改到 `''` 是 breaking——用户写 `<c-modal>` 不传 okText 时，行为从"中文"变成"空字符串再被 fallback"，文案不变但空字符串校验等用法可能会踩。建议保持现状。
-- **Form scss**：完全可逆——只是 token 名替换，没行为变化。`margin-bottom` 由 24 → 18 单值调整即可。
+- **`theme.algorithm`** —— `'default' | 'dark' | 'compact'` 全部生效。`dark` 在 wrapper 上叠 `.dark` 类级联 dark token；`compact` 注入紧凑尺寸 token（对齐 v6 compact：`controlHeight 32 → 24`，padding/margin 各缩一档，字号不动）；用户 `theme.token` 始终最后 `Object.assign`，胜过 compact 默认值。
+- **`locale`** —— `Locale` 接口按组件 namespace（Modal / Popconfirm / Empty / AutoComplete / Mentions / Cascader / TreeSelect / Select / Pagination / Image / DatePicker 等）组织。`useConfig` 注入时按 namespace 浅合并，用户没覆盖的 key 自动回退 zhCN。运行时优先级：**用户显式 prop > `cfg.locale` > 内置 zhCN 兜底**。组件 locale 相关 prop 默认值为 `''`，空串即「走 locale 默认」。语言包通过 `import { zhCN, enUS, jaJP, koKR } from 'vue3-ccui'` 顶层导出。
+- **Form scss token 化** —— Form 样式全量走 SCSS token（`#{$cls-prefix}-form` + `$ccui-color-*` / `$ccui-font-size*` / `$ccui-control-height` 等），不再用 1.x alias 与裸字面量。这是 `ConfigProvider` 的品牌色注入能在 Form 内生效的前提。
 
 ## 后续不变性约束
 
-- **禁止**新增 ConfigProvider props 但不在 `config-provider.tsx` 中真正消费。声明即承诺。
-- **新增** locale 文案的组件，必须同时在 `Locale` 接口加对应 namespace、在 zhCN.ts 和 enUS.ts 各加默认值。
-- **新增** scss 样式，禁止硬编码尺寸 / 1.x var 名 / 主色。grep `1677ff` / `--ccui-text-color` / `var(--ccui-text\b` 自检。
+- **禁止**新增 `ConfigProvider` props 却不在 `config-provider.tsx` 中真正消费。声明即承诺。
+- **新增** locale 文案的组件，必须同时在 `Locale` 接口加对应 namespace，并在 `zhCN` / `enUS` / `jaJP` / `koKR` 各加默认值。
+- **新增** scss 样式禁止硬编码尺寸 / 1.x var 名 / 主色字面量。提交前 grep `1677ff` / `--ccui-text-color` / `var(--ccui-text\b` 自检。
+
+## 后续 TODO
+
+- **Drawer**：当前无默认底部按钮文案，留待真正引入默认底部按钮时再接 locale。
