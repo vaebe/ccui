@@ -244,24 +244,33 @@
     }
 
     .#{$cls-prefix}-steps__item:not(.#{$cls-prefix}-steps__item--last) {
-      .#{$cls-prefix}-steps__icon::after {
+      // 连接线挂在 item 上、用 top/bottom 双向锚定：图标在 item 顶部、下一个图标恰好
+      // 落在 item 底边（flex item 不发生外边距合并，content 的 margin-bottom 计入 item 高），
+      // 所以上端留图标高 +4px、下端留 4px，两端间距始终对称，不随文案高度变化。
+      // 原方案把线挂在图标上、height 写死 calc(100% + 4px)，间距不够时下方会比上方空一大截。
+      &::after {
         position: absolute;
-        // 上下各留 4px，使连接线两端间距对称（原本紧贴图标底部、只在下方留空）
-        top: calc(100% + 4px);
-        inset-inline-start: 50%;
+        top: 36px; // 32px 图标 + 4px 上间距
+        bottom: 4px; // 4px 下间距，与上端对称
+        inset-inline-start: 16px; // 32px 图标水平中心
         width: 1px;
-        height: calc(100% + 4px);
         background: $ccui-color-border;
         content: '';
       }
 
-      &.#{$cls-prefix}-steps__item--finish .#{$cls-prefix}-steps__icon::after {
+      &.#{$cls-prefix}-steps__item--finish::after {
         background: $ccui-color-primary;
       }
 
       .#{$cls-prefix}-steps__content {
         margin-bottom: 16px;
       }
+    }
+
+    // small 尺寸图标为 24px：上间距与水平中心随之缩小，保持两端 4px 对称
+    &.#{$cls-prefix}-steps--small .#{$cls-prefix}-steps__item:not(.#{$cls-prefix}-steps__item--last)::after {
+      top: 28px; // 24px 图标 + 4px 上间距
+      inset-inline-start: 12px; // 24px 图标水平中心
     }
 
     .#{$cls-prefix}-steps__description {

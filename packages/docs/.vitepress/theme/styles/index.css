@@ -7,10 +7,15 @@
   display: table;
 }
 
-/* 仅给 showcase 顶层的 ccui 组件加间距，避免命中嵌套组件（例如 slider 内部的 tooltip） */
+/* 仅给 showcase 顶层的 ccui 组件加间距，避免命中嵌套组件（例如 slider 内部的 tooltip）。
+   用 :has(~ …) 把间距只挂在"后面还有同级 ccui 组件"的元素上：最后一个 / 唯一一个组件
+   不再带 trailing 右/下边距，否则像 ColorPicker 这类小色块会在示例框里多出一圈空白。
+   两个都是 end 边距，不影响行内组件的基线对齐；且保持普通流，block 组件（Table 等）仍占满宽度。 */
 .vp-doc
   [class*='_example-showcase_']
-  > :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__'])) {
+  > :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__'])):has(
+    ~ :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__']))
+  ) {
   margin-inline-end: 8px;
   margin-block-end: 8px;
 }
