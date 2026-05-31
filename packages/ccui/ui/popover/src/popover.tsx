@@ -1,6 +1,17 @@
 import type { PopoverProps } from './popover-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, Teleport, Transition, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  Teleport,
+  toRef,
+  Transition,
+  watch,
+} from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
@@ -66,11 +77,12 @@ export default defineComponent({
         .join(' ')
     })
 
-    const { floatingStyles, middlewareData, update } = useFloating(
+    const { floatingStyles, middlewareData, placement, update } = useFloating(
       computed(() => actualTriggerRef.value),
       popperRef,
       {
-        placement: props.placement as any,
+        // 传响应式 placement，保证 placement prop 变化与 flip 翻转都能被 floating-ui 跟踪
+        placement: toRef(props, 'placement') as any,
         middleware: [
           offset(props.offset),
           ...(props.autoAdjustOverflow ? [flip()] : []),
@@ -80,6 +92,9 @@ export default defineComponent({
       },
     )
 
+    // 实际生效的方位（flip 翻转后可能与 props.placement 不同），箭头/样式都以此为准
+    const actualSide = computed(() => placement.value.split('-')[0])
+
     const arrowStyles = computed(() => {
       if (!props.showArrow || !middlewareData.value.arrow) return {}
       const { x, y } = middlewareData.value.arrow
@@ -88,7 +103,7 @@ export default defineComponent({
         right: 'left',
         bottom: 'top',
         left: 'right',
-      }[props.placement.split('-')[0]]
+      }[actualSide.value]
       return {
         left: x != null ? `${x}px` : '',
         top: y != null ? `${y}px` : '',
@@ -316,7 +331,7 @@ export default defineComponent({
 
     const renderArrow = () => {
       if (!props.showArrow) return null
-      const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
+      const arrowClass = [ns.e('arrow'), ns.em('arrow', actualSide.value)].join(' ')
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
 
