@@ -2,7 +2,7 @@
 
 从一组选项中选择一个或多个值，支持分组（含嵌套）、字段名映射、自定义渲染、远程搜索、tags、popup 定位、Teleport 容器、虚拟列表、完整 ARIA、键盘导航、labelInValue、maxCount、命中高亮和 FormItem 校验联动。
 
-## 基本用法
+## 基本使用
 
 :::demo
 

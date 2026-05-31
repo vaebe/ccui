@@ -29,7 +29,7 @@ import {
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { renderIconNode } from '../../shared/hooks/use-icon'
+import { renderIconWithFallback } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import {
   buildTimeColumnValues,
@@ -936,13 +936,11 @@ export default defineComponent({
           />
           {showClear.value ? (
             <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
-              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
+              {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
             </span>
           ) : (
             <span class={ns.e('suffix')} aria-hidden="true">
-              {slots.suffixIcon
-                ? slots.suffixIcon()
-                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:calendar-outline'))}
+              {renderIconWithFallback(slots.suffixIcon, props.suffixIcon, 'mdi:calendar-outline')}
             </span>
           )}
         </div>

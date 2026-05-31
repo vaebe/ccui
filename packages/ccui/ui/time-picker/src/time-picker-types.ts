@@ -59,6 +59,14 @@ export const timePickerProps = {
     type: [String, Object] as PropType<string | VNode>,
     default: undefined,
   },
+  /**
+   * 是否显示后缀时钟图标。默认 true；置 false 可隐藏（TimeRangePicker 内嵌两个
+   * TimePicker 时用它抑制重复图标，由外层统一展示单个）。
+   */
+  showSuffix: {
+    type: Boolean,
+    default: true,
+  },
   size: {
     type: String as PropType<TimePickerSize>,
     default: 'default',

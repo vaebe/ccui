@@ -2,7 +2,7 @@
 
 双列穿梭框。左侧"源"，右侧"目标"，通过中间按钮把选中项从一侧移到另一侧。常见于权限分配 / 字段挑选 / 角色管理等场景。
 
-## 基本用法
+## 基本使用
 
 `data-source` 给全集，`v-model:target-keys` 控制右侧 keys，`v-model:selected-keys` 控制双列勾选状态。
 
@@ -197,7 +197,7 @@ const selected = ref<string[]>([])
 | targetKeys     | `string[]`                                                    | `[]`         | 在右侧（target）的 key 集合，支持 `v-model:targetKeys`                  |
 | selectedKeys   | `string[]`                                                    | `[]`         | 跨两列勾选的 key，支持 `v-model:selectedKeys`                           |
 | titles         | `[string, string]`                                            | `['', '']`   | 两列标题                                                                |
-| operations     | `[string, string]`                                            | `['>', '<']` | 中间按钮文案：[右移, 左移]                                              |
+| operations     | `[string, string]`                                            | `['', '']`   | 中间按钮文案：[右移, 左移]；为空时回退到内置 chevron 图标               |
 | showSearch     | boolean                                                       | `false`      | 显示搜索框                                                              |
 | filterOption   | `(input: string, item: TransferItem) => boolean`              | --           | 自定义过滤；不传走默认 title 包含匹配                                   |
 | disabled       | boolean                                                       | `false`      | 整体禁用                                                                |

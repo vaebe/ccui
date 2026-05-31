@@ -96,6 +96,28 @@ export default defineComponent({
           current = it.href
         }
       })
+
+      // 滚动到底部时，最后一个区段可能因为容器无法继续上滚而始终越不过 bounds 线，
+      // 导致高亮停留在倒数第二个。此时直接激活最后一个有目标元素的锚点。
+      const metrics = isWindow(container)
+        ? {
+            top: window.scrollY,
+            client: window.innerHeight,
+            scroll: document.documentElement.scrollHeight,
+          }
+        : { top: container.scrollTop, client: container.clientHeight, scroll: container.scrollHeight }
+      const scrollable = metrics.scroll - metrics.client > 4
+      const atBottom = scrollable && Math.ceil(metrics.top + metrics.client) >= metrics.scroll - 2
+      if (atBottom) {
+        for (let i = all.length - 1; i >= 0; i--) {
+          const id = all[i].href.replace(/^#/, '')
+          if (document.getElementById(id)) {
+            current = all[i].href
+            break
+          }
+        }
+      }
+
       if (current !== activeLink.value) {
         activeLink.value = current
         emit('change', current)

@@ -180,9 +180,9 @@ function trace(type, e) {
 
 :::
 
-## 多张图片相册（ImagePreviewGroup）
+## 多张图片相册（ImagePreview）
 
-`<c-image-preview-group>` 把多张图聚成一组，点击任一张进入统一预览：左右切换 / 缩放 / 关闭。
+`<c-image-preview>` 把多张图聚成一组，点击任一张进入统一预览：左右切换 / 缩放 / 关闭。
 
 :::demo
 
@@ -196,11 +196,11 @@ const photos = [
 </script>
 
 <template>
-  <c-image-preview-group :items="photos">
+  <c-image-preview :items="photos">
     <div style="display: flex; gap: 12px">
       <c-image v-for="(url, i) in photos" :key="i" :src="url" :width="120" :height="80" fit="cover" />
     </div>
-  </c-image-preview-group>
+  </c-image-preview>
   <p style="margin-top: 8px; color: #666">点击任一张图片打开相册预览</p>
 </template>
 ```
@@ -230,7 +230,7 @@ function openAt(idx) {
     <c-button @click="openAt(0)">从第 1 张开始</c-button>
     <c-button @click="openAt(1)">从第 2 张开始</c-button>
   </div>
-  <c-image-preview-group v-model:preview="previewState" :items="photos" />
+  <c-image-preview v-model:preview="previewState" :items="photos" />
 </template>
 ```
 

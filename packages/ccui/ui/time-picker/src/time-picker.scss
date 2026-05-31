@@ -66,6 +66,10 @@
 
   &__input {
     flex: 1;
+    // 关键：允许 flex 子项收缩到比 input 固有宽度更小，
+    // 否则 input 撑满后会把后缀时钟图标挤出边框外
+    min-width: 0;
+    width: 100%;
     border: none;
     outline: none;
     background: transparent;
@@ -88,9 +92,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex: none;
     margin-left: 4px;
     color: $ccui-color-text-tertiary;
-    font-size: $ccui-font-size-sm;
+    font-size: $ccui-font-size-icon;
   }
 
   &__clear {

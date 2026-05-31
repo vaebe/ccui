@@ -122,11 +122,54 @@ export default defineComponent({
       }
     }
 
+    const handleMutations = (mutations: MutationRecord[]) => {
+      let needRebuild = false
+      for (const m of mutations) {
+        // 水印节点被移除
+        m.removedNodes.forEach((n) => {
+          if (n === watermarkEl.value) {
+            needRebuild = true
+          }
+        })
+        // 水印节点自身的 style / class 被篡改（如手动删除 background-image）
+        if (m.type === 'attributes' && m.target === watermarkEl.value) {
+          needRebuild = true
+        }
+      }
+      if (needRebuild) {
+        watermarkEl.value?.remove()
+        watermarkEl.value = null
+        renderWatermark()
+      }
+    }
+
+    // 容器只看子节点增删（抓水印被移除）；水印节点单独看 style/class（抓篡改），
+    // 不用 subtree，避免业务内容里任意后代的属性变更都唤起回调
+    const reobserve = () => {
+      if (!containerRef.value || typeof MutationObserver === 'undefined') {
+        return
+      }
+      if (!observer) {
+        observer = new MutationObserver(handleMutations)
+      }
+      observer.disconnect()
+      observer.observe(containerRef.value, { childList: true })
+      if (watermarkEl.value) {
+        observer.observe(watermarkEl.value, { attributes: true, attributeFilter: ['style', 'class'] })
+      }
+    }
+
     const renderWatermark = async () => {
       if (!containerRef.value) {
         return
       }
       const result = await generateBase64()
+      if (!containerRef.value) {
+        return
+      }
+      // 先断开 observer 再做自身 DOM 写入：disconnect 会清空待处理记录，
+      // 自身的 append/setAttribute 不会被记录，彻底避免「标记位 + 微任务」的竞态
+      observer?.disconnect()
       if (!watermarkEl.value) {
         watermarkEl.value = document.createElement('div')
         watermarkEl.value.setAttribute(WATERMARK_TAG, '1')
@@ -136,42 +179,7 @@ export default defineComponent({
         ? buildStyleString(props.zIndex, props.gap, props.offset, result.url, result.size)
         : `position: absolute; inset: 0; pointer-events: none; z-index: ${props.zIndex};`
       watermarkEl.value.setAttribute('style', styleStr)
-      observe()
-    }
-
-    let updatingFromObserver = false
-    const observe = () => {
-      if (!containerRef.value || observer) {
-        return
-      }
-      if (typeof MutationObserver === 'undefined') {
-        return
-      }
-      observer = new MutationObserver((mutations) => {
-        if (updatingFromObserver) {
-          return
-        }
-        let needRebuild = false
-        for (const m of mutations) {
-          // 节点被删
-          m.removedNodes.forEach((n) => {
-            if (n === watermarkEl.value) {
-              needRebuild = true
-            }
-          })
-        }
-        if (needRebuild) {
-          updatingFromObserver = true
-          watermarkEl.value?.remove()
-          watermarkEl.value = null
-          renderWatermark().finally(() => {
-            updatingFromObserver = false
-          })
-        }
-      })
-      observer.observe(containerRef.value, {
-        childList: true,
-      })
+      reobserve()
     }
 
     onMounted(() => {

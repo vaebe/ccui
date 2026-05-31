@@ -157,7 +157,10 @@
     cursor: pointer;
     width: 16px;
     height: 16px;
+    // 覆盖共用规则里的 padding-left，否则图标会在圆形背景里偏右不居中
+    padding-left: 0;
     border-radius: 50%;
+    font-size: 14px;
 
     &:hover {
       background-color: $ccui-color-fill-tertiary;

@@ -1,6 +1,6 @@
 @use '../../style-var/index.scss' as *;
 
-.#{$cls-prefix}-image-preview-group {
+.#{$cls-prefix}-image-preview {
   display: inline-flex;
   flex-wrap: wrap;
   gap: 8px;

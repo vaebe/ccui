@@ -2,7 +2,7 @@
 
 时间区间选择控件，`v-model` 是 `[start, end]` 元组。两端各自独立的 TimePicker 面板，支持独立 `disabled` / `allowEmpty` / `placeholder`，可配 `order` 自动保序。
 
-## 基本用法
+## 基本使用
 
 `v-model` 直接绑定 `[start, end]` 数组。任一端为空时元组对应位置是 `null` 或空串（按 `value-format` 决定）。
 

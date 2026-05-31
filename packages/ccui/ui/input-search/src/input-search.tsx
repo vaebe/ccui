@@ -2,6 +2,7 @@ import type { VNode } from 'vue'
 import type { InputSearchProps } from './input-search-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { computed, defineComponent, Fragment, h, ref, watch } from 'vue'
+import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputSearchProps } from './input-search-types'
 import './input-search.scss'
@@ -77,7 +78,9 @@ export default defineComponent({
       const isInteractive = !props.disabled && !props.readonly
       const showClear = isInteractive && !!props.clearable && !!innerValue.value
       if (!showClear) return null
-      return h('i', { class: ns.e('clear'), onClick: handleClear, 'aria-label': 'clear' }, '×')
+      return h('span', { class: ns.e('clear'), onClick: handleClear, 'aria-label': 'clear' }, [
+        renderIconNode('mdi:close-circle'),
+      ])
     }
 
     const renderEnterButtonContent = () => {

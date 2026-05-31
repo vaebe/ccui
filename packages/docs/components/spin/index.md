@@ -110,8 +110,10 @@ function slow() {
       <p style="margin: 0">delay=500ms：仅当请求 ≥ 500ms 才出现 loading</p>
     </div>
   </c-spin>
-  <c-button style="margin-top: 12px" @click="fast">短任务（200ms，不出 loading）</c-button>
-  <c-button type="primary" style="margin-inline-start: 8px" @click="slow"> 长任务（1.5s，出 loading） </c-button>
+  <div style="display: flex; gap: 8px; margin-top: 12px">
+    <c-button @click="fast">短任务（200ms，不出 loading）</c-button>
+    <c-button type="primary" @click="slow"> 长任务（1.5s，出 loading） </c-button>
+  </div>
 </template>
 ```
 

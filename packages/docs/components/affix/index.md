@@ -4,16 +4,27 @@
 
 ## 基本使用
 
-默认相对窗口顶部 0px 固定。滚动页面查看效果。
+相对顶部 0px 固定，滚动到阈值后元素贴住顶部。下面在一个可滚动容器内演示效果（页面本身带固定导航，直接相对窗口顶部 0px 固定会被导航遮住，故用容器演示）。
 
 :::demo
 
 ```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+const containerRef = ref<HTMLElement | null>(null)
+</script>
+
 <template>
-  <c-affix :offset-top="0">
-    <c-button type="primary">固定到顶部 0px</c-button>
-  </c-affix>
-  <p style="margin-top: 12px">滚动页面查看效果</p>
+  <div
+    ref="containerRef"
+    style="height: 220px; overflow: auto; border: 1px solid #f0f0f0; border-radius: 4px; padding: 12px; position: relative;"
+  >
+    <div style="height: 60px; color: #999">向下滚动这个容器 ↓</div>
+    <c-affix :offset-top="0" :target="() => containerRef">
+      <c-button type="primary">固定到顶部 0px</c-button>
+    </c-affix>
+    <div style="height: 600px; padding-top: 12px; color: #999">占位内容，撑开滚动空间……</div>
+  </div>
 </template>
 ```
 

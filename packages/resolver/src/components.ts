@@ -32,7 +32,6 @@ export const componentMap: Record<string, ComponentEntry> = {
   CAnchor: { exportName: 'Anchor', styleDir: 'anchor' },
   CAutoComplete: { exportName: 'AutoComplete', styleDir: 'auto-complete' },
   CAvatar: { exportName: 'Avatar', styleDir: 'avatar' },
-  CAvatarGroup: { exportName: 'AvatarGroup', styleDir: 'avatar-group' },
   CBackTop: { exportName: 'BackTop', styleDir: 'float-button' },
   CBadge: { exportName: 'Badge', styleDir: 'badge' },
   CBadgeRibbon: { exportName: 'BadgeRibbon', styleDir: 'badge-ribbon' },
@@ -70,7 +69,7 @@ export const componentMap: Record<string, ComponentEntry> = {
   CFormProvider: { exportName: 'FormProvider', styleDir: 'form' },
   CIcon: { exportName: 'Icon', styleDir: 'icon' },
   CImage: { exportName: 'Image', styleDir: 'image' },
-  CImagePreviewGroup: { exportName: 'ImagePreviewGroup', styleDir: 'image-preview-group' },
+  CImagePreview: { exportName: 'ImagePreview', styleDir: 'image-preview' },
   CInput: { exportName: 'Input', styleDir: 'input' },
   CInputNumber: { exportName: 'InputNumber', styleDir: 'input-number' },
   CInputOtp: { exportName: 'InputOtp', styleDir: 'input-otp' },
@@ -129,7 +128,6 @@ export const componentMap: Record<string, ComponentEntry> = {
   CTypographyText: { exportName: 'Text', styleDir: 'typography' },
   CTypographyTitle: { exportName: 'Title', styleDir: 'typography' },
   CUpload: { exportName: 'Upload', styleDir: 'upload' },
-  CUploadDragger: { exportName: 'UploadDragger', styleDir: 'upload-dragger' },
   CWatermark: { exportName: 'Watermark', styleDir: 'watermark' },
 }
 

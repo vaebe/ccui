@@ -468,7 +468,9 @@ export default defineComponent({
               class: ns.e('tag-close'),
               onClick: (event: MouseEvent) => onRemoveTag(option.value, event),
             },
-            slots.removeIcon ? slots.removeIcon() : (renderIconNode(props.removeIcon) ?? 'x'),
+            slots.removeIcon
+              ? slots.removeIcon()
+              : (renderIconNode(props.removeIcon) ?? renderIconNode('mdi:close') ?? undefined),
           ),
         ],
       )
@@ -708,12 +710,16 @@ export default defineComponent({
               ? h(
                   'span',
                   { class: ns.e('clear'), onClick: onClear },
-                  slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? 'x'),
+                  slots.clearIcon
+                    ? slots.clearIcon()
+                    : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close-circle') ?? undefined),
                 )
               : h(
                   'span',
                   { class: ns.e('arrow') },
-                  slots.suffixIcon ? slots.suffixIcon() : (renderIconNode(props.suffixIcon) ?? 'v'),
+                  slots.suffixIcon
+                    ? slots.suffixIcon()
+                    : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:menu-down') ?? undefined),
                 ),
           ]),
           slots.suffix ? h('span', { class: ns.e('suffix') }, slots.suffix()) : null,

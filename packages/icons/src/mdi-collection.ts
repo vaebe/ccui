@@ -5,6 +5,7 @@ import arrowUp from '@iconify-icons/mdi/arrow-up'
 import calendarOutline from '@iconify-icons/mdi/calendar-outline'
 import check from '@iconify-icons/mdi/check'
 import checkCircle from '@iconify-icons/mdi/check-circle'
+import chevronLeft from '@iconify-icons/mdi/chevron-left'
 import chevronRight from '@iconify-icons/mdi/chevron-right'
 import clockOutline from '@iconify-icons/mdi/clock-outline'
 import close from '@iconify-icons/mdi/close'
@@ -27,6 +28,7 @@ export const ccuiMdiCollection: IconifyJSON = {
     'calendar-outline': calendarOutline,
     check: check,
     'check-circle': checkCircle,
+    'chevron-left': chevronLeft,
     'chevron-right': chevronRight,
     'clock-outline': clockOutline,
     close: close,

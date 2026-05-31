@@ -4,7 +4,7 @@ import type { TimeRangePickerProps, TimeRangeValue } from './time-range-picker-t
 import { computed, defineComponent, h, inject, ref, shallowRef } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { renderIconNode } from '../../shared/hooks/use-icon'
+import { renderIconWithFallback } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emitValue, toDayjs } from '../../shared/utils/date'
 import TimePicker from '../../time-picker/src/time-picker'
@@ -132,6 +132,7 @@ export default defineComponent({
         showNow: props.showNow,
         showOk: props.showOk,
         clearable: false, // 范围共用一个清除按钮；单端不显示
+        showSuffix: false, // 时钟图标由外层统一展示，避免内嵌的两个 TimePicker 各渲染一个
         variant: 'borderless',
         // 转发 open-change 用于全局状态（暂只内部追踪）
         'onOpen-change': (open: boolean) => {
@@ -159,13 +160,11 @@ export default defineComponent({
         <div class={ns.e('end')}>{buildEndPicker('end')}</div>
         {showClear.value ? (
           <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
-            {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
+            {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
           </span>
         ) : (
           <span class={ns.e('suffix')} aria-hidden="true">
-            {slots.suffixIcon
-              ? slots.suffixIcon()
-              : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:clock-outline'))}
+            {renderIconWithFallback(slots.suffixIcon, props.suffixIcon, 'mdi:clock-outline')}
           </span>
         )}
       </div>

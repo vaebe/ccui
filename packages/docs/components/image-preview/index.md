@@ -1,4 +1,4 @@
-# ImagePreviewGroup 图片预览组
+# ImagePreview 图片预览
 
 多图预览组件，作为独立顶层组件存在（不挂在 Image 命名空间下）。
 
@@ -31,7 +31,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-image-preview-group :items="items" />
+  <c-image-preview :items="items" />
 </template>
 ```
 
@@ -55,7 +55,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-image-preview-group :items="items" />
+  <c-image-preview :items="items" />
 </template>
 ```
 
@@ -99,7 +99,7 @@ export default defineComponent({
   <c-button @click="open(0)">看第 1 张</c-button>
   <c-button @click="open(1)" style="margin-left: 8px">看第 2 张</c-button>
   <c-button @click="open(2)" style="margin-left: 8px">看第 3 张</c-button>
-  <c-image-preview-group :items="items" :preview="preview" @update:preview="onUpdate" />
+  <c-image-preview :items="items" :preview="preview" @update:preview="onUpdate" />
 </template>
 ```
 
@@ -133,7 +133,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-image-preview-group :items="items" :max-zoom="8" :min-zoom="0.5" />
+  <c-image-preview :items="items" :max-zoom="8" :min-zoom="0.5" />
 </template>
 ```
 
@@ -167,7 +167,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-image-preview-group :items="items" :preview="preview" @update:preview="onUpdate">
+  <c-image-preview :items="items" :preview="preview" @update:preview="onUpdate">
     <div style="display: flex; gap: 12px">
       <img
         v-for="(it, i) in items"
@@ -177,13 +177,13 @@ export default defineComponent({
         @click="open(i)"
       />
     </div>
-  </c-image-preview-group>
+  </c-image-preview>
 </template>
 ```
 
 :::
 
-## ImagePreviewGroup 参数
+## ImagePreview 参数
 
 | 参数    | 类型                                        | 默认 | 说明                                               |
 | ------- | ------------------------------------------- | ---- | -------------------------------------------------- |
@@ -192,7 +192,7 @@ export default defineComponent({
 | maxZoom | number                                      | 6    | 缩放上限                                           |
 | minZoom | number                                      | 0.25 | 缩放下限                                           |
 
-## ImagePreviewGroup 事件
+## ImagePreview 事件
 
 | 事件名         | 参数                                  | 说明                 |
 | -------------- | ------------------------------------- | -------------------- |
@@ -200,7 +200,7 @@ export default defineComponent({
 | change         | current: number                       | 当前显示图片下标变化 |
 | visible-change | visible: boolean                      | 打开 / 关闭预览      |
 
-## ImagePreviewGroup 插槽
+## ImagePreview 插槽
 
 | 插槽名  | 说明                                                  |
 | ------- | ----------------------------------------------------- |

@@ -5,6 +5,9 @@
 
   &--horizontal {
     flex-direction: row;
+    // 默认垂直居中，避免子项（如 Tag）被 inline-flex 默认的 stretch 撑高；
+    // 显式传入 align 时由后面的 --align-* 覆盖
+    align-items: center;
   }
 
   &--vertical {

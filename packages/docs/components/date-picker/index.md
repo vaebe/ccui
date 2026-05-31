@@ -2,7 +2,7 @@
 
 输入或选择日期/周/月/年/季度的控件。支持 `picker` 切换 5 种粒度、面板逐级展开（date → month → year）、`weekStart` 周起始、ConfigProvider 注入 locale 与周文案。
 
-## 基本用法
+## 基本使用
 
 最简单的用法。`v-model` 默认输出按 `format` 渲染的字符串。
 

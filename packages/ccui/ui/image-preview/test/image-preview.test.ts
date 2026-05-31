@@ -2,10 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { ImagePreviewGroup } from '../index'
+import { ImagePreview } from '../index'
 
-const ns = useNamespace('image-preview-group', true)
-const cls = useNamespace('image-preview-group')
+const ns = useNamespace('image-preview', true)
+const cls = useNamespace('image-preview')
 
 const items = [
   { src: 'a.jpg', alt: 'A' },
@@ -13,22 +13,22 @@ const items = [
   { src: 'c.jpg', alt: 'C' },
 ]
 
-describe('image-preview-group', () => {
+describe('image-preview', () => {
   describe('items 模式', () => {
     it('挂载基础 DOM + N 个缩略图', () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items } })
+      const wrapper = mount(ImagePreview, { props: { items } })
       expect(wrapper.find(ns.b()).exists()).toBe(true)
       expect(wrapper.findAll(ns.e('thumb')).length).toBe(3)
     })
 
     it('items 接 string[]', () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items: ['x.jpg', 'y.jpg'] } })
+      const wrapper = mount(ImagePreview, { props: { items: ['x.jpg', 'y.jpg'] } })
       expect(wrapper.findAll(ns.e('thumb')).length).toBe(2)
       expect((wrapper.findAll(ns.e('thumb'))[0].element as HTMLImageElement).src).toContain('x.jpg')
     })
 
     it('点击缩略图打开 mask + 显示当前图', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[1].trigger('click')
       await nextTick()
       const mask = document.querySelector(`.${cls.b().replace('.', '')}__mask`)
@@ -39,7 +39,7 @@ describe('image-preview-group', () => {
     })
 
     it('点击 mask 关闭预览', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
       await nextTick()
       const mask = document.querySelector(`.${cls.b().replace('.', '')}__mask`) as HTMLElement | null
@@ -51,7 +51,7 @@ describe('image-preview-group', () => {
     })
 
     it('toolbar 的 prev / next 切换当前图', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -69,7 +69,7 @@ describe('image-preview-group', () => {
     })
 
     it('next 在末尾时循环到首张', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[2].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -82,7 +82,7 @@ describe('image-preview-group', () => {
     })
 
     it('counter 显示 current / total', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[1].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -92,7 +92,7 @@ describe('image-preview-group', () => {
     })
 
     it('单张时不渲染 counter', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items: ['solo.jpg'] }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items: ['solo.jpg'] }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -102,7 +102,7 @@ describe('image-preview-group', () => {
     })
 
     it('keyboard ArrowRight / ArrowLeft / Escape', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -125,7 +125,7 @@ describe('image-preview-group', () => {
     })
 
     it('zoom 按钮改变 scale transform', async () => {
-      const wrapper = mount(ImagePreviewGroup, { props: { items }, attachTo: document.body })
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
       await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
       await nextTick()
       const prefix = cls.b().replace('.', '')
@@ -145,7 +145,7 @@ describe('image-preview-group', () => {
 
   describe('受控 preview', () => {
     it('preview.visible=true 立即显示当前图', async () => {
-      const wrapper = mount(ImagePreviewGroup, {
+      const wrapper = mount(ImagePreview, {
         props: { items, preview: { visible: true, current: 1 } },
         attachTo: document.body,
       })
@@ -157,7 +157,7 @@ describe('image-preview-group', () => {
     })
 
     it('next 触发 update:preview 与 change 事件', async () => {
-      const wrapper = mount(ImagePreviewGroup, {
+      const wrapper = mount(ImagePreview, {
         props: { items, preview: { visible: true, current: 0 } },
         attachTo: document.body,
       })
@@ -175,7 +175,7 @@ describe('image-preview-group', () => {
     })
 
     it('close 触发 visible-change(false)', async () => {
-      const wrapper = mount(ImagePreviewGroup, {
+      const wrapper = mount(ImagePreview, {
         props: { items, preview: { visible: true, current: 0 } },
         attachTo: document.body,
       })
@@ -191,7 +191,7 @@ describe('image-preview-group', () => {
 
   describe('默认 slot 模式', () => {
     it('未传 items 时不渲染缩略图，但渲染默认 slot', () => {
-      const wrapper = mount(ImagePreviewGroup, {
+      const wrapper = mount(ImagePreview, {
         slots: { default: '<div class="my-content">自定义</div>' },
       })
       expect(wrapper.find('.my-content').exists()).toBe(true)

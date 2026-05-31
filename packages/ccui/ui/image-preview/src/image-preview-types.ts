@@ -16,7 +16,7 @@ export interface ImagePreviewControl {
   current?: number
 }
 
-export const imagePreviewGroupProps = {
+export const imagePreviewProps = {
   /**
    * 图片数组。
    *
@@ -52,4 +52,4 @@ export const imagePreviewGroupProps = {
   },
 } as const
 
-export type ImagePreviewGroupProps = ExtractPropTypes<typeof imagePreviewGroupProps>
+export type ImagePreviewProps = ExtractPropTypes<typeof imagePreviewProps>

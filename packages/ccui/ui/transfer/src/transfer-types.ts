@@ -38,10 +38,10 @@ export const transferProps = {
     type: Array as unknown as PropType<[string, string]>,
     default: () => ['', ''],
   },
-  // 操作按钮文案：[右移, 左移]
+  // 操作按钮文案：[右移, 左移]。为空时回退到内置 chevron 图标
   operations: {
     type: Array as unknown as PropType<[string, string]>,
-    default: () => ['>', '<'],
+    default: () => ['', ''],
   },
   showSearch: {
     type: Boolean,

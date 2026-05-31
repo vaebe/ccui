@@ -1,4 +1,4 @@
-import type { VNode } from 'vue'
+import type { Slot, VNode, VNodeChild } from 'vue'
 import { Icon as IconifyIcon } from '@iconify/vue'
 import { h } from 'vue'
 // 副作用 import：把 ccui 内置 mdi 图标注册到 Iconify 本地数据源，
@@ -27,4 +27,18 @@ export function renderIconNode(value: CcIconValue | null | undefined): VNode | n
     return h('i', { class: value })
   }
   return value
+}
+
+/**
+ * 录入组件后缀/清除/箭头图标的统一渲染：优先同名 slot，其次 prop（Iconify name /
+ * CSS class / VNode），最后回退到内置 mdi 图标。集中 slot>prop>fallback 的优先级，
+ * 避免在各组件里重复 `slots.x ? slots.x() : (renderIconNode(props.x) ?? renderIconNode(fallback))`。
+ */
+export function renderIconWithFallback(
+  slot: Slot | undefined,
+  value: CcIconValue | null | undefined,
+  fallback: string,
+): VNodeChild {
+  if (slot) return slot()
+  return renderIconNode(value) ?? renderIconNode(fallback)
 }

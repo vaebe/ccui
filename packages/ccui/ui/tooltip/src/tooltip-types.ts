@@ -113,7 +113,7 @@ export const tooltipProps = {
   },
   offset: {
     type: Number,
-    default: 8,
+    default: 6,
   },
 
   // ── 高级行为 ─────────────────────────────────────────

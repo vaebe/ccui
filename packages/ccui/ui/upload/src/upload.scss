@@ -161,6 +161,7 @@
   &__list--picture-card {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 8px;
     padding: 0;
     margin: 8px 0 0;

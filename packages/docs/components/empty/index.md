@@ -61,7 +61,7 @@
 
 ```vue
 <template>
-  <c-empty description="搜索没有命中任何条目" image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
+  <c-empty description="搜索没有命中任何条目" image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDY0IDQxIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwwLDAsMC4yNSkiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAxNiBMMjAgMTYgTDI0IDIyIEw0MCAyMiBMNDQgMTYgTDU2IDE2IEw1MiAzNCBMMTIgMzQgWiIgZmlsbD0icmdiYSgwLDAsMCwwLjA0KSIvPjxwYXRoIGQ9Ik04IDE2IEwxNCA2IEw1MCA2IEw1NiAxNiIvPjwvZz48ZWxsaXBzZSBjeD0iMzIiIGN5PSIzOCIgcng9IjIyIiByeT0iMi41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDYpIi8+PC9zdmc+" />
 </template>
 ```
 

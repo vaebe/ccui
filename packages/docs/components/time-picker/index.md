@@ -2,7 +2,7 @@
 
 输入或选择时间的控件。三列（时 / 分 / 秒）滚动选择，可控制各列显示与步长，支持 `disabledHours` / `disabledMinutes` / `disabledSeconds` 屏蔽，支持 `showNow` 与 `showOk` 控制 footer 行为。
 
-## 基本用法
+## 基本使用
 
 最简单的用法，默认 `format: 'HH:mm:ss'`，`showOk: true`，需要点确定才提交。
 

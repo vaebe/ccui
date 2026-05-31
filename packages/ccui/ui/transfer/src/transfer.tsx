@@ -262,7 +262,7 @@ export default defineComponent({
       return (
         <div class={ns.e('pagination')}>
           <button type="button" class={ns.e('page-btn')} disabled={current <= 1} onClick={() => setPage(current - 1)}>
-            ‹
+            {renderIconNode('mdi:chevron-left')}
           </button>
           <span class={ns.e('page-info')}>
             {current} / {pages}
@@ -273,7 +273,7 @@ export default defineComponent({
             disabled={current >= pages}
             onClick={() => setPage(current + 1)}
           >
-            ›
+            {renderIconNode('mdi:chevron-right')}
           </button>
         </div>
       )
@@ -335,7 +335,7 @@ export default defineComponent({
             disabled={props.disabled || leftSelected.value.length === 0}
             onClick={() => move('right')}
           >
-            {props.operations[0]}
+            {props.operations[0] ? props.operations[0] : renderIconNode('mdi:chevron-right')}
           </button>
           <button
             type="button"
@@ -343,7 +343,7 @@ export default defineComponent({
             disabled={props.disabled || rightSelected.value.length === 0}
             onClick={() => move('left')}
           >
-            {props.operations[1]}
+            {props.operations[1] ? props.operations[1] : renderIconNode('mdi:chevron-left')}
           </button>
         </div>
       )

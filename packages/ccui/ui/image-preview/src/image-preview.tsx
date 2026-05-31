@@ -1,10 +1,10 @@
-import type { ImagePreviewGroupProps, ImagePreviewItem } from './image-preview-group-types'
+import type { ImagePreviewProps, ImagePreviewItem } from './image-preview-types'
 import { computed, defineComponent, h, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { imagePreviewGroupProps } from './image-preview-group-types'
-import './image-preview-group.scss'
+import { imagePreviewProps } from './image-preview-types'
+import './image-preview.scss'
 
-function normalizeItems(raw: ImagePreviewGroupProps['items']): ImagePreviewItem[] {
+function normalizeItems(raw: ImagePreviewProps['items']): ImagePreviewItem[] {
   if (!raw) return []
   return raw.map((item) => {
     if (typeof item === 'string') return { src: item }
@@ -13,11 +13,11 @@ function normalizeItems(raw: ImagePreviewGroupProps['items']): ImagePreviewItem[
 }
 
 export default defineComponent({
-  name: 'CImagePreviewGroup',
-  props: imagePreviewGroupProps,
+  name: 'CImagePreview',
+  props: imagePreviewProps,
   emits: ['update:preview', 'change', 'visible-change'],
-  setup(props: ImagePreviewGroupProps, { emit, slots }) {
-    const ns = useNamespace('image-preview-group')
+  setup(props: ImagePreviewProps, { emit, slots }) {
+    const ns = useNamespace('image-preview')
 
     const items = computed(() => normalizeItems(props.items))
     const isControlled = computed(() => props.preview !== undefined)

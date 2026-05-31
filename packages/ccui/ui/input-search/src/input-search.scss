@@ -110,9 +110,12 @@
   }
 
   &__clear {
+    display: inline-flex;
+    align-items: center;
     cursor: pointer;
     color: $ccui-color-text-tertiary;
     font-style: normal;
+    font-size: $ccui-font-size-icon;
     line-height: 1;
 
     &:hover {
@@ -126,9 +129,20 @@
     align-items: center;
     cursor: pointer;
     color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-icon;
 
     &:hover {
       color: $ccui-color-primary;
+    }
+  }
+
+  // 搜索按钮（primary 背景）里的图标应为白色且稍大，跟随按钮文字色
+  &__button &__search-icon {
+    color: inherit;
+    font-size: 18px;
+
+    &:hover {
+      color: inherit;
     }
   }
 

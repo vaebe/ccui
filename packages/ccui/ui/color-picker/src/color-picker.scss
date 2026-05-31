@@ -3,6 +3,7 @@
 .#{$cls-prefix}-color-picker {
   display: inline-block;
   position: relative;
+  vertical-align: middle;
 
   &.is-disabled {
     cursor: not-allowed;

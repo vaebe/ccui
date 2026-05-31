@@ -100,6 +100,12 @@
     }
   }
 
+  // 水平排列时连接线左侧有 title 的 padding 间距、右侧却紧贴下一个图标。
+  // 给非首个步骤的图标补一段等量左间距，让连接线左右对称。
+  &__item:not(:first-child) &__icon {
+    margin-inline-start: 16px;
+  }
+
   &__subtitle {
     margin-inline-start: 8px;
     color: $ccui-color-text-secondary;
@@ -194,6 +200,11 @@
       border-radius: 24px;
     }
 
+    // 连接线对称间距：small 的 title padding 是 12px，图标左间距随之改为 12px
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 12px;
+    }
+
     .#{$cls-prefix}-steps__title {
       padding-inline-end: 12px;
       font-size: $ccui-font-size;
@@ -215,6 +226,11 @@
       overflow: visible;
     }
 
+    // 垂直排列不需要水平方向那段图标左间距
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 0;
+    }
+
     .#{$cls-prefix}-steps__container {
       display: flex;
     }
@@ -230,10 +246,11 @@
     .#{$cls-prefix}-steps__item:not(.#{$cls-prefix}-steps__item--last) {
       .#{$cls-prefix}-steps__icon::after {
         position: absolute;
-        top: 100%;
+        // 上下各留 4px，使连接线两端间距对称（原本紧贴图标底部、只在下方留空）
+        top: calc(100% + 4px);
         inset-inline-start: 50%;
         width: 1px;
-        height: calc(100% + 12px);
+        height: calc(100% + 4px);
         background: $ccui-color-border;
         content: '';
       }
@@ -264,7 +281,8 @@
       text-align: center;
     }
 
-    .#{$cls-prefix}-steps__icon {
+    .#{$cls-prefix}-steps__icon,
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
       display: inline-flex;
       margin: 0 auto 8px;
     }
@@ -295,6 +313,11 @@
       border: 0;
       background: $ccui-color-text-disabled;
       border-radius: 50%;
+    }
+
+    // 点状步骤不套用横向 16px 图标间距，沿用点自身的紧凑排布
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 0;
     }
 
     .#{$cls-prefix}-steps__item--process .#{$cls-prefix}-steps__icon,

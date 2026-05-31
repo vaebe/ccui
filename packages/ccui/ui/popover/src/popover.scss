@@ -32,29 +32,30 @@
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
 
-    // 位置相关的箭头样式
+    // 位置相关的箭头样式：旋转 45° 的方块只保留指向外侧的两条边，
+    // 另外两条（朝向浮层内部、被浮层盖住）设为 transparent，避免出现多余边框
     &--top .ccui-popover__arrow {
       bottom: -4px;
-      border-top-color: inherit;
-      border-bottom: none;
+      border-top-color: transparent;
+      border-left-color: transparent;
     }
 
     &--bottom .ccui-popover__arrow {
       top: -4px;
-      border-bottom-color: inherit;
-      border-top: none;
+      border-bottom-color: transparent;
+      border-right-color: transparent;
     }
 
     &--left .ccui-popover__arrow {
       right: -4px;
-      border-left-color: inherit;
-      border-right: none;
+      border-bottom-color: transparent;
+      border-left-color: transparent;
     }
 
     &--right .ccui-popover__arrow {
       left: -4px;
-      border-right-color: inherit;
-      border-left: none;
+      border-top-color: transparent;
+      border-right-color: transparent;
     }
   }
 

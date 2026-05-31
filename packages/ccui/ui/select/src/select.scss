@@ -127,7 +127,11 @@
     position: absolute;
     top: 50%;
     right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-icon;
     line-height: 1;
     transform: translateY(-50%);
   }

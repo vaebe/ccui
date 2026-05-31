@@ -23,7 +23,7 @@ import {
   watch,
 } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
-import { renderIconNode } from '../../shared/hooks/use-icon'
+import { renderIconWithFallback } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { DEFAULT_COLOR_HEX, hexToRgb, hsvToRgb, rgbToHex, rgbToHsv, rgbToString } from '../../shared/utils/color'
 import { colorPickerProps } from './color-picker-types'
@@ -370,7 +370,7 @@ export default defineComponent({
           {props.showText && <span class={ns.e('value-text')}>{displayText.value}</span>}
           {props.allowClear && !props.disabled && (
             <span class={ns.e('clear')} onClick={handleClear} role="button" aria-label="clear color">
-              {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? '×')}
+              {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
             </span>
           )}
         </button>

@@ -30,7 +30,7 @@
 
 ```vue
 <template>
-  <div>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px">
     <c-tag color="magenta"> magenta </c-tag>
     <c-tag color="red"> red </c-tag>
     <c-tag color="volcano"> volcano </c-tag>

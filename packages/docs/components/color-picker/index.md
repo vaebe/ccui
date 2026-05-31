@@ -2,7 +2,7 @@
 
 可视化挑选颜色，支持 HEX / RGB / HSB 三种格式显示，alpha 透明度，预设色板，和受控/非受控两种模式。基于浏览器 Pointer Events 实现 SV / hue / alpha 三段拖拽，零外部颜色库依赖。
 
-## 基本用法
+## 基本使用
 
 `v-model` 绑定 hex 字符串。alpha < 1 时输出 8 位 hex（如 `#1677ff80`），否则输出 6 位。
 

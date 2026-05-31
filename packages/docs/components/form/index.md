@@ -2,7 +2,7 @@
 
 用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代。
 
-## 基本用法
+## 基本使用
 
 :::demo
 

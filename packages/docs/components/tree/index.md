@@ -4,7 +4,7 @@
 
 展开态用 `defaultExpandedKeys` / `expandedKeys` 或 `defaultExpandAll` 控制。
 
-## 基本用法
+## 基本使用
 
 不传 `expandedKeys` 时默认全部折叠。默认整行可点击触发展开 / 折叠 —— 设 `expandAction="false"` 改为仅 switcher 图标响应。
 

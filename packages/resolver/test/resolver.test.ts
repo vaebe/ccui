@@ -84,12 +84,9 @@ describe('Vue3CCUIResolver — importStyle', () => {
     const r = Vue3CCUIResolver({ importStyle: 'scss' })
     // These sub-components live in their own directory which ships its own
     // <dir>.scss — so they resolve to that file, not the parent's.
-    expect(call(r, 'CAvatarGroup')?.sideEffects).toBe('@vaebe/ccui/ui/avatar-group/src/avatar-group.scss')
     expect(call(r, 'CBadgeRibbon')?.sideEffects).toBe('@vaebe/ccui/ui/badge-ribbon/src/badge-ribbon.scss')
     expect(call(r, 'CCardMeta')?.sideEffects).toBe('@vaebe/ccui/ui/card-meta/src/card-meta.scss')
-    expect(call(r, 'CImagePreviewGroup')?.sideEffects).toBe(
-      '@vaebe/ccui/ui/image-preview-group/src/image-preview-group.scss',
-    )
+    expect(call(r, 'CImagePreview')?.sideEffects).toBe('@vaebe/ccui/ui/image-preview/src/image-preview.scss')
     expect(call(r, 'CInputOtp')?.sideEffects).toBe('@vaebe/ccui/ui/input-otp/src/input-otp.scss')
     expect(call(r, 'CInputSearch')?.sideEffects).toBe('@vaebe/ccui/ui/input-search/src/input-search.scss')
     expect(call(r, 'CSkeletonNode')?.sideEffects).toBe('@vaebe/ccui/ui/skeleton-node/src/skeleton-node.scss')

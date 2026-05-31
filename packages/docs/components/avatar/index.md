@@ -7,7 +7,7 @@
 - 用户列表、评论、消息中显示用户身份
 - 当头像没有图片时，用文字首字母替代
 
-## 基本用法
+## 基本使用
 
 最简单的方式 —— 传 `name`，组件按规则提取最后/前两个字符。
 
@@ -154,54 +154,6 @@
   <c-avatar custom-text="VIP" img-src="https://still-invalid.example/y.jpg" gender="female" />
   &nbsp;
   <c-avatar name="default fallback" img-src="https://broken.example/z.png" :is-round="false" />
-</template>
-```
-
-:::
-
-## 头像组（AvatarGroup）
-
-`<c-avatar-group>` 把多个头像聚拢展示，超出 `max-count` 时合并为 `+N`。
-
-:::demo
-
-```vue
-<template>
-  <c-avatar-group :max-count="3">
-    <c-avatar name="张三" />
-    <c-avatar name="李四" />
-    <c-avatar name="王五" />
-    <c-avatar name="赵六" />
-    <c-avatar name="孙七" />
-  </c-avatar-group>
-</template>
-```
-
-:::
-
-## 头像组 — 自定义溢出样式
-
-`max-style` 控制 `+N` 头像的背景 / 文字色。
-
-:::demo
-
-```vue
-<template>
-  <c-avatar-group :max-count="2" :max-style="{ backgroundColor: '#f56a00', color: '#fff' }">
-    <c-avatar name="张三" />
-    <c-avatar name="李四" />
-    <c-avatar name="王五" />
-    <c-avatar name="赵六" />
-    <c-avatar name="孙七" />
-  </c-avatar-group>
-  <br /><br />
-  <c-avatar-group size="large" :max-count="3">
-    <c-avatar name="A" gender="male" />
-    <c-avatar name="B" gender="female" />
-    <c-avatar name="C" gender="male" />
-    <c-avatar name="D" />
-    <c-avatar name="E" />
-  </c-avatar-group>
 </template>
 ```
 

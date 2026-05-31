@@ -2,7 +2,7 @@
 
 文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。**组件不内置 HTTP 上传请求** —— 业务侧通过 `update:fileList` 拿到文件后自行发请求并回写状态，组件只负责 UI 与状态同步。
 
-## 基本用法
+## 基本使用
 
 `v-model:fileList` 绑定文件列表，点击按钮选择文件。
 
@@ -25,7 +25,7 @@ const list = ref<Array<{ uid: string; name: string; status?: string }>>([])
 
 ## 拖拽上传
 
-`drag` 把按钮替换成拖拽区，支持点击 / 拖拽两种触发。需要更大尺寸 dropzone 视觉时，可直接用平铺顶层组件 [`<c-upload-dragger>`](/components/upload-dragger/)（语义封装，默认开 drag）。
+`drag` 把按钮替换成拖拽区，支持点击 / 拖拽两种触发。
 
 :::demo
 

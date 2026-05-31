@@ -1,6 +1,6 @@
 import type { TooltipProps } from './tooltip-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, toRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tooltipProps } from './tooltip-types'
 import './tooltip.scss'
@@ -35,6 +35,22 @@ export default defineComponent({
       return { backgroundColor: props.color }
     })
 
+    // 使用 floating-ui 进行位置计算
+    // autoAdjustOverflow=true 时启用 flip middleware；否则不翻转
+    const { floatingStyles, middlewareData, placement, update } = useFloating(triggerRef, popperRef, {
+      // 传响应式 placement，保证 placement prop 变化与 flip 翻转都能被 floating-ui 跟踪
+      placement: toRef(props, 'placement') as any,
+      middleware: [
+        offset(props.offset),
+        ...(props.autoAdjustOverflow ? [flip()] : []),
+        shift({ padding: 8 }),
+        ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
+      ],
+    })
+
+    // 实际生效的方位（flip 翻转后可能与 props.placement 不同），箭头/样式都以此为准
+    const actualSide = computed(() => placement.value.split('-')[0])
+
     const popperClass = computed(() => {
       return [
         ns.e('popper'),
@@ -44,18 +60,6 @@ export default defineComponent({
       ]
         .filter(Boolean)
         .join(' ')
-    })
-
-    // 使用 floating-ui 进行位置计算
-    // autoAdjustOverflow=true 时启用 flip middleware；否则不翻转
-    const { floatingStyles, middlewareData, update } = useFloating(triggerRef, popperRef, {
-      placement: props.placement as any,
-      middleware: [
-        offset(props.offset),
-        ...(props.autoAdjustOverflow ? [flip()] : []),
-        shift({ padding: 8 }),
-        ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
-      ],
     })
 
     // 箭头位置计算
@@ -70,7 +74,7 @@ export default defineComponent({
         right: 'left',
         bottom: 'top',
         left: 'right',
-      }[props.placement.split('-')[0]]
+      }[actualSide.value]
 
       return {
         left: x != null ? `${x}px` : '',
@@ -222,7 +226,7 @@ export default defineComponent({
     const renderArrow = () => {
       if (!props.showArrow) return null
 
-      const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
+      const arrowClass = [ns.e('arrow'), ns.em('arrow', actualSide.value)].join(' ')
 
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }

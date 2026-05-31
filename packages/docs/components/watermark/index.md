@@ -99,7 +99,7 @@
 ```vue
 <template>
   <c-watermark
-    image="https://gw.alipayobjects.com/zos/bmw-prod/59a18171-ae17-4fc5-93a0-2645f64a3aca.svg"
+    image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAxMjAgNjQiPjxyZWN0IHg9IjE0IiB5PSIyMCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDAsMCwwLDAuMikiIHN0cm9rZS13aWR0aD0iMi41Ii8+PHRleHQgeD0iNjgiIHk9IjQwIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMTgpIj5jY3VpPC90ZXh0Pjwvc3ZnPg=="
     :width="120"
     :height="64"
   >

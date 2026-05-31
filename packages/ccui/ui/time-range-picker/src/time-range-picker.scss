@@ -63,7 +63,9 @@
       width: 100%;
       display: block;
     }
-    .#{$cls-prefix}-time-picker__input-wrap {
+    // 同时覆盖 TimePicker 自身 disabled 态的背景，避免范围禁用时内部出现多余的灰色块
+    .#{$cls-prefix}-time-picker__input-wrap,
+    .#{$cls-prefix}-time-picker.is-disabled .#{$cls-prefix}-time-picker__input-wrap {
       border: none;
       padding: 0;
       background: transparent;
@@ -83,9 +85,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex: none;
     margin-left: 4px;
     color: $ccui-color-text-tertiary;
-    font-size: $ccui-font-size-sm;
+    font-size: $ccui-font-size-icon;
   }
 
   &__clear {

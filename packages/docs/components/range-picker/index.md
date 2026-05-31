@@ -2,7 +2,7 @@
 
 选择一段连续的日期区间。双面板显示当前月与下一月，起 / 止两次点击完成选择，hover 期间高亮预览区间。复用 DatePicker 同款 dayjs 工具层与 `valueFormat` 三档。
 
-## 基本用法
+## 基本使用
 
 `v-model` 是 `[start, end]` 数组，类型与 `valueFormat` 对应。两次点击日期完成选择。
 

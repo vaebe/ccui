@@ -24,6 +24,13 @@
   padding: 0;
 }
 
+/* 同理抹掉 .vp-doc li + li { margin-top } —— 否则会渗透进组件内部用 <li> 渲染的
+   列表（Carousel 指示点、Upload 照片墙、Menu、Timeline 等），使非首项整体下移错位。
+   一处统一处理，组件内部无需各自加特异性 hack。 */
+.vp-doc [class*='_example-showcase_'] li {
+  margin-top: 0;
+}
+
 .mt-10 {
   margin-top: 10px;
 }
