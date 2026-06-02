@@ -13,35 +13,39 @@
 
 ```vue
 <template>
-  <c-badge :count="5">
+  <c-badge :count="5" class="head-badge">
     <span class="head-example" />
   </c-badge>
 
-  <c-badge :count="0" show-zero>
+  <c-badge :count="0" show-zero class="head-badge">
     <span class="head-example" />
   </c-badge>
 
-  <c-badge :count="99">
+  <c-badge :count="99" class="head-badge">
     <span class="head-example" />
   </c-badge>
 
-  <c-badge :count="100">
+  <c-badge :count="100" class="head-badge">
     <span class="head-example" />
   </c-badge>
 
-  <c-badge :count="200" :overflow-count="99">
+  <c-badge :count="200" :overflow-count="99" class="head-badge">
     <span class="head-example" />
   </c-badge>
 </template>
 
 <style>
+/* 间距加在 badge 外层；若加在被包裹的 .head-example 上，会把徽标锚点一起推开，
+   导致窄徽标（如 0）离右上角有空隙 */
+.head-badge {
+  margin-right: 16px;
+}
 .head-example {
   width: 42px;
   height: 42px;
   background: #eee;
   border-radius: 4px;
   display: inline-block;
-  margin-right: 16px;
 }
 </style>
 ```
@@ -79,7 +83,6 @@
   background: #eee;
   border-radius: 4px;
   display: inline-block;
-  margin-right: 16px;
 }
 </style>
 ```
@@ -114,28 +117,31 @@
 
 ```vue
 <template>
-  <c-badge :count="5" color="#fa541c">
+  <c-badge :count="5" color="#fa541c" class="head-badge">
     <span class="head-example" />
   </c-badge>
-  <c-badge :count="5" color="#52c41a">
+  <c-badge :count="5" color="#52c41a" class="head-badge">
     <span class="head-example" />
   </c-badge>
-  <c-badge :count="5" color="#722ed1">
+  <c-badge :count="5" color="#722ed1" class="head-badge">
     <span class="head-example" />
   </c-badge>
-  <c-badge :count="5" color="#13c2c2">
+  <c-badge :count="5" color="#13c2c2" class="head-badge">
     <span class="head-example" />
   </c-badge>
 </template>
 
 <style>
+/* 间距加在 badge 外层，避免推开徽标锚点 */
+.head-badge {
+  margin-right: 16px;
+}
 .head-example {
   width: 42px;
   height: 42px;
   background: #eee;
   border-radius: 4px;
   display: inline-block;
-  margin-right: 16px;
 }
 </style>
 ```
@@ -150,28 +156,31 @@
 
 ```vue
 <template>
-  <c-badge :count="5">
+  <c-badge :count="5" class="head-badge">
     <span class="head-example" />
   </c-badge>
   默认 &nbsp;&nbsp;&nbsp;
-  <c-badge :count="5" :offset="[-4, 4]">
+  <c-badge :count="5" :offset="[-4, 4]" class="head-badge">
     <span class="head-example" />
   </c-badge>
   offset=[-4, 4] &nbsp;&nbsp;&nbsp;
-  <c-badge :count="5" :offset="[10, -10]">
+  <c-badge :count="5" :offset="[10, -10]" class="head-badge">
     <span class="head-example" />
   </c-badge>
   offset=[10, -10]
 </template>
 
 <style>
+/* 间距加在 badge 外层，避免推开徽标锚点 */
+.head-badge {
+  margin-right: 8px;
+}
 .head-example {
   width: 42px;
   height: 42px;
   background: #eee;
   border-radius: 4px;
   display: inline-block;
-  margin-right: 8px;
 }
 </style>
 ```
@@ -186,25 +195,28 @@
 
 ```vue
 <template>
-  <c-badge count="NEW">
-    <span class="head-example" />
+  <c-badge count="NEW" class="head-badge">
+    <span class="head-example-lg" />
   </c-badge>
-  <c-badge count="HOT" color="#fa541c">
-    <span class="head-example" />
+  <c-badge count="HOT" color="#fa541c" class="head-badge">
+    <span class="head-example-lg" />
   </c-badge>
-  <c-badge count="限时" color="#722ed1">
-    <span class="head-example" />
+  <c-badge count="限时" color="#722ed1" class="head-badge">
+    <span class="head-example-lg" />
   </c-badge>
 </template>
 
 <style>
-.head-example {
+/* 间距加在 badge 外层，避免推开徽标锚点 */
+.head-badge {
+  margin-right: 16px;
+}
+.head-example-lg {
   width: 60px;
   height: 60px;
   background: #f0f0f0;
   border-radius: 4px;
   display: inline-block;
-  margin-right: 16px;
 }
 </style>
 ```

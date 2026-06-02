@@ -149,15 +149,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
+    // 默认箭头按钮保持 32px 方形；传文字（如"加入"/"移除"）时按内容横向撑开、不换行
+    min-width: 32px;
     height: 28px;
-    padding: 0;
+    padding: 0 8px;
     border: 1px solid #d9d9d9;
     border-radius: 4px;
     background: #fff;
     color: rgba(0, 0, 0, 0.88);
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1;
+    white-space: nowrap;
     cursor: pointer;
     transition:
       background 0.2s,

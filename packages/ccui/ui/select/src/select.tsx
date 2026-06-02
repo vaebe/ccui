@@ -719,7 +719,7 @@ export default defineComponent({
                   { class: ns.e('arrow') },
                   slots.suffixIcon
                     ? slots.suffixIcon()
-                    : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:menu-down') ?? undefined),
+                    : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:chevron-down') ?? undefined),
                 ),
           ]),
           slots.suffix ? h('span', { class: ns.e('suffix') }, slots.suffix()) : null,

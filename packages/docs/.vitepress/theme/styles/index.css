@@ -7,17 +7,18 @@
   display: table;
 }
 
-/* 仅给 showcase 顶层的 ccui 组件加间距，避免命中嵌套组件（例如 slider 内部的 tooltip）。
-   用 :has(~ …) 把间距只挂在"后面还有同级 ccui 组件"的元素上：最后一个 / 唯一一个组件
-   不再带 trailing 右/下边距，否则像 ColorPicker 这类小色块会在示例框里多出一圈空白。
-   两个都是 end 边距，不影响行内组件的基线对齐；且保持普通流，block 组件（Table 等）仍占满宽度。 */
+/* showcase 顶层组件间距：只在"紧邻的同级 ccui 组件"之间补 8px 横向间隙（挂在后一个元素上）。
+   - 用相邻兄弟 + 而非 ~：被 <br> / 包裹层分隔的块级组件（如堆叠的多个 Alert）不会被命中，
+     保持满宽、各自用自身分隔；只有真正排在同一行的行内组件（Button/Tag/ColorPicker…）才补间距。
+   - 只给 inline-start（横向）、不加任何纵向 margin：纵向 margin 会移动 inline-block + vertical-align:middle
+     的对齐基点，使同行组件高低错位（ColorPicker 显示格式三个组件不对齐即此因）。
+   - 间距挂在后一个元素上（leading margin），单个 / 末尾组件天然不带 trailing 右下空白；
+     普通流保持不变，block 组件（Table 等）仍占满宽度。 */
 .vp-doc
   [class*='_example-showcase_']
-  > :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__'])):has(
-    ~ :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__']))
-  ) {
-  margin-inline-end: 8px;
-  margin-block-end: 8px;
+  > :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__']))
+  + :where([class^='ccui-']:not([class*='__']), [class*=' ccui-']:not([class*='__'])) {
+  margin-inline-start: 8px;
 }
 
 /* demo 渲染区按"App 环境"对待：抹掉 VitePress .vp-doc ul/ol 的正文样式，

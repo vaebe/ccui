@@ -536,7 +536,7 @@ export default defineComponent({
             <span class={ns.e('suffix')} aria-hidden="true">
               {slots.suffixIcon
                 ? slots.suffixIcon()
-                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:menu-down'))}
+                : (renderIconNode(props.suffixIcon) ?? renderIconNode('mdi:chevron-down'))}
             </span>
           )}
         </div>

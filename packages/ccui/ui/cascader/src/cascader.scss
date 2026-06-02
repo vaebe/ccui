@@ -93,6 +93,11 @@
     font-size: $ccui-font-size-sm;
   }
 
+  // 展开箭头单独放大到图标标准字号，mdi:menu-down 之前在 12px 下视觉过小
+  &__suffix {
+    font-size: $ccui-font-size-icon;
+  }
+
   &__clear {
     cursor: pointer;
     width: 16px;
