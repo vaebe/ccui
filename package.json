@@ -12,7 +12,9 @@
     "test": "vp test",
     "lint": "vp lint . --fix",
     "fmt": "vp fmt",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "bootstrap": "pnpm --filter @vaebe/ccui-icons build && pnpm --filter ccui-cli generate:theme",
+    "postinstall": "pnpm bootstrap"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
