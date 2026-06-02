@@ -28,5 +28,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # 构建 gitignored 的前置产物：icons dist（@vaebe/ccui-icons/install
+      # 副作用 import）+ theme.scss（style-var 经 @vaebe/ccui-theme/theme @forward）。
+      # 全新 checkout 无这两者，组件 tsx / scss 解析会失败。
+      - name: Build prerequisites (icons dist + theme.scss)
+        run: |
+          pnpm --filter @vaebe/ccui-icons build
+          pnpm --filter ccui-cli generate:theme
+
       - name: Run tests
         run: pnpm --filter @vaebe/ccui test
