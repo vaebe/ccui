@@ -1,4 +1,4 @@
-# vue3-ccui 设计原则
+# ccui 设计原则
 
 > 状态：**已采纳**
 > 参考：[Ant Design 设计价值观](https://ant.design/docs/spec/values-cn)
@@ -44,7 +44,7 @@
 **在 ccui 的体现**：
 
 - 主题层 SeedToken / MapToken 双层结构（`themes/light.ts` / `dark.ts`），新增 token 不破坏既有消费。
-- 12 色板 × 10 阶覆盖 Tag / Badge / Avatar / Status 的色彩需求，组件可按调色阶任意取色而无需新增 hex。
+- 12 色板 × 10 阶覆盖 Tag / Badge / Avatar 的色彩需求，组件可按调色阶任意取色而无需新增 hex。
 - `ConfigProvider` 提供运行时 token 定制能力，使用方升级 ccui 主版本不影响品牌色 / 圆角 / 字号等定制项。
 
 ## 与 Ant Design 的差异化

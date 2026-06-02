@@ -11,7 +11,7 @@
 **全部接通，不留死接口。**
 
 - **`theme.algorithm`** —— `'default' | 'dark' | 'compact'` 全部生效。`dark` 在 wrapper 上叠 `.dark` 类级联 dark token；`compact` 注入紧凑尺寸 token（对齐 v6 compact：`controlHeight 32 → 24`，padding/margin 各缩一档，字号不动）；用户 `theme.token` 始终最后 `Object.assign`，胜过 compact 默认值。
-- **`locale`** —— `Locale` 接口按组件 namespace（Modal / Popconfirm / Empty / AutoComplete / Mentions / Cascader / TreeSelect / Select / Pagination / Image / DatePicker 等）组织。`useConfig` 注入时按 namespace 浅合并，用户没覆盖的 key 自动回退 zhCN。运行时优先级：**用户显式 prop > `cfg.locale` > 内置 zhCN 兜底**。组件 locale 相关 prop 默认值为 `''`，空串即「走 locale 默认」。语言包通过 `import { zhCN, enUS, jaJP, koKR } from 'vue3-ccui'` 顶层导出。
+- **`locale`** —— `Locale` 接口按组件 namespace（Modal / Popconfirm / Empty / AutoComplete / Mentions / Cascader / TreeSelect / Select / Pagination / Image / DatePicker 等）组织。`useConfig` 注入时按 namespace 浅合并，用户没覆盖的 key 自动回退 zhCN。运行时优先级：**用户显式 prop > `cfg.locale` > 内置 zhCN 兜底**。组件 locale 相关 prop 默认值为 `''`，空串即「走 locale 默认」。语言包通过 `import { zhCN, enUS, jaJP, koKR } from '@vaebe/ccui'` 顶层导出。
 - **Form scss token 化** —— Form 样式全量走 SCSS token（`#{$cls-prefix}-form` + `$ccui-color-*` / `$ccui-font-size*` / `$ccui-control-height` 等），不再用 1.x alias 与裸字面量。这是 `ConfigProvider` 的品牌色注入能在 Form 内生效的前提。
 
 ## 后续不变性约束

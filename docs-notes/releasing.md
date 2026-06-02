@@ -13,22 +13,25 @@
 ## 一键发布
 
 ```bash
-pnpm release          # dist-tag=beta，预发布
-pnpm release:dry      # 走全流程但不真 publish（验证用）
-node scripts/publish.mjs --tag latest    # 正式发版
-node scripts/publish.mjs --skip-login    # 已知 session 有效时跳过预检
+pnpm release                                          # 交互选版本 + dist-tag=beta 预发布
+pnpm release:dry                                      # 跳过 bump/changelog，只走构建发布预演
+node scripts/publish.mjs --release 2.0.0 --tag latest # 指定版本 + 正式发版（dist-tag=latest）
+node scripts/publish.mjs --release patch              # 非交互 patch 升版
+node scripts/publish.mjs --skip-bump                  # 复用已 bump 好的版本号
+node scripts/publish.mjs --skip-login                 # 已确认 session 有效时跳过登录预检
 ```
 
 脚本执行顺序：
 
-1. **登录预检** —— `npm whoami` 失败时引导 `npm login --auth-type=web`
-2. **版本一致性校验** —— 三包 version 必须相等，否则拒绝
-3. **顺序构建**：
+1. **登录预检** —— `npm whoami` 失败时引导 `npm login --auth-type=web`（`--skip-login` 跳过）
+2. **工作区检查 + 版本号 bump** —— 工作区必须干净（否则拒绝）；用 `bumpp` 一把同步 bump 三个发布包的 version（交互选档，或 `--release patch|minor|major|2.0.0` 非交互）。`--skip-bump` 复用现有版本号，`--dry-run` 跳过本步。
+3. **版本一致性校验** —— 三包 version 必须相等，否则拒绝
+4. **顺序构建**：
    - icons：`pnpm --filter @vaebe/ccui-icons build`（tsdown 出 `dist/`）
    - ccui：`cli create -t ccui` → `cli build` → `cli prepare-release`（生成 `packages/ccui/build/package.json`，展开 `workspace:` 协议）
    - resolver：`pnpm --filter @vaebe/unplugin-vue-components-ccui build`
-4. **顺序 publish**（依赖顺序：icons → ccui → resolver）
-5. **git tag** `v<version>` + `git push origin v<version>`
+5. **顺序 publish**（依赖顺序：icons → ccui → resolver）
+6. **git tag** `v<version>` + `git push origin v<version>`
 
 ## 2FA / 鉴权（重点）
 
@@ -106,7 +109,7 @@ npm login --auth-type=web
 
 ## 版本号管理
 
-三包 version **必须保持一致**，由发布脚本强制校验。bump 时同步改：
+三包 version **必须保持一致**，由发布脚本强制校验：
 
 ```
 packages/icons/package.json
@@ -114,10 +117,12 @@ packages/ccui/package.json
 packages/resolver/package.json
 ```
 
-可以手改，也可以用 [`bumpp`](https://github.com/antfu/bumpp)（已在根 devDeps）：
+正常情况**不用手动改**——`pnpm release` 内部已用 [`bumpp`](https://github.com/antfu/bumpp)（已在根 devDeps）一把同步 bump 三个包（交互选档，或 `--release patch|minor|major|<version>` 非交互）。
+
+需要在发布前单独 bump（比如先开 PR 改版本号）时再手动跑：
 
 ```bash
-npx bumpp packages/*/package.json
+npx bumpp packages/icons/package.json packages/ccui/package.json packages/resolver/package.json
 ```
 
-之后跑 `pnpm release` 即可。
+之后用 `node scripts/publish.mjs --skip-bump` 复用已 bump 好的版本号发布。
