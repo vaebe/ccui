@@ -1,0 +1,5 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-watermark {
+  position: relative;
+}

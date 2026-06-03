@@ -1,6 +1,8 @@
 import type { InputSize } from '../src/input-types'
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Input } from '../index'
 
@@ -141,5 +143,238 @@ describe('input', () => {
     expect(wrapper.find(ns.e('password-hidden')).exists()).toBeTruthy()
 
     wrapper.unmount()
+  })
+
+  describe('prepend / append slot', () => {
+    it('prepend slot 覆盖 prop', () => {
+      const wrapper = mount(Input, {
+        props: { prepend: 'fallback' },
+        slots: { prepend: '<i class="custom-icon">@</i>' },
+      })
+      const prepend = wrapper.find(ns.e('prepend'))
+      expect(prepend.find('.custom-icon').exists()).toBe(true)
+      expect(prepend.text()).not.toContain('fallback')
+      wrapper.unmount()
+    })
+
+    it('append slot 覆盖 prop', () => {
+      const wrapper = mount(Input, {
+        slots: { append: '<i class="suffix-icon">$</i>' },
+      })
+      expect(wrapper.find(ns.e('append')).find('.suffix-icon').exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
+  describe('prefix / suffix slot', () => {
+    it('prefix slot 渲染', () => {
+      const wrapper = mount(Input, {
+        slots: { prefix: '<i class="user-icon"></i>' },
+      })
+      expect(wrapper.find(ns.e('prefix')).find('.user-icon').exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('suffix slot 渲染', () => {
+      const wrapper = mount(Input, {
+        slots: { suffix: '<i class="eye-icon"></i>' },
+      })
+      expect(wrapper.find(ns.e('suffix')).find('.eye-icon').exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
+  describe('showCount / maxLength', () => {
+    it('showCount=true 显示字符计数', () => {
+      const wrapper = mount(Input, { props: { showCount: true, modelValue: 'hello' } })
+      expect(wrapper.find(ns.e('count')).text()).toBe('5')
+      wrapper.unmount()
+    })
+
+    it('showCount=true 配合 maxLength 显示 x / max', () => {
+      const wrapper = mount(Input, {
+        props: { showCount: true, maxLength: 10, modelValue: 'hi' },
+      })
+      expect(wrapper.find(ns.e('count')).text()).toBe('2 / 10')
+      wrapper.unmount()
+    })
+
+    it('showCount={ formatter } 自定义格式', () => {
+      const wrapper = mount(Input, {
+        props: {
+          showCount: { formatter: ({ count, maxLength }) => `${count}字 / 上限 ${maxLength}` },
+          maxLength: 50,
+          modelValue: 'abc',
+        },
+      })
+      expect(wrapper.find(ns.e('count')).text()).toBe('3字 / 上限 50')
+      wrapper.unmount()
+    })
+
+    it('maxLength 透传到原生 maxlength', () => {
+      const wrapper = mount(Input, { props: { maxLength: 8 } })
+      expect(wrapper.find('input').attributes('maxlength')).toBe('8')
+      wrapper.unmount()
+    })
+  })
+
+  describe('status', () => {
+    it('status="error" 加 --status-error 类', () => {
+      const wrapper = mount(Input, { props: { status: 'error' } })
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('status="warning" 加 --status-warning 类', () => {
+      const wrapper = mount(Input, { props: { status: 'warning' } })
+      expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('inherits validateStatus from injected FormItem context', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(Input, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('显式 status prop 优先于 Form 注入的 validateStatus', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(Input, {
+        props: { status: 'warning' },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find(ns.m('status-warning')).exists()).toBe(true)
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(false)
+      wrapper.unmount()
+    })
+
+    it('triggers FormItem.validate on input change and on blur', async () => {
+      const onValidate = vi.fn(async () => true)
+      const wrapper = mount(Input, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate: onValidate,
+            },
+          },
+        },
+      })
+      await wrapper.find('input').setValue('hello')
+      expect(onValidate).toHaveBeenCalledWith('change')
+      await wrapper.find('input').trigger('blur')
+      expect(onValidate).toHaveBeenCalledWith('blur')
+      wrapper.unmount()
+    })
+  })
+
+  describe('variant（v5.13+：outlined / filled / borderless / underlined）', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = mount(Input)
+      expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="filled" 加 --variant-filled 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'filled' } })
+      expect(wrapper.find(ns.m('variant-filled')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="borderless" 加 --variant-borderless 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'borderless' } })
+      expect(wrapper.find(ns.m('variant-borderless')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('variant="underlined" 加 --variant-underlined 类', () => {
+      const wrapper = mount(Input, { props: { variant: 'underlined' } })
+      expect(wrapper.find(ns.m('variant-underlined')).exists()).toBe(true)
+      wrapper.unmount()
+    })
+  })
+
+  describe('press-enter 事件', () => {
+    it('回车键触发 press-enter', async () => {
+      const wrapper = mount(Input)
+      await wrapper.find('input').trigger('keydown', { key: 'Enter' })
+      expect(wrapper.emitted('press-enter')).toBeTruthy()
+      wrapper.unmount()
+    })
+
+    it('非回车键不触发 press-enter', async () => {
+      const wrapper = mount(Input)
+      await wrapper.find('input').trigger('keydown', { key: 'a' })
+      expect(wrapper.emitted('press-enter')).toBeUndefined()
+      wrapper.unmount()
+    })
+  })
+
+  describe('defaultValue 非受控', () => {
+    it('未传 modelValue 时 defaultValue 作为初值', () => {
+      const wrapper = mount(Input, { props: { defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('preset')
+      wrapper.unmount()
+    })
+
+    it('显式 modelValue 优先于 defaultValue', () => {
+      const wrapper = mount(Input, { props: { modelValue: 'real', defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('real')
+      wrapper.unmount()
+    })
+  })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Input, {
+        props: { classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.classes()).toContain('my-root')
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Input, {
+        props: { styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.attributes('style') || '').toContain('color: red')
+      wrapper.unmount()
+    })
+  })
+
+  describe('XL-4 ARIA', () => {
+    it('status="error" 时 input 加 aria-invalid', () => {
+      const w = mount(Input, { props: { status: 'error' } })
+      expect(w.find('input').attributes('aria-invalid')).toBe('true')
+      w.unmount()
+    })
+
+    it('disabled / readonly 时 input 加 aria-disabled / aria-readonly', () => {
+      const w = mount(Input, { props: { disabled: true, readonly: true } })
+      const inp = w.find('input')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+      expect(inp.attributes('aria-readonly')).toBe('true')
+      w.unmount()
+    })
   })
 })

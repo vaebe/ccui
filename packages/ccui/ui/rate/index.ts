@@ -9,7 +9,7 @@ export { Rate }
 
 export default {
   title: 'Rate 评分',
-  category: '数据展示',
+  category: '数据录入',
   status: '100%',
   install(app: App): void {
     app.component(Rate.name!, Rate)

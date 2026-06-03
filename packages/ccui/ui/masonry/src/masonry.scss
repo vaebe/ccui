@@ -1,0 +1,16 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-masonry {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    width: 100%;
+  }
+}

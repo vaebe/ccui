@@ -11,8 +11,8 @@ export default defineComponent({
     const ns = useNamespace('divider')
 
     const dividerStyle = computed(() => {
-      const borderStyleObj
-        = props.direction !== 'horizontal'
+      const borderStyleObj =
+        props.direction !== 'horizontal'
           ? { 'border-left-style': props.borderStyle }
           : { 'border-top-style': props.borderStyle }
       return {
@@ -27,7 +27,7 @@ export default defineComponent({
 
     const dividerTextStyle = computed(() => {
       return {
-        'color': props.contentColor,
+        color: props.contentColor,
         'background-color': props.contentBackgroundColor,
       }
     })

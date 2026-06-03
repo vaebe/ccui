@@ -1,0 +1,42 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-card-meta {
+  display: flex;
+  align-items: flex-start;
+  margin: -4px 0;
+
+  &__avatar {
+    flex: none;
+    padding-inline-end: 16px;
+
+    img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  &__detail {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__title {
+    margin-bottom: 8px;
+    color: $ccui-color-text;
+    font-weight: 500;
+    font-size: $ccui-font-size;
+    line-height: 1.4;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__description {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size-sm;
+    line-height: 1.5;
+  }
+}

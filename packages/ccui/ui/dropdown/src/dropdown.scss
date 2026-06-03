@@ -1,0 +1,85 @@
+@use '../../style-var/index.scss' as *;
+
+// dropdown 作为 popperClass 附加到 popover popper 上
+// 需要覆盖 popover 默认的 padding / border / 圆角
+.#{$cls-prefix}-popover__popper.#{$cls-prefix}-dropdown {
+  padding: 0;
+  border: none;
+  border-radius: $ccui-border-radius-lg;
+  background-color: $ccui-color-bg-elevated;
+  box-shadow: $ccui-box-shadow-secondary;
+  min-width: 100px;
+}
+
+.#{$cls-prefix}-dropdown {
+  &__menu {
+    min-width: 100px;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background-color: transparent;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 5px 12px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    cursor: pointer;
+    border-radius: $ccui-border-radius-sm;
+    margin: 0 4px;
+    transition:
+      background-color $ccui-motion-duration-mid,
+      color $ccui-motion-duration-mid;
+
+    &:hover {
+      background-color: $ccui-color-bg-text-hover;
+    }
+
+    &--disabled {
+      color: $ccui-color-text-disabled;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &--danger {
+      color: $ccui-color-error;
+
+      &:hover {
+        color: #ffffff;
+        background-color: $ccui-color-error;
+      }
+    }
+
+    &--divided {
+      position: relative;
+      margin-top: 8px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        height: 1px;
+        background-color: $ccui-color-border-secondary;
+      }
+    }
+  }
+
+  &__icon {
+    margin-inline-end: 8px;
+    font-size: 14px;
+  }
+
+  &__label {
+    flex: 1;
+  }
+}

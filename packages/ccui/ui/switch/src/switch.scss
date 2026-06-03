@@ -1,0 +1,122 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 22px;
+  padding: 0;
+  color: #ffffff;
+  font-size: $ccui-font-size;
+  line-height: 22px;
+  vertical-align: middle;
+  background: rgba(0, 0, 0, 0.45);
+  border: 0;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all $ccui-motion-duration-mid;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary-border;
+    outline-offset: 1px;
+  }
+
+  &__handle {
+    position: absolute;
+    top: 2px;
+    inset-inline-start: 2px;
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
+    transition: all $ccui-motion-duration-mid ease-in-out;
+  }
+
+  &__inner {
+    display: block;
+    margin: 0 7px 0 25px;
+    color: #ffffff;
+    font-size: $ccui-font-size-sm;
+    transition: margin $ccui-motion-duration-mid;
+
+    span {
+      display: inline-block;
+      line-height: 1;
+    }
+  }
+
+  &--checked {
+    background: $ccui-color-primary;
+
+    .#{$cls-prefix}-switch__handle {
+      inset-inline-start: calc(100% - 20px);
+    }
+
+    .#{$cls-prefix}-switch__inner {
+      margin: 0 25px 0 7px;
+    }
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  &--loading {
+    cursor: default;
+
+    .#{$cls-prefix}-switch__loading {
+      position: absolute;
+      top: 4px;
+      inset-inline-start: 6px;
+      width: 14px;
+      height: 14px;
+      border: 2px solid $ccui-color-primary;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: ccuiSwitchSpin 1s linear infinite;
+    }
+  }
+
+  &--checked.#{$cls-prefix}-switch--loading .#{$cls-prefix}-switch__loading {
+    inset-inline-start: calc(100% - 18px);
+    border-color: #ffffff;
+    border-top-color: transparent;
+  }
+
+  &--small {
+    min-width: 28px;
+    height: 16px;
+    line-height: 16px;
+
+    .#{$cls-prefix}-switch__handle {
+      width: 12px;
+      height: 12px;
+    }
+
+    .#{$cls-prefix}-switch__inner {
+      margin: 0 5px 0 18px;
+      font-size: 12px;
+    }
+
+    &.#{$cls-prefix}-switch--checked {
+      .#{$cls-prefix}-switch__handle {
+        inset-inline-start: calc(100% - 14px);
+      }
+
+      .#{$cls-prefix}-switch__inner {
+        margin: 0 18px 0 5px;
+      }
+    }
+  }
+}
+
+@keyframes ccuiSwitchSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

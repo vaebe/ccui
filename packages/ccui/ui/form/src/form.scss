@@ -1,0 +1,179 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-form {
+  display: block;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
+}
+
+.#{$cls-prefix}-form--vertical .#{$cls-prefix}-form-item {
+  display: block;
+}
+
+.#{$cls-prefix}-form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $ccui-padding-sm $ccui-padding;
+  align-items: flex-start;
+}
+
+.#{$cls-prefix}-form--inline .#{$cls-prefix}-form-item {
+  margin-bottom: 0;
+}
+
+.#{$cls-prefix}-form--disabled {
+  cursor: not-allowed;
+}
+
+.#{$cls-prefix}-form-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: $ccui-margin-lg;
+}
+
+.#{$cls-prefix}-form-item--top {
+  display: block;
+}
+
+.#{$cls-prefix}-form-item--hidden {
+  display: none;
+}
+
+.#{$cls-prefix}-form-item--no-style {
+  display: contents;
+  margin-bottom: 0;
+}
+
+.#{$cls-prefix}-form-item__label {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-height: $ccui-control-height;
+  padding-right: $ccui-padding-sm;
+  color: $ccui-color-text;
+  line-height: $ccui-control-height;
+  text-align: right;
+}
+
+.#{$cls-prefix}-form-item__label--colon::after {
+  margin-inline-start: 2px;
+  content: ':';
+}
+
+.#{$cls-prefix}-form--label-left .#{$cls-prefix}-form-item__label {
+  text-align: left;
+}
+
+.#{$cls-prefix}-form--label-top .#{$cls-prefix}-form-item__label,
+.#{$cls-prefix}-form-item--top .#{$cls-prefix}-form-item__label {
+  display: block;
+  width: auto;
+  min-height: 0;
+  margin-bottom: $ccui-margin-xs;
+  padding-right: 0;
+  line-height: $ccui-line-height-base;
+  text-align: left;
+}
+
+.#{$cls-prefix}-form-item--required .#{$cls-prefix}-form-item__label::before {
+  margin-right: $ccui-margin-xxs;
+  color: $ccui-color-error;
+  content: '*';
+}
+
+.#{$cls-prefix}-form-item__optional {
+  color: $ccui-color-text-secondary;
+  font-weight: 400;
+}
+
+.#{$cls-prefix}-form-item__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.#{$cls-prefix}-form-item__message {
+  margin-top: $ccui-margin-xxs;
+  color: $ccui-color-text-secondary;
+  font-size: $ccui-font-size-sm;
+  line-height: $ccui-line-height-base;
+}
+
+.#{$cls-prefix}-form-item__extra {
+  margin-top: $ccui-margin-xxs;
+  color: $ccui-color-text-secondary;
+  font-size: $ccui-font-size-sm;
+  line-height: $ccui-line-height-base;
+}
+
+.#{$cls-prefix}-form-item--error .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-error;
+}
+
+.#{$cls-prefix}-form-item--error :where(input, textarea, select) {
+  border-color: $ccui-color-error;
+}
+
+.#{$cls-prefix}-form-item--success .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-success;
+}
+
+// hasFeedback / warning 状态 + 栅格 wrapperCol 容器
+.#{$cls-prefix}-form-item__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $ccui-margin-xs;
+}
+
+.#{$cls-prefix}-form-item__control--has-feedback {
+  // 给末尾的图标留位（图标本身 absolute，但 input 右内边距留 24px 让出图标空间）
+  :where(input, textarea, select) {
+    padding-inline-end: 28px;
+  }
+}
+
+.#{$cls-prefix}-form-item__feedback {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: $ccui-font-size-sm;
+  line-height: 1;
+  pointer-events: none;
+
+  &--success {
+    color: $ccui-color-success;
+  }
+
+  &--error {
+    color: $ccui-color-error;
+  }
+
+  &--warning {
+    color: $ccui-color-warning;
+  }
+
+  &--validating {
+    color: $ccui-color-primary;
+    animation: ccui-form-feedback-spin 1s linear infinite;
+  }
+}
+
+@keyframes ccui-form-feedback-spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+// warning 状态文字色（与 error 对齐结构）
+.#{$cls-prefix}-form-item--warning .#{$cls-prefix}-form-item__message {
+  color: $ccui-color-warning;
+}
+
+.#{$cls-prefix}-form-item--warning :where(input, textarea, select) {
+  border-color: $ccui-color-warning;
+}

@@ -43,6 +43,27 @@
     border: inherit;
     transform: rotate(45deg);
     z-index: -1;
+
+    // 旋转 45° 的方块只保留指向外侧的两条边，朝向浮层内部的两条设为 transparent
+    &--top {
+      border-top-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &--bottom {
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+    }
+
+    &--left {
+      border-bottom-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &--right {
+      border-top-color: transparent;
+      border-right-color: transparent;
+    }
   }
 }
 

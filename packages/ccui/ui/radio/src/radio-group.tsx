@@ -1,12 +1,7 @@
-import type {
-  RadioGroupProps,
-} from './radio-types'
+import type { RadioGroupProps } from './radio-types'
 import { computed, defineComponent, provide, toRef } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import {
-  radioGroupInjectionKey,
-  radioGroupProps,
-} from './radio-types'
+import { radioGroupInjectionKey, radioGroupProps } from './radio-types'
 import './radio-group.scss'
 
 export default defineComponent({
@@ -16,7 +11,7 @@ export default defineComponent({
   setup(props: RadioGroupProps, { emit, slots }) {
     const ns = useNamespace('radio-group')
 
-    const emitChangeValue = (val: string) => {
+    const emitChangeValue = (val: string | number) => {
       emit('update:modelValue', val)
       emit('change', val)
     }
@@ -39,7 +34,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={radioGroupClass.value}>
+        <div class={radioGroupClass.value} role="radiogroup" aria-disabled={props.disabled ? true : undefined}>
           {slots.default && slots.default()}
         </div>
       )

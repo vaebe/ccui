@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { Popover } from '../index'
 
@@ -174,10 +174,7 @@ describe('popover', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = createWrapper(
-        { content: 'Test', trigger: 'focus', hideAfter: 0 },
-        { default: '<input type="text" />' },
-      )
+      wrapper = createWrapper({ content: 'Test', trigger: 'focus', hideAfter: 0 }, { default: '<input type="text" />' })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('focus')
       await nextTick()
@@ -237,13 +234,13 @@ describe('popover', () => {
       const beforeHide = vi.fn()
       const hide = vi.fn()
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'hover',
-        'hideAfter': 0,
+        content: 'Test',
+        trigger: 'hover',
+        hideAfter: 0,
         'onBefore-show': beforeShow,
-        'onShow': show,
+        onShow: show,
         'onBefore-hide': beforeHide,
-        'onHide': hide,
+        onHide: hide,
       })
       const trigger = wrapper.find('.ccui-popover__trigger')
       await trigger.trigger('mouseenter')
@@ -266,6 +263,33 @@ describe('popover', () => {
       const popperId = popper.attributes('id')
       expect(trigger.attributes('aria-describedby')).toBe(popperId)
       expect(popper.attributes('role')).toBe('dialog')
+    })
+
+    it('trigger 携带 aria-haspopup / aria-expanded / aria-controls', async () => {
+      wrapper = createWrapper({ content: 'Test', trigger: 'click' })
+      await nextTick()
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      // 关闭态
+      expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+      expect(trigger.attributes('aria-expanded')).toBe('false')
+      expect(trigger.attributes('aria-controls')).toBeUndefined()
+
+      // 打开态
+      await trigger.trigger('click')
+      await nextTick()
+      expect(trigger.attributes('aria-expanded')).toBe('true')
+      const popperId = wrapper.find('.ccui-popover__popper').attributes('id')
+      expect(trigger.attributes('aria-controls')).toBe(popperId)
+    })
+
+    it('有 title 时 popper aria-labelledby 指向 header id', async () => {
+      wrapper = createWrapper({ title: 'Hello', content: 'X', visible: true })
+      await nextTick()
+      const popper = wrapper.find('.ccui-popover__popper')
+      const header = wrapper.find('.ccui-popover__header')
+      const labelledby = popper.attributes('aria-labelledby')
+      expect(labelledby).toBeTruthy()
+      expect(header.attributes('id')).toBe(labelledby)
     })
   })
 
@@ -418,8 +442,8 @@ describe('popover', () => {
       const afterLeave = vi.fn()
 
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'click',
+        content: 'Test',
+        trigger: 'click',
         'onBefore-enter': beforeEnter,
         'onAfter-enter': afterEnter,
         'onBefore-leave': beforeLeave,
@@ -456,8 +480,8 @@ describe('popover', () => {
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
 
       // 调用暴露的 hide 方法
-      // 注意：在受控模式下（有 visible 属性），hide 方法不会直接修改 visible
-      // 所以需要测试非受控模式
+      // 注意：当 visible 由外部状态接管时，hide 方法不会直接修改 visible
+      // 所以这里改测组件内部状态路径
       wrapper.unmount()
 
       wrapper = createWrapper({ content: 'Test' })
@@ -472,6 +496,69 @@ describe('popover', () => {
       wrapper.vm.hide()
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+  })
+
+  // ─────────────────────────────────────────────────────────────
+  // 同义 prop 解析
+  // ─────────────────────────────────────────────────────────────
+
+  describe('同义 prop 解析', () => {
+    it('visible=true 显示浮层', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
+    it('visible=false 隐藏浮层', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: false, content: 'X', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+
+    it('color 应用到 popper inline style', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', color: '#000000', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-popover__popper')
+      expect(popper.attributes('style')).toContain('background-color: rgb(0, 0, 0)')
+    })
+
+    it('showArrow=false 不渲染箭头', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', showArrow: false, teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__arrow').exists()).toBe(false)
+    })
+
+    it('popperClass 注入 popper 根类', async () => {
+      const wrapper = mount(Popover, {
+        props: { visible: true, content: 'X', popperClass: 'custom-popper', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').classes()).toContain('custom-popper')
+    })
+
+    it('update:visible 同步触发', async () => {
+      const wrapper = mount(Popover, {
+        props: { content: 'X', trigger: 'click', teleported: false },
+        slots: { default: '<button>T</button>' },
+      })
+      await wrapper.find('.ccui-popover__trigger').trigger('click')
+      await nextTick()
+      expect(wrapper.emitted('update:visible')).toBeTruthy()
+      expect(wrapper.emitted('update:visible')![0]).toEqual([true])
     })
   })
 })

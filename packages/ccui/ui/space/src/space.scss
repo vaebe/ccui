@@ -1,0 +1,46 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-space {
+  display: inline-flex;
+
+  &--horizontal {
+    flex-direction: row;
+    // 默认垂直居中，避免子项（如 Tag）被 inline-flex 默认的 stretch 撑高；
+    // 显式传入 align 时由后面的 --align-* 覆盖
+    align-items: center;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--align-start {
+    align-items: flex-start;
+  }
+
+  &--align-end {
+    align-items: flex-end;
+  }
+
+  &--align-center {
+    align-items: center;
+  }
+
+  &--align-baseline {
+    align-items: baseline;
+  }
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
+
+  &__item {
+    display: inline-flex;
+  }
+
+  &__split {
+    display: inline-flex;
+    align-items: center;
+    color: $ccui-color-text-quaternary;
+  }
+}

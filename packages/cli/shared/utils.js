@@ -1,137 +1,104 @@
-const { camelCase, upperFirst } = require('lodash');
-const {
-  INDEX_FILE_NAME,
-  UI_DIR,
-  WHITE_LIST_READY_COMPONENTS
-} = require('./constant');
-const { resolve } = require('path');
-const logger = require('./logger');
-const fs = require('fs-extra');
-const traverse = require('@babel/traverse').default;
-const babelParser = require('@babel/parser');
+import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { camelCase, upperFirst } from 'lodash-es'
+import _traverse from '@babel/traverse'
+import * as babelParser from '@babel/parser'
+import { INDEX_FILE_NAME, UI_DIR } from './constant.js'
+import logger from './logger.js'
 
-exports.bigCamelCase = (str) => {
-  return upperFirst(camelCase(str));
-};
+// @babel/traverse 是 CJS，主入口同时挂在 default 与函数本身上。
+const traverse = _traverse.default ?? _traverse
 
-exports.resolveDirFilesInfo = (targetDir, ignoreDirs = []) => {
-  return fs
-    .readdirSync(targetDir)
+export const bigCamelCase = (str) => upperFirst(camelCase(str))
+
+export const resolveDirFilesInfo = (targetDir, ignoreDirs = []) => {
+  return readdirSync(targetDir)
     .filter(
       (dir) =>
-        // 过滤：必须是目录，且不存在与忽略目录内，拥有 INDEX_FILE_NAME
-        fs.statSync(resolve(targetDir, dir)).isDirectory() &&
+        // 必须是目录、不在忽略列表内、且包含 INDEX_FILE_NAME
+        statSync(resolve(targetDir, dir)).isDirectory() &&
         !ignoreDirs.includes(dir) &&
-        fs.existsSync(resolve(targetDir, dir, INDEX_FILE_NAME))
+        existsSync(resolve(targetDir, dir, INDEX_FILE_NAME)),
     )
     .map((dir) => ({
-      name: this.bigCamelCase(dir),
+      name: bigCamelCase(dir),
       dirname: dir,
-      path: resolve(targetDir, dir, INDEX_FILE_NAME)
-    }));
-};
+      path: resolve(targetDir, dir, INDEX_FILE_NAME),
+    }))
+}
 
-exports.parseExportByFileInfo = (fileInfo, ignoreParseError) => {
-  const exportModule = {};
-  const indexContent = fs.readFileSync(fileInfo.path, { encoding: 'utf-8' });
+export const parseExportByFileInfo = (fileInfo, ignoreParseError) => {
+  const exportModule = {}
+  const indexContent = readFileSync(fileInfo.path, { encoding: 'utf-8' })
 
   const ast = babelParser.parse(indexContent, {
     sourceType: 'module',
-    plugins: ['typescript']
-  });
+    plugins: ['typescript'],
+  })
 
-  const exportName = [];
-  let exportDefault = null;
+  const exportName = []
+  let exportDefault = null
 
   traverse(ast, {
     ExportNamedDeclaration({ node }) {
+      if (node.exportKind === 'type') return
+
       if (node.specifiers.length) {
         node.specifiers.forEach((specifier) => {
-          exportName.push(specifier.local.name);
-        });
+          if (specifier.exportKind === 'type') return
+          exportName.push(specifier.local.name)
+        })
       } else if (node.declaration) {
         if (node.declaration.declarations) {
           node.declaration.declarations.forEach((dec) => {
-            exportName.push(dec.id.name);
-          });
+            exportName.push(dec.id.name)
+          })
         } else if (node.declaration.id) {
-          exportName.push(node.declaration.id.name);
+          exportName.push(node.declaration.id.name)
         }
       }
     },
     ExportDefaultDeclaration() {
-      exportDefault = fileInfo.name + 'Install';
-    }
-  });
+      exportDefault = `${fileInfo.name}Install`
+    },
+  })
 
   if (!exportDefault) {
-    logger.error(`${fileInfo.path} must have "export default".`);
-
-    if (ignoreParseError) {
-      return exportModule;
-    } else {
-      process.exit(1);
-    }
+    logger.error(`${fileInfo.path} must have "export default".`)
+    if (ignoreParseError) return exportModule
+    process.exit(1)
   }
 
   if (!exportName.length) {
-    logger.error(`${fileInfo.path} must have "export xxx".`);
-
-    if (ignoreParseError) {
-      return exportModule;
-    } else {
-      process.exit(1);
-    }
+    logger.error(`${fileInfo.path} must have "export xxx".`)
+    if (ignoreParseError) return exportModule
+    process.exit(1)
   }
 
-  exportModule.default = exportDefault;
-  exportModule.parts = exportName;
-  exportModule.fileInfo = fileInfo;
+  exportModule.default = exportDefault
+  exportModule.parts = exportName
+  exportModule.fileInfo = fileInfo
 
-  return exportModule;
-};
+  return exportModule
+}
 
-const parseComponentInfo = (name) => {
-  const componentInfo = {
-    name: this.bigCamelCase(name)
-  };
-  let hasExportDefault = false;
-  const indexContent = fs.readFileSync(resolve(UI_DIR, name, INDEX_FILE_NAME), {
-    encoding: 'utf-8'
-  });
+// 轻量读取组件 index.ts 中 `export default { ... }` 对象内的字面量字段（title / category / status）。
+//
+// 历史上这里走 babel AST（`parseComponentInfo`）顺带强制了 "must have export default" 警告；
+// 现在 sidebar / vue-ccui 生成都基于 discoverComponents 全集，不再做 ready/未 ready gate，
+// 所以只需要按字段名取 string 字面量即可——所有组件 index.ts 都遵循模板规范，正则足够稳健。
+// 取不到字段时返回 undefined，调用方按自身需要 fallback。
+export const readComponentMeta = (name) => {
+  const meta = { name: bigCamelCase(name) }
+  const filepath = resolve(UI_DIR, name, INDEX_FILE_NAME)
+  if (!existsSync(filepath)) return meta
 
-  const ast = babelParser.parse(indexContent, {
-    sourceType: 'module',
-    plugins: ['typescript']
-  });
-  traverse(ast, {
-    ExportDefaultDeclaration({ node }) {
-      hasExportDefault = true;
-      if (node.declaration && node.declaration.properties) {
-        const properties = node.declaration.properties;
-        properties.forEach((pro) => {
-          if (pro.type === 'ObjectProperty') {
-            componentInfo[pro.key.name] = pro.value.value;
-          }
-        });
-      }
-    }
-  });
-
-  if (!hasExportDefault) {
-    logger.warning(
-      `${componentInfo.name} must have "export default" and component info.`
-    );
+  const content = readFileSync(filepath, { encoding: 'utf-8' })
+  // 只匹配 `key: 'value'` / `key: "value"` 三个白名单字段，避免误命中 install / 嵌套对象。
+  for (const key of ['title', 'category', 'status']) {
+    const re = new RegExp(`\\b${key}\\s*:\\s*(['"\`])([^'"\`]*)\\1`)
+    const m = content.match(re)
+    if (m) meta[key] = m[2]
   }
-
-  return componentInfo;
-};
-
-exports.parseComponentInfo = parseComponentInfo;
-
-exports.isReadyToRelease = (componentName) => {
-  return (
-    parseComponentInfo(componentName).status === '100%' ||
-    WHITE_LIST_READY_COMPONENTS.includes(componentName)
-  );
-};
+  return meta
+}

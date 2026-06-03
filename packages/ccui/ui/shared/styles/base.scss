@@ -1,0 +1,8 @@
+// ccui 组件库基础样式重置
+// 全局清除 ul / ol 默认列表标记（小圆点 / 序号）与内外边距
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

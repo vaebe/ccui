@@ -1,0 +1,218 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-input-search {
+  display: inline-flex;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: $ccui-font-size;
+
+  &__input-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: $ccui-size-md;
+    padding: 0 8px;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    color: $ccui-color-text;
+    transition:
+      border-color $ccui-motion-duration-mid,
+      box-shadow $ccui-motion-duration-mid;
+
+    &:hover {
+      border-color: $ccui-color-primary-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-primary;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+  }
+
+  &--with-button &__input-wrap {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+  }
+
+  &--large &__input-wrap {
+    height: $ccui-size-lg;
+    font-size: $ccui-font-size-lg;
+  }
+
+  &--small &__input-wrap {
+    height: $ccui-size-sm;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &--disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-disabled-line;
+    color: $ccui-disabled-text;
+    cursor: not-allowed;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+
+    &:focus-within {
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+
+    &:focus-within {
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+
+  &__inner {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: inherit;
+    font: inherit;
+    font-family: inherit;
+    padding: 4px 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__prefix,
+  &__suffix {
+    display: inline-flex;
+    align-items: center;
+    color: $ccui-color-text-tertiary;
+    gap: 4px;
+  }
+
+  &__prefix {
+    margin-inline-end: 4px;
+  }
+
+  &__suffix {
+    margin-inline-start: 4px;
+  }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: $ccui-color-text-tertiary;
+    font-style: normal;
+    font-size: $ccui-font-size-icon;
+    line-height: 1;
+
+    &:hover {
+      color: $ccui-color-text-secondary;
+    }
+  }
+
+  &__inline-icon,
+  &__search-icon {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-icon;
+
+    &:hover {
+      color: $ccui-color-primary;
+    }
+  }
+
+  // 搜索按钮（primary 背景）里的图标应为白色且稍大，跟随按钮文字色
+  &__button &__search-icon {
+    color: inherit;
+    font-size: 18px;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  &__loading-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: ccui-input-search-rotate 0.8s linear infinite;
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    padding: 0 15px;
+    background-color: $ccui-color-primary;
+    color: #fff;
+    border: 1px solid $ccui-color-primary;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: $ccui-border-radius;
+    border-bottom-right-radius: $ccui-border-radius;
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+    transition:
+      background-color $ccui-motion-duration-mid,
+      border-color $ccui-motion-duration-mid;
+
+    &:hover:not(:disabled) {
+      background-color: $ccui-color-primary-hover;
+      border-color: $ccui-color-primary-hover;
+    }
+
+    &:active:not(:disabled) {
+      background-color: $ccui-color-primary-active;
+      border-color: $ccui-color-primary-active;
+    }
+
+    &--icon-only {
+      padding: 0 12px;
+    }
+
+    &--disabled,
+    &:disabled {
+      background-color: $ccui-disabled-bg;
+      border-color: $ccui-disabled-line;
+      color: $ccui-disabled-text;
+      cursor: not-allowed;
+    }
+  }
+
+  &--large &__button {
+    height: $ccui-size-lg;
+  }
+
+  &--small &__button {
+    height: $ccui-size-sm;
+  }
+}
+
+@keyframes ccui-input-search-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

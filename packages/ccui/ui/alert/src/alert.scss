@@ -1,0 +1,113 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-alert {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: $ccui-font-size;
+  line-height: $ccui-line-height-base;
+  border-radius: $ccui-border-radius;
+  word-wrap: break-word;
+  color: $ccui-color-text;
+
+  &__icon {
+    display: inline-flex;
+    margin-inline-end: 8px;
+    font-size: $ccui-font-size-icon;
+    line-height: 0;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__message {
+    color: $ccui-color-text;
+  }
+
+  &__description {
+    display: none;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+  }
+
+  &__close {
+    margin-inline-start: 8px;
+    padding: 0;
+    color: $ccui-color-text-tertiary;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+    line-height: 1;
+
+    &:hover {
+      color: $ccui-color-text;
+    }
+  }
+
+  &--success {
+    background: $ccui-color-success-bg;
+    border: 1px solid $ccui-color-success-border;
+
+    .#{$cls-prefix}-alert__icon {
+      color: $ccui-color-success;
+    }
+  }
+
+  &--info {
+    background: $ccui-color-info-bg;
+    border: 1px solid $ccui-color-info-border;
+
+    .#{$cls-prefix}-alert__icon {
+      color: $ccui-color-info;
+    }
+  }
+
+  &--warning {
+    background: $ccui-color-warning-bg;
+    border: 1px solid $ccui-color-warning-border;
+
+    .#{$cls-prefix}-alert__icon {
+      color: $ccui-color-warning;
+    }
+  }
+
+  &--error {
+    background: $ccui-color-error-bg;
+    border: 1px solid $ccui-color-error-border;
+
+    .#{$cls-prefix}-alert__icon {
+      color: $ccui-color-error;
+    }
+  }
+
+  &--with-description {
+    align-items: flex-start;
+    padding: 16px;
+
+    .#{$cls-prefix}-alert__icon {
+      margin-top: 4px;
+      font-size: 24px;
+    }
+
+    .#{$cls-prefix}-alert__message {
+      margin-bottom: 4px;
+      color: $ccui-color-text-heading;
+      font-size: $ccui-font-size-lg;
+    }
+
+    .#{$cls-prefix}-alert__description {
+      display: block;
+    }
+  }
+
+  &--banner {
+    margin-bottom: 0;
+    border: 0;
+    border-radius: 0;
+  }
+}

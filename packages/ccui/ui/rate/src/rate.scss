@@ -2,7 +2,10 @@
 
 .#{$cls-prefix}-rate {
   display: inline-flex;
-  align-content: center;
+  align-items: center;
+  color: $ccui-color-warning;
+  font-size: 20px;
+  line-height: 1;
 
   &--read-only {
     span {
@@ -12,27 +15,46 @@
 
   &__icon {
     position: relative;
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
-    color: #e6e6e6;
+    width: 20px;
+    height: 20px;
+    margin-inline-end: 8px;
+    color: $ccui-color-fill;
     cursor: pointer;
-    fill: #e6e6e6;
+    fill: currentColor;
+    transition:
+      color $ccui-motion-duration-mid $ccui-motion-ease-in-out,
+      transform $ccui-motion-duration-mid $ccui-motion-ease-in-out;
 
     span {
       position: absolute;
       top: 0;
       left: 0;
+      width: 20px;
+      height: 20px;
       overflow: hidden;
+    }
+
+    svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    &:hover {
+      transform: scale(1.1);
     }
   }
 
   &--active {
-    color: #7693f5;
-    fill: #6a81ed;
+    color: $ccui-color-warning;
+    fill: currentColor;
   }
 
   &__info {
-    margin: 0;
+    margin-inline-start: 8px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
   }
 }

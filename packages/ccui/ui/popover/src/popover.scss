@@ -31,31 +31,6 @@
       border: 1px solid #e4e7ed;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
-
-    // 位置相关的箭头样式
-    &--top .ccui-popover__arrow {
-      bottom: -4px;
-      border-top-color: inherit;
-      border-bottom: none;
-    }
-
-    &--bottom .ccui-popover__arrow {
-      top: -4px;
-      border-bottom-color: inherit;
-      border-top: none;
-    }
-
-    &--left .ccui-popover__arrow {
-      right: -4px;
-      border-left-color: inherit;
-      border-right: none;
-    }
-
-    &--right .ccui-popover__arrow {
-      left: -4px;
-      border-right-color: inherit;
-      border-left: none;
-    }
   }
 
   &__header {
@@ -86,6 +61,28 @@
     border: inherit;
     transform: rotate(45deg);
     z-index: -1;
+
+    // 箭头方位以 flip 翻转后的实际方位为准：旋转 45° 的方块只保留指向外侧的两条边，
+    // 朝向浮层内部（被浮层盖住）的两条设为 transparent，避免出现多余边框
+    &--top {
+      border-top-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &--bottom {
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+    }
+
+    &--left {
+      border-bottom-color: transparent;
+      border-left-color: transparent;
+    }
+
+    &--right {
+      border-top-color: transparent;
+      border-right-color: transparent;
+    }
   }
 }
 

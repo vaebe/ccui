@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { Tooltip } from '../index'
 
@@ -72,10 +72,7 @@ describe('tooltip', () => {
     })
 
     it('支持插槽内容', async () => {
-      wrapper = createWrapper(
-        { visible: true },
-        { content: '<div class="custom-content">Custom content</div>' },
-      )
+      wrapper = createWrapper({ visible: true }, { content: '<div class="custom-content">Custom content</div>' })
       await nextTick()
       expect(wrapper.find('.custom-content').exists()).toBe(true)
       expect(wrapper.find('.custom-content').text()).toBe('Custom content')
@@ -159,10 +156,7 @@ describe('tooltip', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = createWrapper(
-        { content: 'Test', trigger: 'focus', hideAfter: 0 },
-        { default: '<input type="text" />' },
-      )
+      wrapper = createWrapper({ content: 'Test', trigger: 'focus', hideAfter: 0 }, { default: '<input type="text" />' })
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       await trigger.trigger('focus')
       await nextTick()
@@ -225,13 +219,13 @@ describe('tooltip', () => {
       const beforeHide = vi.fn()
       const hide = vi.fn()
       wrapper = createWrapper({
-        'content': 'Test',
-        'trigger': 'hover',
-        'hideAfter': 0,
+        content: 'Test',
+        trigger: 'hover',
+        hideAfter: 0,
         'onBefore-show': beforeShow,
-        'onShow': show,
+        onShow: show,
         'onBefore-hide': beforeHide,
-        'onHide': hide,
+        onHide: hide,
       })
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       await trigger.trigger('mouseenter')
@@ -252,8 +246,74 @@ describe('tooltip', () => {
       const trigger = wrapper.find('.ccui-tooltip__trigger')
       const popper = wrapper.find('.ccui-tooltip__popper')
       expect(trigger.attributes('aria-label')).toBe('Test tooltip')
-      expect(trigger.attributes('aria-describedby')).toBe('ccui-tooltip__popper')
+      // aria-describedby 匹配实际的 popper id（格式 ccui-tooltip__popper-{n}）
+      const popperId = popper.attributes('id')
+      expect(popperId).toMatch(/^ccui-tooltip__popper-\d+$/)
+      expect(trigger.attributes('aria-describedby')).toBe(popperId)
       expect(popper.attributes('role')).toBe('tooltip')
+    })
+
+    it('多个 tooltip 实例 popper id 唯一', async () => {
+      const w1 = createWrapper({ content: 'A', visible: true })
+      const w2 = createWrapper({ content: 'B', visible: true })
+      await nextTick()
+      const id1 = w1.find('.ccui-tooltip__popper').attributes('id')
+      const id2 = w2.find('.ccui-tooltip__popper').attributes('id')
+      expect(id1).toBeTruthy()
+      expect(id2).toBeTruthy()
+      expect(id1).not.toBe(id2)
+      w1.unmount()
+      w2.unmount()
+    })
+  })
+
+  describe('visible & 样式', () => {
+    it('visible=true 显示浮层', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, content: 'X' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(true)
+    })
+
+    it('visible=false 隐藏浮层', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: false, content: 'X' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(false)
+    })
+
+    it('color 应用到 popper 背景 inline style', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, content: 'X', color: '#ff7875' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      const popper = wrapper.find('.ccui-tooltip__popper')
+      expect(popper.attributes('style')).toContain('background-color: rgb(255, 120, 117)')
+    })
+
+    it('popperClass 注入 popper 根类', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { visible: true, content: 'X', popperClass: 'custom-popper' },
+        slots: { default: '<button>T</button>' },
+      })
+      await nextTick()
+      expect(wrapper.find('.ccui-tooltip__popper').classes()).toContain('custom-popper')
+    })
+
+    it('update:visible 同步触发', async () => {
+      const wrapper = mount(Tooltip, {
+        props: { content: 'X', trigger: 'click' },
+        slots: { default: '<button>T</button>' },
+      })
+      await wrapper.find('.ccui-tooltip__trigger').trigger('click')
+      await nextTick()
+      expect(wrapper.emitted('update:visible')).toBeTruthy()
+      expect(wrapper.emitted('update:visible')![0]).toEqual([true])
     })
   })
 })

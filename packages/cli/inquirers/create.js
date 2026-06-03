@@ -1,6 +1,6 @@
-const { CREATE_SUPPORT_TYPES } = require('../shared/constant')
+import { CREATE_SUPPORT_TYPES } from '../shared/constant.js'
 
-exports.selectCreateType = () => ({
+export const selectCreateType = () => ({
   name: 'type',
   type: 'list',
   message: '（必填）请选择创建类型：',

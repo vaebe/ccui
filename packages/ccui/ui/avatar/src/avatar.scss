@@ -2,18 +2,24 @@
 
 .#{$cls-prefix}-avatar {
   display: inline-block;
+  vertical-align: middle;
 
   &__style {
-    display: inline-block;
-    color: rgb(0 0 0 / 50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: $ccui-color-text-light-solid;
+    background-color: $ccui-color-fill;
     text-align: center;
+    line-height: 1;
+    overflow: hidden;
   }
 
   &--background-0 {
-    background-color: #ff8b87;
+    background-color: #f56a00;
   }
 
   &--background-1 {
-    background-color: #7693f5;
+    background-color: $ccui-color-primary;
   }
 }

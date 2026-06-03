@@ -1,0 +1,17 @@
+import type { App } from 'vue'
+import Progress from './src/progress'
+
+Progress.install = function (app: App): void {
+  app.component(Progress.name!, Progress)
+}
+
+export { Progress }
+
+export default {
+  title: 'Progress 进度条',
+  category: '反馈',
+  status: '100%',
+  install(app: App): void {
+    app.component(Progress.name!, Progress)
+  },
+}

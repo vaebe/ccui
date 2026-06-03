@@ -1,0 +1,457 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-date-picker {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __input-wrap
+  @include form-control-variants-on('.#{$cls-prefix}-date-picker__input-wrap');
+
+  &--small &__input-wrap {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large &__input-wrap {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+  }
+
+  &__input-wrap {
+    display: flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $ccui-primary;
+    }
+  }
+
+  &.is-disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &.is-open &__input-wrap {
+    border-color: $ccui-primary;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    padding: 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1050;
+    width: 280px;
+    padding: 8px;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow: $ccui-box-shadow-secondary;
+    box-sizing: border-box;
+
+    &--with-time {
+      width: auto;
+      min-width: 460px;
+    }
+  }
+
+  &__body-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__date-side {
+    flex: 1;
+    min-width: 264px;
+  }
+
+  &__time-columns {
+    display: flex;
+    border-left: 1px solid $ccui-color-border-secondary;
+    padding-left: 8px;
+  }
+
+  &__time-column {
+    display: flex;
+    flex-direction: column;
+    width: 56px;
+    max-height: 216px;
+    overflow-y: auto;
+    list-style: none;
+
+    & + & {
+      border-left: 1px dashed $ccui-color-border-secondary;
+    }
+  }
+
+  &__time-cell {
+    flex: 0 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--selected {
+      background-color: $ccui-color-fill-secondary;
+      font-weight: 500;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &__main-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  &__main-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__presets {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    width: 100px;
+    border-right: 1px solid $ccui-color-border-secondary;
+    overflow-y: auto;
+    max-height: 280px;
+  }
+
+  &__preset-item {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-primary;
+    }
+  }
+
+  &--with-presets &__panel,
+  &__panel--with-presets {
+    width: auto;
+    min-width: 380px;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__extra-footer {
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    line-height: 1.5;
+  }
+
+  &__footer-btn {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: $ccui-border-radius;
+    background: transparent;
+    color: $ccui-primary;
+    font-size: $ccui-font-size-sm;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--ok {
+      background-color: $ccui-primary;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background-color: $ccui-color-fill-secondary;
+        color: $ccui-primary;
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  &__panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px 8px;
+    border-bottom: 1px solid $ccui-color-border-secondary;
+  }
+
+  &__panel-label {
+    flex: 1;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $ccui-color-text-tertiary;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: $ccui-border-radius;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel-label {
+    &--clickable {
+      cursor: pointer;
+      border-radius: $ccui-border-radius;
+      padding: 2px 6px;
+
+      &:hover {
+        background-color: $ccui-color-fill-tertiary;
+      }
+    }
+  }
+
+  &__week-row,
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &__week-row {
+    padding: 8px 0 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    text-align: center;
+  }
+
+  &__week-row--with-week,
+  &__grid--with-week {
+    grid-template-columns: 32px repeat(7, 1fr);
+  }
+
+  &__grid--month {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__grid--year {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__grid--quarter {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &__week-cell {
+    padding: 4px 0;
+  }
+
+  &__week-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+
+    &--selected {
+      color: $ccui-primary;
+      font-weight: 500;
+    }
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    cursor: pointer;
+    color: $ccui-text;
+
+    &--outside {
+      color: $ccui-color-text-disabled;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+      background-color: $ccui-color-fill-quaternary;
+    }
+
+    &--month,
+    &--year,
+    &--quarter {
+      height: 56px;
+    }
+  }
+
+  &__cell-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: $ccui-border-radius;
+    transition: background-color 0.2s;
+  }
+
+  &__cell--month &__cell-inner,
+  &__cell--year &__cell-inner,
+  &__cell--quarter &__cell-inner {
+    width: auto;
+    min-width: 60px;
+    padding: 0 8px;
+    height: 24px;
+  }
+
+  &__cell:not(&__cell--disabled):hover &__cell-inner {
+    background-color: $ccui-color-fill-tertiary;
+  }
+
+  &__cell--today &__cell-inner {
+    border: 1px solid $ccui-primary;
+  }
+
+  &__cell--in-week &__cell-inner {
+    background-color: $ccui-color-fill-tertiary;
+  }
+
+  &__cell--selected &__cell-inner {
+    background-color: $ccui-primary;
+    color: #fff;
+  }
+
+  &__cell--selected:hover &__cell-inner {
+    background-color: $ccui-primary;
+  }
+
+  &__cell--focused &__cell-inner {
+    box-shadow: inset 0 0 0 1px $ccui-primary;
+  }
+
+  &--picker-week &__cell--in-week:hover &__cell-inner {
+    background-color: $ccui-color-fill-secondary;
+  }
+}
+
+.#{$cls-prefix}-date-picker-fade-enter-active,
+.#{$cls-prefix}-date-picker-fade-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.#{$cls-prefix}-date-picker-fade-enter-from,
+.#{$cls-prefix}-date-picker-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

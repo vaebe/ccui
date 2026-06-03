@@ -1,7 +1,8 @@
 import type { ExtractPropTypes, PropType } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type FitType = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down'
-export type GenderType = 'male' | 'female' | string
+export type GenderType = 'male' | 'female' | (string & {})
 
 export const avatarProps = {
   name: {
@@ -35,6 +36,20 @@ export const avatarProps = {
   fit: {
     type: String as PropType<FitType>,
     default: 'cover',
+  },
+  /**
+   * 语义化 DOM className 注入。可用 key：`root` / `image` / `text`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

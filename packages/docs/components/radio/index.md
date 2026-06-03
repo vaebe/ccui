@@ -1,209 +1,247 @@
 # Radio 单选框
 
-单选框组件
+在多个备选项中选中一个。
 
 ## 何时使用
 
-用于在多个备选项中选中单个状态。
+- 在一组备选项中选中单一选项。
+- 与 `<c-radio-group>` 搭配，在多个 Radio 之间形成互斥关系。
 
-## Radio基本用法
+## 基本使用
+
+直接 `v-model` 到字符串，与每个 `<c-radio>` 的 `label` 比对决定选中状态。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent, ref } from 'vue'
+<script setup>
+import { ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const radioActive = ref('1')
-    const beforeChange = (val) => {
-      console.log(val, 'radio 禁止切换')
-      return false
-    }
-
-    return {
-      radioActive,
-      beforeChange
-    }
-  }
-})
+const value = ref('apple')
 </script>
 
 <template>
-  <c-radio v-model="radioActive" label="1">
-    这是一个单选按钮
-  </c-radio>
-  <c-radio v-model="radioActive" label="2" disabled>
-    禁用
-  </c-radio>
-  <c-radio v-model="radioActive" label="3" :before-change="beforeChange">
-    beforeChange禁止切换
-  </c-radio>
-  <c-radio v-model="radioActive" label="4">
-    这也是个单选按钮
-  </c-radio>
+  <c-radio v-model="value" label="apple">苹果</c-radio>
+  <c-radio v-model="value" label="banana">香蕉</c-radio>
+  <c-radio v-model="value" label="orange">橙子</c-radio>
+  <p style="margin-top: 8px; color: #666">当前：{{ value }}</p>
 </template>
 ```
 
 :::
 
-## RadioGroup基本用法
+## 禁用
 
-用于展示一组多个 radio 单选框
+`disabled` 让单项不可选；常用于"权限不足 / 暂不开放"。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent, ref } from 'vue'
+<script setup>
+import { ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const info = ref('')
-    const checkedRadio = ref('3')
-    const checkedRadio1 = ref('1')
-    const beforeChange = (val) => {
-      info.value = val === '3' ? `label ${val}  radio 禁止切换` : `label ${val}`
-      return val !== '3'
-    }
-
-    return {
-      info,
-      checkedRadio,
-      checkedRadio1,
-      beforeChange
-    }
-  }
-})
+const value = ref('a')
 </script>
 
 <template>
-  <div>
-    <div>
-      <h4>基础示例</h4>
-      <c-radio-group v-model="checkedRadio" :before-change="beforeChange">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="3">
-          禁止切换
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
-      </c-radio-group>
-    </div>
-
-    <div class="mt10">
-      <h4>全部禁用</h4>
-      <c-radio-group v-model="checkedRadio1" :before-change="beforeChange" disabled>
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-      </c-radio-group>
-    </div>
-
-    <div class="mt10">
-      <h4>column 排列</h4>
-      <c-radio-group v-model="checkedRadio1" direction="column">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
-      </c-radio-group>
-    </div>
-
-    <div class="mt10">
-      <h4>row 排列</h4>
-      <c-radio-group v-model="checkedRadio1" direction="row">
-        <c-radio label="1">
-          上海
-        </c-radio>
-        <c-radio label="2">
-          北京
-        </c-radio>
-        <c-radio label="4">
-          广州
-        </c-radio>
-      </c-radio-group>
-    </div>
-
-    <p>提示信息：{{ info }}</p>
-  </div>
+  <c-radio v-model="value" label="a">可选 A</c-radio>
+  <c-radio v-model="value" label="b" disabled>禁用 B</c-radio>
+  <c-radio v-model="value" label="c">可选 C</c-radio>
 </template>
+```
 
-<style scoped>
-.mt10 {
-  margin-top: 10px;
+:::
+
+## 单选框组
+
+`<c-radio-group>` 把一组 Radio 收纳到统一的 `v-model` 下，免去给每个 Radio 单独绑值。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const city = ref('shanghai')
+</script>
+
+<template>
+  <c-radio-group v-model="city">
+    <c-radio label="beijing">北京</c-radio>
+    <c-radio label="shanghai">上海</c-radio>
+    <c-radio label="guangzhou">广州</c-radio>
+    <c-radio label="shenzhen">深圳</c-radio>
+  </c-radio-group>
+  <p style="margin-top: 8px; color: #666">已选：{{ city }}</p>
+</template>
+```
+
+:::
+
+## 排列方向
+
+`direction` 切换纵向（默认）/ 横向。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const a = ref('1')
+const b = ref('1')
+</script>
+
+<template>
+  <p style="color: #666; margin: 0 0 4px">column（默认）</p>
+  <c-radio-group v-model="a" direction="column">
+    <c-radio label="1">选项 1</c-radio>
+    <c-radio label="2">选项 2</c-radio>
+    <c-radio label="3">选项 3</c-radio>
+  </c-radio-group>
+
+  <p style="color: #666; margin: 16px 0 4px">row</p>
+  <c-radio-group v-model="b" direction="row">
+    <c-radio label="1">选项 1</c-radio>
+    <c-radio label="2">选项 2</c-radio>
+    <c-radio label="3">选项 3</c-radio>
+  </c-radio-group>
+</template>
+```
+
+:::
+
+## 整组禁用
+
+在 `<c-radio-group>` 上加 `disabled` 一次性禁用整组。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const v = ref('1')
+</script>
+
+<template>
+  <c-radio-group v-model="v" disabled direction="row">
+    <c-radio label="1">已选不可改</c-radio>
+    <c-radio label="2">禁用</c-radio>
+    <c-radio label="3">禁用</c-radio>
+  </c-radio-group>
+</template>
+```
+
+:::
+
+## 切换前钩子
+
+`before-change` 返回 `false` / `Promise<false>` 时阻止本次切换，常用于"二次确认"或"先做异步校验"。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const v = ref('safe')
+const log = ref('（无）')
+
+function beforeChange(val) {
+  log.value = `尝试切换到 "${val}"`
+  if (val === 'danger') {
+    log.value += ' → 已被钩子阻止'
+    return false
+  }
+  return true
 }
-</style>
+</script>
+
+<template>
+  <c-radio-group v-model="v" :before-change="beforeChange" direction="row">
+    <c-radio label="safe">安全</c-radio>
+    <c-radio label="warn">注意</c-radio>
+    <c-radio label="danger">危险（被禁）</c-radio>
+  </c-radio-group>
+  <p style="margin-top: 8px; color: #666">日志：{{ log }}</p>
+</template>
 ```
 
 :::
 
-## Radio参数
+## 监听 change
 
-| 参数          | 类型                                  | 默认  | 说明                                                                            |
-| ------------- | ------------------------------------- | ----- | ------------------------------------------------------------------------------- |
-| v-model       | \'string' \'number'                   | -     | 必选 radio 的绑定值                                                             |
-| label         | \'string' \'number'                   | -     | 必选，单选项值                                                                  |
-| name          | string                                | -     | 原生 name 属性                                                                  |
-| disabled      | boolean                               | false | 可选，是否禁用该单选项                                                          |
-| before-change | [BeforeChangeType](#beforechangetype) | -     | 可选，radio 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 radio 切换 |
+`change` 事件返回新值，用于联动其他状态。
 
-## Radio事件
+:::demo
 
-| 事件   | 类型                      | 说明                             |
-| ------ | ------------------------- | -------------------------------- |
-| change | `(value: string) => void` | 单选项值改变时触发，返回选中的值 |
+```vue
+<script setup>
+import { ref } from 'vue'
 
-## Radio类型定义
+const v = ref('s')
+const lastChange = ref('（无）')
 
-### BeforeChangeType
+function onChange(val) {
+  lastChange.value = val
+}
+</script>
 
-```ts
-export type BeforeChangeType = (value: string) => boolean | Promise<boolean>
+<template>
+  <c-radio-group v-model="v" direction="row" @change="onChange">
+    <c-radio label="s">小</c-radio>
+    <c-radio label="m">中</c-radio>
+    <c-radio label="l">大</c-radio>
+  </c-radio-group>
+  <p style="margin-top: 8px; color: #666">最近 change：{{ lastChange }}</p>
+</template>
 ```
 
-## Radio插槽
+:::
 
-默认插槽
+## API
 
-## RadioGroup参数
+### Radio Props
 
-| 参数                  | 类型                                  | 默认     | 说明                                                                            |
-| --------------------- | ------------------------------------- | -------- | ------------------------------------------------------------------------------- |
-| model-value / v-model | string / number                       | -        | 必选 radio 的绑定值                                                             |
-| disabled              | boolean                               | false    | 可选，是否禁用该单选项                                                          |
-| direction             | [DirectionType](#directionType)       | 'column' | 可选，设置横向或纵向排列                                                        |
-| before-change         | [BeforeChangeType](#beforeChangeType) | -        | 可选，radio 切换前的回调函数，返回 boolean 类型，返回 false 可以阻止 radio 切换 |
+| 参数         | 类型               | 默认值  | 说明                                                        |
+| ------------ | ------------------ | ------- | ----------------------------------------------------------- |
+| modelValue   | `string \| number` | —       | 必选，绑定值（与 `label` 比较决定是否选中），支持 `v-model` |
+| label        | `string \| number` | `''`    | 必选，本项的值                                              |
+| name         | string             | `''`    | 原生 `name` 属性                                            |
+| disabled     | boolean            | `false` | 是否禁用                                                    |
+| beforeChange | `BeforeChangeType` | —       | 切换前的钩子，返回 `false` 阻止切换                         |
 
-## RadioGroup类型定义
+### Radio Events
 
-### DirectionType
+| 事件   | 回调签名          | 说明         |
+| ------ | ----------------- | ------------ |
+| change | `(value: string)` | 值改变时触发 |
+
+### RadioGroup Props
+
+| 参数         | 类型               | 默认值     | 说明                             |
+| ------------ | ------------------ | ---------- | -------------------------------- |
+| modelValue   | `string \| number` | —          | 必选，被选中的值，支持 `v-model` |
+| disabled     | boolean            | `false`    | 整组禁用                         |
+| direction    | `DirectionType`    | `'column'` | 排列方向（`row` / `column`）     |
+| beforeChange | `BeforeChangeType` | —          | 切换前的钩子，返回 `false` 阻止  |
+
+### RadioGroup Events
+
+| 事件   | 回调签名          | 说明         |
+| ------ | ----------------- | ------------ |
+| change | `(value: string)` | 值改变时触发 |
+
+### Slots
+
+| 名称    | 说明           |
+| ------- | -------------- |
+| default | 单选框右侧文本 |
+
+### 类型定义
 
 ```ts
-export type DirectionType = 'row' | 'column'
+type BeforeChangeType = (value: string) => boolean | Promise<boolean>
+type DirectionType = 'row' | 'column'
 ```
-
-## RadioGroup事件
-
-| 事件   | 类型 | 说明                             |
-| ------ | ---- | -------------------------------- |
-| change |      | 单选项值改变时触发，返回选中的值 |
-
-## RadioGroup插槽
-
-默认插槽

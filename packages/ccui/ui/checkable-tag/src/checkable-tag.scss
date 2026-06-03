@@ -1,0 +1,79 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-checkable-tag {
+  display: inline-flex;
+  align-items: center;
+  height: auto;
+  padding-inline: 8px;
+  margin-inline-end: 8px;
+  font-size: $ccui-font-size-sm;
+  line-height: 22px;
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: $ccui-border-radius-sm;
+  color: $ccui-color-text;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color $ccui-motion-duration-mid,
+    color $ccui-motion-duration-mid,
+    border-color $ccui-motion-duration-mid;
+
+  &:hover {
+    color: $ccui-color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary;
+    outline-offset: 1px;
+  }
+
+  &--checked {
+    background-color: $ccui-color-primary;
+    color: $ccui-color-white;
+
+    &:hover {
+      background-color: $ccui-color-primary-hover;
+      color: $ccui-color-white;
+    }
+
+    &:active {
+      background-color: $ccui-color-primary-active;
+    }
+  }
+
+  &--disabled {
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &.#{$cls-prefix}-checkable-tag--checked {
+      background-color: $ccui-color-fill;
+      color: $ccui-color-text-disabled;
+    }
+  }
+
+  &--large {
+    font-size: $ccui-font-size;
+    line-height: 28px;
+    padding-inline: 10px;
+  }
+
+  &--small {
+    font-size: $ccui-font-size-sm;
+    line-height: 18px;
+    padding-inline: 6px;
+  }
+}
+
+.#{$cls-prefix}-checkable-tag-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0;
+
+  &--disabled {
+    pointer-events: none;
+  }
+}

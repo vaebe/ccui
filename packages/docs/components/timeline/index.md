@@ -7,7 +7,7 @@
 - 当有一系列信息需按时间排列时
 - 需要有一条时间轴进行视觉上的串联时
 
-## 基本用法
+## 基本使用
 
 Timeline 可拆分成多个按照时间戳排列的活动，时间戳是其区分于其他控件的重要特征。
 
@@ -20,7 +20,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -40,8 +40,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -59,7 +58,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -82,8 +81,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -101,7 +99,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -130,8 +128,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -149,7 +146,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -172,8 +169,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::
@@ -191,7 +187,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   setup() {
     return {}
-  }
+  },
 })
 </script>
 
@@ -200,7 +196,9 @@ export default defineComponent({
     <c-timeline>
       <c-timeline-item timestamp="2025/09/09">
         <template #dot>
-          <div style="width: 16px; height: 16px; background: #409eff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <div
+            style="width: 16px; height: 16px; background: #409eff; border-radius: 50%; display: flex; align-items: center; justify-content: center;"
+          >
             <span style="color: white; font-size: 10px;">✓</span>
           </div>
         </template>
@@ -213,8 +211,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
 ```
 
 :::

@@ -1,0 +1,71 @@
+@use '../../style-var/index.scss' as *;
+
+// 对标 Ant Design border-beam 的实现：mask 取边框环 + offset-path 矩形路径（固定 round 100px，
+// 大圆角让过弯旋转平滑无卡顿）+ offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
+.#{$cls-prefix}-border-beam {
+  position: relative;
+  border-radius: var(--ccui-bb-radius);
+
+  &__effect {
+    display: none;
+    position: absolute;
+    inset: calc(-1 * var(--ccui-bb-outset));
+    z-index: 1;
+    padding: var(--ccui-bb-border-width); // 边框 / 光带粗细
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: var(--ccui-bb-radius);
+
+    // 只显示 padding 环（边框）：content-box 实心 + 整体实心，取异或得到边框环
+    @supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+
+      @supports (offset-path: rect(0 auto auto 0 round 1px)) {
+        display: block;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100px;
+          aspect-ratio: 1 / 1;
+          opacity: 0.95;
+          background-image: var(
+            --ccui-bb-beam-gradient,
+            linear-gradient(to left, #{$ccui-color-primary} 0%, #{$ccui-color-primary-hover} 70%, transparent)
+          );
+          offset-anchor: 90% 50%;
+          offset-distance: 0%;
+          offset-path: rect(0 auto auto 0 round 100px);
+          offset-rotate: auto;
+          animation: ccui-border-beam-move var(--ccui-bb-duration) linear infinite;
+          will-change: offset-distance;
+        }
+      }
+    }
+  }
+}
+
+@keyframes ccui-border-beam-move {
+  from {
+    offset-distance: 0%;
+  }
+
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-border-beam__effect::before {
+    display: none;
+  }
+}

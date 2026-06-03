@@ -5,22 +5,22 @@
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  background-color: $ccui-base-bg;
-  border: 1px solid $ccui-line;
+  background-color: $ccui-color-bg-container;
+  border: 1px solid $ccui-color-border;
   border-radius: $ccui-border-radius;
-  color: $ccui-text;
-  font-size: 14px;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
   transition:
-    border-color $ccui-animation-duration-base,
-    box-shadow $ccui-animation-duration-base;
+    border-color $ccui-motion-duration-mid,
+    box-shadow $ccui-motion-duration-mid;
 
   &:hover {
-    border-color: $ccui-brand-hover;
+    border-color: $ccui-color-primary-hover;
   }
 
   &:focus-within {
-    border-color: $ccui-brand;
-    box-shadow: 0 0 0 2px rgba($ccui-brand, 0.2);
+    border-color: $ccui-color-primary;
+    box-shadow: 0 0 0 2px $ccui-control-outline;
   }
 
   &--disabled {
@@ -32,6 +32,47 @@
     &:hover {
       border-color: $ccui-disabled-line;
     }
+  }
+
+  // ── variant 形态（outlined / filled / borderless / underlined）──
+  // outlined 是默认；上面的边框 / 背景 / hover / focus 规则即 outlined 形态。
+  // 其余 3 个 variant 走共享 mixin（style-var/_form-control-variant.scss）。
+  @include form-control-variants;
+
+  // ── 校验状态（status='error'|'warning'）──
+  &--status-error {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &:focus-within {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+  }
+
+  // ── 字符计数 ────────────────────────────────────────
+  &__count {
+    margin-inline-start: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    user-select: none;
+    pointer-events: none;
   }
 
   &--large {

@@ -13,8 +13,7 @@ export default defineComponent({
   props: avatarProps,
   emits: [],
   setup(props: AvatarProps) {
-    const { name, width, height, customText, gender, imgSrc, isRound, fit }
-      = toRefs(props)
+    const { name, width, height, customText, gender, imgSrc, isRound, fit } = toRefs(props)
 
     // 头像图片加载是否有错误
     const isErrorImg = ref<boolean>(false)
@@ -28,11 +27,7 @@ export default defineComponent({
       const minNum = ref<number>(Math.min(width.value, height.value))
 
       // 获取展示名称
-      nameDisplay.value = useGetDisplayName(
-        name.value,
-        customText.value,
-        minNum.value,
-      )
+      nameDisplay.value = useGetDisplayName(name.value, customText.value, minNum.value)
 
       // 计算展示文本的字体大小
       fontSize.value = minNum.value / 4 + 3
@@ -41,10 +36,7 @@ export default defineComponent({
       isNobody.value = !!name.value && name.value === ''
 
       // 计算背景颜色code
-      BgColorCode.value = useGetBackgroundColor(
-        gender.value,
-        nameDisplay.value.substring(0, 1),
-      )
+      BgColorCode.value = useGetBackgroundColor(gender.value, nameDisplay.value.substring(0, 1))
     }
 
     watch(
@@ -64,13 +56,19 @@ export default defineComponent({
         src={imgSrc.value}
         alt=""
         onError={showErrorAvatar}
-        style={{
-          width: `${width.value}px`,
-          height: `${height.value}px`,
-          verticalAlign: 'middle',
-          objectFit: fit.value,
-          borderRadius: isRound.value ? '100%' : '0',
-        }}
+        class={[props.classNames?.image]}
+        style={
+          [
+            {
+              width: `${width.value}px`,
+              height: `${height.value}px`,
+              verticalAlign: 'middle',
+              objectFit: fit.value,
+              borderRadius: isRound.value ? '100%' : '0',
+            },
+            props.styles?.image,
+          ] as any
+        }
       />
     )
 
@@ -78,10 +76,7 @@ export default defineComponent({
     const styleNs = ns.e('style')
 
     const imgSrcErrElement = (
-      <span
-        class={styleNs}
-        style={{ borderRadius: isRound.value ? '100%' : '0' }}
-      >
+      <span class={styleNs} style={{ borderRadius: isRound.value ? '100%' : '0' }}>
         <IconImgError width={width.value} height={height.value} />
       </span>
     )
@@ -104,24 +99,26 @@ export default defineComponent({
 
     const nameElement = (
       <span
-        class={[styleNs, backgroundNs.value]}
-        style={{
-          height: `${height.value}px`,
-          width: `${width.value}px`,
-          lineHeight: `${height.value}px`,
-          fontSize: `${fontSize.value}px`,
-          borderRadius: isRound.value ? '100%' : '0',
-        }}
+        class={[styleNs, backgroundNs.value, props.classNames?.text]}
+        style={
+          [
+            {
+              height: `${height.value}px`,
+              width: `${width.value}px`,
+              lineHeight: `${height.value}px`,
+              fontSize: `${fontSize.value}px`,
+              borderRadius: isRound.value ? '100%' : '0',
+            },
+            props.styles?.text,
+          ] as any
+        }
       >
         {nameDisplay.value}
       </span>
     )
 
     const noNameElement = (
-      <span
-        class={styleNs}
-        style={{ borderRadius: isRound.value ? '100%' : '0' }}
-      >
+      <span class={styleNs} style={{ borderRadius: isRound.value ? '100%' : '0' }}>
         <IconBody width={width.value} height={height.value} />
       </span>
     )
@@ -133,15 +130,14 @@ export default defineComponent({
 
       if (!isNobody.value && nameDisplay.value?.length !== 0) {
         return nameElement
-      }
-      else {
+      } else {
         return noNameElement
       }
     }
 
     return () => {
       return (
-        <div class={ns.b()}>
+        <div class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
           {hasImgElement()}
           {hasNameElement()}
         </div>

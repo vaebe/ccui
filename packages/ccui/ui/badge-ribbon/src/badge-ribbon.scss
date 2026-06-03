@@ -1,0 +1,88 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-badge-ribbon {
+  // 缎带主体
+  position: absolute;
+  top: 8px;
+  height: 22px;
+  padding: 0 8px;
+  color: $ccui-color-white;
+  line-height: 22px;
+  font-size: $ccui-font-size-sm;
+  white-space: nowrap;
+  background-color: $ccui-color-primary;
+  border-radius: $ccui-border-radius-sm;
+  user-select: none;
+  z-index: 1;
+
+  &__wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  &__text {
+    color: inherit;
+  }
+
+  // 三角折角
+  &__corner {
+    position: absolute;
+    top: 100%;
+    width: 8px;
+    height: 8px;
+    color: $ccui-color-primary; // 默认主色，custom 用 inline style 覆盖
+    border: 4px solid;
+    transform: scaleY(0.75);
+    transform-origin: top;
+  }
+
+  // 右上（默认）
+  &--end {
+    right: -8px;
+    border-bottom-right-radius: 0;
+
+    .#{$cls-prefix}-badge-ribbon__corner {
+      right: 0;
+      border-color: currentColor transparent transparent currentColor;
+    }
+  }
+
+  // 左上
+  &--start {
+    left: -8px;
+    border-bottom-left-radius: 0;
+
+    .#{$cls-prefix}-badge-ribbon__corner {
+      left: 0;
+      border-color: currentColor currentColor transparent transparent;
+    }
+  }
+
+  // 预设色：背景与折角同色（color tokens 在 packages/theme/theme.scss）
+  @each $name,
+    $token
+      in (
+        'pink': $ccui-pink-6,
+        'magenta': $ccui-magenta-6,
+        'red': $ccui-red-6,
+        'volcano': $ccui-volcano-6,
+        'orange': $ccui-orange-6,
+        'yellow': $ccui-yellow-6,
+        'gold': $ccui-gold-6,
+        'cyan': $ccui-cyan-6,
+        'lime': $ccui-lime-6,
+        'green': $ccui-green-6,
+        'blue': $ccui-blue-6,
+        'geekblue': $ccui-geekblue-6,
+        'purple': $ccui-purple-6
+      )
+  {
+    &--color-#{$name} {
+      background-color: $token;
+
+      .#{$cls-prefix}-badge-ribbon__corner {
+        color: $token;
+      }
+    }
+  }
+}

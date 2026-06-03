@@ -1,0 +1,213 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__total-text {
+    height: 32px;
+    line-height: 32px;
+    margin-inline-end: 8px;
+    color: $ccui-color-text;
+  }
+
+  &__prev,
+  &__next,
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    margin-inline-end: 8px;
+    padding: 0 4px;
+    font-family: inherit;
+    font-size: $ccui-font-size;
+    line-height: 30px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: $ccui-border-radius;
+    cursor: pointer;
+    user-select: none;
+    transition: all $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-primary;
+    }
+  }
+
+  &__item {
+    border-color: $ccui-color-border;
+    background-color: $ccui-color-bg-container;
+
+    &:hover {
+      border-color: $ccui-color-primary;
+    }
+
+    &--active {
+      color: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+      background-color: $ccui-color-bg-container;
+      font-weight: 600;
+    }
+
+    &--ellipsis {
+      cursor: default;
+      border-color: transparent;
+      background-color: transparent;
+      letter-spacing: 2px;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        color: $ccui-color-text-disabled;
+        border-color: transparent;
+      }
+    }
+  }
+
+  &__prev,
+  &__next {
+    border-color: transparent;
+
+    &:hover {
+      color: $ccui-color-primary;
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        color: $ccui-color-text-disabled;
+      }
+    }
+  }
+
+  &__arrow {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  &__size-changer {
+    margin-inline-start: 8px;
+  }
+
+  &__size-select {
+    height: 32px;
+    padding: 0 8px;
+    font-size: $ccui-font-size;
+    color: $ccui-color-text;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    cursor: pointer;
+    outline: none;
+    transition: border-color $ccui-motion-duration-mid;
+
+    &:hover,
+    &:focus {
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  &__jumper {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 8px;
+    color: $ccui-color-text;
+  }
+
+  &__jumper-input {
+    width: 50px;
+    height: 32px;
+    margin: 0 8px;
+    padding: 0 8px;
+    font-size: $ccui-font-size;
+    color: $ccui-color-text;
+    text-align: center;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    outline: none;
+    transition: border-color $ccui-motion-duration-mid;
+
+    &:hover,
+    &:focus {
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  &__simple-pager {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-end: 8px;
+    color: $ccui-color-text;
+  }
+
+  &__simple-input {
+    width: 40px;
+    height: 32px;
+    padding: 0 6px;
+    margin-inline-end: 4px;
+    font-size: $ccui-font-size;
+    color: $ccui-color-text;
+    text-align: center;
+    background-color: $ccui-color-bg-container;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    outline: none;
+
+    &:hover,
+    &:focus {
+      border-color: $ccui-color-primary;
+    }
+  }
+
+  &__simple-slash {
+    margin: 0 6px;
+    color: $ccui-color-text;
+  }
+
+  &--small {
+    .#{$cls-prefix}-pagination__prev,
+    .#{$cls-prefix}-pagination__next,
+    .#{$cls-prefix}-pagination__item {
+      min-width: 24px;
+      height: 24px;
+      line-height: 22px;
+      font-size: $ccui-font-size-sm;
+    }
+
+    .#{$cls-prefix}-pagination__total-text,
+    .#{$cls-prefix}-pagination__size-select,
+    .#{$cls-prefix}-pagination__jumper-input,
+    .#{$cls-prefix}-pagination__simple-input {
+      height: 24px;
+      line-height: 24px;
+      font-size: $ccui-font-size-sm;
+    }
+  }
+
+  &--disabled {
+    .#{$cls-prefix}-pagination__prev,
+    .#{$cls-prefix}-pagination__next,
+    .#{$cls-prefix}-pagination__item {
+      color: $ccui-color-text-disabled;
+      background-color: $ccui-color-bg-container;
+      border-color: $ccui-color-border;
+      cursor: not-allowed;
+
+      &:hover {
+        color: $ccui-color-text-disabled;
+        border-color: $ccui-color-border;
+      }
+    }
+  }
+}

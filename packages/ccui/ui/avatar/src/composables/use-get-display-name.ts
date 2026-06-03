@@ -10,12 +10,8 @@ function nameFormatting(name: string) {
     if (/[_ -]/.test(name)) {
       const str_before = name.split(/_|-|\s+/)[0]
       const str_after = name.split(/_|-|\s+/)[1]
-      return (
-        str_before.substring(0, 1).toUpperCase()
-        + str_after.substring(0, 1).toUpperCase()
-      )
-    }
-    else {
+      return str_before.substring(0, 1).toUpperCase() + str_after.substring(0, 1).toUpperCase()
+    } else {
       // 一个英文名的情况显示前两个字母
       return name.substring(0, 2).toUpperCase()
     }
@@ -25,11 +21,7 @@ function nameFormatting(name: string) {
   return name.substring(0, 2)
 }
 
-export default function useGetDisplayName(
-  name: string,
-  customText: string,
-  width: number,
-): string {
+export default function useGetDisplayName(name: string, customText: string, width: number): string {
   let nameDisplay = ''
   if (customText) {
     return customText.substring(0, 1)

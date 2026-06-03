@@ -1,0 +1,212 @@
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
+import type { TreeNodeData, TreeNodeKey } from '../../tree/src/tree-types'
+
+/**
+ * `showCheckedStrategy` 取值常量：
+ *
+ * - `TREE_SELECT_SHOW_PARENT`：父子都选中时只输出父节点（默认）
+ * - `TREE_SELECT_SHOW_CHILD`：只输出叶子节点
+ * - `TREE_SELECT_SHOW_ALL`：输出所有选中节点（父 + 子全集）
+ *
+ * **不挂命名空间**，从 `@vaebe/ccui` 顶层 export。
+ * 当前 TreeSelect 尚未接入 `showCheckedStrategy`，常量已 export 供外部代码提前引用。
+ */
+export const TREE_SELECT_SHOW_PARENT = 'SHOW_PARENT' as const
+export const TREE_SELECT_SHOW_CHILD = 'SHOW_CHILD' as const
+export const TREE_SELECT_SHOW_ALL = 'SHOW_ALL' as const
+export type TreeSelectShowCheckedStrategy =
+  | typeof TREE_SELECT_SHOW_PARENT
+  | typeof TREE_SELECT_SHOW_CHILD
+  | typeof TREE_SELECT_SHOW_ALL
+
+export type TreeSelectSize = 'large' | 'default' | 'small'
+export type TreeSelectStatus = '' | 'error' | 'warning' | 'success' | 'validating'
+export type TreeSelectPlacement = 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight'
+export type TreeSelectModelValue = TreeNodeKey | TreeNodeKey[] | null
+export type GetPopupContainer = (triggerNode: HTMLElement | null) => HTMLElement | null
+
+// TreeSelect 自己的 fieldNames（label/value/children/disabled）— 与 Cascader / Select 一致；
+// 内部会转成 c-tree 期望的 (title/key/children/disabled)。
+export interface TreeSelectFieldNames {
+  label?: string
+  value?: string
+  children?: string
+  disabled?: string
+}
+
+// showSearch 对象形态：
+// - filterTreeNode：自定义命中判断，签名 `(input, node) => boolean`；默认按 label 子串匹配
+// - treeNodeFilterProp：决定 fallback 匹配字段名（默认走 fieldNames.label）
+export interface TreeSelectFilterTreeNode {
+  (input: string, node: TreeNodeData): boolean
+}
+export interface TreeSelectShowSearchConfig {
+  filterTreeNode?: TreeSelectFilterTreeNode
+  treeNodeFilterProp?: string
+}
+
+export const treeSelectProps = {
+  modelValue: {
+    type: [String, Number, Array] as PropType<TreeSelectModelValue>,
+    default: undefined,
+  },
+  treeData: {
+    type: Array as PropType<TreeNodeData[]>,
+    default: () => [],
+  },
+  fieldNames: {
+    type: Object as PropType<TreeSelectFieldNames>,
+    default: () => ({}),
+  },
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
+  // 多选模式下，是否在 Tree 节点前展示 checkbox（默认开启）。
+  // false 时多选走 c-tree 的 multiple selectable 模式（不显示 checkbox）。
+  treeCheckable: {
+    type: Boolean,
+    default: true,
+  },
+  treeCheckStrictly: {
+    type: Boolean,
+    default: false,
+  },
+  treeDefaultExpandAll: {
+    type: Boolean,
+    default: false,
+  },
+  treeDefaultExpandedKeys: {
+    type: Array as PropType<TreeNodeKey[]>,
+    default: () => [],
+  },
+  placeholder: {
+    type: String,
+    default: '请选择',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  clearable: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * 自定义清除图标。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `clearIcon` slot 优先级最高。
+   */
+  clearIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
+  },
+  /**
+   * 自定义下拉箭头图标。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `suffixIcon` slot 优先级最高。
+   */
+  suffixIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
+  },
+  /**
+   * 自定义 multiple 模式下 tag 的删除图标。接 string（Iconify name / CSS class）或 VNode；
+   * 同名 `removeIcon` slot 优先级最高。
+   */
+  removeIcon: {
+    type: [String, Object] as PropType<string | VNode>,
+    default: undefined,
+  },
+  size: {
+    type: String as PropType<TreeSelectSize>,
+    default: 'default',
+  },
+  status: {
+    type: String as PropType<TreeSelectStatus>,
+    default: '',
+  },
+  placement: {
+    type: String as PropType<TreeSelectPlacement>,
+    default: 'bottomLeft',
+  },
+  popupClassName: {
+    type: String,
+    default: '',
+  },
+  popupAppendToBody: {
+    type: Boolean,
+    default: false,
+  },
+  getPopupContainer: {
+    type: Function as PropType<GetPopupContainer>,
+    default: undefined,
+  },
+  autoFocus: {
+    type: Boolean,
+    default: false,
+  },
+  inputReadOnly: {
+    type: Boolean,
+    default: true,
+  },
+  transitionName: {
+    type: String,
+    default: 'ccui-tree-select-fade',
+  },
+  // 多选模式下输入框最多展示几个 tag，溢出折叠为 "+N"
+  maxTagCount: {
+    type: Number,
+    default: 3,
+  },
+  notFoundContent: {
+    type: String,
+    // 默认从 ConfigProvider.locale.TreeSelect.notFoundContent 取值；显式 prop 仍优先。
+    default: '',
+  },
+  // popup 最大高度
+  popupMaxHeight: {
+    type: Number,
+    default: 280,
+  },
+  // 是否开启搜索过滤；接 boolean 或 { filterTreeNode, treeNodeFilterProp } 对象
+  showSearch: {
+    type: [Boolean, Object] as PropType<boolean | TreeSelectShowSearchConfig>,
+    default: false,
+  },
+  // 搜索框 placeholder（仅 showSearch 启用时生效）；为空走 locale 兜底
+  searchPlaceholder: {
+    type: String,
+    default: '',
+  },
+  // 异步加载子节点；返回 Promise，resolve 后 c-tree 自动注入 children。
+  // 与 treeData 中节点的 isLeaf=false 配合使用，未标记 isLeaf=false 的节点不会触发 loadData。
+  loadData: {
+    type: Function as PropType<(node: TreeNodeData) => Promise<void>>,
+    default: undefined,
+  },
+  /**
+   * 录入组件统一 variant 形态。
+   */
+  variant: {
+    type: String as PropType<TreeSelectVariant>,
+    default: 'outlined',
+  },
+  /**
+   * 语义化 DOM className 注入。可用 key：`root` / `inputWrap` / `popup`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
+  },
+} as const
+
+export type TreeSelectProps = ExtractPropTypes<typeof treeSelectProps>
+
+export type TreeSelectVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'

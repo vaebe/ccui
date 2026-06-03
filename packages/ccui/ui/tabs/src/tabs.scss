@@ -1,5 +1,13 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-tabs {
-  //
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__content {
+    padding-top: 16px;
+  }
 }

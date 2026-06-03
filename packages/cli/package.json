@@ -1,13 +1,17 @@
 {
   "name": "ccui-cli",
   "version": "1.0.0",
+  "private": true,
   "description": "ccui-cli",
   "keywords": [
     "cli"
   ],
-  "author": "cjz",
   "license": "MIT",
-  "main": "lib/ccui-cli.js",
+  "author": "cjz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaebe/ccui.git"
+  },
   "directories": {
     "lib": "lib"
   },
@@ -15,43 +19,38 @@
     "lib",
     "types"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vaebe/ccui.git"
-  },
+  "type": "module",
+  "main": "lib/ccui-cli.js",
   "scripts": {
     "build:docs": "pnpm --filter docs predev && pnpm --filter docs docs:build",
-    "build:lib": "pnpm --filter vue3-ccui predev && pnpm build:components && pnpm changelog && pnpm release",
+    "build:lib": "pnpm build:components && pnpm changelog && pnpm prepare-release",
+    "prebuild:components": "node ./index.js create -t ccui --ignore-parse-error",
     "build:components": "node ./index.js build",
     "generate:theme": "node ./index.js generate:theme",
     "generate:dts": "node ./index.js generate:dts",
-    "release": "node ./index.js release",
+    "prepare-release": "node ./index.js prepare-release",
+    "release": "node ./index.js prepare-release",
     "cli": "node ./index.js create",
     "cli:create": "node ./index.js create -t component",
-    "prebuild": "node ./index.js create -t ccui --ignore-parse-error",
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "theme": "workspace:*"
+    "lodash-es": "^4.17.21",
+    "@vaebe/ccui-theme": "workspace:*"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vitejs/plugin-vue-jsx": "^5.1.1",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitejs/plugin-vue-jsx": "^5.1.5",
     "chalk": "^4.1.2",
     "commander": "^14.0.2",
     "conventional-changelog-cli": "^5.0.0",
-    "esbuild": "^0.25.12",
-    "esbuild-register": "^3.6.0",
-    "fs-extra": "^11.3.2",
     "inquirer": "^12.10.0",
-    "kolorist": "^1.8.0",
     "ora": "^5.4.1",
-    "rimraf": "^6.1.0",
-    "sass": "^1.93.3",
-    "shelljs": "^0.10.0",
-    "vite": "^7.1.12"
+    "vite": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.10.0"
   }
 }

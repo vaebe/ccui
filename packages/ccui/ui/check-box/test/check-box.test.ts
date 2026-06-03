@@ -1,9 +1,12 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { h, nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { CheckBox } from '../index'
+import CheckBoxGroup from '../src/check-box-group'
 
 const ns = useNamespace('check-box', true)
+const groupNs = useNamespace('check-box-group', true)
 const baseClass = ns.b()
 
 describe('checkBox', () => {
@@ -127,5 +130,94 @@ describe('checkBox', () => {
 
     // 验证beforeChange是否被调用
     expect(beforeChange).toHaveBeenCalled()
+  })
+
+  it('renders checkbox group direction and slot items', () => {
+    const wrapper = mount(CheckBoxGroup, {
+      props: {
+        modelValue: ['a'],
+        direction: 'row',
+      },
+      slots: {
+        default: () => [h(CheckBox, { label: 'a' }), h(CheckBox, { label: 'b' })],
+      },
+    })
+
+    expect(wrapper.find(groupNs.b()).classes()).toContain('is-row')
+    expect(wrapper.findAll(ns.b()).length).toBe(2)
+    expect(wrapper.findAll('label')[0].classes()).toContain('active')
+  })
+
+  it('emits added values from checkbox group', async () => {
+    const wrapper = mount(CheckBoxGroup, {
+      props: {
+        modelValue: ['a'],
+      },
+      slots: {
+        default: () => [h(CheckBox, { label: 'a' }), h(CheckBox, { label: 'b' })],
+      },
+    })
+
+    await wrapper.findAll('input')[1].trigger('change')
+    await nextTick()
+
+    expect(wrapper.emitted('change')?.[0]).toEqual([['a', 'b']])
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['a', 'b']])
+  })
+
+  it('emits removed values from checkbox group', async () => {
+    const wrapper = mount(CheckBoxGroup, {
+      props: {
+        modelValue: ['a', 'b'],
+      },
+      slots: {
+        default: () => [h(CheckBox, { label: 'a' }), h(CheckBox, { label: 'b' })],
+      },
+    })
+
+    await wrapper.findAll('input')[0].trigger('change')
+    await nextTick()
+
+    expect(wrapper.emitted('change')?.[0]).toEqual([['b']])
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['b']])
+  })
+
+  it('passes disabled color and beforeChange through checkbox group', async () => {
+    const beforeChange = vi.fn().mockReturnValue(false)
+    const wrapper = mount(CheckBoxGroup, {
+      props: {
+        modelValue: [],
+        disabled: true,
+        color: '#00ff00',
+        beforeChange,
+      },
+      slots: {
+        default: () => h(CheckBox, { label: 'a' }),
+      },
+    })
+
+    expect(wrapper.find('label').classes()).toContain('disabled')
+    expect(wrapper.find(ns.e('icon')).attributes('style')).toContain('fill: #00ff00')
+
+    await wrapper.find('input').trigger('change')
+    expect(beforeChange).not.toHaveBeenCalled()
+    expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  describe('XL-4 ARIA', () => {
+    it('CheckBoxGroup 根加 role="group"', () => {
+      const wrapper = mount(CheckBoxGroup, {
+        props: { modelValue: [] },
+        slots: { default: () => h(CheckBox, { label: 'a' }) },
+      })
+      expect(wrapper.attributes('role')).toBe('group')
+    })
+
+    it('CheckBox input 加 aria-checked / aria-disabled', () => {
+      const wrapper = mount(CheckBox, { props: { modelValue: true, label: 'a', disabled: true } })
+      const inp = wrapper.find('input')
+      expect(inp.attributes('aria-checked')).toBe('true')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+    })
   })
 })

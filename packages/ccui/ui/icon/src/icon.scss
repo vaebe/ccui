@@ -1,0 +1,75 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  fill: currentColor;
+  line-height: 0;
+  transform: rotate(var(--ccui-icon-rotate, 0deg));
+  transform-origin: center;
+  vertical-align: -0.125em;
+
+  svg,
+  i {
+    display: block;
+    width: 1em;
+    height: 1em;
+    flex: none;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  &--spin {
+    animation: ccui-icon-spin 1s linear infinite;
+  }
+
+  &--spin-ccw {
+    animation-direction: reverse;
+  }
+
+  &--clickable {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  &--clickable:hover {
+    opacity: 0.7;
+  }
+
+  &--clickable:focus-visible {
+    outline: 2px solid $ccui-primary;
+    outline-offset: 2px;
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    color: $ccui-color-text-disabled;
+    opacity: 0.5;
+  }
+
+  &--loading {
+    color: $ccui-color-text-tertiary;
+  }
+
+  &__loading-spinner {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+
+  &--two-tone {
+    color: var(--ccui-icon-two-tone-color, $ccui-color-primary);
+  }
+}
+
+@keyframes ccui-icon-spin {
+  from {
+    transform: rotate(var(--ccui-icon-rotate, 0deg));
+  }
+
+  to {
+    transform: rotate(calc(var(--ccui-icon-rotate, 0deg) + 1turn));
+  }
+}

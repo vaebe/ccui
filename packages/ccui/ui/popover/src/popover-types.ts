@@ -1,18 +1,27 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export type PopoverPlacement
-  = | 'top'
-    | 'top-start'
-    | 'top-end'
-    | 'bottom'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'left'
-    | 'left-start'
-    | 'left-end'
-    | 'right'
-    | 'right-start'
-    | 'right-end'
+/**
+ * `align` 浮层细调（offset / targetOffset / overflow）。
+ */
+export interface PopoverAlign {
+  offset?: [number, number]
+  targetOffset?: [number, number]
+  overflow?: { adjustX?: boolean; adjustY?: boolean }
+}
+
+export type PopoverPlacement =
+  | 'top'
+  | 'top-start'
+  | 'top-end'
+  | 'bottom'
+  | 'bottom-start'
+  | 'bottom-end'
+  | 'left'
+  | 'left-start'
+  | 'left-end'
+  | 'right'
+  | 'right-start'
+  | 'right-end'
 
 export type PopoverEffect = 'dark' | 'light'
 
@@ -35,14 +44,27 @@ export const popoverProps = {
     type: String as PropType<PopoverEffect>,
     default: 'light' as PopoverEffect,
   },
+  /**
+   * 受控显示。支持 `v-model:visible`。
+   */
   visible: {
     type: Boolean,
     default: undefined,
+  },
+  /**
+   * 浮层背景色（任意 CSS 字符串），覆盖 `effect` 的内置色。
+   */
+  color: {
+    type: String,
+    default: '',
   },
   disabled: {
     type: Boolean,
     default: false,
   },
+  /**
+   * 是否显示箭头。
+   */
   showArrow: {
     type: Boolean,
     default: true,
@@ -51,14 +73,23 @@ export const popoverProps = {
     type: String as PropType<PopoverTrigger>,
     default: 'click' as PopoverTrigger,
   },
+  /**
+   * mouseenter 后多少 ms 显示。
+   */
   showAfter: {
     type: Number,
     default: 0,
   },
+  /**
+   * mouseleave 后多少 ms 隐藏。
+   */
   hideAfter: {
     type: Number,
     default: 200,
   },
+  /**
+   * 浮层根节点 class。
+   */
   popperClass: {
     type: String,
     default: '',
@@ -103,9 +134,40 @@ export const popoverProps = {
     type: [Number, String] as PropType<number | string>,
     default: 0,
   },
+  /**
+   * 是否 Teleport 到 body。`false` 时贴近触发节点同 DOM 流。
+   */
   teleported: {
     type: Boolean,
     default: true,
+  },
+  /**
+   * 每次关闭后强制重置内容。
+   */
+  fresh: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 隐藏后销毁浮层 DOM（默认 false，复用 DOM）。
+   */
+  destroyTooltipOnHide: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 浮层是否自动调整以避免溢出（默认开启，由 floating-ui flip 实现）。
+   */
+  autoAdjustOverflow: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * 浮层细调对象：offset / targetOffset / overflow。
+   */
+  align: {
+    type: Object as PropType<PopoverAlign>,
+    default: undefined,
   },
   persistent: {
     type: Boolean,
@@ -122,6 +184,20 @@ export const popoverProps = {
   triggerKeys: {
     type: Array as PropType<string[]>,
     default: () => ['Enter', ' '],
+  },
+  /**
+   * 浮层 ARIA role（默认 dialog）。内部包装组件可指定 menu 以匹配语义。
+   */
+  role: {
+    type: String,
+    default: 'dialog',
+  },
+  /**
+   * 触发器 aria-haspopup 值（默认 dialog）。内部包装组件可指定 menu 等。
+   */
+  ariaHasPopup: {
+    type: String,
+    default: 'dialog',
   },
 } as const
 

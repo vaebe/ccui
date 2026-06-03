@@ -1,0 +1,309 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-cascader {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __input-wrap
+  @include form-control-variants-on('.#{$cls-prefix}-cascader__input-wrap');
+
+  &--small &__input-wrap {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large &__input-wrap {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+  }
+
+  &__input-wrap {
+    display: flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $ccui-primary;
+    }
+  }
+
+  &.is-disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &.is-open &__input-wrap {
+    border-color: $ccui-primary;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    padding: 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  // 展开箭头单独放大到图标标准字号，mdi:menu-down 之前在 12px 下视觉过小
+  &__suffix {
+    font-size: $ccui-font-size-icon;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1050;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow: $ccui-box-shadow-secondary;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  &__columns {
+    display: flex;
+  }
+
+  &__column {
+    width: 160px;
+    max-height: 240px;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    overflow-y: auto;
+    border-right: 1px solid $ccui-color-border-secondary;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    padding: 0 12px;
+    cursor: pointer;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--active {
+      background-color: rgba($ccui-primary, 0.1);
+      color: $ccui-primary;
+      font-weight: 500;
+    }
+
+    &--focused {
+      background-color: $ccui-color-fill-secondary;
+      outline: 1px solid $ccui-primary;
+      outline-offset: -1px;
+    }
+
+    &--disabled,
+    &--disabled:hover {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+      background-color: transparent;
+    }
+  }
+
+  &__item-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__expand-icon {
+    margin-left: 8px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  &__empty {
+    padding: 12px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+    text-align: center;
+  }
+
+  &__item-checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 1px solid $ccui-color-border;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+
+    &--checked {
+      background-color: $ccui-primary;
+      border-color: $ccui-primary;
+    }
+  }
+
+  &__tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px 0 8px;
+    height: 22px;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-fill-tertiary;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+  }
+
+  &__tag-close {
+    cursor: pointer;
+    color: $ccui-color-text-tertiary;
+    padding: 0 2px;
+    border-radius: 2px;
+
+    &:hover {
+      background-color: $ccui-color-fill-secondary;
+      color: $ccui-text;
+    }
+  }
+
+  &__tag--rest {
+    padding: 0 8px;
+    color: $ccui-color-text-secondary;
+  }
+
+  &__search-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: $ccui-font-size;
+    color: $ccui-text;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      color: $ccui-color-text-disabled;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &--focused {
+      background-color: $ccui-color-fill-secondary;
+      outline: 1px solid $ccui-primary;
+      outline-offset: -1px;
+    }
+  }
+
+  &--multiple &__input-wrap {
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 32px;
+    padding: 4px 8px;
+  }
+
+  &--multiple &__input {
+    flex: 1 1 auto;
+    min-width: 60px;
+    width: auto;
+  }
+}
+
+.#{$cls-prefix}-cascader-fade-enter-active,
+.#{$cls-prefix}-cascader-fade-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.#{$cls-prefix}-cascader-fade-enter-from,
+.#{$cls-prefix}-cascader-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

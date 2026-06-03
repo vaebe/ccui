@@ -17,11 +17,16 @@ export default defineComponent({
     })
 
     return () => (
-      <div class={boxClass}>
-        <div class={ns.e('header')} v-show={isHeader}>
+      <div class={[boxClass, props.classNames?.root]} style={props.styles?.root}>
+        {slots.cover && (
+          <div class={[ns.e('cover'), props.classNames?.cover]} style={props.styles?.cover}>
+            {slots.cover()}
+          </div>
+        )}
+        <div class={[ns.e('header'), props.classNames?.header]} style={props.styles?.header} v-show={isHeader.value}>
           {(slots.header && slots.header()) || props.header}
         </div>
-        <div class={ns.e('body')} style={props.bodyStyle}>
+        <div class={[ns.e('body'), props.classNames?.body]} style={[props.bodyStyle, props.styles?.body] as any}>
           {slots.default && slots.default()}
         </div>
       </div>

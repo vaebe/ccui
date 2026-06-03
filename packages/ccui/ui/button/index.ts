@@ -1,11 +1,26 @@
 import type { App } from 'vue'
 import Button from './src/button'
+import ButtonGroup from './src/button-group'
 
+// 平铺导出：模板用 <c-button-group>，TSX 用 import { ButtonGroup }
+// 不做 React 风格的 Button.Group 静态属性挂载（详见 docs-notes/decisions/benchmark-principles.md）
 Button.install = function (app: App): void {
   app.component(Button.name!, Button)
+  app.component(ButtonGroup.name!, ButtonGroup)
 }
 
-export { Button }
+export { Button, ButtonGroup }
+
+export type {
+  ButtonGroupProps,
+  ButtonIconPosition,
+  ButtonLoading,
+  ButtonLoadingObject,
+  ButtonNativeType,
+  ButtonProps,
+  ButtonSizeType,
+  ButtonType,
+} from './src/button-types'
 
 export default {
   title: 'Button 按钮',
@@ -13,5 +28,6 @@ export default {
   status: '100%',
   install(app: App): void {
     app.component(Button.name!, Button)
+    app.component(ButtonGroup.name!, ButtonGroup)
   },
 }

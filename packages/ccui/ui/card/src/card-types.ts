@@ -1,4 +1,5 @@
 import type { ExtractPropTypes, PropType } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type ShadowType = PropType<'always' | 'hover' | 'never'>
 
@@ -16,6 +17,20 @@ export const cardProps = {
     default: () => {
       return { padding: '20px' }
     },
+  },
+  /**
+   * 语义化 DOM className 注入。可用 key：`root` / `header` / `body` / `cover`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

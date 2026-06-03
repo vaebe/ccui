@@ -16,7 +16,7 @@
 
 @mixin focus-state {
   border-color: $ccui-primary;
-  box-shadow: 0 0 0 2px rgba(118, 147, 245, 0.2);
+  box-shadow: 0 0 0 2px $ccui-control-outline;
 }
 
 @mixin hide-controls {
@@ -115,6 +115,38 @@
 
   &--glow {
     @include focus-state;
+  }
+
+  // M-A1：录入组件统一 variant 形态（outlined 是默认；其余 3 个走共享 mixin）
+  @include form-control-variants;
+
+  // 校验状态（status='error'|'warning'），边框层与 Input 一致在根元素
+  &--status-error {
+    border-color: $ccui-color-error;
+
+    &:hover {
+      border-color: $ccui-color-error-hover;
+    }
+
+    &.#{$cls-prefix}-input-number--focused,
+    &.#{$cls-prefix}-input-number--glow {
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+  }
+
+  &--status-warning {
+    border-color: $ccui-color-warning;
+
+    &:hover {
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &.#{$cls-prefix}-input-number--focused,
+    &.#{$cls-prefix}-input-number--glow {
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
   }
 
   &--disabled {
@@ -245,11 +277,11 @@
   }
 
   // 尺寸变体
-  &--lg {
+  &--large {
     @include size-variant(200px, 40px, $ccui-font-size-lg, 38px, 40px, 14px);
   }
 
-  &--sm {
+  &--small {
     @include size-variant(100px, 24px, $ccui-font-size-sm, 22px, 24px, 8px, 0 7px);
   }
 }

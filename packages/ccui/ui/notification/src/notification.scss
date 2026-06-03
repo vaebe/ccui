@@ -1,0 +1,174 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-notification {
+  position: fixed;
+  z-index: 1010;
+  display: flex;
+  flex-direction: column;
+  width: 384px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+
+  &--top {
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  }
+
+  &--topRight {
+    top: 24px;
+    right: 24px;
+    align-items: flex-end;
+  }
+
+  &--topLeft {
+    top: 24px;
+    left: 24px;
+    align-items: flex-start;
+  }
+
+  &--bottom {
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    flex-direction: column-reverse;
+  }
+
+  &--bottomRight {
+    bottom: 24px;
+    right: 24px;
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+
+  &--bottomLeft {
+    bottom: 24px;
+    left: 24px;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+  }
+
+  // L-3.5 stack 模式：视觉堆叠
+  &--stack {
+    .#{$cls-prefix}-notification__item {
+      margin-bottom: 0;
+      transition: transform $ccui-motion-duration-mid;
+    }
+
+    .#{$cls-prefix}-notification__item:not(:first-child) {
+      margin-top: -48px;
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
+    .#{$cls-prefix}-notification__item:nth-child(n + 3) {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
+  }
+
+  &__item {
+    width: 100%;
+    margin-bottom: 16px;
+    pointer-events: auto;
+  }
+
+  &__inner {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 24px;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow:
+      0 6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    margin-inline-end: 12px;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+
+    &--info {
+      background: $ccui-color-primary;
+    }
+
+    &--success {
+      background: $ccui-color-success;
+    }
+
+    &--warning {
+      background: $ccui-color-warning;
+    }
+
+    &--error {
+      background: $ccui-color-error;
+    }
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin-bottom: 4px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: 500;
+    line-height: $ccui-line-height-lg;
+  }
+
+  &__desc {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size;
+    line-height: $ccui-line-height-base;
+    word-wrap: break-word;
+  }
+
+  &__close {
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 12px;
+    padding: 0;
+    color: $ccui-color-text-secondary;
+    background: transparent;
+    border: 0;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color $ccui-motion-duration-mid;
+
+    &:hover {
+      color: $ccui-color-text;
+    }
+  }
+}
+
+.#{$cls-prefix}-notification-fade-enter-active,
+.#{$cls-prefix}-notification-fade-leave-active {
+  transition:
+    opacity $ccui-motion-duration-mid,
+    transform $ccui-motion-duration-mid,
+    height $ccui-motion-duration-mid,
+    margin $ccui-motion-duration-mid;
+}
+
+.#{$cls-prefix}-notification-fade-enter-from,
+.#{$cls-prefix}-notification-fade-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}

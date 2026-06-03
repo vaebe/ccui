@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Card } from '../index'
 
@@ -108,5 +108,42 @@ describe('card', () => {
 
     expect(wrapper.find(ns.e('header')).exists()).toBeTruthy()
     expect(wrapper.find(ns.e('header')).text()).toBe('Header Slot')
+  })
+
+  it('keeps header hidden when no header content exists', () => {
+    const wrapper = mount(Card)
+    const header = wrapper.find(ns.e('header'))
+
+    expect(header.exists()).toBe(true)
+    expect(header.isVisible()).toBe(false)
+  })
+
+  it('prefers header slot over header prop', () => {
+    const wrapper = mount(Card, {
+      props: {
+        header: 'Prop Header',
+      },
+      slots: {
+        header: '<span>Slot Header</span>',
+      },
+    })
+
+    expect(wrapper.find(ns.e('header')).text()).toBe('Slot Header')
+  })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Card, {
+        props: { classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-card').classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Card, {
+        props: { styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-card').attributes('style') || '').toContain('red')
+    })
   })
 })

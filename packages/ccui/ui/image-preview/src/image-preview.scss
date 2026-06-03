@@ -1,0 +1,93 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-image-preview {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &__thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: $ccui-border-radius-sm;
+    cursor: zoom-in;
+    transition: opacity $ccui-motion-duration-mid;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
+  &__mask {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    cursor: zoom-out;
+    transition: transform $ccui-motion-duration-mid;
+  }
+
+  &__toolbar {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: $ccui-border-radius;
+    color: #fff;
+    font-size: 18px;
+    z-index: 1;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: inherit;
+    line-height: 1;
+    transition: background-color $ccui-motion-duration-mid;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  &__counter {
+    margin-inline-start: 8px;
+    font-size: $ccui-font-size-sm;
+    color: rgba(255, 255, 255, 0.85);
+    user-select: none;
+  }
+
+  &-fade-enter-active,
+  &-fade-leave-active {
+    transition: opacity $ccui-motion-duration-mid ease;
+  }
+
+  &-fade-enter-from,
+  &-fade-leave-to {
+    opacity: 0;
+  }
+}

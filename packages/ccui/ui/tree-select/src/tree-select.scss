@@ -1,0 +1,238 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-tree-select {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  color: $ccui-text;
+  font-size: $ccui-font-size;
+  vertical-align: middle;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __input-wrap
+  @include form-control-variants-on('.#{$cls-prefix}-tree-select__input-wrap');
+
+  &--small &__input-wrap {
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  &--large &__input-wrap {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  &--status-error &__input-wrap {
+    border-color: $ccui-color-error;
+  }
+
+  &--status-warning &__input-wrap {
+    border-color: $ccui-color-warning;
+  }
+
+  &__input-wrap {
+    display: flex;
+    min-height: 32px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 11px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    flex-wrap: wrap;
+    gap: 4px 0;
+
+    &:hover {
+      border-color: $ccui-primary;
+    }
+  }
+
+  &.is-disabled &__input-wrap {
+    background-color: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: $ccui-color-border;
+    }
+  }
+
+  &.is-open &__input-wrap {
+    border-color: $ccui-primary;
+  }
+
+  &.is-multiple &__input-wrap {
+    padding: 4px 8px;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    padding: 0;
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__placeholder {
+    flex: 1;
+    color: $ccui-color-text-placeholder;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 6px;
+    background-color: $ccui-color-fill-tertiary;
+    border-radius: $ccui-border-radius;
+    font-size: $ccui-font-size-sm;
+    color: $ccui-text;
+
+    &--overflow {
+      background-color: transparent;
+      color: $ccui-color-text-tertiary;
+    }
+  }
+
+  &__tag-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+  }
+
+  &__tag-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    color: $ccui-color-text-tertiary;
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.06);
+      color: $ccui-text;
+    }
+  }
+
+  &__suffix,
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    padding-left: 4px;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+
+  // 展开箭头单独放大到图标标准字号，mdi:menu-down 之前在 12px 下视觉过小
+  &__suffix {
+    font-size: $ccui-font-size-icon;
+  }
+
+  &__clear {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    // 覆盖共用规则里的 padding-left，否则图标会在圆形背景里偏右不居中
+    padding-left: 0;
+    border-radius: 50%;
+    font-size: 14px;
+
+    &:hover {
+      background-color: $ccui-color-fill-tertiary;
+      color: $ccui-text;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    z-index: 1050;
+    box-sizing: border-box;
+    padding: 4px;
+    background-color: $ccui-color-bg-elevated;
+    border-radius: $ccui-border-radius;
+    box-shadow: $ccui-box-shadow-secondary;
+    overflow: auto;
+    min-width: 220px;
+  }
+
+  &__tree-wrap {
+    padding: 4px 0;
+  }
+
+  &__search {
+    padding: 6px 6px 4px;
+    border-bottom: 1px solid $ccui-color-border-secondary;
+    margin-bottom: 4px;
+  }
+
+  &__search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    border: 1px solid $ccui-color-border;
+    border-radius: $ccui-border-radius;
+    background-color: $ccui-color-bg-container;
+    color: $ccui-text;
+    font-size: $ccui-font-size-sm;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $ccui-primary;
+    }
+
+    &::placeholder {
+      color: $ccui-color-text-placeholder;
+    }
+  }
+
+  &__empty {
+    padding: 16px;
+    text-align: center;
+    color: $ccui-color-text-tertiary;
+    font-size: $ccui-font-size-sm;
+  }
+}
+
+.#{$cls-prefix}-tree-select-fade-enter-active,
+.#{$cls-prefix}-tree-select-fade-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.#{$cls-prefix}-tree-select-fade-enter-from,
+.#{$cls-prefix}-tree-select-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

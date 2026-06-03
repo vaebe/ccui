@@ -1,12 +1,7 @@
-import type {
-  CheckBoxProps,
-} from './check-box-types'
+import type { CheckBoxProps, LabelType } from './check-box-types'
 import { computed, defineComponent, inject } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import {
-  checkBoxGroupInjectionKey,
-  checkBoxProps,
-} from './check-box-types'
+import { checkBoxGroupInjectionKey, checkBoxProps } from './check-box-types'
 import IconActive from './components/icon-active'
 import IconDefault from './components/icon-default'
 import './check-box.scss'
@@ -26,32 +21,27 @@ export default defineComponent({
       })
 
       const isChecked = computed(() => {
-        return (
-          checkBoxGroupInject?.isItemChecked(props.label) || props.modelValue
-        )
+        return checkBoxGroupInject?.isItemChecked(props.label) || props.modelValue
       })
 
       // 计算组件样式
       const labelClass = computed(() => {
-        return `${ns.b()} ${isChecked.value ? 'active' : ''} ${
-          isDisabled.value ? 'disabled' : ''
-        }`
+        return `${ns.b()} ${isChecked.value ? 'active' : ''} ${isDisabled.value ? 'disabled' : ''}`
       })
 
       const iconColor = computed(() => {
         const color = checkBoxGroupInject?.color.value || props.color
-        return color ? `fill: ${color}` : ''
+        return color ? `color: ${color}; fill: ${color}` : ''
       })
 
       // todo 带测试逻辑
-      const judgeCanChange = (hasChecked: boolean, value: string) => {
+      const judgeCanChange = (hasChecked: boolean, value: LabelType) => {
         // 禁用状态不能切换
         if (isDisabled.value) {
           return Promise.resolve(false)
         }
 
-        const beforeChange
-          = checkBoxGroupInject?.beforeChange || props.beforeChange
+        const beforeChange = checkBoxGroupInject?.beforeChange || props.beforeChange
 
         // 判断beforeChange事件是否存在
         if (beforeChange) {
@@ -69,7 +59,7 @@ export default defineComponent({
       const handleChange = async () => {
         const curStatus = !isChecked.value
 
-        judgeCanChange(curStatus, props.label).then((res) => {
+        void judgeCanChange(curStatus, props.label).then((res) => {
           if (res) {
             // 更新选中的数组
             checkBoxGroupInject?.toggleGroupVal(props.label)
@@ -89,6 +79,8 @@ export default defineComponent({
             value={props.label}
             disabled={isDisabled.value}
             checked={isChecked.value}
+            aria-checked={!!isChecked.value}
+            aria-disabled={isDisabled.value ? true : undefined}
           />
           {/* 判断展示那种icon */}
           <span class={ns.e('icon')} style={iconColor.value}>

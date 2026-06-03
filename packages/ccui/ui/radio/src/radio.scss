@@ -1,19 +1,22 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-radio {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 14px;
+  min-height: 22px;
+  margin: 0;
+  padding: 0;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
   font-weight: normal;
-  line-height: 1.5;
-  color: $ccui-text;
+  line-height: $ccui-line-height-base;
   cursor: pointer;
+  transition: color $ccui-motion-duration-mid $ccui-motion-ease-in-out;
 
-  // 隐藏inout元素方便后边自定义
   &__input {
+    position: absolute;
     z-index: -1;
-    display: none;
     width: 0;
     height: 0;
     overflow: hidden;
@@ -23,28 +26,84 @@
 
   &__icon {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
     width: 16px;
     height: 16px;
-    margin-right: 5px;
-    overflow: hidden;
-    line-height: 16px;
+    margin-inline-end: 8px;
+    color: $ccui-color-border;
+    line-height: 1;
     vertical-align: middle;
     user-select: none;
-    fill: $ccui-text;
+    transition: color $ccui-motion-duration-mid $ccui-motion-ease-in-out;
+
+    svg {
+      display: none;
+    }
+
+    &::before {
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      content: '';
+      background-color: $ccui-color-bg-container;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      transition:
+        border-color $ccui-motion-duration-mid $ccui-motion-ease-in-out,
+        box-shadow $ccui-motion-duration-mid $ccui-motion-ease-in-out;
+    }
+
+    &::after {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      content: '';
+      background-color: $ccui-color-primary;
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0;
+      transition:
+        transform $ccui-motion-duration-mid $ccui-motion-ease-in-out,
+        opacity $ccui-motion-duration-mid $ccui-motion-ease-in-out;
+    }
+  }
+
+  &:not(.disabled):hover {
+    .#{$cls-prefix}-radio__icon {
+      color: $ccui-color-primary;
+    }
   }
 
   &.active {
-    color: #7693f5;
+    color: $ccui-color-text;
 
-    span {
-      fill: #7693f5;
+    .#{$cls-prefix}-radio__icon {
+      color: $ccui-color-primary;
+
+      &::after {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   }
 
   &.disabled {
-    color: gray;
+    color: $ccui-color-text-disabled;
     cursor: not-allowed;
-    fill: gray;
+
+    .#{$cls-prefix}-radio__icon {
+      color: $ccui-color-border-disabled;
+
+      &::before {
+        background-color: $ccui-disabled-bg;
+      }
+
+      &::after {
+        background-color: $ccui-color-text-disabled;
+      }
+    }
   }
 }

@@ -1,0 +1,86 @@
+{
+  "name": "@vaebe/unplugin-vue-components-ccui",
+  "version": "2.0.0",
+  "description": "vue3-ccui resolver for unplugin-vue-components — auto import on demand",
+  "keywords": [
+    "auto-import",
+    "ccui",
+    "components",
+    "on-demand",
+    "resolver",
+    "unplugin",
+    "unplugin-vue-components",
+    "vue",
+    "vue3",
+    "vue3-ccui"
+  ],
+  "homepage": "https://github.com/vaebe/ccui/tree/main/packages/resolver#readme",
+  "bugs": {
+    "url": "https://github.com/vaebe/ccui/issues"
+  },
+  "license": "MIT",
+  "author": "vaebe",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaebe/ccui.git",
+    "directory": "packages/resolver"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vp test run",
+    "test:watch": "vp test",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsdown": "^0.18.0",
+    "typescript": "^5.9.3",
+    "unplugin-vue-components": "^28.0.0",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@vaebe/ccui": "workspace:^",
+    "unplugin-vue-components": ">=0.26.0"
+  },
+  "peerDependenciesMeta": {
+    "unplugin-vue-components": {
+      "optional": false
+    },
+    "@vaebe/ccui": {
+      "optional": false
+    }
+  },
+  "engines": {
+    "node": ">=22.10.0"
+  }
+}

@@ -2,7 +2,7 @@ import type { ExtractPropTypes, PropType } from 'vue'
 
 export type SliderSize = 'large' | 'default' | 'small'
 export type SliderPlacement = 'top' | 'right' | 'bottom' | 'left'
-export type SliderMarks = Record<number, string | { style?: Record<string, any>, label?: any }>
+export type SliderMarks = Record<number, string | { style?: Record<string, any>; label?: any }>
 
 export const sliderProps = {
   modelValue: {

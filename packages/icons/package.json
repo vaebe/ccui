@@ -1,0 +1,98 @@
+{
+  "name": "@vaebe/ccui-icons",
+  "version": "2.0.0",
+  "description": "Offline icon assets for vue3-ccui — Iconify mdi collection inlined + tree-shakable SVG components, no CDN",
+  "keywords": [
+    "icons",
+    "iconify",
+    "mdi",
+    "offline",
+    "svg",
+    "vue",
+    "vue3",
+    "vue3-ccui",
+    "tree-shaking"
+  ],
+  "homepage": "https://vaebe.github.io/ccui/",
+  "bugs": {
+    "url": "https://github.com/vaebe/ccui/issues"
+  },
+  "license": "MIT",
+  "author": "vaebe",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaebe/ccui.git",
+    "directory": "packages/icons"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "./dist/install.js",
+    "./dist/install.cjs"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./icons/*": {
+      "import": {
+        "types": "./dist/icons/*.d.ts",
+        "default": "./dist/icons/*.js"
+      },
+      "require": {
+        "types": "./dist/icons/*.d.cts",
+        "default": "./dist/icons/*.cjs"
+      }
+    },
+    "./install": {
+      "import": {
+        "types": "./dist/install.d.ts",
+        "default": "./dist/install.js"
+      },
+      "require": {
+        "types": "./dist/install.d.cts",
+        "default": "./dist/install.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "@iconify/vue": "^5.0.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@iconify-icons/mdi": "^1.2.48",
+    "@iconify/vue": "^5.0.1",
+    "@types/node": "^22.19.0",
+    "tsdown": "^0.18.0",
+    "typescript": "^5.9.3",
+    "vue": "^3.5.33"
+  },
+  "engines": {
+    "node": ">=22.10.0"
+  }
+}

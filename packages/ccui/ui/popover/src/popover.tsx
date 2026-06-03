@@ -1,6 +1,17 @@
 import type { PopoverProps } from './popover-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, Teleport, Transition, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  Teleport,
+  toRef,
+  Transition,
+  watch,
+} from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { popoverProps } from './popover-types'
 import './popover.scss'
@@ -10,10 +21,24 @@ let popoverIdCounter = 0
 export default defineComponent({
   name: 'CPopover',
   props: popoverProps,
-  emits: ['before-show', 'show', 'before-hide', 'hide', 'update:visible', 'before-enter', 'after-enter', 'before-leave', 'after-leave'],
+  emits: [
+    'before-show',
+    'show',
+    'before-hide',
+    'hide',
+    'update:visible',
+    'before-enter',
+    'after-enter',
+    'before-leave',
+    'after-leave',
+  ],
   setup(props: PopoverProps, { emit, slots, expose }) {
     const ns = useNamespace('popover')
     const popperId = `${ns.e('popper')}-${++popoverIdCounter}`
+    const titleId = `${popperId}-title`
+
+    // 是否存在标题（slot 或 prop），用于 aria-labelledby
+    const hasTitle = computed(() => !!slots.title || !!props.title)
 
     const visible = ref(false)
     const triggerRef = ref<HTMLElement>()
@@ -23,11 +48,15 @@ export default defineComponent({
     const hideTimer = ref<number>()
     const autoCloseTimer = ref<number>()
 
-    const isControlled = computed(() => props.visible !== undefined)
+    // visible 受控
+    const externalOpen = computed(() => props.visible)
+    const isControlled = computed(() => externalOpen.value !== undefined)
     const actualVisible = computed(() => {
-      const val = isControlled.value ? props.visible : visible.value
+      const val = isControlled.value ? externalOpen.value : visible.value
       return Boolean(val)
     })
+
+    const inlineColorStyle = computed(() => (props.color ? { backgroundColor: props.color } : {}))
 
     // 虚拟触发支持
     const actualTriggerRef = computed(() => {
@@ -43,33 +72,38 @@ export default defineComponent({
         ns.em('popper', props.effect),
         ns.em('popper', props.placement.split('-')[0]),
         props.popperClass,
-      ].filter(Boolean).join(' ')
+      ]
+        .filter(Boolean)
+        .join(' ')
     })
 
-    const { floatingStyles, middlewareData, update } = useFloating(
+    const { floatingStyles, middlewareData, placement, update } = useFloating(
       computed(() => actualTriggerRef.value),
       popperRef,
       {
-        placement: props.placement as any,
+        // 传响应式 placement，保证 placement prop 变化与 flip 翻转都能被 floating-ui 跟踪
+        placement: toRef(props, 'placement') as any,
         middleware: [
           offset(props.offset),
-          flip(),
+          ...(props.autoAdjustOverflow ? [flip()] : []),
           shift({ padding: 8 }),
           ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
         ],
       },
     )
 
+    // 实际生效的方位（flip 翻转后可能与 props.placement 不同），箭头/样式都以此为准
+    const actualSide = computed(() => placement.value.split('-')[0])
+
     const arrowStyles = computed(() => {
-      if (!props.showArrow || !middlewareData.value.arrow)
-        return {}
+      if (!props.showArrow || !middlewareData.value.arrow) return {}
       const { x, y } = middlewareData.value.arrow
       const staticSide = {
         top: 'bottom',
         right: 'left',
         bottom: 'top',
         left: 'right',
-      }[props.placement.split('-')[0]]
+      }[actualSide.value]
       return {
         left: x != null ? `${x}px` : '',
         top: y != null ? `${y}px` : '',
@@ -106,15 +140,13 @@ export default defineComponent({
       }
       if (props.hideAfter > 0 && props.trigger !== 'click') {
         hideTimer.value = window.setTimeout(hidePopover, props.hideAfter)
-      }
-      else {
+      } else {
         hidePopover()
       }
     }
 
     const doShow = () => {
-      if (props.disabled)
-        return
+      if (props.disabled) return
       clearTimers()
       const showPopover = () => {
         emit('before-show')
@@ -122,7 +154,7 @@ export default defineComponent({
           visible.value = true
         }
         emit('update:visible', true)
-        nextTick(() => {
+        void nextTick(() => {
           update()
           emit('show')
           // 设置自动关闭定时器
@@ -135,8 +167,7 @@ export default defineComponent({
       }
       if (props.showAfter > 0) {
         showTimer.value = window.setTimeout(showPopover, props.showAfter)
-      }
-      else {
+      } else {
         showPopover()
       }
     }
@@ -155,8 +186,7 @@ export default defineComponent({
       if (props.trigger === 'click') {
         if (actualVisible.value) {
           doHide()
-        }
-        else {
+        } else {
           doShow()
         }
       }
@@ -166,8 +196,7 @@ export default defineComponent({
         e.preventDefault()
         if (actualVisible.value) {
           doHide()
-        }
-        else {
+        } else {
           doShow()
         }
       }
@@ -183,31 +212,24 @@ export default defineComponent({
       }
     }
     const normalizeTriggerKey = (value: string) => {
-      if (!value)
-        return value
+      if (!value) return value
       const lower = value.toLowerCase()
-      if (value === ' ' || lower === 'space' || lower === 'spacebar')
-        return 'Space'
+      if (value === ' ' || lower === 'space' || lower === 'spacebar') return 'Space'
       return value
     }
 
     const handleKeydown = (e: KeyboardEvent) => {
-      if (props.trigger !== 'focus')
-        return
+      if (props.trigger !== 'focus') return
 
       const normalizedEventKey = normalizeTriggerKey(e.key)
-      const matches = props.triggerKeys
-        .map(normalizeTriggerKey)
-        .includes(normalizedEventKey)
+      const matches = props.triggerKeys.map(normalizeTriggerKey).includes(normalizedEventKey)
 
-      if (!matches)
-        return
+      if (!matches) return
 
       e.preventDefault()
       if (actualVisible.value) {
         doHide()
-      }
-      else {
+      } else {
         doShow()
       }
     }
@@ -226,12 +248,9 @@ export default defineComponent({
       return [ns.b(), props.disabled ? ns.m('disabled') : ''].filter(Boolean).join(' ')
     })
     const onDocumentMouseDown = (e: MouseEvent) => {
-      if (!actualVisible.value)
-        return
-      if (props.trigger === 'manual')
-        return
-      if (!props.hideOnClickOutside)
-        return
+      if (!actualVisible.value) return
+      if (props.trigger === 'manual') return
+      if (!props.hideOnClickOutside) return
       const rawTarget = e.target as any
       const target: Node | null = rawTarget instanceof Node ? rawTarget : null
       const triggerElement = props.virtualTriggering && props.virtualRef ? props.virtualRef : triggerRef.value
@@ -242,12 +261,9 @@ export default defineComponent({
       }
     }
     const onDocumentKeydown = (e: KeyboardEvent) => {
-      if (!actualVisible.value)
-        return
-      if (props.trigger === 'manual')
-        return
-      if (!props.closeOnEsc)
-        return
+      if (!actualVisible.value) return
+      if (props.trigger === 'manual') return
+      if (!props.closeOnEsc) return
       if (e.key === 'Escape') {
         doHide()
       }
@@ -256,9 +272,9 @@ export default defineComponent({
     let cleanup: (() => void) | undefined
 
     onMounted(() => {
-    // 初始化时如果 visible 为 true，确保显示并监听文档级事件
+      // 初始化时如果 visible 为 true，确保显示并监听文档级事件
       if (props.visible) {
-        nextTick(() => {
+        void nextTick(() => {
           const triggerElement = actualTriggerRef.value
           if (triggerElement && popperRef.value) {
             cleanup = autoUpdate(triggerElement, popperRef.value, update)
@@ -286,15 +302,13 @@ export default defineComponent({
         virtualEl.removeEventListener('contextmenu', handleContextMenu)
       }
     })
-    watch(() => props.visible, (newVal) => {
+    watch(externalOpen, (newVal) => {
       if (isControlled.value) {
         const boolVal = Boolean(newVal)
         if (boolVal !== visible.value) {
           visible.value = boolVal
           if (boolVal) {
-            nextTick(() => {
-              update()
-            })
+            void nextTick(() => update())
           }
         }
       }
@@ -308,8 +322,7 @@ export default defineComponent({
         }
         window.addEventListener('mousedown', onDocumentMouseDown, true)
         window.addEventListener('keydown', onDocumentKeydown, true)
-      }
-      else {
+      } else {
         cleanup?.()
         window.removeEventListener('mousedown', onDocumentMouseDown, true)
         window.removeEventListener('keydown', onDocumentKeydown, true)
@@ -317,19 +330,17 @@ export default defineComponent({
     })
 
     const renderArrow = () => {
-      if (!props.showArrow)
-        return null
-      const arrowClass = [ns.e('arrow'), ns.em('arrow', props.placement.split('-')[0])].join(' ')
+      if (!props.showArrow) return null
+      const arrowClass = [ns.e('arrow'), ns.em('arrow', actualSide.value)].join(' ')
       return <div ref={arrowRef} class={arrowClass} style={arrowStyles.value}></div>
     }
 
     const renderHeader = () => {
       const hasTitleSlot = !!slots.title
       const hasTitleProp = !!props.title
-      if (!hasTitleSlot && !hasTitleProp)
-        return null
+      if (!hasTitleSlot && !hasTitleProp) return null
       return (
-        <div class={ns.e('header')}>
+        <div class={ns.e('header')} id={titleId}>
           {slots.title ? slots.title() : props.title}
         </div>
       )
@@ -356,16 +367,13 @@ export default defineComponent({
         if (props.trigger === 'hover') {
           triggerEvents.onMouseenter = handleMouseEnter
           triggerEvents.onMouseleave = handleMouseLeave
-        }
-        else if (props.trigger === 'click') {
+        } else if (props.trigger === 'click') {
           triggerEvents.onClick = handleClick
-        }
-        else if (props.trigger === 'focus') {
+        } else if (props.trigger === 'focus') {
           triggerEvents.onFocus = handleFocus
           triggerEvents.onBlur = handleBlur
           triggerEvents.onKeydown = handleKeydown
-        }
-        else if (props.trigger === 'contextmenu') {
+        } else if (props.trigger === 'contextmenu') {
           triggerEvents.onContextmenu = handleContextMenu
         }
       }
@@ -374,10 +382,13 @@ export default defineComponent({
         <div
           ref={popperRef}
           class={popperClass.value}
-          role="dialog"
+          role={props.role}
           id={popperId}
+          aria-labelledby={hasTitle.value ? titleId : undefined}
+          aria-label={!hasTitle.value && props.ariaLabel ? props.ariaLabel : undefined}
           style={{
             ...floatingStyles.value,
+            ...inlineColorStyle.value,
             zIndex: 2000,
             pointerEvents: props.enterable ? 'auto' : 'none',
             width: props.width || undefined,
@@ -387,11 +398,14 @@ export default defineComponent({
         >
           {renderArrow()}
           {renderHeader()}
-          <div class={ns.e('content')}>
-            {renderContent()}
-          </div>
+          <div class={ns.e('content')}>{renderContent()}</div>
         </div>
       )
+
+      // 渲染容器决策：teleported=true 时挂到 body，否则同 DOM 流
+      const renderPopperWithContainer = () => {
+        return props.teleported ? <Teleport to="body">{popperContent}</Teleport> : popperContent
+      }
 
       return (
         <div class={rootClass.value}>
@@ -400,6 +414,9 @@ export default defineComponent({
               ref={triggerRef}
               class={ns.e('trigger')}
               aria-describedby={actualVisible.value ? popperId : undefined}
+              aria-haspopup={props.ariaHasPopup as any}
+              aria-expanded={actualVisible.value ? 'true' : 'false'}
+              aria-controls={actualVisible.value ? popperId : undefined}
               aria-label={props.ariaLabel}
               tabindex={props.trigger === 'focus' ? props.tabindex : undefined}
               {...triggerEvents}
@@ -417,10 +434,7 @@ export default defineComponent({
             onBeforeLeave={() => emit('before-leave')}
             onAfterLeave={() => emit('after-leave')}
           >
-            {actualVisible.value && (props.teleported
-              ? <Teleport to="body">{popperContent}</Teleport>
-              : popperContent
-            )}
+            {actualVisible.value && renderPopperWithContainer()}
           </Transition>
         </div>
       )

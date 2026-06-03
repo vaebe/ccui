@@ -1,53 +1,75 @@
 {
-  "name": "vue3-ccui",
-  "version": "1.2.2",
-  "license": "MIT",
+  "name": "@vaebe/ccui",
+  "version": "2.0.0",
   "description": "vue3-ccui components based on Vite and Vue3",
-  "type": "module",
   "keywords": [
+    "components",
     "frontend",
+    "jsx",
     "typescript",
     "ui-component",
-    "components",
-    "vue-components",
-    "vue",
-    "vue3",
     "vite",
-    "jsx",
+    "vue",
+    "vue-components",
+    "vue3",
     "vue3-ccui"
   ],
   "homepage": "https://vaebe.github.io/ccui/",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/vaebe/ccui.git"
   },
+  "style": "style.css",
+  "files": [
+    "*.js",
+    "*.css",
+    "*.d.ts",
+    "theme",
+    "**/index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
   "main": "vue-ccui.umd.js",
   "module": "vue-ccui.es.js",
-  "style": "style.css",
+  "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  },
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "test": "vp test run",
+    "test:watch": "vp test",
+    "coverage": "vp test run --coverage"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",
     "@floating-ui/vue": "^1.1.9",
+    "@iconify/vue": "^5.0.1",
+    "@vaebe/ccui-icons": "workspace:*",
     "dayjs": "^1.11.19",
-    "theme": "workspace:*",
-    "vue": "^3.5.22"
+    "qrcode-generator": "^2.0.4"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vitejs/plugin-vue-jsx": "^5.1.1",
-    "@vitest/coverage-v8": "4.0.6",
+    "@vaebe/ccui-theme": "workspace:*",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitejs/plugin-vue-jsx": "^5.1.5",
+    "@vitest/coverage-v8": "^4.1.5",
     "@vue/test-utils": "^2.4.6",
+    "csstype": "^3.1.3",
     "jsdom": "^24.1.3",
     "sass": "^1.93.3",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "vite-svg-loader": "^5.1.0",
-    "vitest": "^4.0.6",
-    "vue-tsc": "^3.1.3"
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vite-svg-loader": "^5.1.1",
+    "vitest": "catalog:",
+    "vue-tsc": "^3.2.7"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
   }
 }

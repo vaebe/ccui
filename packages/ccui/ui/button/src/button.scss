@@ -1,197 +1,452 @@
 @use '../../style-var/index.scss' as *;
 
-.#{$cls-prefix}-button {
-  --primary-color: #7693f5;
-  --success-color: #67c23a;
-  --info-color: #909399;
-  --warning-color: #e6a23c;
-  --danger-color: #f56c6c;
-  --primary-light-color: rgb(118 147 245 / 10%);
-  --success-light-color: rgb(103 194 58 / 10%);
-  --info-light-color: rgb(144 147 153 / 10%);
-  --warning-light-color: rgb(230 162 60 / 10%);
-  --danger-light-color: rgb(245 108 108 / 10%);
+$button-info-color: #909399;
+$button-info-hover-color: #a6a9ad;
+$button-info-active-color: #73767a;
+$button-info-plain-bg: #f4f4f5;
+$button-info-plain-border: #dcdfe6;
 
+.#{$cls-prefix}-button {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 15px;
-  height: 32px;
-  color: $ccui-text;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
+  gap: 8px;
+  height: $ccui-control-height;
+  padding: 4px 15px;
+  color: $ccui-color-text;
+  font-size: $ccui-font-size;
+  font-weight: 400;
+  line-height: $ccui-line-height-base;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
-  background-color: $ccui-base-bg;
+  background-color: $ccui-color-bg-container;
+  border: 1px solid $ccui-color-border;
   border-radius: $ccui-border-radius;
   outline: none;
-  transition: 0.1s;
   appearance: none;
-  border: 1px solid transparent;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+  transition: all $ccui-motion-duration-mid $ccui-motion-ease-in-out;
 
   &:hover {
-    opacity: 0.8;
+    color: $ccui-color-primary-hover;
+    border-color: $ccui-color-primary-hover;
+  }
+
+  &:active {
+    color: $ccui-color-primary-active;
+    border-color: $ccui-color-primary-active;
   }
 
   &:disabled {
     cursor: not-allowed;
+    color: $ccui-color-text-disabled;
+    background-color: rgba(0, 0, 0, 0.04);
+    border-color: $ccui-color-border;
+    box-shadow: none;
   }
 
+  // 实色按钮
   &--primary,
   &--success,
   &--info,
   &--warning,
   &--danger {
-    color: #ffffff;
+    color: $ccui-color-text-light-solid;
+    border-color: transparent;
+    box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 
-    // 获取焦点、选中
-    &:focus,
-    &:active {
-      opacity: 0.8;
+    &:hover {
+      color: $ccui-color-text-light-solid;
+    }
+
+    &:disabled {
+      color: $ccui-color-text-disabled;
+      background-color: rgba(0, 0, 0, 0.04);
+      border-color: $ccui-color-border;
+      box-shadow: none;
     }
   }
 
   &--primary {
-    background: var(--primary-color);
-  }
+    background-color: $ccui-color-primary;
 
-  &--success {
-    background: var(--success-color);
-  }
+    &:hover {
+      background-color: $ccui-color-primary-hover;
+      border-color: $ccui-color-primary-hover;
+    }
 
-  &--info {
-    background: var(--info-color);
-  }
-
-  &--warning {
-    background: var(--warning-color);
-  }
-
-  &--danger {
-    background: var(--danger-color);
-  }
-
-  &--text {
-    color: #7693f5;
-    background: transparent;
-    border-color: transparent;
-  }
-
-  // plain 朴素按钮
-  &--plain-primary,
-  &--plain-success,
-  &--plain-info,
-  &--plain-warning,
-  &--plain-danger {
-    &:focus,
     &:active {
-      color: #ffffff;
+      background-color: $ccui-color-primary-active;
+      border-color: $ccui-color-primary-active;
     }
   }
 
-  &--plain-primary {
-    color: var(--primary-color);
-    background: var(--primary-light-color);
-    border-color: var(--primary-color);
+  &--success {
+    background-color: $ccui-color-success;
 
-    &:focus,
+    &:hover {
+      background-color: $ccui-color-success-hover;
+      border-color: $ccui-color-success-hover;
+    }
+
     &:active {
-      background: var(--primary-color);
+      background-color: $ccui-color-success-active;
+      border-color: $ccui-color-success-active;
+    }
+  }
+
+  &--info {
+    background-color: $button-info-color;
+
+    &:hover {
+      background-color: $button-info-hover-color;
+      border-color: $button-info-hover-color;
+    }
+
+    &:active {
+      background-color: $button-info-active-color;
+      border-color: $button-info-active-color;
+    }
+  }
+
+  &--warning {
+    background-color: $ccui-color-warning;
+
+    &:hover {
+      background-color: $ccui-color-warning-hover;
+      border-color: $ccui-color-warning-hover;
+    }
+
+    &:active {
+      background-color: $ccui-color-warning-active;
+      border-color: $ccui-color-warning-active;
+    }
+  }
+
+  &--danger {
+    background-color: $ccui-color-error;
+
+    &:hover {
+      background-color: $ccui-color-error-hover;
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:active {
+      background-color: $ccui-color-error-active;
+      border-color: $ccui-color-error-active;
+    }
+  }
+
+  &--text {
+    color: $ccui-color-primary;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    &:active {
+      color: $ccui-color-primary-active;
+      background: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // ── type 标准取值 ────────────────────────────────────────
+  // 'default'：等价于无 type 时的默认外观，主要用于 color × variant 矩阵的显式表达
+  &--default {
+    // 不写额外样式，复用 .ccui-button 默认值
+  }
+
+  // 'dashed'：虚线边框 + 默认色
+  &--dashed {
+    border-style: dashed;
+
+    &:hover {
+      border-style: dashed;
+    }
+  }
+
+  // 'link'：纯文字 + 主色，无背景与边框
+  &--link {
+    color: $ccui-color-primary;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      color: $ccui-color-primary-hover;
+      text-decoration: underline;
+      background: transparent;
+    }
+
+    &:active {
+      color: $ccui-color-primary-active;
+      background: transparent;
+    }
+  }
+
+  // ── danger 行为 ─────────────────────────────────────────
+  // dangerous（boolean prop danger=true）
+  // 单独用：红字 + 红边框；与 type='primary' 组合：红色实色按钮
+  &--dangerous {
+    color: $ccui-color-error;
+    border-color: $ccui-color-error;
+
+    &:hover {
+      color: $ccui-color-error-hover;
+      border-color: $ccui-color-error-hover;
+    }
+
+    &:active {
+      color: $ccui-color-error-active;
+      border-color: $ccui-color-error-active;
+    }
+
+    &.#{$cls-prefix}-button--primary {
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-error;
+      border-color: $ccui-color-error;
+
+      &:hover {
+        background-color: $ccui-color-error-hover;
+        border-color: $ccui-color-error-hover;
+      }
+
+      &:active {
+        background-color: $ccui-color-error-active;
+        border-color: $ccui-color-error-active;
+      }
+    }
+  }
+
+  // ghost：背景透明，文字与边框跟主色
+  &--ghost {
+    background-color: transparent;
+    box-shadow: none;
+
+    // ghost + primary：透明背景 + 主色文字 + 主色边框
+    &.#{$cls-prefix}-button--primary {
+      color: $ccui-color-primary;
+      background-color: transparent;
+      border-color: $ccui-color-primary;
+
+      &:hover {
+        color: $ccui-color-primary-hover;
+        background-color: transparent;
+        border-color: $ccui-color-primary-hover;
+      }
+
+      &:active {
+        color: $ccui-color-primary-active;
+        background-color: transparent;
+        border-color: $ccui-color-primary-active;
+      }
+    }
+
+    // ghost + danger：透明背景 + 红色文字 + 红色边框
+    &.#{$cls-prefix}-button--danger {
+      background-color: transparent;
+    }
+  }
+
+  // block：宽度撑满父容器
+  &--block {
+    width: 100%;
+  }
+
+  // icon-end：图标在右侧（默认在左侧）
+  &--icon-end {
+    flex-direction: row-reverse;
+  }
+
+  // ── color / variant 矩阵（占位，矩阵实现留后续 batch）──
+  // 当前仅占位，避免未来 SCSS 完整接入时类名冲突
+
+  // plain 朴素按钮：浅色背景 + 主色边框
+  // 修复要点：
+  // 1. hover 文字走 *-active（更深主色），避免 warning/danger 文字变浅与浅底融合
+  // 2. focus 与 hover 视觉一致，再叠 box-shadow 做焦点暗示，避免文字纯白扣浅底不可见
+  // 3. active 走实色填充：白字 + *-active 深主色底，
+  //    保证 ≥ 4.5:1 对比度（warning 走 *-active 而非 *-color，提升白字对比）
+  &--plain-primary {
+    color: $ccui-color-primary;
+    background-color: $ccui-color-primary-bg;
+    border-color: $ccui-color-primary-border;
+
+    &:hover {
+      color: $ccui-color-primary-active;
+      background-color: $ccui-color-primary-bg-hover;
+      border-color: $ccui-color-primary-border-hover;
+    }
+
+    &:focus {
+      color: $ccui-color-primary-active;
+      background-color: $ccui-color-primary-bg-hover;
+      border-color: $ccui-color-primary-border-hover;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
+    &:active {
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-primary-active;
+      border-color: $ccui-color-primary-active;
     }
   }
 
   &--plain-success {
-    color: var(--success-color);
-    background: var(--success-light-color);
-    border-color: var(--success-color);
+    color: $ccui-color-success;
+    background-color: $ccui-color-success-bg;
+    border-color: $ccui-color-success-border;
 
-    &:focus,
+    &:hover {
+      color: $ccui-color-success-active;
+      background-color: $ccui-color-success-bg;
+      border-color: $ccui-color-success;
+    }
+
+    &:focus {
+      color: $ccui-color-success-active;
+      background-color: $ccui-color-success-bg;
+      border-color: $ccui-color-success;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
     &:active {
-      background: var(--success-color);
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-success-active;
+      border-color: $ccui-color-success-active;
     }
   }
 
   &--plain-info {
-    color: var(--info-color);
-    background: var(--info-light-color);
-    border-color: var(--info-color);
+    color: $button-info-color;
+    background-color: $button-info-plain-bg;
+    border-color: $button-info-plain-border;
 
-    &:focus,
+    &:hover {
+      color: $button-info-active-color;
+      background-color: $button-info-plain-bg;
+      border-color: $button-info-active-color;
+    }
+
+    &:focus {
+      color: $button-info-active-color;
+      background-color: $button-info-plain-bg;
+      border-color: $button-info-active-color;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
     &:active {
-      background: var(--info-color);
+      color: $ccui-color-text-light-solid;
+      background-color: $button-info-active-color;
+      border-color: $button-info-active-color;
     }
   }
 
   &--plain-warning {
-    color: var(--warning-color);
-    background: var(--warning-light-color);
-    border-color: var(--warning-color);
+    color: $ccui-color-warning;
+    background-color: $ccui-color-warning-bg;
+    border-color: $ccui-color-warning-border;
 
-    &:focus,
+    &:hover {
+      color: $ccui-color-warning-active;
+      background-color: $ccui-color-warning-bg;
+      border-color: $ccui-color-warning;
+    }
+
+    &:focus {
+      color: $ccui-color-warning-active;
+      background-color: $ccui-color-warning-bg;
+      border-color: $ccui-color-warning;
+      box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+    }
+
     &:active {
-      background: var(--warning-color);
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-warning-active;
+      border-color: $ccui-color-warning-active;
     }
   }
 
   &--plain-danger {
-    color: var(--danger-color);
-    background: var(--danger-light-color);
-    border-color: var(--danger-color);
+    color: $ccui-color-error;
+    background-color: $ccui-color-error-bg;
+    border-color: $ccui-color-error-border;
 
-    &:focus,
+    &:hover {
+      color: $ccui-color-error-active;
+      background-color: $ccui-color-error-bg;
+      border-color: $ccui-color-error;
+    }
+
+    &:focus {
+      color: $ccui-color-error-active;
+      background-color: $ccui-color-error-bg;
+      border-color: $ccui-color-error;
+      box-shadow: 0 0 0 2px $ccui-control-outline-error;
+    }
+
     &:active {
-      background: var(--danger-color);
+      color: $ccui-color-text-light-solid;
+      background-color: $ccui-color-error-active;
+      border-color: $ccui-color-error-active;
     }
   }
 
   // 大小
   &--large {
-    height: 40px;
-    padding: 12px 19px;
-    font-size: 16px;
+    height: $ccui-control-height-lg;
+    padding: 6px 15px;
+    font-size: $ccui-font-size-lg;
+    border-radius: $ccui-border-radius-lg;
   }
 
   &--small {
-    height: 24px;
-    padding: 5px 11px;
-    font-size: 12px;
+    height: $ccui-control-height-sm;
+    padding: 0 7px;
+    font-size: $ccui-font-size;
+    border-radius: $ccui-border-radius-sm;
   }
 
   // 圆形按钮的不同尺寸
   &.#{$cls-prefix}-button--large.#{$cls-prefix}-button--circle {
-    width: 40px;
-    height: 40px;
-    padding: 12px;
+    width: $ccui-control-height-lg;
+    padding: 0;
   }
 
   &.#{$cls-prefix}-button--small.#{$cls-prefix}-button--circle {
-    width: 24px;
-    height: 24px;
-    padding: 5px;
+    width: $ccui-control-height-sm;
+    padding: 0;
   }
 
   // 圆角
   &--round {
-    border-radius: 20px;
+    border-radius: 100px;
   }
 
   // 圆形
   &--circle {
-    padding: 8px;
+    width: $ccui-control-height;
+    padding: 0;
+    gap: 0;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+
+    .#{$cls-prefix}-button__content:empty {
+      display: none;
+    }
   }
 
   // 加载状态
   &--loading {
     cursor: default;
-    opacity: 0.6;
+    opacity: 0.65;
     pointer-events: none;
   }
 
@@ -202,22 +457,36 @@
     justify-content: center;
   }
 
+  // 图标（左侧前缀）：1em 跟随按钮字号；颜色继承 currentColor
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 1.1em;
+    line-height: 1;
+    flex: none;
+
+    > svg {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+    }
+  }
+
   // 加载图标
   &__loading-icon {
     position: relative;
     display: inline-block;
     width: 14px;
     height: 14px;
-    margin-right: 5px;
     vertical-align: middle;
 
     &::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       border: 2px solid transparent;
       border-top-color: currentColor;
       border-radius: 50%;
@@ -227,7 +496,7 @@
 
   // 图标
   i {
-    margin-right: 5px;
+    line-height: 1;
   }
 }
 

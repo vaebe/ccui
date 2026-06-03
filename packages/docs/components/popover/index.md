@@ -1,6 +1,6 @@
 # Popover 弹出框
 
-用于在不打断用户流程的情况下展示补充信息和操作内容，支持标题、富文本内容、不同触发方式与位置控制。
+用于在不打断用户流程的情况下展示补充信息和操作内容。支持标题 / 富文本内容 / 不同触发方式与位置控制。
 
 ## 何时使用
 
@@ -8,252 +8,126 @@
 - 支持标题、富文本内容、不同触发方式与位置控制
 - 需要展示比 Tooltip 更复杂的内容和操作
 
-## 基本用法
+## 基本使用
 
-最简单的用法，点击触发显示弹出框。
+最简单的用法，默认点击触发显示弹出框。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
-</script>
-
 <template>
-  <div class="demo-popover-basic">
-    <c-popover title="标题" content="这是一段 Popover 内容">
-      <c-button type="primary" plain>
-        点击触发
-      </c-button>
-    </c-popover>
-  </div>
+  <c-popover title="标题" content="这是一段 Popover 内容">
+    <c-button type="primary" plain>点击触发</c-button>
+  </c-popover>
 </template>
-
-<style>
-</style>
 ```
 
 :::
 
 ## 悬停触发
 
-鼠标悬停时显示弹出框。
+`trigger="hover"` 鼠标悬停时显示弹出框。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
-</script>
-
 <template>
-  <div class="demo-popover-hover">
-    <c-popover trigger="hover" content="鼠标悬停显示">
-      <c-button type="primary" plain>
-        Hover
-      </c-button>
-    </c-popover>
-  </div>
+  <c-popover trigger="hover" content="鼠标悬停显示">
+    <c-button type="primary" plain>Hover</c-button>
+  </c-popover>
 </template>
-
-<style>
-</style>
 ```
 
 :::
 
 ## 自定义内容与标题插槽
 
-支持自定义标题和内容插槽，可以插入任意 Vue 组件。
+`#title` / `#content` slot 可插入任意 VNode，常用于带操作按钮的富文本浮层。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
-</script>
-
 <template>
-  <div class="demo-popover-custom">
-    <c-popover>
-      <template #title>
-        <span>自定义标题</span>
-      </template>
-      <template #content>
-        <div style="max-width: 240px">
-          <p>支持任意插槽内容</p>
-          <c-button type="primary" plain size="small">
-            操作
-          </c-button>
-        </div>
-      </template>
-      <c-button type="primary" plain>
-        自定义内容
-      </c-button>
-    </c-popover>
-  </div>
+  <c-popover>
+    <template #title>
+      <span>自定义标题</span>
+    </template>
+    <template #content>
+      <div style="max-width: 240px">
+        <p style="margin: 0 0 8px">支持任意插槽内容</p>
+        <c-button type="primary" plain size="small">操作</c-button>
+      </div>
+    </template>
+    <c-button type="primary" plain>自定义内容</c-button>
+  </c-popover>
 </template>
-
-<style>
-</style>
 ```
 
 :::
 
-## 位置与主题
+## 12 个出现位置
 
-支持 12 个方向的位置和两种主题样式。
+通过 `placement` 控制方位。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
+<script setup>
+const tops = ['top-start', 'top', 'top-end']
+const lefts = ['left-start', 'left', 'left-end']
+const rights = ['right-start', 'right', 'right-end']
+const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 </script>
 
 <template>
   <div class="demo-popover-placement">
-    <div class="placement-container">
-      <!-- 顶部行 -->
-      <div class="top-row">
-        <c-popover placement="top-start" content="Title Top-start Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top-start
-          </c-button>
-        </c-popover>
-        <c-popover placement="top" content="Title Top Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top
-          </c-button>
-        </c-popover>
-        <c-popover placement="top-end" content="Title Top-end Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            top-end
-          </c-button>
+    <div class="row">
+      <c-popover v-for="p in tops" :key="p" :placement="p" :content="`title ${p}`" trigger="hover">
+        <c-button type="primary" plain>{{ p }}</c-button>
+      </c-popover>
+    </div>
+    <div class="center">
+      <div class="col">
+        <c-popover v-for="p in lefts" :key="p" :placement="p" :content="`title ${p}`" trigger="hover">
+          <c-button type="primary" plain>{{ p }}</c-button>
         </c-popover>
       </div>
-
-      <!-- 中间行 -->
-      <div class="middle-row">
-        <div class="left-column">
-          <c-popover placement="left-start" content="Title Left-start Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left-start
-            </c-button>
-          </c-popover>
-          <c-popover placement="left" content="Title Left Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left
-            </c-button>
-          </c-popover>
-          <c-popover placement="left-end" content="Title Left-end Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              left-end
-            </c-button>
-          </c-popover>
-        </div>
-
-        <div class="right-column">
-          <c-popover placement="right-start" content="Title Right-start Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right-start
-            </c-button>
-          </c-popover>
-          <c-popover placement="right" content="Title Right Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right
-            </c-button>
-          </c-popover>
-          <c-popover placement="right-end" content="Title Right-end Center prompts info" trigger="hover">
-            <c-button type="primary" plain>
-              right-end
-            </c-button>
-          </c-popover>
-        </div>
-      </div>
-
-      <!-- 底部行 -->
-      <div class="bottom-row">
-        <c-popover placement="bottom-start" content="Title Bottom-start Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom-start
-          </c-button>
-        </c-popover>
-        <c-popover placement="bottom" content="Title Bottom Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom
-          </c-button>
-        </c-popover>
-        <c-popover placement="bottom-end" content="Title Bottom-end Center prompts info" trigger="hover">
-          <c-button type="primary" plain>
-            bottom-end
-          </c-button>
+      <div class="col">
+        <c-popover v-for="p in rights" :key="p" :placement="p" :content="`title ${p}`" trigger="hover">
+          <c-button type="primary" plain>{{ p }}</c-button>
         </c-popover>
       </div>
+    </div>
+    <div class="row">
+      <c-popover v-for="p in bottoms" :key="p" :placement="p" :content="`title ${p}`" trigger="hover">
+        <c-button type="primary" plain>{{ p }}</c-button>
+      </c-popover>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .demo-popover-placement {
+  width: 460px;
+  margin: 0 auto;
+}
+.demo-popover-placement .row {
   display: flex;
   justify-content: center;
+  gap: 8px;
 }
-
-.placement-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 400px;
-}
-
-.top-row,
-.bottom-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.middle-row {
+.demo-popover-placement .center {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  margin: 10px 0;
 }
-
-.left-column,
-.right-column {
+.demo-popover-placement .col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
-
 .demo-popover-placement .ccui-button {
-  width: 100px;
+  width: 110px;
   font-size: 12px;
 }
 </style>
@@ -261,133 +135,230 @@ export default defineComponent({
 
 :::
 
-## 受控显示
+## 自定义背景色 color
 
-通过 `v-model` 或 `visible` 属性手动控制弹出框的显示状态。
+`color` 优先于 `effect`，接受任意 CSS color 字符串，常用于品牌色 / 警告色 / 渐变。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  setup() {
-    const visible = ref(false)
-    const toggle = () => visible.value = !visible.value
-
-    return {
-      visible,
-      toggle
-    }
-  }
-})
-</script>
-
 <template>
-  <div class="demo-popover-manual">
-    <c-popover
-      v-model:visible="visible"
-      title="受控"
-      content="通过 v-model 控制显隐"
-      trigger="manual"
-    >
-      <c-button type="primary" plain @click="toggle">
-        {{ visible ? '隐藏' : '显示' }}
-      </c-button>
+  <div style="display: flex; gap: 12px">
+    <c-popover content="品牌蓝" color="#1677ff" trigger="hover">
+      <c-button type="primary" plain>蓝</c-button>
+    </c-popover>
+    <c-popover content="成功绿" color="#52c41a" trigger="hover">
+      <c-button type="primary" plain>绿</c-button>
+    </c-popover>
+    <c-popover content="警告红" color="#f5222d" trigger="hover">
+      <c-button type="primary" plain>红</c-button>
     </c-popover>
   </div>
 </template>
-
-<style>
-</style>
 ```
 
 :::
 
-## 右键菜单触发
+## 显隐箭头 show-arrow
 
-支持右键菜单触发方式。
+通过 `show-arrow` 控制箭头显示/隐藏。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
-</script>
-
 <template>
-  <div class="demo-popover-contextmenu">
-    <c-popover
-      trigger="contextmenu"
-      title="右键菜单"
-      content="右键点击触发弹出框"
-    >
-      <c-button type="primary" plain>
-        右键点击我
-      </c-button>
+  <div style="display: flex; gap: 12px">
+    <c-popover content="默认带箭头" placement="top" trigger="hover">
+      <c-button type="primary" plain>带箭头</c-button>
+    </c-popover>
+    <c-popover content="无箭头" placement="top" trigger="hover" :show-arrow="false">
+      <c-button type="primary" plain>无箭头</c-button>
     </c-popover>
   </div>
 </template>
+```
 
-<style>
-</style>
+:::
+
+## 弹层宽度 width
+
+`width` 控制弹层固定宽度，常用于复杂内容场景避免内容塌缩。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px">
+    <c-popover title="说明" content="这段文字较短，无需固定宽度" trigger="hover">
+      <c-button type="primary" plain>默认</c-button>
+    </c-popover>
+    <c-popover
+      title="说明（固定 280px）"
+      content="即便内容很短，弹层依然保持 280px 宽度；适合需要对齐的卡片样式场景"
+      :width="280"
+      trigger="hover"
+    >
+      <c-button type="primary" plain>width = 280</c-button>
+    </c-popover>
+  </div>
+</template>
+```
+
+:::
+
+## 触发方式
+
+`hover` / `click` / `focus` / `manual` / `contextmenu` 五种。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px">
+    <c-popover trigger="hover" content="鼠标悬停">
+      <c-button type="primary" plain>Hover</c-button>
+    </c-popover>
+    <c-popover trigger="click" content="点击触发">
+      <c-button type="primary" plain>Click</c-button>
+    </c-popover>
+    <c-popover trigger="focus" content="聚焦触发">
+      <c-button type="primary" plain>Focus</c-button>
+    </c-popover>
+    <c-popover trigger="contextmenu" title="右键菜单" content="右键点击触发">
+      <c-button type="primary" plain>右键点击</c-button>
+    </c-popover>
+  </div>
+</template>
+```
+
+:::
+
+## 延迟显示 / 隐藏
+
+通过 `show-after` / `hide-after` 控制显隐延迟（ms）。
+
+:::demo
+
+```vue
+<template>
+  <div style="display: flex; gap: 12px">
+    <c-popover content="延迟 800ms 显示" :show-after="800" trigger="hover">
+      <c-button type="primary" plain>延迟显示</c-button>
+    </c-popover>
+    <c-popover content="延迟 800ms 隐藏" :hide-after="800" trigger="hover">
+      <c-button type="primary" plain>延迟隐藏</c-button>
+    </c-popover>
+  </div>
+</template>
+```
+
+:::
+
+## 受控显示 v-model:visible
+
+`visible` 配合 `v-model:visible` 双向同步。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const visible = ref(false)
+</script>
+
+<template>
+  <div style="display: flex; gap: 12px; align-items: center">
+    <c-popover
+      v-model:visible="visible"
+      title="v-model:visible"
+      content="通过 v-model:visible 接管显隐状态"
+      trigger="manual"
+    >
+      <c-button type="primary" plain>受控触发器</c-button>
+    </c-popover>
+    <c-button type="primary" plain @click="visible = !visible">{{ visible ? '隐藏' : '显示' }}</c-button>
+    <span style="color: #666">visible = {{ visible }}</span>
+  </div>
+</template>
+```
+
+:::
+
+## ref 调用 hide 方法
+
+通过 ref 拿到组件实例后调用 `hide()` 可以在事件回调内主动关闭浮层，常用于「点确认后关闭」流程。
+
+:::demo
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const popRef = ref(null)
+function confirm() {
+  console.log('确认操作')
+  popRef.value?.hide()
+}
+function cancel() {
+  popRef.value?.hide()
+}
+</script>
+
+<template>
+  <c-popover ref="popRef" trigger="click" :width="280">
+    <template #title>
+      <span style="color: #f5222d"><c-icon name="mdi:alert" /> 确认删除</span>
+    </template>
+    <template #content>
+      <p style="margin: 0 0 12px; color: #595959">此操作将永久删除该文件，是否继续？</p>
+      <div style="display: flex; justify-content: flex-end; gap: 8px">
+        <c-button size="small" @click="cancel">取消</c-button>
+        <c-button type="primary" size="small" danger @click="confirm">确定</c-button>
+      </div>
+    </template>
+    <c-button type="primary" plain danger>删除文件</c-button>
+  </c-popover>
+</template>
+```
+
+:::
+
+## 自动关闭
+
+`auto-close` 设置毫秒数，弹层在指定时间后自动隐藏；常用于 toast-like 提示场景。
+
+:::demo
+
+```vue
+<template>
+  <c-popover trigger="click" :auto-close="3000" title="自动关闭" content="3 秒后自动关闭">
+    <c-button type="primary" plain>点击我（3 秒后自动关闭）</c-button>
+  </c-popover>
+</template>
 ```
 
 :::
 
 ## 虚拟触发
 
-支持虚拟元素触发，适用于触发元素和展示内容分离的场景。
+`virtual-triggering` 配合 `virtual-ref`，让浮层挂在外部任意元素上，常用于「触发节点和声明位置分离」的场景。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent, onMounted, ref } from 'vue'
+<script setup>
+import { ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const triggerRef = ref()
-    const visible = ref(false)
-
-    const handleShow = () => {
-      visible.value = true
-    }
-
-    const handleHide = () => {
-      visible.value = false
-    }
-
-    return {
-      triggerRef,
-      visible,
-      handleShow,
-      handleHide
-    }
-  }
-})
+const triggerRef = ref()
+const visible = ref(false)
 </script>
 
 <template>
   <div class="demo-popover-virtual">
     <div class="virtual-trigger-area">
-      <div
-        ref="triggerRef"
-        class="virtual-trigger"
-        @mouseenter="handleShow"
-        @mouseleave="handleHide"
-      >
-        虚拟触发区域
+      <div ref="triggerRef" class="virtual-trigger" @mouseenter="visible = true" @mouseleave="visible = false">
+        虚拟触发区域（hover 我）
       </div>
     </div>
-
     <c-popover
       v-model:visible="visible"
       :virtual-triggering="true"
@@ -398,14 +369,13 @@ export default defineComponent({
   </div>
 </template>
 
-<style>
+<style scoped>
 .virtual-trigger-area {
   border: 2px dashed #ddd;
   padding: 18px;
   text-align: center;
   border-radius: 4px;
 }
-
 .virtual-trigger {
   background: #f5f5f5;
   padding: 10px;
@@ -413,7 +383,6 @@ export default defineComponent({
   cursor: pointer;
   transition: background 0.3s;
 }
-
 .virtual-trigger:hover {
   background: #e6f7ff;
 }
@@ -422,120 +391,53 @@ export default defineComponent({
 
 :::
 
-## 嵌套操作
+## 业务场景：用户卡片 hover
 
-可以在 Popover 中嵌套其他组件和操作。
+用户列表上 hover 头像 / 名字时展示完整用户卡，是 IM / 协作工具最常见的悬浮卡片范式。
 
 :::demo
 
 ```vue
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  setup() {
-    const visible = ref(false)
-
-    const handleConfirm = () => {
-      console.log('确认操作')
-      visible.value = false
-    }
-
-    const handleCancel = () => {
-      console.log('取消操作')
-      visible.value = false
-    }
-
-    return {
-      visible,
-      handleConfirm,
-      handleCancel
-    }
-  }
-})
+<script setup>
+const users = [
+  { value: 'alice', name: 'Alice', role: 'PM', desc: '负责需求评审与排期协调', color: '#1677ff' },
+  { value: 'bob', name: 'Bob', role: 'Frontend', desc: '专注组件库与可视化', color: '#52c41a' },
+  { value: 'carol', name: 'Carol', role: 'Backend', desc: '微服务与数据接口', color: '#fa8c16' },
+]
 </script>
 
 <template>
-  <div class="demo-popover-nested">
-    <c-popover v-model:visible="visible" trigger="manual" width="300">
-      <template #title>
-        <span style="color: #f56c6c;">⚠️ 确认删除</span>
-      </template>
+  <div style="display: flex; gap: 16px">
+    <c-popover v-for="u in users" :key="u.value" trigger="hover" :width="240" placement="bottom-start">
       <template #content>
-        <div class="nested-content">
-          <p>此操作将永久删除该文件，是否继续？</p>
-          <div class="action-buttons">
-            <c-button size="small" @click="handleCancel">
-              取消
-            </c-button>
-            <c-button type="primary" size="small" @click="handleConfirm">
-              确定
-            </c-button>
+        <div style="display: flex; gap: 12px; align-items: flex-start">
+          <div
+            :style="{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: u.color,
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              flexShrink: 0,
+            }"
+          >
+            {{ u.name.charAt(0) }}
+          </div>
+          <div>
+            <strong>{{ u.name }}</strong>
+            <p style="margin: 4px 0; color: #999; font-size: 12px">{{ u.role }}</p>
+            <p style="margin: 0; color: #595959; font-size: 12px">{{ u.desc }}</p>
           </div>
         </div>
       </template>
-      <c-button type="danger" plain @click="visible = true">
-        删除文件
-      </c-button>
+      <a href="#" style="color: #1677ff">{{ u.name }}</a>
     </c-popover>
   </div>
 </template>
-
-<style>
-.nested-content {
-  max-width: 260px;
-}
-
-.nested-content p {
-  margin: 0 0 12px 0;
-  color: #606266;
-  line-height: 1.4;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-</style>
-```
-
-:::
-
-## 自动关闭
-
-设置自动关闭时间，弹出框会在指定时间后自动隐藏。
-
-:::demo
-
-```vue
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup() {
-    return {}
-  }
-})
-</script>
-
-<template>
-  <div class="demo-popover-autoclose">
-    <c-popover
-      trigger="click"
-      :auto-close="3000"
-      title="自动关闭"
-      content="这个弹出框将在3秒后自动关闭"
-    >
-      <c-button type="primary" plain>
-        点击我（3秒后自动关闭）
-      </c-button>
-    </c-popover>
-  </div>
-</template>
-
-<style>
-</style>
 ```
 
 :::
@@ -544,48 +446,53 @@ export default defineComponent({
 
 ### Popover Props
 
-| 参数                      | 说明                                       | 类型           | 可选值                                                                                                    | 默认值             |
-| ------------------------- | ------------------------------------------ | -------------- | --------------------------------------------------------------------------------------------------------- | ------------------ |
-| title                     | 标题文本，也可以通过 `slot#title` 传入     | string         | —                                                                                                         | —                  |
-| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string         | —                                                                                                         | —                  |
-| placement                 | Popover 的出现位置                         | string         | top/top-start/top-end/bottom/bottom-start/bottom-end/left/left-start/left-end/right/right-start/right-end | bottom             |
-| effect                    | 默认提供的主题                             | string         | dark/light                                                                                                | light              |
-| visible / v-model:visible | 状态是否可见                               | boolean        | —                                                                                                         | false              |
-| disabled                  | Popover 是否可用                           | boolean        | —                                                                                                         | false              |
-| show-arrow                | 是否显示 Popover 箭头                      | boolean        | —                                                                                                         | true               |
-| trigger                   | 触发方式                                   | string         | hover/focus/click/manual/contextmenu                                                                      | click              |
-| show-after                | 延迟出现，单位毫秒                         | number         | —                                                                                                         | 0                  |
-| hide-after                | 延迟关闭，单位毫秒                         | number         | —                                                                                                         | 200                |
-| popper-class              | 为 Popover 的 popper 添加类名              | string         | —                                                                                                         | —                  |
-| offset                    | 出现位置的偏移量                           | number         | —                                                                                                         | 4                  |
-| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean        | —                                                                                                         | false              |
-| enterable                 | 鼠标是否可进入到 popover 中                | boolean        | —                                                                                                         | true               |
-| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean        | —                                                                                                         | true               |
-| close-on-esc              | 是否支持 ESC 键关闭                        | boolean        | —                                                                                                         | true               |
-| aria-label                | 屏幕阅读器标签                             | string         | —                                                                                                         | —                  |
-| width                     | 弹层宽度                                   | number\|string | —                                                                                                         | —                  |
-| transition                | 定义渐变动画                               | string         | —                                                                                                         | ccui-popover-fade  |
-| auto-close                | 自动关闭时间，单位毫秒                     | number         | —                                                                                                         | 0                  |
-| tabindex                  | Popover 组件的 tabindex                    | number\|string | —                                                                                                         | 0                  |
-| teleported                | 是否将 popover 插入至 body 元素            | boolean        | —                                                                                                         | true               |
-| persistent                | 是否持久化                                 | boolean        | —                                                                                                         | true               |
-| virtual-triggering        | 是否启用虚拟触发器                         | boolean        | —                                                                                                         | false              |
-| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement    | —                                                                                                         | —                  |
-| trigger-keys              | 键盘触发按键                               | string[]       | —                                                                                                         | ['Enter', 'Space'] |
+| 参数                      | 说明                                        | 类型                                                         | 默认值             |
+| ------------------------- | ------------------------------------------- | ------------------------------------------------------------ | ------------------ |
+| title                     | 标题文本，也可以通过 `slot#title` 传入      | string                                                       | —                  |
+| content                   | 显示的内容，也可以通过 `slot#content` 传入  | string                                                       | —                  |
+| placement                 | Popover 的出现位置                          | 12 种方位字符串                                              | bottom             |
+| effect                    | 默认提供的主题                              | `'dark' \| 'light'`                                          | light              |
+| visible / v-model:visible | 受控显示状态                                | boolean                                                      | false              |
+| disabled                  | Popover 是否可用                            | boolean                                                      | false              |
+| color                     | 自定义背景色（覆盖 `effect`）               | string                                                       | —                  |
+| show-arrow                | 是否显示箭头                                | boolean                                                      | true               |
+| trigger                   | 触发方式                                    | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
+| show-after                | 鼠标进入显示延迟（ms）                      | number                                                       | 0                  |
+| hide-after                | 鼠标离开隐藏延迟（ms）                      | number                                                       | 200                |
+| popper-class              | 浮层根节点 class                            | string                                                       | —                  |
+| fresh                     | 关闭后是否销毁内部内容                      | boolean                                                      | false              |
+| destroyTooltipOnHide      | 隐藏时销毁弹层节点                          | boolean                                                      | false              |
+| autoAdjustOverflow        | 自动调整方向避免溢出                        | boolean                                                      | true               |
+| align                     | floating-ui 微调对象                        | object                                                       | —                  |
+| offset                    | 出现位置的偏移量                            | number                                                       | 4                  |
+| raw-content               | 是否将 content 作为 HTML 字符串处理         | boolean                                                      | false              |
+| enterable                 | 鼠标是否可进入到 popover 中                 | boolean                                                      | true               |
+| hide-on-click-outside     | 是否在点击外部时隐藏                        | boolean                                                      | true               |
+| close-on-esc              | 是否支持 ESC 键关闭                         | boolean                                                      | true               |
+| aria-label                | 屏幕阅读器标签                              | string                                                       | —                  |
+| width                     | 弹层宽度                                    | `number \| string`                                           | —                  |
+| transition                | 定义渐变动画                                | string                                                       | ccui-popover-fade  |
+| auto-close                | 自动关闭时间，单位毫秒                      | number                                                       | 0                  |
+| tabindex                  | Popover 组件的 tabindex                     | `number \| string`                                           | 0                  |
+| teleported                | 是否 Teleport 到 body                       | boolean                                                      | true               |
+| persistent                | 是否持久化                                  | boolean                                                      | true               |
+| virtual-triggering        | 是否启用虚拟触发器                          | boolean                                                      | false              |
+| virtual-ref               | 虚拟触发器的参照元素                        | HTMLElement                                                  | —                  |
+| trigger-keys              | 键盘触发按键                                | string[]                                                     | ['Enter', 'Space'] |
 
 ### Popover Events
 
-| 事件名         | 说明               | 回调参数 |
-| -------------- | ------------------ | -------- |
-| before-show    | 显示前触发         | —        |
-| show           | 显示时触发         | —        |
-| before-hide    | 隐藏前触发         | —        |
-| hide           | 隐藏时触发         | —        |
-| update:visible | 状态变更时触发     | visible  |
-| before-enter   | 显示动画播放前触发 | —        |
-| after-enter    | 显示动画播放后触发 | —        |
-| before-leave   | 隐藏动画播放前触发 | —        |
-| after-leave    | 隐藏动画播放后触发 | —        |
+| 事件名         | 说明                 | 回调参数 |
+| -------------- | -------------------- | -------- |
+| before-show    | 显示前触发           | —        |
+| show           | 显示时触发           | —        |
+| before-hide    | 隐藏前触发           | —        |
+| hide           | 隐藏时触发           | —        |
+| update:visible | v-model:visible 同步 | visible  |
+| before-enter   | 显示动画播放前触发   | —        |
+| after-enter    | 显示动画播放后触发   | —        |
+| before-leave   | 隐藏动画播放前触发   | —        |
+| after-leave    | 隐藏动画播放后触发   | —        |
 
 ### Popover Slots
 

@@ -1,0 +1,347 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-steps {
+  display: flex;
+  width: 100%;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__item {
+    position: relative;
+    display: inline-block;
+    flex: 1;
+    overflow: hidden;
+    vertical-align: top;
+    cursor: pointer;
+
+    &--last {
+      flex: none;
+
+      .#{$cls-prefix}-steps__tail {
+        display: none;
+      }
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+
+      .#{$cls-prefix}-steps__title,
+      .#{$cls-prefix}-steps__description {
+        color: $ccui-color-text-disabled;
+      }
+    }
+  }
+
+  &__container {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  &__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-inline-end: 8px;
+    font-size: $ccui-font-size;
+    line-height: 32px;
+    text-align: center;
+    border: 1px solid $ccui-color-text-disabled;
+    border-radius: 32px;
+    background: transparent;
+    transition:
+      background-color $ccui-motion-duration-mid,
+      border-color $ccui-motion-duration-mid;
+  }
+
+  &__number {
+    color: $ccui-color-text-disabled;
+    font-size: $ccui-font-size;
+    line-height: 1;
+  }
+
+  &__check {
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  &__icon-custom {
+    color: inherit;
+    font-size: 16px;
+  }
+
+  &__content {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  &__title {
+    position: relative;
+    display: inline-block;
+    padding-inline-end: 16px;
+    color: $ccui-color-text;
+    font-size: $ccui-font-size-lg;
+    font-weight: normal;
+    line-height: 32px;
+
+    &::after {
+      position: absolute;
+      top: 16px;
+      inset-inline-start: 100%;
+      display: block;
+      width: 9999px;
+      height: 1px;
+      background: $ccui-color-border;
+      content: '';
+    }
+  }
+
+  // 水平排列时连接线左侧有 title 的 padding 间距、右侧却紧贴下一个图标。
+  // 给非首个步骤的图标补一段等量左间距，让连接线左右对称。
+  &__item:not(:first-child) &__icon {
+    margin-inline-start: 16px;
+  }
+
+  &__subtitle {
+    margin-inline-start: 8px;
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size-sm;
+    font-weight: normal;
+  }
+
+  &__description {
+    color: $ccui-color-text-secondary;
+    font-size: $ccui-font-size-sm;
+    line-height: $ccui-line-height-sm;
+    max-width: 140px;
+    word-break: break-word;
+  }
+
+  &__tail {
+    display: none;
+  }
+
+  &__item--wait {
+    .#{$cls-prefix}-steps__icon {
+      border-color: $ccui-color-text-disabled;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      color: $ccui-color-text-secondary;
+    }
+  }
+
+  &__item--process {
+    .#{$cls-prefix}-steps__icon {
+      background: $ccui-color-primary;
+      border-color: $ccui-color-primary;
+    }
+
+    .#{$cls-prefix}-steps__number,
+    .#{$cls-prefix}-steps__icon-custom {
+      color: #ffffff;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      color: $ccui-color-text;
+      font-weight: 500;
+    }
+  }
+
+  &__item--finish {
+    .#{$cls-prefix}-steps__icon {
+      background: $ccui-color-bg-container;
+      border-color: $ccui-color-primary;
+    }
+
+    .#{$cls-prefix}-steps__check,
+    .#{$cls-prefix}-steps__number,
+    .#{$cls-prefix}-steps__icon-custom {
+      color: $ccui-color-primary;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      color: $ccui-color-text;
+
+      &::after {
+        background: $ccui-color-primary;
+      }
+    }
+  }
+
+  &__item--error {
+    .#{$cls-prefix}-steps__icon {
+      background: $ccui-color-bg-container;
+      border-color: $ccui-color-error;
+    }
+
+    .#{$cls-prefix}-steps__check,
+    .#{$cls-prefix}-steps__number,
+    .#{$cls-prefix}-steps__icon-custom {
+      color: $ccui-color-error;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      color: $ccui-color-error;
+    }
+  }
+
+  &--small {
+    .#{$cls-prefix}-steps__icon {
+      width: 24px;
+      height: 24px;
+      margin-inline-end: 8px;
+      font-size: $ccui-font-size-sm;
+      line-height: 24px;
+      border-radius: 24px;
+    }
+
+    // 连接线对称间距：small 的 title padding 是 12px，图标左间距随之改为 12px
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 12px;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      padding-inline-end: 12px;
+      font-size: $ccui-font-size;
+      line-height: 24px;
+
+      &::after {
+        top: 12px;
+      }
+    }
+  }
+
+  &--vertical {
+    flex-direction: column;
+
+    .#{$cls-prefix}-steps__item {
+      display: block;
+      flex: 1 0 auto;
+      padding-inline-start: 0;
+      overflow: visible;
+    }
+
+    // 垂直排列不需要水平方向那段图标左间距
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 0;
+    }
+
+    .#{$cls-prefix}-steps__container {
+      display: flex;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      padding-inline-end: 0;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    .#{$cls-prefix}-steps__item:not(.#{$cls-prefix}-steps__item--last) {
+      // 连接线挂在 item 上、用 top/bottom 双向锚定：图标在 item 顶部、下一个图标恰好
+      // 落在 item 底边（flex item 不发生外边距合并，content 的 margin-bottom 计入 item 高），
+      // 所以上端留图标高 +4px、下端留 4px，两端间距始终对称，不随文案高度变化。
+      // 原方案把线挂在图标上、height 写死 calc(100% + 4px)，间距不够时下方会比上方空一大截。
+      &::after {
+        position: absolute;
+        top: 36px; // 32px 图标 + 4px 上间距
+        bottom: 4px; // 4px 下间距，与上端对称
+        inset-inline-start: 16px; // 32px 图标水平中心
+        width: 1px;
+        background: $ccui-color-border;
+        content: '';
+      }
+
+      &.#{$cls-prefix}-steps__item--finish::after {
+        background: $ccui-color-primary;
+      }
+
+      .#{$cls-prefix}-steps__content {
+        margin-bottom: 16px;
+      }
+    }
+
+    // small 尺寸图标为 24px：上间距与水平中心随之缩小，保持两端 4px 对称
+    &.#{$cls-prefix}-steps--small .#{$cls-prefix}-steps__item:not(.#{$cls-prefix}-steps__item--last)::after {
+      top: 28px; // 24px 图标 + 4px 上间距
+      inset-inline-start: 12px; // 24px 图标水平中心
+    }
+
+    .#{$cls-prefix}-steps__description {
+      max-width: none;
+      padding-bottom: 12px;
+    }
+  }
+
+  &--label-vertical {
+    .#{$cls-prefix}-steps__item {
+      flex: 1;
+    }
+
+    .#{$cls-prefix}-steps__container {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .#{$cls-prefix}-steps__icon,
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      display: inline-flex;
+      margin: 0 auto 8px;
+    }
+
+    .#{$cls-prefix}-steps__content {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .#{$cls-prefix}-steps__title {
+      padding-inline-end: 0;
+
+      &::after {
+        top: -16px;
+        inset-inline-start: 50%;
+        width: 9999px;
+      }
+    }
+  }
+
+  &--dot {
+    .#{$cls-prefix}-steps__icon {
+      width: 8px;
+      height: 8px;
+      margin-top: 8px;
+      padding: 0;
+      border: 0;
+      background: $ccui-color-text-disabled;
+      border-radius: 50%;
+    }
+
+    // 点状步骤不套用横向 16px 图标间距，沿用点自身的紧凑排布
+    .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+      margin-inline-start: 0;
+    }
+
+    .#{$cls-prefix}-steps__item--process .#{$cls-prefix}-steps__icon,
+    .#{$cls-prefix}-steps__item--finish .#{$cls-prefix}-steps__icon {
+      background: $ccui-color-primary;
+    }
+
+    .#{$cls-prefix}-steps__item--error .#{$cls-prefix}-steps__icon {
+      background: $ccui-color-error;
+    }
+
+    .#{$cls-prefix}-steps__dot {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

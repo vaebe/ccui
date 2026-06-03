@@ -1,17 +1,9 @@
 @use '../../style-var/index.scss' as *;
 
-.#{$cls-prefix}-button-3d {
-  --primary-color: #7693f5;
-  --success-color: #67c23a;
-  --info-color: #909399;
-  --warning-color: #e6a23c;
-  --danger-color: #f56c6c;
-  --primary-light-color: rgb(118 147 245 / 10%);
-  --success-light-color: rgb(103 194 58 / 10%);
-  --info-light-color: rgb(144 147 153 / 10%);
-  --warning-light-color: rgb(230 162 60 / 10%);
-  --danger-light-color: rgb(245 108 108 / 10%);
+$button-3d-info-color: #909399;
+$button-3d-info-active-color: #73767a;
 
+.#{$cls-prefix}-button-3d {
   position: relative;
   background: transparent;
   cursor: pointer;
@@ -77,16 +69,16 @@
     .edge {
       background: linear-gradient(
         to left,
-        hsl(230, 80%, 32%) 0%,
-        hsl(230, 80%, 16%) 8%,
-        hsl(230, 80%, 16%) 92%,
-        hsl(230, 80%, 32%) 100%
+        $ccui-color-primary-active 0%,
+        $ccui-color-primary-active 8%,
+        $ccui-color-primary-active 92%,
+        $ccui-color-primary-active 100%
       );
     }
 
     .front {
-      background: var(--primary-color);
-      color: #ffffff;
+      background: $ccui-color-primary;
+      color: $ccui-color-text-light-solid;
     }
   }
 
@@ -94,16 +86,16 @@
     .edge {
       background: linear-gradient(
         to left,
-        hsl(148, 60%, 28%) 0%,
-        hsl(148, 60%, 14%) 8%,
-        hsl(148, 60%, 14%) 92%,
-        hsl(148, 60%, 28%) 100%
+        $ccui-color-success-active 0%,
+        $ccui-color-success-active 8%,
+        $ccui-color-success-active 92%,
+        $ccui-color-success-active 100%
       );
     }
 
     .front {
-      background: var(--success-color);
-      color: #ffffff;
+      background: $ccui-color-success;
+      color: $ccui-color-text-light-solid;
     }
   }
 
@@ -111,16 +103,16 @@
     .edge {
       background: linear-gradient(
         to left,
-        hsl(220, 8%, 36%) 0%,
-        hsl(220, 8%, 18%) 8%,
-        hsl(220, 8%, 18%) 92%,
-        hsl(220, 8%, 36%) 100%
+        $button-3d-info-active-color 0%,
+        $button-3d-info-active-color 8%,
+        $button-3d-info-active-color 92%,
+        $button-3d-info-active-color 100%
       );
     }
 
     .front {
-      background: var(--info-color);
-      color: #ffffff;
+      background: $button-3d-info-color;
+      color: $ccui-color-text-light-solid;
     }
   }
 
@@ -128,16 +120,16 @@
     .edge {
       background: linear-gradient(
         to left,
-        hsl(32, 80%, 32%) 0%,
-        hsl(32, 80%, 16%) 8%,
-        hsl(32, 80%, 16%) 92%,
-        hsl(32, 80%, 32%) 100%
+        $ccui-color-warning-active 0%,
+        $ccui-color-warning-active 8%,
+        $ccui-color-warning-active 92%,
+        $ccui-color-warning-active 100%
       );
     }
 
     .front {
-      background: var(--warning-color);
-      color: #ffffff;
+      background: $ccui-color-warning;
+      color: $ccui-color-text-light-solid;
     }
   }
 
@@ -145,16 +137,16 @@
     .edge {
       background: linear-gradient(
         to left,
-        hsl(2, 80%, 36%) 0%,
-        hsl(2, 80%, 18%) 8%,
-        hsl(2, 80%, 18%) 92%,
-        hsl(2, 80%, 36%) 100%
+        $ccui-color-error-active 0%,
+        $ccui-color-error-active 8%,
+        $ccui-color-error-active 92%,
+        $ccui-color-error-active 100%
       );
     }
 
     .front {
-      background: var(--danger-color);
-      color: white;
+      background: $ccui-color-error;
+      color: $ccui-color-text-light-solid;
     }
   }
 

@@ -1,0 +1,30 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-empty {
+  margin: 0 8px;
+  padding: 16px;
+  text-align: center;
+  color: $ccui-color-text-disabled;
+
+  &__image {
+    height: 100px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img,
+    svg {
+      max-height: 100%;
+    }
+  }
+
+  &__description {
+    color: $ccui-color-text-disabled;
+    font-size: $ccui-font-size;
+  }
+
+  &__footer {
+    margin-top: 16px;
+  }
+}

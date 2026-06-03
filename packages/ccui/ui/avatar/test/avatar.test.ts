@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Avatar } from '../index'
 
@@ -76,7 +76,7 @@ describe('avatar', () => {
 
     // Simulate image error
     const img = wrapper.find('img')
-    img.trigger('error')
+    await img.trigger('error')
     await wrapper.vm.$nextTick()
 
     expect(wrapper.findComponent({ name: 'IconImgError' }).exists()).toBe(true)
@@ -165,5 +165,23 @@ describe('avatar', () => {
     expect(wrapper.find('span').classes()).toContain('ccui-avatar--background-1')
 
     wrapper.unmount()
+  })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = mount(Avatar, {
+        props: { name: 'A', classNames: { root: 'my-root' } },
+      })
+      expect(wrapper.find('.ccui-avatar').classes()).toContain('my-root')
+      wrapper.unmount()
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = mount(Avatar, {
+        props: { name: 'A', styles: { root: { color: 'red' } } },
+      })
+      expect(wrapper.find('.ccui-avatar').attributes('style') || '').toContain('red')
+      wrapper.unmount()
+    })
   })
 })

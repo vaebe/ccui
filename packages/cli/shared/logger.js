@@ -1,6 +1,6 @@
-const chalk = require('chalk')
+import chalk from 'chalk'
 
-module.exports = {
+export default {
   info(text) {
     console.log(chalk.hex('#00afef')(text))
   },

@@ -1,9 +1,7 @@
-import type {
-  InputNumberInstance,
-  InputNumberProps,
-  InputNumberValue,
-} from './input-number-types'
-import { computed, defineComponent, nextTick, ref, watch } from 'vue'
+import type { FormItemInjectedContext } from '../../form/src/form-types'
+import type { InputNumberInstance, InputNumberProps, InputNumberValue } from './input-number-types'
+import { computed, defineComponent, inject, nextTick, ref, watch } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputNumberProps } from './input-number-types'
 import './input-number.scss'
@@ -15,6 +13,9 @@ export default defineComponent({
   setup(props: InputNumberProps, { emit, expose }) {
     const ns = useNamespace('input-number')
     const inputRef = ref<HTMLInputElement>()
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
+    const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
+    const mergedStatus = computed(() => props.status || validationStatus.value)
 
     // 内部值状态
     const innerValue = ref<InputNumberValue>(props.modelValue)
@@ -35,15 +36,13 @@ export default defineComponent({
 
     // 计算是否禁用增加按钮
     const maxDisabled = computed(() => {
-      if (innerValue.value === undefined)
-        return false
+      if (innerValue.value === undefined) return false
       return innerValue.value >= props.max
     })
 
     // 计算是否禁用减少按钮
     const minDisabled = computed(() => {
-      if (innerValue.value === undefined)
-        return false
+      if (innerValue.value === undefined) return false
       return innerValue.value <= props.min
     })
 
@@ -81,6 +80,8 @@ export default defineComponent({
       if (triggerChange && oldValue !== newValue) {
         emit('change', newValue, oldValue)
       }
+
+      formItem?.validate('change')
     }
 
     // 输入处理
@@ -101,8 +102,7 @@ export default defineComponent({
       if (value === '') {
         if (props.allowEmpty) {
           updateValue(undefined, false)
-        }
-        else {
+        } else {
           target.value = displayValue.value
         }
         return
@@ -119,7 +119,7 @@ export default defineComponent({
       updateValue(numValue)
 
       // 更新显示值
-      nextTick(() => {
+      void nextTick(() => {
         if (inputRef.value) {
           inputRef.value.value = displayValue.value
         }
@@ -140,12 +140,13 @@ export default defineComponent({
       if (inputRef.value) {
         inputRef.value.value = displayValue.value
       }
+
+      formItem?.validate('blur')
     }
 
     // 增加值
     const increase = () => {
-      if (props.disabled || maxDisabled.value)
-        return
+      if (props.disabled || maxDisabled.value) return
 
       const currentValue = innerValue.value ?? 0
       const newValue = formatValue(currentValue + props.step)
@@ -154,8 +155,7 @@ export default defineComponent({
 
     // 减少值
     const decrease = () => {
-      if (props.disabled || minDisabled.value)
-        return
+      if (props.disabled || minDisabled.value) return
 
       const currentValue = innerValue.value ?? 0
       const newValue = formatValue(currentValue - props.step)
@@ -164,8 +164,7 @@ export default defineComponent({
 
     // 键盘事件处理
     const handleKeydown = (event: KeyboardEvent) => {
-      if (props.disabled || props.readonly)
-        return
+      if (props.disabled || props.readonly) return
 
       switch (event.key) {
         case 'ArrowUp':
@@ -223,19 +222,20 @@ export default defineComponent({
               [ns.m('readonly')]: props.readonly,
               [ns.m('without-controls')]: !props.controls,
               [ns.m('controls-right')]: controlsAtRight,
-              [ns.m(props.size)]: props.size !== 'md',
+              [ns.m(props.size)]: props.size !== 'default',
               [ns.m('focused')]: focused.value,
               [ns.m('glow')]: props.showGlowStyle && focused.value,
+              [ns.m(`variant-${props.variant}`)]: !!props.variant,
+              [ns.m(`status-${mergedStatus.value}`)]: !!mergedStatus.value,
             },
+            props.classNames?.root,
           ]}
+          style={props.styles?.root}
         >
           {/* 左侧控制按钮 */}
           {props.controls && !controlsAtRight && (
             <span
-              class={[
-                ns.e('decrease'),
-                { [ns.is('disabled')]: minDisabled.value || props.disabled },
-              ]}
+              class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
               role="button"
               onClick={decrease}
             >
@@ -246,7 +246,7 @@ export default defineComponent({
           )}
 
           {/* 输入框 */}
-          <div class={ns.e('input')}>
+          <div class={[ns.e('input'), props.classNames?.input]} style={props.styles?.input}>
             <input
               ref={inputRef}
               type="number"
@@ -258,6 +258,13 @@ export default defineComponent({
               readonly={props.readonly}
               min={props.min}
               max={props.max}
+              role="spinbutton"
+              aria-valuenow={innerValue.value ?? undefined}
+              aria-valuemin={props.min}
+              aria-valuemax={props.max}
+              aria-disabled={props.disabled ? true : undefined}
+              aria-readonly={props.readonly ? true : undefined}
+              aria-invalid={mergedStatus.value === 'error' ? true : undefined}
               onInput={handleInput}
               onChange={handleInputChange}
               onFocus={handleFocus}
@@ -269,10 +276,7 @@ export default defineComponent({
           {/* 左侧增加按钮 */}
           {props.controls && !controlsAtRight && (
             <span
-              class={[
-                ns.e('increase'),
-                { [ns.is('disabled')]: maxDisabled.value || props.disabled },
-              ]}
+              class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
               role="button"
               onClick={increase}
             >
@@ -284,12 +288,9 @@ export default defineComponent({
 
           {/* 右侧控制按钮 */}
           {props.controls && controlsAtRight && (
-            <div class={ns.e('controls')}>
+            <div class={[ns.e('controls'), props.classNames?.controls]} style={props.styles?.controls}>
               <span
-                class={[
-                  ns.e('increase'),
-                  { [ns.is('disabled')]: maxDisabled.value || props.disabled },
-                ]}
+                class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
                 role="button"
                 onClick={increase}
               >
@@ -298,10 +299,7 @@ export default defineComponent({
                 </svg>
               </span>
               <span
-                class={[
-                  ns.e('decrease'),
-                  { [ns.is('disabled')]: minDisabled.value || props.disabled },
-                ]}
+                class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
                 role="button"
                 onClick={decrease}
               >

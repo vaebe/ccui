@@ -1,35 +1,36 @@
 {
   "name": "vue-ccui",
+  "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "pnpm --filter docs dev",
-    "docs:build": "pnpm --filter docs predev && pnpm --filter docs docs:build",
-    "lint": "eslint . --fix",
-    "postinstall": "husky install"
+    "dev": "vp run --filter docs dev",
+    "docs:build": "vp run --filter docs predev && vp run --filter docs docs:build",
+    "build:lib": "vp run --filter ccui-cli build:lib",
+    "release": "node scripts/publish.mjs",
+    "release:dry": "node scripts/publish.mjs --dry-run",
+    "check": "vp check",
+    "test": "vp test",
+    "lint": "vp lint . --fix",
+    "fmt": "vp fmt",
+    "prepare": "vp config",
+    "bootstrap": "pnpm --filter @vaebe/ccui-icons build && pnpm --filter ccui-cli generate:theme",
+    "postinstall": "pnpm bootstrap"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.2.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@ls-lint/ls-lint": "^2.3.1",
-    "@typescript-eslint/eslint-plugin": "^8.46.3",
-    "@typescript-eslint/parser": "^8.46.3",
     "bumpp": "^10.3.1",
     "commitlint": "^20.1.0",
-    "eslint": "^9.39.1",
-    "eslint-plugin-format": "^1.0.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.6"
+    "vite-plus": "catalog:"
   },
-  "lint-staged": {
-    "packages/**/*.{vue,js,jsx,ts,tsx,scss,css}": [
-      "eslint --fix"
-    ]
+  "engines": {
+    "node": ">=22.10.0"
   },
-  "license": "MIT",
+  "packageManager": "pnpm@10.33.2",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
-      "esbuild",
       "vue-demi"
     ]
   }

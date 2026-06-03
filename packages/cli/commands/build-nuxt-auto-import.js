@@ -1,13 +1,16 @@
-const path = require('node:path')
-const fsExtra = require('fs-extra')
+import path, { dirname } from 'node:path'
+import { existsSync } from 'node:fs'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { outputFile } from '../shared/fs.js'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const outputDir = path.resolve(__dirname, '../../ccui/build')
 const outputNuxtDir = path.resolve(__dirname, '../../ccui/build/nuxt')
 
-exports.createNuxtPlugin = () => {
+export const createNuxtPlugin = async () => {
   const fileStr = `import { join } from 'pathe'
   import { defineNuxtModule } from '@nuxt/kit'
-  
+
   export default defineNuxtModule({
     hooks: {
       'components:dirs'(dirs) {
@@ -19,35 +22,23 @@ exports.createNuxtPlugin = () => {
     }
   })`
 
-  fsExtra.outputFile(path.resolve(outputNuxtDir, `index.js`), fileStr, 'utf-8')
+  await outputFile(path.resolve(outputNuxtDir, 'index.js'), fileStr)
 }
 
-exports.createAutoImportedComponent = async (dirName) => {
-  const importStyle = fsExtra.pathExistsSync(
-    path.resolve(outputDir, `${dirName}/style.css`),
-  )
+export const createAutoImportedComponent = async (dirName) => {
+  const importStyle = existsSync(path.resolve(outputDir, `${dirName}/style.css`))
     ? `import '../../${dirName}/style.css' \n`
-    : ``
+    : ''
 
-  // 使用动态 import 替代 require 来加载 ES 模块
-  const compsModule = await import(pathToFileURL(path.resolve(outputDir, `${dirName}/index.es.js`)))
+  const compsModule = await import(pathToFileURL(path.resolve(outputDir, `${dirName}/index.es.js`)).href)
   const comps = compsModule.default || compsModule
 
-  Object.keys(comps).forEach((compName) => {
-    if (compName !== 'default' && !compName.includes('Directive')) {
-      const fileStr = `${importStyle}\nexport  { ${compName} as default } from '../../${dirName}/index.es.js'`
-
-      fsExtra.outputFile(
-        path.resolve(outputNuxtDir, `components/${compName}.js`),
-        fileStr,
-        'utf-8',
-      )
-    }
-  })
-}
-
-// 辅助函数：将文件路径转换为 file:// URL
-function pathToFileURL(path) {
-  const { pathToFileURL: _pathToFileURL } = require('url')
-  return _pathToFileURL(path).href
+  await Promise.all(
+    Object.keys(comps)
+      .filter((compName) => compName !== 'default' && !compName.includes('Directive'))
+      .map((compName) => {
+        const fileStr = `${importStyle}\nexport  { ${compName} as default } from '../../${dirName}/index.es.js'`
+        return outputFile(path.resolve(outputNuxtDir, `components/${compName}.js`), fileStr)
+      }),
+  )
 }

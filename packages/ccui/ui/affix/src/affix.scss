@@ -1,0 +1,9 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-affix {
+  &__inner {
+    &--fixed {
+      position: fixed;
+    }
+  }
+}

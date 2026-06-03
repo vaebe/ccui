@@ -16,7 +16,7 @@ const members = [
     avatar: 'https://avatars.githubusercontent.com/u/52314078?v=4',
     name: 'vaebe',
     title: 'Creator & Lead Developer',
-    org: 'vue3-ccui',
+    org: '@vaebe/ccui',
     orgLink: 'https://github.com/vaebe/ccui',
     desc: 'Vue.js 爱好者，拥有多年前端开发经验的UI组件库开发者。',
     links: [

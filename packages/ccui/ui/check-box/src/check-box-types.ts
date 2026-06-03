@@ -2,10 +2,7 @@ import type { ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue'
 
 export type LabelType = string | number | boolean
 
-export type BeforeChangeType = (
-  isChecked: boolean,
-  v: string,
-) => boolean | Promise<boolean>
+export type BeforeChangeType = (isChecked: boolean, v: LabelType) => boolean | Promise<boolean>
 
 export type DirectionType = 'row' | 'column'
 
@@ -59,10 +56,9 @@ interface CheckBoxGroupInjection {
   disabled: Ref<boolean>
   color: Ref<string | undefined>
   beforeChange: undefined | BeforeChangeType
-  toggleGroupVal: (v: string) => void
-  isItemChecked: (v: string) => boolean
+  toggleGroupVal: (v: LabelType) => void
+  isItemChecked: (v: LabelType) => boolean
 }
 
 /** check-box-group 注入 checkBox 的 key 值 */
-export const checkBoxGroupInjectionKey: InjectionKey<CheckBoxGroupInjection>
-  = Symbol('CCheckBoxGroup')
+export const checkBoxGroupInjectionKey: InjectionKey<CheckBoxGroupInjection> = Symbol('CCheckBoxGroup')

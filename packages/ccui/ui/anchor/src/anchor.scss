@@ -1,0 +1,66 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-anchor {
+  position: relative;
+  padding-inline-start: 2px;
+  font-size: $ccui-font-size;
+  color: $ccui-color-text;
+
+  &__ink {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    height: 100%;
+    width: 2px;
+    background-color: $ccui-color-border;
+  }
+
+  &__ink-ball {
+    position: absolute;
+    inset-inline-start: 0;
+    width: 2px;
+    height: 16px;
+    background-color: $ccui-color-primary;
+    border-radius: 1px;
+    opacity: 0;
+    transition:
+      top $ccui-motion-duration-mid ease-in-out,
+      opacity $ccui-motion-duration-mid;
+  }
+
+  &__link {
+    padding: 4px 0;
+  }
+
+  &__link-title {
+    display: block;
+    padding: 4px 0 4px 16px;
+    color: $ccui-color-text;
+    text-decoration: none;
+    line-height: 1.5;
+    transition: color $ccui-motion-duration-mid;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      color: $ccui-color-primary;
+    }
+
+    &--active {
+      color: $ccui-color-primary;
+      font-weight: 500;
+    }
+  }
+
+  &__children {
+    .#{$cls-prefix}-anchor__link-title {
+      color: $ccui-color-text-secondary;
+
+      &:hover,
+      &--active {
+        color: $ccui-color-primary;
+      }
+    }
+  }
+}

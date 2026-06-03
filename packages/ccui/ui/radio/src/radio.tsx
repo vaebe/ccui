@@ -22,20 +22,16 @@ export default defineComponent({
 
     // 是否激活
     const isActive = computed(() => {
-      const value = radioGroupInject
-        ? radioGroupInject.modelValue.value
-        : props.modelValue
+      const value = radioGroupInject ? radioGroupInject.modelValue.value : props.modelValue
       return value === props.label
     })
 
     // 计算组件样式
     const labelClass = computed(() => {
-      return `${ns.b()} ${isActive.value ? 'active' : ''} ${
-        isDisabled.value ? 'disabled' : ''
-      }`
+      return `${ns.b()} ${isActive.value ? 'active' : ''} ${isDisabled.value ? 'disabled' : ''}`
     })
 
-    const judgeCanChange = (value: string) => {
+    const judgeCanChange = (value: string | number) => {
       // 禁用状态不能切换
       if (isDisabled.value) {
         return Promise.resolve(false)
@@ -58,18 +54,19 @@ export default defineComponent({
     }
 
     const handleChange = async () => {
-      const _label = `${props.label}`
-      judgeCanChange(_label).then((res) => {
+      // 保留 label 原类型（string 或 number），不再强制 stringify
+      const label = props.label
+      void judgeCanChange(label).then((res) => {
         if (res) {
           // 触发 radioGroup 的 emitChangeValue 事件更新数据
           if (radioGroupInject) {
-            radioGroupInject.emitChangeValue(_label)
+            radioGroupInject.emitChangeValue(label)
           }
 
           // 更新双向绑定的数据
-          emit('update:modelValue', _label)
+          emit('update:modelValue', label)
           // 触发change事件
-          emit('change', _label)
+          emit('change', label)
         }
       })
     }
@@ -85,11 +82,11 @@ export default defineComponent({
             value={props.label}
             disabled={isDisabled.value}
             checked={isActive.value}
+            aria-checked={isActive.value}
+            aria-disabled={isDisabled.value ? true : undefined}
           />
           {/* 判断展示那种icon */}
-          <span class={ns.e('icon')}>
-            {isActive.value ? <IconActive /> : <IconCircle />}
-          </span>
+          <span class={ns.e('icon')}>{isActive.value ? <IconActive /> : <IconCircle />}</span>
 
           {/* 默认插槽 存在展示默认插槽的数据 否则展示label */}
           {slots.default ? slots.default() : props.label}

@@ -2,19 +2,219 @@
 
 .#{$cls-prefix}-tree {
   color: $ccui-text;
+  font-size: $ccui-font-size;
 
-  &__indent {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
+  &__node {
+    position: relative;
+    display: flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    border-radius: $ccui-border-radius;
+    cursor: pointer;
+    transition: background-color 0.2s;
   }
 
-  &__value-wrapper {
-    display: flex;
+  &__node:hover {
+    background: $ccui-color-fill-tertiary;
+  }
+
+  &__node--selected {
+    background: $ccui-color-primary-bg;
+    color: $ccui-primary;
+  }
+
+  &__node--focused {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, $ccui-color-primary 45%, transparent);
+  }
+
+  &__node:focus-visible {
+    outline: 2px solid $ccui-primary;
+    outline-offset: -2px;
+  }
+
+  &__virtual {
+    width: 100%;
+  }
+
+  &__guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: $ccui-color-border-secondary;
+    pointer-events: none;
+  }
+
+  &__node--hover-expand {
+    background: color-mix(in srgb, $ccui-color-primary 6%, transparent);
+  }
+
+  &__switcher-error {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
     align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: $ccui-color-error-bg;
+    color: $ccui-color-error;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  &__node--disabled {
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+  }
+
+  &__node--block {
+    width: 100%;
+  }
+
+  &__node--drop-inside {
+    background: $ccui-color-primary-bg;
+    box-shadow: inset 0 0 0 1px $ccui-primary;
+  }
+
+  &__node--drop-before::before,
+  &__node--drop-after::after {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: $ccui-primary;
+    content: '';
+  }
+
+  &__node--drop-before::before {
+    top: -1px;
+  }
+
+  &__node--drop-after::after {
+    bottom: -1px;
+  }
+
+  &__switcher-wrap {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    color: $ccui-color-text-tertiary;
+  }
+
+  &__switcher {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    transition: transform 0.2s ease;
+  }
+
+  &__switcher--open {
+    transform: rotate(90deg);
+  }
+
+  &__switcher-leaf {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+  }
+
+  &__switcher-loading {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    line-height: 14px;
+    font-size: 14px;
+    animation: ccui-tree-spin 1s linear infinite;
+  }
+
+  &__checkbox {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    border: 1px solid $ccui-color-border;
+    border-radius: 2px;
+    background: $ccui-color-bg-container;
+    color: transparent;
+    font-size: 12px;
+    line-height: 1;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+
+  &__checkbox--checked {
+    background: $ccui-primary;
+    border-color: $ccui-primary;
+    color: #fff;
+  }
+
+  &__checkbox--indeterminate {
+    border-color: $ccui-primary;
+    color: $ccui-primary;
+  }
+
+  &__checkbox--disabled {
+    background: $ccui-disabled-bg;
+    border-color: $ccui-color-border;
+    color: $ccui-color-text-disabled;
+    cursor: not-allowed;
+  }
+
+  &__content {
+    display: inline-flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
   }
 
   &__icon {
-    margin-right: 6px;
+    display: inline-flex;
+    flex: none;
+    color: $ccui-color-text-secondary;
+  }
+
+  &__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__highlight {
+    background: $ccui-color-warning-bg;
+    color: $ccui-color-warning;
+  }
+
+  &__empty {
+    padding: 16px;
+    color: $ccui-color-text-tertiary;
+    text-align: center;
+  }
+
+  &--draggable &__node {
+    cursor: grab;
+  }
+}
+
+@keyframes ccui-tree-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

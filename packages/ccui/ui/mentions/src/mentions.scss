@@ -1,0 +1,128 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-mentions {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __textarea
+  @include form-control-variants-on('.#{$cls-prefix}-mentions__textarea');
+
+  // 校验状态（status='error'|'warning'），边框层与 variant 一致在 __textarea
+  &--status-error {
+    .#{$cls-prefix}-mentions__textarea {
+      border-color: $ccui-color-error;
+
+      &:hover {
+        border-color: $ccui-color-error-hover;
+      }
+
+      &:focus {
+        border-color: $ccui-color-error;
+        box-shadow: 0 0 0 2px $ccui-control-outline-error;
+      }
+    }
+  }
+
+  &--status-warning {
+    .#{$cls-prefix}-mentions__textarea {
+      border-color: $ccui-color-warning;
+
+      &:hover {
+        border-color: $ccui-color-warning-hover;
+      }
+
+      &:focus {
+        border-color: $ccui-color-warning;
+        box-shadow: 0 0 0 2px $ccui-control-outline-warning;
+      }
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background: #fff;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+    line-height: 1.5;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: 0;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:hover {
+      border-color: $ccui-color-primary-hover;
+    }
+
+    &:focus {
+      border-color: $ccui-color-primary;
+      box-shadow: 0 0 0 2px $ccui-control-outline;
+    }
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    &:disabled {
+      background: #f5f5f5;
+      color: rgba(0, 0, 0, 0.4);
+      cursor: not-allowed;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    left: 0;
+    z-index: 1050;
+    min-width: 160px;
+    max-width: 320px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12);
+    overflow: auto;
+  }
+
+  &__options {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+  }
+
+  &__option {
+    padding: 5px 12px;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &.is-active {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &.is-disabled {
+      color: rgba(0, 0, 0, 0.25);
+      cursor: not-allowed;
+      background: transparent;
+    }
+  }
+
+  &__empty {
+    padding: 12px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 13px;
+    text-align: center;
+  }
+}

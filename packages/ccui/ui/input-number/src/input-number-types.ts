@@ -1,4 +1,5 @@
 import type { ExtractPropTypes, PropType } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 /**
  * 数字输入框的值类型
@@ -8,14 +9,29 @@ import type { ExtractPropTypes, PropType } from 'vue'
 export type InputNumberValue = number | undefined
 
 /**
- * 输入框尺寸类型
+ * 输入框尺寸类型。与库内其他录入组件（Input / Select 等）统一。
  */
-export type ISize = 'lg' | 'md' | 'sm'
+export type ISize = 'large' | 'default' | 'small'
 
 /**
  * 控制按钮位置类型
  */
 export type ControlsPosition = 'right' | 'both'
+
+/**
+ * 录入组件统一 variant 形态。
+ *
+ * - `outlined`（默认）：1px solid 边框
+ * - `filled`：无边框 + 浅灰背景填充
+ * - `borderless`：完全无边框无背景
+ * - `underlined`：仅底部 1px 边框
+ */
+export type InputNumberVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
+
+/**
+ * 校验状态。Form 联动会自动透传。
+ */
+export type InputNumberStatus = '' | 'error' | 'warning'
 
 /**
  * 格式化选项接口
@@ -66,7 +82,7 @@ export const inputNumberProps = {
   },
   size: {
     type: String as PropType<ISize>,
-    default: 'md',
+    default: 'default',
   },
   reg: {
     type: [RegExp, String] as PropType<RegExp | string | undefined>,
@@ -88,6 +104,35 @@ export const inputNumberProps = {
     type: String as PropType<ControlsPosition>,
     default: 'both',
   },
+  /**
+   * 录入组件统一 variant 形态。
+   * `'outlined' | 'filled' | 'borderless' | 'underlined'`，默认 `'outlined'`。
+   */
+  variant: {
+    type: String as PropType<InputNumberVariant>,
+    default: 'outlined',
+  },
+  /**
+   * 校验状态。`'error' | 'warning'`，Form 联动会自动透传。
+   */
+  status: {
+    type: String as PropType<InputNumberStatus>,
+    default: '',
+  },
+  /**
+   * 语义化 DOM className 注入。可用 key：`root` / `input` / `controls`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
+  },
 } as const
 
 export type InputNumberProps = ExtractPropTypes<typeof inputNumberProps>
@@ -99,13 +144,13 @@ export interface InputNumberEmits {
   /** 值更新事件 */
   'update:modelValue': [value: InputNumberValue]
   /** 值变化事件 */
-  'change': [currentVal: InputNumberValue, oldVal: InputNumberValue]
+  change: [currentVal: InputNumberValue, oldVal: InputNumberValue]
   /** 失去焦点事件 */
-  'blur': [event: FocusEvent]
+  blur: [event: FocusEvent]
   /** 获得焦点事件 */
-  'focus': [event: FocusEvent]
+  focus: [event: FocusEvent]
   /** 输入事件 */
-  'input': [currentValue: InputNumberValue]
+  input: [currentValue: InputNumberValue]
 }
 
 /**

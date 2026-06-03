@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { nextTick, ref } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { InputNumber } from '../index'
 
 // 测试辅助函数
@@ -108,11 +109,11 @@ describe('inputNumber', () => {
   })
 
   it('should support different sizes', async () => {
-    const wrapper = createWrapper({ size: 'lg' })
-    expect(wrapper.classes()).toContain('ccui-input-number--lg')
+    const wrapper = createWrapper({ size: 'large' })
+    expect(wrapper.classes()).toContain('ccui-input-number--large')
 
-    await wrapper.setProps({ size: 'sm' })
-    expect(wrapper.classes()).toContain('ccui-input-number--sm')
+    await wrapper.setProps({ size: 'small' })
+    expect(wrapper.classes()).toContain('ccui-input-number--small')
   })
 
   it('should handle controls position', async () => {
@@ -180,5 +181,190 @@ describe('inputNumber', () => {
     expect(typeof vm.blur).toBe('function')
     expect(typeof vm.increase).toBe('function')
     expect(typeof vm.decrease).toBe('function')
+  })
+
+  it('should reject invalid input by regexp string', async () => {
+    const wrapper = createWrapper({ modelValue: 12, reg: '^\\d*$' })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('abc')
+    await input.trigger('input')
+
+    expect((input.element as HTMLInputElement).value).toBe('12')
+  })
+
+  it('should reject invalid input by regexp object', async () => {
+    const wrapper = createWrapper({ modelValue: 3, reg: /^\d+$/ })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('3.5')
+    await input.trigger('input')
+
+    expect((input.element as HTMLInputElement).value).toBe('3')
+  })
+
+  it('should restore empty input when allowEmpty is false', async () => {
+    const wrapper = createWrapper({ modelValue: 5 })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.setValue('')
+    await input.trigger('input')
+    expect((input.element as HTMLInputElement).value).toBe('5')
+  })
+
+  it('should ignore keyboard changes when readonly', async () => {
+    const wrapper = createWrapper({ modelValue: 5, readonly: true })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.trigger('keydown', { key: 'ArrowUp' })
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('should render input attributes and glow focus state', async () => {
+    const wrapper = createWrapper({
+      modelValue: 2,
+      min: 1,
+      max: 9,
+      step: 0.5,
+      placeholder: 'Amount',
+      showGlowStyle: true,
+    })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    expect(input.attributes('placeholder')).toBe('Amount')
+    expect(input.attributes('min')).toBe('1')
+    expect(input.attributes('max')).toBe('9')
+    expect(input.attributes('step')).toBe('0.5')
+
+    await input.trigger('focus')
+    expect(wrapper.classes()).toContain('ccui-input-number--glow')
+  })
+
+  it('should omit glow class when showGlowStyle is false', async () => {
+    const wrapper = createWrapper({ showGlowStyle: false })
+    const input = wrapper.find('.ccui-input-number__inner')
+
+    await input.trigger('focus')
+
+    expect(wrapper.classes()).toContain('ccui-input-number--focused')
+    expect(wrapper.classes()).not.toContain('ccui-input-number--glow')
+  })
+
+  it('should update from exposed methods', async () => {
+    const wrapper = createWrapper({ modelValue: 1 })
+    const vm = wrapper.vm as any
+
+    vm.setValue(4)
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([4])
+    expect(vm.getValue()).toBe(4)
+
+    vm.increase()
+    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([5])
+
+    vm.decrease()
+    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([4])
+  })
+
+  describe('variant（v5.13+：outlined / filled / borderless / underlined）', () => {
+    it('默认 variant 为 outlined', () => {
+      const wrapper = createWrapper()
+      expect(wrapper.find('.ccui-input-number--variant-outlined').exists()).toBe(true)
+    })
+
+    it('variant="filled"', () => {
+      const wrapper = createWrapper({ variant: 'filled' })
+      expect(wrapper.find('.ccui-input-number--variant-filled').exists()).toBe(true)
+    })
+
+    it('variant="borderless"', () => {
+      const wrapper = createWrapper({ variant: 'borderless' })
+      expect(wrapper.find('.ccui-input-number--variant-borderless').exists()).toBe(true)
+    })
+
+    it('variant="underlined"', () => {
+      const wrapper = createWrapper({ variant: 'underlined' })
+      expect(wrapper.find('.ccui-input-number--variant-underlined').exists()).toBe(true)
+    })
+  })
+
+  describe('status（校验状态 + Form 联动）', () => {
+    it('status="error" 加 --status-error 类', () => {
+      const wrapper = createWrapper({ status: 'error' })
+      expect(wrapper.find('.ccui-input-number--status-error').exists()).toBe(true)
+    })
+
+    it('status="warning" 加 --status-warning 类', () => {
+      const wrapper = createWrapper({ status: 'warning' })
+      expect(wrapper.find('.ccui-input-number--status-warning').exists()).toBe(true)
+    })
+
+    it('inherits validateStatus from injected FormItem context', () => {
+      const validateStatus = ref<'' | 'error'>('error')
+      const wrapper = mount(InputNumber, {
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus,
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+      expect(wrapper.find('.ccui-input-number--status-error').exists()).toBe(true)
+    })
+
+    it('triggers FormItem.validate on change and on blur', async () => {
+      const onValidate = vi.fn(async () => true)
+      const wrapper = mount(InputNumber, {
+        props: { modelValue: 0 },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate: onValidate,
+            },
+          },
+        },
+      })
+      const input = wrapper.find('.ccui-input-number__inner')
+      await input.setValue('5')
+      await input.trigger('input')
+      expect(onValidate).toHaveBeenCalledWith('change')
+      await input.trigger('blur')
+      expect(onValidate).toHaveBeenCalledWith('blur')
+    })
+  })
+
+  describe('M-A2 classNames / styles 钩子', () => {
+    it('classNames.root 注入到根节点', () => {
+      const wrapper = createWrapper({ classNames: { root: 'my-root' } })
+      expect(wrapper.classes()).toContain('my-root')
+    })
+
+    it('styles.root 注入到根节点 style', () => {
+      const wrapper = createWrapper({ styles: { root: { color: 'red' } } })
+      expect(wrapper.attributes('style') || '').toContain('color: red')
+    })
+  })
+
+  describe('XL-4 ARIA', () => {
+    it('input 加 role="spinbutton" + aria-valuenow / valuemin / valuemax', () => {
+      const wrapper = createWrapper({ modelValue: 5, min: 0, max: 10 })
+      const inp = wrapper.find('.ccui-input-number__inner')
+      expect(inp.attributes('role')).toBe('spinbutton')
+      expect(inp.attributes('aria-valuenow')).toBe('5')
+      expect(inp.attributes('aria-valuemin')).toBe('0')
+      expect(inp.attributes('aria-valuemax')).toBe('10')
+    })
+
+    it('disabled / status=error 时补 aria-disabled / aria-invalid', () => {
+      const wrapper = createWrapper({ disabled: true, status: 'error' })
+      const inp = wrapper.find('.ccui-input-number__inner')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+      expect(inp.attributes('aria-invalid')).toBe('true')
+    })
   })
 })

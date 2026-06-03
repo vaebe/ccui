@@ -1,23 +1,17 @@
 import { ref } from 'vue'
 
-export default function getBackgroundColor(
-  gender: string,
-  char: string,
-): number {
+export default function getBackgroundColor(gender: string, char: string): number {
   const code = ref<number>(1)
   // 性别存在  直接使用性别
   if (gender) {
     if (gender.toLowerCase() === 'male') {
       code.value = 1
-    }
-    else if (gender.toLowerCase() === 'female') {
+    } else if (gender.toLowerCase() === 'female') {
       code.value = 0
-    }
-    else {
+    } else {
       throw new Error('gender must be "Male" or "Female"')
     }
-  }
-  else {
+  } else {
     const unicode = char.charCodeAt(0)
     code.value = unicode % 2
   }

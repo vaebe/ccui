@@ -1,9 +1,11 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { h, nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { Radio } from '../index'
+import { Radio, RadioGroup } from '../index'
 
 const ns = useNamespace('radio', true)
+const groupNs = useNamespace('radio-group', true)
 const baseClass = ns.b()
 
 describe('radio', () => {
@@ -117,5 +119,75 @@ describe('radio', () => {
     await wrapper.find('input').trigger('change')
 
     expect(beforeChange).toHaveBeenCalledWith('Test')
+  })
+
+  it('renders radio group direction and active child', () => {
+    const wrapper = mount(RadioGroup, {
+      props: {
+        modelValue: 'a',
+        direction: 'row',
+      },
+      slots: {
+        default: () => [h(Radio, { label: 'a' }), h(Radio, { label: 'b' })],
+      },
+    })
+
+    expect(wrapper.find(groupNs.b()).classes()).toContain('is-row')
+    expect(wrapper.findAll(ns.b()).length).toBe(2)
+    expect(wrapper.findAll('label')[0].classes()).toContain('active')
+  })
+
+  it('emits selected value from radio group', async () => {
+    const wrapper = mount(RadioGroup, {
+      props: {
+        modelValue: 'a',
+      },
+      slots: {
+        default: () => [h(Radio, { label: 'a' }), h(Radio, { label: 'b' })],
+      },
+    })
+
+    await wrapper.findAll('input')[1].trigger('change')
+    await nextTick()
+
+    expect(wrapper.emitted('change')?.[0]).toEqual(['b'])
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['b'])
+  })
+
+  it('passes disabled and beforeChange through radio group', async () => {
+    const beforeChange = vi.fn().mockReturnValue(false)
+    const wrapper = mount(RadioGroup, {
+      props: {
+        modelValue: '',
+        disabled: true,
+        beforeChange,
+      },
+      slots: {
+        default: () => h(Radio, { label: 'a' }),
+      },
+    })
+
+    expect(wrapper.find('label').classes()).toContain('disabled')
+
+    await wrapper.find('input').trigger('change')
+    expect(beforeChange).not.toHaveBeenCalled()
+    expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  describe('XL-4 ARIA', () => {
+    it('RadioGroup 根加 role="radiogroup"', () => {
+      const wrapper = mount(RadioGroup, {
+        props: { modelValue: 'a' },
+        slots: { default: () => h(Radio, { label: 'a' }) },
+      })
+      expect(wrapper.attributes('role')).toBe('radiogroup')
+    })
+
+    it('Radio input 加 aria-checked / aria-disabled', () => {
+      const wrapper = mount(Radio, { props: { modelValue: 'a', label: 'a', disabled: true } })
+      const inp = wrapper.find('input')
+      expect(inp.attributes('aria-checked')).toBe('true')
+      expect(inp.attributes('aria-disabled')).toBe('true')
+    })
   })
 })

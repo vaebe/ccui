@@ -1,7 +1,34 @@
 import type { ExtractPropTypes, PropType } from 'vue'
+import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 
 export type InputType = 'text' | 'password'
 export type InputSize = 'large' | 'default' | 'small'
+
+/**
+ * 校验状态。Form 联动会自动透传。
+ */
+export type InputStatus = '' | 'error' | 'warning'
+
+/**
+ * 录入组件统一 variant 形态：
+ *
+ * - `outlined`（默认）：1px solid 边框，与既有视觉一致
+ * - `filled`：无边框 + 浅灰背景填充，hover 加深
+ * - `borderless`：完全无边框无背景
+ * - `underlined`：仅底部 1px 边框，类似 Material 风
+ */
+export type InputVariant = 'outlined' | 'filled' | 'borderless' | 'underlined'
+
+/**
+ * `showCount` 复合配置：
+ *
+ * - `boolean`：开启右侧字符计数
+ * - `{ formatter }`：自定义计数格式（接 `({ value, count, maxLength }) => string`）
+ */
+export interface InputShowCountObject {
+  formatter?: (info: { value: string; count: number; maxLength?: number }) => string
+}
+export type InputShowCount = boolean | InputShowCountObject
 
 export const inputProps = {
   type: {
@@ -24,6 +51,9 @@ export const inputProps = {
     type: Boolean,
     default: false,
   },
+  /**
+   * 是否显示清除按钮。
+   */
   clearable: {
     type: Boolean,
     default: false,
@@ -32,17 +62,72 @@ export const inputProps = {
     type: Boolean,
     default: false,
   },
+  /**
+   * 左侧 addon 文本（也可用同名 `prepend` slot 自定义内容）。
+   */
   prepend: {
     type: String,
     default: '',
   },
+  /**
+   * 右侧 addon 文本（也可用同名 `append` slot 自定义内容）。
+   */
   append: {
     type: String,
     default: '',
   },
+  /**
+   * 最大长度（同时透传给原生 `maxlength`）。
+   */
+  maxLength: {
+    type: Number,
+    default: undefined,
+  },
+  /**
+   * 显示字符计数。`true` 用内置格式 `count[/maxLength]`；对象 `{ formatter }` 自定义。
+   */
+  showCount: {
+    type: [Boolean, Object] as PropType<InputShowCount>,
+    default: false,
+  },
+  /**
+   * 校验状态。`'error' | 'warning'`，Form 联动会自动透传。
+   */
+  status: {
+    type: String as PropType<InputStatus>,
+    default: '',
+  },
+  /**
+   * 录入组件统一 variant 形态。
+   */
+  variant: {
+    type: String as PropType<InputVariant>,
+    default: 'outlined',
+  },
+  /**
+   * 非受控模式初始值。设置后首次挂载从 `defaultValue` 取值，之后忽略；与 `v-model` 并存。
+   */
+  defaultValue: {
+    type: String,
+    default: undefined,
+  },
   modelValue: {
     type: String,
     default: '',
+  },
+  /**
+   * 语义化 DOM className 注入。可用 key：`root` / `wrapper` / `input`。
+   */
+  classNames: {
+    type: Object as PropType<CcSemanticClasses>,
+    default: undefined,
+  },
+  /**
+   * 语义化 DOM style 注入。可用 key 与 classNames 一致。
+   */
+  styles: {
+    type: Object as PropType<CcSemanticStyles>,
+    default: undefined,
   },
 } as const
 

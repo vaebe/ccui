@@ -1,0 +1,115 @@
+@use '../../style-var/index.scss' as *;
+
+.#{$cls-prefix}-splitter {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: stretch;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+}
+
+.#{$cls-prefix}-splitter-panel {
+  position: relative;
+  overflow: hidden;
+  background: $ccui-color-bg-container;
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-width: 0;
+  min-height: 0;
+
+  &__resizer {
+    position: relative;
+    background: $ccui-color-border-secondary;
+    user-select: none;
+    transition: background-color $ccui-motion-duration-fast;
+    flex-shrink: 0;
+    flex-grow: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      background: transparent;
+    }
+
+    &:hover,
+    &:active {
+      background: $ccui-color-primary;
+    }
+
+    &--horizontal {
+      width: 1px;
+      cursor: col-resize;
+
+      &::after {
+        top: 0;
+        bottom: 0;
+        inset-inline-start: -3px;
+        inset-inline-end: -3px;
+      }
+    }
+
+    &--vertical {
+      height: 1px;
+      cursor: row-resize;
+
+      &::after {
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        top: -3px;
+        bottom: -3px;
+      }
+    }
+  }
+
+  &__resizer:last-child {
+    display: none;
+  }
+
+  // L-2.23：折叠按钮，挂在 resizer 上
+  &__collapse-btn {
+    position: absolute;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 1px solid $ccui-color-border-secondary;
+    border-radius: 4px;
+    background: $ccui-color-bg-container;
+    color: $ccui-color-text-secondary;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1;
+
+    &:hover {
+      border-color: $ccui-color-primary;
+      color: $ccui-color-primary;
+    }
+  }
+
+  &__resizer--horizontal &__collapse-btn {
+    top: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__resizer--vertical &__collapse-btn {
+    top: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+// 最后一个 resizer 隐藏（splitter 内部最后没有下一个 panel）
+.#{$cls-prefix}-splitter > .#{$cls-prefix}-splitter-panel__resizer:last-child {
+  display: none;
+}

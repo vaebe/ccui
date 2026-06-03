@@ -31,11 +31,14 @@ packages/ccui/build
 **/.vitepress/config/enSidebar.ts
 **/.vitepress/config.ts.js
 **/.vitepress/cache
+packages/docs/public/llms.txt
+packages/docs/public/llms-full.txt
 
-**CHANGELOG.md
+packages/*/CHANGELOG.md
 # test
 packages/ccui/coverage
 packages/ccui/ui/**/__snapshots__
 .pnpm-debug.log
 .claude
 .codeflicker
+docs-notes/screenshots

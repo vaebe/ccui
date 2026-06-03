@@ -9,7 +9,7 @@ export { Calendar }
 
 export default {
   title: 'Calendar 日历',
-  category: '数据展示',
+  category: '数据录入',
   status: '100%',
   install(app: App): void {
     app.component(Calendar.name!, Calendar)
