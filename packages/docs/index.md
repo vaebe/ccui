@@ -3,7 +3,7 @@ layout: home
 hero:
   name: ccui
   text: Vue 3 组件库
-  tagline: 视觉对齐 Ant Design v6.3.7，开箱即用的 Vue 3 + TypeScript 组件库
+  tagline: 开箱即用的 Vue 3 + TypeScript 组件库，视觉设计致敬 Ant Design
   image:
     src: /logo.svg
     alt: cc ui
@@ -24,7 +24,7 @@ features:
 
   - icon: 🧩
     title: 84 个组件
-    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，致敬 Ant Design 视觉风格。
+    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，覆盖中后台常见业务场景。
 
   - icon: 🛠️
     title: TypeScript 优先
