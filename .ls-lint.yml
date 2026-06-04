@@ -14,6 +14,8 @@ ls:
     .d.ts: kebab-case
 
 ignore:
+  # 内部维护笔记，命名不受 kebab-case 约束（如 README.md）
+  - docs-notes
   # ccui
   - packages/ccui/node_modules
   - packages/docs
