@@ -17,9 +17,9 @@
     align-items: center;
     gap: 6px;
     padding: 4px 6px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $ccui-form-control-line;
     border-radius: 6px;
-    background: #fff;
+    background: $ccui-color-bg-container;
     cursor: pointer;
     line-height: 1;
     transition:
@@ -36,8 +36,8 @@
     }
 
     &.is-disabled {
-      border-color: #d9d9d9;
-      background: #f5f5f5;
+      border-color: $ccui-form-control-line;
+      background: $ccui-list-item-hover-bg;
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -65,8 +65,10 @@
     border-radius: 4px;
     overflow: hidden;
     background-image:
-      linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%);
+      linear-gradient(45deg, $ccui-color-picker-alpha-checker 25%, transparent 25%),
+      linear-gradient(-45deg, $ccui-color-picker-alpha-checker 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, $ccui-color-picker-alpha-checker 75%),
+      linear-gradient(-45deg, transparent 75%, $ccui-color-picker-alpha-checker 75%);
     background-size: 8px 8px;
     background-position:
       0 0,
@@ -98,8 +100,8 @@
   &__panel {
     width: 240px;
     padding: 12px;
-    background: #fff;
-    border: 1px solid #f0f0f0;
+    background: $ccui-color-bg-elevated;
+    border: 1px solid $ccui-dividing-line;
     border-radius: 8px;
     box-shadow:
       0 6px 16px rgba(0, 0, 0, 0.08),
@@ -169,8 +171,10 @@
 
   &__alpha {
     background-image:
-      linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%);
+      linear-gradient(45deg, $ccui-color-picker-alpha-checker 25%, transparent 25%),
+      linear-gradient(-45deg, $ccui-color-picker-alpha-checker 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, $ccui-color-picker-alpha-checker 75%),
+      linear-gradient(-45deg, transparent 75%, $ccui-color-picker-alpha-checker 75%);
     background-size: 8px 8px;
     background-position:
       0 0,
@@ -211,9 +215,9 @@
     align-items: center;
     padding: 0 8px;
     height: 28px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $ccui-form-control-line;
     border-radius: 4px;
-    background: #fff;
+    background: $ccui-color-bg-container;
     transition: border-color 0.2s;
 
     &:focus-within {
@@ -245,9 +249,9 @@
     width: 64px;
     height: 28px;
     padding: 0 8px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $ccui-form-control-line;
     border-radius: 4px;
-    background: #fff;
+    background: $ccui-color-bg-container;
 
     &:focus-within {
       border-color: $ccui-color-primary;
@@ -324,7 +328,7 @@
   &__footer {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid $ccui-dividing-line;
   }
 }
 

@@ -72,6 +72,7 @@ export default {
   'float-block-shadow': 'rgba(22, 104, 220, 0.32)',
   'highlight-overlay': 'rgba(0, 0, 0, 0.45)',
   'range-item-hover-bg': '#111a2c',
+  'color-picker-alpha-checker': '#424242',
   // 按钮
   primary: '#1668dc',
   'primary-hover': '#3c89e8',
@@ -79,6 +80,11 @@ export default {
   'contrast-hover': '#e86e6b',
   'contrast-active': '#ad2d2c',
   secondary: 'rgba(255, 255, 255, 0.65)',
+  'button-info': '#a6a9ad',
+  'button-info-hover': '#b8bbbf',
+  'button-info-active': '#85888c',
+  'button-info-plain-bg': '#2a2a2a',
+  'button-info-plain-border': '#3a3a3a',
   // 状态
   'danger-line': '#58181c',
   'danger-bg': '#2a1215',

@@ -1,10 +1,10 @@
 @use '../../style-var/index.scss' as *;
 
-$button-info-color: #909399;
-$button-info-hover-color: #a6a9ad;
-$button-info-active-color: #73767a;
-$button-info-plain-bg: #f4f4f5;
-$button-info-plain-border: #dcdfe6;
+$button-info-color: $ccui-button-info;
+$button-info-hover-color: $ccui-button-info-hover;
+$button-info-active-color: $ccui-button-info-active;
+$button-info-plain-bg: $ccui-button-info-plain-bg;
+$button-info-plain-border: $ccui-button-info-plain-border;
 
 .#{$cls-prefix}-button {
   box-sizing: border-box;

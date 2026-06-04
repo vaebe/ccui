@@ -37,6 +37,53 @@
   margin-top: 0;
 }
 
+/* demo 容器右上角的「浅色 / 深色」就地切换按钮。
+   - JS（theme/demoDarkToggle.ts）注入到每个 [class*='_example-showcase_'] 容器内，
+     容器若为 static 定位会被就地改成 relative 以承载本绝对定位按钮。
+   - 不带任何 ccui- 类，因此不会被 showcase 的相邻兄弟间距 / 列表抹平规则命中。
+   - 切换只 toggle 容器自身 .dark；按钮自身样式写死、不依赖 ccui 变量，
+     使其在浅 / 深两态下都清晰可见。 */
+.vp-doc [class*='_example-showcase_'] .ccui-demo-dark-toggle {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
+  /* 用 VitePress 自身变量，浅 / 深态都有合适对比；不受容器 .dark 影响 */
+  color: var(--vp-c-text-2);
+  background-color: var(--vp-c-bg);
+  opacity: 0.55;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.vp-doc [class*='_example-showcase_'] .ccui-demo-dark-toggle:hover,
+.vp-doc [class*='_example-showcase_'] .ccui-demo-dark-toggle:focus-visible {
+  opacity: 1;
+  color: var(--vp-c-brand-1, var(--vp-c-brand));
+  border-color: var(--vp-c-brand-1, var(--vp-c-brand));
+  outline: none;
+}
+
+/* 容器进入深色态时，按钮仍保持自身配色（已用 vp 变量），
+   这里仅微调让它在深底上更显眼。 */
+.vp-doc [class*='_example-showcase_'].dark .ccui-demo-dark-toggle {
+  opacity: 0.7;
+}
+
 .mt-10 {
   margin-top: 10px;
 }

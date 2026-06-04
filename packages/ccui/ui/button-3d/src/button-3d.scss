@@ -1,7 +1,7 @@
 @use '../../style-var/index.scss' as *;
 
-$button-3d-info-color: #909399;
-$button-3d-info-active-color: #73767a;
+$button-3d-info-color: $ccui-button-info;
+$button-3d-info-active-color: $ccui-button-info-active;
 
 .#{$cls-prefix}-button-3d {
   position: relative;
