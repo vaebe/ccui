@@ -81,6 +81,7 @@
 - [Tabs 选项卡](https://vaebe.github.io/ccui/components/tabs/index.html)：选项卡切换组件
 - [Tag 标签](https://vaebe.github.io/ccui/components/tag/index.html)：进行标记和分类的小标签
 - [Textarea 多行文本](https://vaebe.github.io/ccui/components/textarea/index.html)：多行文本输入框，作为独立顶层组件存在（不挂在 Input 命名空间下）
+- [主题定制 / 深色模式](https://vaebe.github.io/ccui/components/theme/index.html)：ccui 的所有组件样式都建立在一套 `--ccui-*` CSS 变量之上。深色模式、品牌色定制、圆角调整都归结为一件事：**覆盖这些 CSS 变量**。本页梳理三种由浅入深的用法
 - [TimePicker 时间选择框](https://vaebe.github.io/ccui/components/time-picker/index.html)：输入或选择时间的控件。三列（时 / 分 / 秒）滚动选择，可控制各列显示与步长，支持 `disabledHours` / `disabledMinutes` / `disabledSeconds` 屏蔽，支持 `showNow` 与 `showOk` 控制 footer 行为
 - [TimeRangePicker 时间范围选择](https://vaebe.github.io/ccui/components/time-range-picker/index.html)：时间区间选择控件，`v-model` 是 `[start, end]` 元组。两端各自独立的 TimePicker 面板，支持独立 `disabled` / `allowEmpty` / `placeholder`，可配 `order` 自动保序
 - [Timeline 时间线](https://vaebe.github.io/ccui/components/timeline/index.html)：可视化地呈现时间流信息
