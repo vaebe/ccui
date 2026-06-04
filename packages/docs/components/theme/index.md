@@ -134,7 +134,3 @@ const radius = ref(6)
 - 整站统一深色：在根元素切 `.dark` 类（**主推**），配合全局引入的 `darkTheme.css`。
 - 仅局部子树深色：用 `c-config-provider` 的 `theme.algorithm: 'dark'` 包裹。
 - 定制品牌色 / 圆角：用 `c-config-provider` 的 `theme.token`，或直接覆盖 `--ccui-*` 变量。
-
-::: tip 在文档站内试试
-本站每个 `:::demo` 演示框右上角都有一个浅色 / 深色开关，点击只会切换该演示框自身的 `.dark`，方便就地预览组件在两种模式下的表现。
-:::

@@ -36,16 +36,7 @@ export const generateTheme = async () => {
   const darkCssVars = Object.entries(mergedDarkTheme)
     .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)
     .join(';\n')
-
-  // 同时产出一个 `.light{}` 块，内容为 light 全集。它的用途是「在已处于
-  // 深色（祖先带 .dark）的子树里把某一块强制切回浅色」：CSS 自定义属性按元素
-  // 就近解析，离用得最近的祖先上的声明胜出，因此在子树容器上挂 `.light` 即可
-  // 覆盖更外层 `html.dark` 下传的取值。`.dark` / `.light` 互为对称的作用域类，
-  // 任一模式都能就地反向覆盖，文档站的 demo 浅/深就地预览即依赖此能力。
-  const lightScopeVars = Object.entries(lightTheme)
-    .map(([key, value]) => `--${CSS_CLASS_PREFIX}-${key}: ${value}`)
-    .join(';\n')
-  const darkFileStr = `.dark{\n${darkCssVars}\n}\n.light{\n${lightScopeVars}\n}`
+  const darkFileStr = `.dark{\n${darkCssVars}\n}`
 
   const lightThemeFilePath = path.resolve(__dirname, '../../theme/theme.scss')
   const darkThemeFilePath = path.resolve(__dirname, '../../theme/darkTheme.css')
