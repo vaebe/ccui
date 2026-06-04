@@ -1,3 +1,5 @@
+@use '../../style-var/index.scss' as *;
+
 .ccui-tooltip {
   position: relative;
   display: inline-block;
@@ -15,16 +17,16 @@
     word-wrap: break-word;
 
     &--dark {
-      background: #303133;
-      color: #fff;
-      border: 1px solid #303133;
+      background: $ccui-feedback-overlay-bg;
+      color: $ccui-light-text;
+      border: 1px solid $ccui-feedback-overlay-bg;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
 
     &--light {
-      background: #fff;
-      color: #606266;
-      border: 1px solid #e4e7ed;
+      background: $ccui-base-bg;
+      color: $ccui-aide-text-stress;
+      border: 1px solid $ccui-color-border;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
   }

@@ -185,7 +185,7 @@ const cfg = useConfig()
 | componentSize | `'small' \| 'middle' \| 'large'` | `'middle'`    | 默认组件尺寸                                                                                |
 | direction     | `'ltr' \| 'rtl'`                 | `'ltr'`       | 文字方向                                                                                    |
 | locale        | `Locale`                         | —             | 语言包                                                                                      |
-| theme         | `{ token, algorithm, cssVar }`   | —             | 主题配置：`token` 用 camelCase（colorPrimary / borderRadius 等），自动映射为 CSS 变量并下传 |
+| theme         | `{ token, algorithm }`           | —             | 主题配置：`token` 用 camelCase（colorPrimary / borderRadius 等），自动映射为 CSS 变量并下传 |
 | iconPrefixCls | string                           | `'ccui-icon'` | 图标类名前缀                                                                                |
 
 ### useConfig

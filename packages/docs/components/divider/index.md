@@ -77,14 +77,14 @@
 
 ## 自定义文案样式
 
-`content-color` 改文字颜色，`content-background-color` 改文字底色（在彩色背景上常用）。
+`content-color` 改文字颜色，`content-background-color` 改文字底色（在彩色背景上常用）。钉死一个固定浅色底时，记得同时钉死文字色，否则深色模式下文字会变白、落在浅底上不可读。
 
 :::demo
 
 ```vue
 <template>
   <c-divider content-color="#7693f5">蓝色文字</c-divider>
-  <c-divider content-background-color="#fff7e6">米色背景</c-divider>
+  <c-divider content-color="#874d00" content-background-color="#fff7e6">米色背景</c-divider>
 </template>
 ```
 

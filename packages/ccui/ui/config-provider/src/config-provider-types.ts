@@ -5,7 +5,6 @@ export type ComponentSize = 'small' | 'middle' | 'large'
 export interface ThemeConfig {
   token?: Record<string, string | number>
   algorithm?: 'default' | 'dark' | 'compact'
-  cssVar?: boolean
 }
 
 export interface ModalLocale {
