@@ -54,7 +54,7 @@ export default defineComponent({
     const imgElement = (
       <img
         src={imgSrc.value}
-        alt=""
+        alt={name.value || customText.value || ''}
         onError={showErrorAvatar}
         class={[props.classNames?.image]}
         style={

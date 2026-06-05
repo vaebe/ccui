@@ -418,7 +418,6 @@ export default defineComponent({
           style={{
             ...floatingStyles.value,
             ...inlineColorStyle.value,
-            zIndex: 2000,
             pointerEvents: props.enterable ? 'auto' : 'none',
             width: props.width ? (typeof props.width === 'number' ? `${props.width}px` : props.width) : undefined,
           }}

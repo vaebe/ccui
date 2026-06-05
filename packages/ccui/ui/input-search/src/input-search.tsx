@@ -78,9 +78,23 @@ export default defineComponent({
       const isInteractive = !props.disabled && !props.readonly
       const showClear = isInteractive && !!props.clearable && !!innerValue.value
       if (!showClear) return null
-      return h('span', { class: ns.e('clear'), onClick: handleClear, 'aria-label': 'clear' }, [
-        renderIconNode('mdi:close-circle'),
-      ])
+      return h(
+        'span',
+        {
+          class: ns.e('clear'),
+          role: 'button',
+          tabindex: 0,
+          onClick: handleClear,
+          onKeydown: (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleClear()
+            }
+          },
+          'aria-label': 'clear',
+        },
+        [renderIconNode('mdi:close-circle')],
+      )
     }
 
     const renderEnterButtonContent = () => {
@@ -122,7 +136,23 @@ export default defineComponent({
       }
       const tail = props.loading
         ? renderLoadingIcon()
-        : h('span', { class: ns.e('inline-icon'), onClick: (e: Event) => triggerSearch(e) }, renderSearchIcon())
+        : h(
+            'span',
+            {
+              class: ns.e('inline-icon'),
+              role: 'button',
+              tabindex: 0,
+              'aria-label': 'search',
+              onClick: (e: Event) => triggerSearch(e),
+              onKeydown: (e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  triggerSearch(e)
+                }
+              },
+            },
+            renderSearchIcon(),
+          )
       return h('span', { class: ns.e('suffix') }, [renderClear(), slots.suffix?.(), tail])
     }
 

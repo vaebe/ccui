@@ -1,5 +1,5 @@
 import type { TableSummaryProps } from './table-summary-types'
-import { defineComponent, inject, onBeforeUnmount, watchEffect } from 'vue'
+import { defineComponent, inject, onBeforeUnmount } from 'vue'
 import { tableSummaryCollectorKey } from '../../table/src/table-types'
 import { tableSummaryProps } from './table-summary-types'
 
@@ -11,10 +11,8 @@ export default defineComponent({
 
     if (collector) {
       // 把 default slot 引用交给 Table；Table 在 tfoot 内调用渲染。
-      // 用 watchEffect 而非一次性 push，是因为 slots.default 在某些场景下是动态的。
-      watchEffect(() => {
-        collector.setSummary(slots.default ?? null)
-      })
+      // 一次性注册即可：slot 函数在 Table 渲染时调用，自行捕获父作用域响应式。
+      collector.setSummary(slots.default ?? null)
       onBeforeUnmount(() => collector.setSummary(null))
     }
     // 脱离 <c-table> 父级时静默渲染 null。

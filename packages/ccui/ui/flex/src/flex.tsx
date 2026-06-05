@@ -14,7 +14,7 @@ export default defineComponent({
     const ns = useNamespace('flex')
 
     const style = computed<CSSProperties>(() => {
-      const wrapValue = props.wrap === true ? 'wrap' : props.wrap === false ? 'nowrap' : props.wrap
+      const wrapValue = props.wrap === true ? 'wrap' : props.wrap === false ? undefined : props.wrap // 'nowrap' 是默认值，无需输出
       let gapValue: string | undefined
       if (props.gap !== undefined && props.gap !== null) {
         if (typeof props.gap === 'number') {
@@ -24,11 +24,11 @@ export default defineComponent({
         }
       }
       return {
-        flexDirection: props.vertical ? 'column' : 'row',
+        flexDirection: props.vertical ? 'column' : undefined,
         flexWrap: wrapValue,
-        justifyContent: props.justify,
-        alignItems: props.align,
-        flex: props.flex,
+        justifyContent: props.justify === 'normal' ? undefined : props.justify,
+        alignItems: props.align === 'normal' ? undefined : props.align,
+        flex: props.flex === 'normal' ? undefined : props.flex,
         gap: gapValue,
       }
     })

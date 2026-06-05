@@ -7,6 +7,7 @@ import type {
   NotificationType,
 } from './notification-types'
 import { defineComponent, h, reactive, Teleport } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import NotificationItem from './notification-item'
 import './notification.scss'
 
@@ -127,6 +128,7 @@ export function useNotification(): UseNotificationReturn {
   const holder: Component = defineComponent({
     name: 'CNotificationHolder',
     setup() {
+      const ns = useNamespace('notification')
       const onDestroy = (placement: NotificationPlacement, id: string) => {
         const arr = lists[placement]
         const idx = arr.findIndex((it) => it.id === id)
@@ -147,7 +149,7 @@ export function useNotification(): UseNotificationReturn {
             'div',
             {
               key: p,
-              class: ['ccui-notification', `ccui-notification--${p}`, config.stack && 'ccui-notification--stack'],
+              class: [ns.b(), ns.m(p), config.stack && ns.m('stack')],
               style: containerStyle,
             },
             lists[p].map((it) =>

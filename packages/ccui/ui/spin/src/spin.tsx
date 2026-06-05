@@ -39,7 +39,7 @@ export default defineComponent({
 
     const indicatorCls = computed(() => ({
       [ns.e('dot')]: true,
-      [ns.em('dot', props.size)]: true,
+      ...(props.size !== 'default' ? { [ns.em('dot', props.size)]: true } : {}),
     }))
 
     const renderIndicator = () => {
@@ -57,7 +57,7 @@ export default defineComponent({
     }
 
     const renderSpinner = () => (
-      <div class={[ns.b(), ns.m(props.size), ns.m('spinning')]}>
+      <div class={[ns.b(), ns.m(props.size)]} role="status" aria-live="polite" aria-label={props.tip || '加载中'}>
         {renderIndicator()}
         {props.tip && <div class={ns.e('text')}>{props.tip}</div>}
       </div>
@@ -78,7 +78,12 @@ export default defineComponent({
       return (
         <div class={[ns.e('nested'), visible.value && ns.is('blur')]}>
           {visible.value && <div class={ns.e('overlay')}>{renderSpinner()}</div>}
-          <div class={[ns.e('container'), visible.value && ns.is('blur')]}>{slots.default()}</div>
+          <div
+            class={[ns.e('container'), visible.value && ns.is('blur')]}
+            aria-busy={visible.value ? 'true' : undefined}
+          >
+            {slots.default()}
+          </div>
         </div>
       )
     }

@@ -130,7 +130,16 @@ export default defineComponent({
         class: ns.e('thumb'),
         src: item.src,
         alt: item.alt ?? '',
+        // 缩略图作为打开预览的交互元素，需键盘可达（Enter/Space 与点击行为一致）
+        tabindex: 0,
+        role: 'button',
         onClick: () => openAt(idx),
+        onKeydown: (e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            openAt(idx)
+          }
+        },
       })
 
     const renderOverlay = () =>

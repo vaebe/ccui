@@ -33,7 +33,7 @@ export default defineComponent({
     })
 
     const dividerTextCls = computed(() => {
-      return `${ns.e('text')} is-${props.contentPosition}`
+      return `${ns.e('text')} ${ns.is(props.contentPosition)}`
     })
 
     return () => (

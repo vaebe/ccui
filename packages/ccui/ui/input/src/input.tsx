@@ -133,6 +133,8 @@ export default defineComponent({
     const clearInput = () => {
       updateValue('')
       emit('clear')
+      // 清除后把焦点归还输入框，避免清除按钮随 hasClear 消失后焦点丢回 body
+      inputRef.value?.focus()
     }
 
     const togglePasswordVisible = () => {
@@ -183,8 +185,19 @@ export default defineComponent({
           {hasClear && <i class={ns.e('clear')} onClick={clearInput}></i>}
           {hasPasswordToggle && (
             <i
+              role="button"
+              tabindex={0}
+              aria-label={isPasswordVisible.value ? '隐藏密码' : '显示密码'}
+              aria-pressed={isPasswordVisible.value ? 'true' : 'false'}
               class={isPasswordVisible.value ? ns.e('password-visible') : ns.e('password-hidden')}
               onClick={togglePasswordVisible}
+              onKeydown={(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  // Space 默认会滚动页面，阻止它；Enter/Space 触发与 onClick 一致的切换逻辑
+                  e.preventDefault()
+                  togglePasswordVisible()
+                }
+              }}
             />
           )}
           {hasSuffixSlot && slots.suffix!()}

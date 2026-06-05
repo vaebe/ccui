@@ -97,9 +97,7 @@ export default defineComponent({
       if (props.twoToneColor) {
         style['--ccui-icon-two-tone-color'] = props.twoToneColor
       }
-      if (props.rotate !== undefined) {
-        style['--ccui-icon-rotate'] = `${props.rotate}deg`
-      }
+      style['--ccui-icon-rotate'] = `${props.rotate}deg`
       return style
     })
 

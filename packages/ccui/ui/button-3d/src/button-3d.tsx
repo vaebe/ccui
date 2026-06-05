@@ -28,7 +28,10 @@ export default defineComponent({
           'is-loading': props.loading,
         }}
         type={props.nativeType}
-        disabled={props.disabled}
+        // loading 时同步原生 disabled，避免键盘 Enter/Space 触发原生提交
+        disabled={props.disabled || props.loading}
+        // 向辅助技术暴露忙碌状态
+        aria-busy={props.loading || undefined}
         onClick={onClick}
       >
         <span class="shadow"></span>

@@ -22,7 +22,7 @@
     position: fixed;
     inset: 0;
     z-index: 1100;
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: $ccui-color-bg-mask;
     display: flex;
     align-items: center;
     justify-content: center;

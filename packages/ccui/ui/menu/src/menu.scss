@@ -23,7 +23,7 @@
     align-items: center;
     gap: 10px;
     height: 40px;
-    padding: 0 20px;
+    padding: 0 $ccui-padding-md;
     margin: 4px;
     border-radius: $ccui-border-radius;
     color: inherit;
@@ -34,7 +34,7 @@
 
     &:hover {
       color: $ccui-color-primary;
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: $ccui-color-fill-tertiary;
     }
 
     &:focus-visible {
@@ -86,7 +86,7 @@
 
   &__icon {
     flex: 0 0 auto;
-    font-size: 14px;
+    font-size: $ccui-font-size;
   }
 
   &__label {
@@ -99,7 +99,7 @@
   &__extra {
     flex: 0 0 auto;
     color: $ccui-color-text-secondary;
-    font-size: 12px;
+    font-size: $ccui-font-size-sm;
   }
 
   &__arrow {
@@ -136,9 +136,9 @@
   }
 
   &__group-title {
-    padding: 8px 20px 4px;
+    padding: $ccui-padding-xs $ccui-padding-md $ccui-padding-xxs;
     color: $ccui-color-text-secondary;
-    font-size: 12px;
+    font-size: $ccui-font-size-sm;
     line-height: 20px;
   }
 
@@ -193,7 +193,7 @@
 
   &--inline {
     .#{$cls-prefix}-menu__sub {
-      background-color: rgba(0, 0, 0, 0.02);
+      background-color: $ccui-color-fill-quaternary;
     }
   }
 

@@ -1,5 +1,5 @@
 import type { RateProps } from './rate-types'
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import iconDefault from './components/icon-default'
 import { rateProps } from './rate-types'
@@ -36,6 +36,15 @@ export default defineComponent({
     }
 
     setIconState(selectedQuantity.value)
+
+    // 监听外部 modelValue 变化（受控更新 / 编程式重置），同步内部选中状态与图标宽度
+    watch(
+      () => props.modelValue,
+      (v) => {
+        selectedQuantity.value = v
+        setIconState(v)
+      },
+    )
 
     // 判断当前鼠标事件的目标是否是半选
     // 从监听器自身元素（currentTarget）计算几何，避免 e.target 落在内部 svg/span 导致 offsetX 与 clientWidth 取自不同元素而错判

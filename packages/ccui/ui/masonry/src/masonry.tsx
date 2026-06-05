@@ -73,6 +73,12 @@ export default defineComponent({
       }
     })
 
+    // 末列样式：与 columnStyle 同源派生，仅去掉右间距，避免渲染时为每列新建 style 对象
+    const columnStyleLast = computed<CSSProperties>(() => ({
+      ...columnStyle.value,
+      marginInlineEnd: undefined,
+    }))
+
     const itemStyle = computed<CSSProperties>(() => {
       const [, v] = gutterPair.value
       return {
@@ -102,10 +108,7 @@ export default defineComponent({
         {columns.value.map((items, ci) => (
           <div
             class={ns.e('column')}
-            style={{
-              ...columnStyle.value,
-              marginInlineEnd: ci === columns.value.length - 1 ? undefined : columnStyle.value.marginInlineEnd,
-            }}
+            style={ci === columns.value.length - 1 ? columnStyleLast.value : columnStyle.value}
             key={ci}
           >
             {items.map((item, ii) => (

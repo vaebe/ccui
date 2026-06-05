@@ -131,7 +131,13 @@ export default defineComponent({
                     <Fragment key={`r-${rIdx}`}>
                       <tr class={ns.e('row')}>
                         {row.map((it, idx) => (
-                          <th key={`l-${idx}`} class={ns.e('label')} colspan={it.span} style={it.labelStyle}>
+                          <th
+                            key={`l-${idx}`}
+                            class={ns.e('label')}
+                            scope="col"
+                            colspan={it.span}
+                            style={it.labelStyle}
+                          >
                             {it.label}
                             {props.colon && !props.bordered ? ':' : ''}
                           </th>
@@ -153,7 +159,7 @@ export default defineComponent({
                       if (props.bordered) {
                         return (
                           <Fragment key={`p-${idx}`}>
-                            <th class={ns.e('label')} style={it.labelStyle}>
+                            <th class={ns.e('label')} scope="row" style={it.labelStyle}>
                               {it.label}
                             </th>
                             <td class={ns.e('content')} colspan={it.span * 2 - 1} style={it.contentStyle}>

@@ -16,6 +16,13 @@ export default defineComponent({
     const id = Symbol('CTableColumn')
     const order = nextColumnOrder()
 
+    // 稳定的渲染代理：闭包内部读 slot/prop 最新值（slot 优先于 function prop，且保留响应式），
+    // 引用始终复用，避免 getter 每次读取都新建临时闭包。
+    const renderProxy = (scope: { text: any; record: any; index: number; column: TableColumn }) => {
+      if (slots.customRender) return slots.customRender(scope)
+      return props.customRender?.(scope)
+    }
+
     // 关键：用 getter 暴露字段，让 Table 端的 render 读取时直接跟 props 建立响应式依赖。
     // 这样 props 变动不需要在本组件 watch 里 re-register —— 避免 function prop 引用频繁变化导致的递归刷新。
     const column = {} as TableColumn
@@ -34,15 +41,9 @@ export default defineComponent({
       filterMultiple: { get: () => props.filterMultiple, enumerable: true, configurable: true },
       onCell: { get: () => props.onCell, enumerable: true, configurable: true },
       onHeaderCell: { get: () => props.onHeaderCell, enumerable: true, configurable: true },
-      // slot 优先于 function prop；用稳定闭包代理，闭包内部读 slot/prop 最新值。
+      // slot 优先于 function prop；复用稳定闭包代理，仅在两者皆无时返回 undefined。
       customRender: {
-        get: () => {
-          if (!slots.customRender && !props.customRender) return undefined
-          return (scope: { text: any; record: any; index: number; column: TableColumn }) => {
-            if (slots.customRender) return slots.customRender(scope)
-            return props.customRender?.(scope)
-          }
-        },
+        get: () => (slots.customRender || props.customRender ? renderProxy : undefined),
         enumerable: true,
         configurable: true,
       },

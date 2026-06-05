@@ -207,6 +207,14 @@ function createTypographyComponent(
           !!ellipsisConfig.value && !expanded.value && ellipsisRows.value > 1,
       }))
 
+      // 让 role="button" 的 span 键盘可达：Enter / Space 触发与 onClick 相同的逻辑
+      const onActivate = (handler: () => void) => (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handler()
+        }
+      }
+
       const renderCopyBtn = (): VNode | null => {
         const cfg = copyConfig.value
         if (!cfg) return null
@@ -217,8 +225,10 @@ function createTypographyComponent(
             <span
               class={[ns.e('copy'), copied.value && ns.is('copied')]}
               role="button"
+              tabindex={0}
               title={titleAttr}
               onClick={triggerCopy}
+              onKeydown={onActivate(triggerCopy)}
             >
               {slots['copy-icon']({ copied: copied.value })}
             </span>
@@ -228,8 +238,10 @@ function createTypographyComponent(
           <span
             class={[ns.e('copy'), copied.value && ns.is('copied')]}
             role="button"
+            tabindex={0}
             title={titleAttr}
             onClick={triggerCopy}
+            onKeydown={onActivate(triggerCopy)}
           >
             {copied.value ? renderIconNode('mdi:check') : renderIconNode('mdi:content-copy')}
           </span>
@@ -243,13 +255,27 @@ function createTypographyComponent(
         if (!triggerTypes.includes('icon')) return null
         if (slots['edit-icon']) {
           return (
-            <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+            <span
+              class={ns.e('edit')}
+              role="button"
+              tabindex={0}
+              title={cfg.tooltip || undefined}
+              onClick={startEdit}
+              onKeydown={onActivate(startEdit)}
+            >
               {slots['edit-icon']()}
             </span>
           )
         }
         return (
-          <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+          <span
+            class={ns.e('edit')}
+            role="button"
+            tabindex={0}
+            title={cfg.tooltip || undefined}
+            onClick={startEdit}
+            onKeydown={onActivate(startEdit)}
+          >
             ✎
           </span>
         )
@@ -260,13 +286,25 @@ function createTypographyComponent(
         const cfg = ellipsisConfig.value!
         if (expanded.value) {
           return (
-            <span class={ns.e('collapse')} role="button" onClick={toggleExpand}>
+            <span
+              class={ns.e('collapse')}
+              role="button"
+              tabindex={0}
+              onClick={toggleExpand}
+              onKeydown={onActivate(toggleExpand)}
+            >
               {slots['collapse-text'] ? slots['collapse-text']() : '收起'}
             </span>
           )
         }
         return (
-          <span class={ns.e('expand')} role="button" onClick={toggleExpand}>
+          <span
+            class={ns.e('expand')}
+            role="button"
+            tabindex={0}
+            onClick={toggleExpand}
+            onKeydown={onActivate(toggleExpand)}
+          >
             {slots['expand-text'] ? slots['expand-text']() : '展开'}
           </span>
         )

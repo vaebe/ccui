@@ -1,5 +1,5 @@
 import type { BreadcrumbItemProps, BreadcrumbProps } from './breadcrumb-types'
-import { defineComponent, inject, provide } from 'vue'
+import { defineComponent, inject, provide, ref, toRef } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { breadcrumbItemProps, breadcrumbProps } from './breadcrumb-types'
 import './breadcrumb.scss'
@@ -12,7 +12,8 @@ export const Breadcrumb = defineComponent({
   setup(props: BreadcrumbProps, { slots }) {
     const ns = useNamespace('breadcrumb')
 
-    provide(BREADCRUMB_KEY, { separator: props.separator })
+    // 用 toRef 保留 props.separator 响应性，slot 用法下子项可随父级动态更新分隔符
+    provide(BREADCRUMB_KEY, { separator: toRef(props, 'separator') })
 
     const renderRoutes = () => {
       const routes = props.routes ?? []
@@ -24,7 +25,9 @@ export const Breadcrumb = defineComponent({
         return (
           <span key={idx} class={ns.e('item')}>
             {isLast || !link ? (
-              <span class={ns.e('link')}>{text}</span>
+              <span class={ns.e('link')} aria-current="page">
+                {text}
+              </span>
             ) : (
               <a class={ns.e('link')} href={link}>
                 {text}
@@ -49,10 +52,10 @@ export const BreadcrumbItem = defineComponent({
   props: breadcrumbItemProps,
   setup(props: BreadcrumbItemProps, { slots }) {
     const ns = useNamespace('breadcrumb')
-    const ctx = inject<{ separator: string }>(BREADCRUMB_KEY, { separator: '/' })
+    const ctx = inject<{ separator: { value: string } }>(BREADCRUMB_KEY, { separator: ref('/') })
 
     return () => {
-      const sep = props.separator || ctx.separator
+      const sep = props.separator || ctx.separator.value
       return (
         <span class={ns.e('item')}>
           {props.href ? (
@@ -60,7 +63,9 @@ export const BreadcrumbItem = defineComponent({
               {slots.default?.()}
             </a>
           ) : (
-            <span class={ns.e('link')}>{slots.default?.()}</span>
+            <span class={ns.e('link')} aria-current="page">
+              {slots.default?.()}
+            </span>
           )}
           <span class={ns.e('separator')}>{slots.separator ? slots.separator() : sep}</span>
         </span>

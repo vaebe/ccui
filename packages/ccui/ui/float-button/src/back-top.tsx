@@ -1,5 +1,5 @@
 import type { BackTopProps } from './float-button-types'
-import { defineComponent, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { backTopProps } from './float-button-types'
@@ -74,23 +74,40 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
+    // 绑定/解绑滚动监听；target 变更后需重新解析容器并重绑
+    const bind = () => {
       container = resolveTarget(props.target)
       container.addEventListener('scroll', onScroll, { passive: true })
       onScroll()
-    })
-    onBeforeUnmount(() => {
+    }
+    const unbind = () => {
       container?.removeEventListener('scroll', onScroll)
+      // 解绑后必须置 null，避免重复绑定时旧容器引用残留
+      container = null
+    }
+
+    onMounted(bind)
+    onBeforeUnmount(() => {
+      unbind()
       // 取消可能仍在进行的滚动动画，避免卸载后副作用
       cancelScroll?.()
     })
+    // target 变更后重新绑定，使 visible 计算基于最新容器
+    watch(
+      () => props.target,
+      () => {
+        unbind()
+        bind()
+      },
+    )
 
-    const cls = [ns.b(), ns.m(props.shape), ns.m(props.type), ns.m('back-top')]
+    // class 需随 shape/type 响应式变更，故用 computed 包裹
+    const cls = computed(() => [ns.b(), ns.m(props.shape), ns.m(props.type), ns.m('back-top')])
 
     return () => (
       <Transition name={`${ns.b()}-fade`}>
         {visible.value && (
-          <button class={cls} type="button" onClick={onClick} aria-label="Back to top">
+          <button class={cls.value} type="button" onClick={onClick} aria-label="Back to top">
             <span class={ns.e('body')}>
               <span class={ns.e('content')}>
                 <span class={ns.e('icon')}>

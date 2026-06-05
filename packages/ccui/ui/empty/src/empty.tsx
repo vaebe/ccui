@@ -6,7 +6,7 @@ import { emptyProps } from './empty-types'
 import './empty.scss'
 
 const DEFAULT_IMG = (
-  <svg width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
+  <svg aria-hidden="true" width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
     <g transform="translate(0 1)" fill="none" fill-rule="evenodd">
       <ellipse fill="var(--ccui-color-fill-quaternary, #f5f5f5)" cx="32" cy="33" rx="32" ry="7" />
       <g fill-rule="nonzero" stroke="var(--ccui-line, #d9d9d9)">
@@ -31,7 +31,7 @@ export default defineComponent({
     return () => (
       <div class={ns.b()}>
         <div class={ns.e('image')} style={props.imageStyle}>
-          {slots.image ? slots.image() : props.image ? <img src={props.image} alt="empty" /> : DEFAULT_IMG}
+          {slots.image ? slots.image() : props.image ? <img src={props.image} alt="" /> : DEFAULT_IMG}
         </div>
         <div class={ns.e('description')}>{slots.description ? slots.description() : descLocal.value}</div>
         {slots.default && <div class={ns.e('footer')}>{slots.default()}</div>}

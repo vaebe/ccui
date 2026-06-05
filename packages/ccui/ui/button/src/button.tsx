@@ -188,7 +188,7 @@ export default defineComponent({
             // disabled <a> 没有原生支持，用 aria-disabled + click 拦截
             'aria-disabled': resolvedDisabled.value || isLoading.value ? 'true' : undefined,
             role: 'button',
-            tabindex: resolvedDisabled.value ? -1 : 0,
+            tabindex: resolvedDisabled.value || isLoading.value ? -1 : 0,
             onClick,
           },
           children,

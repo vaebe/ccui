@@ -54,13 +54,23 @@ export default defineComponent({
     const inkRef = ref<HTMLElement>()
     const linkRefs = ref<Map<string, HTMLElement>>(new Map())
 
-    const setLinkRef = (href: string) => (el: unknown) => {
-      const node = el as HTMLElement | null
-      if (node) {
-        linkRefs.value.set(href, node)
-      } else {
-        linkRefs.value.delete(href)
+    // 缓存每个 href 的 ref 回调，保证同一 href 始终复用同一函数引用，
+    // 避免每次渲染产生新函数导致 Vue 反复 detach/attach（null→node）抖动。
+    const linkRefSetters = new Map<string, (el: unknown) => void>()
+    const getLinkRef = (href: string) => {
+      let setter = linkRefSetters.get(href)
+      if (!setter) {
+        setter = (el: unknown) => {
+          const node = el as HTMLElement | null
+          if (node) {
+            linkRefs.value.set(href, node)
+          } else {
+            linkRefs.value.delete(href)
+          }
+        }
+        linkRefSetters.set(href, setter)
       }
+      return setter
     }
 
     const updateInk = () => {
@@ -130,14 +140,29 @@ export default defineComponent({
     }
 
     let container: HTMLElement | Window | null = null
-    onMounted(() => {
+    const bind = () => {
       container = getScrollContainer(props.scrollContainer)
       container.addEventListener('scroll', onScroll, { passive: true })
+    }
+    const unbind = () => {
+      container?.removeEventListener('scroll', onScroll)
+      container = null
+    }
+    onMounted(() => {
+      bind()
       onScroll()
     })
-    onBeforeUnmount(() => {
-      container?.removeEventListener('scroll', onScroll)
-    })
+    onBeforeUnmount(unbind)
+    // scrollContainer 运行时变化时，需把监听从旧容器迁移到新容器并重算高亮，
+    // 否则旧容器监听泄漏、新容器无监听导致滚动驱动失效。
+    watch(
+      () => props.scrollContainer,
+      () => {
+        unbind()
+        bind()
+        onScroll()
+      },
+    )
 
     watch(activeLink, () => {
       nextTick(updateInk)
@@ -177,7 +202,7 @@ export default defineComponent({
       return (
         <div class={ns.e('link')} key={link.href}>
           <a
-            ref={setLinkRef(link.href)}
+            ref={getLinkRef(link.href)}
             class={[ns.e('link-title'), active && ns.em('link-title', 'active')]}
             href={link.href}
             style={{ paddingInlineStart: `${16 + level * 16}px` }}

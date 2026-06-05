@@ -172,7 +172,21 @@ export const Sider = defineComponent({
       const triggerStyle = isZeroWidthMode.value ? props.zeroWidthTriggerStyle : undefined
       const triggerCls = [ns.e('trigger'), isZeroWidthMode.value && ns.em('trigger', 'zero-width')]
       return (
-        <div class={triggerCls} style={triggerStyle} onClick={toggle}>
+        <div
+          class={triggerCls}
+          style={triggerStyle}
+          role="button"
+          tabindex={0}
+          aria-expanded={!isCollapsed.value}
+          onClick={toggle}
+          onKeydown={(e: KeyboardEvent) => {
+            // 键盘可达：Enter / Space 触发与 onClick 一致的折叠/展开逻辑
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              toggle()
+            }
+          }}
+        >
           {slots.trigger ? slots.trigger() : <span class={ns.e('trigger-arrow')}>{arrow ? '›' : '‹'}</span>}
         </div>
       )

@@ -26,10 +26,10 @@ export default defineComponent({
         return
       }
 
-      // 如果找到了就删除对应下标的元素并更新数据
-      valueList.value.splice(index, 1)
-      emit('change', valueList.value)
-      emit('update:modelValue', valueList.value)
+      // 如果找到了就生成删除该元素后的新数组并更新数据（不原地 mutate prop）
+      const res = valueList.value.filter((item) => item !== val)
+      emit('change', res)
+      emit('update:modelValue', res)
     }
     const isItemChecked = (val: LabelType) => {
       // 验证数组中是否存在该项 返回boolean
@@ -44,13 +44,8 @@ export default defineComponent({
       isItemChecked,
     })
 
-    const directionType = {
-      row: 'is-row',
-      column: 'is-column',
-    }
-
     const checkBoxGroupClass = computed(() => {
-      return `${ns.b()} ${directionType[props.direction]}`
+      return `${ns.b()} ${ns.is(props.direction)}`
     })
 
     return () => {

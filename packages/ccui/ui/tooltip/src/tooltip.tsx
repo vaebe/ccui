@@ -40,12 +40,14 @@ export default defineComponent({
     const { floatingStyles, middlewareData, placement, update } = useFloating(triggerRef, popperRef, {
       // 传响应式 placement，保证 placement prop 变化与 flip 翻转都能被 floating-ui 跟踪
       placement: toRef(props, 'placement') as any,
-      middleware: [
+      // middleware 用 computed 包裹，让 floating-ui 通过 toValue 重新求值，
+      // 保证运行时切换 offset / autoAdjustOverflow / showArrow 能重建中间件链
+      middleware: computed(() => [
         offset(props.offset),
         ...(props.autoAdjustOverflow ? [flip()] : []),
         shift({ padding: 8 }),
         ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
-      ],
+      ]) as any,
     })
 
     // 实际生效的方位（flip 翻转后可能与 props.placement 不同），箭头/样式都以此为准

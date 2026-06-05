@@ -417,6 +417,11 @@ export default defineComponent({
           onPointerdown={onHuePointerDown}
           onKeydown={onHueKeydown}
           tabindex={0}
+          role="slider"
+          aria-label="hue"
+          aria-valuemin={0}
+          aria-valuemax={360}
+          aria-valuenow={Math.round(pendingHsv.value.h)}
         >
           <div class={ns.e('hue-cursor')} style={cursorStyle} />
         </div>
@@ -437,6 +442,11 @@ export default defineComponent({
           onPointerdown={onAlphaPointerDown}
           onKeydown={onAlphaKeydown}
           tabindex={0}
+          role="slider"
+          aria-label="alpha"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(pendingHsv.value.a * 100)}
         >
           <div class={ns.e('alpha-track')} style={trackStyle} />
           <div class={ns.e('alpha-cursor')} style={cursorStyle} />

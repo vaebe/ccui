@@ -41,6 +41,11 @@ export default defineComponent({
       syncKeys(list.length)
     })
 
+    // 契约说明：外部对该数组的头部/中部增删（splice）必须通过 operation.add/remove/move，
+    // 以保证 keys 与元素一一对齐。此处的 syncKeys 仅是针对“整数组替换”的粗粒度对账：
+    // 它只在末尾补 seed 或截断尾部，元素本身又没有可用的 identity 字段，
+    // 因此对非末尾的增删它无法正确重排 key（会让后续表单项复用错误的 key，导致状态/校验串位）。
+    // 这里刻意不做基于值的“智能重排”——没有稳定身份字段时任何猜测都可能造成更严重的错位。
     watch(
       () => (form ? getValueByPath(form.model.value, props.name) : undefined),
       (next) => {

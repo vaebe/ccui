@@ -10,14 +10,14 @@ export default defineComponent({
   setup(props: CardProps, { slots }) {
     const ns = useNamespace('card')
 
-    const boxClass = `${ns.b()} ${ns.m(props.shadow)}-shadow`
+    const boxClass = computed(() => `${ns.b()} ${ns.m(`${props.shadow}-shadow`)}`)
 
     const isHeader = computed(() => {
       return props.header || slots.header
     })
 
     return () => (
-      <div class={[boxClass, props.classNames?.root]} style={props.styles?.root}>
+      <div class={[boxClass.value, props.classNames?.root]} style={props.styles?.root}>
         {slots.cover && (
           <div class={[ns.e('cover'), props.classNames?.cover]} style={props.styles?.cover}>
             {slots.cover()}

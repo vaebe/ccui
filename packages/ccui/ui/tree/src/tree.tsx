@@ -21,7 +21,7 @@ function titleToString(value: unknown): string {
   return ''
 }
 
-function highlightTitle(title: unknown, keyword: string): VNode | string {
+function highlightTitle(title: unknown, keyword: string, highlightClass: string): VNode | string {
   const str = titleToString(title)
   if (!keyword) {
     return str
@@ -34,7 +34,7 @@ function highlightTitle(title: unknown, keyword: string): VNode | string {
   }
   return h('span', null, [
     str.slice(0, idx),
-    h('span', { class: 'ccui-tree__highlight' }, str.slice(idx, idx + keyword.length)),
+    h('span', { class: highlightClass }, str.slice(idx, idx + keyword.length)),
     str.slice(idx + keyword.length),
   ])
 }
@@ -363,10 +363,19 @@ export default defineComponent({
           {
             class: ns.e('switcher-error'),
             role: 'button',
+            tabindex: 0,
             title: 'Click to retry',
             onClick: (event: MouseEvent) => {
               event.stopPropagation()
               void retryLoad(node.key)
+            },
+            onKeydown: (event: KeyboardEvent) => {
+              // 键盘可达性：Enter / Space 触发与 onClick 相同的重试逻辑
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                event.stopPropagation()
+                void retryLoad(node.key)
+              }
             },
           },
           '!',
@@ -413,7 +422,7 @@ export default defineComponent({
       if (slots.title) {
         return slots.title({ node, data: node.raw, expanded: expandedKeys.value.has(node.key) })
       }
-      return highlightTitle(node.title, searchValue.value)
+      return highlightTitle(node.title, searchValue.value, ns.e('highlight'))
     }
 
     const renderIcon = (node: FlattenedTreeNode) => {

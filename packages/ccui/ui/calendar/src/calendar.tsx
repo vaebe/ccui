@@ -144,8 +144,17 @@ export default defineComponent({
 
         return (
           <div
+            role="button"
+            tabindex={0}
+            aria-selected={dateCellOpts.isSelected}
             onClick={() => {
               setCurrentDate(dateCellOpts.date)
+            }}
+            onKeydown={(e: KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setCurrentDate(dateCellOpts.date)
+              }
             }}
             class={[className, props.classNames?.cell]}
             style={props.styles?.cell}

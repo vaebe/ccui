@@ -51,6 +51,8 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
   let containerEl: HTMLElement | null = null
 
   const ns = useNamespace('modal-confirm')
+  // footer 按钮复用 Modal 组件的 BEM 命名空间（样式定义在 modal.scss 的 .ccui-modal 下）
+  const nsModal = useNamespace('modal')
 
   const handle: ModalFuncReturn = {
     destroy() {
@@ -152,16 +154,16 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
         const footer = (
           <div class={ns.e('footer')}>
             {type === 'confirm' && (
-              <button class={['ccui-modal__btn', 'ccui-modal__btn--cancel']} onClick={onCancelClick}>
+              <button class={[nsModal.e('btn'), nsModal.em('btn', 'cancel')]} onClick={onCancelClick}>
                 {cancelText}
               </button>
             )}
             <button
-              class={['ccui-modal__btn', `ccui-modal__btn--${okType}`, loading.value && 'is-loading']}
+              class={[nsModal.e('btn'), nsModal.em('btn', okType), loading.value && nsModal.is('loading')]}
               disabled={loading.value}
               onClick={onOkClick}
             >
-              {loading.value && <span class="ccui-modal__spinner" />}
+              {loading.value && <span class={nsModal.e('spinner')} />}
               {okText}
             </button>
           </div>

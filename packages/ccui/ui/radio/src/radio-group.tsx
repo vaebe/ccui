@@ -23,13 +23,8 @@ export default defineComponent({
       emitChangeValue,
     })
 
-    const directionType = {
-      row: 'is-row',
-      column: 'is-column',
-    }
-
     const radioGroupClass = computed(() => {
-      return `${ns.b()} ${directionType[props.direction]}`
+      return `${ns.b()} ${ns.is(props.direction)}`
     })
 
     return () => {

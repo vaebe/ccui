@@ -153,8 +153,18 @@ export default defineComponent({
         <li
           key={page}
           class={[ns.e('item'), active && ns.em('item', 'active')]}
+          role="button"
+          tabindex={props.disabled ? -1 : 0}
           aria-current={active ? 'page' : undefined}
+          aria-disabled={props.disabled || undefined}
           onClick={() => goTo(page)}
+          onKeydown={(e: KeyboardEvent) => {
+            // 键盘可达：Enter / Space 触发与点击相同的跳页逻辑
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              goTo(page)
+            }
+          }}
         >
           {page}
         </li>
@@ -216,7 +226,19 @@ export default defineComponent({
           {renderTotal()}
           <li
             class={[ns.e('prev'), prevDisabled && ns.is('disabled')]}
+            role="button"
+            tabindex={prevDisabled ? -1 : 0}
             onClick={handlePrev}
+            onKeydown={(e: KeyboardEvent) => {
+              // 键盘可达：禁用态忽略，Enter / Space 触发与点击相同的上一页逻辑
+              if (prevDisabled) {
+                return
+              }
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handlePrev()
+              }
+            }}
             aria-disabled={prevDisabled}
             aria-label={locale.value.prevPage || '上一页'}
           >
@@ -246,7 +268,19 @@ export default defineComponent({
 
           <li
             class={[ns.e('next'), nextDisabled && ns.is('disabled')]}
+            role="button"
+            tabindex={nextDisabled ? -1 : 0}
             onClick={handleNext}
+            onKeydown={(e: KeyboardEvent) => {
+              // 键盘可达：禁用态忽略，Enter / Space 触发与点击相同的下一页逻辑
+              if (nextDisabled) {
+                return
+              }
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleNext()
+              }
+            }}
             aria-disabled={nextDisabled}
             aria-label={locale.value.nextPage || '下一页'}
           >

@@ -112,7 +112,11 @@ export default defineComponent({
       if (match) {
         if (!open.value) {
           open.value = true
-          activeIndex.value = 0
+          // 初始高亮首个可用项；全 disabled / 空列表时 findIndex 返回 -1，用 Math.max(0, ...) 兜底保持原行为
+          activeIndex.value = Math.max(
+            0,
+            filteredOptions.value.findIndex((o) => !o.disabled),
+          )
         }
         if (props.searchDebounce > 0) {
           if (debounceTimer) clearTimeout(debounceTimer)

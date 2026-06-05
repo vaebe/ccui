@@ -86,6 +86,8 @@ export default defineComponent({
           <span
             class={[ns.b(), ns.m('count-standalone'), props.classNames?.root, props.classNames?.count]}
             style={[countStyle.value, props.styles?.root, props.styles?.count] as any}
+            // 溢出时 displayCount 会截断成 99+，用 title 暴露真实数值给读屏/悬停
+            title={props.dot ? undefined : typeof props.count === 'number' ? String(props.count) : displayCount.value}
           >
             {displayCount.value}
           </span>
@@ -101,6 +103,8 @@ export default defineComponent({
             props.dot ? props.classNames?.dot : props.classNames?.count,
           ]}
           style={[countStyle.value, props.dot ? props.styles?.dot : props.styles?.count] as any}
+          // 溢出时 displayCount 会截断成 99+，用 title 暴露真实数值给读屏/悬停（dot 模式无数值）
+          title={props.dot ? undefined : typeof props.count === 'number' ? String(props.count) : displayCount.value}
         >
           {props.dot ? null : displayCount.value}
         </sup>

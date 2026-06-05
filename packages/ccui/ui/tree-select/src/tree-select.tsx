@@ -269,13 +269,13 @@ export default defineComponent({
       emitChange(keys.length === 0 ? null : keys)
     }
 
-    function removeTag(e: MouseEvent, key: TreeNodeKey) {
+    function removeTag(e: MouseEvent | KeyboardEvent, key: TreeNodeKey) {
       e.stopPropagation()
       const next = selectedKeys.value.filter((k) => k !== key)
       emitChange(next.length === 0 ? null : next)
     }
 
-    function clear(e: MouseEvent) {
+    function clear(e: MouseEvent | KeyboardEvent) {
       e.stopPropagation()
       if (selectedKeys.value.length === 0) return
       emitChange(null)
@@ -480,7 +480,14 @@ export default defineComponent({
                     class={ns.e('tag-close')}
                     role="button"
                     aria-label="移除"
+                    tabindex={0}
                     onClick={(e: MouseEvent) => removeTag(e, tag.key)}
+                    onKeydown={(e: KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        removeTag(e, tag.key)
+                      }
+                    }}
                   >
                     {slots.removeIcon
                       ? slots.removeIcon()
@@ -536,7 +543,19 @@ export default defineComponent({
         >
           {renderInputContent()}
           {showClear.value ? (
-            <span class={ns.e('clear')} role="button" aria-label="清除" onClick={clear}>
+            <span
+              class={ns.e('clear')}
+              role="button"
+              aria-label="清除"
+              tabindex={0}
+              onClick={clear}
+              onKeydown={(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  clear(e)
+                }
+              }}
+            >
               {slots.clearIcon ? slots.clearIcon() : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close'))}
             </span>
           ) : (

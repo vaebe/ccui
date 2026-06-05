@@ -78,7 +78,7 @@ export const ConfigProvider = defineComponent({
     // locale 变更时切全局 dayjs locale。ConfigProvider locale.locale 用 'zh-CN' / 'en-US' /
     // 'ja-JP' / 'ko-KR' 命名，dayjs 用小写的 'zh-cn' / 'en' / 'ja' / 'ko'，做一次映射。
     watch(
-      () => ctx.value.locale?.locale,
+      () => mergeLocale(props.locale).locale,
       (name) => {
         if (!name) return
         void setDayjsLocale(name)

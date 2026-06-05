@@ -67,6 +67,7 @@ export default defineComponent({
             style={props.styles?.root}
             role={props.role}
             aria-live={props.role === 'alert' ? 'assertive' : 'polite'}
+            aria-atomic={true}
             onMouseenter={onMouseenter}
             onMouseleave={onMouseleave}
           >

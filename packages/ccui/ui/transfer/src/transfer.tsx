@@ -189,6 +189,8 @@ export default defineComponent({
           keys.splice(toIdx, 0, dragKey.value)
           emit('update:targetKeys', keys)
           emit('change', keys, 'right' as TransferDirection, [dragKey.value])
+          // 与 move() 保持一致：实际发生重排序后触发 form 校验
+          formItem?.validate('change')
         }
       }
       dragKey.value = null
