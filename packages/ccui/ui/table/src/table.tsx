@@ -649,7 +649,11 @@ export default defineComponent({
           value:
             column.filterMultiple === false
               ? selected.length
-                ? column.filters.findIndex((item) => item.value === selected[0]).toString()
+                ? (() => {
+                    // 防止 findIndex 返回 -1（受控旧值已不在 filters 中），回退到 'All' 选项（value=''）
+                    const idx = column.filters.findIndex((item) => item.value === selected[0])
+                    return idx >= 0 ? String(idx) : ''
+                  })()
                 : ''
               : selected
                   .map((value) => column.filters!.findIndex((item) => item.value === value))

@@ -148,6 +148,15 @@ export default defineComponent({
       },
     )
 
+    // 当密码显隐能力关闭（type 离开 'password' 或 showPassword 关闭）时，
+    // 复位 isPasswordVisible，避免残留显隐态在下次进入 password 模式时直接以明文展示
+    watch(
+      () => showPasswordVisible.value,
+      (v) => {
+        if (!v) isPasswordVisible.value = false
+      },
+    )
+
     const renderAddonBefore = () => {
       if (!hasAddonBefore.value) return null
       const slotContent = slots.prepend?.()

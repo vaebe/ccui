@@ -3,8 +3,8 @@ import type { ExtractPropTypes, PropType } from 'vue'
 export interface WatermarkFont {
   color?: string
   fontSize?: number
-  fontWeight?: 'normal' | 'light' | 'weight' | number
-  fontStyle?: 'none' | 'normal' | 'italic' | 'oblique'
+  fontWeight?: 'normal' | 'lighter' | 'bold' | number
+  fontStyle?: 'normal' | 'italic' | 'oblique'
   fontFamily?: string
 }
 

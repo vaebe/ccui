@@ -22,7 +22,7 @@
     border: 1px solid $ccui-form-control-line;
     border-radius: 6px;
     background: $ccui-color-bg-container;
-    color: rgba(0, 0, 0, 0.88);
+    color: $ccui-color-text;
     font-size: 14px;
     line-height: 24px;
     cursor: pointer;
@@ -35,7 +35,7 @@
 
     &.is-disabled {
       background: $ccui-list-item-hover-bg;
-      color: rgba(0, 0, 0, 0.25);
+      color: $ccui-color-text-disabled;
       cursor: not-allowed;
     }
   }
@@ -50,7 +50,7 @@
     border: 1px dashed $ccui-color-border;
     border-radius: 8px;
     background: $ccui-area;
-    color: rgba(0, 0, 0, 0.65);
+    color: $ccui-color-text-secondary;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
@@ -68,7 +68,7 @@
     &.is-disabled {
       cursor: not-allowed;
       background: $ccui-list-item-hover-bg;
-      color: rgba(0, 0, 0, 0.25);
+      color: $ccui-color-text-disabled;
 
       &:hover {
         border-color: $ccui-color-border;
@@ -98,12 +98,12 @@
     gap: 8px;
     padding: 6px 8px;
     border-radius: 4px;
-    color: rgba(0, 0, 0, 0.85);
+    color: $ccui-color-text;
     font-size: 13px;
     transition: background 0.2s;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: $ccui-color-fill-tertiary;
     }
 
     &--status-error {
@@ -111,7 +111,7 @@
     }
 
     &--status-uploading {
-      color: rgba(0, 0, 0, 0.65);
+      color: $ccui-color-text-secondary;
     }
   }
 
@@ -128,7 +128,7 @@
   }
 
   &__item-size {
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 12px;
   }
 
@@ -144,7 +144,7 @@
     border: 0;
     border-radius: 50%;
     background: transparent;
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 11px;
     cursor: pointer;
     transition:
@@ -152,8 +152,8 @@
       color 0.2s;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.06);
-      color: rgba(0, 0, 0, 0.85);
+      background: $ccui-color-fill-secondary;
+      color: $ccui-color-text;
     }
   }
 
@@ -183,13 +183,13 @@
     position: relative;
     width: 104px;
     height: 104px;
-    border: 1px dashed rgba(0, 0, 0, 0.15);
+    border: 1px dashed $ccui-color-border;
     border-radius: 6px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.02);
+    background: $ccui-color-fill-quaternary;
 
     &:hover {
       border-color: $ccui-primary;
@@ -205,7 +205,7 @@
 
   &__item-card-icon {
     font-size: 28px;
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
   }
 
   &__item-card-percent {
@@ -214,7 +214,7 @@
     left: 4px;
     padding: 0 4px;
     background: rgba(0, 0, 0, 0.55);
-    color: #fff;
+    color: $ccui-color-text-light-solid;
     border-radius: 2px;
     font-size: 11px;
   }
@@ -234,7 +234,7 @@
     border: 0;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.5);
-    color: #fff;
+    color: $ccui-color-text-light-solid;
     cursor: pointer;
     font-size: 12px;
 
@@ -250,7 +250,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.65);
+    color: $ccui-color-text-secondary;
     text-align: center;
   }
 

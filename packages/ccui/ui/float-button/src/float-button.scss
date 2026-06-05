@@ -65,7 +65,7 @@
     min-width: 16px;
     height: 16px;
     padding: 0 4px;
-    color: #ffffff;
+    color: $ccui-color-white;
     background: $ccui-color-error;
     font-size: 12px;
     line-height: 16px;
@@ -87,7 +87,7 @@
   }
 
   &--primary {
-    color: #ffffff;
+    color: $ccui-color-white;
     background-color: $ccui-color-primary;
 
     &:hover {

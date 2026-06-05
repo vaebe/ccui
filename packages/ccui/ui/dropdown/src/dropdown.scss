@@ -40,21 +40,22 @@
       background-color: $ccui-color-bg-text-hover;
     }
 
-    &--disabled {
-      color: $ccui-color-text-disabled;
-      cursor: not-allowed;
-
-      &:hover {
-        background-color: transparent;
-      }
-    }
-
     &--danger {
       color: $ccui-color-error;
 
       &:hover {
         color: #ffffff;
         background-color: $ccui-color-error;
+      }
+    }
+
+    &--disabled {
+      color: $ccui-color-text-disabled;
+      cursor: not-allowed;
+
+      &:hover {
+        color: $ccui-color-text-disabled;
+        background-color: transparent;
       }
     }
 

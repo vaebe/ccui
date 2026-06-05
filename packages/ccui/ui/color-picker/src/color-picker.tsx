@@ -65,7 +65,11 @@ export default defineComponent({
       const raw = isControlled.value ? props.modelValue : innerValue.value
       return raw ?? DEFAULT_COLOR_HEX
     })
-    const currentRgb = computed<RGB>(() => hexToRgb(currentHex.value) ?? hexToRgb(DEFAULT_COLOR_HEX)!)
+    const currentRgb = computed<RGB>(() => {
+      const rgb = hexToRgb(currentHex.value) ?? hexToRgb(DEFAULT_COLOR_HEX)!
+      // disabledAlpha 时强制不透明，避免外部传入 8 位带 alpha 的 hex 让 swatch/显示文本仍带透明度
+      return props.disabledAlpha ? { ...rgb, a: 1 } : rgb
+    })
     // pending 状态供面板内部编辑使用
     const pendingHsv = shallowRef<HSV>(rgbToHsv(currentRgb.value))
 
@@ -160,9 +164,11 @@ export default defineComponent({
       const up = () => {
         document.removeEventListener('pointermove', move)
         document.removeEventListener('pointerup', up)
+        document.removeEventListener('pointercancel', up)
       }
       document.addEventListener('pointermove', move)
       document.addEventListener('pointerup', up)
+      document.addEventListener('pointercancel', up)
     }
 
     function onSvPointerDown(e: PointerEvent) {

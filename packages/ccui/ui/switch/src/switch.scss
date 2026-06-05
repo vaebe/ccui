@@ -12,7 +12,7 @@
   font-size: $ccui-font-size;
   line-height: 22px;
   vertical-align: middle;
-  background: rgba(0, 0, 0, 0.45);
+  background: $ccui-color-text-tertiary;
   border: 0;
   border-radius: 100px;
   cursor: pointer;
@@ -32,7 +32,7 @@
     height: 18px;
     background: #ffffff;
     border-radius: 50%;
-    box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
     transition: all $ccui-motion-duration-mid ease-in-out;
   }
 

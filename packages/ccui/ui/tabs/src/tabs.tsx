@@ -21,6 +21,7 @@ export default defineComponent({
     provide<TabsState>(tabsInjectionKey, state)
 
     const setActiveTab = (name: string | number) => {
+      if (props.beforeChange && props.beforeChange(name) === false) return
       state.active = name
 
       // 更新 v-model 触发change事件

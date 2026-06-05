@@ -38,7 +38,12 @@ export default defineComponent({
     setIconState(selectedQuantity.value)
 
     // 判断当前鼠标事件的目标是否是半选
-    const isSemiSelected = (e: MouseEvent) => props.allowHalf && e.offsetX * 2 <= (e.target as HTMLElement).clientWidth
+    // 从监听器自身元素（currentTarget）计算几何，避免 e.target 落在内部 svg/span 导致 offsetX 与 clientWidth 取自不同元素而错判
+    const isSemiSelected = (e: MouseEvent) => {
+      if (!props.allowHalf) return false
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      return (e.clientX - rect.left) * 2 <= rect.width
+    }
 
     const handleMouseInteraction = (e: MouseEvent, index: number, isClick = false) => {
       if (props.readOnly) return

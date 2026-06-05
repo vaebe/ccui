@@ -36,13 +36,13 @@ export default defineComponent({
 
     // 计算是否禁用增加按钮
     const maxDisabled = computed(() => {
-      if (innerValue.value === undefined) return false
+      if (innerValue.value === undefined || innerValue.value === null) return false
       return innerValue.value >= props.max
     })
 
     // 计算是否禁用减少按钮
     const minDisabled = computed(() => {
-      if (innerValue.value === undefined) return false
+      if (innerValue.value === undefined || innerValue.value === null) return false
       return innerValue.value <= props.min
     })
 

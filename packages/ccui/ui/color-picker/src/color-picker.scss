@@ -51,10 +51,10 @@
     }
 
     &--status-error {
-      border-color: #ff4d4f;
+      border-color: $ccui-color-error;
     }
     &--status-warning {
-      border-color: #faad14;
+      border-color: $ccui-color-warning;
     }
   }
 
@@ -92,7 +92,7 @@
   }
 
   &__value-text {
-    color: rgba(0, 0, 0, 0.85);
+    color: $ccui-color-text;
     font-size: 13px;
     font-family: monospace;
   }
@@ -226,7 +226,7 @@
   }
 
   &__hash {
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     margin-right: 4px;
     user-select: none;
   }
@@ -237,7 +237,7 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: rgba(0, 0, 0, 0.88);
+    color: $ccui-color-text;
     font-size: 13px;
     font-family: monospace;
     text-transform: uppercase;
@@ -264,7 +264,7 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: rgba(0, 0, 0, 0.88);
+    color: $ccui-color-text;
     font-size: 13px;
     text-align: right;
     -moz-appearance: textfield;
@@ -277,7 +277,7 @@
   }
 
   &__alpha-suffix {
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 13px;
     margin-left: 2px;
   }
@@ -296,7 +296,7 @@
   }
 
   &__preset-group-label {
-    color: rgba(0, 0, 0, 0.65);
+    color: $ccui-color-text-secondary;
     font-size: 12px;
     line-height: 1.4;
   }

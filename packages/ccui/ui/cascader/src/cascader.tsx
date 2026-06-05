@@ -148,7 +148,7 @@ export default defineComponent({
     })
 
     function pathKey(path: CascaderOption[]): string {
-      return path.map((n) => String(getOptionValue(n, fn.value))).join('')
+      return JSON.stringify(path.map((n) => getOptionValue(n, fn.value)))
     }
 
     const checkedKeys = computed<Set<string>>(() => {
@@ -483,7 +483,7 @@ export default defineComponent({
         if (k === 'Enter') {
           e.preventDefault()
           if (focusedColumn.value === -1 && focusedIndex.value >= 0 && focusedIndex.value < results.length) {
-            pickSearchResult(results[focusedColumn.value === -1 ? focusedIndex.value : 0])
+            pickSearchResult(results[focusedIndex.value])
           }
         }
         return

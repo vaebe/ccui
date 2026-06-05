@@ -4,7 +4,7 @@
   display: inline-block;
   padding: 2px;
   color: $ccui-color-text-secondary;
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: $ccui-color-fill-tertiary;
   border-radius: $ccui-border-radius;
   transition: all $ccui-motion-duration-mid;
 
@@ -32,10 +32,7 @@
       color: $ccui-color-text;
       background: $ccui-color-bg-elevated;
       border-radius: $ccui-border-radius-sm;
-      box-shadow:
-        0 2px 8px -2px rgba(0, 0, 0, 0.05),
-        0 1px 4px -1px rgba(25, 15, 15, 0.07),
-        0 0 1px 0 rgba(0, 0, 0, 0.08);
+      box-shadow: $ccui-box-shadow-tertiary;
     }
 
     &--disabled {

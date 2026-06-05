@@ -156,11 +156,6 @@ export const rangePickerProps = {
     type: [Boolean, Object] as PropType<boolean | RangeTimeShowConfig>,
     default: false,
   },
-  // 是否在 footer 显示「此刻」按钮。仅 showTime 启用时显示。
-  showNow: {
-    type: Boolean,
-    default: true,
-  },
   /**
    * 录入组件统一 variant 形态。
    */

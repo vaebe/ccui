@@ -241,6 +241,16 @@ export function useSliderKeyboard(
   currentValue: Ref<number | number[]>,
   emit: (event: 'update:modelValue' | 'input' | 'change' | 'change-complete', value: number | number[]) => void,
 ) {
+  // 将值对齐到 step 网格并应用 precision，与 getValueFromPercent 的对齐保持一致
+  const snap = (v: number) => {
+    let r = props.step > 0 ? props.min + Math.round((v - props.min) / props.step) * props.step : v
+    if (props.precision != null) {
+      const f = 10 ** props.precision
+      r = Math.round(r * f) / f
+    }
+    return r
+  }
+
   // 键盘事件处理
   const handleKeydown = (event: KeyboardEvent, index?: number) => {
     if (props.disabled) return
@@ -271,15 +281,15 @@ export function useSliderKeyboard(
       const [start, end] = currentValue.value
 
       if (index === 0) {
-        const newStart = Math.max(props.min, Math.min(start + delta, end))
+        const newStart = Math.max(props.min, Math.min(snap(start + delta), end))
         currentValue.value = [newStart, end]
       } else {
-        const newEnd = Math.min(props.max, Math.max(end + delta, start))
+        const newEnd = Math.min(props.max, Math.max(snap(end + delta), start))
         currentValue.value = [start, newEnd]
       }
     } else {
       const current = Array.isArray(currentValue.value) ? currentValue.value[0] : currentValue.value
-      currentValue.value = Math.max(props.min, Math.min(props.max, current + delta))
+      currentValue.value = Math.max(props.min, Math.min(props.max, snap(current + delta)))
     }
 
     emit('change', currentValue.value)

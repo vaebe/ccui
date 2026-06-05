@@ -100,7 +100,7 @@
       padding: 0;
       border: 0;
       border-radius: 2px;
-      background: rgba(0, 0, 0, 0.25);
+      background: $ccui-color-fill;
       cursor: pointer;
       transition:
         background 0.3s,
@@ -133,8 +133,8 @@
     padding: 0;
     border: 0;
     border-radius: 50%;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.4);
+    color: $ccui-color-text-light-solid;
+    background: $ccui-color-bg-mask;
     font-size: 18px;
     line-height: 32px;
     text-align: center;
@@ -143,7 +143,7 @@
     transition: background 0.2s;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.6);
+      background: $ccui-color-bg-spotlight;
     }
 
     &--prev {

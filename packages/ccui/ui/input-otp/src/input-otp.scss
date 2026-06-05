@@ -52,13 +52,6 @@
     font-size: $ccui-font-size-sm;
   }
 
-  &--disabled &__cell {
-    background-color: $ccui-disabled-bg;
-    border-color: $ccui-disabled-line;
-    color: $ccui-disabled-text;
-    cursor: not-allowed;
-  }
-
   &--status-error &__cell {
     border-color: $ccui-color-error;
 

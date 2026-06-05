@@ -293,7 +293,14 @@ export default defineComponent({
     onMounted(() => {
       document.addEventListener('mousedown', onClickOutside, true)
       if (props.autoFocus) {
-        nextTick(() => inputRef.value?.focus())
+        nextTick(() => {
+          if (props.multiple) {
+            // 多选模式不渲染 <input>，inputRef 恒为 null；真正可聚焦的是 tabindex=0 的 input-wrap
+            ;(rootRef.value?.querySelector(`.${ns.e('input-wrap')}`) as HTMLElement | null)?.focus()
+          } else {
+            inputRef.value?.focus()
+          }
+        })
       }
     })
 

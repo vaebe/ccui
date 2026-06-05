@@ -93,6 +93,7 @@ export default defineComponent({
     const handleKeydown = (idx: number, e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
         if (cells.value[idx]) {
+          e.preventDefault()
           cells.value[idx] = ''
           commit(idx)
         } else if (idx > 0) {

@@ -13,7 +13,7 @@ interface ResolvedFont {
 }
 
 const FONT_DEFAULTS: ResolvedFont = {
-  color: 'rgba(0, 0, 0, 0.15)',
+  color: 'rgba(128, 128, 128, 0.15)',
   fontSize: 16,
   fontWeight: 'normal',
   fontStyle: 'normal',
@@ -71,6 +71,8 @@ export default defineComponent({
     const containerRef = ref<HTMLDivElement>()
     const watermarkEl = ref<HTMLDivElement | null>(null)
     let observer: MutationObserver | null = null
+    // 单调递增的渲染序号：丢弃过期（被后续渲染取代）的异步结果，避免并发竞态
+    let renderToken = 0
 
     const generateBase64 = async (): Promise<{ url: string; size: { width: number; height: number } } | null> => {
       const ratio = getRatio()
@@ -116,8 +118,15 @@ export default defineComponent({
         drawText(ctx, text.filter(Boolean) as string[], props.width, props.height, font)
       }
 
+      let url: string
+      try {
+        url = canvas.toDataURL()
+      } catch {
+        // 画布被跨域图片污染，toDataURL 抛 SecurityError；返回 null 走仅占位 style 分支
+        return null
+      }
       return {
-        url: canvas.toDataURL(),
+        url,
         size: { width: props.width, height: props.height },
       }
     }
@@ -163,8 +172,10 @@ export default defineComponent({
       if (!containerRef.value) {
         return
       }
+      const token = ++renderToken
       const result = await generateBase64()
-      if (!containerRef.value) {
+      // 过期结果（已被后续渲染取代）或已卸载则丢弃，确保只有最新一次写入 style
+      if (token !== renderToken || !containerRef.value) {
         return
       }
       // 先断开 observer 再做自身 DOM 写入：disconnect 会清空待处理记录，

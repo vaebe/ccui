@@ -37,7 +37,7 @@
     align-items: center;
     justify-content: center;
     margin-inline-start: 6px;
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 10px;
     cursor: pointer;
     transition: color $ccui-motion-duration-mid;
@@ -59,7 +59,7 @@
       color: rgba(255, 255, 255, 0.85);
 
       &:hover {
-        color: #ffffff;
+        color: $ccui-color-white;
       }
     }
   }

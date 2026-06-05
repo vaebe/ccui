@@ -83,7 +83,11 @@ export function useNotification(): UseNotificationReturn {
     const cap = config.maxCount ?? Infinity
     if (!isFinite(cap) || cap <= 0) return
     const arr = lists[placement]
-    while (arr.length > cap) arr.shift()
+    // 被挤掉的通知也要触发 onClose，避免用户注册的回调被静默吞掉
+    while (arr.length > cap) {
+      const removed = arr.shift()
+      removed?.options.onClose?.()
+    }
   }
 
   function open(options: NotificationOptions): NotificationHandle {

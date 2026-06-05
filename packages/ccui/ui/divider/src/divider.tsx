@@ -36,14 +36,14 @@ export default defineComponent({
       return `${ns.e('text')} is-${props.contentPosition}`
     })
 
-    return () => {
-      return (
-        <div class={dividerCls.value} style={dividerStyle.value}>
+    return () => (
+      <div class={dividerCls.value} style={dividerStyle.value}>
+        {props.direction === 'horizontal' && slots.default ? (
           <div class={dividerTextCls.value} style={dividerTextStyle.value}>
-            {slots.default && slots.default()}
+            {slots.default()}
           </div>
-        </div>
-      )
-    }
+        ) : null}
+      </div>
+    )
   },
 })

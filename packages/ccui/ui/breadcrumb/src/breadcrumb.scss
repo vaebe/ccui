@@ -31,7 +31,7 @@
 
     &:hover {
       color: $ccui-color-text;
-      background-color: rgba(0, 0, 0, 0.06);
+      background-color: $ccui-color-fill-secondary;
       border-radius: $ccui-border-radius-sm;
     }
   }

@@ -27,7 +27,7 @@
     height: 16px;
     font-size: 12px;
     font-weight: bold;
-    color: #ffffff;
+    color: $ccui-color-white;
     background: $ccui-color-warning;
     border-radius: 50%;
     line-height: 1;
@@ -77,36 +77,30 @@
       border-color: $ccui-color-primary;
     }
 
-    &--cancel {
-      // default style
-    }
+    // --cancel / --default 继承基础按钮样式
 
     &--primary {
-      color: #ffffff;
+      color: $ccui-color-white;
       background-color: $ccui-color-primary;
       border-color: $ccui-color-primary;
 
       &:hover {
-        color: #ffffff;
+        color: $ccui-color-white;
         background-color: $ccui-color-primary-hover;
         border-color: $ccui-color-primary-hover;
       }
     }
 
     &--danger {
-      color: #ffffff;
+      color: $ccui-color-white;
       background-color: $ccui-color-error;
       border-color: $ccui-color-error;
 
       &:hover {
-        color: #ffffff;
+        color: $ccui-color-white;
         background-color: $ccui-color-error-hover;
         border-color: $ccui-color-error-hover;
       }
-    }
-
-    &--default {
-      // default
     }
   }
 }

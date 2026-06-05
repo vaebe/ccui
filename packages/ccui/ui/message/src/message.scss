@@ -84,10 +84,7 @@
     padding: 9px 12px;
     background-color: $ccui-color-bg-elevated;
     border-radius: $ccui-border-radius;
-    box-shadow:
-      0 6px 16px 0 rgba(0, 0, 0, 0.08),
-      0 3px 6px -4px rgba(0, 0, 0, 0.12),
-      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: $ccui-box-shadow;
     font-size: $ccui-font-size;
     color: $ccui-color-text;
     line-height: $ccui-line-height-base;

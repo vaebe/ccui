@@ -1,10 +1,8 @@
 import type { TableColumn } from '../../table/src/table-types'
 import type { TableColumnProps } from './table-column-types'
 import { defineComponent, inject, onBeforeUnmount } from 'vue'
-import { tableColumnGroupCollectorKey, tableColumnsCollectorKey } from '../../table/src/table-types'
+import { nextColumnOrder, tableColumnGroupCollectorKey, tableColumnsCollectorKey } from '../../table/src/table-types'
 import { tableColumnProps } from './table-column-types'
-
-let columnSeq = 0
 
 export default defineComponent({
   name: 'CTableColumn',
@@ -16,7 +14,7 @@ export default defineComponent({
     const collector = group ?? root
 
     const id = Symbol('CTableColumn')
-    const order = ++columnSeq
+    const order = nextColumnOrder()
 
     // 关键：用 getter 暴露字段，让 Table 端的 render 读取时直接跟 props 建立响应式依赖。
     // 这样 props 变动不需要在本组件 watch 里 re-register —— 避免 function prop 引用频繁变化导致的递归刷新。

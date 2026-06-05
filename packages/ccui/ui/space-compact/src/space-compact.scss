@@ -22,9 +22,7 @@
     margin-inline-start: -1px;
   }
 
-  &--horizontal > *:not(:first-child):not(:last-child) {
-    border-radius: 0;
-  }
+  &--horizontal > *:not(:first-child):not(:last-child),
   &--horizontal > *:not(:first-child):not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
     border-radius: 0;
   }

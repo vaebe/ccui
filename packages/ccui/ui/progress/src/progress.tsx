@@ -121,7 +121,7 @@ export default defineComponent({
               cy="50"
               r={radius}
               fill="none"
-              stroke={props.trailColor || 'rgba(0, 0, 0, 0.06)'}
+              stroke={props.trailColor || 'var(--ccui-color-fill-secondary, rgba(0, 0, 0, 0.06))'}
               stroke-width={strokeWidth}
               stroke-dasharray={isDashboard ? `${adjustedDashArray} ${circumference}` : `${circumference}`}
               stroke-linecap="round"

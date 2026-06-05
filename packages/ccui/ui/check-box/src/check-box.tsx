@@ -21,7 +21,8 @@ export default defineComponent({
       })
 
       const isChecked = computed(() => {
-        return checkBoxGroupInject?.isItemChecked(props.label) || props.modelValue
+        // group 模式只认 group 状态，独立模式返回纯布尔
+        return checkBoxGroupInject ? checkBoxGroupInject.isItemChecked(props.label) : !!props.modelValue
       })
 
       // 计算组件样式

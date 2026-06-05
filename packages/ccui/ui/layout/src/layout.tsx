@@ -101,7 +101,7 @@ export const Sider = defineComponent({
     // 不命中时自动 uncollapse。同步 emit @breakpoint(broken)。
     let mql: MediaQueryList | null = null
     const onBreakpointChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      const broken = 'matches' in e ? e.matches : (e as MediaQueryListEvent).matches
+      const broken = e.matches
       emit('breakpoint', broken)
       // 自动切换 collapsed 态（受控时不覆盖父值）。
       if (props.collapsed === undefined) {
@@ -125,6 +125,8 @@ export const Sider = defineComponent({
         mql.removeEventListener('change', onBreakpointChange)
         mql = null
       }
+      // 卸载时从 Layout 注销自身，避免 siders 数组只增不减导致 has-sider 残留。
+      ctx?.removeSider(id)
     })
 
     const widthPx = computed(() => {

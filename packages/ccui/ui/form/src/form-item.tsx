@@ -273,6 +273,11 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
+      // 卸载时清理仍处于防抖窗口的定时器，避免触发已卸载组件的 doValidate
+      if (validateTimer) {
+        clearTimeout(validateTimer)
+        validateTimer = null
+      }
       form?.removeField(fieldContext)
       const itemPreserve = props.preserve
       const formPreserve = form?.preserve.value ?? true

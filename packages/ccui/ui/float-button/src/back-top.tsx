@@ -40,10 +40,11 @@ function scrollTo(target: HTMLElement | Window, to: number, duration: number) {
       ;(target as HTMLElement).scrollTop = value
     }
     if (progress < 1) {
-      requestAnimationFrame(frame)
+      rafId = requestAnimationFrame(frame)
     }
   }
-  requestAnimationFrame(frame)
+  let rafId = requestAnimationFrame(frame)
+  return () => cancelAnimationFrame(rafId)
 }
 
 export default defineComponent({
@@ -54,6 +55,8 @@ export default defineComponent({
     const ns = useNamespace('float-button')
     const visible = ref(false)
     let container: HTMLElement | Window | null = null
+    // 跟踪滚动动画的取消句柄，组件卸载时需取消，避免卸载后仍有 rAF 副作用
+    let cancelScroll: (() => void) | null = null
 
     const onScroll = () => {
       if (!container) {
@@ -65,7 +68,9 @@ export default defineComponent({
     const onClick = (e: MouseEvent) => {
       emit('click', e)
       if (container) {
-        scrollTo(container, 0, props.duration)
+        // 先取消上一次未结束的滚动动画，再开启新的
+        cancelScroll?.()
+        cancelScroll = scrollTo(container, 0, props.duration)
       }
     }
 
@@ -76,6 +81,8 @@ export default defineComponent({
     })
     onBeforeUnmount(() => {
       container?.removeEventListener('scroll', onScroll)
+      // 取消可能仍在进行的滚动动画，避免卸载后副作用
+      cancelScroll?.()
     })
 
     const cls = [ns.b(), ns.m(props.shape), ns.m(props.type), ns.m('back-top')]

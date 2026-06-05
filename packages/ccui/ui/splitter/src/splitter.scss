@@ -68,13 +68,12 @@
     }
   }
 
-  &__resizer:last-child {
-    display: none;
-  }
-
   // L-2.23：折叠按钮，挂在 resizer 上
   &__collapse-btn {
     position: absolute;
+    top: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
     display: inline-flex;
     align-items: center;
@@ -94,18 +93,6 @@
       border-color: $ccui-color-primary;
       color: $ccui-color-primary;
     }
-  }
-
-  &__resizer--horizontal &__collapse-btn {
-    top: 50%;
-    inset-inline-start: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  &__resizer--vertical &__collapse-btn {
-    top: 50%;
-    inset-inline-start: 50%;
-    transform: translate(-50%, -50%);
   }
 }
 

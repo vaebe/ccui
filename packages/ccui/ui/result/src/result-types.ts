@@ -15,10 +15,6 @@ export const resultProps = {
     type: String,
     default: '',
   },
-  icon: {
-    type: String,
-    default: '',
-  },
 } as const
 
 export type ResultProps = ExtractPropTypes<typeof resultProps>

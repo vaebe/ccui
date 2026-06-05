@@ -60,7 +60,7 @@
 
   &__item--active,
   &__submenu-title--active {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: $ccui-color-fill-tertiary;
   }
 
   &__item--disabled,
@@ -80,7 +80,7 @@
 
     &:hover {
       color: $ccui-color-error;
-      background-color: rgba(255, 77, 79, 0.08);
+      background-color: color-mix(in srgb, $ccui-color-error 8%, transparent);
     }
   }
 
@@ -204,6 +204,11 @@
     .#{$cls-prefix}-menu__item:hover,
     .#{$cls-prefix}-menu__submenu-title:hover {
       color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .#{$cls-prefix}-menu__item--active,
+    .#{$cls-prefix}-menu__submenu-title--active {
       background-color: rgba(255, 255, 255, 0.08);
     }
 

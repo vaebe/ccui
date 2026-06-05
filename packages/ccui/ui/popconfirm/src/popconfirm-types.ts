@@ -40,7 +40,7 @@ export const popconfirmProps = {
   },
   iconColor: {
     type: String,
-    default: '#faad14',
+    default: '',
   },
   hideIcon: {
     type: Boolean,

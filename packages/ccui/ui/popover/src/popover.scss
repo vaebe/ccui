@@ -24,14 +24,14 @@
       background: $ccui-feedback-overlay-bg;
       color: $ccui-light-text;
       border: 1px solid $ccui-feedback-overlay-bg;
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: $ccui-box-shadow-secondary;
     }
 
     &--light {
       background: $ccui-base-bg;
       color: $ccui-aide-text-stress;
       border: 1px solid $ccui-color-border;
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: $ccui-box-shadow-secondary;
     }
   }
 

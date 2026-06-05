@@ -69,6 +69,7 @@ export default defineComponent({
       const buttonProps = {
         class: [ns.e('button'), { [ns.em('button', 'disabled')]: props.disabled }],
         tabindex: props.disabled ? -1 : 0,
+        onClick: (e: MouseEvent) => e.stopPropagation(),
         onMousedown: (e: MouseEvent) => handleDragStart(e, index),
         onTouchstart: (e: TouchEvent) => handleDragStart(e, index),
         onKeydown: (e: KeyboardEvent) => handleKeydown(e, index),

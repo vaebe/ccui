@@ -33,7 +33,7 @@ export default defineComponent({
       fontSize.value = minNum.value / 4 + 3
 
       // 传入的name不存在 且不等于 '' 时
-      isNobody.value = !!name.value && name.value === ''
+      isNobody.value = !name.value
 
       // 计算背景颜色code
       BgColorCode.value = useGetBackgroundColor(gender.value, nameDisplay.value.substring(0, 1))

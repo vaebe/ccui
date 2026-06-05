@@ -327,7 +327,7 @@ export default defineComponent({
           return
         }
         const option = visibleOptions.value[activeIndex.value]
-        if (option && (visibleOptions.value.length > 0 || mode.value !== 'tags')) {
+        if (option) {
           onSelectOption(option)
           return
         }
@@ -457,6 +457,11 @@ export default defineComponent({
           draggable: props.tagsDraggable && !option.disabled ? true : undefined,
           onDragstart: (event: DragEvent) => onTagDragStart(event, option),
           onDragover: (event: DragEvent) => onTagDragOver(event, option),
+          // 拖出当前 tag 时仅清除自身的 drop-over 标记，避免残留高亮；
+          // 子节点 dragover 冒泡会随后重新设值，故带守卫不会误清其他 tag
+          onDragleave: () => {
+            if (dragOverTagValue.value === option.value) dragOverTagValue.value = null
+          },
           onDrop: (event: DragEvent) => onTagDrop(event, option),
           onDragend: onTagDragEnd,
         },

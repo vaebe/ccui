@@ -27,10 +27,6 @@ export const anchorProps = {
     type: [String, Object] as PropType<string | HTMLElement>,
     default: undefined,
   },
-  showInkInFixed: {
-    type: Boolean,
-    default: false,
-  },
   targetOffset: {
     type: Number,
     default: undefined,

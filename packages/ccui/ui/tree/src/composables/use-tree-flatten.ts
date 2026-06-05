@@ -119,11 +119,14 @@ export function useTreeVisible(
     const expanded = expandedKeys.value
     const keyword = searchValue.value.trim()
     const customFilter = filterTreeNode?.value
+    // 过滤/搜索是否处于激活态：以“过滤器是否启用”为判据，
+    // 而非命中集合是否为空——这样零命中时结果为空，而不是回退成整棵树
+    const filtering = !!keyword || !!customFilter
 
     const result: FlattenedTreeNode[] = []
     const visibleAncestors = new Set<TreeNodeKey>()
 
-    if (keyword || customFilter) {
+    if (filtering) {
       // Determine matched keys, then include ancestors
       for (const node of allNodes) {
         const matched = customFilter
@@ -139,7 +142,13 @@ export function useTreeVisible(
     }
 
     for (const node of allNodes) {
-      if (visibleAncestors.size > 0 && !visibleAncestors.has(node.key)) {
+      if (filtering) {
+        // 过滤/搜索激活时，只显示命中节点及其祖先（已收集进 visibleAncestors），
+        // 无视 expanded 状态自动展开命中路径；visibleAncestors 为空即零命中 => 结果为空
+        if (!visibleAncestors.has(node.key)) {
+          continue
+        }
+        result.push(node)
         continue
       }
       const allParentsExpanded = node.parentKeys.every((parentKey) => expanded.has(parentKey))

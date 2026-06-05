@@ -33,8 +33,11 @@ export default defineComponent({
     })
 
     const current = computed(() => {
-      if (isControlled.value) return props.preview?.current ?? 0
-      return innerCurrent.value
+      const total = items.value.length
+      const raw = isControlled.value ? (props.preview?.current ?? 0) : innerCurrent.value
+      if (total === 0) return 0
+      // 归一化，避免父组件传入越界 current 导致 activeItem 为 undefined
+      return ((raw % total) + total) % total
     })
 
     const setVisible = (next: boolean) => {
@@ -53,9 +56,18 @@ export default defineComponent({
     }
 
     const openAt = (idx: number) => {
-      setCurrent(idx)
+      const total = items.value.length
+      if (total === 0) return
+      const target = ((idx % total) + total) % total
+      if (!isControlled.value) {
+        innerCurrent.value = target
+        innerVisible.value = true
+      }
       scale.value = 1
-      setVisible(true)
+      // 同时变更 current 与 visible，合并为一次 update:preview，避免受控下两次 emit 互相用对方旧值覆盖
+      emit('change', target)
+      emit('visible-change', true)
+      emit('update:preview', { ...props.preview, visible: true, current: target })
     }
 
     const close = () => {
@@ -93,14 +105,18 @@ export default defineComponent({
       }
     }
 
-    watch(visible, (val) => {
-      if (typeof window === 'undefined') return
-      if (val) {
-        window.addEventListener('keydown', onKeydown)
-      } else {
-        window.removeEventListener('keydown', onKeydown)
-      }
-    })
+    watch(
+      visible,
+      (val) => {
+        if (typeof window === 'undefined') return
+        if (val) {
+          window.addEventListener('keydown', onKeydown)
+        } else {
+          window.removeEventListener('keydown', onKeydown)
+        }
+      },
+      { immediate: true },
+    )
 
     onBeforeUnmount(() => {
       if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown)

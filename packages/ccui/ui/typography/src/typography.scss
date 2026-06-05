@@ -89,8 +89,8 @@
     margin: 0 0.2em;
     padding: 0.2em 0.4em;
     font-size: 85%;
-    background: rgba(150, 150, 150, 0.1);
-    border: 1px solid rgba(100, 100, 100, 0.2);
+    background: $ccui-color-fill-secondary;
+    border: 1px solid $ccui-color-border;
     border-radius: $ccui-border-radius-sm;
     font-family: $ccui-font-family-code;
   }
@@ -99,15 +99,15 @@
     margin: 0 0.2em;
     padding: 0.15em 0.4em 0.1em;
     font-size: 90%;
-    background: rgba(150, 150, 150, 0.06);
-    border: 1px solid rgba(100, 100, 100, 0.2);
+    background: $ccui-color-fill-tertiary;
+    border: 1px solid $ccui-color-border;
     border-bottom-width: 2px;
     border-radius: $ccui-border-radius-sm;
     font-family: $ccui-font-family-code;
   }
 
   mark {
-    background-color: #ffe58f;
+    background-color: $ccui-color-warning-bg;
     padding: 0;
   }
 

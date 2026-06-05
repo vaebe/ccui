@@ -19,8 +19,12 @@ export default defineComponent({
 
     //  组件卸载移除 组件props数据缓存
     onUnmounted(() => {
-      if (tabsState) {
-        tabsState.data = tabsState.data?.filter((item) => item.name !== props.name)
+      if (tabsState && tabsState.data) {
+        const idx = tabsState.data.findIndex((item) => item.name === props.name)
+        if (idx !== -1) {
+          tabsState.data.splice(idx, 1)
+          tabsState.slots?.splice(idx, 1)
+        }
       }
     })
 

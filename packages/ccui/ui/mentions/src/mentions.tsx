@@ -12,6 +12,7 @@ import {
   onUnmounted,
   ref,
   shallowRef,
+  watch,
 } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
@@ -66,6 +67,15 @@ export default defineComponent({
         const hay = props.caseSensitive ? opt.label : opt.label.toLowerCase()
         return hay.includes(needle)
       })
+    })
+
+    // 过滤列表收缩时，把 activeIndex 钳到首个可用项，避免越界导致无高亮且 Enter/Tab 选不中
+    watch(filteredOptions, (list) => {
+      if (!open.value) return
+      if (activeIndex.value >= list.length || list[activeIndex.value]?.disabled) {
+        const first = list.findIndex((o) => !o.disabled)
+        activeIndex.value = first === -1 ? 0 : first
+      }
     })
 
     let debounceTimer: ReturnType<typeof setTimeout> | null = null

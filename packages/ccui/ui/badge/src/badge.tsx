@@ -46,7 +46,11 @@ export default defineComponent({
       }
       if (props.offset && Array.isArray(props.offset)) {
         const [x, y] = props.offset
-        style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+        // 独立模式以 scss 基线 transform: none 为锚做纯平移；
+        // 包裹模式以 scss 基线 translate(50%, -50%)（角标推到右上角外侧）为锚做微调
+        style.transform = isStandalone.value
+          ? `translate(${x}px, ${y}px)`
+          : `translate(calc(50% + ${x}px), calc(-50% + ${y}px))`
       }
       return Object.keys(style).length ? style : undefined
     })

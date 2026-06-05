@@ -167,7 +167,8 @@ export default defineComponent({
       formItem?.validate('change')
     }
 
-    function pickValue(type: ColumnType, value: number) {
+    // 仅预览：计算并写入 pendingDayjs，不 emit、不关闭面板（键盘方向键导航用）
+    function previewValue(type: ColumnType, value: number) {
       let next: Dayjs
       if (type === 'hour') {
         if (props.use12Hours) {
@@ -187,6 +188,11 @@ export default defineComponent({
         next = pendingDayjs.value.hour(from12h(display, value === 1))
       }
       pendingDayjs.value = next
+      return next
+    }
+
+    function pickValue(type: ColumnType, value: number) {
+      const next = previewValue(type, value)
       if (!props.showOk) {
         emitChange(next)
         closePopup()
@@ -268,24 +274,47 @@ export default defineComponent({
         const target = col?.children?.[newIndex] as HTMLElement | undefined
         target?.focus()
       }
+      // 环绕查找下一个未禁用单元格；带步数上界，全禁用时返回 -1 避免死循环
+      const findNext = (start: number, dir: 1 | -1) => {
+        for (let step = 1; step <= total; step++) {
+          const i = (((start + dir * step) % total) + total) % total
+          if (!list[i].disabled) return i
+        }
+        return -1
+      }
+      // 从首/尾方向查找第一个未禁用单元格，全禁用时返回 -1
+      const findEdge = (dir: 1 | -1) => {
+        const start = dir === 1 ? 0 : total - 1
+        for (let step = 0; step < total; step++) {
+          const i = start + dir * step
+          if (!list[i].disabled) return i
+        }
+        return -1
+      }
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        const next = (index + 1) % total
-        pickValue(type, list[next].value)
+        const next = findNext(index, 1)
+        if (next < 0) return
+        previewValue(type, list[next].value)
         focusCell(next)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
-        const prev = (index - 1 + total) % total
-        pickValue(type, list[prev].value)
+        const prev = findNext(index, -1)
+        if (prev < 0) return
+        previewValue(type, list[prev].value)
         focusCell(prev)
       } else if (e.key === 'Home') {
         e.preventDefault()
-        pickValue(type, list[0].value)
-        focusCell(0)
+        const first = findEdge(1)
+        if (first < 0) return
+        previewValue(type, list[first].value)
+        focusCell(first)
       } else if (e.key === 'End') {
         e.preventDefault()
-        pickValue(type, list[total - 1].value)
-        focusCell(total - 1)
+        const last = findEdge(-1)
+        if (last < 0) return
+        previewValue(type, list[last].value)
+        focusCell(last)
       } else if (e.key === 'Enter') {
         e.preventDefault()
         if (props.showOk) clickOk()
@@ -335,7 +364,7 @@ export default defineComponent({
       const cols = popupRef.value.querySelectorAll<HTMLElement>(`[data-time-column]`)
       cols.forEach((col) => {
         const selected =
-          col.querySelector<HTMLElement>(`.${ns.em('cell', 'selected').slice(0)}`.replace('.--', '--')) ??
+          col.querySelector<HTMLElement>(`.${ns.em('cell', 'selected')}`) ??
           col.querySelector<HTMLElement>(`li[aria-selected="true"]`)
         if (!selected) return
         const target = selected.offsetTop - col.clientHeight / 2 + selected.offsetHeight / 2

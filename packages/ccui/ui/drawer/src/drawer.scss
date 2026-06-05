@@ -8,7 +8,7 @@
   &__mask {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: $ccui-color-bg-mask;
     pointer-events: auto;
   }
 
@@ -22,6 +22,8 @@
     pointer-events: auto;
     display: flex;
     flex-direction: column;
+    // body 区 transform 过渡（用于 push 嵌套抽屉让位）
+    transition: transform $ccui-motion-duration-mid cubic-bezier(0.7, 0.3, 0.1, 1);
   }
 
   &__inner {
@@ -53,11 +55,6 @@
     display: inline-flex;
     align-items: center;
     margin-inline-start: 8px;
-  }
-
-  // body 区 transform 过渡（用于 push 嵌套抽屉让位）
-  &__content {
-    transition: transform $ccui-motion-duration-mid cubic-bezier(0.7, 0.3, 0.1, 1);
   }
 
   // loading 状态的骨架占位
@@ -116,7 +113,7 @@
 
     &:hover {
       color: $ccui-color-text;
-      background-color: rgba(0, 0, 0, 0.06);
+      background-color: $ccui-color-fill-secondary;
     }
   }
 

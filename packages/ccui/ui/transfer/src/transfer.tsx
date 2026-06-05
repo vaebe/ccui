@@ -80,8 +80,13 @@ export default defineComponent({
       return items.slice(start, start + pageSize.value)
     }
 
-    const pagedLeft = computed(() => paginateItems(filteredLeft.value, leftPage.value))
-    const pagedRight = computed(() => paginateItems(filteredRight.value, rightPage.value))
+    // 钳制页码：列表项变少后页码可能越界，slice 会返回空数组导致整列空白，故按 totalPages 回钳
+    const pagedLeft = computed(() =>
+      paginateItems(filteredLeft.value, Math.min(leftPage.value, totalPages(filteredLeft.value))),
+    )
+    const pagedRight = computed(() =>
+      paginateItems(filteredRight.value, Math.min(rightPage.value, totalPages(filteredRight.value))),
+    )
 
     function totalPages(items: TransferItem[]): number {
       if (pageSize.value <= 0) return 1
@@ -254,7 +259,9 @@ export default defineComponent({
       if (pageSize.value <= 0) return null
       const pages = totalPages(totalItems)
       if (pages <= 1) return null
-      const current = direction === 'left' ? leftPage.value : rightPage.value
+      // 钳制显示页码：列表回长后避免出现陈旧的越界页码（如 "3 / 2"）
+      const rawCurrent = direction === 'left' ? leftPage.value : rightPage.value
+      const current = Math.min(rawCurrent, pages)
       const setPage = (p: number) => {
         if (direction === 'left') leftPage.value = p
         else rightPage.value = p

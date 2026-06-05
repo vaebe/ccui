@@ -185,7 +185,7 @@ export default defineComponent({
           >
             {link.title ?? link.href}
           </a>
-          {link.children?.length && (
+          {!!link.children?.length && (
             <div class={ns.e('children')}>{link.children.map((child) => renderLink(child, level + 1))}</div>
           )}
         </div>
