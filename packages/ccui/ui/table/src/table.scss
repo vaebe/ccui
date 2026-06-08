@@ -204,7 +204,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(255, 255, 255, 0.65);
+    // 主题感知的半透明遮罩：跟随深/浅主题，spinner 保持不透明
+    background-color: color-mix(in srgb, $ccui-color-bg-container 65%, transparent);
   }
 
   &__loading-dot {

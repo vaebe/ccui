@@ -68,6 +68,7 @@ export default defineComponent({
 
     let container: HTMLElement | Window | null = null
     let resizeObserver: ResizeObserver | null = null
+    let rafId: number | null = null
 
     const isTopMode = computed(() => props.offsetBottom === undefined)
     const offsetTop = computed(() => props.offsetTop ?? 0)
@@ -140,7 +141,7 @@ export default defineComponent({
         resizeObserver.observe(wrapperRef.value)
       }
       // 等下一帧再计算，避免初次布局未完成
-      requestAnimationFrame(() => update())
+      rafId = requestAnimationFrame(() => update())
     })
 
     onBeforeUnmount(() => {
@@ -148,6 +149,11 @@ export default defineComponent({
       window.removeEventListener('resize', update)
       resizeObserver?.disconnect()
       resizeObserver = null
+      // 卸载时取消未执行的下一帧回调，避免卸载后再触发一次 update()
+      if (rafId !== null && typeof cancelAnimationFrame === 'function') {
+        cancelAnimationFrame(rafId)
+        rafId = null
+      }
     })
 
     watch(

@@ -38,7 +38,7 @@ export const progressProps = {
     default: 120,
   },
   size: {
-    type: [String, Number, Array] as PropType<ProgressSize | number | [number, number]>,
+    type: String as PropType<ProgressSize>,
     default: 'default',
   },
   format: {

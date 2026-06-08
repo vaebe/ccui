@@ -1,4 +1,4 @@
-import type { CSSProperties, Slot, VNodeChild } from 'vue'
+import type { CSSProperties, Slot, VNode, VNodeChild } from 'vue'
 import type {
   TableCellRenderProps,
   TableColumn,
@@ -531,6 +531,14 @@ export default defineComponent({
               'aria-label': 'Select all rows',
               onClick: (event: MouseEvent) => event.stopPropagation(),
               onChange: (event: Event) => handleSelectAll((event.target as HTMLInputElement).checked),
+              // indeterminate 只能通过 JS property 设置（无法用 attribute），
+              // 在挂载/更新时同步原生半选状态，让屏幕阅读器能播报“部分选中”
+              onVnodeMounted: (vnode: VNode) => {
+                ;(vnode.el as HTMLInputElement).indeterminate = isSomeDisplayRowsSelected.value
+              },
+              onVnodeUpdated: (vnode: VNode) => {
+                ;(vnode.el as HTMLInputElement).indeterminate = isSomeDisplayRowsSelected.value
+              },
             }),
       )
     }
@@ -649,7 +657,11 @@ export default defineComponent({
           value:
             column.filterMultiple === false
               ? selected.length
-                ? column.filters.findIndex((item) => item.value === selected[0]).toString()
+                ? (() => {
+                    // 防止 findIndex 返回 -1（受控旧值已不在 filters 中），回退到 'All' 选项（value=''）
+                    const idx = column.filters.findIndex((item) => item.value === selected[0])
+                    return idx >= 0 ? String(idx) : ''
+                  })()
                 : ''
               : selected
                   .map((value) => column.filters!.findIndex((item) => item.value === value))

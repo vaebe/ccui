@@ -31,7 +31,7 @@ export default function useGetDisplayName(name: string, customText: string, widt
     nameDisplay = name.length < 2 ? name : nameFormatting(name)
   }
 
-  if (width < 30) {
+  if (name && width < 30) {
     nameDisplay = name.substring(0, 1).toUpperCase()
   }
   return nameDisplay

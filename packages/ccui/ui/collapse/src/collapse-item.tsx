@@ -26,6 +26,13 @@ export default defineComponent({
       ctx?.toggle(props.name)
     }
 
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleClick()
+      }
+    }
+
     const onBeforeEnter = (el: Element) => {
       ;(el as HTMLElement).style.height = '0'
     }
@@ -84,12 +91,7 @@ export default defineComponent({
             aria-disabled={props.disabled || undefined}
             tabindex={props.disabled ? -1 : 0}
             onClick={handleClick}
-            onKeydown={(e: KeyboardEvent) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                handleClick()
-              }
-            }}
+            onKeydown={handleKeydown}
           >
             {headerChildren}
           </div>

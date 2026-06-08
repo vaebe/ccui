@@ -76,10 +76,20 @@ export default defineComponent({
               key={index}
               class={itemCls}
               role="listitem"
+              tabindex={item.disabled ? -1 : 0}
               aria-current={isCurrent ? 'step' : undefined}
               aria-disabled={item.disabled || undefined}
               aria-label={stepLabel}
               onClick={() => onItemClick(index, item)}
+              onKeydown={(e: KeyboardEvent) => {
+                if (item.disabled) {
+                  return
+                }
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onItemClick(index, item)
+                }
+              }}
             >
               <div class={ns.e('container')}>
                 <div class={ns.e('tail')}>

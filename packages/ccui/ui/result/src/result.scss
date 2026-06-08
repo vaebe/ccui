@@ -22,13 +22,13 @@
 
   // 内置状态：通过状态修饰类驱动 svg fill="currentColor"。
   &--success &__icon {
-    color: var(--ccui-success, #52c41a);
+    color: $ccui-color-success;
   }
   &--error &__icon {
-    color: var(--ccui-danger, #ff4d4f);
+    color: $ccui-color-error;
   }
   &--warning &__icon {
-    color: var(--ccui-warning, #faad14);
+    color: $ccui-color-warning;
   }
   &--info &__icon,
   &--404 &__icon,

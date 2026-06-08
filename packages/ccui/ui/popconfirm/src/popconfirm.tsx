@@ -32,11 +32,13 @@ export default defineComponent({
     })
 
     const close = () => {
-      if (!isControlled.value) {
-        innerVisible.value = false
+      if (isControlled.value) {
+        // 受控：直接通知父，由父改 visible 收口关闭，不再调用 popover.hide() 触发二次 emit
+        emit('update:visible', false)
+      } else {
+        // 非受控：仅调 popover.hide()，由其 emit 经 onUpdate:visible 同步 innerVisible 并向上转发一次
+        popoverRef.value?.hide?.()
       }
-      emit('update:visible', false)
-      popoverRef.value?.hide?.()
     }
 
     const onConfirm = (e: MouseEvent) => {
@@ -70,7 +72,7 @@ export default defineComponent({
             <div class={ns.e('inner')}>
               <div class={ns.e('header')}>
                 {!props.hideIcon && (
-                  <span class={ns.e('icon')} style={{ color: props.iconColor }}>
+                  <span class={ns.e('icon')} style={props.iconColor ? { color: props.iconColor } : undefined}>
                     {props.icon ? <i class={props.icon} /> : <span class={ns.e('warning')}>!</span>}
                   </span>
                 )}

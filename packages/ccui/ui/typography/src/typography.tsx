@@ -145,7 +145,9 @@ function createTypographyComponent(
       }
       const finishEdit = () => {
         const cfg = editConfig.value
-        if (!cfg) return
+        // 幂等守卫：Enter 已结束编辑后，textarea 卸载触发的 blur 会再次调用本函数，
+        // 此时 editing 已为 false，直接 return 避免 onChange/onEnd/emit 重复触发
+        if (!cfg || !editing.value) return
         editing.value = false
         cfg.onChange?.(editValue.value)
         cfg.onEnd?.()
@@ -201,8 +203,17 @@ function createTypographyComponent(
         ...buildModifierClasses(props as TextProps),
         ...(extraClass ? extraClass(props) : {}),
         [ns.m('ellipsis')]: !!ellipsisConfig.value && !expanded.value,
-        [ns.m(`ellipsis-${ellipsisRows.value}`)]: !!ellipsisConfig.value && !expanded.value && ellipsisRows.value > 1,
+        [ns.m(`ellipsis-${Math.min(ellipsisRows.value, 6)}`)]:
+          !!ellipsisConfig.value && !expanded.value && ellipsisRows.value > 1,
       }))
+
+      // 让 role="button" 的 span 键盘可达：Enter / Space 触发与 onClick 相同的逻辑
+      const onActivate = (handler: () => void) => (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handler()
+        }
+      }
 
       const renderCopyBtn = (): VNode | null => {
         const cfg = copyConfig.value
@@ -214,8 +225,10 @@ function createTypographyComponent(
             <span
               class={[ns.e('copy'), copied.value && ns.is('copied')]}
               role="button"
+              tabindex={0}
               title={titleAttr}
               onClick={triggerCopy}
+              onKeydown={onActivate(triggerCopy)}
             >
               {slots['copy-icon']({ copied: copied.value })}
             </span>
@@ -225,8 +238,10 @@ function createTypographyComponent(
           <span
             class={[ns.e('copy'), copied.value && ns.is('copied')]}
             role="button"
+            tabindex={0}
             title={titleAttr}
             onClick={triggerCopy}
+            onKeydown={onActivate(triggerCopy)}
           >
             {copied.value ? renderIconNode('mdi:check') : renderIconNode('mdi:content-copy')}
           </span>
@@ -240,13 +255,27 @@ function createTypographyComponent(
         if (!triggerTypes.includes('icon')) return null
         if (slots['edit-icon']) {
           return (
-            <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+            <span
+              class={ns.e('edit')}
+              role="button"
+              tabindex={0}
+              title={cfg.tooltip || undefined}
+              onClick={startEdit}
+              onKeydown={onActivate(startEdit)}
+            >
               {slots['edit-icon']()}
             </span>
           )
         }
         return (
-          <span class={ns.e('edit')} role="button" title={cfg.tooltip || undefined} onClick={startEdit}>
+          <span
+            class={ns.e('edit')}
+            role="button"
+            tabindex={0}
+            title={cfg.tooltip || undefined}
+            onClick={startEdit}
+            onKeydown={onActivate(startEdit)}
+          >
             ✎
           </span>
         )
@@ -256,16 +285,26 @@ function createTypographyComponent(
         if (!ellipsisExpandable.value) return null
         const cfg = ellipsisConfig.value!
         if (expanded.value) {
-          // collapsible 模式下展示收起；普通 expandable 展开后不再返回
-          if (cfg.expandable !== 'collapsible' && cfg.expandable !== true) return null
           return (
-            <span class={ns.e('collapse')} role="button" onClick={toggleExpand}>
+            <span
+              class={ns.e('collapse')}
+              role="button"
+              tabindex={0}
+              onClick={toggleExpand}
+              onKeydown={onActivate(toggleExpand)}
+            >
               {slots['collapse-text'] ? slots['collapse-text']() : '收起'}
             </span>
           )
         }
         return (
-          <span class={ns.e('expand')} role="button" onClick={toggleExpand}>
+          <span
+            class={ns.e('expand')}
+            role="button"
+            tabindex={0}
+            onClick={toggleExpand}
+            onKeydown={onActivate(toggleExpand)}
+          >
             {slots['expand-text'] ? slots['expand-text']() : '展开'}
           </span>
         )

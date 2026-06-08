@@ -160,6 +160,8 @@ export default defineComponent({
     const handleBlur = (e: FocusEvent) => emit('blur', e)
 
     const handleKeydown = (e: KeyboardEvent) => {
+      // 输入法合成态（选词/确认候选）不触发 press-enter
+      if (e.isComposing || e.keyCode === 229) return
       // Enter（不含 shift/ctrl/alt/meta）触发 press-enter
       if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
         emit('press-enter', e)

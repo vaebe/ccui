@@ -177,9 +177,17 @@ export const Col = defineComponent({
         s.paddingInlineStart = `${h / 2}px`
         s.paddingInlineEnd = `${h / 2}px`
       }
+      const toFlex = (f: string | number) => (typeof f === 'number' ? `${f} ${f} auto` : String(f))
+      // 断点级 flex：按 BREAKPOINTS 顺序遍历，最后一个生效（last active wins）
+      for (const bp of BREAKPOINTS) {
+        const size = computedSizes.value[bp]
+        if (size && size.flex !== undefined) {
+          s.flex = toFlex(size.flex)
+        }
+      }
+      // 顶层 flex 优先级最高，覆盖断点级 flex
       if (props.flex !== undefined) {
-        const flex = typeof props.flex === 'number' ? `${props.flex} ${props.flex} auto` : String(props.flex)
-        s.flex = flex
+        s.flex = toFlex(props.flex)
       }
       return s
     })

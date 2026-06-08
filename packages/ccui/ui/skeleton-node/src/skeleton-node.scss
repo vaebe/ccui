@@ -1,8 +1,16 @@
 @use '../../style-var/index.scss' as *;
 
-$skeleton-bg: rgba(0, 0, 0, 0.06);
-$skeleton-bg-active: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 37%, rgba(0, 0, 0, 0.06) 63%);
-$skeleton-icon: rgba(0, 0, 0, 0.18);
+// 占位填充：light 下 fill-secondary 即 rgba(0,0,0,0.06)，精确匹配原硬编码值，并随 light/dark 切换
+$skeleton-bg: $ccui-color-fill-secondary;
+// 高亮渐变：0.06 → fill-secondary，0.15 → fill（light 精确对应），保持亮色观感不变
+$skeleton-bg-active: linear-gradient(
+  90deg,
+  $ccui-color-fill-secondary 25%,
+  $ccui-color-fill 37%,
+  $ccui-color-fill-secondary 63%
+);
+// 图标色：原 0.18 介于 fill(0.15) 与 text-quaternary(0.25) 之间，取最近的 fill 保持低调且参与深色切换
+$skeleton-icon: $ccui-color-fill;
 
 .#{$cls-prefix}-skeleton-node {
   display: inline-flex;

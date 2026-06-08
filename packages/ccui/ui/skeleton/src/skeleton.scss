@@ -1,7 +1,12 @@
 @use '../../style-var/index.scss' as *;
 
-$skeleton-bg: rgba(0, 0, 0, 0.06);
-$skeleton-bg-active: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 37%, rgba(0, 0, 0, 0.06) 63%);
+$skeleton-bg: $ccui-color-fill-secondary;
+$skeleton-bg-active: linear-gradient(
+  90deg,
+  $ccui-color-fill-secondary 25%,
+  $ccui-color-fill 37%,
+  $ccui-color-fill-secondary 63%
+);
 
 .#{$cls-prefix}-skeleton {
   display: flex;
@@ -35,7 +40,6 @@ $skeleton-bg-active: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 
   &__paragraph {
     margin-top: 24px;
     padding: 0;
-    list-style: none;
 
     &-row {
       width: 100%;

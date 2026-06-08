@@ -271,7 +271,37 @@ export default defineComponent({
 
     let cleanup: (() => void) | undefined
 
+    // 虚拟触发：把触发事件绑定到外部 virtualRef 元素上
+    // boundVirtualEl 记录实际绑定的元素，确保 virtualRef 变化时能从正确的节点上解绑
+    let boundVirtualEl: HTMLElement | undefined
+    const bindVirtualTriggerEvents = () => {
+      if (!props.virtualTriggering || !props.virtualRef) return
+      const el = props.virtualRef
+      el.addEventListener('mouseenter', handleMouseEnter)
+      el.addEventListener('mouseleave', handleMouseLeave)
+      el.addEventListener('click', handleClick)
+      el.addEventListener('focus', handleFocus)
+      el.addEventListener('blur', handleBlur)
+      el.addEventListener('keydown', handleKeydown)
+      el.addEventListener('contextmenu', handleContextMenu)
+      boundVirtualEl = el
+    }
+    const unbindVirtualTriggerEvents = () => {
+      const el = boundVirtualEl
+      if (!el) return
+      el.removeEventListener('mouseenter', handleMouseEnter)
+      el.removeEventListener('mouseleave', handleMouseLeave)
+      el.removeEventListener('click', handleClick)
+      el.removeEventListener('focus', handleFocus)
+      el.removeEventListener('blur', handleBlur)
+      el.removeEventListener('keydown', handleKeydown)
+      el.removeEventListener('contextmenu', handleContextMenu)
+      boundVirtualEl = undefined
+    }
+
     onMounted(() => {
+      // 虚拟触发模式下，把触发事件绑定到外部元素
+      bindVirtualTriggerEvents()
       // 初始化时如果 visible 为 true，确保显示并监听文档级事件
       if (props.visible) {
         void nextTick(() => {
@@ -284,6 +314,14 @@ export default defineComponent({
         })
       }
     })
+    // virtualRef / virtualTriggering 变化时，先从旧元素解绑再绑定到新元素
+    watch(
+      () => [props.virtualTriggering, props.virtualRef] as const,
+      () => {
+        unbindVirtualTriggerEvents()
+        bindVirtualTriggerEvents()
+      },
+    )
     onUnmounted(() => {
       clearTimers()
       cleanup?.()
@@ -291,16 +329,7 @@ export default defineComponent({
       window.removeEventListener('keydown', onDocumentKeydown, true)
 
       // 清理虚拟触发元素的事件监听
-      if (props.virtualTriggering && props.virtualRef) {
-        const virtualEl = props.virtualRef
-        virtualEl.removeEventListener('mouseenter', handleMouseEnter)
-        virtualEl.removeEventListener('mouseleave', handleMouseLeave)
-        virtualEl.removeEventListener('click', handleClick)
-        virtualEl.removeEventListener('focus', handleFocus)
-        virtualEl.removeEventListener('blur', handleBlur)
-        virtualEl.removeEventListener('keydown', handleKeydown)
-        virtualEl.removeEventListener('contextmenu', handleContextMenu)
-      }
+      unbindVirtualTriggerEvents()
     })
     watch(externalOpen, (newVal) => {
       if (isControlled.value) {
@@ -389,9 +418,8 @@ export default defineComponent({
           style={{
             ...floatingStyles.value,
             ...inlineColorStyle.value,
-            zIndex: 2000,
             pointerEvents: props.enterable ? 'auto' : 'none',
-            width: props.width || undefined,
+            width: props.width ? (typeof props.width === 'number' ? `${props.width}px` : props.width) : undefined,
           }}
           onMouseenter={handlePopperMouseEnter}
           onMouseleave={handlePopperMouseLeave}

@@ -31,8 +31,7 @@
 }
 
 .#{$cls-prefix}-card--hover-shadow {
-  &:hover,
-  &:focus {
+  &:hover {
     box-shadow: $ccui-box-shadow;
   }
 }

@@ -1,5 +1,5 @@
 import type { BackTopProps } from './float-button-types'
-import { defineComponent, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { backTopProps } from './float-button-types'
@@ -40,10 +40,11 @@ function scrollTo(target: HTMLElement | Window, to: number, duration: number) {
       ;(target as HTMLElement).scrollTop = value
     }
     if (progress < 1) {
-      requestAnimationFrame(frame)
+      rafId = requestAnimationFrame(frame)
     }
   }
-  requestAnimationFrame(frame)
+  let rafId = requestAnimationFrame(frame)
+  return () => cancelAnimationFrame(rafId)
 }
 
 export default defineComponent({
@@ -54,6 +55,8 @@ export default defineComponent({
     const ns = useNamespace('float-button')
     const visible = ref(false)
     let container: HTMLElement | Window | null = null
+    // 跟踪滚动动画的取消句柄，组件卸载时需取消，避免卸载后仍有 rAF 副作用
+    let cancelScroll: (() => void) | null = null
 
     const onScroll = () => {
       if (!container) {
@@ -65,25 +68,46 @@ export default defineComponent({
     const onClick = (e: MouseEvent) => {
       emit('click', e)
       if (container) {
-        scrollTo(container, 0, props.duration)
+        // 先取消上一次未结束的滚动动画，再开启新的
+        cancelScroll?.()
+        cancelScroll = scrollTo(container, 0, props.duration)
       }
     }
 
-    onMounted(() => {
+    // 绑定/解绑滚动监听；target 变更后需重新解析容器并重绑
+    const bind = () => {
       container = resolveTarget(props.target)
       container.addEventListener('scroll', onScroll, { passive: true })
       onScroll()
-    })
-    onBeforeUnmount(() => {
+    }
+    const unbind = () => {
       container?.removeEventListener('scroll', onScroll)
-    })
+      // 解绑后必须置 null，避免重复绑定时旧容器引用残留
+      container = null
+    }
 
-    const cls = [ns.b(), ns.m(props.shape), ns.m(props.type), ns.m('back-top')]
+    onMounted(bind)
+    onBeforeUnmount(() => {
+      unbind()
+      // 取消可能仍在进行的滚动动画，避免卸载后副作用
+      cancelScroll?.()
+    })
+    // target 变更后重新绑定，使 visible 计算基于最新容器
+    watch(
+      () => props.target,
+      () => {
+        unbind()
+        bind()
+      },
+    )
+
+    // class 需随 shape/type 响应式变更，故用 computed 包裹
+    const cls = computed(() => [ns.b(), ns.m(props.shape), ns.m(props.type), ns.m('back-top')])
 
     return () => (
       <Transition name={`${ns.b()}-fade`}>
         {visible.value && (
-          <button class={cls} type="button" onClick={onClick} aria-label="Back to top">
+          <button class={cls.value} type="button" onClick={onClick} aria-label="Back to top">
             <span class={ns.e('body')}>
               <span class={ns.e('content')}>
                 <span class={ns.e('icon')}>

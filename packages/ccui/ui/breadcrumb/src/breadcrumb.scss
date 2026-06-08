@@ -31,7 +31,7 @@
 
     &:hover {
       color: $ccui-color-text;
-      background-color: rgba(0, 0, 0, 0.06);
+      background-color: $ccui-color-fill-secondary;
       border-radius: $ccui-border-radius-sm;
     }
   }
@@ -46,6 +46,7 @@
     user-select: none;
   }
 
+  // 末项分隔符依赖 BreadcrumbItem 为 nav 的最后一个直接子节点；若其后另有节点则 :last-child 失效
   &__item:last-child &__separator {
     display: none;
   }

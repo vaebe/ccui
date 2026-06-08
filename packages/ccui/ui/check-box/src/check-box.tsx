@@ -11,64 +11,65 @@ export default defineComponent({
   props: checkBoxProps,
   emits: ['change', 'update:modelValue'],
   setup(props: CheckBoxProps, { emit, slots }) {
+    const ns = useNamespace('check-box')
+
+    const checkBoxGroupInject = inject(checkBoxGroupInjectionKey, null)
+
+    const isDisabled = computed(() => {
+      return checkBoxGroupInject?.disabled.value || props.disabled
+    })
+
+    const isChecked = computed(() => {
+      // group 模式只认 group 状态，独立模式返回纯布尔
+      return checkBoxGroupInject ? checkBoxGroupInject.isItemChecked(props.label) : !!props.modelValue
+    })
+
+    // 计算组件样式
+    const labelClass = computed(() => {
+      return `${ns.b()} ${isChecked.value ? 'active' : ''} ${isDisabled.value ? 'disabled' : ''}`
+    })
+
+    const iconColor = computed(() => {
+      const color = checkBoxGroupInject?.color.value || props.color
+      return color ? `color: ${color}; fill: ${color}` : ''
+    })
+
+    // todo 带测试逻辑
+    const judgeCanChange = (hasChecked: boolean, value: LabelType) => {
+      // 禁用状态不能切换
+      if (isDisabled.value) {
+        return Promise.resolve(false)
+      }
+
+      const beforeChange = checkBoxGroupInject?.beforeChange || props.beforeChange
+
+      // 判断beforeChange事件是否存在
+      if (beforeChange) {
+        const res = beforeChange(hasChecked, value)
+        // 存在boolean 返回对应的值，否则直接返回
+        if (typeof res === 'boolean') {
+          return Promise.resolve(res)
+        }
+        return res
+      }
+
+      return Promise.resolve(true)
+    }
+
+    const handleChange = async () => {
+      const curStatus = !isChecked.value
+
+      void judgeCanChange(curStatus, props.label).then((res) => {
+        if (res) {
+          // 更新选中的数组
+          checkBoxGroupInject?.toggleGroupVal(props.label)
+          emit('change', curStatus)
+          emit('update:modelValue', curStatus)
+        }
+      })
+    }
+
     return () => {
-      const ns = useNamespace('check-box')
-
-      const checkBoxGroupInject = inject(checkBoxGroupInjectionKey, null)
-
-      const isDisabled = computed(() => {
-        return checkBoxGroupInject?.disabled.value || props.disabled
-      })
-
-      const isChecked = computed(() => {
-        return checkBoxGroupInject?.isItemChecked(props.label) || props.modelValue
-      })
-
-      // 计算组件样式
-      const labelClass = computed(() => {
-        return `${ns.b()} ${isChecked.value ? 'active' : ''} ${isDisabled.value ? 'disabled' : ''}`
-      })
-
-      const iconColor = computed(() => {
-        const color = checkBoxGroupInject?.color.value || props.color
-        return color ? `color: ${color}; fill: ${color}` : ''
-      })
-
-      // todo 带测试逻辑
-      const judgeCanChange = (hasChecked: boolean, value: LabelType) => {
-        // 禁用状态不能切换
-        if (isDisabled.value) {
-          return Promise.resolve(false)
-        }
-
-        const beforeChange = checkBoxGroupInject?.beforeChange || props.beforeChange
-
-        // 判断beforeChange事件是否存在
-        if (beforeChange) {
-          const res = beforeChange(hasChecked, value)
-          // 存在boolean 返回对应的值，否则直接返回
-          if (typeof res === 'boolean') {
-            return Promise.resolve(res)
-          }
-          return res
-        }
-
-        return Promise.resolve(true)
-      }
-
-      const handleChange = async () => {
-        const curStatus = !isChecked.value
-
-        void judgeCanChange(curStatus, props.label).then((res) => {
-          if (res) {
-            // 更新选中的数组
-            checkBoxGroupInject?.toggleGroupVal(props.label)
-            emit('change', curStatus)
-            emit('update:modelValue', curStatus)
-          }
-        })
-      }
-
       return (
         <label class={labelClass.value}>
           <input

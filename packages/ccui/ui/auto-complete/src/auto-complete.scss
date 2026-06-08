@@ -63,15 +63,15 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: rgba(0, 0, 0, 0.88);
+    color: $ccui-color-text;
     font-size: 14px;
 
     &::placeholder {
-      color: rgba(0, 0, 0, 0.25);
+      color: $ccui-color-text-placeholder;
     }
 
     &:disabled {
-      color: rgba(0, 0, 0, 0.4);
+      color: $ccui-color-text-disabled;
     }
   }
 
@@ -81,14 +81,14 @@
     justify-content: center;
     width: 16px;
     height: 16px;
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 11px;
     cursor: pointer;
     border-radius: 50%;
     transition: color 0.2s;
 
     &:hover {
-      color: rgba(0, 0, 0, 0.85);
+      color: $ccui-color-text;
     }
   }
 
@@ -96,9 +96,7 @@
     background: $ccui-base-bg;
     border: 1px solid $ccui-dividing-line;
     border-radius: 6px;
-    box-shadow:
-      0 6px 16px rgba(0, 0, 0, 0.08),
-      0 3px 6px -4px rgba(0, 0, 0, 0.12);
+    box-shadow: $ccui-box-shadow-secondary;
     box-sizing: border-box;
     overflow: auto;
     z-index: 1050;
@@ -113,17 +111,17 @@
 
   &__option {
     padding: 5px 12px;
-    color: rgba(0, 0, 0, 0.88);
+    color: $ccui-color-text;
     font-size: 14px;
     cursor: pointer;
     transition: background 0.2s;
 
     &.is-active {
-      background: rgba(0, 0, 0, 0.04);
+      background: $ccui-color-fill-tertiary;
     }
 
     &.is-disabled {
-      color: rgba(0, 0, 0, 0.25);
+      color: $ccui-color-text-disabled;
       cursor: not-allowed;
       background: transparent;
     }
@@ -131,7 +129,7 @@
 
   &__empty {
     padding: 12px;
-    color: rgba(0, 0, 0, 0.45);
+    color: $ccui-color-text-tertiary;
     font-size: 13px;
     text-align: center;
   }

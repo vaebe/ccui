@@ -1,10 +1,8 @@
 import type { TableColumn, TableColumnsCollector } from '../../table/src/table-types'
 import type { TableColumnGroupProps } from './table-column-group-types'
 import { defineComponent, inject, onBeforeUnmount, provide, shallowRef, triggerRef } from 'vue'
-import { tableColumnGroupCollectorKey, tableColumnsCollectorKey } from '../../table/src/table-types'
+import { nextColumnOrder, tableColumnGroupCollectorKey, tableColumnsCollectorKey } from '../../table/src/table-types'
 import { tableColumnGroupProps } from './table-column-group-types'
-
-let groupSeq = 0
 
 interface ChildEntry {
   column: TableColumn
@@ -18,7 +16,7 @@ export default defineComponent({
     const outer = inject(tableColumnGroupCollectorKey, null) ?? inject(tableColumnsCollectorKey, null)
 
     const id = Symbol('CTableColumnGroup')
-    const order = ++groupSeq
+    const order = nextColumnOrder()
 
     // 子列收集器：内部 TableColumn 注册到这里。
     const childEntries = new Map<symbol, ChildEntry>()

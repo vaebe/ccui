@@ -25,9 +25,9 @@ export default defineComponent({
     const activeNames = ref<(string | number)[]>(normalize(props.modelValue, props.accordion))
 
     watch(
-      () => props.modelValue,
-      (val) => {
-        activeNames.value = normalize(val, props.accordion)
+      () => [props.modelValue, props.accordion] as const,
+      ([val, acc]) => {
+        activeNames.value = normalize(val, acc)
       },
     )
 

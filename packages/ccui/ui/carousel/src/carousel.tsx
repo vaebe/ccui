@@ -125,18 +125,20 @@ export default defineComponent({
       const step = slidesToScroll.value
       const max = isMulti.value ? maxActive.value : total.value - 1
       let target = active.value + step
-      // 多帧并排时，最后一页要对齐到 maxActive（不能越过；但 infinite 时仍可绕到 0）
-      if (isMulti.value && !props.infinite && target > max) target = max
-      // 多帧并排时，跨过 max 但 infinite=true → 回到 0
-      if (isMulti.value && props.infinite && active.value >= max) target = 0
+      // 多帧并排时，target 越过 max：已在末页才绕回 0，否则对齐到 maxActive（保证最后一页填满）
+      if (isMulti.value && target > max) {
+        target = props.infinite && active.value >= max ? 0 : max
+      }
       setActive(target)
     }
     function prev(): void {
       const step = slidesToScroll.value
       const max = isMulti.value ? maxActive.value : total.value - 1
       let target = active.value - step
-      // 多帧并排 + infinite：从 0 倒退应回到末页（active = maxActive）
-      if (isMulti.value && props.infinite && active.value <= 0) target = max
+      // 多帧并排时，target 越过 0：已在首页才绕到末页（active = maxActive），否则对齐到 0
+      if (isMulti.value && target < 0) {
+        target = props.infinite && active.value <= 0 ? max : 0
+      }
       setActive(target)
     }
     function getCurrentIndex(): number {

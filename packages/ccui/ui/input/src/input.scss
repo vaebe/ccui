@@ -75,58 +75,38 @@
     pointer-events: none;
   }
 
-  &--large {
-    height: $ccui-size-lg;
-    font-size: $ccui-font-size-lg;
-
+  // 各 size 的 prefix/suffix 内边距同构，抽成 mixin 统一发射复合选择器
+  @mixin input-size-pad($pad) {
     &.#{$cls-prefix}-input--prefix {
       .#{$cls-prefix}-input__inner {
-        padding-left: 24px;
+        padding-left: $pad;
       }
     }
 
     &.#{$cls-prefix}-input--suffix,
     &.#{$cls-prefix}-input--clearable {
       .#{$cls-prefix}-input__inner {
-        padding-right: 24px;
+        padding-right: $pad;
       }
     }
+  }
+
+  &--large {
+    height: $ccui-size-lg;
+    font-size: $ccui-font-size-lg;
+    @include input-size-pad(24px);
   }
 
   &--default {
     height: $ccui-size-md;
     font-size: $ccui-font-size-md;
-
-    &.#{$cls-prefix}-input--prefix {
-      .#{$cls-prefix}-input__inner {
-        padding-left: 24px;
-      }
-    }
-
-    &.#{$cls-prefix}-input--suffix,
-    &.#{$cls-prefix}-input--clearable {
-      .#{$cls-prefix}-input__inner {
-        padding-right: 24px;
-      }
-    }
+    @include input-size-pad(24px);
   }
 
   &--small {
     height: $ccui-size-sm;
     font-size: $ccui-font-size-sm;
-
-    &.#{$cls-prefix}-input--prefix {
-      .#{$cls-prefix}-input__inner {
-        padding-left: 20px;
-      }
-    }
-
-    &.#{$cls-prefix}-input--suffix,
-    &.#{$cls-prefix}-input--clearable {
-      .#{$cls-prefix}-input__inner {
-        padding-right: 20px;
-      }
-    }
+    @include input-size-pad(20px);
   }
 
   &__wrapper {

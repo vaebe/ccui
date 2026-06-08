@@ -163,6 +163,16 @@ export interface TableColumnsCollector {
 export const tableColumnsCollectorKey = Symbol('TableColumnsCollector') as InjectionKey<TableColumnsCollector>
 
 /**
+ * 全局单调递增列序号：`<c-table-column>` 与 `<c-table-column-group>` 共享同一计数器，
+ * 保证顶层列与分组在同一 order 序列内排序，分组内子列同样按全局序号排序。
+ * order 只需全局单调，无需重置。
+ */
+let columnOrderSeq = 0
+export function nextColumnOrder(): number {
+  return ++columnOrderSeq
+}
+
+/**
  * ColumnGroup 子作用域收集器：内部 `<c-table-column>` 注册到 group，而非 root Table。
  */
 export interface TableColumnGroupCollector {

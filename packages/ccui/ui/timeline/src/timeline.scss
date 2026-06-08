@@ -62,15 +62,6 @@
   padding-bottom: 20px;
   list-style: none;
 
-  // 确保隐藏所有列表标记
-  &::marker {
-    display: none;
-  }
-
-  &::before {
-    display: none;
-  }
-
   // 内容包装器
   &__wrapper {
     position: relative;

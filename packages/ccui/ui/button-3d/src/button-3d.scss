@@ -13,7 +13,6 @@ $button-3d-info-active-color: $ccui-button-info-active;
   border-radius: $ccui-border-radius;
   outline-offset: 4px;
   user-select: none;
-  background: transparent;
 
   .shadow {
     position: absolute;
@@ -65,88 +64,30 @@ $button-3d-info-active-color: $ccui-button-info-active;
   }
 
   // 主要按钮类型样式
-  &--primary {
+  // .edge 四个 stop 颜色一致，仅 type 不同，用 mixin + @each 收敛
+  @mixin edge-gradient($c) {
     .edge {
-      background: linear-gradient(
-        to left,
-        $ccui-color-primary-active 0%,
-        $ccui-color-primary-active 8%,
-        $ccui-color-primary-active 92%,
-        $ccui-color-primary-active 100%
-      );
-    }
-
-    .front {
-      background: $ccui-color-primary;
-      color: $ccui-color-text-light-solid;
+      background: linear-gradient(to left, $c 0%, $c 8%, $c 92%, $c 100%);
     }
   }
 
-  &--success {
-    .edge {
-      background: linear-gradient(
-        to left,
-        $ccui-color-success-active 0%,
-        $ccui-color-success-active 8%,
-        $ccui-color-success-active 92%,
-        $ccui-color-success-active 100%
-      );
-    }
+  @each $name, $edge,
+    $front
+      in (
+        ('primary', $ccui-color-primary-active, $ccui-color-primary),
+        ('success', $ccui-color-success-active, $ccui-color-success),
+        ('info', $button-3d-info-active-color, $button-3d-info-color),
+        ('warning', $ccui-color-warning-active, $ccui-color-warning),
+        ('danger', $ccui-color-error-active, $ccui-color-error)
+      )
+  {
+    &--#{$name} {
+      @include edge-gradient($edge);
 
-    .front {
-      background: $ccui-color-success;
-      color: $ccui-color-text-light-solid;
-    }
-  }
-
-  &--info {
-    .edge {
-      background: linear-gradient(
-        to left,
-        $button-3d-info-active-color 0%,
-        $button-3d-info-active-color 8%,
-        $button-3d-info-active-color 92%,
-        $button-3d-info-active-color 100%
-      );
-    }
-
-    .front {
-      background: $button-3d-info-color;
-      color: $ccui-color-text-light-solid;
-    }
-  }
-
-  &--warning {
-    .edge {
-      background: linear-gradient(
-        to left,
-        $ccui-color-warning-active 0%,
-        $ccui-color-warning-active 8%,
-        $ccui-color-warning-active 92%,
-        $ccui-color-warning-active 100%
-      );
-    }
-
-    .front {
-      background: $ccui-color-warning;
-      color: $ccui-color-text-light-solid;
-    }
-  }
-
-  &--danger {
-    .edge {
-      background: linear-gradient(
-        to left,
-        $ccui-color-error-active 0%,
-        $ccui-color-error-active 8%,
-        $ccui-color-error-active 92%,
-        $ccui-color-error-active 100%
-      );
-    }
-
-    .front {
-      background: $ccui-color-error;
-      color: $ccui-color-text-light-solid;
+      .front {
+        background: $front;
+        color: $ccui-color-text-light-solid;
+      }
     }
   }
 
@@ -228,9 +169,10 @@ $button-3d-info-active-color: $ccui-button-info-active;
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    // 轨道与指示色跟随 .front 的字色：彩色 type 下解析为白，默认浅底 type 下解析为深色，保证可见
+    border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
     border-radius: 50%;
-    border-top-color: white;
+    border-top-color: currentColor;
     animation: spin 1s ease-in-out infinite;
     margin-right: 8px;
   }

@@ -46,7 +46,11 @@ export default defineComponent({
       }
       if (props.offset && Array.isArray(props.offset)) {
         const [x, y] = props.offset
-        style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+        // 独立模式以 scss 基线 transform: none 为锚做纯平移；
+        // 包裹模式以 scss 基线 translate(50%, -50%)（角标推到右上角外侧）为锚做微调
+        style.transform = isStandalone.value
+          ? `translate(${x}px, ${y}px)`
+          : `translate(calc(50% + ${x}px), calc(-50% + ${y}px))`
       }
       return Object.keys(style).length ? style : undefined
     })
@@ -82,6 +86,8 @@ export default defineComponent({
           <span
             class={[ns.b(), ns.m('count-standalone'), props.classNames?.root, props.classNames?.count]}
             style={[countStyle.value, props.styles?.root, props.styles?.count] as any}
+            // 溢出时 displayCount 会截断成 99+，用 title 暴露真实数值给读屏/悬停
+            title={props.dot ? undefined : typeof props.count === 'number' ? String(props.count) : displayCount.value}
           >
             {displayCount.value}
           </span>
@@ -97,6 +103,8 @@ export default defineComponent({
             props.dot ? props.classNames?.dot : props.classNames?.count,
           ]}
           style={[countStyle.value, props.dot ? props.styles?.dot : props.styles?.count] as any}
+          // 溢出时 displayCount 会截断成 99+，用 title 暴露真实数值给读屏/悬停（dot 模式无数值）
+          title={props.dot ? undefined : typeof props.count === 'number' ? String(props.count) : displayCount.value}
         >
           {props.dot ? null : displayCount.value}
         </sup>

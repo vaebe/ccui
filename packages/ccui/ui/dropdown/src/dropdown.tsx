@@ -77,7 +77,15 @@ export default defineComponent({
                         item.divided && ns.em('item', 'divided'),
                       ]}
                       role="menuitem"
+                      aria-disabled={item.disabled || undefined}
+                      tabindex={item.disabled ? undefined : 0}
                       onClick={() => onSelect(item)}
+                      onKeydown={(e: KeyboardEvent) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          onSelect(item)
+                        }
+                      }}
                     >
                       {item.icon && <i class={[ns.e('icon'), item.icon]} />}
                       <span class={ns.e('label')}>{item.label}</span>

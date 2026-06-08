@@ -49,7 +49,7 @@ export default defineComponent({
       if (!p) {
         return 0
       }
-      if (typeof p === 'object' && p.rows) {
+      if (typeof p === 'object' && p.rows !== undefined) {
         return p.rows
       }
       return 3

@@ -58,7 +58,6 @@ export default defineComponent({
     const wrapperCls = computed(() => ({
       [ns.b()]: true,
       [ns.m('disabled')]: props.disabled,
-      [ns.m(sizeRef.value)]: true,
     }))
 
     return () => {

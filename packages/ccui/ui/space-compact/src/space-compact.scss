@@ -22,21 +22,25 @@
     margin-inline-start: -1px;
   }
 
-  &--horizontal > *:not(:first-child):not(:last-child) {
-    border-radius: 0;
-  }
-  &--horizontal > *:not(:first-child):not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--horizontal > *:not(:first-child):not(:last-child),
+  &--horizontal
+    > *:not(:first-child):not(:last-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-radius: 0;
   }
 
   &--horizontal > *:first-child:not(:last-child),
-  &--horizontal > *:first-child:not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--horizontal
+    > *:first-child:not(:last-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
 
   &--horizontal > *:last-child:not(:first-child),
-  &--horizontal > *:last-child:not(:first-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--horizontal
+    > *:last-child:not(:first-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -53,18 +57,24 @@
   }
 
   &--vertical > *:not(:first-child):not(:last-child),
-  &--vertical > *:not(:first-child):not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--vertical
+    > *:not(:first-child):not(:last-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-radius: 0;
   }
 
   &--vertical > *:first-child:not(:last-child),
-  &--vertical > *:first-child:not(:last-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--vertical
+    > *:first-child:not(:last-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
 
   &--vertical > *:last-child:not(:first-child),
-  &--vertical > *:last-child:not(:first-child) :is(input, button, .ccui-input, .ccui-button, .ccui-select) {
+  &--vertical
+    > *:last-child:not(:first-child)
+    :is(input, button, .#{$cls-prefix}-input, .#{$cls-prefix}-button, .#{$cls-prefix}-select) {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }

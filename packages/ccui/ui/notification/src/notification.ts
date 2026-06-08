@@ -8,6 +8,7 @@ import type {
   NotificationType,
 } from './notification-types'
 import { createApp, h, reactive } from 'vue'
+import { useNamespace } from '../../shared/hooks/use-namespace'
 import NotificationItem from './notification-item'
 import './notification.scss'
 
@@ -19,6 +20,7 @@ interface NotificationInstance {
 const PLACEMENTS: NotificationPlacement[] = ['top', 'topRight', 'topLeft', 'bottom', 'bottomRight', 'bottomLeft']
 
 let counter = 0
+const ns = useNamespace('notification')
 const containers = new Map<NotificationPlacement, HTMLElement>()
 const apps = new Map<NotificationPlacement, ReturnType<typeof createApp>>()
 const lists = reactive<Record<NotificationPlacement, NotificationInstance[]>>({
@@ -50,8 +52,8 @@ function normalizeDuration(input: number | undefined, defaultSeconds: number): n
 function ensureContainer(placement: NotificationPlacement) {
   if (containers.has(placement)) return
   const el = document.createElement('div')
-  el.className = `ccui-notification ccui-notification--${placement}`
-  if (globalConfig.stack) el.classList.add('ccui-notification--stack')
+  el.className = `${ns.b()} ${ns.m(placement)}`
+  if (globalConfig.stack) el.classList.add(ns.m('stack'))
   if (placement === 'top' || placement.startsWith('top')) {
     if (globalConfig.top !== undefined) {
       el.style.top = typeof globalConfig.top === 'number' ? `${globalConfig.top}px` : globalConfig.top
@@ -106,7 +108,11 @@ function enforceMaxCount(placement: NotificationPlacement) {
   const cap = globalConfig.maxCount ?? Infinity
   if (!isFinite(cap) || cap <= 0) return
   const arr = lists[placement]
-  while (arr.length > cap) arr.shift()
+  // 被挤掉的通知也要触发 onClose，避免用户注册的回调被静默吞掉
+  while (arr.length > cap) {
+    const removed = arr.shift()
+    removed?.options.onClose?.()
+  }
 }
 
 function open(options: NotificationOptions): NotificationHandle {
@@ -138,8 +144,8 @@ const notification = {
   config(cfg: NotificationGlobalConfig) {
     Object.assign(globalConfig, cfg)
     containers.forEach((el) => {
-      if (globalConfig.stack) el.classList.add('ccui-notification--stack')
-      else el.classList.remove('ccui-notification--stack')
+      if (globalConfig.stack) el.classList.add(ns.m('stack'))
+      else el.classList.remove(ns.m('stack'))
     })
   },
   destroy(): void {

@@ -197,6 +197,19 @@ function renderItem({ item, level, keyPath, ns, ctx }: RenderItemArgs): JSX.Elem
   )
 }
 
+// 根据 keyPath 找到目标项真实的同级集合（keyPath 为 leaf-first：[item.key, parentKey, ..., rootKey]）
+function findSiblingItems(roots: MenuItem[], keyPath: MenuKey[]): MenuItem[] {
+  // 去掉自身 key 并反转，得到从根到直接父级的祖先顺序
+  const ancestors = keyPath.slice(1).reverse()
+  let level = roots
+  for (const ancestorKey of ancestors) {
+    const parent = level.find((m) => m.key === ancestorKey)
+    if (!parent?.children?.length) return level
+    level = parent.children
+  }
+  return level
+}
+
 export default defineComponent({
   name: 'CMenu',
   props: menuProps,
@@ -309,7 +322,8 @@ export default defineComponent({
       let nextKeys = nextOpen ? [...openKeys.value, item.key] : openKeys.value.filter((openKey) => openKey !== item.key)
 
       if (props.accordion && nextOpen) {
-        const siblingKeys = props.items
+        const siblings = findSiblingItems(props.items, keyPath)
+        const siblingKeys = siblings
           .filter((menuItem) => menuItem.children?.length && menuItem.key !== item.key)
           .map((menuItem) => menuItem.key)
         nextKeys = nextKeys.filter((openKey) => !siblingKeys.includes(openKey) || openKey === item.key)

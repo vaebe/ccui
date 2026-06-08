@@ -36,13 +36,13 @@ export default defineComponent({
 
     // 计算是否禁用增加按钮
     const maxDisabled = computed(() => {
-      if (innerValue.value === undefined) return false
+      if (innerValue.value === undefined || innerValue.value === null) return false
       return innerValue.value >= props.max
     })
 
     // 计算是否禁用减少按钮
     const minDisabled = computed(() => {
-      if (innerValue.value === undefined) return false
+      if (innerValue.value === undefined || innerValue.value === null) return false
       return innerValue.value <= props.min
     })
 
@@ -237,7 +237,16 @@ export default defineComponent({
             <span
               class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
               role="button"
+              tabindex={minDisabled.value || props.disabled ? -1 : 0}
+              aria-label="减少"
+              aria-disabled={minDisabled.value || props.disabled || undefined}
               onClick={decrease}
+              onKeydown={(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  decrease()
+                }
+              }}
             >
               <svg viewBox="0 0 1024 1024" width="1em" height="1em">
                 <path d="M128 544h768a32 32 0 1 0 0-64H128a32 32 0 0 0 0 64z" />
@@ -278,7 +287,16 @@ export default defineComponent({
             <span
               class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
               role="button"
+              tabindex={maxDisabled.value || props.disabled ? -1 : 0}
+              aria-label="增加"
+              aria-disabled={maxDisabled.value || props.disabled || undefined}
               onClick={increase}
+              onKeydown={(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  increase()
+                }
+              }}
             >
               <svg viewBox="0 0 1024 1024" width="1em" height="1em">
                 <path d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z" />
@@ -292,7 +310,16 @@ export default defineComponent({
               <span
                 class={[ns.e('increase'), { [ns.is('disabled')]: maxDisabled.value || props.disabled }]}
                 role="button"
+                tabindex={maxDisabled.value || props.disabled ? -1 : 0}
+                aria-label="增加"
+                aria-disabled={maxDisabled.value || props.disabled || undefined}
                 onClick={increase}
+                onKeydown={(e: KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    increase()
+                  }
+                }}
               >
                 <svg viewBox="0 0 1024 1024" width="1em" height="1em">
                   <path d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z" />
@@ -301,7 +328,16 @@ export default defineComponent({
               <span
                 class={[ns.e('decrease'), { [ns.is('disabled')]: minDisabled.value || props.disabled }]}
                 role="button"
+                tabindex={minDisabled.value || props.disabled ? -1 : 0}
+                aria-label="减少"
+                aria-disabled={minDisabled.value || props.disabled || undefined}
                 onClick={decrease}
+                onKeydown={(e: KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    decrease()
+                  }
+                }}
               >
                 <svg viewBox="0 0 1024 1024" width="1em" height="1em">
                   <path d="M128 544h768a32 32 0 1 0 0-64H128a32 32 0 0 0 0 64z" />

@@ -61,7 +61,6 @@
   }
 
   &--small {
-    font-size: $ccui-font-size-sm;
     line-height: 18px;
     padding-inline: 6px;
   }
@@ -71,7 +70,6 @@
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0 0;
 
   &--disabled {
     pointer-events: none;

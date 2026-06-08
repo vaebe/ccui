@@ -22,11 +22,14 @@ export default defineComponent({
     const ns = useNamespace('alert')
     const closed = ref(false)
 
+    // 是否渲染图标：显式开启、提供 icon 插槽、或 banner 模式
+    const showIcon = computed(() => props.showIcon || !!slots.icon || props.banner)
+
     const cls = computed(() => ({
       [ns.b()]: true,
       [ns.m(props.type)]: true,
       [ns.m('with-description')]: !!props.description || !!slots.description,
-      [ns.m('show-icon')]: props.showIcon || !!slots.icon,
+      [ns.m('show-icon')]: showIcon.value,
       [ns.m('banner')]: props.banner,
     }))
 
@@ -39,10 +42,9 @@ export default defineComponent({
       if (closed.value) {
         return null
       }
-      const showIcon = props.showIcon || !!slots.icon || props.banner
       return (
         <div class={[cls.value, props.classNames?.root]} style={props.styles?.root} role="alert">
-          {showIcon && (
+          {showIcon.value && (
             <span class={[ns.e('icon'), props.classNames?.icon]} style={props.styles?.icon}>
               {slots.icon ? (
                 slots.icon()
@@ -64,7 +66,7 @@ export default defineComponent({
             )}
           </div>
           {(props.closable || props.closeText) && (
-            <button class={ns.e('close')} type="button" onClick={onClose}>
+            <button class={ns.e('close')} type="button" aria-label="关闭" onClick={onClose}>
               {props.closeText ? (
                 <span>{props.closeText}</span>
               ) : (

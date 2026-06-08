@@ -44,7 +44,7 @@ $button-info-plain-border: $ccui-button-info-plain-border;
   &:disabled {
     cursor: not-allowed;
     color: $ccui-color-text-disabled;
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: $ccui-color-fill-tertiary;
     border-color: $ccui-color-border;
     box-shadow: none;
   }
@@ -65,7 +65,7 @@ $button-info-plain-border: $ccui-button-info-plain-border;
 
     &:disabled {
       color: $ccui-color-text-disabled;
-      background-color: rgba(0, 0, 0, 0.04);
+      background-color: $ccui-color-fill-tertiary;
       border-color: $ccui-color-border;
       box-shadow: none;
     }
@@ -149,12 +149,12 @@ $button-info-plain-border: $ccui-button-info-plain-border;
 
     &:hover {
       color: $ccui-color-primary-hover;
-      background: rgba(0, 0, 0, 0.06);
+      background: $ccui-color-fill-secondary;
     }
 
     &:active {
       color: $ccui-color-primary-active;
-      background: rgba(0, 0, 0, 0.15);
+      background: $ccui-color-fill;
     }
   }
 

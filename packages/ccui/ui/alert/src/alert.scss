@@ -91,7 +91,7 @@
 
     .#{$cls-prefix}-alert__icon {
       margin-top: 4px;
-      font-size: 24px;
+      font-size: $ccui-font-size-heading-3;
     }
 
     .#{$cls-prefix}-alert__message {

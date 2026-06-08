@@ -101,7 +101,7 @@ export const Sider = defineComponent({
     // 不命中时自动 uncollapse。同步 emit @breakpoint(broken)。
     let mql: MediaQueryList | null = null
     const onBreakpointChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      const broken = 'matches' in e ? e.matches : (e as MediaQueryListEvent).matches
+      const broken = e.matches
       emit('breakpoint', broken)
       // 自动切换 collapsed 态（受控时不覆盖父值）。
       if (props.collapsed === undefined) {
@@ -125,6 +125,8 @@ export const Sider = defineComponent({
         mql.removeEventListener('change', onBreakpointChange)
         mql = null
       }
+      // 卸载时从 Layout 注销自身，避免 siders 数组只增不减导致 has-sider 残留。
+      ctx?.removeSider(id)
     })
 
     const widthPx = computed(() => {
@@ -170,7 +172,21 @@ export const Sider = defineComponent({
       const triggerStyle = isZeroWidthMode.value ? props.zeroWidthTriggerStyle : undefined
       const triggerCls = [ns.e('trigger'), isZeroWidthMode.value && ns.em('trigger', 'zero-width')]
       return (
-        <div class={triggerCls} style={triggerStyle} onClick={toggle}>
+        <div
+          class={triggerCls}
+          style={triggerStyle}
+          role="button"
+          tabindex={0}
+          aria-expanded={!isCollapsed.value}
+          onClick={toggle}
+          onKeydown={(e: KeyboardEvent) => {
+            // 键盘可达：Enter / Space 触发与 onClick 一致的折叠/展开逻辑
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              toggle()
+            }
+          }}
+        >
           {slots.trigger ? slots.trigger() : <span class={ns.e('trigger-arrow')}>{arrow ? '›' : '‹'}</span>}
         </div>
       )

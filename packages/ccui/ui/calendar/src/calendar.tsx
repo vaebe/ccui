@@ -41,19 +41,19 @@ export default defineComponent({
 
     // 根据月份计算当前展示日期的数组
     const generatedDate = (month?: string) => {
-      // 获取当月第一天是周几
-      const whichDay = dayjs(month).startOf('month').day()
-      // 计算开始开始日期 7 减去当月第一天是周几（获取到的周几是 0123456， 其中0代表周日）
-      const startDate = dayjs(dayjs(month).subtract(7 - whichDay, 'day')).format('YYYY-MM-DD')
+      // 当月第一天
+      const first = dayjs(month).startOf('month')
+      // 当月第一天是周几（0123456，其中 0 代表周日）
+      const whichDay = first.day()
+      // 起始日期回退到所在周的周日，使网格第 N 列恰好对应星期 N，与周日…周六表头对齐
+      const startDate = first.subtract(whichDay, 'day').format('YYYY-MM-DD')
 
       // 整理数据
       // 生成长度42的数组，为什么是42呢？ 因为有的月份是28 或者30 31， 35 会导致某些月份展示不全。
       curDateList.value = Array.from({ length: 42 }, (_, index) => index).reduce(
         (acc: Array<dateItem>, index: number) => {
           // 获取展示的日期
-          const date = dayjs(startDate)
-            .add(index + 1, 'day')
-            .format('YYYY-MM-DD')
+          const date = dayjs(startDate).add(index, 'day').format('YYYY-MM-DD')
           // 分割日期 用于获取是 几号 如 123456
           const dateList = date.split('-')
           // 获取周几
@@ -61,7 +61,7 @@ export default defineComponent({
 
           // 将需要的数据 放进数组
           acc.push({
-            index: index + 1,
+            index,
             date,
             day: dateList[dateList.length - 1],
             week: weekList.value[week],
@@ -78,6 +78,8 @@ export default defineComponent({
 
     // 设置当前天、选中天， 生成对应月份
     const setCurrentDate = (date: string) => {
+      // 只读模式下禁止任何改值（日期格点击、月份切换、header slot 暴露的 setDate/changeMonth 均经此收口）
+      if (props.readOnly) return
       currentDate.value = dayjs(date).format('YYYY-MM-DD')
       // 月份不同 重新生成日历
       if (!date.includes(currentMonth.value)) {
@@ -142,8 +144,17 @@ export default defineComponent({
 
         return (
           <div
+            role="button"
+            tabindex={0}
+            aria-selected={dateCellOpts.isSelected}
             onClick={() => {
               setCurrentDate(dateCellOpts.date)
+            }}
+            onKeydown={(e: KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setCurrentDate(dateCellOpts.date)
+              }
             }}
             class={[className, props.classNames?.cell]}
             style={props.styles?.cell}

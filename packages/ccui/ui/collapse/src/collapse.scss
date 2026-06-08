@@ -1,7 +1,7 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-collapse {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: $ccui-color-fill-quaternary;
   border: 1px solid $ccui-color-border;
   border-radius: $ccui-border-radius;
   border-bottom: 0;
@@ -29,7 +29,7 @@
     transition: background-color $ccui-motion-duration-mid;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.02);
+      background-color: $ccui-color-fill-quaternary;
     }
   }
 

@@ -64,7 +64,6 @@
   }
 
   &__check {
-    color: #ffffff;
     font-size: 14px;
     line-height: 1;
   }
@@ -143,7 +142,7 @@
 
     .#{$cls-prefix}-steps__number,
     .#{$cls-prefix}-steps__icon-custom {
-      color: #ffffff;
+      color: $ccui-color-text-light-solid;
     }
 
     .#{$cls-prefix}-steps__title {

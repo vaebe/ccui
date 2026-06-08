@@ -286,6 +286,9 @@ export default defineComponent({
       if (!selectedStart.value && !selectedEnd.value) return
       pendingStart.value = null
       pendingEnd.value = null
+      // 复位选择阶段与 hover，保证清空后从 start 端重新选起
+      phase.value = 'start'
+      hoverDate.value = null
       emitRange(null, null)
     }
 
@@ -448,7 +451,13 @@ export default defineComponent({
 
     function renderGrid(cells: ReturnType<typeof generateMonthGrid>) {
       return (
-        <div class={ns.e('grid')}>
+        <div
+          class={ns.e('grid')}
+          onMouseleave={() => {
+            // 指针移出整个网格时清除 hover 预览，避免残留高亮
+            hoverDate.value = null
+          }}
+        >
           {cells.map((cell) => {
             // 显示禁用以当前 phase 为准（用户先填 start 再填 end，对应该侧的限制）
             const disabled = isDisabledFor(cell.date, phase.value)
@@ -545,7 +554,8 @@ export default defineComponent({
     }
 
     function renderFooter() {
-      const okDisabled = !pendingStart.value || !pendingEnd.value
+      const okDisabled =
+        (!pendingStart.value && !allowEmptyTuple.value[0]) || (!pendingEnd.value && !allowEmptyTuple.value[1])
       return (
         <div class={ns.e('footer')}>
           <button

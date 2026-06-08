@@ -18,6 +18,15 @@ function toNumber(v: number | string | undefined): number | undefined {
   return Number.isNaN(n) ? undefined : n
 }
 
+// 百分比字符串按 total 折算为像素，数值仍按像素原样返回（与 computePixel 约定一致）。
+function toPixel(v: number | string | undefined, total: number): number | undefined {
+  if (typeof v === 'string' && v.endsWith('%')) {
+    const n = Number.parseFloat(v)
+    return Number.isNaN(n) ? undefined : (n / 100) * total
+  }
+  return toNumber(v)
+}
+
 export const Splitter = defineComponent({
   name: 'CSplitter',
   props: splitterProps,
@@ -29,7 +38,7 @@ export const Splitter = defineComponent({
     // L-2.23：layout 显式优先；缺省时回落到 orientation 别名；都没传则默认 horizontal。
     const effectiveLayout = computed<SplitterLayout>(() => props.layout ?? props.orientation ?? 'horizontal')
 
-    const panels = reactive<{ id: number; props: PanelProps; size: number | undefined }[]>([])
+    const panels = reactive<{ id: number; props: PanelProps; size: number | undefined; pixelized: boolean }[]>([])
 
     // L-2.23：折叠状态。Map<panelId, prevSize>，prevSize 用于恢复时还原宽度。
     const collapsedPanels = reactive(new Map<number, number | undefined>())
@@ -39,6 +48,7 @@ export const Splitter = defineComponent({
         id,
         props: p,
         size: toNumber(p.size ?? p.defaultSize),
+        pixelized: false,
       })
     }
     const unregisterPanel = (id: number) => {
@@ -51,9 +61,13 @@ export const Splitter = defineComponent({
 
     let dragState: { panelIdx: number; startPos: number; startA: number; startB: number; total: number } | null = null
 
-    const computePixel = (panel: { props: PanelProps; size: number | undefined }, total: number): number => {
+    const computePixel = (
+      panel: { props: PanelProps; size: number | undefined; pixelized: boolean },
+      total: number,
+    ): number => {
       if (panel.size !== undefined) {
-        if (typeof panel.props.size === 'string' && panel.props.size.endsWith('%')) {
+        // 仅在首次像素化前命中 % 分支，避免把已经是像素的 size 当成百分比再换算。
+        if (!panel.pixelized && typeof panel.props.size === 'string' && panel.props.size.endsWith('%')) {
           return (panel.size / 100) * total
         }
         return panel.size
@@ -73,10 +87,10 @@ export const Splitter = defineComponent({
         return
       }
       const total = dragState.total
-      const minA = toNumber(a.props.min) ?? 0
-      const maxA = toNumber(a.props.max) ?? total
-      const minB = toNumber(b.props.min) ?? 0
-      const maxB = toNumber(b.props.max) ?? total
+      const minA = toPixel(a.props.min, total) ?? 0
+      const maxA = toPixel(a.props.max, total) ?? total
+      const minB = toPixel(b.props.min, total) ?? 0
+      const maxB = toPixel(b.props.max, total) ?? total
       let newA = dragState.startA + delta
       let newB = dragState.startB - delta
       newA = Math.max(minA, Math.min(maxA, newA))
@@ -116,6 +130,7 @@ export const Splitter = defineComponent({
       // 把所有 panel size 转换为像素
       panels.forEach((p) => {
         p.size = computePixel(p, total)
+        p.pixelized = true
       })
       const a = panels[idx]
       const b = panels[idx + 1]
@@ -139,6 +154,11 @@ export const Splitter = defineComponent({
     onBeforeUnmount(() => {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
+      // 拖拽进行中被卸载时，还原 body 全局样式，避免残留 col-resize 光标与禁用文本选择。
+      if (dragState) {
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
+      }
     })
 
     // L-2.23：折叠 panel 入口。toggle 时记录或恢复 size，让 panel style 计算走 collapsed=0 分支。

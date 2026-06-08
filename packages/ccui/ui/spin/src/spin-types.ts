@@ -23,10 +23,6 @@ export const spinProps = {
     type: Boolean,
     default: false,
   },
-  percent: {
-    type: [Number, String] as PropType<number | 'auto'>,
-    default: undefined,
-  },
 } as const
 
 export type SpinProps = ExtractPropTypes<typeof spinProps>

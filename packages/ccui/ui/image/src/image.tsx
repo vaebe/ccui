@@ -69,6 +69,9 @@ export default defineComponent({
 
     let observer: IntersectionObserver | null = null
     const setupLazy = () => {
+      // 先释放上一次的 observer，避免 src 连续切换时旧 observer 泄漏
+      observer?.disconnect()
+      observer = null
       if (!props.lazy || !wrapperRef.value) {
         return
       }

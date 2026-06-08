@@ -56,7 +56,7 @@ export default defineComponent({
 
     // 渲染时间戳
     const renderTimestamp = () => {
-      if (props.hideTimestamp) return null
+      if (props.hideTimestamp || !props.timestamp) return null
 
       return <div class={timestampClasses.value}>{props.timestamp}</div>
     }

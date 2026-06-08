@@ -1,6 +1,6 @@
 @use '../../style-var/index.scss' as *;
 
-// 对标 Ant Design border-beam 的实现：mask 取边框环 + offset-path 矩形路径（固定 round 100px，
+// 实现：mask 取边框环 + offset-path 矩形路径（固定 round 100px，
 // 大圆角让过弯旋转平滑无卡顿）+ offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
 .#{$cls-prefix}-border-beam {
   position: relative;

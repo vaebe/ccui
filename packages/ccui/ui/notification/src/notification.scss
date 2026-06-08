@@ -82,10 +82,8 @@
     padding: 16px 24px;
     background-color: $ccui-color-bg-elevated;
     border-radius: $ccui-border-radius;
-    box-shadow:
-      0 6px 16px 0 rgba(0, 0, 0, 0.08),
-      0 3px 6px -4px rgba(0, 0, 0, 0.12),
-      0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    // 弹层阴影统一走 token，与 dropdown/select/menu 等浮层族对齐，深色模式下自动加深
+    box-shadow: $ccui-box-shadow-secondary;
   }
 
   &__icon {

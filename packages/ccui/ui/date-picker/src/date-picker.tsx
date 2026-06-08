@@ -295,9 +295,19 @@ export default defineComponent({
     function clickNow() {
       const now = dayjs()
       if (showTimeActive.value) {
+        // 与 cell 选择 / 时间列保持一致：此刻命中 disabledDate / minDate / maxDate / disabledTime 时不提交
+        if (isDateDisabled(now)) return
+        if (
+          mergedDisabledHours().includes(now.hour()) ||
+          mergedDisabledMinutes(now.hour()).includes(now.minute()) ||
+          mergedDisabledSeconds(now.hour(), now.minute()).includes(now.second())
+        )
+          return
         emitChange(now)
       } else {
-        emitChange(now.startOf('day'))
+        const target = now.startOf('day')
+        if (isDateDisabled(target)) return
+        emitChange(target)
       }
       closePopup()
     }
