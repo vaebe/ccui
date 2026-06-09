@@ -81,7 +81,7 @@ const selected = ref<string[]>([])
   <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data">
     <template #render="{ item }">
       <span
-        ><strong>{{ item.title }}</strong> · <small style="color:#999">{{ item.description }}</small></span
+        ><strong>{{ item.title }}</strong> · <small style="color:var(--ccui-color-text-tertiary)">{{ item.description }}</small></span
       >
     </template>
   </c-transfer>

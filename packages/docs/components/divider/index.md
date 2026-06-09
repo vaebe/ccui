@@ -134,15 +134,15 @@
 <template>
   <h3 style="margin: 16px 0 0">基本信息</h3>
   <c-divider style="margin: 12px 0" />
-  <p style="color: #666; margin: 0">姓名 / 头像 / 联系方式</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0">姓名 / 头像 / 联系方式</p>
 
   <h3 style="margin: 24px 0 0">账号设置</h3>
   <c-divider style="margin: 12px 0" />
-  <p style="color: #666; margin: 0">密码 / 双因素验证 / 登录历史</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0">密码 / 双因素验证 / 登录历史</p>
 
   <h3 style="margin: 24px 0 0">通知偏好</h3>
   <c-divider style="margin: 12px 0" />
-  <p style="color: #666; margin: 0">邮件 / 短信 / 站内消息</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0">邮件 / 短信 / 站内消息</p>
 </template>
 ```
 

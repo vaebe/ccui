@@ -22,7 +22,7 @@ const checked = ref(true)
 
 <template>
   <c-check-box v-model="checked">这是一个多选框</c-check-box>
-  <p style="margin-top: 8px; color: #666">当前：{{ checked ? '选中' : '未选中' }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前：{{ checked ? '选中' : '未选中' }}</p>
 </template>
 ```
 
@@ -116,7 +116,7 @@ const cities = ref(['shanghai'])
     <c-check-box label="guangzhou">广州</c-check-box>
     <c-check-box label="shenzhen">深圳</c-check-box>
   </c-check-box-group>
-  <p style="margin-top: 8px; color: #666">已选：{{ cities.join(', ') || '（空）' }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">已选：{{ cities.join(', ') || '（空）' }}</p>
 </template>
 ```
 
@@ -137,14 +137,14 @@ const b = ref([])
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">column（默认）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">column（默认）</p>
   <c-check-box-group v-model="a" direction="column">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
     <c-check-box label="3">选项 3</c-check-box>
   </c-check-box-group>
 
-  <p style="color: #666; margin: 16px 0 4px">row</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">row</p>
   <c-check-box-group v-model="b" direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
@@ -170,14 +170,14 @@ const b = ref(['1'])
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">整组禁用</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">整组禁用</p>
   <c-check-box-group v-model="a" disabled direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
     <c-check-box label="3">选项 3</c-check-box>
   </c-check-box-group>
 
-  <p style="color: #666; margin: 16px 0 4px">整组改颜色</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">整组改颜色</p>
   <c-check-box-group v-model="b" color="#fa541c" direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
@@ -217,7 +217,7 @@ function beforeChange(isChecked, label) {
     <c-check-box label="b">B</c-check-box>
     <c-check-box label="locked">锁定项（被禁切换）</c-check-box>
   </c-check-box-group>
-  <p style="margin-top: 8px; color: #666">日志：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">日志：{{ log }}</p>
 </template>
 ```
 

@@ -590,11 +590,11 @@ const b = ref('')
 <template>
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">weekStart=0（默认，周日开头）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">weekStart=0（默认，周日开头）</p>
       <c-date-picker v-model="a" :week-start="0" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">weekStart=1（周一开头）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">weekStart=1（周一开头）</p>
       <c-date-picker v-model="b" :week-start="1" />
     </div>
   </div>
@@ -649,8 +649,8 @@ function onChange(v, dateString) {
 
 <template>
   <c-date-picker v-model="value" value-format="date" @change="onChange" />
-  <p style="margin: 8px 0 0; color: #666">最近一次 change：</p>
-  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastChange }}</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-secondary)">最近一次 change：</p>
+  <p style="margin: 4px 0 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ lastChange }}</p>
 </template>
 ```
 
@@ -676,9 +676,9 @@ function onPanelChange(mode, viewMonth) {
 
 <template>
   <c-date-picker v-model="value" @panel-change="onPanelChange" />
-  <p style="margin: 8px 0 0; color: #666">最近一次 panel-change：</p>
-  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastPanel }}</p>
-  <p style="margin: 8px 0 0; color: #999; font-size: 12px">提示：点击年份 / 月份头部进入上钻视图触发该事件</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-secondary)">最近一次 panel-change：</p>
+  <p style="margin: 4px 0 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ lastPanel }}</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-tertiary); font-size: 12px">提示：点击年份 / 月份头部进入上钻视图触发该事件</p>
 </template>
 ```
 

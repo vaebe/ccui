@@ -87,7 +87,7 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 6px">small</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 6px">small</p>
   <c-descriptions
     bordered
     size="small"
@@ -99,7 +99,7 @@
     ]"
   />
 
-  <p style="color: #666; margin: 16px 0 6px">default</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 6px">default</p>
   <c-descriptions
     bordered
     :column="3"
@@ -110,7 +110,7 @@
     ]"
   />
 
-  <p style="color: #666; margin: 16px 0 6px">middle</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 6px">middle</p>
   <c-descriptions
     bordered
     size="middle"

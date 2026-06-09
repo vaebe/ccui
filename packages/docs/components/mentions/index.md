@@ -131,9 +131,9 @@ const opts = ['Anna', 'ALICE', 'bob']
 </script>
 
 <template>
-  <p style="margin: 0 0 4px; color: #666">caseSensitive=false（默认，An 也能匹配 Anna）</p>
+  <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">caseSensitive=false（默认，An 也能匹配 Anna）</p>
   <c-mentions v-model="v1" :options="opts" :rows="2" />
-  <p style="margin: 12px 0 4px; color: #666">caseSensitive=true（必须严格大小写）</p>
+  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">caseSensitive=true（必须严格大小写）</p>
   <c-mentions v-model="v2" :options="opts" case-sensitive :rows="2" />
 </template>
 ```
@@ -155,9 +155,9 @@ const v2 = ref('')
 </script>
 
 <template>
-  <p style="margin: 0 0 4px; color: #666">autoSize=true（无限制）</p>
+  <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">autoSize=true（无限制）</p>
   <c-mentions v-model="v1" :options="['anna', 'bob']" auto-size placeholder="多输几行回车试试" />
-  <p style="margin: 12px 0 4px; color: #666">autoSize=&#123; minRows: 2, maxRows: 6 &#125;</p>
+  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">autoSize=&#123; minRows: 2, maxRows: 6 &#125;</p>
   <c-mentions
     v-model="v2"
     :options="['anna', 'bob']"
@@ -251,7 +251,7 @@ const team = [
             height: '24px',
             borderRadius: '50%',
             background: option.color,
-            color: '#fff',
+            color: 'var(--ccui-color-text-light-solid)',
             fontSize: '12px',
             display: 'inline-flex',
             alignItems: 'center',
@@ -262,7 +262,7 @@ const team = [
         </span>
         <span>
           <strong>{{ option.label }}</strong>
-          <span style="margin-left: 6px; color: #999; font-size: 12px">{{ option.role }}</span>
+          <span style="margin-left: 6px; color: var(--ccui-color-text-tertiary); font-size: 12px">{{ option.role }}</span>
         </span>
       </div>
     </template>

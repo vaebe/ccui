@@ -25,7 +25,7 @@
 ```vue
 <template>
   <c-image src="https://picsum.photos/seed/c-image-preview/600/400" :width="200" :height="200" fit="cover" preview />
-  <p style="margin-top: 8px; color: #666">点击图片打开预览</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">点击图片打开预览</p>
 </template>
 ```
 
@@ -47,7 +47,7 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
   <div style="display: flex; gap: 16px; flex-wrap: wrap">
     <div v-for="f in fits" :key="f" style="text-align: center">
       <c-image :src="url" :fit="f" :width="120" :height="80" />
-      <div style="margin-top: 4px; color: #666">{{ f }}</div>
+      <div style="margin-top: 4px; color: var(--ccui-color-text-secondary)">{{ f }}</div>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
   &nbsp;
   <c-image src="https://invalid.example.com/y.png" :width="160" :height="120">
     <template #error>
-      <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ff4d4f">
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--ccui-color-error)">
         资源已下线 <c-icon name="mdi:close-circle" />
       </div>
     </template>
@@ -90,8 +90,8 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
 
 ```vue
 <template>
-  <div style="height: 200px; overflow: auto; border: 1px dashed #d9d9d9; padding: 8px">
-    <p style="color: #666">滚动下方查看懒加载图片：</p>
+  <div style="height: 200px; overflow: auto; border: 1px dashed var(--ccui-color-border); padding: 8px">
+    <p style="color: var(--ccui-color-text-secondary)">滚动下方查看懒加载图片：</p>
     <div style="height: 240px"></div>
     <c-image src="https://picsum.photos/seed/c-image-lazy/600/400" :width="200" lazy root-margin="50px" />
   </div>
@@ -117,10 +117,10 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
           justify-content: center;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, #f5f5f5 25%, #eee 50%, #f5f5f5 75%);
+          background: linear-gradient(90deg, var(--ccui-area) 25%, var(--ccui-color-border-secondary) 50%, var(--ccui-area) 75%);
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite;
-          color: #999;
+          color: var(--ccui-color-text-tertiary);
         "
       >
         loading…
@@ -170,7 +170,7 @@ function trace(type, e) {
       @error="trace('error')"
       @click="trace('click')"
     />
-    <ul style="margin: 0; padding-left: 18px; color: #666; font-size: 12px">
+    <ul style="margin: 0; padding-left: 18px; color: var(--ccui-color-text-secondary); font-size: 12px">
       <li v-if="!logs.length">尚无事件</li>
       <li v-for="(log, i) in logs" :key="i">{{ log }}</li>
     </ul>
@@ -201,7 +201,7 @@ const photos = [
       <c-image v-for="(url, i) in photos" :key="i" :src="url" :width="120" :height="80" fit="cover" />
     </div>
   </c-image-preview>
-  <p style="margin-top: 8px; color: #666">点击任一张图片打开相册预览</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">点击任一张图片打开相册预览</p>
 </template>
 ```
 
@@ -258,7 +258,7 @@ function openAt(idx) {
           align-items: center;
           justify-content: center;
           height: 100%;
-          background: #fafafa;
+          background: var(--ccui-area);
           color: #cf1322;
           font-size: 12px;
           gap: 4px;

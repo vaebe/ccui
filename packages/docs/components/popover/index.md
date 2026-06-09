@@ -277,7 +277,7 @@ const visible = ref(false)
       <c-button type="primary" plain>受控触发器</c-button>
     </c-popover>
     <c-button type="primary" plain @click="visible = !visible">{{ visible ? '隐藏' : '显示' }}</c-button>
-    <span style="color: #666">visible = {{ visible }}</span>
+    <span style="color: var(--ccui-color-text-secondary)">visible = {{ visible }}</span>
   </div>
 </template>
 ```
@@ -309,7 +309,7 @@ function cancel() {
       <span style="color: #f5222d"><c-icon name="mdi:alert" /> 确认删除</span>
     </template>
     <template #content>
-      <p style="margin: 0 0 12px; color: #595959">此操作将永久删除该文件，是否继续？</p>
+      <p style="margin: 0 0 12px; color: var(--ccui-color-text-secondary)">此操作将永久删除该文件，是否继续？</p>
       <div style="display: flex; justify-content: flex-end; gap: 8px">
         <c-button size="small" @click="cancel">取消</c-button>
         <c-button type="primary" size="small" danger @click="confirm">确定</c-button>
@@ -371,20 +371,20 @@ const visible = ref(false)
 
 <style scoped>
 .virtual-trigger-area {
-  border: 2px dashed #ddd;
+  border: 2px dashed var(--ccui-color-border);
   padding: 18px;
   text-align: center;
   border-radius: 4px;
 }
 .virtual-trigger {
-  background: #f5f5f5;
+  background: var(--ccui-area);
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s;
 }
 .virtual-trigger:hover {
-  background: #e6f7ff;
+  background: var(--ccui-color-primary-bg);
 }
 </style>
 ```
@@ -417,7 +417,7 @@ const users = [
               height: '48px',
               borderRadius: '50%',
               background: u.color,
-              color: '#fff',
+              color: 'var(--ccui-color-text-light-solid)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -429,12 +429,12 @@ const users = [
           </div>
           <div>
             <strong>{{ u.name }}</strong>
-            <p style="margin: 4px 0; color: #999; font-size: 12px">{{ u.role }}</p>
-            <p style="margin: 0; color: #595959; font-size: 12px">{{ u.desc }}</p>
+            <p style="margin: 4px 0; color: var(--ccui-color-text-tertiary); font-size: 12px">{{ u.role }}</p>
+            <p style="margin: 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ u.desc }}</p>
           </div>
         </div>
       </template>
-      <a href="#" style="color: #1677ff">{{ u.name }}</a>
+      <a href="#" style="color: var(--ccui-color-primary)">{{ u.name }}</a>
     </c-popover>
   </div>
 </template>

@@ -204,7 +204,7 @@ function handleCopy(text) {
 <template>
   <c-typography-text :copyable="{ onCopy: handleCopy }">复制我看看</c-typography-text>
   <br />
-  <span style="color: #666; font-size: 13px">
+  <span style="color: var(--ccui-color-text-secondary); font-size: 13px">
     已复制 {{ count }} 次<span v-if="lastText">，上次内容：「{{ lastText }}」</span>
   </span>
 </template>
@@ -394,7 +394,7 @@ const text = ref('最多 10 个字符')
     {{ text }}
   </c-typography-text>
   <br />
-  <span style="color: #666; font-size: 13px">当前 {{ text.length }} / 10 字</span>
+  <span style="color: var(--ccui-color-text-secondary); font-size: 13px">当前 {{ text.length }} / 10 字</span>
 </template>
 ```
 
@@ -433,7 +433,7 @@ function push(msg) {
   >
     {{ text }}
   </c-typography-text>
-  <ul style="color: #666; font-size: 12px; margin-top: 8px">
+  <ul style="color: var(--ccui-color-text-secondary); font-size: 12px; margin-top: 8px">
     <li v-for="l in log" :key="l">{{ l }}</li>
   </ul>
 </template>
@@ -480,7 +480,7 @@ const text = ref('emit 同步')
     {{ text }}
   </c-typography-text>
   <br />
-  <span style="color: #666; font-size: 13px">外部 ref：「{{ text }}」</span>
+  <span style="color: var(--ccui-color-text-secondary); font-size: 13px">外部 ref：「{{ text }}」</span>
 </template>
 ```
 

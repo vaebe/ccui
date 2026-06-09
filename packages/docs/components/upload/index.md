@@ -190,7 +190,7 @@ const list = ref<Array<{ uid: string; name: string }>>([])
   <c-upload v-model:fileList="list" multiple>
     <template #itemRender="{ item, remove }">
       <li
-        style="display:flex;align-items:center;gap:8px;padding:6px;background:#fff;border:1px solid #eee;border-radius:4px;margin-top:6px"
+        style="display:flex;align-items:center;gap:8px;padding:6px;background:var(--ccui-color-bg-container);border:1px solid var(--ccui-color-border-secondary);border-radius:4px;margin-top:6px"
       >
         <span>📄</span>
         <span style="flex:1">{{ item.name }}</span>

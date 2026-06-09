@@ -32,7 +32,7 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 6px">status="error"（当前步骤报错）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 6px">status="error"（当前步骤报错）</p>
   <c-steps
     :current="1"
     status="error"

@@ -230,7 +230,7 @@ async function submit() {
     <c-form-item>
       <c-button type="primary" @click="submit">提交</c-button>
     </c-form-item>
-    <p style="color:#666;margin:0">{{ log || '弱密码 / 价格 > 1000 会显示 warning 但不阻塞提交' }}</p>
+    <p style="color:var(--ccui-color-text-secondary);margin:0">{{ log || '弱密码 / 价格 > 1000 会显示 warning 但不阻塞提交' }}</p>
   </c-form>
 </template>
 ```
@@ -366,18 +366,18 @@ const m3 = reactive({ keyword: '', status: '' })
 </script>
 
 <template>
-  <p style="margin: 0 0 6px; color: #666">layout="horizontal"（默认）</p>
+  <p style="margin: 0 0 6px; color: var(--ccui-color-text-secondary)">layout="horizontal"（默认）</p>
   <c-form :model="m1" label-width="80px">
     <c-form-item label="姓名" name="name"><c-input v-model="m1.name" /></c-form-item>
   </c-form>
 
-  <p style="margin: 16px 0 6px; color: #666">layout="vertical"</p>
+  <p style="margin: 16px 0 6px; color: var(--ccui-color-text-secondary)">layout="vertical"</p>
   <c-form :model="m2" layout="vertical">
     <c-form-item label="姓名" name="name"><c-input v-model="m2.name" /></c-form-item>
     <c-form-item label="邮箱" name="email"><c-input v-model="m2.email" /></c-form-item>
   </c-form>
 
-  <p style="margin: 16px 0 6px; color: #666">layout="inline"</p>
+  <p style="margin: 16px 0 6px; color: var(--ccui-color-text-secondary)">layout="inline"</p>
   <c-form :model="m3" layout="inline">
     <c-form-item label="关键词" name="keyword"><c-input v-model="m3.keyword" /></c-form-item>
     <c-form-item label="状态" name="status">
@@ -469,7 +469,7 @@ async function submit() {
       <c-button type="primary" :loading="submitting" @click="submit">{{ submitting ? '提交中' : '提交' }}</c-button>
     </c-form-item>
   </c-form>
-  <p style="color:#666">{{ log || '提交后整个表单进入 disabled 状态，1.5s 后恢复' }}</p>
+  <p style="color:var(--ccui-color-text-secondary)">{{ log || '提交后整个表单进入 disabled 状态，1.5s 后恢复' }}</p>
 </template>
 ```
 
@@ -521,7 +521,7 @@ function clear() {
       <c-button style="margin-inline-start: 8px" @click="clear">清空校验</c-button>
     </c-form-item>
   </c-form>
-  <p style="color: #666">{{ log }}</p>
+  <p style="color: var(--ccui-color-text-secondary)">{{ log }}</p>
 </template>
 ```
 

@@ -17,13 +17,13 @@ const containerRef = ref<HTMLElement | null>(null)
 <template>
   <div
     ref="containerRef"
-    style="height: 220px; overflow: auto; border: 1px solid #f0f0f0; border-radius: 4px; padding: 12px; position: relative;"
+    style="height: 220px; overflow: auto; border: 1px solid var(--ccui-color-border-secondary); border-radius: 4px; padding: 12px; position: relative;"
   >
-    <div style="height: 60px; color: #999">向下滚动这个容器 ↓</div>
+    <div style="height: 60px; color: var(--ccui-color-text-tertiary)">向下滚动这个容器 ↓</div>
     <c-affix :offset-top="0" :target="() => containerRef">
       <c-button type="primary">固定到顶部 0px</c-button>
     </c-affix>
-    <div style="height: 600px; padding-top: 12px; color: #999">占位内容，撑开滚动空间……</div>
+    <div style="height: 600px; padding-top: 12px; color: var(--ccui-color-text-tertiary)">占位内容，撑开滚动空间……</div>
   </div>
 </template>
 ```
@@ -109,7 +109,7 @@ const containerRef = ref<HTMLElement | null>(null)
     style="
       height: 200px;
       overflow: auto;
-      border: 1px solid #f0f0f0;
+      border: 1px solid var(--ccui-color-border-secondary);
       padding: 12px;
       position: relative;
     "
@@ -154,12 +154,12 @@ const containerRef = ref<HTMLElement | null>(null)
 ```vue
 <template>
   <c-affix :offset-top="0">
-    <div style="background: #1677ff; color: #fff; padding: 8px 12px; border-radius: 4px">
+    <div style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid); padding: 8px 12px; border-radius: 4px">
       第一层：主导航（offsetTop=0）
     </div>
   </c-affix>
   <c-affix :offset-top="48" style="margin-top: 8px">
-    <div style="background: #fff; border: 1px solid #d9d9d9; padding: 8px 12px; border-radius: 4px">
+    <div style="background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border); padding: 8px 12px; border-radius: 4px">
       第二层：筛选条（offsetTop=48）
     </div>
   </c-affix>
@@ -186,9 +186,9 @@ const keyword = ref('')
   <c-affix :offset-top="0">
     <div
       style="
-        background: #fff;
+        background: var(--ccui-color-bg-container);
         padding: 12px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--ccui-color-border-secondary);
         display: flex;
         gap: 8px;
         align-items: center;
@@ -215,12 +215,12 @@ const keyword = ref('')
 <template>
   <div style="display: flex; gap: 24px; align-items: flex-start">
     <c-affix :offset-top="80" style="width: 160px; flex-shrink: 0">
-      <div style="background: #fafafa; border-radius: 6px; padding: 12px">
-        <p style="margin: 0 0 8px; color: #666; font-size: 12px">目录</p>
-        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第一章 介绍</a>
-        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第二章 安装</a>
-        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第三章 用法</a>
-        <a href="#" style="display: block; color: #1677ff; margin: 4px 0">第四章 进阶</a>
+      <div style="background: var(--ccui-area); border-radius: 6px; padding: 12px">
+        <p style="margin: 0 0 8px; color: var(--ccui-color-text-secondary); font-size: 12px">目录</p>
+        <a href="#" style="display: block; color: var(--ccui-color-primary); margin: 4px 0">第一章 介绍</a>
+        <a href="#" style="display: block; color: var(--ccui-color-primary); margin: 4px 0">第二章 安装</a>
+        <a href="#" style="display: block; color: var(--ccui-color-primary); margin: 4px 0">第三章 用法</a>
+        <a href="#" style="display: block; color: var(--ccui-color-primary); margin: 4px 0">第四章 进阶</a>
       </div>
     </c-affix>
     <div style="flex: 1">
@@ -248,13 +248,13 @@ const boxRef = ref(null)
 <template>
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
     <div>
-      <p style="color: #666; margin: 0 0 8px">target = window（默认）</p>
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">target = window（默认）</p>
       <c-affix :offset-top="60">
         <c-button>滚整页时贴顶</c-button>
       </c-affix>
     </div>
-    <div ref="boxRef" style="height: 160px; overflow: auto; border: 1px solid #f0f0f0; padding: 8px">
-      <p style="color: #666; margin: 0 0 8px">target = 本容器</p>
+    <div ref="boxRef" style="height: 160px; overflow: auto; border: 1px solid var(--ccui-color-border-secondary); padding: 8px">
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">target = 本容器</p>
       <c-affix :offset-top="0" :target="() => boxRef">
         <c-button type="primary">只在此盒子内贴顶</c-button>
       </c-affix>

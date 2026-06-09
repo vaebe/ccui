@@ -18,7 +18,7 @@ const options = ['张三', '李四', '王五', '赵六']
 
 <template>
   <c-auto-complete v-model="value" :options="options" placeholder="输入名字" />
-  <div style="margin-top: 8px; color: rgba(0,0,0,.45)">value: {{ value }}</div>
+  <div style="margin-top: 8px; color: var(--ccui-color-text-tertiary)">value: {{ value }}</div>
 </template>
 ```
 

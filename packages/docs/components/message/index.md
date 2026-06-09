@@ -220,7 +220,7 @@ function withClose() {
 
 <template>
   <c-button @click="withClose">弹出可关闭提示</c-button>
-  <span style="margin-inline-start: 12px; color: #666">已关闭：{{ closedCount }} 次</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">已关闭：{{ closedCount }} 次</span>
 </template>
 ```
 

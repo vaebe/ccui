@@ -43,7 +43,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -80,7 +80,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -139,7 +139,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -178,7 +178,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -214,7 +214,7 @@
 .head-example-lg {
   width: 60px;
   height: 60px;
-  background: #f0f0f0;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }

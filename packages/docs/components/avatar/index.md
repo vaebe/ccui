@@ -180,7 +180,7 @@
       <c-avatar :name="u.name" :gender="u.gender" />
       <div>
         <div style="font-weight: 600">{{ u.name }}</div>
-        <div style="font-size: 12px; color: #999">{{ u.desc }}</div>
+        <div style="font-size: 12px; color: var(--ccui-color-text-tertiary)">{{ u.desc }}</div>
       </div>
     </div>
   </div>
@@ -197,13 +197,13 @@
 
 ```vue
 <template>
-  <div style="display: flex; gap: 12px; padding: 12px; border: 1px solid #eee; border-radius: 8px">
+  <div style="display: flex; gap: 12px; padding: 12px; border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px">
     <c-avatar name="李四" gender="male" :width="40" :height="40" />
     <div style="flex: 1">
       <div style="font-weight: 600">
-        李四 <span style="color: #999; font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span>
+        李四 <span style="color: var(--ccui-color-text-tertiary); font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span>
       </div>
-      <div style="margin-top: 4px; color: #555">很好用的组件库，文档示例齐全！</div>
+      <div style="margin-top: 4px; color: var(--ccui-color-text-secondary)">很好用的组件库，文档示例齐全！</div>
     </div>
   </div>
 </template>

@@ -11,7 +11,7 @@
 ```vue
 <template>
   <c-watermark content="@vaebe/ccui">
-    <div style="height: 200px; background: #f6f8fa; padding: 16px">水印保护区域，文字会随宽高密铺。</div>
+    <div style="height: 200px; background: var(--ccui-area); padding: 16px">水印保护区域，文字会随宽高密铺。</div>
   </c-watermark>
 </template>
 ```
@@ -27,7 +27,7 @@
 ```vue
 <template>
   <c-watermark :content="['CCUI', 'Confidential']">
-    <div style="height: 200px; background: #fff; border: 1px dashed #d9d9d9; padding: 16px">多行水印</div>
+    <div style="height: 200px; background: var(--ccui-color-bg-container); border: 1px dashed var(--ccui-color-border); padding: 16px">多行水印</div>
   </c-watermark>
 </template>
 ```
@@ -43,10 +43,10 @@
 ```vue
 <template>
   <c-watermark content="ROTATE 0" :rotate="0">
-    <div style="height: 100px; background: #fafafa; padding: 12px">rotate=0</div>
+    <div style="height: 100px; background: var(--ccui-area); padding: 12px">rotate=0</div>
   </c-watermark>
   <c-watermark content="ROTATE -45" :rotate="-45" style="margin-top: 12px">
-    <div style="height: 100px; background: #fafafa; padding: 12px">rotate=-45</div>
+    <div style="height: 100px; background: var(--ccui-area); padding: 12px">rotate=-45</div>
   </c-watermark>
 </template>
 ```
@@ -62,7 +62,7 @@
 ```vue
 <template>
   <c-watermark content="Important" :font="{ color: 'rgba(255, 0, 0, 0.18)', fontSize: 18, fontWeight: 600 }">
-    <div style="height: 160px; background: #fff; border: 1px solid #f0f0f0; padding: 16px">
+    <div style="height: 160px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px">
       自定义颜色 / 字号 / 粗细
     </div>
   </c-watermark>
@@ -80,10 +80,10 @@
 ```vue
 <template>
   <c-watermark content="dense" :gap="[40, 40]" :width="80" :height="40">
-    <div style="height: 160px; background: #f6f8fa; padding: 12px">高密度</div>
+    <div style="height: 160px; background: var(--ccui-area); padding: 12px">高密度</div>
   </c-watermark>
   <c-watermark content="sparse" :gap="[180, 120]" style="margin-top: 12px">
-    <div style="height: 160px; background: #f6f8fa; padding: 12px">低密度</div>
+    <div style="height: 160px; background: var(--ccui-area); padding: 12px">低密度</div>
   </c-watermark>
 </template>
 ```
@@ -103,7 +103,7 @@
     :width="120"
     :height="64"
   >
-    <div style="height: 200px; background: #fff; border: 1px solid #f0f0f0; padding: 16px">图片水印（背景层）</div>
+    <div style="height: 200px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px">图片水印（背景层）</div>
   </c-watermark>
 </template>
 ```

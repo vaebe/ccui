@@ -245,8 +245,8 @@ const data = [
 <template>
   <c-tree :data="data" default-expand-all>
     <template #title="{ node, expanded }">
-      <strong style="color: #1677ff;">{{ node.raw.title }}</strong>
-      <span v-if="expanded" style="margin-left: 8px; color: #999;">(展开)</span>
+      <strong style="color: var(--ccui-color-primary);">{{ node.raw.title }}</strong>
+      <span v-if="expanded" style="margin-left: 8px; color: var(--ccui-color-text-tertiary);">(展开)</span>
     </template>
     <template #icon="{ node }">{{ node.raw.icon }}</template>
   </c-tree>
@@ -315,7 +315,7 @@ const data = [
 <!-- 自定义 connector 内容 -->
 <c-tree :data="data" show-line>
   <template #connector="{ depth }">
-    <span style="color: #d9d9d9;">·</span>
+    <span style="color: var(--ccui-color-border);">·</span>
   </template>
 </c-tree>
 ```

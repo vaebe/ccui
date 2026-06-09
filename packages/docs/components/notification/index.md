@@ -205,7 +205,7 @@ function closeManually() {
 <template>
   <c-button @click="openControlled">弹出受控通知</c-button>
   <c-button :disabled="!handle" @click="closeManually">手动关闭</c-button>
-  <span style="margin-inline-start: 12px; color: #666">已关闭：{{ closedTimes }} 次</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">已关闭：{{ closedTimes }} 次</span>
 </template>
 ```
 

@@ -16,8 +16,8 @@
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-header style="background: #1677ff; color: #fff">Header</c-layout-header>
-    <c-layout-content style="padding: 24px; background: #f5f5f5">Content</c-layout-content>
+    <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)">Header</c-layout-header>
+    <c-layout-content style="padding: 24px; background: var(--ccui-area)">Content</c-layout-content>
     <c-layout-footer style="text-align: center">Footer</c-layout-footer>
   </c-layout>
 </template>
@@ -38,7 +38,7 @@
       Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: #1677ff; color: #fff">Header</c-layout-header>
+      <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)">Header</c-layout-header>
       <c-layout-content style="padding: 24px">Main</c-layout-content>
       <c-layout-footer style="text-align: center">Footer</c-layout-footer>
     </c-layout>
@@ -71,7 +71,7 @@ const collapsed = ref(false)
       Sider menu
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: #1677ff" />
+      <c-layout-header style="background: var(--ccui-color-primary)" />
       <c-layout-content style="padding: 24px"> 当前 collapsed = {{ collapsed }} </c-layout-content>
     </c-layout>
   </c-layout>
@@ -114,14 +114,14 @@ const collapsed = ref(false)
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-sider theme="light" style="border-inline-end: 1px solid #f0f0f0; padding: 12px">
+    <c-layout-sider theme="light" style="border-inline-end: 1px solid var(--ccui-color-border-secondary); padding: 12px">
       浅色 Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: white; border-bottom: 1px solid #f0f0f0; color: #333">
+      <c-layout-header style="background: var(--ccui-color-bg-container); border-bottom: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text)">
         Header
       </c-layout-header>
-      <c-layout-content style="padding: 24px; background: #fafafa">主体</c-layout-content>
+      <c-layout-content style="padding: 24px; background: var(--ccui-area)">主体</c-layout-content>
     </c-layout>
   </c-layout>
 </template>
