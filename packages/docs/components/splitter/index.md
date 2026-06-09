@@ -15,7 +15,7 @@
 
 ```vue
 <template>
-  <c-splitter style="height: 200px; border: 1px solid #f0f0f0">
+  <c-splitter style="height: 200px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="200" :min="100">
       <div style="padding: 16px">Left</div>
     </c-splitter-panel>
@@ -36,7 +36,7 @@
 
 ```vue
 <template>
-  <c-splitter layout="vertical" style="height: 280px; border: 1px solid #f0f0f0">
+  <c-splitter layout="vertical" style="height: 280px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="100" :min="50">
       <div style="padding: 16px">Top</div>
     </c-splitter-panel>
@@ -57,15 +57,15 @@
 
 ```vue
 <template>
-  <c-splitter style="height: 220px; border: 1px solid #f0f0f0">
+  <c-splitter style="height: 220px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="160" :min="80">
-      <div style="padding: 16px; background: #fafafa; height: 100%">侧边栏</div>
+      <div style="padding: 16px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">侧边栏</div>
     </c-splitter-panel>
     <c-splitter-panel>
       <div style="padding: 16px">主内容</div>
     </c-splitter-panel>
     <c-splitter-panel :default-size="200" :min="100">
-      <div style="padding: 16px; background: #fafafa; height: 100%">右侧详情</div>
+      <div style="padding: 16px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">右侧详情</div>
     </c-splitter-panel>
   </c-splitter>
 </template>
@@ -81,7 +81,7 @@
 
 ```vue
 <template>
-  <c-splitter style="height: 200px; border: 1px solid #f0f0f0">
+  <c-splitter style="height: 200px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="200" :min="120" :max="320">
       <div style="padding: 12px">min=120, max=320</div>
     </c-splitter-panel>
@@ -102,9 +102,9 @@
 
 ```vue
 <template>
-  <c-splitter style="height: 160px; border: 1px solid #f0f0f0">
+  <c-splitter style="height: 160px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="200" :resizable="false">
-      <div style="padding: 12px; background: #fafafa; height: 100%">固定 200px</div>
+      <div style="padding: 12px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">固定 200px</div>
     </c-splitter-panel>
     <c-splitter-panel>
       <div style="padding: 12px">弹性</div>
@@ -133,7 +133,7 @@ function onResize(arr) {
 </script>
 
 <template>
-  <c-splitter style="height: 180px; border: 1px solid #f0f0f0" @resize="onResize">
+  <c-splitter style="height: 180px; border: 1px solid var(--ccui-color-border-secondary)" @resize="onResize">
     <c-splitter-panel :default-size="200" :min="80">
       <div style="padding: 12px">A</div>
     </c-splitter-panel>
@@ -144,7 +144,7 @@ function onResize(arr) {
       <div style="padding: 12px">C</div>
     </c-splitter-panel>
   </c-splitter>
-  <p style="margin-top: 8px; color: #666">当前尺寸：{{ sizes }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前尺寸：{{ sizes }}</p>
 </template>
 ```
 

@@ -21,9 +21,9 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 
 <style>
 .mas-item {
-  background: #e6f4ff;
-  border: 1px solid #91caff;
-  color: #1677ff;
+  background: var(--ccui-color-bg-container);
+  border: 1px solid var(--ccui-color-border-secondary);
+  color: var(--ccui-color-text);
   padding: 12px;
   border-radius: 4px;
 }
@@ -43,15 +43,16 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
   <c-masonry :columns="{ xs: 1, sm: 2, md: 3, lg: 4 }" :gutter="12">
     <div v-for="i in 8" :key="i" class="mas-item" :style="{ height: `${60 + i * 12}px` }">Item {{ i }}</div>
   </c-masonry>
-  <p style="margin-top: 8px; color: #666">缩窄浏览器观察列数变化</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">缩窄浏览器观察列数变化</p>
 </template>
 
 <style>
 .mas-item {
-  background: #fafafa;
+  background: var(--ccui-color-bg-container);
+  border: 1px solid var(--ccui-color-border-secondary);
+  color: var(--ccui-color-text);
   padding: 12px;
   border-radius: 4px;
-  border: 1px solid #f0f0f0;
 }
 </style>
 ```
@@ -66,7 +67,7 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 8px">水平 24, 垂直 8</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">水平 24, 垂直 8</p>
   <c-masonry :columns="3" :gutter="[24, 8]">
     <div v-for="i in 6" :key="i" class="mas-item" :style="{ height: `${60 + i * 8}px` }">Item {{ i }}</div>
   </c-masonry>
@@ -74,10 +75,11 @@ const heights = [80, 120, 60, 100, 140, 90, 70, 110, 130]
 
 <style>
 .mas-item {
-  background: #fafafa;
+  background: var(--ccui-color-bg-container);
+  border: 1px solid var(--ccui-color-border-secondary);
+  color: var(--ccui-color-text);
   padding: 12px;
   border-radius: 4px;
-  border: 1px solid #f0f0f0;
 }
 </style>
 ```
@@ -146,10 +148,11 @@ function reset() {
 
 <style>
 .mas-item {
-  background: #fafafa;
+  background: var(--ccui-color-bg-container);
+  border: 1px solid var(--ccui-color-border-secondary);
+  color: var(--ccui-color-text);
   padding: 12px;
   border-radius: 4px;
-  border: 1px solid #f0f0f0;
 }
 </style>
 ```

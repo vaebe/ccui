@@ -8,7 +8,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" />
@@ -26,7 +26,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       type="primary"
       :badge="5"
@@ -48,7 +48,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button shape="square" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:home-outline" />
@@ -68,7 +68,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button description="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" :size="20" />
@@ -97,7 +97,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       href="https://github.com/vaebe/ccui"
       target="_blank"
@@ -121,7 +121,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       type="primary"
       tooltip="点击查看帮助文档"
@@ -145,7 +145,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 280px; background: #f6f8fa">
+  <div style="position: relative; height: 280px; background: var(--ccui-area)">
     <c-float-button tooltip="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" />
@@ -195,7 +195,7 @@
 ```vue
 <template>
   <c-back-top :visibility-height="100" :duration="800" />
-  <div style="color: #999; font-size: 12px">滚动超过 100px 即出现按钮，动画时长 800ms。</div>
+  <div style="color: var(--ccui-color-text-tertiary); font-size: 12px">滚动超过 100px 即出现按钮，动画时长 800ms。</div>
 </template>
 ```
 

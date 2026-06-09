@@ -31,11 +31,11 @@
 ```vue
 <template>
   <c-badge-ribbon text="右上" placement="end">
-    <div style="width: 200px; height: 80px; background: #f5f5f5; border-radius: 4px"></div>
+    <div style="width: 200px; height: 80px; background: var(--ccui-area); border-radius: 4px"></div>
   </c-badge-ribbon>
   <br />
   <c-badge-ribbon text="左上" placement="start" style="margin-top: 12px">
-    <div style="width: 200px; height: 80px; background: #f5f5f5; border-radius: 4px"></div>
+    <div style="width: 200px; height: 80px; background: var(--ccui-area); border-radius: 4px"></div>
   </c-badge-ribbon>
 </template>
 ```
@@ -77,7 +77,7 @@ export default defineComponent({
 <template>
   <div style="display: flex; flex-wrap: wrap; gap: 16px">
     <c-badge-ribbon v-for="c in colors" :key="c" :text="c" :color="c">
-      <div style="width: 120px; height: 56px; background: #f5f5f5; border-radius: 4px"></div>
+      <div style="width: 120px; height: 56px; background: var(--ccui-area); border-radius: 4px"></div>
     </c-badge-ribbon>
   </div>
 </template>
@@ -94,11 +94,11 @@ export default defineComponent({
 ```vue
 <template>
   <c-badge-ribbon text="自定义" color="#ff5500">
-    <div style="width: 200px; height: 80px; background: #f5f5f5; border-radius: 4px"></div>
+    <div style="width: 200px; height: 80px; background: var(--ccui-area); border-radius: 4px"></div>
   </c-badge-ribbon>
   <br />
   <c-badge-ribbon text="渐变色" color="hotpink" style="margin-top: 12px">
-    <div style="width: 200px; height: 80px; background: #f5f5f5; border-radius: 4px"></div>
+    <div style="width: 200px; height: 80px; background: var(--ccui-area); border-radius: 4px"></div>
   </c-badge-ribbon>
 </template>
 ```
@@ -117,7 +117,7 @@ export default defineComponent({
     <template #text>
       <span>🔥 限时</span>
     </template>
-    <div style="width: 200px; height: 80px; background: #f5f5f5; border-radius: 4px"></div>
+    <div style="width: 200px; height: 80px; background: var(--ccui-area); border-radius: 4px"></div>
   </c-badge-ribbon>
 </template>
 ```

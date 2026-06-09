@@ -71,7 +71,7 @@ const loading = ref(true)
 
 <template>
   <c-spin :spinning="loading">
-    <div style="padding: 30px; background: #f5f5f5; border-radius: 4px">
+    <div style="padding: 30px; background: var(--ccui-area); border-radius: 4px">
       <h4 style="margin-top: 0">面板标题</h4>
       <p style="margin: 0">这块内容会被遮罩盖住，加载结束后浮现。</p>
     </div>
@@ -106,7 +106,7 @@ function slow() {
 
 <template>
   <c-spin :spinning="loading" :delay="500">
-    <div style="padding: 30px; background: #f5f5f5; border-radius: 4px">
+    <div style="padding: 30px; background: var(--ccui-area); border-radius: 4px">
       <p style="margin: 0">delay=500ms：仅当请求 ≥ 500ms 才出现 loading</p>
     </div>
   </c-spin>
@@ -193,9 +193,9 @@ const loading = ref(false)
 
 <template>
   <c-spin :spinning="loading">
-    <div style="padding: 16px; background: #fff; border: 1px solid #f0f0f0; border-radius: 6px">
+    <div style="padding: 16px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px">
       <h4 style="margin: 0 0 8px">订单 #20260515-001</h4>
-      <p style="margin: 0; color: #666">已发货 · 顺丰速运 · SF1234567890</p>
+      <p style="margin: 0; color: var(--ccui-color-text-secondary)">已发货 · 顺丰速运 · SF1234567890</p>
     </div>
   </c-spin>
   <c-button style="margin-top: 12px" type="primary" @click="loading = !loading">
@@ -240,7 +240,7 @@ async function reload() {
 <template>
   <c-button type="primary" style="margin-bottom: 12px" @click="reload">重新加载</c-button>
   <c-spin :spinning="loading" tip="正在拉取最新数据…">
-    <ul style="margin: 0; padding: 0 0 0 20px; background: #fff; border: 1px solid #f0f0f0; border-radius: 6px">
+    <ul style="margin: 0; padding: 0 0 0 20px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px">
       <li v-for="item in list" :key="item.id" style="padding: 6px 0">{{ item.name }}</li>
     </ul>
   </c-spin>
@@ -270,19 +270,19 @@ const rows = [
 <template>
   <c-button style="margin-bottom: 12px" @click="loading = !loading">切换 loading</c-button>
   <c-spin :spinning="loading">
-    <table style="width: 100%; border-collapse: collapse; background: #fff">
+    <table style="width: 100%; border-collapse: collapse; background: var(--ccui-color-bg-container)">
       <thead>
-        <tr style="background: #fafafa">
-          <th style="padding: 8px; border: 1px solid #f0f0f0; text-align: left">ID</th>
-          <th style="padding: 8px; border: 1px solid #f0f0f0; text-align: left">姓名</th>
-          <th style="padding: 8px; border: 1px solid #f0f0f0; text-align: left">部门</th>
+        <tr style="background: var(--ccui-area)">
+          <th style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary); text-align: left">ID</th>
+          <th style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary); text-align: left">姓名</th>
+          <th style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary); text-align: left">部门</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" :key="row.id">
-          <td style="padding: 8px; border: 1px solid #f0f0f0">{{ row.id }}</td>
-          <td style="padding: 8px; border: 1px solid #f0f0f0">{{ row.name }}</td>
-          <td style="padding: 8px; border: 1px solid #f0f0f0">{{ row.dept }}</td>
+          <td style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary)">{{ row.id }}</td>
+          <td style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary)">{{ row.name }}</td>
+          <td style="padding: 8px; border: 1px solid var(--ccui-color-border-secondary)">{{ row.dept }}</td>
         </tr>
       </tbody>
     </table>
@@ -318,12 +318,12 @@ function refresh(card) {
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px">
     <c-spin v-for="card in cards" :key="card.id" :spinning="card.loading">
       <div
-        style="background: #fff; border: 1px solid #f0f0f0; border-radius: 6px; padding: 16px; cursor: pointer"
+        style="background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px; padding: 16px; cursor: pointer"
         @click="refresh(card)"
       >
-        <p style="margin: 0; color: #999; font-size: 12px">{{ card.title }}</p>
+        <p style="margin: 0; color: var(--ccui-color-text-tertiary); font-size: 12px">{{ card.title }}</p>
         <p style="margin: 6px 0 0; font-size: 20px; font-weight: 600">{{ card.value }}</p>
-        <p style="margin: 6px 0 0; color: #1677ff; font-size: 12px">点击刷新</p>
+        <p style="margin: 6px 0 0; color: var(--ccui-color-primary); font-size: 12px">点击刷新</p>
       </div>
     </c-spin>
   </div>

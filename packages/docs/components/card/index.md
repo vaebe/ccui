@@ -136,7 +136,7 @@
   <div style="display: flex; gap: 16px; flex-wrap: wrap">
     <c-card style="width: 240px" :body-style="{ padding: '16px' }">
       <div
-        style="width: 100%; height: 120px; border-radius: 4px; margin-bottom: 12px; background: linear-gradient(135deg, #1677ff 0%, #69c0ff 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 500"
+        style="width: 100%; height: 120px; border-radius: 4px; margin-bottom: 12px; background: linear-gradient(135deg, #1677ff 0%, #69c0ff 100%); display: flex; align-items: center; justify-content: center; color: var(--ccui-color-text-light-solid); font-size: 20px; font-weight: 500"
       >
         Vue 3
       </div>
@@ -146,7 +146,7 @@
       <c-card-meta title="张三 · 前端工程师" description="3 年 Vue 经验 / 北京">
         <template #avatar>
           <div
-            style="width: 48px; height: 48px; border-radius: 50%; background: #1677ff; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px"
+            style="width: 48px; height: 48px; border-radius: 50%; background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid); display: flex; align-items: center; justify-content: center; font-size: 20px"
           >
             张
           </div>
@@ -191,7 +191,7 @@
   <c-row :gutter="12">
     <c-col v-for="i in 4" :key="i" :span="6">
       <c-card shadow="hover" :header="`方案 ${i}`" :body-style="{ padding: '12px' }" style="cursor: pointer">
-        <p style="margin: 0; color: #666">点击查看详情 / 移动到上方变高亮</p>
+        <p style="margin: 0; color: var(--ccui-color-text-secondary)">点击查看详情 / 移动到上方变高亮</p>
       </c-card>
     </c-col>
   </c-row>

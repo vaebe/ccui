@@ -62,7 +62,7 @@ const value = ref(99.5)
 
 <template>
   <c-input-number v-model="value" readonly />
-  <p style="color: #666">值由后端计算得出，仅供展示</p>
+  <p style="color: var(--ccui-color-text-secondary)">值由后端计算得出，仅供展示</p>
 </template>
 ```
 
@@ -230,8 +230,8 @@ function onChange(curr, prev) {
 
 <template>
   <c-input-number v-model="value" @change="onChange" />
-  <p style="margin-top: 8px; color: #666">最近 5 次变更：</p>
-  <ul style="margin: 4px 0; padding-left: 20px; color: #666">
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 5 次变更：</p>
+  <ul style="margin: 4px 0; padding-left: 20px; color: var(--ccui-color-text-secondary)">
     <li v-for="(log, i) in logs" :key="i">[{{ log.at }}] {{ log.prev }} → {{ log.curr }}</li>
   </ul>
 </template>
@@ -317,11 +317,11 @@ const positiveOnly = ref(0)
 <template>
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">仅正整数（reg = /^\d+$/）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">仅正整数（reg = /^\d+$/）</p>
       <c-input-number v-model="intOnly" :reg="/^\d+$/" :min="0" placeholder="只能输入整数" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">非负小数（reg = /^\d+(\.\d{0,2})?$/）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">非负小数（reg = /^\d+(\.\d{0,2})?$/）</p>
       <c-input-number v-model="positiveOnly" :reg="/^\d+(\.\d{0,2})?$/" :min="0" :precision="2" placeholder="0.00" />
     </div>
   </div>
@@ -347,11 +347,11 @@ const b = ref(10)
 <template>
   <div style="display: flex; gap: 16px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">默认（发光）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">默认（发光）</p>
       <c-input-number v-model="a" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">关闭发光</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">关闭发光</p>
       <c-input-number v-model="b" :show-glow-style="false" />
     </div>
   </div>

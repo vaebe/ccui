@@ -108,13 +108,13 @@ const routes = [
     <c-breadcrumb-item href="#">
       首页
       <template #separator>
-        <span style="color: #1677ff; margin: 0 8px">»</span>
+        <span style="color: var(--ccui-color-primary); margin: 0 8px">»</span>
       </template>
     </c-breadcrumb-item>
     <c-breadcrumb-item href="#">
       工单
       <template #separator>
-        <span style="color: #1677ff; margin: 0 8px">»</span>
+        <span style="color: var(--ccui-color-primary); margin: 0 8px">»</span>
       </template>
     </c-breadcrumb-item>
     <c-breadcrumb-item>详情</c-breadcrumb-item>
@@ -133,7 +133,7 @@ const routes = [
 ```vue
 <template>
   <div
-    style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #fafafa; border-radius: 6px"
+    style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--ccui-area); border-radius: 6px"
   >
     <c-breadcrumb>
       <c-breadcrumb-item><a href="#">首页</a></c-breadcrumb-item>

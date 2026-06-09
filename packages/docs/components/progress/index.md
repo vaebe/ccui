@@ -167,19 +167,19 @@ onBeforeUnmount(stop)
 <template>
   <div style="margin-bottom: 12px">
     <c-progress :percent="60" size="small" />
-    <span style="color: #999; font-size: 12px">size="small"</span>
+    <span style="color: var(--ccui-color-text-tertiary); font-size: 12px">size="small"</span>
   </div>
   <div style="margin-bottom: 12px">
     <c-progress :percent="60" />
-    <span style="color: #999; font-size: 12px">size="default"</span>
+    <span style="color: var(--ccui-color-text-tertiary); font-size: 12px">size="default"</span>
   </div>
   <div style="margin-bottom: 12px">
     <c-progress :percent="60" :size="16" />
-    <span style="color: #999; font-size: 12px">:size="16"（线宽 16px）</span>
+    <span style="color: var(--ccui-color-text-tertiary); font-size: 12px">:size="16"（线宽 16px）</span>
   </div>
   <div>
     <c-progress :percent="60" :size="[240, 12]" />
-    <span style="color: #999; font-size: 12px">:size="[240, 12]"（宽 240 高 12）</span>
+    <span style="color: var(--ccui-color-text-tertiary); font-size: 12px">:size="[240, 12]"（宽 240 高 12）</span>
   </div>
 </template>
 ```
@@ -290,7 +290,7 @@ const segPercents = computed(() => steps.map((_, i) => (i < step.value ? 100 : i
 <template>
   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px">
     <div v-for="(p, i) in segPercents" :key="i">
-      <div style="font-size: 12px; color: #666; margin-bottom: 4px">{{ steps[i] }}</div>
+      <div style="font-size: 12px; color: var(--ccui-color-text-secondary); margin-bottom: 4px">{{ steps[i] }}</div>
       <c-progress :percent="p" :show-info="false" size="small" :stroke-color="i < step ? '#52c41a' : '#1677ff'" />
     </div>
   </div>

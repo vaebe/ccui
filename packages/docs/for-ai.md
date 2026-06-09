@@ -4,11 +4,9 @@ ccui 文档站按 [llms.txt 规范](https://llmstxt.org)发布了纯文本索引
 
 ## 提供的资源
 
-| 路径 | 说明 | 推荐用途 |
-| --- | --- | --- |
-| [`/llms.txt`](https://vaebe.github.io/ccui/llms.txt) | 站点目录索引，列出"入门 / 全部 83+ 组件 / 仓库链接"，每个条目附一句话描述 | 让模型"看一眼就知道 ccui 有哪些组件、点进哪个 URL 看细节" |
-| [`/llms-full.txt`](https://vaebe.github.io/ccui/llms-full.txt) | 单文件聚合了简介 + 全部组件文档的完整 Markdown | 一次性灌入上下文做问答 / 代码生成，或作为 RAG 切分原料 |
-| 单组件页 `https://vaebe.github.io/ccui/components/<name>/index.html` | 组件官网文档页 | 让用户 / 模型从 `llms.txt` 索引点进具体组件 |
+- [`llms.txt`](https://vaebe.github.io/ccui/llms.txt) —— 站点目录索引，列出"入门 / 全部 83+ 组件 / 仓库链接"，每条附一句话描述。适合让模型一眼看清 ccui 有哪些组件、点进哪个 URL 看细节。
+- [`llms-full.txt`](https://vaebe.github.io/ccui/llms-full.txt) —— 单文件聚合简介 + 全部组件文档的完整 Markdown。适合一次性灌入上下文做问答 / 代码生成，或作为 RAG 切分原料。
+- **单组件页** `components/<name>/index.html` —— 组件官网文档页，让用户 / 模型从 `llms.txt` 索引点进具体组件。
 
 > 两个 txt 文件随站点构建生成，跟随 `docs:build` 自动更新；本地 `pnpm dev` 也会在 `predev` 阶段生成 `packages/docs/public/llms{,-full}.txt`。
 

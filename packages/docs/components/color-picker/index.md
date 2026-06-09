@@ -132,7 +132,7 @@ const presets = [{ label: '主题色快选', colors: ['#1677ff', '#36ad6a', '#f7
         </div>
       </div>
       <div
-        style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; color: rgba(0,0,0,.65); font-size: 12px"
+        style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text-secondary); font-size: 12px"
       >
         当前选中：{{ hex }} —— 上线前请走品牌色规范评审
       </div>

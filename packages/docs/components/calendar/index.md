@@ -22,7 +22,7 @@ const date = ref(new Date().toISOString().slice(0, 10))
 
 <template>
   <c-calendar v-model="date" />
-  <p style="margin-top: 8px; color: #666">已选：{{ date }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">已选：{{ date }}</p>
 </template>
 ```
 
@@ -48,7 +48,7 @@ function onChange(val) {
 
 <template>
   <c-calendar v-model="date" @change="onChange" />
-  <p style="margin-top: 8px; color: #666">最近 change：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 change：{{ log }}</p>
 </template>
 ```
 
@@ -97,12 +97,12 @@ const date = ref(new Date().toISOString().slice(0, 10))
 <template>
   <c-calendar v-model="date">
     <template #header="{ value, currentMonth, setDate, changeMonth }">
-      <div style="padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f0f0f0">
+      <div style="padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--ccui-color-border-secondary)">
         <c-button size="small" @click="changeMonth('lastMonth')">‹ 上月</c-button>
         <c-button size="small" @click="changeMonth('nextMonth')">下月 ›</c-button>
         <c-button size="small" type="primary" @click="setDate(new Date().toISOString().slice(0, 10))">今天</c-button>
-        <span style="margin-inline-start: auto; color: #666">当前月：{{ currentMonth }}</span>
-        <span style="color: #666">选中：{{ value }}</span>
+        <span style="margin-inline-start: auto; color: var(--ccui-color-text-secondary)">当前月：{{ currentMonth }}</span>
+        <span style="color: var(--ccui-color-text-secondary)">选中：{{ value }}</span>
       </div>
     </template>
   </c-calendar>
@@ -142,7 +142,7 @@ const events = {
             position: 'absolute',
             inset: 'auto 0 0 0',
             fontSize: '11px',
-            color: isSelected ? '#fff' : '#1677ff',
+            color: isSelected ? 'var(--ccui-color-text-light-solid)' : 'var(--ccui-color-primary)',
           }"
         >
           • {{ events[day] }}

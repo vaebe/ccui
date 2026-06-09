@@ -107,7 +107,7 @@ function cancel() {
 
 <template>
   <c-button type="primary" @click="open = true">编辑</c-button>
-  <span style="margin-inline-start: 12px; color: #666">最近操作：{{ result }}</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">最近操作：{{ result }}</span>
   <c-drawer v-model:visible="open" title="编辑信息">
     <p>这里放编辑表单……</p>
     <template #footer>
@@ -164,7 +164,7 @@ const text = ref('')
     <input
       v-model="text"
       placeholder="输点东西然后关掉再打开"
-      style="width: 100%; padding: 6px 8px; border: 1px solid #d9d9d9; border-radius: 4px"
+      style="width: 100%; padding: 6px 8px; border: 1px solid var(--ccui-color-border); border-radius: 4px"
     />
   </c-drawer>
 </template>

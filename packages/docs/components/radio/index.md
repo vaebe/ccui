@@ -24,7 +24,7 @@ const value = ref('apple')
   <c-radio v-model="value" label="apple">苹果</c-radio>
   <c-radio v-model="value" label="banana">香蕉</c-radio>
   <c-radio v-model="value" label="orange">橙子</c-radio>
-  <p style="margin-top: 8px; color: #666">当前：{{ value }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前：{{ value }}</p>
 </template>
 ```
 
@@ -72,7 +72,7 @@ const city = ref('shanghai')
     <c-radio label="guangzhou">广州</c-radio>
     <c-radio label="shenzhen">深圳</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">已选：{{ city }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">已选：{{ city }}</p>
 </template>
 ```
 
@@ -93,14 +93,14 @@ const b = ref('1')
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">column（默认）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">column（默认）</p>
   <c-radio-group v-model="a" direction="column">
     <c-radio label="1">选项 1</c-radio>
     <c-radio label="2">选项 2</c-radio>
     <c-radio label="3">选项 3</c-radio>
   </c-radio-group>
 
-  <p style="color: #666; margin: 16px 0 4px">row</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">row</p>
   <c-radio-group v-model="b" direction="row">
     <c-radio label="1">选项 1</c-radio>
     <c-radio label="2">选项 2</c-radio>
@@ -164,7 +164,7 @@ function beforeChange(val) {
     <c-radio label="warn">注意</c-radio>
     <c-radio label="danger">危险（被禁）</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">日志：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">日志：{{ log }}</p>
 </template>
 ```
 
@@ -194,7 +194,7 @@ function onChange(val) {
     <c-radio label="m">中</c-radio>
     <c-radio label="l">大</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">最近 change：{{ lastChange }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 change：{{ lastChange }}</p>
 </template>
 ```
 

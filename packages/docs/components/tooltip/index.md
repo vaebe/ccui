@@ -276,7 +276,7 @@ const visible = ref(false)
     <c-button type="primary" plain @click="visible = !visible">
       {{ visible ? '隐藏' : '显示' }}
     </c-button>
-    <span style="color: #666">visible = {{ visible }}</span>
+    <span style="color: var(--ccui-color-text-secondary)">visible = {{ visible }}</span>
   </div>
 </template>
 ```
@@ -310,7 +310,7 @@ function log(type) {
     >
       <c-button type="primary" plain>触发器</c-button>
     </c-tooltip>
-    <ul style="margin: 0; padding-left: 18px; color: #666; font-size: 12px">
+    <ul style="margin: 0; padding-left: 18px; color: var(--ccui-color-text-secondary); font-size: 12px">
       <li v-if="!logs.length">尚无事件</li>
       <li v-for="(log, i) in logs" :key="i">{{ log }}</li>
     </ul>
@@ -333,7 +333,7 @@ function log(type) {
       <span>邮箱地址</span>
       <c-tooltip content="用于接收账号通知与重置密码邮件" placement="right">
         <span
-          style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: #f0f0f0; color: #666; align-items: center; justify-content: center; font-size: 11px; cursor: help"
+          style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: var(--ccui-area); color: var(--ccui-color-text-secondary); align-items: center; justify-content: center; font-size: 11px; cursor: help"
         >
           ?
         </span>

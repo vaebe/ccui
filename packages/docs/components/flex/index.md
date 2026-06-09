@@ -34,13 +34,13 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 4px">small</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">small</p>
   <c-flex gap="small"><c-tag>tag</c-tag><c-tag>tag</c-tag><c-tag>tag</c-tag></c-flex>
 
-  <p style="color: #666; margin: 12px 0 4px">middle</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 12px 0 4px">middle</p>
   <c-flex gap="middle"><c-tag>tag</c-tag><c-tag>tag</c-tag><c-tag>tag</c-tag></c-flex>
 
-  <p style="color: #666; margin: 12px 0 4px">large</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 12px 0 4px">large</p>
   <c-flex gap="large"><c-tag>tag</c-tag><c-tag>tag</c-tag><c-tag>tag</c-tag></c-flex>
 </template>
 ```
@@ -73,21 +73,21 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 4px">justify="space-between"（两端对齐）</p>
-  <c-flex justify="space-between" align="center" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">justify="space-between"（两端对齐）</p>
+  <c-flex justify="space-between" align="center" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-tag>左</c-tag>
     <c-button>右</c-button>
   </c-flex>
 
-  <p style="color: #666; margin: 12px 0 4px">justify="space-evenly"（等距）</p>
-  <c-flex justify="space-evenly" align="center" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <p style="color: var(--ccui-color-text-secondary); margin: 12px 0 4px">justify="space-evenly"（等距）</p>
+  <c-flex justify="space-evenly" align="center" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-tag>1</c-tag>
     <c-tag>2</c-tag>
     <c-tag>3</c-tag>
   </c-flex>
 
-  <p style="color: #666; margin: 12px 0 4px">justify="center"（居中）</p>
-  <c-flex justify="center" align="center" gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <p style="color: var(--ccui-color-text-secondary); margin: 12px 0 4px">justify="center"（居中）</p>
+  <c-flex justify="center" align="center" gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-tag>居中</c-tag>
     <c-button type="primary">操作</c-button>
   </c-flex>
@@ -104,7 +104,7 @@
 
 ```vue
 <template>
-  <c-flex wrap gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <c-flex wrap gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-tag v-for="i in 12" :key="i">Tag {{ i }}</c-tag>
   </c-flex>
 </template>
@@ -120,9 +120,9 @@
 
 ```vue
 <template>
-  <c-flex gap="middle" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <c-flex gap="middle" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-button>固定</c-button>
-    <c-flex flex="1" justify="center" align="center" style="background: white; border-radius: 4px; padding: 8px">
+    <c-flex flex="1" justify="center" align="center" style="background: var(--ccui-color-bg-container); border-radius: 4px; padding: 8px">
       撑开剩余空间
     </c-flex>
     <c-button type="primary">固定</c-button>
@@ -140,7 +140,7 @@
 
 ```vue
 <template>
-  <c-flex component="nav" gap="middle" style="background: #fafafa; padding: 12px; border-radius: 6px">
+  <c-flex component="nav" gap="middle" style="background: var(--ccui-area); padding: 12px; border-radius: 6px">
     <a href="#" style="color: inherit">首页</a>
     <a href="#" style="color: inherit">文档</a>
     <a href="#" style="color: inherit">关于</a>
@@ -164,11 +164,11 @@ const justifies = ['flex-start', 'center', 'flex-end', 'space-between', 'space-a
 <template>
   <c-flex vertical :gap="12">
     <div v-for="j in justifies" :key="j">
-      <p style="color: #666; margin: 0 0 4px">justify="{{ j }}"</p>
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">justify="{{ j }}"</p>
       <c-flex
         :justify="j"
         align="center"
-        style="background: #fafafa; padding: 8px; border-radius: 6px; min-height: 40px"
+        style="background: var(--ccui-area); padding: 8px; border-radius: 6px; min-height: 40px"
       >
         <c-tag>A</c-tag>
         <c-tag>B</c-tag>
@@ -195,8 +195,8 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 <template>
   <c-flex vertical :gap="12">
     <div v-for="a in aligns" :key="a">
-      <p style="color: #666; margin: 0 0 4px">align="{{ a }}"</p>
-      <c-flex :align="a" gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px; height: 80px">
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">align="{{ a }}"</p>
+      <c-flex :align="a" gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px; height: 80px">
         <c-tag style="font-size: 12px">12px</c-tag>
         <c-tag style="font-size: 20px">20px</c-tag>
         <c-tag style="font-size: 14px">14px</c-tag>
@@ -216,7 +216,7 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 
 ```vue
 <template>
-  <c-flex wrap="wrap-reverse" gap="small" style="background: #fafafa; padding: 8px; border-radius: 6px">
+  <c-flex wrap="wrap-reverse" gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-tag v-for="i in 10" :key="i">Tag {{ i }}</c-tag>
   </c-flex>
 </template>
@@ -232,11 +232,11 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 
 ```vue
 <template>
-  <c-flex vertical style="background: #fafafa; border-radius: 6px; height: 240px; overflow: hidden">
+  <c-flex vertical style="background: var(--ccui-area); border-radius: 6px; height: 240px; overflow: hidden">
     <c-flex
       justify="space-between"
       align="center"
-      style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #f0f0f0"
+      style="padding: 12px 16px; background: var(--ccui-color-bg-container); border-bottom: 1px solid var(--ccui-color-border-secondary)"
     >
       <strong>页头</strong>
       <c-button size="small">登出</c-button>
@@ -245,20 +245,20 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
       <c-flex
         vertical
         gap="small"
-        style="width: 120px; padding: 12px; background: #fafafa; border-right: 1px solid #f0f0f0"
+        style="width: 120px; padding: 12px; background: var(--ccui-area); border-right: 1px solid var(--ccui-color-border-secondary)"
       >
         <c-tag>菜单 1</c-tag>
         <c-tag>菜单 2</c-tag>
         <c-tag>菜单 3</c-tag>
       </c-flex>
-      <c-flex flex="1" justify="center" align="center" style="padding: 16px; background: #fff">
-        <span style="color: #999">主内容区</span>
+      <c-flex flex="1" justify="center" align="center" style="padding: 16px; background: var(--ccui-color-bg-container)">
+        <span style="color: var(--ccui-color-text-tertiary)">主内容区</span>
       </c-flex>
     </c-flex>
     <c-flex
       justify="center"
       align="center"
-      style="padding: 8px; background: #fff; border-top: 1px solid #f0f0f0; color: #999; font-size: 12px"
+      style="padding: 8px; background: var(--ccui-color-bg-container); border-top: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text-tertiary); font-size: 12px"
     >
       © 2026 ccui
     </c-flex>
@@ -279,7 +279,7 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
   <c-flex
     justify="space-between"
     align="center"
-    style="background: #fff; border: 1px solid #f0f0f0; padding: 12px 16px; border-radius: 6px"
+    style="background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 12px 16px; border-radius: 6px"
   >
     <strong>订单列表</strong>
     <c-space>

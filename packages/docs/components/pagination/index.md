@@ -17,7 +17,7 @@ const current = ref(1)
 
 <template>
   <c-pagination v-model:current="current" :total="100" />
-  <p style="margin-top: 8px; color: #666">当前第 {{ current }} 页</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前第 {{ current }} 页</p>
 </template>
 ```
 
@@ -67,7 +67,7 @@ const size = ref(20)
     show-size-changer
     show-total
   />
-  <p style="margin-top: 8px; color: #666">page={{ current }} pageSize={{ size }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">page={{ current }} pageSize={{ size }}</p>
 </template>
 ```
 
@@ -125,7 +125,7 @@ const size = ref(20)
 <template>
   <c-pagination :total="100" :current="1" disabled />
   <c-pagination :total="5" :page-size="10" hide-on-single-page />
-  <p style="color: #666">↑ 上方 disabled，下方因只有 1 页被隐藏</p>
+  <p style="color: var(--ccui-color-text-secondary)">↑ 上方 disabled，下方因只有 1 页被隐藏</p>
 </template>
 ```
 
