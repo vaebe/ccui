@@ -209,12 +209,16 @@ const containerRef = ref<HTMLElement | null>(null)
 ```vue
 <template>
   <c-affix :offset-top="0">
-    <div style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid); padding: 8px 12px; border-radius: 4px">
+    <div
+      style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid); padding: 8px 12px; border-radius: 4px"
+    >
       第一层：主导航（offsetTop=0）
     </div>
   </c-affix>
   <c-affix :offset-top="48" style="margin-top: 8px">
-    <div style="background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border); padding: 8px 12px; border-radius: 4px">
+    <div
+      style="background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border); padding: 8px 12px; border-radius: 4px"
+    >
       第二层：筛选条（offsetTop=48）
     </div>
   </c-affix>
@@ -308,7 +312,10 @@ const boxRef = ref(null)
         <c-button>滚整页时贴顶</c-button>
       </c-affix>
     </div>
-    <div ref="boxRef" style="height: 160px; overflow: auto; border: 1px solid var(--ccui-color-border-secondary); padding: 8px">
+    <div
+      ref="boxRef"
+      style="height: 160px; overflow: auto; border: 1px solid var(--ccui-color-border-secondary); padding: 8px"
+    >
       <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">target = 本容器</p>
       <c-affix :offset-top="0" :target="() => boxRef">
         <c-button type="primary">只在此盒子内贴顶</c-button>
@@ -573,10 +580,14 @@ Alert 嵌在卡片或表单内部，作为局部提示。
 
 ```vue
 <template>
-  <div style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px; padding: 16px; max-width: 480px">
+  <div
+    style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px; padding: 16px; max-width: 480px"
+  >
     <h3 style="margin: 0 0 12px">API 接入配置</h3>
     <c-alert show-icon type="warning" message="生产环境密钥泄露将导致严重后果，请妥善保管。" />
-    <div style="margin-top: 12px; color: var(--ccui-color-text-secondary); font-size: 13px">App Key：sk-prod-XXXXXXXXXXXX</div>
+    <div style="margin-top: 12px; color: var(--ccui-color-text-secondary); font-size: 13px">
+      App Key：sk-prod-XXXXXXXXXXXX
+    </div>
   </div>
 </template>
 ```
@@ -1351,11 +1362,17 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 
 ```vue
 <template>
-  <div style="display: flex; gap: 12px; padding: 12px; border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px">
+  <div
+    style="display: flex; gap: 12px; padding: 12px; border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px"
+  >
     <c-avatar name="李四" gender="male" :width="40" :height="40" />
     <div style="flex: 1">
       <div style="font-weight: 600">
-        李四 <span style="color: var(--ccui-color-text-tertiary); font-weight: 400; margin-inline-start: 8px; font-size: 12px">2 小时前</span>
+        李四
+        <span
+          style="color: var(--ccui-color-text-tertiary); font-weight: 400; margin-inline-start: 8px; font-size: 12px"
+          >2 小时前</span
+        >
       </div>
       <div style="margin-top: 4px; color: var(--ccui-color-text-secondary)">很好用的组件库，文档示例齐全！</div>
     </div>
@@ -2626,26 +2643,26 @@ export default defineComponent({
 
 ## Button参数
 
-| 参数            | 类型                                                  | 默认    | 说明                                                                                                                    |
-| --------------- | ----------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------- |
-| size            | [ButtonSizeType](#buttonsizetype)                     | --      | 尺寸                                                                                                                    |
-| type            | [ButtonType](#buttontype)                             | --      | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
-| plain           | boolean                                               | false   | 朴素按钮：背景透明，文字与边框跟主色                                                                                    |
-| round           | boolean                                               | false   | 圆角按钮                                                                                                                |
-| circle          | boolean                                               | false   | 圆形按钮（常用于纯图标场景）                                                                                            |
-| native-type     | [ButtonNativeType](#buttonnativetype)                 | button  | 原生 `<button>` 的 type 属性                                                                                            |
-| danger          | boolean                                               | false   | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
-| ghost           | boolean                                               | false   | 幽灵按钮（透明背景 + 描边色）                                                                                           |
-| block           | boolean                                               | false   | 撑满父宽度                                                                                                              |
-| autoInsertSpace | boolean                                               | true    | 两个 CJK 字符之间自动插入空格                                                                                           |
-| href            | string                                                | --      | 设置后用 `<a role="button">` 渲染                                                                                       |
-| target          | string                                                | --      | 配合 `href` 透传 `target`                                                                                               |
-| icon            | string \| VNode                                       | --      | 图标（也可用 `icon` slot）                                                                                              |
-| iconPosition    | 'start' \| 'end'                                      | start   | 图标位置                                                                                                                |
-| disabled        | boolean                                               | false   | 是否为禁用状态                                                                                                          |
-| autofocus       | boolean                                               | false   | 原生 autofocus 属性                                                                                                     |
-| loading         | boolean \| { delay?: number; icon?: VNode \| string } | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
-| color           | string                                                | --      | 自定义按钮颜色（任意 CSS color 字符串）；实心型 type 注入 bg + border；描边型注入 color + border；text/link 仅 color    |
+| 参数            | 类型                                                  | 默认   | 说明                                                                                                                    |
+| --------------- | ----------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+| size            | [ButtonSizeType](#buttonsizetype)                     | --     | 尺寸                                                                                                                    |
+| type            | [ButtonType](#buttontype)                             | --     | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
+| plain           | boolean                                               | false  | 朴素按钮：背景透明，文字与边框跟主色                                                                                    |
+| round           | boolean                                               | false  | 圆角按钮                                                                                                                |
+| circle          | boolean                                               | false  | 圆形按钮（常用于纯图标场景）                                                                                            |
+| native-type     | [ButtonNativeType](#buttonnativetype)                 | button | 原生 `<button>` 的 type 属性                                                                                            |
+| danger          | boolean                                               | false  | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
+| ghost           | boolean                                               | false  | 幽灵按钮（透明背景 + 描边色）                                                                                           |
+| block           | boolean                                               | false  | 撑满父宽度                                                                                                              |
+| autoInsertSpace | boolean                                               | true   | 两个 CJK 字符之间自动插入空格                                                                                           |
+| href            | string                                                | --     | 设置后用 `<a role="button">` 渲染                                                                                       |
+| target          | string                                                | --     | 配合 `href` 透传 `target`                                                                                               |
+| icon            | string \| VNode                                       | --     | 图标（也可用 `icon` slot）                                                                                              |
+| iconPosition    | 'start' \| 'end'                                      | start  | 图标位置                                                                                                                |
+| disabled        | boolean                                               | false  | 是否为禁用状态                                                                                                          |
+| autofocus       | boolean                                               | false  | 原生 autofocus 属性                                                                                                     |
+| loading         | boolean \| { delay?: number; icon?: VNode \| string } | false  | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
+| color           | string                                                | --     | 自定义按钮颜色（任意 CSS color 字符串）；实心型 type 注入 bg + border；描边型注入 color + border；text/link 仅 color    |
 
 ## ButtonGroup 参数
 
@@ -2904,11 +2921,15 @@ const date = ref(new Date().toISOString().slice(0, 10))
 <template>
   <c-calendar v-model="date">
     <template #header="{ value, currentMonth, setDate, changeMonth }">
-      <div style="padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--ccui-color-border-secondary)">
+      <div
+        style="padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--ccui-color-border-secondary)"
+      >
         <c-button size="small" @click="changeMonth('lastMonth')">‹ 上月</c-button>
         <c-button size="small" @click="changeMonth('nextMonth')">下月 ›</c-button>
         <c-button size="small" type="primary" @click="setDate(new Date().toISOString().slice(0, 10))">今天</c-button>
-        <span style="margin-inline-start: auto; color: var(--ccui-color-text-secondary)">当前月：{{ currentMonth }}</span>
+        <span style="margin-inline-start: auto; color: var(--ccui-color-text-secondary)"
+          >当前月：{{ currentMonth }}</span
+        >
         <span style="color: var(--ccui-color-text-secondary)">选中：{{ value }}</span>
       </div>
     </template>
@@ -4598,7 +4619,9 @@ const options: Dept[] = [
     <template #option="{ option }">
       <span style="display: inline-flex; align-items: center; gap: 8px">
         <span>{{ option.label }}</span>
-        <span v-if="option.staff" style="font-size: 12px; color: var(--ccui-color-text-tertiary)">{{ option.staff }} 人</span>
+        <span v-if="option.staff" style="font-size: 12px; color: var(--ccui-color-text-tertiary)"
+          >{{ option.staff }} 人</span
+        >
       </span>
     </template>
   </c-cascader>
@@ -4634,7 +4657,9 @@ const options = [
 <template>
   <c-cascader v-model="value" :options="options" placeholder="选择派送区域">
     <template #popup="{ default: defaultPopup }">
-      <div style="padding: 8px 12px; border-bottom: 1px solid var(--ccui-color-border-secondary); font-size: 12px; color: var(--ccui-color-text-tertiary)">
+      <div
+        style="padding: 8px 12px; border-bottom: 1px solid var(--ccui-color-border-secondary); font-size: 12px; color: var(--ccui-color-text-tertiary)"
+      >
         派送区域影响时效与运费
       </div>
       <component :is="defaultPopup" />
@@ -5950,23 +5975,23 @@ const value = ref('#1677ff')
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                   | 说明                                                                              |
-| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------- |
-| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                            |
-| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                                 |
-| format            | `'hex' \| 'rgb' \| 'hsb'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                        |
-| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                          |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                      |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                              |
-| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                      |
-| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                      |
-| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表       |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                          |
-| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                            |
-| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                            |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                  |
-| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                        |
-| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                            |
+| 参数              | 类型                                                       | 默认值                   | 说明                                                                        |
+| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------- |
+| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                      |
+| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                           |
+| format            | `'hex' \| 'rgb' \| 'hsb'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                  |
+| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                    |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                        |
+| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                |
+| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                |
+| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表 |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                    |
+| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                      |
+| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                      |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                            |
+| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                  |
+| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                      |
 
 ### Slots
 
@@ -6879,7 +6904,9 @@ function onPanelChange(mode, viewMonth) {
   <c-date-picker v-model="value" @panel-change="onPanelChange" />
   <p style="margin: 8px 0 0; color: var(--ccui-color-text-secondary)">最近一次 panel-change：</p>
   <p style="margin: 4px 0 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ lastPanel }}</p>
-  <p style="margin: 8px 0 0; color: var(--ccui-color-text-tertiary); font-size: 12px">提示：点击年份 / 月份头部进入上钻视图触发该事件</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-tertiary); font-size: 12px">
+    提示：点击年份 / 月份头部进入上钻视图触发该事件
+  </p>
 </template>
 ```
 
@@ -7886,7 +7913,10 @@ const visible = ref(false)
 
 ```vue
 <template>
-  <c-empty description="搜索没有命中任何条目" image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDY0IDQxIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwwLDAsMC4yNSkiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAxNiBMMjAgMTYgTDI0IDIyIEw0MCAyMiBMNDQgMTYgTDU2IDE2IEw1MiAzNCBMMTIgMzQgWiIgZmlsbD0icmdiYSgwLDAsMCwwLjA0KSIvPjxwYXRoIGQ9Ik04IDE2IEwxNCA2IEw1MCA2IEw1NiAxNiIvPjwvZz48ZWxsaXBzZSBjeD0iMzIiIGN5PSIzOCIgcng9IjIyIiByeT0iMi41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDYpIi8+PC9zdmc+" />
+  <c-empty
+    description="搜索没有命中任何条目"
+    image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDY0IDQxIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwwLDAsMC4yNSkiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAxNiBMMjAgMTYgTDI0IDIyIEw0MCAyMiBMNDQgMTYgTDU2IDE2IEw1MiAzNCBMMTIgMzQgWiIgZmlsbD0icmdiYSgwLDAsMCwwLjA0KSIvPjxwYXRoIGQ9Ik04IDE2IEwxNCA2IEw1MCA2IEw1NiAxNiIvPjwvZz48ZWxsaXBzZSBjeD0iMzIiIGN5PSIzOCIgcng9IjIyIiByeT0iMi41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDYpIi8+PC9zdmc+"
+  />
 </template>
 ```
 
@@ -7949,7 +7979,9 @@ const visible = ref(false)
 
 ```vue
 <template>
-  <div style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px; padding: 24px 16px; background: var(--ccui-color-bg-container)">
+  <div
+    style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px; padding: 24px 16px; background: var(--ccui-color-bg-container)"
+  >
     <c-empty description="该项目还没有任何成员" :image-style="{ height: '56px' }">
       <c-button type="primary">+ 邀请成员</c-button>
     </c-empty>
@@ -8168,7 +8200,12 @@ const active = ref('订单')
   </c-flex>
 
   <p style="color: var(--ccui-color-text-secondary); margin: 12px 0 4px">justify="center"（居中）</p>
-  <c-flex justify="center" align="center" gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
+  <c-flex
+    justify="center"
+    align="center"
+    gap="small"
+    style="background: var(--ccui-area); padding: 8px; border-radius: 6px"
+  >
     <c-tag>居中</c-tag>
     <c-button type="primary">操作</c-button>
   </c-flex>
@@ -8203,7 +8240,12 @@ const active = ref('订单')
 <template>
   <c-flex gap="middle" style="background: var(--ccui-area); padding: 8px; border-radius: 6px">
     <c-button>固定</c-button>
-    <c-flex flex="1" justify="center" align="center" style="background: var(--ccui-color-bg-container); border-radius: 4px; padding: 8px">
+    <c-flex
+      flex="1"
+      justify="center"
+      align="center"
+      style="background: var(--ccui-color-bg-container); border-radius: 4px; padding: 8px"
+    >
       撑开剩余空间
     </c-flex>
     <c-button type="primary">固定</c-button>
@@ -8277,7 +8319,11 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
   <c-flex vertical :gap="12">
     <div v-for="a in aligns" :key="a">
       <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">align="{{ a }}"</p>
-      <c-flex :align="a" gap="small" style="background: var(--ccui-area); padding: 8px; border-radius: 6px; height: 80px">
+      <c-flex
+        :align="a"
+        gap="small"
+        style="background: var(--ccui-area); padding: 8px; border-radius: 6px; height: 80px"
+      >
         <c-tag style="font-size: 12px">12px</c-tag>
         <c-tag style="font-size: 20px">20px</c-tag>
         <c-tag style="font-size: 14px">14px</c-tag>
@@ -8332,7 +8378,12 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
         <c-tag>菜单 2</c-tag>
         <c-tag>菜单 3</c-tag>
       </c-flex>
-      <c-flex flex="1" justify="center" align="center" style="padding: 16px; background: var(--ccui-color-bg-container)">
+      <c-flex
+        flex="1"
+        justify="center"
+        align="center"
+        style="padding: 16px; background: var(--ccui-color-bg-container)"
+      >
         <span style="color: var(--ccui-color-text-tertiary)">主内容区</span>
       </c-flex>
     </c-flex>
@@ -8880,7 +8931,9 @@ async function submit() {
     <c-form-item>
       <c-button type="primary" @click="submit">提交</c-button>
     </c-form-item>
-    <p style="color:var(--ccui-color-text-secondary);margin:0">{{ log || '弱密码 / 价格 > 1000 会显示 warning 但不阻塞提交' }}</p>
+    <p style="color:var(--ccui-color-text-secondary);margin:0">
+      {{ log || '弱密码 / 价格 > 1000 会显示 warning 但不阻塞提交' }}
+    </p>
   </c-form>
 </template>
 ```
@@ -9563,7 +9616,9 @@ Row 可以嵌套：外层切大块，内层在大块里再分。注意嵌套时�
       <div class="g-block" style="height: 160px; background: #52c41a">主内容（xs=24 md=18）</div>
     </c-col>
   </c-row>
-  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">缩窄到 md（&lt;768px）以下时，侧栏与主内容会堆叠为单列</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">
+    缩窄到 md（&lt;768px）以下时，侧栏与主内容会堆叠为单列
+  </p>
 </template>
 ```
 
@@ -10126,7 +10181,9 @@ const url = 'https://picsum.photos/seed/c-image-fit/600/400'
   &nbsp;
   <c-image src="https://invalid.example.com/y.png" :width="160" :height="120">
     <template #error>
-      <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--ccui-color-error)">
+      <div
+        style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--ccui-color-error)"
+      >
         资源已下线 <c-icon name="mdi:close-circle" />
       </div>
     </template>
@@ -10898,12 +10955,12 @@ export type InputSize = 'large' | 'default' | 'small'
 
 ## Input插槽
 
-| 插槽名  | 说明              |
-| ------- | ----------------- |
-| prepend | 前置 addon 内容   |
-| append  | 后置 addon 内容   |
-| prefix  | 输入框内左侧前缀  |
-| suffix  | 输入框内右侧后缀  |
+| 插槽名  | 说明             |
+| ------- | ---------------- |
+| prepend | 前置 addon 内容  |
+| append  | 后置 addon 内容  |
+| prefix  | 输入框内左侧前缀 |
+| suffix  | 输入框内右侧后缀 |
 
 
 ---
@@ -11322,24 +11379,24 @@ const v3 = ref(0)
 
 ## InputNumber参数
 
-| 参数              | 类型                                                             | 默认值       | 说明                                                                                         |
-| ----------------- | ---------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------- |
-| v-model           | `number \| undefined`                                            | `undefined`  | 绑定值                                                                                       |
-| step              | `number`                                                         | `1`          | 计数器步长                                                                                   |
-| placeholder       | `string`                                                         | `''`         | 输入框占位文本                                                                               |
-| max               | `number`                                                         | `Infinity`   | 设置计数器允许的最大值                                                                       |
-| min               | `number`                                                         | `-Infinity`  | 设置计数器允许的最小值                                                                       |
-| disabled          | `boolean`                                                        | `false`      | 是否禁用计数器                                                                               |
-| readonly          | `boolean`                                                        | `false`      | 是否只读                                                                                     |
-| precision         | `number`                                                         | `undefined`  | 数值精度                                                                                     |
-| size              | `'large' \| 'default' \| 'small'`                                | `'default'`  | 输入框尺寸                                                                                   |
-| controls          | `boolean`                                                        | `true`       | 是否显示控制按钮                                                                             |
-| controls-position | `'both' \| 'right'`                                              | `'both'`     | 控制按钮位置                                                                                 |
-| allow-empty       | `boolean`                                                        | `false`      | 是否允许空值                                                                                 |
-| show-glow-style   | `boolean`                                                        | `true`       | 是否显示悬浮发光效果                                                                         |
-| reg               | `RegExp \| string`                                               | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤                                                   |
-| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`         | `'outlined'` | 录入组件统一形态                                                                             |
-| status            | `'' \| 'error' \| 'warning'`                                     | `''`         | 校验状态，Form 联动会自动透传                                                                |
+| 参数              | 类型                                                     | 默认值       | 说明                                       |
+| ----------------- | -------------------------------------------------------- | ------------ | ------------------------------------------ |
+| v-model           | `number \| undefined`                                    | `undefined`  | 绑定值                                     |
+| step              | `number`                                                 | `1`          | 计数器步长                                 |
+| placeholder       | `string`                                                 | `''`         | 输入框占位文本                             |
+| max               | `number`                                                 | `Infinity`   | 设置计数器允许的最大值                     |
+| min               | `number`                                                 | `-Infinity`  | 设置计数器允许的最小值                     |
+| disabled          | `boolean`                                                | `false`      | 是否禁用计数器                             |
+| readonly          | `boolean`                                                | `false`      | 是否只读                                   |
+| precision         | `number`                                                 | `undefined`  | 数值精度                                   |
+| size              | `'large' \| 'default' \| 'small'`                        | `'default'`  | 输入框尺寸                                 |
+| controls          | `boolean`                                                | `true`       | 是否显示控制按钮                           |
+| controls-position | `'both' \| 'right'`                                      | `'both'`     | 控制按钮位置                               |
+| allow-empty       | `boolean`                                                | `false`      | 是否允许空值                               |
+| show-glow-style   | `boolean`                                                | `true`       | 是否显示悬浮发光效果                       |
+| reg               | `RegExp \| string`                                       | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤 |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态                           |
+| status            | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传              |
 
 ## InputNumber事件
 
@@ -11698,19 +11755,19 @@ export default defineComponent({
 
 ## InputSearch 参数
 
-| 参数         | 类型                                       | 默认    | 说明                                                                               |
-| ------------ | ------------------------------------------ | ------- | ---------------------------------------------------------------------------------- |
-| modelValue   | string                                     | --      | 绑定值（v-model）                                                                  |
-| defaultValue | string                                     | --      | 非受控初值                                                                         |
-| placeholder  | string                                     | --      | 占位符                                                                             |
-| enterButton  | boolean \| string \| VNode                 | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
-| loading      | boolean                                    | false   | 搜索中状态，按钮变 disabled                                                        |
-| size         | 'large' \| 'default' \| 'small'            | default | 尺寸                                                                               |
-| disabled     | boolean                                    | false   | 整体禁用                                                                           |
-| readonly     | boolean                                    | false   | 只读                                                                               |
-| clearable    | boolean                                    | false   | 清除按钮，清除时同步 emit @search('')                                              |
-| maxLength    | number                                     | --      | 最大长度                                                                           |
-| status       | '' \| 'error' \| 'warning'                 | ''      | 校验状态                                                                           |
+| 参数         | 类型                            | 默认    | 说明                                                                               |
+| ------------ | ------------------------------- | ------- | ---------------------------------------------------------------------------------- |
+| modelValue   | string                          | --      | 绑定值（v-model）                                                                  |
+| defaultValue | string                          | --      | 非受控初值                                                                         |
+| placeholder  | string                          | --      | 占位符                                                                             |
+| enterButton  | boolean \| string \| VNode      | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
+| loading      | boolean                         | false   | 搜索中状态，按钮变 disabled                                                        |
+| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                                                               |
+| disabled     | boolean                         | false   | 整体禁用                                                                           |
+| readonly     | boolean                         | false   | 只读                                                                               |
+| clearable    | boolean                         | false   | 清除按钮，清除时同步 emit @search('')                                              |
+| maxLength    | number                          | --      | 最大长度                                                                           |
+| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                                                           |
 
 ## InputSearch 事件
 
@@ -11756,7 +11813,9 @@ export default defineComponent({
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)">Header</c-layout-header>
+    <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)"
+      >Header</c-layout-header
+    >
     <c-layout-content style="padding: 24px; background: var(--ccui-area)">Content</c-layout-content>
     <c-layout-footer style="text-align: center">Footer</c-layout-footer>
   </c-layout>
@@ -11778,7 +11837,9 @@ export default defineComponent({
       Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)">Header</c-layout-header>
+      <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)"
+        >Header</c-layout-header
+      >
       <c-layout-content style="padding: 24px">Main</c-layout-content>
       <c-layout-footer style="text-align: center">Footer</c-layout-footer>
     </c-layout>
@@ -11854,11 +11915,16 @@ const collapsed = ref(false)
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-sider theme="light" style="border-inline-end: 1px solid var(--ccui-color-border-secondary); padding: 12px">
+    <c-layout-sider
+      theme="light"
+      style="border-inline-end: 1px solid var(--ccui-color-border-secondary); padding: 12px"
+    >
       浅色 Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: var(--ccui-color-bg-container); border-bottom: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text)">
+      <c-layout-header
+        style="background: var(--ccui-color-bg-container); border-bottom: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text)"
+      >
         Header
       </c-layout-header>
       <c-layout-content style="padding: 24px; background: var(--ccui-area)">主体</c-layout-content>
@@ -12276,7 +12342,9 @@ const v2 = ref('')
 <template>
   <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">autoSize=true（无限制）</p>
   <c-mentions v-model="v1" :options="['anna', 'bob']" auto-size placeholder="多输几行回车试试" />
-  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">autoSize=&#123; minRows: 2, maxRows: 6 &#125;</p>
+  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">
+    autoSize=&#123; minRows: 2, maxRows: 6 &#125;
+  </p>
   <c-mentions
     v-model="v2"
     :options="['anna', 'bob']"
@@ -12381,7 +12449,9 @@ const team = [
         </span>
         <span>
           <strong>{{ option.label }}</strong>
-          <span style="margin-left: 6px; color: var(--ccui-color-text-tertiary); font-size: 12px">{{ option.role }}</span>
+          <span style="margin-left: 6px; color: var(--ccui-color-text-tertiary); font-size: 12px">{{
+            option.role
+          }}</span>
         </span>
       </div>
     </template>
@@ -14650,39 +14720,39 @@ const users = [
 
 ### Popover Props
 
-| 参数                      | 说明                                        | 类型                                                         | 默认值             |
-| ------------------------- | ------------------------------------------- | ------------------------------------------------------------ | ------------------ |
-| title                     | 标题文本，也可以通过 `slot#title` 传入      | string                                                       | —                  |
-| content                   | 显示的内容，也可以通过 `slot#content` 传入  | string                                                       | —                  |
-| placement                 | Popover 的出现位置                          | 12 种方位字符串                                              | bottom             |
-| effect                    | 默认提供的主题                              | `'dark' \| 'light'`                                          | light              |
-| visible / v-model:visible | 受控显示状态                                | boolean                                                      | false              |
-| disabled                  | Popover 是否可用                            | boolean                                                      | false              |
-| color                     | 自定义背景色（覆盖 `effect`）               | string                                                       | —                  |
-| show-arrow                | 是否显示箭头                                | boolean                                                      | true               |
-| trigger                   | 触发方式                                    | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
-| show-after                | 鼠标进入显示延迟（ms）                      | number                                                       | 0                  |
-| hide-after                | 鼠标离开隐藏延迟（ms）                      | number                                                       | 200                |
-| popper-class              | 浮层根节点 class                            | string                                                       | —                  |
-| fresh                     | 关闭后是否销毁内部内容                      | boolean                                                      | false              |
-| destroyTooltipOnHide      | 隐藏时销毁弹层节点                          | boolean                                                      | false              |
-| autoAdjustOverflow        | 自动调整方向避免溢出                        | boolean                                                      | true               |
-| align                     | floating-ui 微调对象                        | object                                                       | —                  |
-| offset                    | 出现位置的偏移量                            | number                                                       | 4                  |
-| raw-content               | 是否将 content 作为 HTML 字符串处理         | boolean                                                      | false              |
-| enterable                 | 鼠标是否可进入到 popover 中                 | boolean                                                      | true               |
-| hide-on-click-outside     | 是否在点击外部时隐藏                        | boolean                                                      | true               |
-| close-on-esc              | 是否支持 ESC 键关闭                         | boolean                                                      | true               |
-| aria-label                | 屏幕阅读器标签                              | string                                                       | —                  |
-| width                     | 弹层宽度                                    | `number \| string`                                           | —                  |
-| transition                | 定义渐变动画                                | string                                                       | ccui-popover-fade  |
-| auto-close                | 自动关闭时间，单位毫秒                      | number                                                       | 0                  |
-| tabindex                  | Popover 组件的 tabindex                     | `number \| string`                                           | 0                  |
-| teleported                | 是否 Teleport 到 body                       | boolean                                                      | true               |
-| persistent                | 是否持久化                                  | boolean                                                      | true               |
-| virtual-triggering        | 是否启用虚拟触发器                          | boolean                                                      | false              |
-| virtual-ref               | 虚拟触发器的参照元素                        | HTMLElement                                                  | —                  |
-| trigger-keys              | 键盘触发按键                                | string[]                                                     | ['Enter', 'Space'] |
+| 参数                      | 说明                                       | 类型                                                         | 默认值             |
+| ------------------------- | ------------------------------------------ | ------------------------------------------------------------ | ------------------ |
+| title                     | 标题文本，也可以通过 `slot#title` 传入     | string                                                       | —                  |
+| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string                                                       | —                  |
+| placement                 | Popover 的出现位置                         | 12 种方位字符串                                              | bottom             |
+| effect                    | 默认提供的主题                             | `'dark' \| 'light'`                                          | light              |
+| visible / v-model:visible | 受控显示状态                               | boolean                                                      | false              |
+| disabled                  | Popover 是否可用                           | boolean                                                      | false              |
+| color                     | 自定义背景色（覆盖 `effect`）              | string                                                       | —                  |
+| show-arrow                | 是否显示箭头                               | boolean                                                      | true               |
+| trigger                   | 触发方式                                   | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
+| show-after                | 鼠标进入显示延迟（ms）                     | number                                                       | 0                  |
+| hide-after                | 鼠标离开隐藏延迟（ms）                     | number                                                       | 200                |
+| popper-class              | 浮层根节点 class                           | string                                                       | —                  |
+| fresh                     | 关闭后是否销毁内部内容                     | boolean                                                      | false              |
+| destroyTooltipOnHide      | 隐藏时销毁弹层节点                         | boolean                                                      | false              |
+| autoAdjustOverflow        | 自动调整方向避免溢出                       | boolean                                                      | true               |
+| align                     | floating-ui 微调对象                       | object                                                       | —                  |
+| offset                    | 出现位置的偏移量                           | number                                                       | 4                  |
+| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean                                                      | false              |
+| enterable                 | 鼠标是否可进入到 popover 中                | boolean                                                      | true               |
+| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean                                                      | true               |
+| close-on-esc              | 是否支持 ESC 键关闭                        | boolean                                                      | true               |
+| aria-label                | 屏幕阅读器标签                             | string                                                       | —                  |
+| width                     | 弹层宽度                                   | `number \| string`                                           | —                  |
+| transition                | 定义渐变动画                               | string                                                       | ccui-popover-fade  |
+| auto-close                | 自动关闭时间，单位毫秒                     | number                                                       | 0                  |
+| tabindex                  | Popover 组件的 tabindex                    | `number \| string`                                           | 0                  |
+| teleported                | 是否 Teleport 到 body                      | boolean                                                      | true               |
+| persistent                | 是否持久化                                 | boolean                                                      | true               |
+| virtual-triggering        | 是否启用虚拟触发器                         | boolean                                                      | false              |
+| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement                                                  | —                  |
+| trigger-keys              | 键盘触发按键                               | string[]                                                     | ['Enter', 'Space'] |
 
 ### Popover Events
 
@@ -16680,7 +16750,9 @@ const pageSize = ref(20)
 
 <template>
   <c-segmented v-model="pageSize" :options="[10, 20, 50, 100]" />
-  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">每页 {{ pageSize }} 条（typeof = {{ typeof pageSize }}）</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">
+    每页 {{ pageSize }} 条（typeof = {{ typeof pageSize }}）
+  </p>
 </template>
 ```
 
@@ -18578,7 +18650,9 @@ const loading = ref(false)
 
 <template>
   <c-spin :spinning="loading">
-    <div style="padding: 16px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px">
+    <div
+      style="padding: 16px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px"
+    >
       <h4 style="margin: 0 0 8px">订单 #20260515-001</h4>
       <p style="margin: 0; color: var(--ccui-color-text-secondary)">已发货 · 顺丰速运 · SF1234567890</p>
     </div>
@@ -18625,7 +18699,9 @@ async function reload() {
 <template>
   <c-button type="primary" style="margin-bottom: 12px" @click="reload">重新加载</c-button>
   <c-spin :spinning="loading" tip="正在拉取最新数据…">
-    <ul style="margin: 0; padding: 0 0 0 20px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px">
+    <ul
+      style="margin: 0; padding: 0 0 0 20px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px"
+    >
       <li v-for="item in list" :key="item.id" style="padding: 6px 0">{{ item.name }}</li>
     </ul>
   </c-spin>
@@ -18808,7 +18884,9 @@ function refresh(card) {
       <div style="padding: 16px">主内容</div>
     </c-splitter-panel>
     <c-splitter-panel :default-size="200" :min="100">
-      <div style="padding: 16px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">右侧详情</div>
+      <div style="padding: 16px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">
+        右侧详情
+      </div>
     </c-splitter-panel>
   </c-splitter>
 </template>
@@ -18847,7 +18925,9 @@ function refresh(card) {
 <template>
   <c-splitter style="height: 160px; border: 1px solid var(--ccui-color-border-secondary)">
     <c-splitter-panel :default-size="200" :resizable="false">
-      <div style="padding: 12px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">固定 200px</div>
+      <div style="padding: 12px; background: var(--ccui-area); color: var(--ccui-color-text); height: 100%">
+        固定 200px
+      </div>
     </c-splitter-panel>
     <c-splitter-panel>
       <div style="padding: 12px">弹性</div>
@@ -19686,7 +19766,9 @@ const selected = computed(() => dataSource.find((r) => r.id === selectedKey.valu
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
     <c-segmented v-model="size" :options="['small', 'middle', 'default']" />
     <c-button @click="reload">刷新（模拟 loading）</c-button>
-    <label style="margin-inline-start:8px;color:var(--ccui-color-text-secondary)"> <input v-model="showHeader" type="checkbox" /> 显示表头 </label>
+    <label style="margin-inline-start:8px;color:var(--ccui-color-text-secondary)">
+      <input v-model="showHeader" type="checkbox" /> 显示表头
+    </label>
   </div>
   <c-table
     :columns="columns"
@@ -21150,7 +21232,12 @@ ccui 的设计变量统一以 `--ccui-` 开头，覆盖颜色、圆角、字号�
   </c-config-provider>
 
   <div style="margin-top: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
-    <c-button v-for="c in colors" :key="c" :style="{ background: c, color: 'var(--ccui-color-text-light-solid)', border: 'none' }" @click="color = c">
+    <c-button
+      v-for="c in colors"
+      :key="c"
+      :style="{ background: c, color: 'var(--ccui-color-text-light-solid)', border: 'none' }"
+      @click="color = c"
+    >
       {{ c }}
     </c-button>
     <span style="margin-inline-start: 8px">圆角</span>
@@ -22362,28 +22449,28 @@ function log(type) {
 
 ### Tooltip Props
 
-| 参数                      | 说明                                                  | 类型                                         | 默认值 |
-| ------------------------- | ----------------------------------------------------- | -------------------------------------------- | ------ |
-| content                   | 浮层显示文本。也可用同名 `content` slot 传入富文本    | string                                       | —      |
-| visible / v-model:visible | 受控显示状态                                          | boolean                                      | false  |
-| placement                 | 出现位置（12 种）                                     | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
-| effect                    | 内置主题                                              | `'dark' \| 'light'`                          | dark   |
-| color                     | 自定义背景色（覆盖 `effect`）                         | string                                       | —      |
-| show-arrow                | 是否显示箭头                                          | boolean                                      | true   |
-| show-after                | 鼠标进入触发显示的延迟（ms）                          | number                                       | 0      |
-| hide-after                | 鼠标离开触发隐藏的延迟（ms）                          | number                                       | 200    |
-| popper-class              | 浮层根节点 class                                      | string                                       | —      |
-| trigger                   | 触发方式                                              | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
-| disabled                  | 是否禁用                                              | boolean                                      | false  |
-| offset                    | 距触发器的偏移量（px）                                | number                                       | 8      |
-| enterable                 | 鼠标是否可进入到 tooltip 中                           | boolean                                      | true   |
-| raw-content               | 是否将 content 作为 HTML 字符串处理                   | boolean                                      | false  |
-| fresh                     | 关闭后是否销毁内部内容                                | boolean                                      | false  |
-| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                               | boolean                                      | false  |
-| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）           | boolean                                      | true   |
-| align                     | floating-ui offset / flip 等微调参数                  | object                                       | —      |
-| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）             | `(trigger) => HTMLElement \| null`           | —      |
-| aria-label                | 屏幕阅读器标签                                        | string                                       | —      |
+| 参数                      | 说明                                               | 类型                                         | 默认值 |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------- | ------ |
+| content                   | 浮层显示文本。也可用同名 `content` slot 传入富文本 | string                                       | —      |
+| visible / v-model:visible | 受控显示状态                                       | boolean                                      | false  |
+| placement                 | 出现位置（12 种）                                  | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
+| effect                    | 内置主题                                           | `'dark' \| 'light'`                          | dark   |
+| color                     | 自定义背景色（覆盖 `effect`）                      | string                                       | —      |
+| show-arrow                | 是否显示箭头                                       | boolean                                      | true   |
+| show-after                | 鼠标进入触发显示的延迟（ms）                       | number                                       | 0      |
+| hide-after                | 鼠标离开触发隐藏的延迟（ms）                       | number                                       | 200    |
+| popper-class              | 浮层根节点 class                                   | string                                       | —      |
+| trigger                   | 触发方式                                           | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
+| disabled                  | 是否禁用                                           | boolean                                      | false  |
+| offset                    | 距触发器的偏移量（px）                             | number                                       | 8      |
+| enterable                 | 鼠标是否可进入到 tooltip 中                        | boolean                                      | true   |
+| raw-content               | 是否将 content 作为 HTML 字符串处理                | boolean                                      | false  |
+| fresh                     | 关闭后是否销毁内部内容                             | boolean                                      | false  |
+| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                            | boolean                                      | false  |
+| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）        | boolean                                      | true   |
+| align                     | floating-ui offset / flip 等微调参数               | object                                       | —      |
+| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）          | `(trigger) => HTMLElement \| null`           | —      |
+| aria-label                | 屏幕阅读器标签                                     | string                                       | —      |
 
 ### Tooltip Events
 
@@ -22397,9 +22484,9 @@ function log(type) {
 
 ### Tooltip Slots
 
-| 插槽名  | 说明                                |
-| ------- | ----------------------------------- |
-| default | Tooltip 触发 & 引用的元素           |
+| 插槽名  | 说明                                    |
+| ------- | --------------------------------------- |
+| default | Tooltip 触发 & 引用的元素               |
 | content | 自定义浮层内容（优先于 `content` prop） |
 
 
@@ -22490,7 +22577,8 @@ const selected = ref<string[]>([])
   <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data">
     <template #render="{ item }">
       <span
-        ><strong>{{ item.title }}</strong> · <small style="color:var(--ccui-color-text-tertiary)">{{ item.description }}</small></span
+        ><strong>{{ item.title }}</strong> ·
+        <small style="color:var(--ccui-color-text-tertiary)">{{ item.description }}</small></span
       >
     </template>
   </c-transfer>
@@ -22600,21 +22688,21 @@ const selected = ref<string[]>([])
 
 ### Props
 
-| 参数           | 类型                                                          | 默认值       | 说明                                                                    |
-| -------------- | ------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------- |
-| dataSource     | `TransferItem[]`                                              | `[]`         | 全部数据。`{ key, title?, description?, disabled? }`                    |
-| targetKeys     | `string[]`                                                    | `[]`         | 在右侧（target）的 key 集合，支持 `v-model:targetKeys`                  |
-| selectedKeys   | `string[]`                                                    | `[]`         | 跨两列勾选的 key，支持 `v-model:selectedKeys`                           |
-| titles         | `[string, string]`                                            | `['', '']`   | 两列标题                                                                |
-| operations     | `[string, string]`                                            | `['', '']`   | 中间按钮文案：[右移, 左移]；为空时回退到内置 chevron 图标               |
-| showSearch     | boolean                                                       | `false`      | 显示搜索框                                                              |
-| filterOption   | `(input: string, item: TransferItem) => boolean`              | --           | 自定义过滤；不传走默认 title 包含匹配                                   |
-| disabled       | boolean                                                       | `false`      | 整体禁用                                                                |
-| render         | `(item: TransferItem) => string \| VNode`                     | --           | 自定义单项渲染                                                          |
-| locale         | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --           | 自定义文案                                                              |
-| pagination     | `boolean \| number`                                           | `false`      | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize                  |
-| draggable      | boolean                                                       | `false`      | 是否允许右侧列表拖拽排序                                                |
-| selectionsIcon | `string \| VNode`                                             | --           | 头部全选区状态图标，string 为 Iconify 名或 CSS 类。同名 slot 优先级更高 |
+| 参数           | 类型                                                          | 默认值     | 说明                                                                    |
+| -------------- | ------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
+| dataSource     | `TransferItem[]`                                              | `[]`       | 全部数据。`{ key, title?, description?, disabled? }`                    |
+| targetKeys     | `string[]`                                                    | `[]`       | 在右侧（target）的 key 集合，支持 `v-model:targetKeys`                  |
+| selectedKeys   | `string[]`                                                    | `[]`       | 跨两列勾选的 key，支持 `v-model:selectedKeys`                           |
+| titles         | `[string, string]`                                            | `['', '']` | 两列标题                                                                |
+| operations     | `[string, string]`                                            | `['', '']` | 中间按钮文案：[右移, 左移]；为空时回退到内置 chevron 图标               |
+| showSearch     | boolean                                                       | `false`    | 显示搜索框                                                              |
+| filterOption   | `(input: string, item: TransferItem) => boolean`              | --         | 自定义过滤；不传走默认 title 包含匹配                                   |
+| disabled       | boolean                                                       | `false`    | 整体禁用                                                                |
+| render         | `(item: TransferItem) => string \| VNode`                     | --         | 自定义单项渲染                                                          |
+| locale         | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --         | 自定义文案                                                              |
+| pagination     | `boolean \| number`                                           | `false`    | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize                  |
+| draggable      | boolean                                                       | `false`    | 是否允许右侧列表拖拽排序                                                |
+| selectionsIcon | `string \| VNode`                                             | --         | 头部全选区状态图标，string 为 Iconify 名或 CSS 类。同名 slot 优先级更高 |
 
 ### Events
 
@@ -24802,7 +24890,11 @@ const onResize = debounce(() => {
 ```vue
 <template>
   <c-watermark :content="['CCUI', 'Confidential']">
-    <div style="height: 200px; background: var(--ccui-color-bg-container); border: 1px dashed var(--ccui-color-border); padding: 16px">多行水印</div>
+    <div
+      style="height: 200px; background: var(--ccui-color-bg-container); border: 1px dashed var(--ccui-color-border); padding: 16px"
+    >
+      多行水印
+    </div>
   </c-watermark>
 </template>
 ```
@@ -24837,7 +24929,9 @@ const onResize = debounce(() => {
 ```vue
 <template>
   <c-watermark content="Important" :font="{ color: 'rgba(255, 0, 0, 0.18)', fontSize: 18, fontWeight: 600 }">
-    <div style="height: 160px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px">
+    <div
+      style="height: 160px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px"
+    >
       自定义颜色 / 字号 / 粗细
     </div>
   </c-watermark>
@@ -24878,7 +24972,11 @@ const onResize = debounce(() => {
     :width="120"
     :height="64"
   >
-    <div style="height: 200px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px">图片水印（背景层）</div>
+    <div
+      style="height: 200px; background: var(--ccui-color-bg-container); border: 1px solid var(--ccui-color-border-secondary); padding: 16px"
+    >
+      图片水印（背景层）
+    </div>
   </c-watermark>
 </template>
 ```
