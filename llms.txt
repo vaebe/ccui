@@ -39,7 +39,7 @@
 - [Empty 空状态](https://vaebe.github.io/ccui/components/empty/index.html)：数据缺失或还没创建时的占位提示
 - [Flex 弹性布局](https://vaebe.github.io/ccui/components/flex/index.html)：封装 CSS flexbox 的常用属性，配合主题间距 token 让"行内 / 垂直 / 两端对齐"等场景更直白
 - [FloatButton 悬浮按钮](https://vaebe.github.io/ccui/components/float-button/index.html)：固定在视图角落的按钮
-- [Form 表单](https://vaebe.github.io/ccui/components/form/index.html)：用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代
+- [Form 表单](https://vaebe.github.io/ccui/components/form/index.html)：用于收集、校验和提交一组输入项，支持 `validateDebounce` / `normalize` 等高级字段配置
 - [Grid 栅格](https://vaebe.github.io/ccui/components/grid/index.html)：24 等分的响应式栅格系统。`<c-row>` 是行容器，`<c-col>` 是列；列的 `span` 之和满 24 即填满一行
 - [Icon 图标](https://vaebe.github.io/ccui/components/icon/index.html)：统一图标尺寸、颜色、旋转和无障碍属性的基础包装器，内置 [Iconify](https://iconify.design/) 适配，可直接通过 `name="<prefix>:<icon>"` 渲染来自 200+ 图标集的任意图标
 - [Image 图片](https://vaebe.github.io/ccui/components/image/index.html)：带占位、错误兜底、懒加载和大图预览的图片组件

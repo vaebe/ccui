@@ -612,6 +612,10 @@ Alert 嵌在卡片或表单内部，作为局部提示。
 | ------ | ---- | -------------- |
 | close  | --   | 关闭按钮被点击 |
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`icon`、`message`、`description`。
+
 
 ---
 
@@ -1120,6 +1124,7 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | placeholder              | string                                                     | --                        | 占位文案                                         |
 | disabled                 | boolean                                                    | `false`                   | 是否禁用                                         |
 | allowClear               | boolean                                                    | `false`                   | 显示一键清空按钮                                 |
+| clearIcon                | `string \| VNode`                                          | --                        | 自定义清除图标，也可使用 `clearIcon` 插槽        |
 | size                     | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                       |
 | status                   | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                      | 校验状态；置于 `FormItem` 时自动继承             |
 | filterOption             | `boolean \| (input, option) => boolean`                    | `true`                    | 过滤逻辑                                         |
@@ -1134,6 +1139,9 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | defaultActiveFirstOption | boolean                                                    | `false`                   | 打开浮层时是否默认高亮第一项                     |
 | backfill                 | boolean                                                    | `false`                   | 键盘导航时是否把高亮项 label 写回 input          |
 | searchDebounce           | number                                                     | `0`                       | 搜索防抖延迟（毫秒），`0` 不防抖                 |
+| variant                  | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`   | `'outlined'`              | 输入框形态                                       |
+| classNames               | `{ root?, input?, popup? }`                                | --                        | 语义化 DOM className 注入                        |
+| styles                   | `{ root?, input?, popup? }`                                | --                        | 语义化 DOM style 注入                            |
 
 ### Events
 
@@ -1149,10 +1157,11 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 
 ### Slots
 
-| 名称    | 参数                                                                    | 说明                        |
-| ------- | ----------------------------------------------------------------------- | --------------------------- |
-| option  | `{ option: AutoCompleteOption, index: number }`                         | 自定义单项渲染              |
-| trigger | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
+| 名称      | 参数                                                                    | 说明                        |
+| --------- | ----------------------------------------------------------------------- | --------------------------- |
+| option    | `{ option: AutoCompleteOption, index: number }`                         | 自定义单项渲染              |
+| trigger   | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
+| clearIcon | —                                                                       | 自定义清除图标              |
 
 ## 已知限制（未交付）
 
@@ -1405,6 +1414,10 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | imgSrc     | string                                                     | -       | 自定义图片                                 |
 | customText | string                                                     | -       | 自定义文字（不做提取）                     |
 | fit        | `'fill' \| 'contain' \| 'cover' \| 'none' \| 'scale-down'` | `cover` | 图片填充方式                               |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`image`、`text`。
 
 
 ---
@@ -1676,6 +1689,10 @@ const count = ref(8)
 | text          | string                                                     | --     | 状态点的文字               |
 | color         | string                                                     | --     | 自定义小圆点颜色           |
 | offset        | [number, number]                                           | --     | 设置徽标数偏移             |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`count`、`dot`。
 
 
 ---
@@ -2657,7 +2674,7 @@ export default defineComponent({
 | autoInsertSpace | boolean                                               | true   | 两个 CJK 字符之间自动插入空格                                                                                           |
 | href            | string                                                | --     | 设置后用 `<a role="button">` 渲染                                                                                       |
 | target          | string                                                | --     | 配合 `href` 透传 `target`                                                                                               |
-| icon            | string \| VNode                                       | --     | 图标（也可用 `icon` slot）                                                                                              |
+| icon            | string                                                | --     | 图标名称；含 `:` 时按 Iconify 名称解析，否则作为 CSS 类名（也可用 `icon` slot）                                         |
 | iconPosition    | 'start' \| 'end'                                      | start  | 图标位置                                                                                                                |
 | disabled        | boolean                                               | false  | 是否为禁用状态                                                                                                          |
 | autofocus       | boolean                                               | false  | 原生 autofocus 属性                                                                                                     |
@@ -2706,9 +2723,16 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset'
 
 ## Button插槽
 
-| 插槽名 | 说明           |
-| ------ | -------------- |
-| icon   | 自定义图标组件 |
+| 插槽名  | 说明           |
+| ------- | -------------- |
+| default | 按钮内容       |
+| icon    | 自定义图标组件 |
+
+## Button事件
+
+| 事件名 | 回调参数              | 说明                                             |
+| ------ | --------------------- | ------------------------------------------------ |
+| click  | `(event: MouseEvent)` | 点击时触发；禁用或加载状态下不会触发组件点击事件 |
 
 
 ---
@@ -2789,20 +2813,20 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset'
 
 ### Props
 
-| 参数       | 说明       | 类型                 | 可选值                                    | 默认值    |
-| ---------- | ---------- | -------------------- | ----------------------------------------- | --------- |
-| size       | 尺寸       | `Button3DSize`       | [Button3DSizeType](#button3dsizetype)     | `default` |
-| type       | 类型       | `Button3DType`       | [Button3DType](#button3dtype)             |           |
-| disabled   | 是否禁用   | `boolean`            | -                                         | `false`   |
-| loading    | 是否加载中 | `boolean`            | -                                         | `false`   |
-| nativeType | 原生类型   | `Button3DNativeType` | [Button3DNativeType](#button3dnativetype) | `button`  |
+| 参数       | 说明       | 类型                 | 可选值                                    | 默认值   |
+| ---------- | ---------- | -------------------- | ----------------------------------------- | -------- |
+| size       | 尺寸       | `Button3DSizeType`   | [Button3DSizeType](#button3dsizetype)     | `''`     |
+| type       | 类型       | `Button3DType`       | [Button3DType](#button3dtype)             | `''`     |
+| disabled   | 是否禁用   | `boolean`            | -                                         | `false`  |
+| loading    | 是否加载中 | `boolean`            | -                                         | `false`  |
+| nativeType | 原生类型   | `Button3DNativeType` | [Button3DNativeType](#button3dnativetype) | `button` |
 
 ## Button-3d 类型定义
 
 ### Button3DType
 
 ```ts
-export type Button3DType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
+export type Button3DType = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
 ```
 
 ### Button3DSizeType
@@ -3441,6 +3465,10 @@ const right = ref(dayjs().add(1, 'month').format('YYYY-MM-DD'))
 | ------- | ------------ |
 | default | 卡片内容     |
 | header  | 自定义标题区 |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`header`、`cover`、`body`。
 
 
 ---
@@ -4777,7 +4805,7 @@ const opts = [
 | options           | `CascaderOption[]`                                         | `[]`                 | 数据源（递归 children）                                       |
 | fieldNames        | `{ label?, value?, children?, disabled? }`                 | `{}`                 | 字段名映射                                                    |
 | placeholder       | string                                                     | `请选择`             | 占位文案                                                      |
-| separator         | string                                                     | `/`                  | 默认 displayRender 的拼接符                                   |
+| separator         | string                                                     | `' / '`              | 默认 displayRender 的拼接符                                   |
 | displayRender     | `(labels, selectedOptions) => string`                      | --                   | 自定义路径展示                                                |
 | changeOnSelect    | boolean                                                    | `false`              | 中间节点也可选并提交                                          |
 | disabled          | boolean                                                    | `false`              | 是否禁用                                                      |
@@ -5083,6 +5111,7 @@ function beforeChange(isChecked, label) {
 | ------------ | ---------------------------------------------------------------- | ------- | ------------------------------------------------------- |
 | modelValue   | boolean                                                          | —       | 必选，单独使用时绑定布尔；group 内由 group 接管         |
 | label        | `string \| number \| boolean`                                    | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值 |
+| name         | string                                                           | `''`    | 透传给原生 checkbox 的 `name` 属性                      |
 | disabled     | boolean                                                          | `false` | 是否禁用                                                |
 | color        | string                                                           | —       | 自定义选中色                                            |
 | beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —       | 切换前的钩子                                            |
@@ -5992,22 +6021,27 @@ const value = ref('#1677ff')
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                            |
 | transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                  |
 | allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                      |
+| clearIcon         | `string \| VNode`                                          | --                       | 自定义清除图标，也可使用 `clearIcon` 插槽                                   |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`   | `'outlined'`             | 触发器形态                                                                  |
+| classNames        | `{ root?, trigger?, popup? }`                              | --                       | 语义化 DOM className 注入                                                   |
+| styles            | `{ root?, trigger?, popup? }`                              | --                       | 语义化 DOM style 注入                                                       |
 
 ### Slots
 
-| 名称    | 作用域                                                                                                              | 说明                                                                                             |
-| ------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| trigger | `{ color: string, open: boolean, disabled: boolean }`                                                               | 自定义触发器，替代默认 swatch 按钮                                                               |
-| panel   | `{ color: string, components: { picker: () => VNode, presets: () => VNode \| null, footer: () => VNode \| null } }` | 自定义面板内容；`components.*` 为面板各子片段的渲染函数，可按需调用、重新排版                    |
-| footer  | `{ color: string }`                                                                                                 | 面板底部追加区。默认面板：放在 picker 之后渲染；`panel` slot 内：通过 `components.footer()` 调用 |
+| 名称      | 作用域                                                                                                              | 说明                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| trigger   | `{ color: string, open: boolean, disabled: boolean }`                                                               | 自定义触发器，替代默认 swatch 按钮                                                               |
+| panel     | `{ color: string, components: { picker: () => VNode, presets: () => VNode \| null, footer: () => VNode \| null } }` | 自定义面板内容；`components.*` 为面板各子片段的渲染函数，可按需调用、重新排版                    |
+| footer    | `{ color: string }`                                                                                                 | 面板底部追加区。默认面板：放在 picker 之后渲染；`panel` slot 内：通过 `components.footer()` 调用 |
+| clearIcon | —                                                                                                                   | 自定义清除图标                                                                                   |
 
 ### Events
 
-| 事件名            | 回调签名                                      | 触发时机                                  |
-| ----------------- | --------------------------------------------- | ----------------------------------------- |
-| update:modelValue | `(hex: string)`                               | 颜色变化时（hex 字符串，alpha<1 时 8 位） |
-| change            | `(hex: string, info: { rgb: RGB; hsv: HSV })` | 颜色变化时（同 update:modelValue）        |
-| open-change       | `(open: boolean)`                             | 浮层打开 / 关闭时                         |
+| 事件名            | 回调签名                                                              | 触发时机                                        |
+| ----------------- | --------------------------------------------------------------------- | ----------------------------------------------- |
+| update:modelValue | `(hex: string \| null)`                                               | 颜色变化或清空时（hex 字符串，alpha<1 时 8 位） |
+| change            | `(hex: string \| null, info: { rgb: RGB \| null; hsv: HSV \| null })` | 颜色变化或清空时（同 update:modelValue）        |
+| open-change       | `(open: boolean)`                                                     | 浮层打开 / 关闭时                               |
 
 ### 键盘导航
 
@@ -6994,6 +7028,10 @@ const value = ref('')
 - `TimePicker` 组件、`format` 含时分秒时的面板分栏。
 - `showToday`。
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。
+
 
 ---
 
@@ -7614,7 +7652,7 @@ const text = ref('')
 | destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                  |
 | keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                    |
 | focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                        |
-| push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
+| push                   | `boolean \| { distance?: number }`                                                   | `true`    | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
 | zIndex                 | number                                                                               | `1000`    | 层级                                                                |
 | appendToBody           | boolean                                                                              | `true`    | 是否把浮层 Teleport 到 `document.body`                              |
 
@@ -7638,6 +7676,10 @@ const text = ref('')
 | footer     | 自定义底部内容（优先级高于 `footer` prop）        |
 | extra      | 标题右侧操作区（与 `title` 同行，inline-flex）    |
 | close-icon | 自定义关闭图标（优先级高于 `closable.closeIcon`） |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`mask`、`wrap`、`header`、`body`、`footer`。
 
 
 ---
@@ -8701,7 +8743,7 @@ const aligns = ['flex-start', 'center', 'flex-end', 'baseline', 'stretch']
 
 > 文档链接：https://vaebe.github.io/ccui/components/form/index.html
 
-用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代。
+用于收集、校验和提交一组输入项，支持 `validateDebounce` / `normalize` 等高级字段配置。
 
 ## 基本使用
 
@@ -9315,7 +9357,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 | validateStatus   | success / error / warning / validating                          | --        | 外部校验状态（含 warning，配合 `warningOnly` rule）                              |
 | hasFeedback      | boolean                                                         | 跟随 Form | 校验状态图标（图标 ✓ / ✕ / ! / ◌ 随 currentStatus 切，input padding-right 让位） |
 | dependencies     | FormNamePath[]                                                  | []        | 依赖字段变化后重新校验当前项                                                     |
-| validateDebounce | number                                                          | --        | 触发校验的 debounce ms                                                           |
+| validateDebounce | number                                                          | `0`       | 触发校验的 debounce ms（`0` 表示不防抖）                                         |
 | normalize        | `(value, prevValue, allValues) => any`                          | --        | 在校验/提交前 normalize 值                                                       |
 | htmlFor          | string                                                          | --        | label 的 for 属性                                                                |
 | colon            | boolean                                                         | 跟随 Form | 是否显示当前项冒号                                                               |
@@ -9402,7 +9444,7 @@ Form 默认在字段卸载时保留 `model` 中的值（`preserve=true`）。把
 ## 缺失功能
 
 - render props 级别的复杂条件渲染。
-- `validateDebounce`、`normalize`、`getValueProps` 等少量高级字段配置。
+- `getValueProps` 等少量高级字段配置。
 - 完整无障碍实现和与所有录入组件的深度状态联动。
 - 更完整的滚动容器定位、复杂错误聚合展示和国际化包级别默认文案。
 
@@ -10416,6 +10458,10 @@ function openAt(idx) {
 | placeholder | 自定义加载中占位   |
 | error       | 自定义加载失败展示 |
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`image`、`previewMask`。
+
 
 ---
 
@@ -11420,6 +11466,10 @@ const v3 = ref(0)
 | getValue | 获取当前值                    | —                     | `number \| undefined` |
 | setValue | 设置值（受 min/max/精度约束） | `number \| undefined` | `void`                |
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`controls`。
+
 
 ---
 
@@ -11965,9 +12015,13 @@ function onCollapse(val, type) {
 
 ## API
 
-### Layout / Header / Content / Footer
+### Layout Props
 
-直接渲染对应语义化标签，无额外 props。`style` 可自由覆盖背景 / 内边距等。
+| 参数     | 类型      | 默认值 | 说明                                                          |
+| -------- | --------- | ------ | ------------------------------------------------------------- |
+| hasSider | `boolean` | —      | 是否应用包含侧栏的布局；不传时根据后代 `LayoutSider` 自动判断 |
+
+Header / Content / Footer 无额外 props，直接渲染对应语义化标签。`style` 可自由覆盖背景 / 内边距等。
 
 ### LayoutSider Props
 
@@ -11979,6 +12033,7 @@ function onCollapse(val, type) {
 | defaultCollapsed      | `boolean`                                       | `false`  | 初始折叠状态                                                                                          |
 | collapsible           | `boolean`                                       | `false`  | 显示底部折叠按钮                                                                                      |
 | reverseArrow          | `boolean`                                       | `false`  | 折叠按钮的箭头反向                                                                                    |
+| trigger               | `string \| object \| null`                      | —        | 兼容属性；当前仅 `null` 有效，用于隐藏触发器。自定义渲染内容请使用 `trigger` 插槽                     |
 | theme                 | `'light' \| 'dark'`                             | `'dark'` | 主题色                                                                                                |
 | breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | 响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值 |
 | zeroWidthTriggerStyle | `CSSProperties`                                 | —        | `collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                              |
@@ -11990,6 +12045,13 @@ function onCollapse(val, type) {
 | update:collapsed | `(value: boolean)`               | 折叠状态变化                                                                 |
 | collapse         | `(value: boolean, type: string)` | 折叠被触发，`type` 为 `'clickTrigger'` / `'responsive'`                      |
 | breakpoint       | `(broken: boolean)`              | 断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复 |
+
+### LayoutSider Slots
+
+| 插槽名  | 说明                 |
+| ------- | -------------------- |
+| default | 侧栏内容             |
+| trigger | 自定义折叠触发器内容 |
 
 
 ---
@@ -13574,6 +13636,10 @@ function ask() {
 | footer     | `{ ok, cancel }` | 自定义底部按钮（优先级高于 `footer` prop）        |
 | close-icon | -                | 自定义关闭图标（优先级高于 `closable.closeIcon`） |
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`mask`、`wrap`、`header`、`body`、`footer`。
+
 
 ---
 
@@ -14720,39 +14786,41 @@ const users = [
 
 ### Popover Props
 
-| 参数                      | 说明                                       | 类型                                                         | 默认值             |
-| ------------------------- | ------------------------------------------ | ------------------------------------------------------------ | ------------------ |
-| title                     | 标题文本，也可以通过 `slot#title` 传入     | string                                                       | —                  |
-| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string                                                       | —                  |
-| placement                 | Popover 的出现位置                         | 12 种方位字符串                                              | bottom             |
-| effect                    | 默认提供的主题                             | `'dark' \| 'light'`                                          | light              |
-| visible / v-model:visible | 受控显示状态                               | boolean                                                      | false              |
-| disabled                  | Popover 是否可用                           | boolean                                                      | false              |
-| color                     | 自定义背景色（覆盖 `effect`）              | string                                                       | —                  |
-| show-arrow                | 是否显示箭头                               | boolean                                                      | true               |
-| trigger                   | 触发方式                                   | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click              |
-| show-after                | 鼠标进入显示延迟（ms）                     | number                                                       | 0                  |
-| hide-after                | 鼠标离开隐藏延迟（ms）                     | number                                                       | 200                |
-| popper-class              | 浮层根节点 class                           | string                                                       | —                  |
-| fresh                     | 关闭后是否销毁内部内容                     | boolean                                                      | false              |
-| destroyTooltipOnHide      | 隐藏时销毁弹层节点                         | boolean                                                      | false              |
-| autoAdjustOverflow        | 自动调整方向避免溢出                       | boolean                                                      | true               |
-| align                     | floating-ui 微调对象                       | object                                                       | —                  |
-| offset                    | 出现位置的偏移量                           | number                                                       | 4                  |
-| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean                                                      | false              |
-| enterable                 | 鼠标是否可进入到 popover 中                | boolean                                                      | true               |
-| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean                                                      | true               |
-| close-on-esc              | 是否支持 ESC 键关闭                        | boolean                                                      | true               |
-| aria-label                | 屏幕阅读器标签                             | string                                                       | —                  |
-| width                     | 弹层宽度                                   | `number \| string`                                           | —                  |
-| transition                | 定义渐变动画                               | string                                                       | ccui-popover-fade  |
-| auto-close                | 自动关闭时间，单位毫秒                     | number                                                       | 0                  |
-| tabindex                  | Popover 组件的 tabindex                    | `number \| string`                                           | 0                  |
-| teleported                | 是否 Teleport 到 body                      | boolean                                                      | true               |
-| persistent                | 是否持久化                                 | boolean                                                      | true               |
-| virtual-triggering        | 是否启用虚拟触发器                         | boolean                                                      | false              |
-| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement                                                  | —                  |
-| trigger-keys              | 键盘触发按键                               | string[]                                                     | ['Enter', 'Space'] |
+| 参数                      | 说明                                       | 类型                                                         | 默认值            |
+| ------------------------- | ------------------------------------------ | ------------------------------------------------------------ | ----------------- |
+| title                     | 标题文本，也可以通过 `slot#title` 传入     | string                                                       | —                 |
+| content                   | 显示的内容，也可以通过 `slot#content` 传入 | string                                                       | —                 |
+| placement                 | Popover 的出现位置                         | 12 种方位字符串                                              | bottom            |
+| effect                    | 默认提供的主题                             | `'dark' \| 'light'`                                          | light             |
+| visible / v-model:visible | 受控显示状态                               | boolean                                                      | false             |
+| disabled                  | Popover 是否可用                           | boolean                                                      | false             |
+| color                     | 自定义背景色（覆盖 `effect`）              | string                                                       | —                 |
+| show-arrow                | 是否显示箭头                               | boolean                                                      | true              |
+| trigger                   | 触发方式                                   | `'hover' \| 'focus' \| 'click' \| 'manual' \| 'contextmenu'` | click             |
+| show-after                | 鼠标进入显示延迟（ms）                     | number                                                       | 0                 |
+| hide-after                | 鼠标离开隐藏延迟（ms）                     | number                                                       | 200               |
+| popper-class              | 浮层根节点 class                           | string                                                       | —                 |
+| fresh                     | 关闭后是否销毁内部内容                     | boolean                                                      | false             |
+| destroyTooltipOnHide      | 隐藏时销毁弹层节点                         | boolean                                                      | false             |
+| autoAdjustOverflow        | 自动调整方向避免溢出                       | boolean                                                      | true              |
+| align                     | floating-ui 微调对象                       | object                                                       | —                 |
+| offset                    | 出现位置的偏移量                           | number                                                       | 4                 |
+| raw-content               | 是否将 content 作为 HTML 字符串处理        | boolean                                                      | false             |
+| enterable                 | 鼠标是否可进入到 popover 中                | boolean                                                      | true              |
+| hide-on-click-outside     | 是否在点击外部时隐藏                       | boolean                                                      | true              |
+| close-on-esc              | 是否支持 ESC 键关闭                        | boolean                                                      | true              |
+| aria-label                | 屏幕阅读器标签                             | string                                                       | —                 |
+| width                     | 弹层宽度                                   | `number \| string`                                           | —                 |
+| transition                | 定义渐变动画                               | string                                                       | ccui-popover-fade |
+| auto-close                | 自动关闭时间，单位毫秒                     | number                                                       | 0                 |
+| tabindex                  | Popover 组件的 tabindex                    | `number \| string`                                           | 0                 |
+| teleported                | 是否 Teleport 到 body                      | boolean                                                      | true              |
+| persistent                | 是否持久化                                 | boolean                                                      | true              |
+| virtual-triggering        | 是否启用虚拟触发器                         | boolean                                                      | false             |
+| virtual-ref               | 虚拟触发器的参照元素                       | HTMLElement                                                  | —                 |
+| trigger-keys              | 键盘触发按键                               | string[]                                                     | `['Enter', ' ']`  |
+| role                      | 浮层的 ARIA role                           | string                                                       | dialog            |
+| aria-has-popup            | 触发器的 `aria-haspopup` 值                | string                                                       | dialog            |
 
 ### Popover Events
 
@@ -15888,6 +15956,10 @@ const value = ref([])
 
 - **键盘导航**：方向键 / Enter 切换尚未实现。
 - **响应式单面板**：移动端 PC 双面板会溢出，自动切单面板留给后续。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。
 
 
 ---
@@ -17409,13 +17481,13 @@ const opts = [
 | filterOption             | `boolean / (input, option) => boolean`                | `true`             | 过滤策略；`false` 走远程搜索；函数自定义谓词    |
 | placement                | `'bottom' / 'top' / 'auto'`                           | `'bottom'`         | 浮层位置（基于 floating-ui，自动 flip / shift） |
 | popupClassName           | `string`                                              | `''`               | 浮层附加类                                      |
-| placeholder              | `string`                                              | --                 | 占位文本                                        |
+| placeholder              | `string`                                              | `'Please select'`  | 占位文本                                        |
 | disabled                 | `boolean`                                             | `false`            | 是否禁用                                        |
 | clearable                | `boolean`                                             | `false`            | 是否可清空                                      |
 | loading                  | `boolean`                                             | `false`            | 加载中                                          |
 | size                     | `'large' / 'default' / 'small'`                       | `'default'`        | 尺寸                                            |
 | noDataText               | `string`                                              | `No data`          | 空状态文本                                      |
-| loadingText              | `string`                                              | `Loading`          | 加载文本                                        |
+| loadingText              | `string`                                              | `'Loading...'`     | 加载文本                                        |
 | maxTagCount              | `number`                                              | `3`                | 多选最多直接展示的标签数                        |
 | status                   | `'' / 'error' / 'warning' / 'success' / 'validating'` | `''`               | 显式校验状态，覆盖 FormItem 注入                |
 | labelInValue             | `boolean`                                             | `false`            | 启用后 modelValue 变成 `{ value, label }` 形态  |
@@ -17496,6 +17568,10 @@ type SelectFilterOption = boolean | ((input: string, option: SelectOption) => bo
 - `filterOption=false` 完全跳过前端过滤；函数返回 `true` 即视为命中。
 - `fieldNames` 不影响 `modelValue`：传入和回传仍然是 `value` 字段（按映射后的字段）的原始值。
 - 注入到 FormItem 时 `status` 优先级高于 `formItem.validateStatus`。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`selector`、`popup`。
 
 
 ---
@@ -20032,6 +20108,10 @@ function onChange(filters, sorter, currentData) {
 | update:expandedRowKeys | 展开行变化                         |
 | expand                 | (expanded, record) — 单行展开/收起 |
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`header`、`body`、`row`。
+
 
 ---
 
@@ -20717,24 +20797,27 @@ export default defineComponent({
 
 ## Tabs参数
 
-| 参数         | 类型                                  | 默认 | 说明                      |
-| ------------ | ------------------------------------- | ---- | ------------------------- |
-| v-model      | [ModelValueType](#modelvaluetype)     | -    | 绑定值，选中选项卡的 name |
-| type         | [TabsType](#itabstype)                | -    | 风格类型                  |
-| tab-position | [ITabPositionType](#itabpositiontype) | top  | 选项卡所在位置            |
+| 参数          | 类型                                  | 默认 | 说明                                |
+| ------------- | ------------------------------------- | ---- | ----------------------------------- |
+| v-model       | [ModelValueType](#modelvaluetype)     | null | 绑定值，选中选项卡的 name           |
+| type          | [ITabsType](#itabstype)               | `''` | 风格类型                            |
+| custom-width  | string                                | `''` | Tabs 根节点宽度，接受任意 CSS width |
+| css-class     | string                                | `''` | Tabs 根节点附加 class               |
+| before-change | [BeforeChangeType](#beforechangetype) | null | 切换前守卫；返回 `false` 时阻止切换 |
+| tab-position  | [ITabPositionType](#itabpositiontype) | top  | 选项卡所在位置                      |
 
 ## Tabs事件
 
-| 事件   | 类型                                  | 说明                  |
-| ------ | ------------------------------------- | --------------------- |
-| change | [BeforeChangeType](#beforechangetype) | activeName 改变时触发 |
+| 事件   | 类型                                     | 说明                  |
+| ------ | ---------------------------------------- | --------------------- |
+| change | `(activeName: string \| number) => void` | activeName 改变时触发 |
 
 ## tabs类型定义
 
 ### ModelValueType
 
 ```ts
-export type ModelValueType = string | number
+export type ModelValueType = string | number | null
 ```
 
 ### ITabsType
@@ -20762,10 +20845,11 @@ export type BeforeChangeType = (id: Active) => boolean
 
 ## Tab参数
 
-| 参数  | 类型                    | 默认 | 说明                                              |
-| ----- | ----------------------- | ---- | ------------------------------------------------- |
-| label | [LabelType](#labeltype) | -    | 选项卡标题                                        |
-| name  | [NameType](#nametype)   | -    | 与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+| 参数     | 类型                    | 默认  | 说明                                              |
+| -------- | ----------------------- | ----- | ------------------------------------------------- |
+| label    | [LabelType](#labeltype) | -     | 选项卡标题                                        |
+| name     | [NameType](#nametype)   | -     | 与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+| disabled | boolean                 | false | 是否禁用该选项卡                                  |
 
 ## tab类型定义
 
@@ -21669,6 +21753,10 @@ const BIZ_HOURS = new Set([9, 10, 11, 12, 13, 14, 15, 16, 17])
 - **showTime 嵌入 DatePicker**：DatePicker 推到 90% 时一并接通。
 - **滚轮 snap**：打开时已可自动滚动到选中项（见上文 "自动滚动到选中"），但鼠标滚轮 / 触控板的 snap-to-cell 吸附交互暂未实现，留给后续。
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。
+
 
 ---
 
@@ -21784,30 +21872,41 @@ const value = ref<[string, string] | null>(null)
 
 ### Props
 
-| 参数            | 类型                                                                  | 默认值       | 说明                                              |
-| --------------- | --------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
-| modelValue      | `[DateValue, DateValue] \| null`                                      | --           | 时间范围元组，支持 `v-model`                      |
-| format          | string                                                                | `''`         | 时间格式（dayjs token）；空时按 `use12Hours` 兜底 |
-| valueFormat     | `'string' \| 'date' \| 'number'`                                      | `'string'`   | `v-model` 输出形态                                |
-| use12Hours      | boolean                                                               | `false`      | 12 小时制                                         |
-| placeholder     | `string \| [string, string]`                                          | --           | 占位文案；元组分别给两端                          |
-| disabled        | `boolean \| [boolean, boolean]`                                       | `false`      | 是否禁用；元组分别锁两端                          |
-| allowEmpty      | `boolean \| [boolean, boolean]`                                       | `false`      | 是否允许该端为空；元组分别配置                    |
-| order           | boolean                                                               | `true`       | start > end 时自动交换                            |
-| separator       | string                                                                | `~`          | 中间分隔符                                        |
-| size            | `'small' \| 'default' \| 'large'`                                     | `'default'`  | 输入框尺寸                                        |
-| status          | `'' \| 'error' \| 'warning' \| ...`                                   | `''`         | 校验状态                                          |
-| placement       | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'`            | `bottomLeft` | 浮层方位                                          |
-| clearable       | boolean                                                               | `true`       | 是否显示清除按钮                                  |
-| showHour        | boolean                                                               | `true`       | 是否显示小时列                                    |
-| showMinute      | boolean                                                               | `true`       | 是否显示分钟列                                    |
-| showSecond      | boolean                                                               | `true`       | 是否显示秒列                                      |
-| hourStep        | number                                                                | `1`          | 小时步进                                          |
-| minuteStep      | number                                                                | `1`          | 分钟步进                                          |
-| secondStep      | number                                                                | `1`          | 秒步进                                            |
-| disabledHours   | `(which: 'start' \| 'end') => number[]`                               | --           | 按 which 区分两端的小时禁用                       |
-| disabledMinutes | `(which: 'start' \| 'end', selectedHour: number) => number[]`         | --           | 按 which + 当前 hour 返回禁用分钟                 |
-| disabledSeconds | `(which: 'start' \| 'end', selectedHour, selectedMinute) => number[]` | --           | 按 which + 时分返回禁用秒                         |
+| 参数              | 类型                                                                  | 默认值       | 说明                                              |
+| ----------------- | --------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| modelValue        | `[DateValue, DateValue] \| null`                                      | --           | 时间范围元组，支持 `v-model`                      |
+| format            | string                                                                | `''`         | 时间格式（dayjs token）；空时按 `use12Hours` 兜底 |
+| valueFormat       | `'string' \| 'date' \| 'number'`                                      | `'string'`   | `v-model` 输出形态                                |
+| use12Hours        | boolean                                                               | `false`      | 12 小时制                                         |
+| placeholder       | `string \| [string, string]`                                          | --           | 占位文案；元组分别给两端                          |
+| disabled          | `boolean \| [boolean, boolean]`                                       | `false`      | 是否禁用；元组分别锁两端                          |
+| allowEmpty        | `boolean \| [boolean, boolean]`                                       | `false`      | 是否允许该端为空；元组分别配置                    |
+| order             | boolean                                                               | `true`       | start > end 时自动交换                            |
+| separator         | string                                                                | `~`          | 中间分隔符                                        |
+| size              | `'small' \| 'default' \| 'large'`                                     | `'default'`  | 输入框尺寸                                        |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`             | `''`         | 校验状态                                          |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'`            | `bottomLeft` | 浮层方位                                          |
+| clearable         | boolean                                                               | `true`       | 是否显示清除按钮                                  |
+| clearIcon         | `string \| VNode`                                                     | --           | 自定义清除图标，也可使用 `clearIcon` 插槽         |
+| suffixIcon        | `string \| VNode`                                                     | --           | 自定义后缀图标，也可使用 `suffixIcon` 插槽        |
+| popupClassName    | string                                                                | `''`         | 浮层附加 class                                    |
+| popupAppendToBody | boolean                                                               | `false`      | 是否将浮层 Teleport 到 body                       |
+| autoFocus         | boolean                                                               | `false`      | 挂载后是否自动聚焦开始时间输入框                  |
+| inputReadOnly     | boolean                                                               | `true`       | 是否将内部输入框设为只读                          |
+| showHour          | boolean                                                               | `true`       | 是否显示小时列                                    |
+| showMinute        | boolean                                                               | `true`       | 是否显示分钟列                                    |
+| showSecond        | boolean                                                               | `true`       | 是否显示秒列                                      |
+| hourStep          | number                                                                | `1`          | 小时步进                                          |
+| minuteStep        | number                                                                | `1`          | 分钟步进                                          |
+| secondStep        | number                                                                | `1`          | 秒步进                                            |
+| disabledHours     | `(which: 'start' \| 'end') => number[]`                               | --           | 按 which 区分两端的小时禁用                       |
+| disabledMinutes   | `(which: 'start' \| 'end', selectedHour: number) => number[]`         | --           | 按 which + 当前 hour 返回禁用分钟                 |
+| disabledSeconds   | `(which: 'start' \| 'end', selectedHour, selectedMinute) => number[]` | --           | 按 which + 时分返回禁用秒                         |
+| showNow           | boolean                                                               | `true`       | 是否显示“此刻”快捷操作                            |
+| showOk            | boolean                                                               | `true`       | 是否显示确认按钮                                  |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `outlined`   | 输入框形态                                        |
+| classNames        | `{ root?: string }`                                                   | --           | 根节点语义化 class                                |
+| styles            | `{ root?: CSSProperties }`                                            | --           | 根节点语义化样式                                  |
 
 ### Events
 
@@ -21816,6 +21915,15 @@ const value = ref<[string, string] | null>(null)
 | update:modelValue | `(value: [...] \| null)`      | 任一端变更或清除                   |
 | change            | `(value, [startStr, endStr])` | 选中或清除时（带格式化字符串元组） |
 | open-change       | `(open: boolean)`             | 任一端面板打开 / 关闭              |
+| focus             | --                            | 任一端输入框获得焦点               |
+| blur              | --                            | 任一端输入框失去焦点               |
+
+### Slots
+
+| 插槽名     | 说明           |
+| ---------- | -------------- |
+| clearIcon  | 自定义清除图标 |
+| suffixIcon | 自定义后缀图标 |
 
 
 ---
@@ -22462,7 +22570,7 @@ function log(type) {
 | popper-class              | 浮层根节点 class                                   | string                                       | —      |
 | trigger                   | 触发方式                                           | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
 | disabled                  | 是否禁用                                           | boolean                                      | false  |
-| offset                    | 距触发器的偏移量（px）                             | number                                       | 8      |
+| offset                    | 距触发器的偏移量（px）                             | number                                       | 6      |
 | enterable                 | 鼠标是否可进入到 tooltip 中                        | boolean                                      | true   |
 | raw-content               | 是否将 content 作为 HTML 字符串处理                | boolean                                      | false  |
 | fresh                     | 关闭后是否销毁内部内容                             | boolean                                      | false  |
@@ -23247,6 +23355,10 @@ type TreeDropPosition = 'before' | 'inside' | 'after'
 - `loadData` 完成后由消费者直接修改原 `node.children`，组件通过 reactive 检测重新平铺。
 - `drop` 事件**不会**自动改 `data`——业务实现移动逻辑。
 
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`node`、`switcher`、`label`。
+
 
 ---
 
@@ -23756,6 +23868,10 @@ import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT }
 
 - **showCheckedStrategy**：多选 checkable 模式下，输出的 v-model 总是 `c-tree` 的 `checkedKeys` 全集；不暴露 `SHOW_PARENT` / `SHOW_CHILD` / `SHOW_ALL` 切换。常量符号已顶层 export，未来接入实际逻辑后即可直接使用。
 - **半选 v-model 输出**：多选模式 v-model 不携带 `halfCheckedKeys`（业务需要时可监听 `c-tree` 的 check 事件自取）。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`inputWrap`、`popup`。
 
 
 ---
