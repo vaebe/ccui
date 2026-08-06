@@ -332,12 +332,12 @@ const boxRef = ref(null)
 
 ### Props
 
-| 参数         | 类型                                                           | 默认值      | 说明                                                                            |
-| ------------ | -------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------- |
-| offsetTop    | number                                                         | `0`         | 距离窗口（或目标容器）顶部多少像素后开始固定。`offsetBottom` 未传时启用顶部模式 |
-| offsetBottom | number                                                         | `undefined` | 距离窗口（或目标容器）底部多少像素后开始固定。设置该值则忽略 `offsetTop`        |
-| target       | `string \| HTMLElement \| () => HTMLElement \| Window \| null` | `window`    | 滚动容器。可传 CSS 选择器、DOM 节点或返回 DOM 节点的函数                        |
-| zIndex       | number                                                         | `10`        | 固定时元素的 `z-index`                                                          |
+| 参数         | 类型                                                                       | 默认值      | 说明                                                                            |
+| ------------ | -------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------- |
+| offsetTop    | number                                                                     | `0`         | 距离窗口（或目标容器）顶部多少像素后开始固定。`offsetBottom` 未传时启用顶部模式 |
+| offsetBottom | number                                                                     | `undefined` | 距离窗口（或目标容器）底部多少像素后开始固定。设置该值则忽略 `offsetTop`        |
+| target       | `string \| HTMLElement \| Window \| (() => HTMLElement \| Window \| null)` | `window`    | 滚动容器。可传 CSS 选择器、DOM 节点、Window 或返回目标节点的函数                |
+| zIndex       | number                                                                     | `10`        | 固定时元素的 `z-index`                                                          |
 
 ### Events
 
@@ -3220,14 +3220,15 @@ const right = ref(dayjs().add(1, 'month').format('YYYY-MM-DD'))
 
 ### Props
 
-| 参数        | 类型                                        | 默认值         | 说明                                                                           |
-| ----------- | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------ |
-| modelValue  | `string \| number \| Date \| Dayjs \| null` | --             | 选中日期（v-model）；`null` 回退到今天                                         |
-| format      | string                                      | `'YYYY-MM-DD'` | 字符串输入解析模板 + `valueFormat='string'` 时的输出模板（dayjs format token） |
-| valueFormat | `'string' \| 'date' \| 'number'`            | `'string'`     | v-model 输出协议：字符串 / 原生 `Date` / 毫秒级 timestamp                      |
-| readOnly    | boolean                                     | `false`        | 只读模式                                                                       |
-| classNames  | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM className 注入                                                      |
-| styles      | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM style 注入                                                          |
+| 参数         | 类型                                        | 默认值         | 说明                                                                           |
+| ------------ | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| modelValue   | `string \| number \| Date \| Dayjs \| null` | --             | 选中日期（v-model）；`null` 回退到今天                                         |
+| format       | string                                      | `'YYYY-MM-DD'` | 字符串输入解析模板 + `valueFormat='string'` 时的输出模板（dayjs format token） |
+| valueFormat  | `'string' \| 'date' \| 'number'`            | `'string'`     | v-model 输出协议：字符串 / 原生 `Date` / 毫秒级 timestamp                      |
+| readOnly     | boolean                                     | `false`        | 只读模式                                                                       |
+| disabledDate | `(current: Dayjs) => boolean`               | --             | 返回 `true` 时该日期不可选择                                                   |
+| classNames   | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM className 注入                                                      |
+| styles       | `{ root?, header?, body?, cell? }`          | --             | 语义化 DOM style 注入                                                          |
 
 ### Events
 
@@ -6634,6 +6635,7 @@ const timeConfig = {
 `disabledTime(current)` 接当前编辑日期（pending）作为入参，返回 `{ disabledHours, disabledMinutes, disabledSeconds }`。其中 `disabledMinutes` 接 `hour`、`disabledSeconds` 接 `hour + minute`，方便实现「8:00 后才可选 / 仅整点」等业务约束。
 
 与 `showTime.disabledHours / Minutes / Seconds`（静态）取并集 —— 静态规则用作全表禁用，动态规则按 pending 时间联动。
+只有 `showTime.format` 实际显示的时间列会参与确认校验：小时始终参与，未显示分钟或秒时，对应禁用规则不会阻止提交。
 
 :::demo
 
@@ -6766,6 +6768,7 @@ const value = ref('')
 ## presets 预设快捷项
 
 `presets` 在面板左侧渲染一列快捷项，`label` / `value` 均支持函数形式延迟求值，便于「今天 / 昨天」这种相对时刻。
+快捷值同样受 `minDate` / `maxDate` / `disabledDate` 约束；`picker="week"` 会先归一到周起始日，再检查并提交。
 
 :::demo
 
@@ -6992,7 +6995,7 @@ const value = ref('')
 | popupAppendToBody | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                                                                                                                            |
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                                                                                                                                                                                                                                  |
 | autoFocus         | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                                                                                                                                                                                                                                                           |
-| inputReadOnly     | boolean                                                    | `true`                  | 输入框只读（不允许键盘输入日期，仅通过面板选择）                                                                                                                                                                                                                                                  |
+| inputReadOnly     | boolean                                                    | `true`                  | 输入框是否只读；设为 `false` 后可按 `format` 严格录入，change / blur 时提交合法且未被禁用的值，无效输入会恢复为当前受控值；外部 `modelValue` / `format` / `picker` 更新或切回只读时会覆盖未提交草稿                                                                                               |
 | transitionName    | string                                                     | `ccui-date-picker-fade` | 浮层过渡名                                                                                                                                                                                                                                                                                        |
 | picker            | `'date' \| 'week' \| 'month' \| 'year' \| 'quarter'`       | `'date'`                | 选择粒度；面板形态、`format` 兜底与 emit 值随之变化                                                                                                                                                                                                                                               |
 | showTime          | `boolean \| TimeShowConfig`                                | `false`                 | 仅 `picker="date"` 生效；开启后面板追加时间选择列与「此刻 / 确定」footer。`TimeShowConfig` 支持 `format`（默认 `'HH:mm:ss'`，含 `m` 显示分列、含 `s` 显示秒列）、`defaultValue`、`hourStep / minuteStep / secondStep`、`disabledHours / disabledMinutes / disabledSeconds`、`hideDisabledOptions` |
@@ -14448,7 +14451,7 @@ const bottoms = ['bottom-start', 'bottom', 'bottom-end']
 
 <style scoped>
 .demo-popover-placement {
-  width: 460px;
+  width: min(460px, 100%);
   margin: 0 auto;
 }
 .demo-popover-placement .row {
