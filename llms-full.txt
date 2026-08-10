@@ -1123,6 +1123,7 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | options                  | `(string \| number \| { value, label?, disabled? })[]`     | `[]`                      | 候选项；string/number 形态的 label = value       |
 | placeholder              | string                                                     | --                        | 占位文案                                         |
 | disabled                 | boolean                                                    | `false`                   | 是否禁用                                         |
+| readonly                 | boolean                                                    | `false`                   | 是否只读；只读时不打开候选浮层                   |
 | allowClear               | boolean                                                    | `false`                   | 显示一键清空按钮                                 |
 | clearIcon                | `string \| VNode`                                          | --                        | 自定义清除图标，也可使用 `clearIcon` 插槽        |
 | size                     | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                       |
@@ -1145,23 +1146,23 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 
 ### Events
 
-| 事件名            | 回调签名                                                | 触发时机                            |
-| ----------------- | ------------------------------------------------------- | ----------------------------------- |
-| update:modelValue | `(value: string \| number)`                             | 输入或选中时                        |
-| change            | `(value: string \| number)`                             | 同 update:modelValue                |
-| search            | `(keyword: string)`                                     | 同 update:modelValue（search 别名） |
-| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时                        |
-| open-change       | `(open: boolean)`                                       | 浮层打开 / 关闭时                   |
-| focus             | `(e: FocusEvent)`                                       | 输入框聚焦                          |
-| blur              | `(e: FocusEvent)`                                       | 输入框失焦                          |
+| 事件名            | 回调签名                                                | 触发时机                                       |
+| ----------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| update:modelValue | `(value: string \| number)`                             | 输入或选中时                                   |
+| change            | `(value: string \| number)`                             | 同 update:modelValue                           |
+| search            | `(keyword: string)`                                     | 输入、选择或清除后触发；输入法组合结束后才触发 |
+| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时                                   |
+| open-change       | `(open: boolean)`                                       | 浮层打开 / 关闭时                              |
+| focus             | `(e: FocusEvent)`                                       | 输入框聚焦                                     |
+| blur              | `(e: FocusEvent)`                                       | 输入框失焦                                     |
 
 ### Slots
 
-| 名称      | 参数                                                                    | 说明                        |
-| --------- | ----------------------------------------------------------------------- | --------------------------- |
-| option    | `{ option: AutoCompleteOption, index: number }`                         | 自定义单项渲染              |
-| trigger   | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
-| clearIcon | —                                                                       | 自定义清除图标              |
+| 名称      | 参数                                                                                                                    | 说明                                                                         |
+| --------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| option    | `{ option: AutoCompleteOption, index: number }`                                                                         | 自定义单项渲染                                                               |
+| trigger   | `{ value, onInput, onFocus, onBlur, onKeydown, onCompositionstart, onCompositionend, placeholder, disabled, readonly }` | 自定义输入框（如 textarea）；需透传只读与 composition 事件以保持完整输入行为 |
+| clearIcon | —                                                                                                                       | 自定义清除图标                                                               |
 
 ## 已知限制（未交付）
 
@@ -5108,14 +5109,15 @@ function beforeChange(isChecked, label) {
 
 ### CheckBox Props
 
-| 参数         | 类型                                                             | 默认值  | 说明                                                    |
-| ------------ | ---------------------------------------------------------------- | ------- | ------------------------------------------------------- |
-| modelValue   | boolean                                                          | —       | 必选，单独使用时绑定布尔；group 内由 group 接管         |
-| label        | `string \| number \| boolean`                                    | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值 |
-| name         | string                                                           | `''`    | 透传给原生 checkbox 的 `name` 属性                      |
-| disabled     | boolean                                                          | `false` | 是否禁用                                                |
-| color        | string                                                           | —       | 自定义选中色                                            |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —       | 切换前的钩子                                            |
+| 参数          | 类型                                                                                  | 默认值  | 说明                                                       |
+| ------------- | ------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------- |
+| modelValue    | boolean                                                                               | —       | 必选，单独使用时绑定布尔；group 内由 group 接管            |
+| label         | `string \| number \| boolean`                                                         | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值    |
+| name          | string                                                                                | `''`    | 透传给原生 checkbox 的 `name` 属性                         |
+| disabled      | boolean                                                                               | `false` | 是否禁用                                                   |
+| indeterminate | boolean                                                                               | `false` | 是否显示半选状态；原生状态和 `aria-checked="mixed"` 会同步 |
+| color         | string                                                                                | —       | 自定义选中色                                               |
+| beforeChange  | `(isChecked: boolean, v: string \| number \| boolean) => boolean \| Promise<boolean>` | —       | 切换前的钩子；拒绝 Promise 时阻止切换                      |
 
 ### CheckBox Events
 
@@ -5125,19 +5127,20 @@ function beforeChange(isChecked, label) {
 
 ### CheckBoxGroup Props
 
-| 参数         | 类型                                                             | 默认值     | 说明                       |
-| ------------ | ---------------------------------------------------------------- | ---------- | -------------------------- |
-| modelValue   | `Array<string \| number>`                                        | `[]`       | 已选项数组，支持 `v-model` |
-| disabled     | boolean                                                          | `false`    | 整组禁用                   |
-| color        | string                                                           | —          | 整组的选中色               |
-| direction    | `'row' \| 'column'`                                              | `'column'` | 排列方向                   |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —          | 切换前的钩子               |
+| 参数         | 类型                                                                                  | 默认值     | 说明                                        |
+| ------------ | ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------- |
+| modelValue   | `Array<string \| number \| boolean>`                                                  | `[]`       | 已选项数组，支持 `v-model`                  |
+| name         | string                                                                                | `''`       | 统一透传给组内未设置 `name` 的原生 checkbox |
+| disabled     | boolean                                                                               | `false`    | 整组禁用                                    |
+| color        | string                                                                                | —          | 整组的选中色                                |
+| direction    | `'row' \| 'column'`                                                                   | `'column'` | 排列方向                                    |
+| beforeChange | `(isChecked: boolean, v: string \| number \| boolean) => boolean \| Promise<boolean>` | —          | 切换前的钩子；动态更新会立即生效            |
 
 ### CheckBoxGroup Events
 
-| 事件   | 回调签名             | 说明             |
-| ------ | -------------------- | ---------------- |
-| change | `(values: string[])` | 选中项改变时触发 |
+| 事件   | 回调签名                                       | 说明             |
+| ------ | ---------------------------------------------- | ---------------- |
+| change | `(values: Array<string \| number \| boolean>)` | 选中项改变时触发 |
 
 ### Slots
 
@@ -5977,6 +5980,15 @@ const rules = { brand: [{ required: true, message: '请选择品牌色', trigger
 ```
 
 :::
+
+## 键盘与焦点
+
+- 默认触发器以及自定义 `trigger` 均可通过 `Enter` / `Space` 打开面板。
+- 面板打开后焦点进入饱和度/明度区域；方向键调整数值，按住 `Shift` 时使用较大步长。
+- `Escape` 关闭面板并把焦点恢复到触发器。焦点移出整个组件后会触发表单的 blur 校验。
+- 清除按钮是独立的原生按钮，可通过 Tab 聚焦并用键盘清空颜色。
+
+传入自定义 `trigger` 时，组件会在外层触发节点补齐 button 语义、`tabindex`、`aria-expanded`、`aria-controls` 和禁用状态；slot 内容应避免再嵌套交互元素。
 
 ## Variants
 
@@ -11229,7 +11241,7 @@ const value = ref(undefined)
 
 ## 监听 change 事件
 
-`change` 返回当前值与变更前的旧值两个参数，方便埋点 / 撤销栈等场景。
+`input` 会随每次合法输入更新，`change` 在输入通过原生 change（通常是失焦）或按 Enter 提交时触发一次，并返回本次编辑后的值与编辑前的旧值两个参数，方便埋点 / 撤销栈等场景。上下方向键和控制按钮会立即提交。
 
 :::demo
 
@@ -11320,7 +11332,7 @@ const price = ref(0)
 
 ## 正则限制 reg
 
-`reg` 接受 RegExp 或字符串，输入时不匹配的字符会被过滤；常用于「只允许正整数」「只允许非负数」之类的约束。
+`reg` 接受 RegExp 或字符串；整段输入不匹配时会恢复为上一次合法显示值，常用于「只允许正整数」「只允许非负数」之类的约束。
 
 :::demo
 
@@ -11469,6 +11481,14 @@ const v3 = ref(0)
 | getValue | 获取当前值                    | —                     | `number \| undefined` |
 | setValue | 设置值（受 min/max/精度约束） | `number \| undefined` | `void`                |
 
+在 `disabled` 或 `readonly` 状态下，`increase` / `decrease` 不会修改值。
+
+## 原生输入属性与无障碍
+
+未被组件声明的原生输入属性（例如 `name`、`id`、`form`、`autocomplete`、`aria-label`）会透传到内部 `<input>`；`class` 和 `style` 仍作用于组件根节点。内部输入使用 `spinbutton` 语义，自动提供有效的 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 与格式化后的 `aria-valuetext`。默认无限边界不会输出无效的 `Infinity` ARIA 值。
+
+控制按钮不增加额外 Tab 停靠点；聚焦输入后可使用 ↑ / ↓ 步进，并使用 Enter 提交当前编辑值。
+
 ## 语义化 DOM
 
 `classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`controls`。
@@ -11590,7 +11610,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-input-otp v-model="v1" :length="6" :formatter="upper" />
+  <c-input-otp v-model="v1" type="text" :length="6" :formatter="upper" />
   <c-input-otp v-model="v2" :length="6" :formatter="digit" style="margin-top: 12px" />
 </template>
 ```
@@ -11626,26 +11646,29 @@ export default defineComponent({
 
 ## InputOtp 参数
 
-| 参数         | 类型                            | 默认    | 说明                                         |
-| ------------ | ------------------------------- | ------- | -------------------------------------------- |
-| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model         |
-| defaultValue | string                          | --      | 非受控初值                                   |
-| length       | number                          | 6       | 单元格数量                                   |
-| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示 |
-| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用               |
-| autoFocus    | boolean                         | false   | 挂载时聚焦首格                               |
-| disabled     | boolean                         | false   | 整体禁用                                     |
-| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                         |
-| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                     |
+| 参数         | 类型                            | 默认    | 说明                                          |
+| ------------ | ------------------------------- | ------- | --------------------------------------------- |
+| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model          |
+| defaultValue | string                          | --      | 非受控初值                                    |
+| length       | number                          | 6       | 单元格数量；取整并限制在 1–64                 |
+| type         | 'number' \| 'text'              | number  | 移动端软键盘类型；字符过滤仍由 formatter 控制 |
+| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示  |
+| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用                |
+| autoFocus    | boolean                         | false   | 挂载时聚焦首格                                |
+| disabled     | boolean                         | false   | 整体禁用                                      |
+| readOnly     | boolean                         | false   | 只读；仍可聚焦和选择                          |
+| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                          |
+| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                      |
 
 ## InputOtp 事件
 
-| 事件名            | 参数               | 说明                                     |
-| ----------------- | ------------------ | ---------------------------------------- |
-| update:modelValue | value              | v-model                                  |
-| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号 |
-| focus             | event              | 任一 cell 获得焦点                       |
-| blur              | event              | 任一 cell 失去焦点                       |
+| 事件名            | 参数               | 说明                                       |
+| ----------------- | ------------------ | ------------------------------------------ |
+| update:modelValue | value              | v-model                                    |
+| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号   |
+| complete          | value              | 所有 cell 填满时触发；同一完成值仅触发一次 |
+| focus             | event              | 焦点从组件外进入整个 OTP group             |
+| blur              | event              | 焦点离开整个 OTP group                     |
 
 ## 行为说明
 
@@ -11653,7 +11676,8 @@ export default defineComponent({
 - **Backspace**：当前格有值 → 清掉；当前格为空且不在首格 → 回到上一格并清掉。
 - **ArrowLeft / ArrowRight**：显式跨格焦点。
 - **`autocomplete="one-time-code"`**：首格设置该属性，配合 iOS / Android 系统自动填充短信验证码。
-- **`inputmode="numeric"`**：移动端默认弹出数字键盘。
+- **移动端键盘**：`type="number"` 使用 `inputmode="numeric"`，`type="text"` 使用文本键盘；字符过滤请使用 `formatter`。
+- **焦点事件**：cell 之间移动不会重复触发 `focus` / `blur`；仅进入或离开整个组件时触发。
 
 
 ---
@@ -11785,6 +11809,8 @@ export default defineComponent({
 
 `clearable` 开启后，清除会同时 emit `@search('')`。
 
+清除按钮支持 Enter/Space，并会在清除后把焦点归还输入框。中文等输入法组合期间不会提交中间值，也不会因为组合确认键误触发搜索。
+
 :::demo
 
 ```vue
@@ -11814,13 +11840,17 @@ export default defineComponent({
 | defaultValue | string                          | --      | 非受控初值                                                                         |
 | placeholder  | string                          | --      | 占位符                                                                             |
 | enterButton  | boolean \| string \| VNode      | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
-| loading      | boolean                         | false   | 搜索中状态，按钮变 disabled                                                        |
+| loading      | boolean                         | false   | 搜索中状态，搜索入口暂停；清除仍更新值但不会触发 search                            |
 | size         | 'large' \| 'default' \| 'small' | default | 尺寸                                                                               |
 | disabled     | boolean                         | false   | 整体禁用                                                                           |
 | readonly     | boolean                         | false   | 只读                                                                               |
 | clearable    | boolean                         | false   | 清除按钮，清除时同步 emit @search('')                                              |
 | maxLength    | number                          | --      | 最大长度                                                                           |
 | status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                                                           |
+
+原生输入属性（例如 `name`、`autocomplete`、`aria-label`）会透传到内部 `input`；外部 `class` 和 `style` 仍作用于组件根节点。位于 FormItem 内时，组件会继承校验状态及错误描述，并在值变化和组件失焦时触发对应校验。
+
+> 兼容说明：`showPassword`、`prepend`、`append`、`showCount`、`variant` 曾随 Input props 一并暴露，因此当前仍保留类型和运行时识别，避免升级破坏；InputSearch 不实现这些效果，现已弃用，请勿在新代码中使用。后续只会在破坏性版本中移除。
 
 ## InputSearch 事件
 
@@ -12589,6 +12619,7 @@ const opts = ['alice', 'bob', 'charlie']
 | split           | string                                                   | `' '`        | 选中后追加的分隔符                                |
 | placeholder     | string                                                   | --           | 占位文案                                          |
 | disabled        | boolean                                                  | `false`      | 是否禁用                                          |
+| readonly        | boolean                                                  | `false`      | 是否只读；只读时不打开候选浮层                    |
 | rows            | number                                                   | `3`          | textarea 行数                                     |
 | filterOption    | `boolean \| (input, option) => boolean`                  | `true`       | 过滤逻辑                                          |
 | caseSensitive   | boolean                                                  | `false`      | 默认过滤是否区分大小写                            |
@@ -12599,6 +12630,8 @@ const opts = ['alice', 'bob', 'charlie']
 | searchDebounce  | number                                                   | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                  |
 | variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态                                  |
 | status          | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传                     |
+| classNames      | `Record<'root' \| 'textarea' \| 'popup', string>`        | --           | 语义化 DOM 类名                                   |
+| styles          | `Record<'root' \| 'textarea' \| 'popup', CSSProperties>` | --           | 语义化 DOM 样式                                   |
 
 ### Events
 
@@ -15284,7 +15317,7 @@ onBeforeUnmount(() => timer && clearInterval(timer))
 
 ## 基本使用
 
-直接 `v-model` 到字符串，与每个 `<c-radio>` 的 `label` 比对决定选中状态。
+将 `v-model` 与每个 `<c-radio>` 的 `label` 比对决定选中状态；值可以是字符串、数字或布尔值。
 
 :::demo
 
@@ -15475,38 +15508,43 @@ function onChange(val) {
 
 :::
 
+## 键盘与表单
+
+RadioGroup 会为组内原生 radio 使用同一个 `name`：Tab 进入当前选中项后，可使用方向键切换选项，并用 Space 选择。向 RadioGroup 传入 `name` 后，选中值会以该字段名随原生表单提交；未传入时组件会自动生成分组名，需要读取原生 `FormData` 时建议显式传入稳定名称。
+
 ## API
 
 ### Radio Props
 
-| 参数         | 类型               | 默认值  | 说明                                                        |
-| ------------ | ------------------ | ------- | ----------------------------------------------------------- |
-| modelValue   | `string \| number` | —       | 必选，绑定值（与 `label` 比较决定是否选中），支持 `v-model` |
-| label        | `string \| number` | `''`    | 必选，本项的值                                              |
-| name         | string             | `''`    | 原生 `name` 属性                                            |
-| disabled     | boolean            | `false` | 是否禁用                                                    |
-| beforeChange | `BeforeChangeType` | —       | 切换前的钩子，返回 `false` 阻止切换                         |
+| 参数         | 类型                          | 默认值  | 说明                                                   |
+| ------------ | ----------------------------- | ------- | ------------------------------------------------------ |
+| modelValue   | `string \| number \| boolean` | —       | 绑定值（与 `label` 比较决定是否选中），支持 `v-model`  |
+| label        | `string \| number \| boolean` | `''`    | 本项的值                                               |
+| name         | string                        | `''`    | 独立使用时的原生 `name`；组内使用 RadioGroup 的 `name` |
+| disabled     | boolean                       | `false` | 是否禁用                                               |
+| beforeChange | `BeforeChangeType`            | —       | 切换前的钩子，返回 `false` 或拒绝 Promise 时阻止切换   |
 
 ### Radio Events
 
-| 事件   | 回调签名          | 说明         |
-| ------ | ----------------- | ------------ |
-| change | `(value: string)` | 值改变时触发 |
+| 事件   | 回调签名                                       | 说明         |
+| ------ | ---------------------------------------------- | ------------ |
+| change | `(value: string \| number \| boolean) => void` | 值改变时触发 |
 
 ### RadioGroup Props
 
-| 参数         | 类型               | 默认值     | 说明                             |
-| ------------ | ------------------ | ---------- | -------------------------------- |
-| modelValue   | `string \| number` | —          | 必选，被选中的值，支持 `v-model` |
-| disabled     | boolean            | `false`    | 整组禁用                         |
-| direction    | `DirectionType`    | `'column'` | 排列方向（`row` / `column`）     |
-| beforeChange | `BeforeChangeType` | —          | 切换前的钩子，返回 `false` 阻止  |
+| 参数         | 类型                          | 默认值     | 说明                                    |
+| ------------ | ----------------------------- | ---------- | --------------------------------------- |
+| modelValue   | `string \| number \| boolean` | —          | 被选中的值，支持 `v-model`              |
+| name         | string                        | `''`       | 组内原生 radio 的 `name`，用于表单提交  |
+| disabled     | boolean                       | `false`    | 整组禁用                                |
+| direction    | `DirectionType`               | `'column'` | 排列方向（`row` / `column`）            |
+| beforeChange | `BeforeChangeType`            | —          | 切换前的钩子，返回 `false` 或拒绝时阻止 |
 
 ### RadioGroup Events
 
-| 事件   | 回调签名          | 说明         |
-| ------ | ----------------- | ------------ |
-| change | `(value: string)` | 值改变时触发 |
+| 事件   | 回调签名                                       | 说明         |
+| ------ | ---------------------------------------------- | ------------ |
+| change | `(value: string \| number \| boolean) => void` | 值改变时触发 |
 
 ### Slots
 
@@ -15517,7 +15555,8 @@ function onChange(val) {
 ### 类型定义
 
 ```ts
-type BeforeChangeType = (value: string) => boolean | Promise<boolean>
+type RadioValue = string | number | boolean
+type BeforeChangeType = (value: RadioValue) => boolean | Promise<boolean>
 type DirectionType = 'row' | 'column'
 ```
 
@@ -15939,7 +15978,7 @@ const value = ref([])
 | popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                               |
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点                                                                                                                                                                                     |
 | autoFocus         | boolean                                                    | `false`                   | 挂载后自动 focus 起始输入框                                                                                                                                                                          |
-| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读                                                                                                                                                                                           |
+| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读；设为 `false` 后可按 `format` 手动录入，change / blur 时提交，非法值会恢复原显示                                                                                                          |
 | transitionName    | string                                                     | `ccui-range-picker-fade`  | 浮层过渡名                                                                                                                                                                                           |
 | weekStart         | `0 \| 1`                                                   | `0`                       | 周起始：`0` 周日开头，`1` 周一开头                                                                                                                                                                   |
 | presets           | `RangePresetItem[]`                                        | `[]`                      | 左侧快捷项；每项 `{ label, value }`，`value` 可为元组或返回元组的函数；空数组不渲染 rail                                                                                                             |
@@ -15957,7 +15996,7 @@ const value = ref([])
 
 ## 已知限制（未交付）
 
-- **键盘导航**：方向键 / Enter 切换尚未实现。
+- **日期网格键盘导航**：输入框已支持 Enter / ArrowDown 打开、Escape 关闭与焦点恢复；日期格之间的方向键移动和 Enter 选中尚未实现。
 - **响应式单面板**：移动端 PC 双面板会溢出，自动切单面板留给后续。
 
 ## 语义化 DOM
@@ -19412,24 +19451,28 @@ function onChange(val: boolean) {
 
 ### Props
 
-| 参数              | 类型                          | 默认值      | 说明               |
-| ----------------- | ----------------------------- | ----------- | ------------------ |
-| modelValue        | `boolean \| string \| number` | `false`     | v-model 绑定值     |
-| checkedValue      | `boolean \| string \| number` | `true`      | 选中时的值         |
-| uncheckedValue    | `boolean \| string \| number` | `false`     | 未选中时的值       |
-| disabled          | boolean                       | `false`     | 禁用               |
-| loading           | boolean                       | `false`     | 加载状态           |
-| size              | `'default' \| 'small'`        | `'default'` | 大小               |
-| checkedChildren   | string                        | `--`        | 选中时显示的内容   |
-| uncheckedChildren | string                        | `--`        | 未选中时显示的内容 |
-| autofocus         | boolean                       | `false`     | 自动聚焦           |
+| 参数              | 类型                                     | 默认值      | 说明                                   |
+| ----------------- | ---------------------------------------- | ----------- | -------------------------------------- |
+| modelValue        | `boolean \| string \| number`            | `false`     | v-model 绑定值                         |
+| checkedValue      | `boolean \| string \| number`            | `true`      | 选中时的值                             |
+| uncheckedValue    | `boolean \| string \| number`            | `false`     | 未选中时的值                           |
+| disabled          | boolean                                  | `false`     | 禁用                                   |
+| loading           | boolean                                  | `false`     | 加载状态                               |
+| beforeChange      | `(value) => boolean \| Promise<boolean>` | `--`        | 切换前守卫，返回或解析为 `true` 时提交 |
+| size              | `'default' \| 'medium' \| 'small'`       | `'default'` | 大小，`medium` 与 `default` 等价       |
+| checkedChildren   | string                                   | `--`        | 选中时显示的内容                       |
+| uncheckedChildren | string                                   | `--`        | 未选中时显示的内容                     |
+| autofocus         | boolean                                  | `false`     | 自动聚焦                               |
 
 ### Events
 
-| 事件名 | 回调签名                 | 触发时机       |
-| ------ | ------------------------ | -------------- |
-| change | `(value, e: MouseEvent)` | 状态改变时触发 |
-| click  | `(e: MouseEvent)`        | 点击时触发     |
+| 事件名 | 回调签名                 | 触发时机           |
+| ------ | ------------------------ | ------------------ |
+| change | `(value, e: MouseEvent)` | 状态改变时触发     |
+| click  | `(e: MouseEvent)`        | 点击切换成功时触发 |
+| blur   | `(e: FocusEvent)`        | 失去焦点时触发     |
+
+`beforeChange` 等待期间 Switch 保持不可切换；守卫抛错、Promise rejection 或返回 `false` 时不触发更新事件。
 
 
 ---
@@ -19940,7 +19983,7 @@ function onCreate() {
 
 ## change 事件全量追踪
 
-`@change` 在过滤 / 排序任意一项变化时触发，回调签名 `(filters, sorter, currentData)`。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
+`@change` 在过滤 / 排序任意一项变化时触发，回调签名 `(filters, sorter, currentData)`。受控列尚未回写时，参数已反映本次请求的下一状态。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
 
 :::demo
 
@@ -21428,6 +21471,8 @@ const c = ref<number | null>(null)
 
 :::
 
+当需要手动录入时，可设置 `:input-read-only="false"`。输入会按 `format` 严格解析；空输入会清除当前值，格式非法、命中禁用规则或不符合步长的值会恢复为当前受控值。
+
 ## 步长
 
 `hour-step` / `minute-step` / `second-step` 控制各列步长。常见用法：5 分钟一档、30 秒一档。
@@ -21591,11 +21636,11 @@ const value = ref('')
 
 ## 键盘导航
 
-打开面板后 Tab 进入任意 cell（每个 cell 均为 `tabindex=0`），即可使用键盘切换：
+输入框支持 `Enter` / `ArrowDown` 打开、`Escape` 关闭。打开面板后，Tab 会按列进入当前选中项（每列仅一个 roving tab stop），即可使用键盘切换：
 
 - `ArrowUp` / `ArrowDown`：在当前列内上下移动（环绕到首 / 尾）。
 - `Home` / `End`：跳到当前列首项 / 末项。
-- `Enter`：相当于点击「确定」，或在 `show-ok=false` 时关闭面板。
+- `Enter`：相当于点击「确定」；在 `show-ok=false` 时提交当前键盘预览值并关闭面板。
 - `Escape`：关闭面板。
 
 :::demo
@@ -24637,7 +24682,7 @@ const text = ref(
 
 > 文档链接：https://vaebe.github.io/ccui/components/upload/index.html
 
-文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。**组件不内置 HTTP 上传请求** —— 业务侧通过 `update:fileList` 拿到文件后自行发请求并回写状态，组件只负责 UI 与状态同步。
+文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。可以通过 `customRequest` 或 `action` 执行上传；两者均未提供时，业务侧可通过 `update:fileList` 自行发请求并回写状态。
 
 ## 基本使用
 
@@ -24705,7 +24750,7 @@ const list = ref([
 
 ## 多选 + 类型限制
 
-`multiple` 允许多选；`accept` 直接传给 native `<input>`，浏览器会根据 MIME 过滤。
+`multiple` 允许多选；`accept` 会传给 native `<input>`，拖放文件也会按相同的扩展名或 MIME 规则过滤。
 
 :::demo
 
@@ -24863,25 +24908,27 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 
 ### Props
 
-| 参数            | 类型                                                            | 默认值                       | 说明                                                                       |
-| --------------- | --------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------------- |
-| fileList        | `UploadFile[]`                                                  | --                           | 受控文件列表，支持 `v-model:fileList`                                      |
-| defaultFileList | `UploadFile[]`                                                  | `[]`                         | 非受控初始列表                                                             |
-| accept          | string                                                          | `''`                         | 接受的文件类型（传给 native input.accept）                                 |
-| multiple        | boolean                                                         | `false`                      | 是否允许多选                                                               |
-| disabled        | boolean                                                         | `false`                      | 是否禁用                                                                   |
-| maxCount        | number                                                          | `0`                          | 最大文件数；`0` 表示不限                                                   |
-| maxSize         | number                                                          | `0`                          | 单文件最大字节数；`0` 表示不限                                             |
-| beforeUpload    | `(file: File, fileList: File[]) => boolean \| Promise<boolean>` | --                           | 过滤函数（同步/异步）；返回 false 拒收                                     |
-| drag            | boolean                                                         | `false`                      | 是否渲染拖拽区域代替按钮                                                   |
-| showUploadList  | boolean                                                         | `true`                       | 是否渲染文件列表                                                           |
-| listType        | `'text' \| 'picture' \| 'picture-card'`                         | `'text'`                     | 列表展示形态；`picture` 行内显示缩略图；`picture-card` 网格卡片（104×104） |
-| defaultStatus   | `'uploading' \| 'done' \| 'error'`                              | `'done'`                     | 新加文件的初始 status；业务可改为 'uploading' 让组件持续显示加载态         |
-| triggerText     | string                                                          | `点击上传`                   | 默认按钮文案                                                               |
-| dragText        | string                                                          | `点击或拖拽文件到此区域上传` | 拖拽区文案                                                                 |
-| removeText      | string                                                          | `删除`                       | 列表项 × 按钮的 aria-label                                                 |
-| customRequest   | `(options: CustomRequestOptions) => void`                       | --                           | 自定义上传函数（onProgress/onSuccess/onError）                             |
-| action          | string                                                          | `''`                         | 上传地址；未传 customRequest 时用默认 XHR POST                             |
+| 参数            | 类型                                                                                                     | 默认值                       | 说明                                                                       |
+| --------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------------- |
+| fileList        | `UploadFile[]`                                                                                           | --                           | 受控文件列表，支持 `v-model:fileList`                                      |
+| defaultFileList | `UploadFile[]`                                                                                           | `[]`                         | 非受控初始列表                                                             |
+| accept          | string                                                                                                   | `''`                         | 接受的文件类型（传给 native input.accept）                                 |
+| name            | string                                                                                                   | --                           | 原生文件输入的表单字段名                                                   |
+| capture         | `'user' \| 'environment'`                                                                                | --                           | 移动端原生文件输入的采集来源提示                                           |
+| multiple        | boolean                                                                                                  | `false`                      | 是否允许多选                                                               |
+| disabled        | boolean                                                                                                  | `false`                      | 是否禁用                                                                   |
+| maxCount        | number                                                                                                   | `0`                          | 最大文件数；`0` 表示不限                                                   |
+| maxSize         | number                                                                                                   | `0`                          | 单文件最大字节数；`0` 表示不限                                             |
+| beforeUpload    | `(file: File, fileList: File[]) => boolean \| Promise<boolean>`                                          | --                           | 过滤函数（同步/异步）；返回 false 拒收                                     |
+| drag            | boolean                                                                                                  | `false`                      | 是否渲染拖拽区域代替按钮                                                   |
+| showUploadList  | boolean                                                                                                  | `true`                       | 是否渲染文件列表                                                           |
+| listType        | `'text' \| 'picture' \| 'picture-card'`                                                                  | `'text'`                     | 列表展示形态；`picture` 行内显示缩略图；`picture-card` 网格卡片（104×104） |
+| defaultStatus   | `'uploading' \| 'done' \| 'error'`                                                                       | `'done'`                     | 新加文件的初始 status；业务可改为 'uploading' 让组件持续显示加载态         |
+| triggerText     | string                                                                                                   | `点击上传`                   | 默认按钮文案                                                               |
+| dragText        | string                                                                                                   | `点击或拖拽文件到此区域上传` | 拖拽区文案                                                                 |
+| removeText      | string                                                                                                   | `删除`                       | 列表项删除按钮的 aria-label 前缀                                           |
+| customRequest   | `(options: CustomRequestOptions) => void \| UploadRequestHandle \| Promise<void \| UploadRequestHandle>` | --                           | 自定义上传函数；可返回取消句柄，异常会转为 `error` 状态                    |
+| action          | string                                                                                                   | `''`                         | 上传地址；未传 customRequest 时用默认 XHR POST                             |
 
 ### UploadFile
 
@@ -24899,14 +24946,14 @@ const list = ref([{ uid: '1', name: 'preset.txt', status: 'done' }])
 
 ### Events
 
-| 事件名          | 回调签名                                                          | 触发时机                   |
-| --------------- | ----------------------------------------------------------------- | -------------------------- |
-| update:fileList | `(list: UploadFile[])`                                            | 列表变化                   |
-| change          | `(file: UploadFile, list: UploadFile[])`                          | 单文件添加 / 移除时        |
-| remove          | `(file: UploadFile)`                                              | 用户点 × 移除              |
-| reject          | `(file: File, reason: 'maxSize' \| 'maxCount' \| 'beforeUpload')` | 文件被拒收                 |
-| drop            | `(e: DragEvent)`                                                  | 拖拽放下（仅 `drag=true`） |
-| preview         | `(file: UploadFile)`                                              | 点击文件名时触发           |
+| 事件名          | 回调签名                                                                                    | 触发时机                   |
+| --------------- | ------------------------------------------------------------------------------------------- | -------------------------- |
+| update:fileList | `(list: UploadFile[])`                                                                      | 列表变化                   |
+| change          | `(file: UploadFile, list: UploadFile[])`                                                    | 单文件添加 / 移除时        |
+| remove          | `(file: UploadFile)`                                                                        | 用户点 × 移除              |
+| reject          | `(file: File, reason: 'accept' \| 'beforeUpload' \| 'maxCount' \| 'maxSize' \| 'multiple')` | 文件被拒收                 |
+| drop            | `(e: DragEvent)`                                                                            | 拖拽放下（仅 `drag=true`） |
+| preview         | `(file: UploadFile)`                                                                        | 点击文件名时触发           |
 
 ### Slots
 

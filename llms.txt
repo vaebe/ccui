@@ -90,7 +90,7 @@
 - [Tree 树](https://vaebe.github.io/ccui/components/tree/index.html)：层级数据展示与管理：选中、勾选（含父子半选联动）、展开、异步加载、搜索高亮、自定义渲染、拖拽
 - [TreeSelect 树选择](https://vaebe.github.io/ccui/components/tree-select/index.html)：把 `Tree` 嵌进下拉浮层做为选项面板的选择器。`v-model` 在单选模式下是单值（节点 value），多选模式下是 value 数组。多选默认渲染 checkbox（`treeCheckable=true`），关闭后回退到 `c-tree` 的 multiple selectable 模式。fieldNames 与 Cascader/Select 保持一致（`label/value/children/disabled`），内部映射到 `c-tree` 的 `title/key/...`
 - [Typography 排版](https://vaebe.github.io/ccui/components/typography/index.html)：文本内容的基本格式
-- [Upload 上传](https://vaebe.github.io/ccui/components/upload/index.html)：文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。**组件不内置 HTTP 上传请求** —— 业务侧通过 `update:fileList` 拿到文件后自行发请求并回写状态，组件只负责 UI 与状态同步
+- [Upload 上传](https://vaebe.github.io/ccui/components/upload/index.html)：文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。可以通过 `customRequest` 或 `action` 执行上传；两者均未提供时，业务侧可通过 `update:fileList` 自行发请求并回写状态
 - [Util 工具集](https://vaebe.github.io/ccui/components/util/index.html)：vue3-ccui 内部使用的公共工具函数
 - [Watermark 水印](https://vaebe.github.io/ccui/components/watermark/index.html)：为页面或局部容器盖上重复的、平铺的水印。常用于"版权提示 / 数据保密 / 防截图泄露"等场景
 
