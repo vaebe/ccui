@@ -122,7 +122,7 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 ## 外扩与圆角
 
-`outset` 让流光层相对容器边缘向外扩展，`borderWidth` 调整光带粗细，`borderRadius` 决定边框环圆角。
+`outset` 让流光层相对容器边缘向外扩展，`borderWidth` 调整光带粗细，`borderRadius` 决定边框环圆角；较小的 `size` 可以缩短光带，避免在紧凑卡片的拐角处形成过长尾迹。
 
 :::demo
 
@@ -130,7 +130,7 @@ const preset = computed(() => borderBeamPresets[current.value])
 <script setup lang="ts"></script>
 
 <template>
-  <c-border-beam :outset="6" :border-width="2" :border-radius="16" style="width: 240px">
+  <c-border-beam :outset="6" :border-width="2" :border-radius="16" :size="40" style="width: 240px">
     <c-card>外扩 6px、2px 粗光带</c-card>
   </c-border-beam>
 </template>
@@ -142,13 +142,14 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 ### Props
 
-| 参数         | 说明                                                       | 类型                                | 默认值 |
-| ------------ | ---------------------------------------------------------- | ----------------------------------- | ------ |
-| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变 | [BorderBeamColor](#borderbeamcolor) | -      |
-| outset       | 流光层相对容器边缘的外扩距离（number 视为 px）             | `number \| string`                  | `0`    |
-| borderWidth  | 边框 / 光带粗细（px）                                      | `number`                            | `1`    |
-| borderRadius | 容器圆角（px），与被包裹内容保持一致即可严丝合缝           | `number`                            | `8`    |
-| duration     | 跑完一圈的时长（秒）                                       | `number`                            | `6`    |
+| 参数         | 说明                                                           | 类型                                | 默认值 |
+| ------------ | -------------------------------------------------------------- | ----------------------------------- | ------ |
+| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变     | [BorderBeamColor](#borderbeamcolor) | -      |
+| outset       | 流光层相对容器边缘的外扩距离（number 视为 px）                 | `number \| string`                  | `0`    |
+| borderWidth  | 边框 / 光带粗细（px）                                          | `number`                            | `1`    |
+| borderRadius | 容器圆角（px），与被包裹内容保持一致即可严丝合缝               | `number`                            | `8`    |
+| size         | 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px） | `number \| string`                  | `100`  |
+| duration     | 跑完一圈的时长（秒）                                           | `number`                            | `6`    |
 
 ### Slots
 

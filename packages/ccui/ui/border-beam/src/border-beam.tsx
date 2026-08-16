@@ -61,6 +61,7 @@ export default defineComponent({
         '--ccui-bb-outset': toLength(props.outset),
         '--ccui-bb-border-width': `${props.borderWidth}px`,
         '--ccui-bb-radius': `${props.borderRadius}px`,
+        '--ccui-bb-size': toLength(props.size),
         '--ccui-bb-duration': `${props.duration}s`,
       }
       if (beamGradient.value) {

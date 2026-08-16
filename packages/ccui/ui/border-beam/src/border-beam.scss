@@ -1,7 +1,7 @@
 @use '../../style-var/index.scss' as *;
 
-// 实现：mask 取边框环 + offset-path 矩形路径（固定 round 100px，
-// 大圆角让过弯旋转平滑无卡顿）+ offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
+// 实现：mask 取边框环 + size 控制渐变层及平滑转弯路径，
+// 再用 offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
 .#{$cls-prefix}-border-beam {
   position: relative;
   border-radius: var(--ccui-bb-radius);
@@ -35,7 +35,7 @@
           position: absolute;
           top: 0;
           left: 0;
-          width: 100px;
+          width: var(--ccui-bb-size);
           aspect-ratio: 1 / 1;
           opacity: 0.95;
           background-image: var(
@@ -44,7 +44,8 @@
           );
           offset-anchor: 90% 50%;
           offset-distance: 0%;
-          offset-path: rect(0 auto auto 0 round 100px);
+          // 与渐变层使用同一个 size，让较短光带仍沿较缓的路径连续转弯。
+          offset-path: rect(0 auto auto 0 round var(--ccui-bb-size));
           offset-rotate: auto;
           animation: ccui-border-beam-move var(--ccui-bb-duration) linear infinite;
           will-change: offset-distance;

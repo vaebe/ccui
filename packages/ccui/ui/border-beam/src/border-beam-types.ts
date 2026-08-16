@@ -33,6 +33,11 @@ export const borderBeamProps = {
     type: Number,
     default: 8,
   },
+  /** 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px） */
+  size: {
+    type: [Number, String] as PropType<number | string>,
+    default: 100,
+  },
   /** 跑完一圈的时长（秒） */
   duration: {
     type: Number,

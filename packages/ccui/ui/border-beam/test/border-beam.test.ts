@@ -116,6 +116,7 @@ describe('border-beam', () => {
     expect(style).toContain('--ccui-bb-outset: 0px')
     expect(style).toContain('--ccui-bb-border-width: 1px')
     expect(style).toContain('--ccui-bb-radius: 8px')
+    expect(style).toContain('--ccui-bb-size: 100px')
     expect(style).toContain('--ccui-bb-duration: 6s')
   })
 
@@ -125,6 +126,7 @@ describe('border-beam', () => {
         borderWidth: 2,
         borderRadius: 12,
         outset: 4,
+        size: 40,
         duration: 8,
       },
     })
@@ -132,6 +134,7 @@ describe('border-beam', () => {
     expect(style).toContain('--ccui-bb-border-width: 2px')
     expect(style).toContain('--ccui-bb-radius: 12px')
     expect(style).toContain('--ccui-bb-outset: 4px')
+    expect(style).toContain('--ccui-bb-size: 40px')
     expect(style).toContain('--ccui-bb-duration: 8s')
   })
 
@@ -141,6 +144,14 @@ describe('border-beam', () => {
     })
     const style = wrapper.attributes('style') || ''
     expect(style).toContain('--ccui-bb-outset: 1rem')
+  })
+
+  it('accepts string size as-is', () => {
+    const wrapper = mount(BorderBeam, {
+      props: { size: '3rem' },
+    })
+    const style = wrapper.attributes('style') || ''
+    expect(style).toContain('--ccui-bb-size: 3rem')
   })
 
   describe('presets', () => {
