@@ -118,6 +118,53 @@ describe('message', () => {
     expect(typeof message.destroy).toBe('function')
   })
 
+  it('resumes auto close with the remaining duration after hover', async () => {
+    vi.useFakeTimers()
+    const onClose = vi.fn()
+    message.open({ content: 'Remaining', duration: 200, onClose })
+    await nextTick()
+    const item = document.body.querySelector('.ccui-message__item') as HTMLElement
+
+    vi.advanceTimersByTime(120)
+    item.dispatchEvent(new MouseEvent('mouseenter'))
+    vi.advanceTimersByTime(1000)
+    item.dispatchEvent(new MouseEvent('mouseleave'))
+    vi.advanceTimersByTime(79)
+    expect(onClose).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(2)
+    expect(onClose).toHaveBeenCalledTimes(1)
+    vi.useRealTimers()
+  })
+
+  it('closes once when remaining duration reaches zero during hover, while duration=0 stays persistent', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(0))
+    const onClose = vi.fn()
+    message.open({ content: 'Expired', duration: 200, onClose })
+    await nextTick()
+    const expiredItem = document.body.querySelector('.ccui-message__item') as HTMLElement
+
+    vi.setSystemTime(new Date(250))
+    expiredItem.dispatchEvent(new MouseEvent('mouseenter'))
+    expiredItem.dispatchEvent(new MouseEvent('mouseleave'))
+    expiredItem.dispatchEvent(new MouseEvent('mouseleave'))
+    await nextTick()
+    expect(onClose).toHaveBeenCalledTimes(1)
+
+    message.info('Persistent', 0)
+    await nextTick()
+    const persistentItem = Array.from(document.body.querySelectorAll<HTMLElement>('.ccui-message__item')).find((item) =>
+      item.textContent?.includes('Persistent'),
+    )!
+    expect(persistentItem).toBeDefined()
+    persistentItem.dispatchEvent(new MouseEvent('mouseenter'))
+    persistentItem.dispatchEvent(new MouseEvent('mouseleave'))
+    vi.runAllTimers()
+    await nextTick()
+    expect(document.body.textContent).toContain('Persistent')
+    vi.useRealTimers()
+  })
+
   it('reuses existing container for multiple messages', async () => {
     message.info('One', 0)
     message.success('Two', 0)

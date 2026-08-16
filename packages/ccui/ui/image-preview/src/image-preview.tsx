@@ -1,6 +1,7 @@
 import type { ImagePreviewProps, ImagePreviewItem } from './image-preview-types'
-import { computed, defineComponent, h, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
+import { computed, defineComponent, h, nextTick, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { activateOverlay, canUseDom, lockBodyScroll } from '../../shared/utils/overlay'
 import { imagePreviewProps } from './image-preview-types'
 import './image-preview.scss'
 
@@ -26,6 +27,10 @@ export default defineComponent({
     const innerVisible = ref(false)
     const innerCurrent = ref(0)
     const scale = ref(1)
+    const overlayRef = ref<HTMLElement | null>(null)
+    const triggerRef = ref<HTMLElement | null>(null)
+    let releaseOverlay: (() => void) | null = null
+    let releaseScroll: (() => void) | null = null
 
     const visible = computed(() => {
       if (isControlled.value) return !!props.preview?.visible
@@ -59,6 +64,9 @@ export default defineComponent({
       const total = items.value.length
       if (total === 0) return
       const target = ((idx % total) + total) % total
+      if (canUseDom() && document.activeElement instanceof HTMLElement && document.activeElement !== document.body) {
+        triggerRef.value = document.activeElement
+      }
       if (!isControlled.value) {
         innerCurrent.value = target
         innerVisible.value = true
@@ -97,7 +105,7 @@ export default defineComponent({
     const onKeydown = (e: KeyboardEvent) => {
       if (!visible.value) return
       if (e.key === 'Escape') {
-        close()
+        if (!e.defaultPrevented) close()
       } else if (e.key === 'ArrowLeft') {
         prev()
       } else if (e.key === 'ArrowRight') {
@@ -105,14 +113,45 @@ export default defineComponent({
       }
     }
 
+    const activeItem = computed(() => items.value[current.value])
+    const overlayOpen = computed(() => visible.value && !!activeItem.value)
+
     watch(
-      visible,
+      overlayOpen,
       (val) => {
         if (typeof window === 'undefined') return
         if (val) {
+          const activeElement = document.activeElement
+          if (
+            activeElement instanceof HTMLElement &&
+            activeElement !== document.body &&
+            !overlayRef.value?.contains(activeElement)
+          ) {
+            triggerRef.value = activeElement
+          }
           window.addEventListener('keydown', onKeydown)
+          releaseScroll?.()
+          releaseScroll = lockBodyScroll()
+          void nextTick(() => {
+            if (!overlayOpen.value || !overlayRef.value) return
+            releaseOverlay?.()
+            releaseOverlay = activateOverlay({
+              container: overlayRef.value,
+              closeOnEsc: true,
+              onEscape: close,
+            })
+          })
         } else {
           window.removeEventListener('keydown', onKeydown)
+          releaseOverlay?.()
+          releaseOverlay = null
+          releaseScroll?.()
+          releaseScroll = null
+          const trigger = triggerRef.value
+          triggerRef.value = null
+          if (trigger && document.body.contains(trigger)) {
+            trigger.focus({ preventScroll: true })
+          }
         }
       },
       { immediate: true },
@@ -120,9 +159,9 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown)
+      releaseOverlay?.()
+      releaseScroll?.()
     })
-
-    const activeItem = computed(() => items.value[current.value])
 
     const renderThumb = (item: ImagePreviewItem, idx: number) =>
       h('img', {
@@ -130,6 +169,7 @@ export default defineComponent({
         class: ns.e('thumb'),
         src: item.src,
         alt: item.alt ?? '',
+        'aria-label': item.alt || `Preview image ${idx + 1}`,
         // 缩略图作为打开预览的交互元素，需键盘可达（Enter/Space 与点击行为一致）
         tabindex: 0,
         role: 'button',
@@ -153,7 +193,11 @@ export default defineComponent({
                 ? h(
                     'div',
                     {
+                      ref: overlayRef,
                       class: ns.e('mask'),
+                      role: 'dialog',
+                      'aria-modal': 'true',
+                      'aria-label': activeItem.value.alt ? `${activeItem.value.alt} preview` : 'Image preview',
                       onClick: close,
                     },
                     [
@@ -164,12 +208,28 @@ export default defineComponent({
                           onClick: (e: MouseEvent) => e.stopPropagation(),
                         },
                         [
-                          h('button', { onClick: prev, 'aria-label': 'prev', class: ns.e('btn') }, '‹'),
-                          h('button', { onClick: zoomOut, 'aria-label': 'zoom out', class: ns.e('btn') }, '−'),
-                          h('button', { onClick: resetZoom, 'aria-label': 'reset', class: ns.e('btn') }, '⟳'),
-                          h('button', { onClick: zoomIn, 'aria-label': 'zoom in', class: ns.e('btn') }, '+'),
-                          h('button', { onClick: next, 'aria-label': 'next', class: ns.e('btn') }, '›'),
-                          h('button', { onClick: close, 'aria-label': 'close', class: ns.e('btn') }, '×'),
+                          h('button', { type: 'button', onClick: prev, 'aria-label': 'prev', class: ns.e('btn') }, '‹'),
+                          h(
+                            'button',
+                            { type: 'button', onClick: zoomOut, 'aria-label': 'zoom out', class: ns.e('btn') },
+                            '−',
+                          ),
+                          h(
+                            'button',
+                            { type: 'button', onClick: resetZoom, 'aria-label': 'reset', class: ns.e('btn') },
+                            '⟳',
+                          ),
+                          h(
+                            'button',
+                            { type: 'button', onClick: zoomIn, 'aria-label': 'zoom in', class: ns.e('btn') },
+                            '+',
+                          ),
+                          h('button', { type: 'button', onClick: next, 'aria-label': 'next', class: ns.e('btn') }, '›'),
+                          h(
+                            'button',
+                            { type: 'button', onClick: close, 'aria-label': 'close', class: ns.e('btn') },
+                            '×',
+                          ),
                           items.value.length > 1
                             ? h('span', { class: ns.e('counter') }, `${current.value + 1} / ${items.value.length}`)
                             : null,
@@ -190,7 +250,7 @@ export default defineComponent({
       ])
 
     return () => {
-      const children = props.items ? items.value.map((item, idx) => renderThumb(item, idx)) : slots.default?.()
+      const children = slots.default ? slots.default() : items.value.map((item, idx) => renderThumb(item, idx))
 
       return h('div', { class: ns.b() }, [children, renderOverlay()])
     }

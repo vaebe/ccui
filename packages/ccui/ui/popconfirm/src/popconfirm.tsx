@@ -1,8 +1,9 @@
 import type { PopconfirmProps } from './popconfirm-types'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import Popover from '../../popover/src/popover'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { activateOverlay, canUseDom } from '../../shared/utils/overlay'
 import { popconfirmProps } from './popconfirm-types'
 import './popconfirm.scss'
 
@@ -20,7 +21,10 @@ export default defineComponent({
     const externalOpen = computed(() => props.visible)
 
     const popoverRef = ref<{ hide?: () => void } | null>(null)
+    const contentRef = ref<HTMLElement | null>(null)
     const innerVisible = ref(false)
+    let restoreFocusTarget: HTMLElement | null = null
+    let releaseOverlay: (() => void) | null = null
 
     const isControlled = computed(() => externalOpen.value !== undefined)
     const popoverVisible = computed(() => (isControlled.value ? externalOpen.value : innerVisible.value))
@@ -41,6 +45,43 @@ export default defineComponent({
       }
     }
 
+    const restoreTriggerFocus = () => {
+      const target = restoreFocusTarget
+      restoreFocusTarget = null
+      if (!target || !canUseDom() || !document.body.contains(target)) return
+      try {
+        target.focus({ preventScroll: true })
+      } catch {}
+    }
+
+    watch(
+      popoverVisible,
+      (visible) => {
+        if (visible) {
+          if (canUseDom()) {
+            const activeElement = document.activeElement
+            if (activeElement instanceof HTMLElement && activeElement !== document.body)
+              restoreFocusTarget = activeElement
+          }
+          void nextTick(() => {
+            if (!popoverVisible.value || !contentRef.value) return
+            releaseOverlay?.()
+            releaseOverlay = activateOverlay({ container: contentRef.value, closeOnEsc: true, onEscape: close })
+          })
+        } else {
+          releaseOverlay?.()
+          releaseOverlay = null
+          void nextTick(restoreTriggerFocus)
+        }
+      },
+      { immediate: true },
+    )
+
+    onBeforeUnmount(() => {
+      releaseOverlay?.()
+      releaseOverlay = null
+    })
+
     const onConfirm = (e: MouseEvent) => {
       emit('confirm', e)
       close()
@@ -60,6 +101,8 @@ export default defineComponent({
         width={props.width}
         popperClass={ns.b()}
         showArrow={true}
+        closeOnEsc={false}
+        ariaLabel={slots.title ? '确认操作' : props.title || '确认操作'}
         onUpdate:visible={(val: boolean) => {
           if (!isControlled.value) {
             innerVisible.value = val
@@ -69,7 +112,7 @@ export default defineComponent({
         v-slots={{
           default: () => slots.default?.(),
           content: () => (
-            <div class={ns.e('inner')}>
+            <div ref={contentRef} class={ns.e('inner')}>
               <div class={ns.e('header')}>
                 {!props.hideIcon && (
                   <span class={ns.e('icon')} style={props.iconColor ? { color: props.iconColor } : undefined}>
@@ -88,10 +131,10 @@ export default defineComponent({
                   slots.actions({ confirm: onConfirm, cancel: onCancel })
                 ) : (
                   <>
-                    <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
+                    <button type="button" class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
                       {cancelTextLocal.value}
                     </button>
-                    <button class={[ns.e('btn'), ns.em('btn', props.confirmType)]} onClick={onConfirm}>
+                    <button type="button" class={[ns.e('btn'), ns.em('btn', props.confirmType)]} onClick={onConfirm}>
                       {confirmTextLocal.value}
                     </button>
                   </>

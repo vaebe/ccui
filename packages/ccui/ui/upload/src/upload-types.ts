@@ -1,7 +1,11 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export type UploadStatus = 'uploading' | 'done' | 'error' | 'removed'
+/** 新选文件允许使用的初始状态；`removed` 仅用于删除事件快照。 */
+export type UploadDefaultStatus = Exclude<UploadStatus, 'removed'>
 export type UploadListType = 'text' | 'picture' | 'picture-card'
+/** 文件被组件拒收时的稳定原因码。 */
+export type UploadRejectReason = 'accept' | 'beforeUpload' | 'maxCount' | 'maxSize' | 'multiple'
 
 export interface UploadFile {
   uid: string
@@ -27,7 +31,15 @@ export interface CustomRequestOptions {
   onError: (error: Error) => void
 }
 
-export type CustomRequest = (options: CustomRequestOptions) => { abort: () => void } | void
+export interface UploadRequestHandle {
+  /** 取消仍在进行的上传请求。 */
+  abort: () => void
+}
+
+/** 自定义请求可同步或异步返回取消句柄；Promise rejection 会转换为文件 error 状态。 */
+export type CustomRequest = (
+  options: CustomRequestOptions,
+) => UploadRequestHandle | void | Promise<UploadRequestHandle | void>
 
 export const uploadProps = {
   // 受控文件列表，支持 v-model:fileList
@@ -43,6 +55,16 @@ export const uploadProps = {
   accept: {
     type: String,
     default: '',
+  },
+  // 原生文件输入的表单字段名
+  name: {
+    type: String,
+    default: undefined,
+  },
+  // 移动端原生文件输入的采集来源提示
+  capture: {
+    type: String as PropType<'environment' | 'user'>,
+    default: undefined,
   },
   multiple: {
     type: Boolean,
@@ -81,8 +103,9 @@ export const uploadProps = {
   },
   // 选择文件后默认 status；业务可改为 'uploading' 让组件持续显示加载态，等业务回写为 'done'
   defaultStatus: {
-    type: String as PropType<UploadStatus>,
+    type: String as PropType<UploadDefaultStatus>,
     default: 'done',
+    validator: (value: UploadDefaultStatus) => value === 'uploading' || value === 'done' || value === 'error',
   },
   removeText: {
     type: String,

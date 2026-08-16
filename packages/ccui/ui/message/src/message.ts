@@ -8,6 +8,7 @@ import type {
   MessageType,
 } from './message-types'
 import { createApp, h, reactive } from 'vue'
+import { canUseDom } from '../../shared/utils/overlay'
 import MessageItem from './message-item'
 import './message.scss'
 
@@ -112,6 +113,7 @@ function enforceMaxCount(placement: MessagePlacement) {
 }
 
 function open(options: MessageOptions): MessageHandle {
+  if (!canUseDom()) return { close: () => {} }
   const placement = options.placement ?? 'top'
   ensureContainer(placement)
   const id = `msg-${++counter}`

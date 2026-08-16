@@ -1,6 +1,7 @@
 import type { PopoverProps } from './popover-types'
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 import {
+  cloneVNode,
   computed,
   defineComponent,
   nextTick,
@@ -41,6 +42,8 @@ export default defineComponent({
     const hasTitle = computed(() => !!slots.title || !!props.title)
 
     const visible = ref(false)
+    // 仅在浮层首次打开后缓存 DOM；这样 persistent 不会让默认隐藏态提前挂载内容。
+    const hasRendered = ref(false)
     const triggerRef = ref<HTMLElement>()
     const popperRef = ref<HTMLElement>()
     const arrowRef = ref<HTMLElement>()
@@ -83,12 +86,15 @@ export default defineComponent({
       {
         // 传响应式 placement，保证 placement prop 变化与 flip 翻转都能被 floating-ui 跟踪
         placement: toRef(props, 'placement') as any,
-        middleware: [
-          offset(props.offset),
+        // 使用 computed 让 offset、箭头和溢出调整在运行时切换后重新生成中间件。
+        middleware: computed(() => [
+          props.align?.offset
+            ? offset({ mainAxis: props.align.offset[0], crossAxis: props.align.offset[1] })
+            : offset(props.offset),
           ...(props.autoAdjustOverflow ? [flip()] : []),
           shift({ padding: 8 }),
           ...(props.showArrow ? [arrow({ element: arrowRef })] : []),
-        ],
+        ]) as any,
       },
     )
 
@@ -153,6 +159,7 @@ export default defineComponent({
         if (!isControlled.value) {
           visible.value = true
         }
+        hasRendered.value = true
         emit('update:visible', true)
         void nextTick(() => {
           update()
@@ -385,6 +392,42 @@ export default defineComponent({
       return props.content
     }
 
+    const mergeAriaIds = (current: unknown, id: string) => {
+      const ids = (typeof current === 'string' || typeof current === 'number' ? String(current) : '')
+        .split(/\s+/)
+        .filter(Boolean)
+      if (!ids.includes(id)) ids.push(id)
+      return ids.join(' ')
+    }
+
+    const renderTrigger = () => {
+      const triggerNodes = slots.default?.() ?? []
+      if (triggerNodes.length !== 1) return triggerNodes
+
+      const triggerNode = triggerNodes[0]
+      const triggerProps: Record<string, any> = {
+        'aria-haspopup': props.ariaHasPopup,
+        'aria-expanded': actualVisible.value ? 'true' : 'false',
+      }
+
+      // 仅在打开时追加本组件拥有的关系；关闭时不要以 undefined 擦除调用方已有的 ARIA 关系。
+      if (actualVisible.value) {
+        triggerProps['aria-describedby'] = mergeAriaIds(triggerNode.props?.['aria-describedby'], popperId)
+        triggerProps['aria-controls'] = mergeAriaIds(triggerNode.props?.['aria-controls'], popperId)
+      }
+
+      // focus/blur 不冒泡，必须绑定到实际获得焦点的 trigger，而不是外层包装节点。
+      // cloneVNode 会合并调用方已有的事件处理器。
+      if (props.trigger === 'focus') {
+        triggerProps.tabindex = props.tabindex
+        triggerProps.onFocus = handleFocus
+        triggerProps.onBlur = handleBlur
+        triggerProps.onKeydown = handleKeydown
+      }
+
+      return cloneVNode(triggerNode, triggerProps)
+    }
+
     // 暴露方法
     expose({
       hide: doHide,
@@ -398,15 +441,12 @@ export default defineComponent({
           triggerEvents.onMouseleave = handleMouseLeave
         } else if (props.trigger === 'click') {
           triggerEvents.onClick = handleClick
-        } else if (props.trigger === 'focus') {
-          triggerEvents.onFocus = handleFocus
-          triggerEvents.onBlur = handleBlur
-          triggerEvents.onKeydown = handleKeydown
         } else if (props.trigger === 'contextmenu') {
           triggerEvents.onContextmenu = handleContextMenu
         }
       }
 
+      const keepHiddenContent = hasRendered.value && props.persistent && !props.destroyTooltipOnHide && !props.fresh
       const popperContent = (
         <div
           ref={popperRef}
@@ -419,6 +459,7 @@ export default defineComponent({
             ...floatingStyles.value,
             ...inlineColorStyle.value,
             pointerEvents: props.enterable ? 'auto' : 'none',
+            display: actualVisible.value ? undefined : 'none',
             width: props.width ? (typeof props.width === 'number' ? `${props.width}px` : props.width) : undefined,
           }}
           onMouseenter={handlePopperMouseEnter}
@@ -438,18 +479,8 @@ export default defineComponent({
       return (
         <div class={rootClass.value}>
           {!props.virtualTriggering && (
-            <div
-              ref={triggerRef}
-              class={ns.e('trigger')}
-              aria-describedby={actualVisible.value ? popperId : undefined}
-              aria-haspopup={props.ariaHasPopup as any}
-              aria-expanded={actualVisible.value ? 'true' : 'false'}
-              aria-controls={actualVisible.value ? popperId : undefined}
-              aria-label={props.ariaLabel}
-              tabindex={props.trigger === 'focus' ? props.tabindex : undefined}
-              {...triggerEvents}
-            >
-              {slots.default?.()}
+            <div ref={triggerRef} class={ns.e('trigger')} {...triggerEvents}>
+              {renderTrigger()}
             </div>
           )}
 
@@ -462,7 +493,7 @@ export default defineComponent({
             onBeforeLeave={() => emit('before-leave')}
             onAfterLeave={() => emit('after-leave')}
           >
-            {actualVisible.value && renderPopperWithContainer()}
+            {(actualVisible.value || keepHiddenContent) && renderPopperWithContainer()}
           </Transition>
         </div>
       )

@@ -27,6 +27,7 @@ describe('popconfirm', () => {
     expect(document.body.innerHTML).toContain('Are you sure?')
     const buttons = document.body.querySelectorAll(`${ns.e('btn')}`)
     expect(buttons.length).toBe(2)
+    expect([...buttons].every((button) => button.getAttribute('type') === 'button')).toBe(true)
     wrapper.unmount()
   })
 
@@ -140,9 +141,79 @@ describe('popconfirm', () => {
     await nextTick()
     const popper = document.body.querySelector('.ccui-popover__popper')
     expect(popper?.getAttribute('role')).toBe('dialog')
-    const trigger = wrapper.find('.ccui-popover__trigger')
+    expect(popper?.getAttribute('aria-label')).toBe('Are you sure?')
+    const trigger = wrapper.find('.ccui-popover__trigger button')
     expect(trigger.attributes('aria-haspopup')).toBe('dialog')
     expect(trigger.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('打开后将焦点移入弹层，并在操作按钮间循环 Tab', async () => {
+    const wrapper = mount(Popconfirm, {
+      props: { title: '确认删除？' },
+      slots: { default: '<button class="real-trigger">删除</button>' },
+      attachTo: document.body,
+    })
+    const trigger = wrapper.find('.real-trigger').element as HTMLButtonElement
+    trigger.focus()
+    trigger.click()
+    await nextTick()
+    await nextTick()
+
+    const cancel = document.body.querySelector(`${ns.em('btn', 'cancel')}`) as HTMLButtonElement
+    const confirm = document.body.querySelector(`${ns.em('btn', 'primary')}`) as HTMLButtonElement
+    expect(document.activeElement).toBe(cancel)
+
+    cancel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }))
+    expect(document.activeElement).toBe(confirm)
+    confirm.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+    expect(document.activeElement).toBe(cancel)
+    wrapper.unmount()
+  })
+
+  it('初始受控 visible=true 时立即移入焦点、圈闭 Tab 并响应 Escape', async () => {
+    const outside = document.createElement('button')
+    outside.textContent = 'Outside'
+    document.body.appendChild(outside)
+    outside.focus()
+
+    const wrapper = makeWrapper({ visible: true })
+    await nextTick()
+    await nextTick()
+
+    const cancel = document.body.querySelector(`${ns.em('btn', 'cancel')}`) as HTMLButtonElement
+    const confirm = document.body.querySelector(`${ns.em('btn', 'primary')}`) as HTMLButtonElement
+    expect(document.activeElement).toBe(cancel)
+
+    cancel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }))
+    expect(document.activeElement).toBe(confirm)
+    confirm.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('update:visible')?.at(-1)).toEqual([false])
+
+    wrapper.unmount()
+    outside.remove()
+  })
+
+  it('在弹层内按 Escape 关闭并将焦点恢复到真实 trigger', async () => {
+    const wrapper = mount(Popconfirm, {
+      props: { title: '确认删除？' },
+      slots: { default: '<button class="real-trigger">删除</button>' },
+      attachTo: document.body,
+    })
+    const trigger = wrapper.find('.real-trigger').element as HTMLButtonElement
+    trigger.focus()
+    trigger.click()
+    await nextTick()
+    await nextTick()
+    expect(document.activeElement).not.toBe(trigger)
+
+    document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await nextTick()
+    await nextTick()
+
+    expect(document.body.querySelector('.ccui-popover__popper')).toBeNull()
+    expect(document.activeElement).toBe(trigger)
     wrapper.unmount()
   })
 

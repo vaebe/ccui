@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Popover from './src/popover'
+export type { PopoverAlign, PopoverEffect, PopoverPlacement, PopoverProps, PopoverTrigger } from './src/popover-types'
 
 Popover.install = function (app: App): void {
   app.component(Popover.name!, Popover)

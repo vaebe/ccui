@@ -32,6 +32,25 @@ describe('alert', () => {
     expect(wrapper.find(ns.b()).exists()).toBe(false)
   })
 
+  it('renders default slot content and keeps the close icon decorative', () => {
+    const wrapper = mount(Alert, {
+      props: { message: 'm', closable: true, showIcon: true },
+      slots: { default: '<ul><li>error detail</li></ul>' },
+    })
+    expect(wrapper.find('li').text()).toBe('error detail')
+    expect(wrapper.findAll('svg').every((icon) => icon.attributes('aria-hidden') === 'true')).toBe(true)
+  })
+
+  it('forwards ordinary root attributes without replacing the alert role', () => {
+    const wrapper = mount(Alert, {
+      props: { message: 'm' },
+      attrs: { id: 'billing-alert', 'data-source': 'checkout', role: 'status' },
+    })
+    expect(wrapper.attributes('id')).toBe('billing-alert')
+    expect(wrapper.attributes('data-source')).toBe('checkout')
+    expect(wrapper.attributes('role')).toBe('alert')
+  })
+
   describe('M-A2 classNames / styles 钩子', () => {
     it('classNames.root 注入到根节点', () => {
       const wrapper = mount(Alert, {

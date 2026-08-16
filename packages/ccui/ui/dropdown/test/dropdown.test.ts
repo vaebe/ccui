@@ -113,7 +113,116 @@ describe('dropdown', () => {
     expect(wrapper.emitted('select')).toBeTruthy()
     expect(wrapper.emitted('update:visible')?.[0]?.[0]).toBe(false)
     expect(wrapper.emitted('visible-change')?.[0]?.[0]).toBe(false)
+    expect(wrapper.emitted('update:visible')).toHaveLength(1)
+    expect(wrapper.emitted('visible-change')).toHaveLength(1)
     wrapper.unmount()
+  })
+
+  it('supports roving arrow navigation', async () => {
+    const wrapper = mount(Dropdown, {
+      props: {
+        visible: true,
+        items: [
+          { key: 'a', label: 'A' },
+          { key: 'disabled', label: 'Disabled', disabled: true },
+          { key: 'c', label: 'C' },
+        ],
+      },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+    const items = Array.from(document.body.querySelectorAll<HTMLElement>(ns.e('item')))
+    items[0].focus()
+    items[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    expect(document.activeElement).toBe(items[2])
+
+    items[2].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }))
+    expect(document.activeElement).toBe(items[0])
+    wrapper.unmount()
+  })
+
+  it('emits one close request for a real Escape keydown', async () => {
+    const wrapper = mount(Dropdown, {
+      props: { trigger: 'click', items: [{ key: 'a', label: 'A' }] },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+
+    const item = document.body.querySelector(ns.e('item')) as HTMLElement
+    item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await nextTick()
+
+    expect(wrapper.emitted('update:visible')).toEqual([[true], [false]])
+    expect(wrapper.emitted('visible-change')).toEqual([[true], [false]])
+    wrapper.unmount()
+  })
+
+  it('restores focus to the trigger after Escape closes the menu', async () => {
+    const wrapper = mount(Dropdown, {
+      props: { trigger: 'click', items: [{ key: 'a', label: 'A' }] },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    const trigger = wrapper.find<HTMLButtonElement>('button').element
+    trigger.focus()
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    const item = document.body.querySelector(ns.e('item')) as HTMLElement
+    expect(document.activeElement).toBe(item)
+    item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await nextTick()
+
+    expect(document.activeElement).toBe(trigger)
+    wrapper.unmount()
+  })
+
+  it.each([
+    ['Enter', 'Enter'],
+    ['Space', ' '],
+  ])('restores focus to the trigger after %s selects a menu item', async (_label, key) => {
+    const wrapper = mount(Dropdown, {
+      props: { trigger: 'click', items: [{ key: 'a', label: 'A' }] },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    const trigger = wrapper.find<HTMLButtonElement>('button').element
+    trigger.focus()
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    const item = document.body.querySelector(ns.e('item')) as HTMLElement
+    expect(document.activeElement).toBe(item)
+
+    item.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    await nextTick()
+
+    expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ key: 'a' })
+    expect(document.activeElement).toBe(trigger)
+    wrapper.unmount()
+  })
+
+  it('does not steal focus back when an outside control closes the menu', async () => {
+    const outside = document.createElement('input')
+    document.body.appendChild(outside)
+    const wrapper = mount(Dropdown, {
+      props: { trigger: 'click', items: [{ key: 'a', label: 'A' }] },
+      slots: { default: '<button>Trigger</button>' },
+      attachTo: document.body,
+    })
+
+    await wrapper.find('.ccui-popover__trigger').trigger('click')
+    await nextTick()
+    outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    outside.focus()
+    await nextTick()
+
+    expect(document.activeElement).toBe(outside)
+    wrapper.unmount()
+    outside.remove()
   })
 
   it('skips hiding when hideOnClick=false', async () => {
@@ -223,7 +332,7 @@ describe('dropdown', () => {
       attachTo: document.body,
     })
 
-    const trigger = wrapper.find('.ccui-popover__trigger')
+    const trigger = wrapper.find('.ccui-popover__trigger button')
     // 关闭态
     expect(trigger.attributes('aria-haspopup')).toBe('menu')
     expect(trigger.attributes('aria-expanded')).toBe('false')

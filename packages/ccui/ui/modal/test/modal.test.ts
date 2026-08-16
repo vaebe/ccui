@@ -3,13 +3,13 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Modal } from '../index'
+import { Drawer } from '../../drawer'
 
 const ns = useNamespace('modal', true)
 
 afterEach(() => {
   document.body.innerHTML = ''
-  delete document.body.dataset.ccuiModalCount
-  delete document.body.dataset.ccuiOriginalOverflow
+  delete document.body.dataset.ccuiOverlayCount
   document.body.style.overflow = ''
 })
 
@@ -177,19 +177,59 @@ describe('modal', () => {
     const second = mount(Modal, { props: { visible: true, appendToBody: true } })
     await nextTick()
 
-    expect(document.body.dataset.ccuiModalCount).toBe('2')
+    expect(document.body.dataset.ccuiOverlayCount).toBe('2')
     expect(document.body.style.overflow).toBe('hidden')
 
     await first.setProps({ visible: false })
     await nextTick()
-    expect(document.body.dataset.ccuiModalCount).toBe('1')
+    expect(document.body.dataset.ccuiOverlayCount).toBe('1')
 
     await second.setProps({ visible: false })
     await nextTick()
-    expect(document.body.dataset.ccuiModalCount).toBeUndefined()
+    expect(document.body.dataset.ccuiOverlayCount).toBeUndefined()
     expect(document.body.style.overflow).toBe('')
     first.unmount()
     second.unmount()
+  })
+
+  it('shares the body scroll lock with Drawer', async () => {
+    const modal = mount(Modal, { props: { visible: true } })
+    const drawer = mount(Drawer, { props: { visible: true } })
+    await nextTick()
+
+    expect(document.body.dataset.ccuiOverlayCount).toBe('2')
+    await modal.setProps({ visible: false })
+    expect(document.body.dataset.ccuiOverlayCount).toBe('1')
+    expect(document.body.style.overflow).toBe('hidden')
+
+    await drawer.setProps({ visible: false })
+    expect(document.body.dataset.ccuiOverlayCount).toBeUndefined()
+    expect(document.body.style.overflow).toBe('')
+    modal.unmount()
+    drawer.unmount()
+  })
+
+  it('moves focus inside and traps Tab navigation', async () => {
+    const wrapper = mount(Modal, {
+      props: { visible: true, closable: false, footer: null },
+      slots: {
+        default: () => [h('button', { class: 'first-action' }, 'First'), h('button', { class: 'last-action' }, 'Last')],
+      },
+    })
+    await nextTick()
+    const first = document.body.querySelector('.first-action') as HTMLButtonElement
+    const last = document.body.querySelector('.last-action') as HTMLButtonElement
+
+    expect(document.activeElement).toBe(first)
+    last.focus()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+    expect(document.activeElement).toBe(first)
+    first.focus()
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }),
+    )
+    expect(document.activeElement).toBe(last)
+    wrapper.unmount()
   })
 
   it('renders destroyOnClose modal only after it becomes visible', async () => {
@@ -216,6 +256,19 @@ describe('modal', () => {
       expect(closeBtn.disabled).toBe(true)
       closeBtn.click()
       expect(wrapper.emitted('update:visible')).toBeUndefined()
+      wrapper.unmount()
+    })
+
+    it('closable.disabled only disables the close button, not mask or Escape dismissal', async () => {
+      const wrapper = mount(Modal, {
+        props: { visible: true, closable: { disabled: true }, maskClosable: true },
+      })
+      await nextTick()
+      ;(document.body.querySelector(ns.e('mask')) as HTMLElement).click()
+      expect(wrapper.emitted('update:visible')?.[0]).toEqual([false])
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+      expect(wrapper.emitted('update:visible')?.[1]).toEqual([false])
       wrapper.unmount()
     })
 
@@ -352,6 +405,20 @@ describe('modal', () => {
   })
 
   describe('可访问性 ARIA', () => {
+    it('关闭但保留挂载时从可访问性树中隐藏 dialog 语义', async () => {
+      const wrapper = mount(Modal, {
+        props: { visible: false, title: 'Modal Title', appendToBody: true },
+      })
+      await nextTick()
+      const root = document.body.querySelector(ns.b()) as HTMLElement
+      expect(root.getAttribute('role')).toBeNull()
+      expect(root.getAttribute('aria-modal')).toBeNull()
+      expect(root.getAttribute('aria-labelledby')).toBeNull()
+      expect(root.getAttribute('aria-describedby')).toBeNull()
+      expect(root.getAttribute('aria-hidden')).toBe('true')
+      wrapper.unmount()
+    })
+
     it('root 为 role=dialog aria-modal=true，并 aria-labelledby/aria-describedby 指向 title/body', async () => {
       const wrapper = mount(Modal, {
         props: { visible: true, title: 'Modal Title', appendToBody: true },

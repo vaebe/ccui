@@ -3,6 +3,7 @@ import type { ModalFuncOptions, ModalFuncReturn, ModalFuncType } from './confirm
 import { createApp, defineComponent, h, reactive, ref } from 'vue'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { canUseDom } from '../../shared/utils/overlay'
 import Modal from './modal'
 
 interface ParentContext {
@@ -44,6 +45,12 @@ const activeInstances = new Set<{ destroy: () => void }>()
  * - `onOk` 返回 Promise 时按钮进入 loading，resolve 后关闭；reject 不关闭（错误传递给调用方）
  */
 export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentContext): ModalFuncReturn {
+  if (!canUseDom()) {
+    return {
+      destroy() {},
+      update() {},
+    }
+  }
   const state = reactive<ModalFuncOptions>({ type: 'confirm', ...options })
   const open = ref(true)
   const loading = ref(false)
@@ -154,11 +161,12 @@ export function modalFunc(options: ModalFuncOptions = {}, parentCtx?: ParentCont
         const footer = (
           <div class={ns.e('footer')}>
             {type === 'confirm' && (
-              <button class={[nsModal.e('btn'), nsModal.em('btn', 'cancel')]} onClick={onCancelClick}>
+              <button type="button" class={[nsModal.e('btn'), nsModal.em('btn', 'cancel')]} onClick={onCancelClick}>
                 {cancelText}
               </button>
             )}
             <button
+              type="button"
               class={[nsModal.e('btn'), nsModal.em('btn', okType), loading.value && nsModal.is('loading')]}
               disabled={loading.value}
               onClick={onOkClick}
