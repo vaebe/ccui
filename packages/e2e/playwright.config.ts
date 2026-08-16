@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   testDir: './tests',
@@ -19,8 +20,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // 直接使用仓库已安装的 Vite+，避免 pnpm exec 在 CI 中再次触发工作区 bootstrap。
-    command: '../../node_modules/.bin/vp dev --host 127.0.0.1 --port 4173',
+    // 从 E2E 包自身启动 Vite+，避免依赖 pnpm 在不同平台下的根目录 bin 链接布局。
+    command: 'pnpm run dev',
+    cwd: fileURLToPath(new URL('.', import.meta.url)),
+    stdout: 'pipe',
+    stderr: 'pipe',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

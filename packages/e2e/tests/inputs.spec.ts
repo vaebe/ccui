@@ -1,5 +1,13 @@
 import { openFixture } from './support/open-fixture'
 import { expect, test } from './support/test'
+import type { Locator, Page } from '@playwright/test'
+
+/** 根据触发器的 aria-controls 定位弹层，兼容内联渲染与 Teleport。 */
+async function getControlledPopup(page: Page, trigger: Locator) {
+  const popupId = await trigger.getAttribute('aria-controls')
+  expect(popupId).toBeTruthy()
+  return page.locator(`#${popupId}`)
+}
 
 test.beforeEach(async ({ page }) => {
   await openFixture(page, 'inputs', 'input-fixtures')
@@ -164,7 +172,7 @@ test('[ColorPicker] changes hue with an arrow key', async ({ page }) => {
 
 test('[ColorPicker] clears a controlled color', async ({ page }) => {
   const fixture = page.getByTestId('color-picker-fixture')
-  await fixture.getByRole('button', { name: 'clear color', exact: true }).click()
+  await fixture.getByRole('button', { name: '清空颜色', exact: true }).click()
   await expect(fixture.getByTestId('color-value')).toHaveText('empty')
 })
 
@@ -346,7 +354,7 @@ test('[InputNumber] distinguishes disabled and readonly inputs', async ({ page }
 test('[InputOtp] labels every OTP cell', async ({ page }) => {
   const fixture = page.getByTestId('number-otp-search-fixture')
   await expect(fixture.getByRole('group', { name: 'OTP input' }).first().locator('input')).toHaveCount(4)
-  await expect(fixture.getByRole('textbox', { name: 'OTP cell 1' }).first()).toHaveAttribute(
+  await expect(fixture.getByRole('textbox', { name: 'OTP input, cell 1 of 4', exact: true }).first()).toHaveAttribute(
     'autocomplete',
     'one-time-code',
   )
@@ -356,7 +364,7 @@ test('[InputOtp] fills and emits the complete code', async ({ page }) => {
   const fixture = page.getByTestId('number-otp-search-fixture')
   for (let index = 1; index <= 4; index++) {
     await fixture
-      .getByRole('textbox', { name: `OTP cell ${index}` })
+      .getByRole('textbox', { name: `OTP input, cell ${index} of 4`, exact: true })
       .first()
       .fill(String(index))
   }
@@ -365,15 +373,15 @@ test('[InputOtp] fills and emits the complete code', async ({ page }) => {
 
 test('[InputOtp] advances focus after input', async ({ page }) => {
   const fixture = page.getByTestId('number-otp-search-fixture')
-  await fixture.getByRole('textbox', { name: 'OTP cell 1' }).first().fill('1')
-  await expect(fixture.getByRole('textbox', { name: 'OTP cell 2' }).first()).toBeFocused()
+  await fixture.getByRole('textbox', { name: 'OTP input, cell 1 of 4', exact: true }).first().fill('1')
+  await expect(fixture.getByRole('textbox', { name: 'OTP input, cell 2 of 4', exact: true }).first()).toBeFocused()
 })
 
 test('[InputOtp] follows an external code update', async ({ page }) => {
   const fixture = page.getByTestId('number-otp-search-fixture')
   await fixture.getByTestId('otp-external').click()
   await expect(fixture.getByTestId('otp-value')).toHaveText('9876')
-  await expect(fixture.getByRole('textbox', { name: 'OTP cell 1' }).first()).toHaveValue('9')
+  await expect(fixture.getByRole('textbox', { name: 'OTP input, cell 1 of 4', exact: true }).first()).toHaveValue('9')
 })
 
 test('[InputOtp] disables every OTP cell', async ({ page }) => {
@@ -400,7 +408,7 @@ test('[InputSearch] clears its value and emits an empty search', async ({ page }
   const fixture = page.getByTestId('number-otp-search-fixture')
   const input = fixture.locator('.ccui-input-search').first().locator('input')
   await input.fill('clear me')
-  await fixture.getByRole('button', { name: 'clear' }).click()
+  await fixture.getByRole('button', { name: '清除输入', exact: true }).click()
   await expect(input).toHaveValue('')
   await expect(fixture.getByTestId('search-value')).toHaveText('')
 })
@@ -941,10 +949,12 @@ test('[Select] closes its listbox with Escape', async ({ page }) => {
 
 test('[TimePicker] renders hour minute and second listboxes', async ({ page }) => {
   const scope = page.getByTestId('time-fixture').locator('.ccui-time-picker').first()
-  await scope.locator('input').click()
-  await expect(scope.getByRole('listbox', { name: 'hour' })).toBeVisible()
-  await expect(scope.getByRole('listbox', { name: 'minute' })).toBeVisible()
-  await expect(scope.getByRole('listbox', { name: 'second' })).toBeVisible()
+  const input = scope.locator('input')
+  await input.click()
+  const popup = await getControlledPopup(page, input)
+  await expect(popup.getByRole('listbox', { name: '小时' })).toBeVisible()
+  await expect(popup.getByRole('listbox', { name: '分钟' })).toBeVisible()
+  await expect(popup.getByRole('listbox', { name: '秒' })).toBeVisible()
 })
 
 test('[TimeRangePicker] gives both endpoints dialog popup semantics', async ({ page }) => {
@@ -1091,11 +1101,13 @@ test('[RangePicker] selects a new complete range and commits both inputs', async
 test('[TimePicker] selects a new time and commits input plus model', async ({ page }) => {
   const fixture = page.getByTestId('time-fixture')
   const picker = fixture.locator('.ccui-time-picker').first()
-  await picker.locator('input').click()
-  await picker.getByRole('listbox', { name: 'hour' }).getByRole('option', { name: '10', exact: true }).click()
-  await picker.getByRole('listbox', { name: 'minute' }).getByRole('option', { name: '45', exact: true }).click()
-  await picker.getByRole('listbox', { name: 'second' }).getByRole('option', { name: '30', exact: true }).click()
-  await picker.locator('.ccui-time-picker__footer-btn--ok').click()
+  const input = picker.locator('input')
+  await input.click()
+  const popup = await getControlledPopup(page, input)
+  await popup.getByRole('listbox', { name: '小时' }).getByRole('option', { name: '10', exact: true }).click()
+  await popup.getByRole('listbox', { name: '分钟' }).getByRole('option', { name: '45', exact: true }).click()
+  await popup.getByRole('listbox', { name: '秒' }).getByRole('option', { name: '30', exact: true }).click()
+  await popup.locator('.ccui-time-picker__footer-btn--ok').click()
   await expect(picker.locator('input')).toHaveValue('10:45:30')
   await expect(fixture.getByTestId('time-value')).toHaveText('10:45:30')
 })
@@ -1104,9 +1116,11 @@ test('[TimeRangePicker] selects a new start time and commits both endpoints', as
   const fixture = page.getByTestId('time-fixture')
   const range = fixture.locator('.ccui-time-range-picker').first()
   const start = range.locator('.ccui-time-range-picker__start')
-  await start.locator('input').click()
-  await start.getByRole('listbox', { name: 'hour' }).getByRole('option', { name: '10', exact: true }).click()
-  await start.locator('.ccui-time-picker__footer-btn--ok').click()
+  const input = start.locator('input')
+  await input.click()
+  const popup = await getControlledPopup(page, input)
+  await popup.getByRole('listbox', { name: '小时' }).getByRole('option', { name: '10', exact: true }).click()
+  await popup.locator('.ccui-time-picker__footer-btn--ok').click()
   await expect(range.locator('.ccui-time-range-picker__start input')).toHaveValue('10:00:00')
   await expect(range.locator('.ccui-time-range-picker__end input')).toHaveValue('18:00:00')
   await expect(fixture.getByTestId('time-range-value')).toHaveText('["10:00:00","18:00:00"]')

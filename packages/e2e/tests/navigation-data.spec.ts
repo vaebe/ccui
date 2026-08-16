@@ -83,9 +83,10 @@ test('[Carousel] wraps to the previous slide from the controlled first slide', a
 
 test('[Carousel] indicator activation selects a specific slide', async ({ page }) => {
   const fixture = page.getByTestId('carousel-fixture')
-  const third = fixture.getByRole('button', { name: 'Go to slide 3' })
+  // 指示器按 WAI-ARIA Tabs 模式暴露为 tab，而不是普通按钮。
+  const third = fixture.getByRole('tab', { name: 'Go to slide 3' })
   await third.click()
-  await expect(third).toHaveAttribute('aria-current', 'true')
+  await expect(third).toHaveAttribute('aria-selected', 'true')
   await expect(fixture.getByTestId('carousel-value')).toHaveText('2')
 })
 
@@ -187,7 +188,8 @@ test('[BackTop] becomes visible and restores its element scroll target', async (
 })
 
 test('[Image] loads its data source with explicit dimensions and alt text', async ({ page }) => {
-  const image = page.getByTestId('image-fixture').getByRole('img', { name: 'Fixture image' })
+  // 可预览图片本身是带 button 角色的 img，名称仍由 alt 提供。
+  const image = page.getByTestId('image-fixture').getByRole('button', { name: 'Fixture image' })
   await expect(image).toHaveCSS('width', '160px')
   await expect
     .poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0))
@@ -195,7 +197,7 @@ test('[Image] loads its data source with explicit dimensions and alt text', asyn
 })
 
 test('[Image] opens its own preview and supports toolbar zoom', async ({ page }) => {
-  await page.getByRole('img', { name: 'Fixture image' }).click()
+  await page.getByRole('button', { name: 'Fixture image' }).click()
   const overlay = page.locator('.ccui-image__preview-mask')
   await expect(overlay).toBeVisible()
   await overlay.getByRole('button', { name: 'zoom in' }).click()
@@ -289,34 +291,34 @@ test('[Masonry] keeps item rectangles non-overlapping within each column', async
 test('[Menu] exposes vertical menu orientation and initially unselected items', async ({ page }) => {
   const fixture = page.getByTestId('menu-fixture')
   await expect(fixture.getByRole('menu').first()).toHaveAttribute('aria-orientation', 'vertical')
-  await expect(fixture.getByRole('menuitem', { name: 'Menu Home' })).toHaveAttribute('aria-selected', 'false')
+  await expect(fixture.getByRole('menuitemradio', { name: 'Menu Home' })).toHaveAttribute('aria-checked', 'false')
 })
 
 test('[Menu] synchronizes item selection and submenu expansion', async ({ page }) => {
   const fixture = page.getByTestId('menu-fixture')
   await fixture.getByRole('menuitem', { name: 'Menu Group' }).click()
   await expect(fixture.getByRole('menuitem', { name: 'Menu Group' })).toHaveAttribute('aria-expanded', 'true')
-  await fixture.getByRole('menuitem', { name: 'Sub One' }).click()
+  await fixture.getByRole('menuitemradio', { name: 'Sub One' }).click()
   await expect(fixture.getByTestId('menu-selection')).toHaveText('sub-one')
 })
 
 test('[Menu] exposes disabled submenu items to assistive technology', async ({ page }) => {
   const fixture = page.getByTestId('menu-fixture')
   await fixture.getByRole('menuitem', { name: 'Menu Group' }).click()
-  await expect(fixture.getByRole('menuitem', { name: 'Sub Disabled' })).toHaveAttribute('aria-disabled', 'true')
+  await expect(fixture.getByRole('menuitemradio', { name: 'Sub Disabled' })).toHaveAttribute('aria-disabled', 'true')
 })
 
 test('[Menu] selects a top-level item and updates its controlled output', async ({ page }) => {
   const fixture = page.getByTestId('menu-fixture')
-  const home = fixture.getByRole('menuitem', { name: 'Menu Home' })
+  const home = fixture.getByRole('menuitemradio', { name: 'Menu Home' })
   await home.click()
-  await expect(home).toHaveAttribute('aria-selected', 'true')
+  await expect(home).toHaveAttribute('aria-checked', 'true')
   await expect(fixture.getByTestId('menu-selection')).toHaveText('home')
 })
 
 test('[Menu] moves keyboard focus between enabled top-level items', async ({ page }) => {
   const fixture = page.getByTestId('menu-fixture')
-  const home = fixture.getByRole('menuitem', { name: 'Menu Home' })
+  const home = fixture.getByRole('menuitemradio', { name: 'Menu Home' })
   await home.focus()
   await page.keyboard.press('ArrowDown')
   await expect(fixture.getByRole('menuitem', { name: 'Menu Group' })).toBeFocused()

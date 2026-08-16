@@ -157,7 +157,8 @@ test('[Drawer] closes when its mask is clicked', async ({ page }) => {
 
 test('[Drawer] ignores mask clicks when maskClosable is false', async ({ page }) => {
   await page.getByTestId('open-strict-drawer').click()
-  await page.locator('.ccui-drawer__mask').click({ position: { x: 1200, y: 20 } })
+  // 右侧抽屉会覆盖遮罩右侧区域，应点击真实暴露的左侧遮罩。
+  await page.locator('.ccui-drawer__mask').click({ position: { x: 20, y: 20 } })
   await expect(page.getByRole('dialog', { name: 'Strict drawer' })).toBeVisible()
 })
 
@@ -212,8 +213,9 @@ test('[Drawer] nested drawers retain body scroll lock after child close', async 
 test('[Dropdown] exposes menu popup state from its trigger', async ({ page }) => {
   const trigger = page.getByRole('button', { name: 'Open dropdown' })
   await trigger.click()
-  await expect(trigger.locator('..')).toHaveAttribute('aria-haspopup', 'menu')
-  await expect(trigger.locator('..')).toHaveAttribute('aria-expanded', 'true')
+  // Popover 会把 ARIA 状态合并到实际可交互触发器。
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'menu')
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true')
 })
 
 test('[Dropdown] selects an item and closes its menu', async ({ page }) => {
@@ -266,7 +268,7 @@ test('[Popover] click trigger opens an accessible dialog', async ({ page }) => {
   const trigger = page.getByRole('button', { name: 'Open popover' })
   await trigger.click()
   await expect(page.getByRole('dialog').filter({ hasText: 'Popover body' })).toBeVisible()
-  await expect(trigger.locator('..')).toHaveAttribute('aria-expanded', 'true')
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true')
 })
 
 test('[Popover] follows dark-theme feedback overlay text tokens', async ({ page }) => {
@@ -295,7 +297,7 @@ test('[Popover] outside click closes a click popover', async ({ page }) => {
 
 test('[Popover] focus trigger opens and blur closes content', async ({ page }) => {
   const trigger = page.getByRole('button', { name: 'Focus popover trigger' })
-  await trigger.locator('..').focus()
+  await trigger.focus()
   await expect(page.getByText('Focus popover body', { exact: true })).toBeVisible()
   await page.getByRole('heading', { name: 'Overlay and provider components' }).click()
   await expect(page.getByText('Focus popover body', { exact: true })).toBeHidden()
@@ -401,13 +403,13 @@ test('[Popconfirm] disabled trigger never opens confirmation', async ({ page }) 
 })
 
 test('[Popconfirm] focus trigger confirms through its action', async ({ page }) => {
-  await page.getByRole('button', { name: 'Focus confirmation trigger' }).locator('..').focus()
+  await page.getByRole('button', { name: 'Focus confirmation trigger' }).focus()
   await page.getByRole('button', { name: 'Accept focus confirmation' }).click()
   await expect(page.getByTestId('focus-confirmation-result')).toHaveText('confirmed')
 })
 
 test('[Popconfirm] focus trigger cancels through its action', async ({ page }) => {
-  await page.getByRole('button', { name: 'Focus confirmation trigger' }).locator('..').focus()
+  await page.getByRole('button', { name: 'Focus confirmation trigger' }).focus()
   await page.getByRole('button', { name: 'Reject focus confirmation' }).click()
   await expect(page.getByTestId('focus-confirmation-result')).toHaveText('cancelled')
 })
