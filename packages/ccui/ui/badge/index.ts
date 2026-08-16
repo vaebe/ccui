@@ -1,6 +1,9 @@
 import type { App } from 'vue'
 import Badge from './src/badge'
 
+// Keep the documented prop contract available from the public component entry.
+export type { BadgeProps, BadgeStatus } from './src/badge-types'
+
 Badge.install = function (app: App): void {
   app.component(Badge.name!, Badge)
 }

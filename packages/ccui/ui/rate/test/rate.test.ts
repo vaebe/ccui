@@ -1,4 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Rate } from '../index'
@@ -118,7 +119,7 @@ describe('rate', () => {
       expect(icons.length).toBe(5)
       expect(icons[0].attributes('role')).toBe('radio')
       expect(icons[0].attributes('aria-label')).toBe('1 stars')
-      // 前 3 颗为 checked，后两颗未选
+      expect(icons[0].attributes('aria-checked')).toBe('false')
       expect(icons[2].attributes('aria-checked')).toBe('true')
       expect(icons[3].attributes('aria-checked')).toBe('false')
     })
@@ -126,8 +127,33 @@ describe('rate', () => {
     it('readOnly 时根加 aria-readonly + 每颗星 aria-disabled', () => {
       const wrapper = createWrapper({ modelValue: 2, readOnly: true })
       expect(wrapper.attributes('aria-readonly')).toBe('true')
+      expect(wrapper.attributes('tabindex')).toBe('0')
       const icons = wrapper.findAll(iconClass)
       expect(icons[0].attributes('aria-disabled')).toBe('true')
+      expect(icons.every((icon) => icon.attributes('tabindex') === '-1')).toBe(true)
     })
+  })
+
+  it('supports keyboard selection and roving tabindex', async () => {
+    const wrapper = mount(Rate, { props: { count: 5, modelValue: 2 }, attachTo: document.body })
+    const icons = wrapper.findAll(iconClass)
+    expect(icons[1].attributes('tabindex')).toBe('0')
+    ;(icons[1].element as HTMLElement).focus()
+    await icons[1].trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([3])
+    await nextTick()
+    expect(document.activeElement).toBe(icons[2].element)
+    await icons[2].trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('change')?.at(-1)).toEqual([1])
+    await nextTick()
+    expect(document.activeElement).toBe(icons[0].element)
+  })
+
+  it('forwards root attrs and exposes radio position metadata', () => {
+    const wrapper = createWrapper({ 'data-testid': 'rate', 'aria-describedby': 'help' })
+    expect(wrapper.attributes('data-testid')).toBe('rate')
+    expect(wrapper.attributes('aria-describedby')).toBe('help')
+    expect(wrapper.findAll(iconClass)[0].attributes('aria-setsize')).toBe('5')
+    expect(wrapper.findAll(iconClass)[0].attributes('aria-posinset')).toBe('1')
   })
 })

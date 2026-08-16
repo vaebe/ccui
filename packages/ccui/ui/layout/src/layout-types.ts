@@ -58,7 +58,8 @@ export const siderProps = {
     default: 'dark',
   },
   trigger: {
-    type: [String, Object] as PropType<string | object>,
+    // null explicitly disables the trigger while keeping the public type aligned with Vue usage.
+    type: [String, Object] as PropType<string | object | null>,
     default: undefined,
   },
   breakpoint: {

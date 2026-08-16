@@ -80,3 +80,13 @@ $skeleton-bg-active: linear-gradient(
     background-position: 0 50%;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-skeleton--active {
+    .#{$cls-prefix}-skeleton__avatar,
+    .#{$cls-prefix}-skeleton__title,
+    .#{$cls-prefix}-skeleton__paragraph-row {
+      animation: none;
+    }
+  }
+}

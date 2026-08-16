@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'vue'
 import type { BorderBeamColor, BorderBeamColorStop, BorderBeamProps } from './border-beam-types'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, mergeProps, useAttrs } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { borderBeamProps, MAX_BEAM_COLOR_STOP_PERCENT } from './border-beam-types'
 import './border-beam.scss'
@@ -47,9 +47,12 @@ function getBorderBeamGradient(value?: BorderBeamColor): string | undefined {
 
 export default defineComponent({
   name: 'CBorderBeam',
+  // Keep caller attrs on the visual container while preserving the generated CSS variables.
+  inheritAttrs: false,
   props: borderBeamProps,
   setup(props: BorderBeamProps, { slots }) {
     const ns = useNamespace('border-beam')
+    const attrs = useAttrs()
 
     const beamGradient = computed(() => getBorderBeamGradient(props.color))
 
@@ -67,7 +70,7 @@ export default defineComponent({
     })
 
     return () => (
-      <div class={ns.b()} style={rootStyle.value}>
+      <div {...mergeProps(attrs, { class: ns.b(), style: rootStyle.value })}>
         {slots.default?.()}
         <div class={ns.e('effect')} aria-hidden="true" />
       </div>

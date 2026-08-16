@@ -1,5 +1,5 @@
 import type { RateProps } from './rate-types'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import iconDefault from './components/icon-default'
 import { rateProps } from './rate-types'
@@ -67,21 +67,57 @@ export default defineComponent({
       }
     }
 
+    // 键盘操作与点击保持相同的更新路径，确保受控值和 change 事件一致。
+    const focusRateItem = async (root: HTMLElement | null, index: number) => {
+      // 状态更新会重算 roving tabindex；等待 DOM 刷新后再把焦点移到新的评分项。
+      await nextTick()
+      const items = root?.querySelectorAll<HTMLElement>(`.${ns.e('icon')}`)
+      items?.[index]?.focus()
+    }
+
+    const handleKeyInteraction = async (e: KeyboardEvent, index: number) => {
+      if (props.readOnly) return
+      const key = e.key
+      const delta = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : key === 'ArrowLeft' || key === 'ArrowDown' ? -1 : 0
+      const target =
+        key === 'Home'
+          ? 1
+          : key === 'End'
+            ? props.count
+            : delta
+              ? Math.min(props.count, Math.max(1, index + 1 + delta))
+              : 0
+      if (!target && key !== 'Enter' && key !== ' ') return
+      e.preventDefault()
+      const next = target || index + 1
+      selectedQuantity.value = next
+      setIconState(next)
+      emit('update:modelValue', next)
+      emit('change', next)
+      await focusRateItem((e.currentTarget as HTMLElement).parentElement, next - 1)
+    }
+
     const rateItem = computed(() => (slots.default ? slots.default() : iconDefault()))
 
     const iconList = () =>
       iconStateList.value.map((item, index) => {
         const rank = index + 1
-        const isFullyChecked = selectedQuantity.value >= rank
+        // 视觉填充可以累计，但 radio 语义必须只有当前评分对应的一项为 checked。
+        const activeIndex = Math.max(0, Math.min(props.count - 1, Math.ceil(selectedQuantity.value) - 1))
+        const isCurrentRating = selectedQuantity.value > 0 && index === activeIndex
         return (
           <div
             class={ns.e('icon')}
             role="radio"
-            aria-checked={isFullyChecked}
+            aria-checked={isCurrentRating}
             aria-label={`${rank} stars`}
             aria-disabled={props.readOnly ? true : undefined}
+            aria-setsize={props.count}
+            aria-posinset={rank}
+            tabindex={!props.readOnly && index === activeIndex ? 0 : -1}
             onMousemove={(e: MouseEvent) => handleMouseInteraction(e, index)}
             onClick={(e: MouseEvent) => handleMouseInteraction(e, index, true)}
+            onKeydown={(e: KeyboardEvent) => handleKeyInteraction(e, index)}
           >
             <span>{rateItem.value}</span>
             <span class={ns.m('active')} style={{ width: item.width, color: props.color, fill: props.color }}>
@@ -102,6 +138,7 @@ export default defineComponent({
         role="radiogroup"
         aria-label="rate"
         aria-readonly={props.readOnly ? true : undefined}
+        tabindex={props.readOnly ? 0 : undefined}
         onMouseleave={() => setIconState(selectedQuantity.value)}
       >
         {iconList()}

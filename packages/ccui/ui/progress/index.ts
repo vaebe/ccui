@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Progress from './src/progress'
+export type { ProgressProps, ProgressSize, ProgressStatus, ProgressType } from './src/progress-types'
 
 Progress.install = function (app: App): void {
   app.component(Progress.name!, Progress)

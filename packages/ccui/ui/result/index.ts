@@ -1,6 +1,9 @@
 import type { App } from 'vue'
 import Result from './src/result'
 
+// Keep the documented result contract importable from the public entry.
+export type { ResultProps, ResultStatus } from './src/result-types'
+
 Result.install = function (app: App): void {
   app.component(Result.name!, Result)
 }

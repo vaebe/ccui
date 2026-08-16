@@ -122,3 +122,10 @@
     opacity: 0;
   }
 }
+
+// Processing is decorative feedback; users who reduce motion should see a stable dot.
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-badge__status-dot--processing::after {
+    animation: none;
+  }
+}

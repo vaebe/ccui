@@ -28,6 +28,12 @@ describe('timeline', () => {
     expect(wrapper.classes()).toContain('ccui-timeline')
   })
 
+  it('forwards root attributes', () => {
+    const wrapper = mount(Timeline, { attrs: { 'aria-label': 'Activity timeline', id: 'timeline-root' } })
+    expect(wrapper.attributes('aria-label')).toBe('Activity timeline')
+    expect(wrapper.attributes('id')).toBe('timeline-root')
+  })
+
   it('should render timeline items', () => {
     const wrapper = createTimelineWrapper({
       default: () => [
@@ -122,5 +128,11 @@ describe('timelineItem', () => {
     )
     expect(wrapper.find('.ccui-timeline-item__dot').exists()).toBe(true)
     expect(wrapper.find('.custom-dot').exists()).toBe(true)
+  })
+
+  it('forwards item attributes and marks decorative connectors as hidden', () => {
+    const wrapper = createItemWrapper({ 'aria-label': 'Release' })
+    expect(wrapper.attributes('aria-label')).toBe('Release')
+    expect(wrapper.find('.ccui-timeline-item__tail').attributes('aria-hidden')).toBe('true')
   })
 })

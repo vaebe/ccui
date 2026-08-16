@@ -126,3 +126,11 @@
     transform: rotate(405deg);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-spin__dot,
+  .#{$cls-prefix}-spin__dot-item {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Watermark from './src/watermark'
+export type { WatermarkFont, WatermarkProps } from './src/watermark-types'
 
 Watermark.install = function (app: App): void {
   app.component(Watermark.name!, Watermark)

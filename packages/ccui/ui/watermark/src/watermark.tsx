@@ -1,5 +1,5 @@
 import type { WatermarkFont, WatermarkProps } from './watermark-types'
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { defineComponent, mergeProps, onBeforeUnmount, onMounted, ref, useAttrs, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { watermarkProps } from './watermark-types'
 import './watermark.scss'
@@ -21,6 +21,11 @@ const FONT_DEFAULTS: ResolvedFont = {
 }
 
 const WATERMARK_TAG = 'data-ccui-watermark'
+
+/** 将外部数值归一化，避免无效尺寸或间距生成不可用的 canvas/CSS。 */
+function normalizeNumber(value: number, fallback: number, min = -Infinity) {
+  return Number.isFinite(value) && value >= min ? value : fallback
+}
 
 function getRatio() {
   return typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1
@@ -68,6 +73,7 @@ export default defineComponent({
   props: watermarkProps,
   setup(props: WatermarkProps, { slots }) {
     const ns = useNamespace('watermark')
+    const attrs = useAttrs()
     const containerRef = ref<HTMLDivElement>()
     const watermarkEl = ref<HTMLDivElement | null>(null)
     let observer: MutationObserver | null = null
@@ -86,17 +92,24 @@ export default defineComponent({
       if (!ctx) {
         return null
       }
-      const w = props.width * ratio
-      const h = props.height * ratio
+      const width = normalizeNumber(props.width, 120, 1)
+      const height = normalizeNumber(props.height, 64, 1)
+      const w = width * ratio
+      const h = height * ratio
       canvas.width = w
       canvas.height = h
 
       ctx.translate(w / 2, h / 2)
-      ctx.rotate((Math.PI / 180) * props.rotate)
+      ctx.rotate((Math.PI / 180) * normalizeNumber(props.rotate, -22))
       ctx.translate(-w / 2, -h / 2)
       ctx.scale(ratio, ratio)
 
-      const font = { ...FONT_DEFAULTS, ...props.font }
+      const font = {
+        ...FONT_DEFAULTS,
+        ...props.font,
+        // Canvas 接受的字号必须为有限正数，保留其它合法字体配置。
+        fontSize: normalizeNumber(props.font.fontSize ?? FONT_DEFAULTS.fontSize, FONT_DEFAULTS.fontSize, 1),
+      }
 
       if (props.image) {
         try {
@@ -107,15 +120,15 @@ export default defineComponent({
             img.onerror = reject
             img.src = props.image
           })
-          ctx.drawImage(img, 0, 0, props.width, props.height)
+          ctx.drawImage(img, 0, 0, width, height)
         } catch {
           // fallback to text
           const text = Array.isArray(props.content) ? props.content : [props.content]
-          drawText(ctx, text.filter(Boolean) as string[], props.width, props.height, font)
+          drawText(ctx, text.filter(Boolean) as string[], width, height, font)
         }
       } else {
         const text = Array.isArray(props.content) ? props.content : [props.content]
-        drawText(ctx, text.filter(Boolean) as string[], props.width, props.height, font)
+        drawText(ctx, text.filter(Boolean) as string[], width, height, font)
       }
 
       let url: string
@@ -127,7 +140,7 @@ export default defineComponent({
       }
       return {
         url,
-        size: { width: props.width, height: props.height },
+        size: { width, height },
       }
     }
 
@@ -184,11 +197,19 @@ export default defineComponent({
       if (!watermarkEl.value) {
         watermarkEl.value = document.createElement('div')
         watermarkEl.value.setAttribute(WATERMARK_TAG, '1')
+        // 水印层仅为视觉背景，避免被辅助技术重复读取。
+        watermarkEl.value.setAttribute('aria-hidden', 'true')
         containerRef.value.appendChild(watermarkEl.value)
       }
       const styleStr = result
-        ? buildStyleString(props.zIndex, props.gap, props.offset, result.url, result.size)
-        : `position: absolute; inset: 0; pointer-events: none; z-index: ${props.zIndex};`
+        ? buildStyleString(
+            normalizeNumber(props.zIndex, 9),
+            [normalizeNumber(props.gap[0], 100, 0), normalizeNumber(props.gap[1], 100, 0)],
+            props.offset && [normalizeNumber(props.offset[0], 0), normalizeNumber(props.offset[1], 0)],
+            result.url,
+            result.size,
+          )
+        : `position: absolute; inset: 0; pointer-events: none; z-index: ${normalizeNumber(props.zIndex, 9)};`
       watermarkEl.value.setAttribute('style', styleStr)
       reobserve()
     }
@@ -222,7 +243,7 @@ export default defineComponent({
     )
 
     return () => (
-      <div ref={containerRef} class={ns.b()}>
+      <div ref={containerRef} {...mergeProps(attrs, { class: ns.b() })}>
         {slots.default?.()}
       </div>
     )

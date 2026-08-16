@@ -41,12 +41,14 @@
 .#{$cls-prefix}-layout-sider {
   position: relative;
   min-width: 0;
+  color: rgba(255, 255, 255, 0.85);
   background: #001529;
   transition:
     all 0.2s,
     background 0s;
 
   &--light {
+    color: $ccui-color-text;
     background: $ccui-color-bg-container;
     border-inline-end: 1px solid $ccui-color-border-secondary;
   }

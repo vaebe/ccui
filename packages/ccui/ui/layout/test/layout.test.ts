@@ -12,6 +12,14 @@ describe('layout', () => {
     expect(wrapper.find(ns.b()).exists()).toBe(true)
   })
 
+  it('forwards root attrs across layout primitives', () => {
+    expect(mount(Layout, { attrs: { 'data-testid': 'layout' } }).attributes('data-testid')).toBe('layout')
+    expect(mount(Header, { attrs: { 'aria-label': 'header' } }).attributes('aria-label')).toBe('header')
+    expect(mount(Content, { attrs: { 'data-testid': 'content' } }).attributes('data-testid')).toBe('content')
+    expect(mount(Footer, { attrs: { 'data-testid': 'footer' } }).attributes('data-testid')).toBe('footer')
+    expect(mount(Sider, { attrs: { 'aria-label': 'navigation' } }).attributes('aria-label')).toBe('navigation')
+  })
+
   it('header / Footer / Content render proper tags', () => {
     const w1 = mount(Header, { slots: { default: 'h' } })
     expect(w1.element.tagName).toBe('HEADER')
@@ -33,6 +41,11 @@ describe('layout', () => {
     const wrapper = mount(Sider, { props: { collapsible: true }, slots: { default: 'menu' } })
     await wrapper.find(siderNs.e('trigger')).trigger('click')
     expect(wrapper.emitted('update:collapsed')?.[0]).toEqual([true])
+  })
+
+  it('supports null trigger to hide the collapsible control', () => {
+    const wrapper = mount(Sider, { props: { collapsible: true, trigger: null } })
+    expect(wrapper.find(siderNs.e('trigger')).exists()).toBe(false)
   })
 
   it('layout adds has-sider modifier when Sider is registered', async () => {

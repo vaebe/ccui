@@ -2,15 +2,16 @@
 import type {} from 'csstype'
 import type { CSSProperties } from 'vue'
 import type { FlexProps } from './flex-types'
-import { computed, defineComponent, h } from 'vue'
+import { computed, defineComponent, h, mergeProps } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { flexProps, PRESET_GAP } from './flex-types'
 import './flex.scss'
 
 export default defineComponent({
   name: 'CFlex',
+  inheritAttrs: false,
   props: flexProps,
-  setup(props: FlexProps, { slots }) {
+  setup(props: FlexProps, { attrs, slots }) {
     const ns = useNamespace('flex')
 
     const style = computed<CSSProperties>(() => {
@@ -33,6 +34,7 @@ export default defineComponent({
       }
     })
 
-    return () => h(props.component || 'div', { class: ns.b(), style: style.value }, slots.default?.())
+    return () =>
+      h(props.component || 'div', mergeProps(attrs, { class: ns.b(), style: style.value }), slots.default?.())
   },
 })

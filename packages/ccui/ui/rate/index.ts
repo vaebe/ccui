@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Rate from './src/rate'
+export type { RateProps } from './src/rate-types'
 
 Rate.install = function (app: App): void {
   app.component(Rate.name!, Rate)

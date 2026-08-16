@@ -67,9 +67,10 @@ describe('avatar', () => {
     wrapper.unmount()
   })
 
-  it('shows error icon when image fails to load', async () => {
+  it('falls back to the display name when image fails to load', async () => {
     const wrapper = mount(Avatar, {
       props: {
+        name: 'Avatar',
         imgSrc: 'https://example.com/avatar.jpg',
       },
     })
@@ -79,7 +80,8 @@ describe('avatar', () => {
     await img.trigger('error')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'IconImgError' }).exists()).toBe(true)
+    expect(wrapper.find(styleClass).text()).toBe('AV')
+    expect(wrapper.find('img').exists()).toBe(false)
 
     wrapper.unmount()
   })
@@ -148,8 +150,41 @@ describe('avatar', () => {
       },
     })
 
-    expect(wrapper.find(styleClass).text()).toBe('C')
+    expect(wrapper.find(styleClass).text()).toBe('CA')
 
+    wrapper.unmount()
+  })
+
+  it('renders custom text without requiring a name', () => {
+    const wrapper = mount(Avatar, {
+      props: { customText: 'VIP' },
+    })
+
+    expect(wrapper.find(styleClass).text()).toBe('VIP')
+    expect(wrapper.findComponent({ name: 'IconBody' }).exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('retries a replacement image after the previous source fails', async () => {
+    const wrapper = mount(Avatar, {
+      props: { name: 'Avatar', imgSrc: 'broken-image' },
+    })
+
+    await wrapper.find('img').trigger('error')
+    expect(wrapper.find('img').exists()).toBe(false)
+
+    await wrapper.setProps({ imgSrc: 'replacement-image' })
+    expect(wrapper.find('img').attributes('src')).toBe('replacement-image')
+    wrapper.unmount()
+  })
+
+  it('forwards native attributes to the avatar root', () => {
+    const wrapper = mount(Avatar, {
+      attrs: { id: 'profile-avatar', 'aria-label': '用户头像' },
+    })
+
+    expect(wrapper.attributes('id')).toBe('profile-avatar')
+    expect(wrapper.attributes('aria-label')).toBe('用户头像')
     wrapper.unmount()
   })
 

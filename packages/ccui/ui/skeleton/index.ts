@@ -6,6 +6,12 @@ Skeleton.install = function (app: App): void {
 }
 
 export { Skeleton }
+export type {
+  SkeletonAvatarShape,
+  SkeletonParagraphShape,
+  SkeletonProps,
+  SkeletonTitleShape,
+} from './src/skeleton-types'
 
 export default {
   title: 'Skeleton 骨架屏',

@@ -49,13 +49,20 @@ export default defineComponent({
     )
     const loadingDelay = computed(() => loadingObj.value?.delay ?? 0)
     const loadingIconNode = computed(() => loadingObj.value?.icon)
+    // delay 只控制 spinner 出现时机；请求一开始就必须阻止重复点击与表单提交。
+    const isLoadingPending = computed(() => isLoadingObject(props.loading) || !!props.loading)
 
+    /** 重置唯一延迟计时器，并按最新 loading/delay 配置更新 spinner 可见状态。 */
     function applyLoading(target: boolean) {
       if (delayTimer) {
         clearTimeout(delayTimer)
         delayTimer = undefined
       }
       if (target && loadingDelay.value > 0) {
+        // delay 动态增大时先隐藏旧 spinner，否则旧 true 会绕过新的等待窗口。
+        delayLoading.value = false
+        // SSR setup 只输出逻辑 pending 状态；客户端 setup/hydration 再启动视觉延迟，避免服务端遗留 timer。
+        if (typeof window === 'undefined') return
         delayTimer = setTimeout(() => {
           delayLoading.value = true
           delayTimer = undefined
@@ -66,8 +73,8 @@ export default defineComponent({
     }
 
     watch(
-      () => props.loading,
-      (val) => {
+      [() => props.loading, loadingDelay],
+      ([val]) => {
         const target = isLoadingObject(val) ? true : !!val
         applyLoading(target)
       },
@@ -75,7 +82,10 @@ export default defineComponent({
     )
 
     onBeforeUnmount(() => {
-      if (delayTimer) clearTimeout(delayTimer)
+      if (delayTimer) {
+        clearTimeout(delayTimer)
+        delayTimer = undefined
+      }
     })
 
     const isLoading = computed(() => {
@@ -108,7 +118,7 @@ export default defineComponent({
         [ns.m('round')]: props.round,
         [ns.m('circle')]: props.circle,
         [ns.m('loading')]: isLoading.value,
-        [ns.m('disabled')]: resolvedDisabled.value || isLoading.value,
+        [ns.m('disabled')]: resolvedDisabled.value || isLoadingPending.value,
         // 用 `--dangerous` 避免与 type='danger' 共用同名类
         [ns.m('dangerous')]: props.danger,
         [ns.m('ghost')]: props.ghost,
@@ -132,8 +142,10 @@ export default defineComponent({
 
     // ── 事件 ─────────────────────────────────────────────
     const onClick = (e: MouseEvent) => {
-      if (resolvedDisabled.value || isLoading.value) {
+      if (resolvedDisabled.value || isLoadingPending.value) {
         e.preventDefault()
+        // href 模式没有原生 disabled，阻止父级委托点击把禁用操作误认为已触发。
+        e.stopPropagation()
         return
       }
       emit('click', e)
@@ -183,12 +195,13 @@ export default defineComponent({
           {
             class: butCls.value,
             style: customColorStyle.value,
-            href: resolvedDisabled.value || isLoading.value ? undefined : props.href,
+            href: resolvedDisabled.value || isLoadingPending.value ? undefined : props.href,
             target: props.target,
-            // disabled <a> 没有原生支持，用 aria-disabled + click 拦截
-            'aria-disabled': resolvedDisabled.value || isLoading.value ? 'true' : undefined,
-            role: 'button',
-            tabindex: resolvedDisabled.value || isLoading.value ? -1 : 0,
+            autofocus: !resolvedDisabled.value && !isLoadingPending.value && props.autofocus ? true : undefined,
+            // 保留原生链接语义与 Enter 行为；禁用时移除导航能力并退出 Tab 顺序。
+            'aria-disabled': resolvedDisabled.value || isLoadingPending.value ? 'true' : undefined,
+            'aria-busy': isLoadingPending.value ? 'true' : undefined,
+            tabindex: resolvedDisabled.value || isLoadingPending.value ? -1 : undefined,
             onClick,
           },
           children,
@@ -202,7 +215,8 @@ export default defineComponent({
           style: customColorStyle.value,
           type: props.nativeType,
           autofocus: props.autofocus || undefined,
-          disabled: resolvedDisabled.value || isLoading.value,
+          disabled: resolvedDisabled.value || isLoadingPending.value,
+          'aria-busy': isLoadingPending.value ? 'true' : undefined,
           onClick,
         },
         children,

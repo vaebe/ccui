@@ -55,13 +55,20 @@ function resolveFromItems(items: DescriptionsItem[]): ResolvedItem[] {
   }))
 }
 
+function normalizeSpan(value: number, fallback = 1): number {
+  // Table colspan must be a finite positive integer; invalid public input falls back safely.
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback
+}
+
 function chunkRows(items: ResolvedItem[], column: number): ResolvedItem[][] {
+  // Keep the table grid valid for dynamic/invalid input instead of emitting zero-width cells.
+  const safeColumn = normalizeSpan(column)
   const rows: ResolvedItem[][] = []
   let cur: ResolvedItem[] = []
   let used = 0
   items.forEach((item) => {
-    const span = Math.min(item.span, column)
-    if (used + span > column) {
+    const span = Math.min(normalizeSpan(item.span), safeColumn)
+    if (used + span > safeColumn) {
       if (cur.length) {
         rows.push(cur)
       }
@@ -70,7 +77,7 @@ function chunkRows(items: ResolvedItem[], column: number): ResolvedItem[][] {
     }
     cur.push({ ...item, span })
     used += span
-    if (used === column) {
+    if (used === safeColumn) {
       rows.push(cur)
       cur = []
       used = 0
@@ -78,7 +85,7 @@ function chunkRows(items: ResolvedItem[], column: number): ResolvedItem[][] {
   })
   if (cur.length) {
     // 最后一行如果未填满，最后一项跨满剩余列
-    cur[cur.length - 1] = { ...cur[cur.length - 1], span: cur[cur.length - 1].span + (column - used) }
+    cur[cur.length - 1] = { ...cur[cur.length - 1], span: cur[cur.length - 1].span + (safeColumn - used) }
     rows.push(cur)
   }
   return rows
@@ -87,7 +94,7 @@ function chunkRows(items: ResolvedItem[], column: number): ResolvedItem[][] {
 export default defineComponent({
   name: 'CDescriptions',
   props: descriptionsProps,
-  setup(props: DescriptionsProps, { slots }) {
+  setup(props: DescriptionsProps, { slots, attrs }) {
     const ns = useNamespace('descriptions')
 
     const items = computed<ResolvedItem[]>(() => {
@@ -120,7 +127,7 @@ export default defineComponent({
     }
 
     return () => (
-      <div class={cls.value}>
+      <div {...attrs} class={cls.value}>
         {renderHeader()}
         <div class={ns.e('view')}>
           <table>

@@ -29,6 +29,32 @@ describe('tag', () => {
     expect(wrapper.emitted('close')).toBeTruthy()
   })
 
+  it('makes the close control keyboard accessible and forwards root attributes', async () => {
+    const wrapper = mount(Tag, {
+      attrs: { 'data-track': 'tag' },
+      props: { closable: true },
+      slots: { default: 'x' },
+    })
+    const close = wrapper.find<HTMLButtonElement>(ns.e('close'))
+
+    expect(close.element.tagName).toBe('BUTTON')
+    expect(close.attributes('type')).toBe('button')
+    expect(close.attributes('aria-label')).toBe('关闭标签')
+    expect(wrapper.attributes('data-track')).toBe('tag')
+    await close.trigger('click')
+    expect(wrapper.emitted('close')).toHaveLength(1)
+  })
+
+  it('updates color and close affordance from dynamic props', async () => {
+    const wrapper = mount(Tag, { props: { color: 'success' } })
+    expect(wrapper.find(ns.m('success')).exists()).toBe(true)
+
+    await wrapper.setProps({ color: '#f50', closable: true })
+    expect(wrapper.find(ns.m('success')).exists()).toBe(false)
+    expect(wrapper.find(ns.m('has-color')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('close')).exists()).toBe(true)
+  })
+
   it('variant=outlined（默认）渲染 outlined class，无 borderless', () => {
     const wrapper = mount(Tag, { slots: { default: 'x' } })
     expect(wrapper.find(ns.m('variant-outlined')).exists()).toBe(true)

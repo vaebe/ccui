@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import { SpaceCompact } from '../index'
 
 describe('space-compact', () => {
@@ -45,5 +46,39 @@ describe('space-compact', () => {
     expect(wrapper.find('.a').exists()).toBe(true)
     expect(wrapper.find('.b').exists()).toBe(true)
     expect(wrapper.find('.c').exists()).toBe(true)
+  })
+
+  it('forwards root attrs for group semantics', () => {
+    const wrapper = mount(SpaceCompact, {
+      attrs: { 'aria-label': 'filters', role: 'group', id: 'compact-root' },
+    })
+
+    expect(wrapper.attributes('aria-label')).toBe('filters')
+    expect(wrapper.attributes('role')).toBe('group')
+    expect(wrapper.attributes('id')).toBe('compact-root')
+  })
+
+  it('passes size to child controls without overriding explicit child size', () => {
+    const Probe = defineComponent({
+      props: { size: String },
+      setup(props) {
+        return () => h('span', { class: 'probe-size' }, props.size)
+      },
+    })
+    const wrapper = mount(SpaceCompact, {
+      props: { size: 'large' },
+      slots: { default: () => [h(Probe), h(Probe, { size: 'small' })] },
+    })
+
+    expect(wrapper.findAll('.probe-size').map((node) => node.text())).toEqual(['large', 'small'])
+  })
+
+  it('does not leak the component size prop onto native controls', () => {
+    const wrapper = mount(SpaceCompact, {
+      props: { size: 'large' },
+      slots: { default: '<input class="native-control" />' },
+    })
+
+    expect(wrapper.find('.native-control').attributes('size')).toBeUndefined()
   })
 })

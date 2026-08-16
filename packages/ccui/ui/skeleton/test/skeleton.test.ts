@@ -88,4 +88,21 @@ describe('skeleton', () => {
     expect(rows[0].attributes('style') ?? '').toBe('')
     expect(rows[1].attributes('style')).toContain('width: 50%')
   })
+
+  it('forwards root attrs and exposes loading semantics', () => {
+    const wrapper = mount(Skeleton, { attrs: { id: 'loading-card', 'data-test': 'skeleton' } })
+    expect(wrapper.attributes('id')).toBe('loading-card')
+    expect(wrapper.attributes('data-test')).toBe('skeleton')
+    expect(wrapper.attributes('aria-busy')).toBe('true')
+  })
+
+  it('does not render loading semantics when content is ready', () => {
+    const wrapper = mount(Skeleton, {
+      props: { loading: false },
+      attrs: { 'aria-label': 'content' },
+      slots: { default: 'ready' },
+    })
+    expect(wrapper.attributes('aria-busy')).toBeUndefined()
+    expect(wrapper.find('.ccui-skeleton').exists()).toBe(false)
+  })
 })

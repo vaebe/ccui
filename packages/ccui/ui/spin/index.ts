@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Spin from './src/spin'
+export type { SpinProps, SpinSize } from './src/spin-types'
 
 Spin.install = function (app: App): void {
   app.component(Spin.name!, Spin)

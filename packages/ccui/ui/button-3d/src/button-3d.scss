@@ -6,6 +6,8 @@ $button-3d-info-active-color: $ccui-button-info-active;
 .#{$cls-prefix}-button-3d {
   position: relative;
   background: transparent;
+  border: 0;
+  padding: 0;
   cursor: pointer;
   transition: filter 250ms;
   -webkit-tap-highlight-color: transparent;
@@ -109,7 +111,7 @@ $button-3d-info-active-color: $ccui-button-info-active;
   }
 
   // 状态样式
-  &:hover {
+  &:not(:disabled):hover {
     filter: brightness(110%);
 
     .front {
@@ -126,7 +128,12 @@ $button-3d-info-active-color: $ccui-button-info-active;
     outline: none;
   }
 
-  &:active {
+  // 不依赖浏览器默认 outline，确保键盘焦点在所有色型上都有稳定位置提示。
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary;
+  }
+
+  &:not(:disabled):active {
     .front {
       transform: translateY(-2px);
       transition: transform 34ms;
@@ -180,6 +187,43 @@ $button-3d-info-active-color: $ccui-button-info-active;
   @keyframes spin {
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  // 减少动态效果偏好下禁用位移过渡和无限旋转，但保留静态 3D 层级与 busy 语义。
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &:not(:disabled):hover,
+    &:not(:disabled):active {
+      transition: none;
+
+      // 状态选择器需与上方 hover/active 至少等特异度，才能在媒体查询中可靠覆盖短时 transition。
+      .front,
+      .shadow {
+        transition: none;
+      }
+    }
+
+    .loading-spinner {
+      animation: none;
+    }
+  }
+
+  // 强制色模式会丢弃渐变背景；用系统色恢复前景、边缘和焦点的最小可辨识边界。
+  @media (forced-colors: active) {
+    .front,
+    .edge {
+      color: ButtonText;
+      background: ButtonFace;
+      border: 1px solid ButtonText;
+    }
+
+    .shadow {
+      background: ButtonText;
+    }
+
+    &:focus-visible {
+      outline-color: Highlight;
     }
   }
 }

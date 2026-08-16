@@ -1,15 +1,20 @@
 import type { CheckableTagGroupProps, CheckableTagValue } from './checkable-tag-types'
-import { computed, defineComponent, h, provide, ref, watch } from 'vue'
+import { computed, defineComponent, h, inject, provide, ref, useAttrs, watch } from 'vue'
+import type { FormItemInjectedContext } from '../../form/src/form-types'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import CheckableTag from './checkable-tag'
 import { checkableTagGroupInjectionKey, checkableTagGroupProps } from './checkable-tag-types'
 
 export default defineComponent({
   name: 'CCheckableTagGroup',
+  inheritAttrs: false,
   props: checkableTagGroupProps,
   emits: ['update:modelValue', 'change'],
   setup(props: CheckableTagGroupProps, { emit, slots }) {
     const ns = useNamespace('checkable-tag-group')
+    const attrs = useAttrs()
+    const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     // 内部状态镜像：保持 modelValue 单向流，但避免 toggle 时连续读旧值。
     const inner = ref<CheckableTagValue[]>([...(props.modelValue ?? [])])
@@ -43,6 +48,7 @@ export default defineComponent({
       inner.value = next
       emit('update:modelValue', next)
       emit('change', next)
+      void formItem?.validate('change')
     }
 
     provide(checkableTagGroupInjectionKey, {
@@ -75,7 +81,18 @@ export default defineComponent({
           )
         : slots.default?.()
 
-      return h('div', { class: wrapperCls.value, role: 'group' }, items)
+      return h(
+        'div',
+        {
+          ...attrs,
+          class: [wrapperCls.value, attrs.class],
+          role: 'group',
+          'aria-disabled': props.disabled ? true : undefined,
+          'aria-invalid': formItem?.validateStatus.value === 'error' ? true : undefined,
+          'aria-describedby': formItem?.messageId?.value,
+        },
+        items,
+      )
     }
   },
 })

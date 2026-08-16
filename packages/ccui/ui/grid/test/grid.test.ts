@@ -30,6 +30,17 @@ describe('grid', () => {
     expect(wrapper.find(rowNs.m('align-middle')).exists()).toBe(true)
   })
 
+  it('forwards semantic and data attributes to row and col roots', () => {
+    const wrapper = mount({
+      components: { Row, Col },
+      template: '<Row data-testid="layout" aria-label="content"><Col data-cell="1">A</Col></Row>',
+    })
+
+    expect(wrapper.find(rowNs.b()).attributes('data-testid')).toBe('layout')
+    expect(wrapper.find(rowNs.b()).attributes('aria-label')).toBe('content')
+    expect(wrapper.find(colNs.b()).attributes('data-cell')).toBe('1')
+  })
+
   it('col applies span modifier', () => {
     const wrapper = mount({
       components: { Row, Col },

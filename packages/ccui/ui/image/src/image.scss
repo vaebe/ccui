@@ -15,6 +15,11 @@
     &--preview {
       cursor: zoom-in;
     }
+
+    &:focus-visible {
+      outline: 2px solid $ccui-color-primary;
+      outline-offset: 2px;
+    }
   }
 
   &__placeholder,
@@ -77,6 +82,15 @@
         background: rgba(255, 255, 255, 0.32);
       }
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-image__inner,
+  .#{$cls-prefix}-image__preview-img,
+  .#{$cls-prefix}-image-preview-fade-enter-active,
+  .#{$cls-prefix}-image-preview-fade-leave-active {
+    transition: none;
   }
 }
 

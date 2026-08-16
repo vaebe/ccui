@@ -37,14 +37,9 @@ export default defineComponent({
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front">
-          {props.loading ? (
-            <>
-              <span class="loading-spinner"></span>
-              Loading...
-            </>
-          ) : (
-            slots.default?.()
-          )}
+          {/* loading 只增加状态指示，不替换调用方提供的可访问名称或本地化文本。 */}
+          {props.loading && <span class="loading-spinner" aria-hidden="true"></span>}
+          {slots.default?.()}
         </span>
       </button>
     )

@@ -21,6 +21,11 @@ describe('spin', () => {
     expect(wrapper.text()).toContain('Loading...')
   })
 
+  it('preserves a consumer aria-label over the localized fallback', () => {
+    const wrapper = mount(Spin, { attrs: { 'aria-label': '正在同步' } })
+    expect(wrapper.find(ns.b()).attributes('aria-label')).toBe('正在同步')
+  })
+
   it('hides spinner when spinning false', () => {
     const wrapper = mount(Spin, { props: { spinning: false } })
     expect(wrapper.find(ns.b()).exists()).toBe(false)
@@ -41,6 +46,16 @@ describe('spin', () => {
 
     expect(wrapper.find('.custom-indicator').exists()).toBe(true)
     expect(wrapper.find(ns.e('dot')).exists()).toBe(false)
+  })
+
+  it('forwards attrs to the visible root without duplicating them in nested mode', () => {
+    const standalone = mount(Spin, { attrs: { id: 'standalone', 'data-test': 'spin' } })
+    expect(standalone.find(ns.b()).attributes('id')).toBe('standalone')
+    expect(standalone.find(ns.b()).attributes('data-test')).toBe('spin')
+
+    const nested = mount(Spin, { attrs: { id: 'nested' }, slots: { default: 'content' } })
+    expect(nested.find(ns.e('nested')).attributes('id')).toBe('nested')
+    expect(nested.find(ns.b()).attributes('id')).toBeUndefined()
   })
 
   it('renders fullscreen spinner only when visible', async () => {

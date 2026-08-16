@@ -36,11 +36,19 @@ const SIZE_MAP: Record<string, number> = {
 }
 
 export function resolveSize(size: SpaceSize): [number, number] {
+  // CSS gaps must be finite and non-negative; normalize malformed runtime values
+  // so an accidental NaN/negative prop cannot invalidate the whole layout rule.
+  const normalize = (value: unknown): number => {
+    const numeric = typeof value === 'number' ? value : Number(value)
+    return Number.isFinite(numeric) ? Math.max(0, numeric) : 0
+  }
+
   if (Array.isArray(size)) {
-    return [size[0] ?? 0, size[1] ?? 0]
+    return [normalize(size[0]), normalize(size[1])]
   }
   if (typeof size === 'number') {
-    return [size, size]
+    const value = normalize(size)
+    return [value, value]
   }
   const v = SIZE_MAP[size] ?? 8
   return [v, v]

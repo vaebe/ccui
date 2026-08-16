@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'vue'
 import type { SkeletonAvatarShape, SkeletonParagraphShape, SkeletonProps, SkeletonTitleShape } from './skeleton-types'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, mergeProps, useAttrs } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { skeletonProps } from './skeleton-types'
 import './skeleton.scss'
@@ -11,9 +11,12 @@ function toSize(s: string | number): string {
 
 export default defineComponent({
   name: 'CSkeleton',
+  // The ready state renders caller-owned slot roots, so attrs are applied only to the loading wrapper.
+  inheritAttrs: false,
   props: skeletonProps,
   setup(props: SkeletonProps, { slots }) {
     const ns = useNamespace('skeleton')
+    const attrs = useAttrs()
 
     const cls = computed(() => ({
       [ns.b()]: true,
@@ -79,7 +82,13 @@ export default defineComponent({
       const total = paragraphRows.value
 
       return (
-        <div class={cls.value}>
+        <div
+          {...mergeProps(attrs, {
+            class: cls.value,
+            // Skeleton content is a loading region; expose its busy state while it is visible.
+            'aria-busy': 'true',
+          })}
+        >
           {props.avatar && (
             <div class={ns.e('header')}>
               <span class={ns.e('avatar')} style={avatarStyle.value} />

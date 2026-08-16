@@ -1,8 +1,9 @@
-import type { ButtonSizeType, ButtonType } from '../src/button-types'
+import type { ButtonGroupProps, ButtonProps, ButtonSizeType, ButtonType } from '../index'
 import { mount, shallowMount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vite-plus/test'
+import { effectScope, h, reactive } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
-import { Button } from '../index'
+import { Button, ButtonGroup } from '../index'
 
 const ns = useNamespace('button', true)
 const baseClass = ns.b()
@@ -17,6 +18,13 @@ function getSizeClass(type: ButtonSizeType) {
 const roundClass = ns.m('round')
 const circleClass = ns.m('circle')
 const loadingClass = ns.m('loading')
+
+afterEach(() => {
+  // loading delay 用例即使断言提前失败，也不能把 fake timer 泄漏到后续测试。
+  vi.useRealTimers()
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 // 测试辅助函数
 function createWrapper(props = {}, slots = {}) {
@@ -40,6 +48,12 @@ function createShallowWrapper(props = {}, slots = {}) {
 }
 
 describe('button', () => {
+  it('从入口导出 Button 与 ButtonGroup 公开类型', () => {
+    expectTypeOf<ButtonProps['nativeType']>().toEqualTypeOf<'button' | 'submit' | 'reset'>()
+    expectTypeOf<ButtonProps['loading']>().toMatchTypeOf<boolean | { delay?: number }>()
+    expectTypeOf<ButtonGroupProps['size']>().toEqualTypeOf<ButtonSizeType>()
+  })
+
   it('dom', () => {
     const wrapper = createShallowWrapper({}, { default: '确定' })
     expect(wrapper.find(baseClass).exists()).toBeTruthy()
@@ -224,7 +238,8 @@ describe('button', () => {
       const wrapper = createShallowWrapper({ href: 'https://example.com' })
       expect(wrapper.find('a').exists()).toBe(true)
       expect(wrapper.find('a').attributes('href')).toBe('https://example.com')
-      expect(wrapper.find('a').attributes('role')).toBe('button')
+      expect(wrapper.find('a').attributes('role')).toBeUndefined()
+      expect(wrapper.find('a').attributes('tabindex')).toBeUndefined()
     })
 
     it('disabled <a> 不渲染 href 且 aria-disabled=true', () => {
@@ -235,9 +250,50 @@ describe('button', () => {
       expect(link.attributes('tabindex')).toBe('-1')
     })
 
+    it('disabled <a> 阻止默认导航与父级委托点击', () => {
+      const host = document.createElement('div')
+      document.body.append(host)
+      const delegatedClick = vi.fn()
+      host.addEventListener('click', delegatedClick)
+      const wrapper = mount(Button, {
+        attachTo: host,
+        props: { href: '/danger', disabled: true },
+        slots: { default: () => 'Disabled link' },
+      })
+      const event = new MouseEvent('click', { bubbles: true, cancelable: true })
+
+      wrapper.element.dispatchEvent(event)
+
+      expect(event.defaultPrevented).toBe(true)
+      expect(delegatedClick).not.toHaveBeenCalled()
+      expect(wrapper.emitted('click')).toBeUndefined()
+      expect(getComputedStyle(wrapper.element).pointerEvents).not.toBe('none')
+      wrapper.unmount()
+      host.remove()
+    })
+
+    it('原生 aria-label 透传，为纯图标 button 与 link 提供可访问名称', () => {
+      const button = shallowMount(Button, { props: { icon: 'mdi:magnify' }, attrs: { 'aria-label': '搜索' } })
+      const link = shallowMount(Button, {
+        props: { href: '/search', icon: 'mdi:magnify' },
+        attrs: { 'aria-label': '搜索页面' },
+      })
+
+      expect(button.find('button').attributes('aria-label')).toBe('搜索')
+      expect(link.find('a').attributes('aria-label')).toBe('搜索页面')
+    })
+
     it('target 透传到 <a>', () => {
       const wrapper = createShallowWrapper({ href: 'https://example.com', target: '_blank' })
       expect(wrapper.find('a').attributes('target')).toBe('_blank')
+    })
+
+    it('href 模式仅在可用时透传 autofocus', async () => {
+      const wrapper = createShallowWrapper({ href: '/edit', autofocus: true })
+      expect(wrapper.find('a').attributes('autofocus')).toBeDefined()
+
+      await wrapper.setProps({ disabled: true })
+      expect(wrapper.find('a').attributes('autofocus')).toBeUndefined()
     })
   })
 
@@ -280,13 +336,16 @@ describe('button', () => {
     it('loading={ delay: 50 } 延迟后才进入 loading', async () => {
       vi.useFakeTimers()
       const wrapper = createWrapper({ loading: { delay: 50 } }, { default: 'Save' })
-      // 立即检查：未进入 loading
+      // delay 只延迟 spinner；逻辑 pending 必须立即阻止重复提交。
       expect(wrapper.find(loadingClass).exists()).toBe(false)
+      expect(wrapper.find('button').attributes('disabled')).toBe('')
+      expect(wrapper.find('button').attributes('aria-busy')).toBe('true')
+      await wrapper.trigger('click')
+      expect(wrapper.emitted('click')).toBeUndefined()
       // 推进 50ms 后进入 loading
       vi.advanceTimersByTime(60)
       await wrapper.vm.$nextTick()
       expect(wrapper.find(loadingClass).exists()).toBe(true)
-      vi.useRealTimers()
       wrapper.unmount()
     })
 
@@ -296,16 +355,84 @@ describe('button', () => {
       wrapper.unmount()
     })
 
+    it('延迟 loading 的 href 在 spinner 前后都由根节点拦截事件', async () => {
+      vi.useFakeTimers()
+      const host = document.createElement('div')
+      document.body.append(host)
+      const delegatedClick = vi.fn()
+      host.addEventListener('click', delegatedClick)
+      const wrapper = mount(Button, {
+        attachTo: host,
+        props: { href: '/save', loading: { delay: 100 } },
+        slots: { default: () => 'Save' },
+      })
+      const link = wrapper.find('a')
+
+      expect(link.attributes('href')).toBeUndefined()
+      expect(link.attributes('aria-disabled')).toBe('true')
+      expect(link.attributes('aria-busy')).toBe('true')
+      expect(link.attributes('tabindex')).toBe('-1')
+      expect(wrapper.find(loadingClass).exists()).toBe(false)
+      expect(getComputedStyle(link.element).pointerEvents).not.toBe('none')
+      link.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      expect(delegatedClick).not.toHaveBeenCalled()
+
+      vi.advanceTimersByTime(100)
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find(loadingClass).exists()).toBe(true)
+      expect(getComputedStyle(link.element).pointerEvents).not.toBe('none')
+      link.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      expect(delegatedClick).not.toHaveBeenCalled()
+      expect(wrapper.emitted('click')).toBeUndefined()
+
+      wrapper.unmount()
+      expect(vi.getTimerCount()).toBe(0)
+      host.remove()
+    })
+
     it('loading 切换：true → false 取消 delay 定时器', async () => {
       vi.useFakeTimers()
       const wrapper = createWrapper({ loading: { delay: 100 } }, { default: 'Save' })
       // 在 delay 期间撤回 loading
       await wrapper.setProps({ loading: false })
+      expect(vi.getTimerCount()).toBe(0)
+      expect(wrapper.find('button').attributes('disabled')).toBeUndefined()
+      expect(wrapper.find('button').attributes('aria-busy')).toBeUndefined()
       vi.advanceTimersByTime(200)
       await wrapper.vm.$nextTick()
       expect(wrapper.find(loadingClass).exists()).toBe(false)
-      vi.useRealTimers()
       wrapper.unmount()
+    })
+
+    it('同一响应式 loading 对象动态修改 delay 时重启单一显示计时器', async () => {
+      vi.useFakeTimers()
+      const loading = reactive({ delay: 0 })
+      const wrapper = createWrapper({ loading }, { default: 'Save' })
+      expect(wrapper.find(loadingClass).exists()).toBe(true)
+
+      loading.delay = 100
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find(loadingClass).exists()).toBe(false)
+      expect(vi.getTimerCount()).toBe(1)
+
+      vi.advanceTimersByTime(100)
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find(loadingClass).exists()).toBe(true)
+      expect(vi.getTimerCount()).toBe(0)
+      wrapper.unmount()
+    })
+
+    it('SSR setup 对 delay loading 不创建计时器', () => {
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+      vi.stubGlobal('window', undefined)
+      const scope = effectScope()
+      const setup = (Button as unknown as { setup: (props: ButtonProps, context: unknown) => unknown }).setup
+
+      scope.run(() => setup({ loading: { delay: 100 } } as ButtonProps, { slots: {}, emit: vi.fn() }))
+
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
+      scope.stop()
     })
   })
 
@@ -342,6 +469,23 @@ describe('button', () => {
       const btn = wrapper.find(baseClass)
       expect(btn.classes()).toContain('ccui-button--small')
       expect(btn.classes()).not.toContain('ccui-button--large')
+    })
+
+    it('Group 的 size/disabled 动态更新并透传原生 group 名称', async () => {
+      const wrapper = mount(ButtonGroup, {
+        props: { size: 'small', disabled: false },
+        attrs: { 'aria-label': '编辑操作' },
+        slots: { default: () => h(Button, null, { default: () => 'Edit' }) },
+      })
+      expect(wrapper.attributes('role')).toBe('group')
+      expect(wrapper.attributes('aria-label')).toBe('编辑操作')
+      expect(wrapper.find('button').classes()).toContain('ccui-button--small')
+
+      await wrapper.setProps({ size: 'large', disabled: true })
+
+      expect(wrapper.find('button').classes()).toContain('ccui-button--large')
+      expect(wrapper.find('button').classes()).not.toContain('ccui-button--small')
+      expect(wrapper.find('button').attributes('disabled')).toBe('')
     })
   })
 

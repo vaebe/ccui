@@ -8,6 +8,7 @@ FloatButton.install = function (app: App): void {
 }
 
 export { BackTop, FloatButton }
+export type { BackTopProps, FloatButtonProps, FloatButtonShape, FloatButtonType } from './src/float-button-types'
 
 export default {
   title: 'FloatButton 悬浮按钮',

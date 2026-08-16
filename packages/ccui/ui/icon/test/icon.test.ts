@@ -165,6 +165,16 @@ describe('icon', () => {
     expect(wrapper.find('svg').attributes('aria-hidden')).toBe('true')
   })
 
+  it('accepts a functional component without a runtime prop warning', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const FunctionalIcon = () => h('svg', { class: 'functional-icon', viewBox: '0 0 24 24' })
+    const wrapper = mount(Icon, { props: { component: FunctionalIcon } })
+
+    expect(wrapper.find('.functional-icon').exists()).toBe(true)
+    expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('Invalid prop'))
+    warn.mockRestore()
+  })
+
   it('exposes resolveIcon and unregisterIcon for registry management', () => {
     registerIcon('search', SearchIcon)
     expect(resolveIcon('search')).toBe(SearchIcon)
@@ -427,5 +437,18 @@ describe('icon', () => {
     expect(labelled.attributes('role')).toBe('img')
     expect(labelled.attributes('aria-label')).toBe('menu')
     expect(decorative.attributes('aria-hidden')).toBe('true')
+  })
+
+  it('preserves native aria-label/title attrs and derives image semantics', () => {
+    const wrapper = mount(Icon, {
+      attrs: { 'aria-label': 'native label', title: 'native title', 'data-testid': 'icon' },
+      slots: { default: '<svg viewBox="0 0 24 24" />' },
+    })
+
+    expect(wrapper.attributes('role')).toBe('img')
+    expect(wrapper.attributes('aria-label')).toBe('native label')
+    expect(wrapper.attributes('title')).toBe('native title')
+    expect(wrapper.attributes('data-testid')).toBe('icon')
+    expect(wrapper.attributes('aria-hidden')).toBeUndefined()
   })
 })

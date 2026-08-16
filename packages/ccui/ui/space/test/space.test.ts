@@ -72,4 +72,18 @@ describe('space', () => {
     expect(wrapper.findAll(ns.e('item')).length).toBe(2)
     expect(wrapper.find(ns.e('split')).text()).toBe('/')
   })
+
+  it('forwards root attrs and normalizes invalid gaps', () => {
+    const wrapper = mount(Space, {
+      attrs: { 'aria-label': 'actions', role: 'group', id: 'space-root' },
+      props: { size: [-4, Number.NaN] },
+      slots: { default: '<span>a</span>' },
+    })
+
+    expect(wrapper.attributes('aria-label')).toBe('actions')
+    expect(wrapper.attributes('role')).toBe('group')
+    expect(wrapper.attributes('id')).toBe('space-root')
+    expect(wrapper.attributes('style')).toContain('column-gap: 0px')
+    expect(wrapper.attributes('style')).toContain('row-gap: 0px')
+  })
 })

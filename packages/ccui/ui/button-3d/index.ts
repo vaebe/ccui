@@ -6,6 +6,7 @@ Button3d.install = function (app: App): void {
 }
 
 export { Button3d }
+export type { Button3dProps, Button3DNativeType, Button3DSizeType, Button3DType } from './src/button-3d-types'
 
 export default {
   title: 'Button3d 按钮',

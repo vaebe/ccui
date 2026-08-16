@@ -7,7 +7,7 @@ import type {
   TextProps,
   TitleProps,
 } from './typography-types'
-import { computed, defineComponent, h, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, defineComponent, h, mergeProps, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 import { renderIconNode } from '../../shared/hooks/use-icon'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { linkProps, paragraphProps, textProps, titleProps } from './typography-types'
@@ -97,6 +97,8 @@ function createTypographyComponent(
     // eslint-disable-next-line ts/no-explicit-any
     setup(rawProps: any, { slots, emit }: any) {
       const props = rawProps as TextProps
+      // 显式 h 渲染不会自动继承 attrs；统一合并到根节点，保证 class、ARIA 和 data-* 可透传。
+      const attrs = useAttrs()
       // copyable
       const copyConfig = computed<CopyableConfig | null>(() => resolveConfig(props.copyable, {} as CopyableConfig))
       const copied = ref(false)
@@ -227,6 +229,7 @@ function createTypographyComponent(
               role="button"
               tabindex={0}
               title={titleAttr}
+              aria-label={titleAttr || '复制'}
               onClick={triggerCopy}
               onKeydown={onActivate(triggerCopy)}
             >
@@ -240,6 +243,7 @@ function createTypographyComponent(
             role="button"
             tabindex={0}
             title={titleAttr}
+            aria-label={titleAttr || '复制'}
             onClick={triggerCopy}
             onKeydown={onActivate(triggerCopy)}
           >
@@ -260,6 +264,7 @@ function createTypographyComponent(
               role="button"
               tabindex={0}
               title={cfg.tooltip || undefined}
+              aria-label={cfg.tooltip || '编辑'}
               onClick={startEdit}
               onKeydown={onActivate(startEdit)}
             >
@@ -273,6 +278,7 @@ function createTypographyComponent(
             role="button"
             tabindex={0}
             title={cfg.tooltip || undefined}
+            aria-label={cfg.tooltip || '编辑'}
             onClick={startEdit}
             onKeydown={onActivate(startEdit)}
           >
@@ -283,7 +289,6 @@ function createTypographyComponent(
 
       const renderExpandBtn = (): VNode | null => {
         if (!ellipsisExpandable.value) return null
-        const cfg = ellipsisConfig.value!
         if (expanded.value) {
           return (
             <span
@@ -342,20 +347,23 @@ function createTypographyComponent(
         })()
 
         if (editing.value) {
-          return h(tagName, { class: cls.value }, [renderEditingInput()])
+          return h(tagName, mergeProps(attrs, { class: cls.value }), [renderEditingInput()])
         }
 
         const tagAttrs: Record<string, unknown> = {
           class: cls.value,
-          title: ellipsisTitle,
           'data-ellipsis-rows': ellipsisConfig.value ? ellipsisRows.value : undefined,
         }
+        // 只有启用省略提示时才覆盖 title，避免 undefined 抹掉调用方的原生提示。
+        if (ellipsisTitle !== undefined) tagAttrs.title = ellipsisTitle
         if (editConfig.value && (editConfig.value.triggerType ?? ['icon']).includes('text')) {
           tagAttrs.onClick = onTextClick
         }
         if (tagName === 'a') {
-          tagAttrs.href = (props as unknown as LinkProps).href
-          tagAttrs.target = (props as unknown as LinkProps).target
+          const { href, target } = props as unknown as LinkProps
+          // 未传组件 prop 时保留 attrs 中的值；显式 prop 仍由 Vue props 优先提供。
+          if (href !== undefined) tagAttrs.href = href
+          if (target !== undefined) tagAttrs.target = target
         }
 
         const children: (VNode | string)[] = []
@@ -370,7 +378,7 @@ function createTypographyComponent(
         if (editBtn) children.push(editBtn)
         if (copyBtn) children.push(copyBtn)
 
-        return h(tagName, tagAttrs, children)
+        return h(tagName, mergeProps(attrs, tagAttrs), children)
       }
     },
   })
@@ -410,6 +418,7 @@ export const Link = createTypographyComponent(
 export const Typography = defineComponent({
   name: 'CTypography',
   setup(_, { slots }) {
-    return () => h('article', { class: ns.b() }, slots.default?.())
+    const attrs = useAttrs()
+    return () => h('article', mergeProps(attrs, { class: ns.b() }), slots.default?.())
   },
 })

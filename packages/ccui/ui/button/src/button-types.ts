@@ -27,7 +27,7 @@ export type ButtonIconPosition = 'start' | 'end'
  * `loading` 复合配置：
  *
  * - `boolean`：立刻进入 loading
- * - `{ delay, icon }`：延迟 `delay` ms 后再进入 loading；自定义 loading 图标
+ * - `{ delay, icon }`：逻辑 pending 立即生效，`delay` 仅推迟 loading 图标；可自定义图标
  */
 export interface ButtonLoadingObject {
   delay?: number

@@ -24,7 +24,8 @@ function nameFormatting(name: string) {
 export default function useGetDisplayName(name: string, customText: string, width: number): string {
   let nameDisplay = ''
   if (customText) {
-    return customText.substring(0, 1)
+    // 文档承诺自定义文字原样展示，不能按 name 的缩写规则截断。
+    return customText
   }
   // name 存在才执行逻辑
   if (name) {

@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Flex from './src/flex'
+export type { FlexAlign, FlexJustify, FlexProps, FlexWrap } from './src/flex-types'
 
 Flex.install = function (app: App): void {
   app.component(Flex.name!, Flex)

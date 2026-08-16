@@ -64,6 +64,13 @@
   }
 }
 
+// 动效偏好由系统控制时，图标仍保持可见但不持续旋转。
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-icon--spin {
+    animation: none;
+  }
+}
+
 @keyframes ccui-icon-spin {
   from {
     transform: rotate(var(--ccui-icon-rotate, 0deg));

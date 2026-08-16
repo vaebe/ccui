@@ -24,10 +24,13 @@ describe('watermark', () => {
   it('renders default container with slot content', () => {
     const wrapper = mount(Watermark, {
       props: { content: 'demo' },
+      attrs: { id: 'watermark-root', 'aria-label': '受保护内容' },
       slots: { default: '<p class="inside">Hello</p>' },
     })
     expect(wrapper.find(ns.b()).exists()).toBe(true)
     expect(wrapper.find('.inside').text()).toBe('Hello')
+    expect(wrapper.attributes('id')).toBe('watermark-root')
+    expect(wrapper.attributes('aria-label')).toBe('受保护内容')
   })
 
   it('appends a watermark layer node', async () => {
@@ -39,6 +42,7 @@ describe('watermark', () => {
     expect(wm).not.toBeNull()
     // canvas may not be available in jsdom — fallback style still has pointer-events
     expect(wm?.getAttribute('style')).toContain('pointer-events')
+    expect(wm?.getAttribute('aria-hidden')).toBe('true')
   })
 
   it('keeps watermark when content prop changes', async () => {
@@ -67,6 +71,41 @@ describe('watermark', () => {
     await waitWatermarkRender()
     const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
     expect(wm?.getAttribute('style')).toContain('z-index: 100')
+  })
+
+  it('normalizes non-finite canvas and style values', async () => {
+    const wrapper = mount(Watermark, {
+      props: {
+        content: 'demo',
+        width: Number.NaN,
+        height: Number.POSITIVE_INFINITY,
+        gap: [Number.NaN, 4],
+        zIndex: Number.NaN,
+      },
+    })
+    await waitWatermarkRender()
+    const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
+    expect(wm?.getAttribute('style')).not.toContain('NaN')
+    expect(wm?.getAttribute('style')).toContain('z-index: 9')
+  })
+
+  it('normalizes negative gaps before calculating background size', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      fillText: vi.fn(),
+      rotate: vi.fn(),
+      scale: vi.fn(),
+      translate: vi.fn(),
+    } as unknown as CanvasRenderingContext2D)
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,watermark')
+
+    const wrapper = mount(Watermark, {
+      props: { content: 'demo', width: 120, height: 64, gap: [-200, -100] },
+    })
+    await waitWatermarkRender()
+
+    const wm = wrapper.element.querySelector('[data-ccui-watermark]') as HTMLElement | null
+    expect(wm?.getAttribute('style')).toContain('background-size: 220px 164px')
+    expect(wm?.getAttribute('style')).not.toContain('background-size: -')
   })
 
   it('rebuilds watermark when its node is removed (MutationObserver)', async () => {

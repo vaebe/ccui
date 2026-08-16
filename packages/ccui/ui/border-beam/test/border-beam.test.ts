@@ -13,6 +13,15 @@ describe('border-beam', () => {
     expect(wrapper.classes()).toContain('ccui-border-beam')
   })
 
+  it('forwards root attrs without replacing generated CSS variables', () => {
+    const wrapper = mount(BorderBeam, {
+      attrs: { id: 'beam', 'aria-label': 'decorative border' },
+    })
+    expect(wrapper.attributes('id')).toBe('beam')
+    expect(wrapper.attributes('aria-label')).toBe('decorative border')
+    expect(wrapper.attributes('style')).toContain('--ccui-bb-duration: 6s')
+  })
+
   it('renders default slot content', () => {
     const wrapper = mount(BorderBeam, {
       slots: {
