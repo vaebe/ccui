@@ -21,7 +21,7 @@ export const borderBeamProps = {
   /** 流光层相对容器边缘的外扩距离（number 视为 px） */
   outset: {
     type: [Number, String] as PropType<number | string>,
-    default: undefined,
+    default: 0,
   },
   /** 边框 / 光带粗细（number 视为 px） */
   borderWidth: {
@@ -31,7 +31,7 @@ export const borderBeamProps = {
   /** 容器圆角（number 视为 px）；asChild 时不传则继承目标元素 */
   borderRadius: {
     type: [Number, String] as PropType<number | string>,
-    default: undefined,
+    default: 8,
   },
   /** 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px） */
   size: {

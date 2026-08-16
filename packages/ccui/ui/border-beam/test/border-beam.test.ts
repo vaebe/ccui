@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h, nextTick } from 'vue'
+import { Fragment, h, nextTick } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Card } from '../../card'
@@ -118,6 +118,8 @@ describe('border-beam', () => {
     expect(style).toContain('--ccui-bb-radius: 8px')
     expect(style).toContain('--ccui-bb-size: 100px')
     expect(style).toContain('--ccui-bb-duration: 6s')
+    expect(wrapper.props('outset')).toBe(0)
+    expect(wrapper.props('borderRadius')).toBe(8)
   })
 
   it('injects css variables from props onto container', () => {
@@ -256,26 +258,54 @@ describe('border-beam', () => {
 
       expect(wrapper.find('.ccui-card.host').exists()).toBe(true)
       expect(wrapper.find('.ccui-card.host').find(ns.e('effect')).exists()).toBe(true)
+      expect(wrapper.find('.ccui-card.host').find(ns.e('effect')).attributes('style')).toContain(
+        '--ccui-bb-inset-offset: 0px',
+      )
     })
 
-    it('refreshes inferred border widths after host style mutations', async () => {
+    it('keeps the beam inside hosts that clip overflowing children', async () => {
+      const wrapper = mount(BorderBeam, {
+        props: { asChild: true, outset: 6 },
+        slots: {
+          default: () =>
+            h('div', {
+              class: 'host',
+              style: 'position: relative; overflow: hidden; border: 2px solid; border-radius: 12px',
+            }),
+        },
+      })
+      await nextTick()
+
+      expect(wrapper.find(ns.e('effect')).attributes('style')).toContain('--ccui-bb-inset-offset: 0px')
+    })
+
+    it('refreshes inferred border widths after border-box changes', async () => {
       let widths = ['1px', '1px', '1px', '1px']
-      let mutationCallback: MutationCallback | undefined
-      class MutationObserverMock {
-        constructor(callback: MutationCallback) {
-          mutationCallback = callback
+      let resizeCallback: ResizeObserverCallback | undefined
+      let observedBox: ResizeObserverBoxOptions | undefined
+      class ResizeObserverMock {
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallback = callback
         }
 
-        /** 测试只需捕获回调，宿主样式读取由 getComputedStyle mock 控制。 */
-        observe(): void {}
+        /** 记录观察盒模型，确保边框变化而内容盒不变时仍会刷新。 */
+        observe(_target: Element, options?: ResizeObserverOptions): void {
+          observedBox = options?.box
+        }
 
         /** 与浏览器接口一致，组件卸载时可安全清理观察器。 */
         disconnect(): void {}
+
+        /** 测试不使用多目标取消观察。 */
+        unobserve(): void {}
       }
-      vi.stubGlobal('MutationObserver', MutationObserverMock)
+      vi.stubGlobal('ResizeObserver', ResizeObserverMock)
       const computedStyle = vi.spyOn(window, 'getComputedStyle').mockImplementation(
         () =>
           ({
+            overflow: 'visible',
+            overflowX: 'visible',
+            overflowY: 'visible',
             borderTopWidth: widths[0],
             borderRightWidth: widths[1],
             borderBottomWidth: widths[2],
@@ -294,16 +324,33 @@ describe('border-beam', () => {
         },
       })
       await nextTick()
+      expect(observedBox).toBe('border-box')
       expect(wrapper.find(ns.e('effect')).attributes('style')).toContain('--ccui-bb-inset-offset: -1px -1px -1px -1px')
 
       widths = ['4px', '3px', '2px', '1px']
-      mutationCallback?.([], {} as MutationObserver)
+      resizeCallback?.([], {} as ResizeObserver)
       await nextTick()
       expect(wrapper.find(ns.e('effect')).attributes('style')).toContain('--ccui-bb-inset-offset: -4px -3px -2px -1px')
 
       wrapper.unmount()
       computedStyle.mockRestore()
       vi.unstubAllGlobals()
+    })
+
+    it('preserves raw text when a Fragment contains more than one renderable child', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      const wrapper = mount(BorderBeam, {
+        props: { asChild: true },
+        slots: {
+          default: () => h(Fragment, null, ['前缀文本', h('div', { class: 'content' }, '元素文本')]),
+        },
+      })
+
+      expect(wrapper.text()).toContain('前缀文本')
+      expect(wrapper.text()).toContain('元素文本')
+      expect(wrapper.find(ns.e('effect')).exists()).toBe(false)
+      expect(warn).toHaveBeenCalledWith('[ccui BorderBeam] asChild 需要唯一的元素或单根组件插槽。')
+      warn.mockRestore()
     })
 
     it('warns and renders no effect for multiple children', () => {

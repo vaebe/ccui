@@ -158,7 +158,9 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 ## 继承真实边框
 
-开启 `asChild` 后不会生成包装层，流光层会直接挂载到唯一的默认插槽元素中。未传 `outset` 时，组件会读取目标元素四边的实际边框宽度；未传 `borderRadius` 时，流光会继承目标元素的圆角，因此支持非对称圆角和 CSS 变量。
+开启 `asChild` 后不会生成包装层，流光层会直接挂载到唯一的默认插槽元素中。未显式传入 `outset` 时，组件会读取目标元素四边的实际边框宽度；未显式传入 `borderRadius` 时，流光会继承目标元素的圆角，因此支持非对称圆角和 CSS 变量。
+
+如果目标元素使用 `overflow: hidden`、`clip`、`auto` 或 `scroll`，外扩的子元素会被目标自身裁剪。组件会自动把流光收进内容边缘（`outset` 按 `0` 处理），保证流光可见；需要严格覆盖外侧边框时，请使用默认包装模式。
 
 目标元素需要建立定位上下文（例如 `position: relative`），并且默认插槽只能包含一个最终渲染为 `HTMLElement` 的元素或单根组件。
 
@@ -209,16 +211,16 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 ### Props
 
-| 参数         | 说明                                                                               | 类型                                | 默认值           |
-| ------------ | ---------------------------------------------------------------------------------- | ----------------------------------- | ---------------- |
-| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变                         | [BorderBeamColor](#borderbeamcolor) | -                |
-| outset       | 流光层相对容器边缘的外扩距离；`asChild` 下不传则读取目标元素四边边框               | `number \| string`                  | 包装模式下为 `0` |
-| borderWidth  | 边框 / 光带粗细（number 视为 px）                                                  | `number \| string`                  | `1`              |
-| borderRadius | 流光层圆角；`asChild` 下不传则继承目标元素，可使用非对称 CSS 圆角                  | `number \| string`                  | 包装模式下为 `8` |
-| size         | 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px）                     | `number \| string`                  | `100`            |
-| duration     | 跑完一圈的时长（秒），必须大于 0                                                   | `number`                            | `6`              |
-| count        | 同时显示的流光数量，取大于等于 1 的整数                                            | `number`                            | `1`              |
-| asChild      | 移除包装层，并把流光层挂载到唯一的默认插槽 HTMLElement；目标元素需要建立定位上下文 | `boolean`                           | `false`          |
+| 参数         | 说明                                                                               | 类型                                | 默认值  |
+| ------------ | ---------------------------------------------------------------------------------- | ----------------------------------- | ------- |
+| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变                         | [BorderBeamColor](#borderbeamcolor) | -       |
+| outset       | 流光层相对容器边缘的外扩距离；`asChild` 下未显式传入则读取目标元素四边边框         | `number \| string`                  | `0`     |
+| borderWidth  | 边框 / 光带粗细（number 视为 px）                                                  | `number \| string`                  | `1`     |
+| borderRadius | 流光层圆角；`asChild` 下未显式传入则继承目标元素，可使用非对称 CSS 圆角            | `number \| string`                  | `8`     |
+| size         | 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px）                     | `number \| string`                  | `100`   |
+| duration     | 跑完一圈的时长（秒），必须大于 0                                                   | `number`                            | `6`     |
+| count        | 同时显示的流光数量，取大于等于 1 的整数                                            | `number`                            | `1`     |
+| asChild      | 移除包装层，并把流光层挂载到唯一的默认插槽 HTMLElement；目标元素需要建立定位上下文 | `boolean`                           | `false` |
 
 ### Slots
 

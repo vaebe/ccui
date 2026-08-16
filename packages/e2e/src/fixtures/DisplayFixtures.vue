@@ -36,6 +36,11 @@ const currentStep = ref(1)
 const iconClicks = ref(0)
 const siderCollapsed = ref(false)
 const tagClosed = ref(false)
+
+/** 直接修改祖先 class，确保 BorderBeam 只能通过真实 border-box 变化感知边框更新。 */
+function widenBorderBeamHost(): void {
+  document.querySelector('[data-testid="border-beam-dynamic-wrap"]')?.classList.add('is-wide')
+}
 </script>
 
 <template>
@@ -63,11 +68,17 @@ const tagClosed = ref(false)
       <BorderBeam as-child :count="3" border-width="2px">
         <div
           data-testid="border-beam-child-host"
-          style="position: relative; border: 2px solid transparent; border-radius: 12px 12px 0 0"
+          style="position: relative; overflow: hidden; border: 2px solid transparent; border-radius: 12px 12px 0 0"
         >
-          Auto beam content
+          Clipped beam content
         </div>
       </BorderBeam>
+      <div class="border-beam-dynamic-wrap" data-testid="border-beam-dynamic-wrap">
+        <button type="button" @click="widenBorderBeamHost">Widen beam border</button>
+        <BorderBeam as-child>
+          <div class="border-beam-dynamic-host" data-testid="border-beam-dynamic-host">Dynamic beam content</div>
+        </BorderBeam>
+      </div>
       <Tag v-if="!tagClosed" color="success" closable @close="tagClosed = true">Stable</Tag>
     </section>
 
@@ -192,5 +203,17 @@ const tagClosed = ref(false)
 
 [data-testid='display-watermark'] {
   min-height: 120px;
+}
+
+.border-beam-dynamic-host {
+  position: relative;
+  box-sizing: content-box;
+  width: 160px;
+  padding: 8px;
+  border: 2px solid transparent;
+}
+
+.border-beam-dynamic-wrap.is-wide .border-beam-dynamic-host {
+  border-width: 6px;
 }
 </style>

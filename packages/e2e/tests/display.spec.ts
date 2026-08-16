@@ -55,12 +55,24 @@ test('[BorderBeam] exposes configured animation geometry and content', async ({ 
   await expect(beam).toHaveCSS('--ccui-bb-border-width', '1px')
 })
 
-test('[BorderBeam] mounts evenly delayed effects into an asChild host', async ({ page }) => {
+test('[BorderBeam] keeps evenly delayed effects inside a clipping asChild host', async ({ page }) => {
   const host = page.getByTestId('border-beam-child-host')
   const effects = host.locator('.ccui-border-beam__effect--child')
   await expect(effects).toHaveCount(3)
   await expect(effects.nth(1)).toHaveCSS('--ccui-bb-delay', '-2s')
-  await expect(effects.first()).toHaveCSS('--ccui-bb-inset-offset', '-2px -2px -2px -2px')
+  await expect(effects.first()).toHaveCSS('--ccui-bb-inset-offset', '0px')
+  await expect(effects.first()).toHaveCSS('border-radius', '12px 12px 0px 0px')
+})
+
+test('[BorderBeam] refreshes inferred inset when an ancestor class changes the border box', async ({ page }) => {
+  const host = page.getByTestId('border-beam-dynamic-host')
+  const effect = host.locator('.ccui-border-beam__effect--child')
+  await expect(host).toHaveCSS('border-top-width', '2px')
+  await expect(effect).toHaveCSS('--ccui-bb-inset-offset', '-2px -2px -2px -2px')
+
+  await page.getByRole('button', { name: 'Widen beam border' }).click()
+  await expect(host).toHaveCSS('border-top-width', '6px')
+  await expect(effect).toHaveCSS('--ccui-bb-inset-offset', '-6px -6px -6px -6px')
 })
 
 test('[Breadcrumb] renders a labelled navigation landmark', async ({ page }) => {

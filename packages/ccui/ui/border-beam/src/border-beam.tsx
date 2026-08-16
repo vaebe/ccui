@@ -1,11 +1,13 @@
-import type { CSSProperties, VNode } from 'vue'
+import type { CSSProperties, VNode, VNodeChild } from 'vue'
 import type { BorderBeamColor, BorderBeamColorStop, BorderBeamProps } from './border-beam-types'
 import {
   cloneVNode,
   Comment,
   computed,
+  createTextVNode,
   defineComponent,
   Fragment,
+  getCurrentInstance,
   h,
   isVNode,
   onBeforeUnmount,
@@ -51,16 +53,22 @@ function toInset(value: number | string): string {
 }
 
 /** 展开顶层 Fragment 并忽略注释、空白文本，供 asChild 校验唯一目标节点。 */
-function getRenderableChildren(nodes: VNode[]): VNode[] {
+function getRenderableChildren(nodes: VNodeChild[]): VNode[] {
   const result: VNode[] = []
   nodes.forEach((node) => {
-    if (!isVNode(node) || node.type === Comment) return
-    if (node.type === Text && (typeof node.children !== 'string' || !node.children.trim())) return
-    if (node.type === Fragment && Array.isArray(node.children)) {
-      result.push(...getRenderableChildren(node.children.filter(isVNode)))
+    if (Array.isArray(node)) {
+      result.push(...getRenderableChildren(node))
       return
     }
-    result.push(node)
+    if (!isVNode(node) && typeof node !== 'string' && typeof node !== 'number') return
+    const normalized = isVNode(node) ? node : createTextVNode(String(node))
+    if (normalized.type === Comment) return
+    if (normalized.type === Text && (typeof normalized.children !== 'string' || !normalized.children.trim())) return
+    if (normalized.type === Fragment && Array.isArray(normalized.children)) {
+      result.push(...getRenderableChildren(normalized.children as VNodeChild[]))
+      return
+    }
+    result.push(normalized)
   })
   return result
 }
@@ -108,6 +116,7 @@ export default defineComponent({
   setup(props: BorderBeamProps, { slots }) {
     const ns = useNamespace('border-beam')
     const attrs = useAttrs()
+    const instance = getCurrentInstance()
     const childHost = ref<HTMLElement | null>(null)
     const childInset = ref('0px')
     let resizeObserver: ResizeObserver | undefined
@@ -119,6 +128,17 @@ export default defineComponent({
     const normalizedCount = computed(() => normalizeCount(props.count))
     const normalizedDuration = computed(() => normalizeDuration(props.duration))
 
+    /** Vue 会填入 prop 默认值；通过原始 VNode props 区分“未传”与“显式传入默认值”。 */
+    const hasExplicitProp = (name: string) => {
+      const vnodeProps = instance?.vnode.props
+      if (!vnodeProps) return false
+      const kebabName = name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
+      return (
+        Object.prototype.hasOwnProperty.call(vnodeProps, name) ||
+        Object.prototype.hasOwnProperty.call(vnodeProps, kebabName)
+      )
+    }
+
     /** 包装模式保留原默认值；asChild 模式则允许圆角变量缺省并从宿主继承。 */
     const sharedEffectStyle = computed<CSSProperties>(() => {
       const vars: Record<string, string> = {
@@ -126,8 +146,6 @@ export default defineComponent({
         '--ccui-bb-size': toLength(props.size, DEFAULT_SIZE),
         '--ccui-bb-duration': `${normalizedDuration.value}s`,
       }
-      if (props.borderRadius !== undefined)
-        vars['--ccui-bb-radius'] = toLength(props.borderRadius, DEFAULT_BORDER_RADIUS)
       if (beamGradient.value) {
         vars['--ccui-bb-beam-gradient'] = beamGradient.value
       }
@@ -140,10 +158,24 @@ export default defineComponent({
       '--ccui-bb-radius': toLength(props.borderRadius, DEFAULT_BORDER_RADIUS),
     }))
 
-    /** 读取真实宿主的四边边框，使未显式传 outset 时光束自动覆盖现有边框。 */
+    /**
+     * 读取真实宿主的四边边框。裁剪型宿主必须把光束收进 padding box，
+     * 否则负 inset 部分会被宿主自身的 overflow 完整裁掉。
+     */
     const updateChildInset = () => {
-      if (!childHost.value || props.outset !== undefined) return
+      if (!childHost.value) return
       const style = getComputedStyle(childHost.value)
+      const clipsChildren = [style.overflow, style.overflowX, style.overflowY].some(
+        (value) => value === 'hidden' || value === 'clip' || value === 'auto' || value === 'scroll',
+      )
+      if (clipsChildren) {
+        childInset.value = '0px'
+        return
+      }
+      if (hasExplicitProp('outset')) {
+        childInset.value = toInset(props.outset)
+        return
+      }
       const widths = [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth]
       childInset.value = widths.map((width) => `${-(Number.parseFloat(width) || 0)}px`).join(' ')
     }
@@ -162,7 +194,8 @@ export default defineComponent({
       updateChildInset()
       if (typeof ResizeObserver !== 'undefined') {
         resizeObserver = new ResizeObserver(updateChildInset)
-        resizeObserver.observe(host)
+        // content-box 固定时边框变化不会触发默认观察；border-box 可覆盖 hover、媒体查询和祖先样式。
+        resizeObserver.observe(host, { box: 'border-box' })
       }
       if (typeof MutationObserver !== 'undefined') {
         mutationObserver = new MutationObserver(updateChildInset)
@@ -182,15 +215,14 @@ export default defineComponent({
         return
       }
       warnedInvalidChild = false
+      if (childHost.value === element) {
+        updateChildInset()
+        return
+      }
       observeChildHost(element)
     }
 
-    watch(
-      () => props.outset,
-      (outset) => {
-        if (outset === undefined) updateChildInset()
-      },
-    )
+    watch(() => props.outset, updateChildInset)
     watch(
       () => props.asChild,
       (asChild) => {
@@ -210,7 +242,10 @@ export default defineComponent({
           ...sharedEffectStyle.value,
           '--ccui-bb-delay': delay,
           ...(asChild && {
-            '--ccui-bb-inset-offset': props.outset === undefined ? childInset.value : toInset(props.outset),
+            '--ccui-bb-inset-offset': childInset.value,
+            ...(hasExplicitProp('borderRadius') && {
+              '--ccui-bb-radius': toLength(props.borderRadius, DEFAULT_BORDER_RADIUS),
+            }),
           }),
         } as CSSProperties
         return h('div', {
