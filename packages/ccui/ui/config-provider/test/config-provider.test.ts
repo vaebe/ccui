@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import { jaJP, koKR } from '../../locale'
 import { ConfigProvider, useConfig } from '../index'
 
@@ -29,6 +29,26 @@ describe('configProvider', () => {
       template: `<ConfigProvider component-size="small"><ConsumerComp /></ConfigProvider>`,
     })
     expect(wrapper.find('[data-testid="consumer"]').text()).toContain('"componentSize":"small"')
+  })
+
+  it('propagates reactive prop changes to an existing consumer', async () => {
+    const wrapper = mount(ConfigProvider, {
+      props: { componentSize: 'small' },
+      slots: { default: () => h(ConsumerComp) },
+    })
+    expect(wrapper.find('[data-testid="consumer"]').text()).toContain('"componentSize":"small"')
+    await wrapper.setProps({ componentSize: 'large' })
+    await nextTick()
+    expect(wrapper.find('[data-testid="consumer"]').text()).toContain('"componentSize":"large"')
+  })
+
+  it('preserves child attrs on the provider wrapper', () => {
+    const wrapper = mount(ConfigProvider, {
+      attrs: { id: 'settings-root', 'data-audit': 'config' },
+      slots: { default: 'x' },
+    })
+    expect(wrapper.attributes('id')).toBe('settings-root')
+    expect(wrapper.attributes('data-audit')).toBe('config')
   })
 
   it('applies theme tokens as CSS variables', () => {

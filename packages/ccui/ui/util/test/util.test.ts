@@ -35,7 +35,10 @@ describe('util', () => {
 
   it('isObject only returns true for plain objects', () => {
     expect(isObject({})).toBe(true)
+    expect(isObject(Object.create(null))).toBe(true)
     expect(isObject([])).toBe(false)
+    expect(isObject(new Date())).toBe(false)
+    expect(isObject(Object.create({}))).toBe(false)
     expect(isObject(null)).toBe(false)
     expect(isObject(1)).toBe(false)
   })
@@ -127,6 +130,24 @@ describe('util', () => {
     t()
     t()
     expect(fn).toHaveBeenCalledTimes(1)
+    vi.advanceTimersByTime(60)
+    expect(fn).toHaveBeenCalledTimes(2)
+    vi.useRealTimers()
+  })
+
+  it('throttle uses the latest trailing arguments and can cancel pending work', () => {
+    vi.useFakeTimers()
+    const fn = vi.fn()
+    const t = throttle(fn, 50)
+
+    t('first')
+    t('stale')
+    t('latest')
+    vi.advanceTimersByTime(60)
+    expect(fn.mock.calls).toEqual([['first'], ['latest']])
+
+    t('cancelled')
+    t.cancel()
     vi.advanceTimersByTime(60)
     expect(fn).toHaveBeenCalledTimes(2)
     vi.useRealTimers()

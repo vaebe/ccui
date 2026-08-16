@@ -1,5 +1,5 @@
-import type { ComputedRef, Ref } from 'vue'
-import { computed, ref } from 'vue'
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue'
+import { computed, ref, toValue } from 'vue'
 
 export interface VirtualListItem<T> {
   index: number
@@ -8,9 +8,13 @@ export interface VirtualListItem<T> {
 }
 
 export interface UseVirtualListOptions {
-  itemHeight: number
-  maxHeight: number
-  buffer?: number
+  itemHeight: MaybeRefOrGetter<number>
+  maxHeight: MaybeRefOrGetter<number>
+  buffer?: MaybeRefOrGetter<number>
+}
+
+function finiteOr(value: number, fallback: number): number {
+  return Number.isFinite(value) ? value : fallback
 }
 
 export function useVirtualList<T>(
@@ -25,20 +29,22 @@ export function useVirtualList<T>(
   scrollToIndex: (index: number, container?: HTMLElement | null) => void
 } {
   const scrollTop = ref(0)
-  const buffer = options.buffer ?? 4
+  const itemHeight = computed(() => Math.max(1, finiteOr(toValue(options.itemHeight), 1)))
+  const maxHeight = computed(() => Math.max(0, finiteOr(toValue(options.maxHeight), 0)))
+  const buffer = computed(() => Math.max(0, Math.floor(finiteOr(toValue(options.buffer ?? 4), 0))))
 
-  const totalHeight = computed(() => items.value.length * options.itemHeight)
-  const containerHeight = computed(() => Math.min(options.maxHeight, totalHeight.value))
+  const totalHeight = computed(() => items.value.length * itemHeight.value)
+  const containerHeight = computed(() => Math.min(maxHeight.value, totalHeight.value))
 
   const visible = computed<VirtualListItem<T>[]>(() => {
     const allItems = items.value
     if (allItems.length === 0) return []
-    const start = Math.max(0, Math.floor(scrollTop.value / options.itemHeight) - buffer)
-    const visibleCount = Math.ceil(containerHeight.value / options.itemHeight) + buffer * 2
+    const start = Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - buffer.value)
+    const visibleCount = Math.ceil(containerHeight.value / itemHeight.value) + buffer.value * 2
     const end = Math.min(allItems.length, start + visibleCount)
     const out: VirtualListItem<T>[] = []
     for (let i = start; i < end; i += 1) {
-      out.push({ index: i, data: allItems[i], top: i * options.itemHeight })
+      out.push({ index: i, data: allItems[i], top: i * itemHeight.value })
     }
     return out
   })
@@ -49,11 +55,11 @@ export function useVirtualList<T>(
 
   const scrollToIndex = (index: number, container?: HTMLElement | null) => {
     if (!container) return
-    const desiredTop = index * options.itemHeight
+    const desiredTop = index * itemHeight.value
     if (desiredTop < scrollTop.value) {
       container.scrollTop = desiredTop
-    } else if (desiredTop + options.itemHeight > scrollTop.value + containerHeight.value) {
-      container.scrollTop = desiredTop - containerHeight.value + options.itemHeight
+    } else if (desiredTop + itemHeight.value > scrollTop.value + containerHeight.value) {
+      container.scrollTop = desiredTop - containerHeight.value + itemHeight.value
     }
   }
 

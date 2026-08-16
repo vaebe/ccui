@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'vue'
 import type { ConfigContext, ConfigProviderProps, Locale } from './config-provider-types'
-import { computed, defineComponent, inject, provide, watch } from 'vue'
+import { computed, defineComponent, inject, provide, reactive, watch, watchEffect } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { setDayjsLocale } from '../../shared/utils/dayjs-locale'
 import defaultLocale from '../../locale/zh-CN'
@@ -64,16 +64,28 @@ export const ConfigProvider = defineComponent({
   setup(props: ConfigProviderProps, { slots }) {
     const ns = useNamespace('config-provider')
 
-    const ctx = computed<ConfigContext>(() => ({
+    // Keep one reactive context object so descendants that call useConfig() once
+    // still observe prop changes without needing to re-inject a new value.
+    const ctx = reactive<ConfigContext>({
       prefixCls: props.prefixCls,
       componentSize: props.componentSize,
       locale: mergeLocale(props.locale),
       direction: props.direction,
       theme: props.theme,
       iconPrefixCls: props.iconPrefixCls,
-    }))
+    })
+    provide<ConfigContext>(CONFIG_INJECT_KEY, ctx)
 
-    provide<ConfigContext>(CONFIG_INJECT_KEY, ctx.value)
+    watchEffect(() => {
+      Object.assign(ctx, {
+        prefixCls: props.prefixCls,
+        componentSize: props.componentSize,
+        locale: mergeLocale(props.locale),
+        direction: props.direction,
+        theme: props.theme,
+        iconPrefixCls: props.iconPrefixCls,
+      })
+    })
 
     // locale 变更时切全局 dayjs locale。ConfigProvider locale.locale 用 'zh-CN' / 'en-US' /
     // 'ja-JP' / 'ko-KR' 命名，dayjs 用小写的 'zh-cn' / 'en' / 'ja' / 'ko'，做一次映射。
