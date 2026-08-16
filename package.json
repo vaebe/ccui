@@ -8,8 +8,13 @@
     "build:lib": "vp run --filter ccui-cli build:lib",
     "release": "node scripts/publish.mjs",
     "release:dry": "node scripts/publish.mjs --dry-run",
-    "check": "vp check",
-    "test": "vp test",
+    "check": "vp run --filter ccui-cli generate:meta && vp check",
+    "test": "vp run --filter @vaebe/ccui --filter @vaebe/unplugin-vue-components-ccui test",
+    "e2e:install": "pnpm --filter @vaebe/ccui-e2e exec playwright install chromium",
+    "check:e2e-coverage": "node packages/e2e/scripts/check-coverage.mjs",
+    "test:e2e": "pnpm check:e2e-coverage && vp run --filter @vaebe/ccui-e2e test:e2e",
+    "test:e2e:repeat": "pnpm check:e2e-coverage && pnpm --filter @vaebe/ccui-e2e exec playwright test --repeat-each=3",
+    "test:e2e:ui": "vp run --filter @vaebe/ccui-e2e test:e2e:ui",
     "lint": "vp lint . --fix",
     "fmt": "vp fmt",
     "prepare": "vp config",
@@ -20,6 +25,7 @@
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@ls-lint/ls-lint": "^2.3.1",
+    "baseline-browser-mapping": "^2.10.43",
     "bumpp": "^10.3.1",
     "commitlint": "^20.1.0",
     "vite-plus": "catalog:"
@@ -27,11 +33,5 @@
   "engines": {
     "node": ">=22.10.0"
   },
-  "packageManager": "pnpm@10.33.2",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "vue-demi"
-    ]
-  }
+  "packageManager": "pnpm@11.11.0"
 }

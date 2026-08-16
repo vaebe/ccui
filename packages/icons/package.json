@@ -3,15 +3,15 @@
   "version": "2.1.0",
   "description": "Offline icon assets for vue3-ccui — Iconify mdi collection inlined + tree-shakable SVG components, no CDN",
   "keywords": [
-    "icons",
     "iconify",
+    "icons",
     "mdi",
     "offline",
     "svg",
+    "tree-shaking",
     "vue",
     "vue3",
-    "vue3-ccui",
-    "tree-shaking"
+    "vue3-ccui"
   ],
   "homepage": "https://vaebe.github.io/ccui/",
   "bugs": {
@@ -24,19 +24,19 @@
     "url": "git+https://github.com/vaebe/ccui.git",
     "directory": "packages/icons"
   },
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "sideEffects": [
-    "./dist/install.js",
-    "./dist/install.cjs"
-  ],
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/install.js",
+    "./dist/install.cjs"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -72,17 +72,13 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "beta",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta"
   },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
     "prepublishOnly": "pnpm build"
-  },
-  "peerDependencies": {
-    "@iconify/vue": "^5.0.0",
-    "vue": "^3.5.0"
   },
   "devDependencies": {
     "@iconify-icons/mdi": "^1.2.48",
@@ -91,6 +87,10 @@
     "tsdown": "^0.18.0",
     "typescript": "^5.9.3",
     "vue": "^3.5.33"
+  },
+  "peerDependencies": {
+    "@iconify/vue": "^5.0.0",
+    "vue": "^3.5.0"
   },
   "engines": {
     "node": ">=22.10.0"

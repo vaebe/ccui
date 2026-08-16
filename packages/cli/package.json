@@ -26,6 +26,7 @@
     "build:lib": "pnpm build:components && pnpm changelog && pnpm prepare-release",
     "prebuild:components": "node ./index.js create -t ccui --ignore-parse-error",
     "build:components": "node ./index.js build",
+    "generate:meta": "node ./index.js create -t ccui --ignore-parse-error",
     "generate:theme": "node ./index.js generate:theme",
     "generate:dts": "node ./index.js generate:dts",
     "prepare-release": "node ./index.js prepare-release",
@@ -35,8 +36,8 @@
     "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "@vaebe/ccui-theme": "workspace:*"
+    "@vaebe/ccui-theme": "workspace:*",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",

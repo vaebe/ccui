@@ -7,12 +7,14 @@
 // 导致 discoverComponents 永远返回空数组，实际只生成根 index.d.ts 一个壳。
 import path, { dirname } from 'node:path'
 import { promises as fsp } from 'node:fs'
+import { createRequire } from 'node:module'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import logger from '../shared/logger.js'
 import { discoverComponents } from '../shared/discover-components.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
 const pkgRoot = path.resolve(__dirname, '../../ccui')
 const entryDir = path.resolve(pkgRoot, 'ui')
 const outputDir = path.resolve(pkgRoot, 'build')
@@ -53,16 +55,17 @@ async function moveDir(from, to) {
 
 export const generateDts = async () => {
   // 1) 跑 vue-tsc 把所有声明文件落到 build/types/
-  // Windows shell: Node 20+ CVE-2024-27980 后 spawnSync 不再自动解析 pnpm.cmd（同 run-command.js 处理）
-  const result = spawnSync('pnpm', ['exec', 'vue-tsc', '-p', 'tsconfig.build.json'], {
+  // 直接解析并执行 workspace 安装的 vue-tsc，避免 `pnpm exec` 在 pnpm 11 下
+  // 触发额外的依赖目录状态检查，也绕开 Windows 对 pnpm.cmd/shell 的差异。
+  const vueTscBin = require.resolve('vue-tsc/bin/vue-tsc.js', { paths: [pkgRoot] })
+  const result = spawnSync(process.execPath, [vueTscBin, '-p', 'tsconfig.build.json'], {
     cwd: pkgRoot,
     stdio: 'inherit',
-    shell: process.platform === 'win32',
   })
   // result.error 单独看：PATH 找不到 `pnpm` 时 status === null，否则
   // 错误会被 "退出码 null" 这种无信息抛错盖掉真实的 ENOENT。
   if (result.error) {
-    throw new Error(`无法执行 pnpm exec vue-tsc：${result.error.message}`)
+    throw new Error(`无法执行 vue-tsc：${result.error.message}`)
   }
   if (result.status !== 0) {
     throw new Error(`vue-tsc 退出码 ${result.status}，类型生成失败`)

@@ -1,0 +1,66 @@
+:root {
+  color: #1f2937;
+  background: #f8fafc;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.fixture-app {
+  width: min(1080px, calc(100% - 32px));
+  margin: 24px auto 80px;
+}
+
+h1 {
+  margin-block: 0 24px;
+}
+
+.fixture-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.fixture {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+  background: white;
+}
+
+.fixture h2 {
+  margin-block: 0 16px;
+  font-size: 18px;
+}
+
+.fixture-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 12px;
+}
+
+.fixture-output {
+  min-height: 24px;
+  margin-block: 8px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.splitter-fixture {
+  width: 500px;
+  max-width: 100%;
+  height: 120px;
+  border: 1px solid #dbe3ee;
+}
+
+.splitter-pane {
+  height: 100%;
+  padding: 12px;
+}
