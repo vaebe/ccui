@@ -12,7 +12,8 @@ test('[Alert] renders warning message, description, and live alert semantics', a
 })
 
 test('[Alert] emits close and removes itself from the document', async ({ page }) => {
-  await page.getByRole('button', { name: '关闭' }).click()
+  // 精确匹配 Alert 的关闭按钮，避免同时命中“关闭标签”等其他控件。
+  await page.getByRole('button', { name: '关闭', exact: true }).click()
   await expect(page.getByRole('alert')).toHaveCount(0)
   await expect(page.getByTestId('alert-close-count')).toHaveText('1')
 })
@@ -80,7 +81,8 @@ test('[Breadcrumb] renders a labelled navigation landmark', async ({ page }) => 
 })
 
 test('[Breadcrumb] renders separators between supplied items', async ({ page }) => {
-  await expect(page.locator('.ccui-breadcrumb__separator')).toHaveCount(2)
+  // 两个面包屑项目之间只应渲染一个分隔符，末项不追加分隔符。
+  await expect(page.locator('.ccui-breadcrumb__separator')).toHaveCount(1)
 })
 
 test('[BreadcrumbItem] renders linked items with their href', async ({ page }) => {

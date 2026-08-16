@@ -19,7 +19,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm exec vite --host 127.0.0.1 --port 4173',
+    // 直接使用仓库已安装的 Vite+，避免 pnpm exec 在 CI 中再次触发工作区 bootstrap。
+    command: '../../node_modules/.bin/vp dev --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
