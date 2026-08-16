@@ -271,8 +271,13 @@ export async function validateRule(
     }
   }
 
-  if (rule.pattern && !rule.pattern.test(String(value))) {
-    return { field, message: getMessage(rule, field, label, validateMessages, 'pattern') }
+  if (rule.pattern) {
+    rule.pattern.lastIndex = 0
+    const matches = rule.pattern.test(String(value))
+    rule.pattern.lastIndex = 0
+    if (!matches) {
+      return { field, message: getMessage(rule, field, label, validateMessages, 'pattern') }
+    }
   }
 
   if (rule.validator) {

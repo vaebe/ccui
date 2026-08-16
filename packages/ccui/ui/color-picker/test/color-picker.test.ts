@@ -6,6 +6,7 @@ import { ColorPicker } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { hexToRgb, hsvToRgb, hsvToString, rgbToHex, rgbToHsv, rgbToString } from '../../shared/utils/color'
 import { Form, FormItem } from '../../form'
+import { formItemInjectionKey } from '../../form/src/form-types'
 
 const ns = useNamespace('color-picker', true)
 const wrappers: VueWrapper[] = []
@@ -137,6 +138,45 @@ describe('color-picker popup', () => {
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
   })
 
+  it('passes the actual trigger button to getPopupContainer and uses it as the popup anchor', async () => {
+    const getPopupContainer = vi.fn((_triggerNode: HTMLElement | null) => document.body)
+    const wrapper = mountCP({ getPopupContainer })
+    const trigger = wrapper.find(ns.e('trigger')).element
+    await openPanel(wrapper)
+    expect(getPopupContainer).toHaveBeenCalledWith(trigger)
+    expect(getPopupContainer.mock.calls.some(([node]) => node !== trigger && node !== null)).toBe(false)
+  })
+
+  it('focuses the picker when opened and restores trigger focus after Escape', async () => {
+    const wrapper = mountCP()
+    const trigger = wrapper.find(ns.e('trigger')).element as HTMLButtonElement
+    trigger.focus()
+    await openPanel(wrapper)
+    expect(document.activeElement).toBe(wrapper.find(ns.e('sv')).element)
+
+    await wrapper.find(ns.e('panel')).trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(document.activeElement).toBe(trigger)
+    expect(wrapper.emitted('open-change')?.slice(-1)[0]).toEqual([false])
+  })
+
+  it('closes an open popup and stops pointer tracking when dynamically disabled', async () => {
+    const onChange = vi.fn()
+    const wrapper = mountCP({ modelValue: '#ff0000', onChange })
+    await openPanel(wrapper)
+    const hue = wrapper.find(ns.e('hue')).element as HTMLElement
+    stubRect(hue, 100, 10)
+    hue.dispatchEvent(new MouseEvent('pointerdown', { clientX: 20, clientY: 5, bubbles: true }))
+    const changesBeforeDisable = onChange.mock.calls.length
+
+    await wrapper.setProps({ disabled: true })
+    document.dispatchEvent(new MouseEvent('pointermove', { clientX: 80, clientY: 5, bubbles: true }))
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(onChange).toHaveBeenCalledTimes(changesBeforeDisable)
+    expect(wrapper.emitted('open-change')?.slice(-1)[0]).toEqual([false])
+  })
+
   it('renders alpha slider by default and hides it when disabledAlpha=true', async () => {
     const a = mountCP()
     await openPanel(a)
@@ -147,9 +187,59 @@ describe('color-picker popup', () => {
     expect(b.find(ns.e('alpha')).exists()).toBe(false)
     expect(b.find(ns.e('alpha-input-wrap')).exists()).toBe(false)
   })
+
+  it('resynchronizes pending alpha when disabledAlpha changes dynamically', async () => {
+    const wrapper = mountCP({ modelValue: '#1677ff80' })
+    await openPanel(wrapper)
+    expect(wrapper.find(ns.e('alpha')).attributes('aria-valuenow')).toBe('50')
+    await wrapper.setProps({ disabledAlpha: true })
+    expect(wrapper.find(ns.e('alpha')).exists()).toBe(false)
+    await wrapper.setProps({ disabledAlpha: false })
+    expect(wrapper.find(ns.e('alpha')).attributes('aria-valuenow')).toBe('50')
+  })
+
+  it('stops an active alpha drag immediately when disabledAlpha becomes true', async () => {
+    const onChange = vi.fn()
+    const wrapper = mountCP({ modelValue: '#1677ff80', onChange })
+    await openPanel(wrapper)
+    const alpha = wrapper.find(ns.e('alpha')).element as HTMLElement
+    stubRect(alpha, 100, 10)
+    alpha.dispatchEvent(new MouseEvent('pointerdown', { clientX: 20, clientY: 5, bubbles: true }))
+    const changesBeforeDisable = onChange.mock.calls.length
+
+    await wrapper.setProps({ disabledAlpha: true })
+    document.dispatchEvent(new MouseEvent('pointermove', { clientX: 80, clientY: 5, bubbles: true }))
+    expect(wrapper.find(ns.e('alpha')).exists()).toBe(false)
+    expect(onChange).toHaveBeenCalledTimes(changesBeforeDisable)
+  })
 })
 
 describe('color-picker SV / hue / alpha drag', () => {
+  it('removes document pointer listeners when unmounted during a drag', async () => {
+    const onChange = vi.fn()
+    const wrapper = mountCP({ modelValue: '#ff0000', onChange })
+    await wrapper.find(ns.e('trigger')).trigger('click')
+    await nextTick()
+    const sv = document.body.querySelector(ns.e('sv')) as HTMLElement
+    vi.spyOn(sv, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 100,
+      height: 100,
+      right: 100,
+      bottom: 100,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    })
+    sv.dispatchEvent(new MouseEvent('pointerdown', { clientX: 20, clientY: 20, bubbles: true }))
+    const changesBeforeUnmount = onChange.mock.calls.length
+
+    wrapper.unmount()
+    document.dispatchEvent(new MouseEvent('pointermove', { clientX: 80, clientY: 80, bubbles: true }))
+    expect(onChange).toHaveBeenCalledTimes(changesBeforeUnmount)
+  })
+
   it('clicking SV area updates s/v based on relative position', async () => {
     const wrapper = mountCP({ defaultValue: '#ff0000' })
     await openPanel(wrapper)
@@ -236,11 +326,13 @@ describe('color-picker hex input', () => {
     await openPanel(wrapper)
     const input = wrapper.find(`${ns.e('hex-input')}`)
     await input.setValue('00ff00')
+    ;(input.element as HTMLInputElement).focus()
     await input.trigger('keydown', { key: 'Enter' })
     await nextTick()
     // input.blur 在 jsdom 内会触发我们 onBlur → commit
     const last = wrapper.emitted('update:modelValue')?.slice(-1)[0][0] as string | undefined
     expect(last?.toLowerCase()).toBe('#00ff00')
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
   })
 })
 
@@ -296,6 +388,14 @@ describe('color-picker controlled / uncontrolled', () => {
     const fg = wrapper.find(ns.e('swatch-fg'))
     // 父级未提交，swatch 仍是 #1677ff
     expect((fg.element as HTMLElement).style.backgroundColor).toBe('rgb(22, 119, 255)')
+    expect(wrapper.find(ns.e('hue')).attributes('aria-valuenow')).toBe(String(rgbToHsv(hexToRgb('#1677ff')!).h))
+  })
+
+  it('normalizes an invalid controlled color consistently instead of exposing invalid text', async () => {
+    const wrapper = mountCP({ modelValue: 'not-a-color', showText: true })
+    expect(wrapper.find(ns.e('value-text')).text()).toBe('#1677FF')
+    await openPanel(wrapper)
+    expect((wrapper.find(ns.e('hex-input')).element as HTMLInputElement).value).toBe('1677FF')
   })
 })
 
@@ -332,6 +432,36 @@ describe('color-picker form integration', () => {
     await nextTick()
     expect(value.value?.toLowerCase()).toBe('#ff0000')
   })
+
+  it('does not validate blur while focus moves into the popup and validates once when leaving the component', async () => {
+    const validate = vi.fn()
+    const wrapper = mount(ColorPicker, {
+      props: { popupAppendToBody: true },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: { validateStatus: ref(''), validate },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const outside = document.createElement('button')
+    document.body.append(outside)
+
+    const trigger = wrapper.find(ns.e('trigger')).element as HTMLButtonElement
+    trigger.focus()
+    await wrapper.find(ns.e('trigger')).trigger('click')
+    await nextTick()
+    const teleportedSv = document.body.querySelector(ns.e('sv')) as HTMLElement
+    expect(teleportedSv).toBeTruthy()
+    expect(document.activeElement).toBe(teleportedSv)
+    expect(validate).not.toHaveBeenCalledWith('blur')
+
+    outside.focus()
+    await nextTick()
+    expect(validate.mock.calls.filter(([reason]) => reason === 'blur')).toHaveLength(1)
+    outside.remove()
+  })
 })
 
 describe('color-picker RGB inputs', () => {
@@ -351,7 +481,6 @@ describe('color-picker RGB inputs', () => {
     const rInput = wrapper.findAll(ns.e('rgb-input'))[0]
     // R: 255→128
     await rInput.setValue('128')
-    await rInput.trigger('input')
     await nextTick()
     const emitted = wrapper.emitted('update:modelValue')
     expect(emitted).toBeDefined()
@@ -410,12 +539,34 @@ describe('color-picker trigger slot', () => {
     // 默认触发器不渲染
     expect(wrapper.find(ns.e('swatch')).exists()).toBe(false)
   })
+
+  it('gives a custom trigger button semantics and supports keyboard open and Escape focus restore', async () => {
+    const wrapper = mount(ColorPicker, {
+      props: { modelValue: '#ff0000' },
+      slots: { trigger: () => h('span', '自定义颜色') },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    const trigger = wrapper.find(ns.e('trigger-custom'))
+    expect(trigger.attributes('role')).toBe('button')
+    expect(trigger.attributes('tabindex')).toBe('0')
+    expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+    await trigger.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    await wrapper.find(ns.e('panel')).trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(document.activeElement).toBe(trigger.element)
+  })
 })
 
 describe('color-picker allowClear', () => {
   it('shows clear button when allowClear=true', () => {
     const wrapper = mountCP({ modelValue: '#ff0000', allowClear: true })
     expect(wrapper.find(ns.e('clear')).exists()).toBe(true)
+    expect(wrapper.find(ns.e('trigger')).attributes('aria-label')).toContain('#FF0000')
+    expect(wrapper.findAll('button')).toHaveLength(2)
+    expect(wrapper.find(ns.e('clear')).attributes('aria-label')).toBe('清空颜色')
   })
 
   it('does not show clear button by default', () => {
@@ -485,6 +636,13 @@ describe('color-picker M-A2 classNames / styles 钩子', () => {
 })
 
 describe('color-picker M-B6 presets 分组 / 对象项', () => {
+  it('支持扁平 `{ color, label }` 对象数组', async () => {
+    const wrapper = mountCP({ presets: [{ color: '#1677ff', label: '品牌蓝' }] })
+    await openPanel(wrapper)
+    const preset = wrapper.find(ns.e('preset'))
+    expect(preset.attributes('aria-label')).toBe('品牌蓝')
+  })
+
   it('支持 `{ label, colors }` 分组形态：渲染每组的 label 和色块', async () => {
     const wrapper = mountCP({
       presets: [

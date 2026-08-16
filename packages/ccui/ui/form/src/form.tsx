@@ -127,18 +127,6 @@ export default defineComponent({
       },
     )
 
-    watch(
-      () => props.model,
-      () => {
-        fields.value.forEach((field) => {
-          if (field.dependencies.length > 0) {
-            void field.validate()
-          }
-        })
-      },
-      { deep: true },
-    )
-
     const exposed: FormInstance = {
       validate,
       validateField,
@@ -155,6 +143,21 @@ export default defineComponent({
         provider.registerForm(props.name, exposed)
       }
     })
+
+    watch(
+      () => props.name,
+      (name, previousName) => {
+        if (!provider) {
+          return
+        }
+        if (previousName) {
+          provider.unregisterForm(previousName)
+        }
+        if (name) {
+          provider.registerForm(name, exposed)
+        }
+      },
+    )
 
     onUnmounted(() => {
       if (props.name && provider) {

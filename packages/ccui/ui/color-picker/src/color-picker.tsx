@@ -14,6 +14,7 @@ import {
   defineComponent,
   getCurrentInstance,
   inject,
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -52,18 +53,20 @@ export default defineComponent({
     const uid = getCurrentInstance()?.uid ?? 0
     const popupId = `ccui-color-picker-popup-${uid}`
     const rootRef = ref<HTMLElement | null>(null)
+    const interactionRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const svAreaRef = ref<HTMLElement | null>(null)
     const hueAreaRef = ref<HTMLElement | null>(null)
     const alphaAreaRef = ref<HTMLElement | null>(null)
     const open = shallowRef(false)
+    let stopPointerTracking: (() => void) | null = null
     const innerValue = shallowRef<string>(props.defaultValue ?? DEFAULT_COLOR_HEX)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const isControlled = computed(() => props.modelValue !== undefined)
     const currentHex = computed<string>(() => {
       const raw = isControlled.value ? props.modelValue : innerValue.value
-      return raw ?? DEFAULT_COLOR_HEX
+      return raw && hexToRgb(raw) ? raw : DEFAULT_COLOR_HEX
     })
     const currentRgb = computed<RGB>(() => {
       const rgb = hexToRgb(currentHex.value) ?? hexToRgb(DEFAULT_COLOR_HEX)!
@@ -77,7 +80,10 @@ export default defineComponent({
       pendingHsv.value = rgbToHsv(currentRgb.value)
     }
 
-    watch(currentHex, syncPendingFromCurrent)
+    watch([currentHex, () => props.disabledAlpha], ([, disabledAlpha]) => {
+      if (disabledAlpha) stopPointerTracking?.()
+      syncPendingFromCurrent()
+    })
 
     const placement = computed(() => PLACEMENT_TO_FLOATING[props.placement])
     const popupContainer = computed<HTMLElement | null>(() => {
@@ -104,16 +110,36 @@ export default defineComponent({
       syncPendingFromCurrent()
       open.value = true
       emit('open-change', true)
+      nextTick(() => svAreaRef.value?.focus())
     }
-    function closePopup() {
+    function closePopup(restoreFocus = false) {
       if (!open.value) return
       open.value = false
       emit('open-change', false)
+      if (restoreFocus) {
+        nextTick(() => {
+          const root = rootRef.value
+          if (root?.matches('button, [tabindex]')) root.focus()
+          else {
+            const trigger = root?.querySelector('button, [tabindex]') as HTMLElement | null
+            trigger?.focus()
+          }
+        })
+      }
     }
     function togglePopup() {
       if (open.value) closePopup()
       else openPopup()
     }
+
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        if (!disabled) return
+        stopPointerTracking?.()
+        closePopup()
+      },
+    )
 
     function emitChange(hsv: HSV) {
       const rgb = hsvToRgb(hsv)
@@ -124,6 +150,7 @@ export default defineComponent({
       emit('update:modelValue', hex)
       emit('change', hex, { rgb, hsv })
       formItem?.validate('change')
+      if (isControlled.value) nextTick(syncPendingFromCurrent)
     }
 
     function commitHsv(next: HSV) {
@@ -135,9 +162,28 @@ export default defineComponent({
       if (!open.value) return
       const target = e.target as Node | null
       if (!target) return
-      if (rootRef.value?.contains(target)) return
+      if (interactionRef.value?.contains(target)) return
       if (popupRef.value?.contains(target)) return
       closePopup()
+    }
+
+    function onComponentFocusout(e: FocusEvent) {
+      const next = e.relatedTarget as Node | null
+      if (next && (interactionRef.value?.contains(next) || popupRef.value?.contains(next))) return
+      formItem?.validate('blur')
+    }
+
+    function onPopupKeydown(e: KeyboardEvent) {
+      if (e.key !== 'Escape') return
+      e.preventDefault()
+      e.stopPropagation()
+      closePopup(true)
+    }
+
+    function onCustomTriggerKeydown(e: KeyboardEvent) {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      e.preventDefault()
+      togglePopup()
     }
 
     onMounted(() => {
@@ -145,6 +191,7 @@ export default defineComponent({
     })
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)
+      stopPointerTracking?.()
     })
 
     // ---- 拖拽：通用 pointer 处理 ----
@@ -153,6 +200,7 @@ export default defineComponent({
       e: PointerEvent,
       apply: (relX: number, relY: number, rect: DOMRect) => void,
     ) {
+      stopPointerTracking?.()
       const rect = el.getBoundingClientRect()
       function update(ev: PointerEvent) {
         const relX = clamp01((ev.clientX - rect.left) / Math.max(rect.width, 1))
@@ -161,14 +209,16 @@ export default defineComponent({
       }
       update(e)
       const move = (ev: PointerEvent) => update(ev)
-      const up = () => {
+      const cleanup = () => {
         document.removeEventListener('pointermove', move)
-        document.removeEventListener('pointerup', up)
-        document.removeEventListener('pointercancel', up)
+        document.removeEventListener('pointerup', cleanup)
+        document.removeEventListener('pointercancel', cleanup)
+        if (stopPointerTracking === cleanup) stopPointerTracking = null
       }
+      stopPointerTracking = cleanup
       document.addEventListener('pointermove', move)
-      document.addEventListener('pointerup', up)
-      document.addEventListener('pointercancel', up)
+      document.addEventListener('pointerup', cleanup)
+      document.addEventListener('pointercancel', cleanup)
     }
 
     function onSvPointerDown(e: PointerEvent) {
@@ -289,6 +339,7 @@ export default defineComponent({
 
     // ---- hex 输入 ----
     const hexInput = ref('')
+    let suppressNextHexBlur = false
     watch(
       currentHex,
       (v) => {
@@ -309,10 +360,22 @@ export default defineComponent({
         hexInput.value = (currentHex.value || '').replace(/^#/, '').toUpperCase()
       }
     }
+    function onHexBlur() {
+      if (suppressNextHexBlur) {
+        suppressNextHexBlur = false
+        return
+      }
+      onHexCommit()
+    }
     function onHexKeydown(e: KeyboardEvent) {
       if (e.key === 'Enter') {
+        e.preventDefault()
         onHexCommit()
+        suppressNextHexBlur = true
         ;(e.target as HTMLInputElement).blur?.()
+        Promise.resolve().then(() => {
+          suppressNextHexBlur = false
+        })
       }
     }
 
@@ -343,6 +406,13 @@ export default defineComponent({
             class={[ns.e('trigger-custom'), props.classNames?.trigger]}
             style={props.styles?.trigger}
             onClick={togglePopup}
+            onKeydown={onCustomTriggerKeydown}
+            role="button"
+            tabindex={props.disabled ? -1 : 0}
+            aria-disabled={props.disabled}
+            aria-haspopup="dialog"
+            aria-expanded={open.value}
+            aria-controls={popupId}
           >
             {slots.trigger({ color: currentHex.value, open: open.value, disabled: props.disabled })}
           </div>
@@ -359,27 +429,30 @@ export default defineComponent({
         mergedStatus.value ? ns.em('status', mergedStatus.value) : '',
       ]
       return (
-        <button
-          ref={(el: any) => (rootRef.value = el as HTMLElement)}
-          type="button"
-          class={[triggerCls, props.classNames?.trigger]}
-          style={props.styles?.trigger}
-          disabled={props.disabled}
-          aria-haspopup="dialog"
-          aria-expanded={open.value}
-          aria-controls={popupId}
-          onClick={togglePopup}
-        >
-          <span class={ns.e('swatch')}>
-            <span class={ns.e('swatch-fg')} style={swatchStyle} />
-          </span>
-          {props.showText && <span class={ns.e('value-text')}>{displayText.value}</span>}
-          {props.allowClear && !props.disabled && (
-            <span class={ns.e('clear')} onClick={handleClear} role="button" aria-label="clear color">
-              {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
+        <div class={ns.e('trigger-wrap')}>
+          <button
+            ref={(el: any) => (rootRef.value = el as HTMLElement)}
+            type="button"
+            class={[triggerCls, props.classNames?.trigger]}
+            style={props.styles?.trigger}
+            disabled={props.disabled}
+            aria-label={`选择颜色，当前 ${displayText.value}`}
+            aria-haspopup="dialog"
+            aria-expanded={open.value}
+            aria-controls={popupId}
+            onClick={togglePopup}
+          >
+            <span class={ns.e('swatch')}>
+              <span class={ns.e('swatch-fg')} style={swatchStyle} />
             </span>
+            {props.showText && <span class={ns.e('value-text')}>{displayText.value}</span>}
+          </button>
+          {props.allowClear && !props.disabled && (
+            <button type="button" class={ns.e('clear')} onClick={handleClear} aria-label="清空颜色">
+              {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
+            </button>
           )}
-        </button>
+        </div>
       )
     }
 
@@ -474,7 +547,7 @@ export default defineComponent({
               maxlength={8}
               spellcheck={false}
               onInput={onHexInput}
-              onBlur={onHexCommit}
+              onBlur={onHexBlur}
               onKeydown={onHexKeydown}
               aria-label="hex"
             />
@@ -612,6 +685,8 @@ export default defineComponent({
               style={[floatingStyles.value, props.styles?.popup] as any}
               role="dialog"
               aria-label="选择颜色"
+              onKeydown={onPopupKeydown}
+              onFocusout={teleported.value ? onComponentFocusout : undefined}
             >
               {body}
             </div>
@@ -622,6 +697,7 @@ export default defineComponent({
 
     return () => (
       <div
+        ref={interactionRef}
         class={[
           ns.b(),
           props.disabled ? ns.is('disabled') : '',
@@ -629,6 +705,7 @@ export default defineComponent({
           props.classNames?.root,
         ]}
         style={props.styles?.root}
+        onFocusout={onComponentFocusout}
       >
         {renderTrigger()}
         {renderPopup()}

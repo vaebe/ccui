@@ -22,9 +22,10 @@ import './mentions.scss'
 
 export default defineComponent({
   name: 'CMentions',
+  inheritAttrs: false,
   props: mentionsProps,
   emits: ['update:modelValue', 'change', 'select', 'search', 'focus', 'blur'],
-  setup(props: MentionsProps, { emit, slots }) {
+  setup(props: MentionsProps, { attrs, emit, slots }) {
     const ns = useNamespace('mentions')
     const cfg = useConfig()
     const uid = getCurrentInstance()?.uid ?? 0
@@ -37,6 +38,7 @@ export default defineComponent({
     const innerValue = shallowRef<string>(props.defaultValue ?? '')
     const activeIndex = shallowRef(0)
     const activeMatch = shallowRef<MentionMatch | null>(null)
+    const isComposing = shallowRef(false)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
     const validationStatus = computed(() => formItem?.validateStatus.value ?? '')
     const mergedStatus = computed(() => props.status || validationStatus.value)
@@ -49,7 +51,7 @@ export default defineComponent({
 
     const prefixList = computed<string[]>(() => {
       const p = props.prefix
-      return Array.isArray(p) ? p : [p]
+      return [...new Set((Array.isArray(p) ? p : [p]).filter((item) => item.length > 0))]
     })
 
     const normalized = computed<NormalizedOption[]>(() => (props.options || []).map((item) => normalizeMention(item)))
@@ -72,13 +74,29 @@ export default defineComponent({
     // 过滤列表收缩时，把 activeIndex 钳到首个可用项，避免越界导致无高亮且 Enter/Tab 选不中
     watch(filteredOptions, (list) => {
       if (!open.value) return
-      if (activeIndex.value >= list.length || list[activeIndex.value]?.disabled) {
+      if (activeIndex.value < 0 || activeIndex.value >= list.length || list[activeIndex.value]?.disabled) {
         const first = list.findIndex((o) => !o.disabled)
-        activeIndex.value = first === -1 ? 0 : first
+        activeIndex.value = first
       }
     })
 
     let debounceTimer: ReturnType<typeof setTimeout> | null = null
+    let compositionValueToIgnore: string | null = null
+    let lastSearchSignature: string | null = null
+
+    function cancelPendingSearch(): void {
+      if (!debounceTimer) return
+      clearTimeout(debounceTimer)
+      debounceTimer = null
+    }
+
+    function closePopup(): void {
+      open.value = false
+      activeMatch.value = null
+      activeIndex.value = -1
+      lastSearchSignature = null
+      cancelPendingSearch()
+    }
 
     function setValue(next: string) {
       if (!isControlled.value) {
@@ -105,32 +123,49 @@ export default defineComponent({
 
     function refreshMatch(): void {
       const ta = textareaRef.value
-      if (!ta) return
+      if (!ta || props.disabled || props.readonly || isComposing.value) {
+        closePopup()
+        return
+      }
       const cursor = ta.selectionStart
-      const match = findActiveMention(currentValue.value, cursor, prefixList.value)
+      const match = findActiveMention(ta.value, cursor, prefixList.value)
       activeMatch.value = match
       if (match) {
         if (!open.value) {
           open.value = true
-          // 初始高亮首个可用项；全 disabled / 空列表时 findIndex 返回 -1，用 Math.max(0, ...) 兜底保持原行为
-          activeIndex.value = Math.max(
-            0,
-            filteredOptions.value.findIndex((o) => !o.disabled),
-          )
+          activeIndex.value = filteredOptions.value.findIndex((o) => !o.disabled)
         }
+        const searchSignature = `${match.prefix}\0${match.search}`
+        if (lastSearchSignature === searchSignature) return
+        lastSearchSignature = searchSignature
+        cancelPendingSearch()
         if (props.searchDebounce > 0) {
-          if (debounceTimer) clearTimeout(debounceTimer)
-          debounceTimer = setTimeout(() => emit('search', match.search, match.prefix), props.searchDebounce)
+          debounceTimer = setTimeout(() => {
+            debounceTimer = null
+            emit('search', match.search, match.prefix)
+          }, props.searchDebounce)
         } else {
           emit('search', match.search, match.prefix)
         }
       } else if (open.value) {
-        open.value = false
+        closePopup()
+      } else {
+        cancelPendingSearch()
       }
     }
 
     function onInput(e: Event): void {
-      const next = (e.target as HTMLTextAreaElement).value
+      const target = e.target as HTMLTextAreaElement
+      if (props.disabled || props.readonly) {
+        target.value = currentValue.value
+        return
+      }
+      if (isComposing.value || (e as InputEvent).isComposing) return
+      if (compositionValueToIgnore === target.value) {
+        compositionValueToIgnore = null
+        return
+      }
+      const next = target.value
       setValue(next)
       nextTick(() => {
         refreshMatch()
@@ -139,7 +174,7 @@ export default defineComponent({
     }
 
     function onKeyup(): void {
-      // 方向键移动光标后也要刷新（不改 value，但改光标位置）
+      // 仅光标导航键会在不产生 input 的情况下改变 selection；Escape 等键不可在 keyup 时重开浮层。
       refreshMatch()
     }
 
@@ -151,14 +186,16 @@ export default defineComponent({
       const ta = textareaRef.value
       const match = activeMatch.value
       if (!ta || !match || opt.disabled) return
-      const before = currentValue.value.slice(0, match.start)
-      const after = currentValue.value.slice(ta.selectionStart)
+      const sourceValue = ta.value
+      const before = sourceValue.slice(0, match.start)
+      const after = sourceValue.slice(ta.selectionStart)
       const inserted = `${match.prefix}${opt.value}${props.split}`
       const next = `${before}${inserted}${after}`
       setValue(next)
       emit('select', opt.raw, match.prefix)
       open.value = false
       activeMatch.value = null
+      activeIndex.value = -1
       // 把光标定位到 inserted 末尾
       const newCursor = before.length + inserted.length
       nextTick(() => {
@@ -170,7 +207,7 @@ export default defineComponent({
     }
 
     function onKeydown(e: KeyboardEvent): void {
-      if (props.disabled) return
+      if (props.disabled || props.readonly || isComposing.value || e.isComposing) return
       if (!open.value) return
       const list = filteredOptions.value
       const enabled = list.filter((o) => !o.disabled)
@@ -194,9 +231,28 @@ export default defineComponent({
         }
       } else if (e.key === 'Escape') {
         e.preventDefault()
-        open.value = false
-        activeMatch.value = null
+        closePopup()
       }
+    }
+
+    function onCompositionstart(): void {
+      if (props.disabled || props.readonly) return
+      isComposing.value = true
+      compositionValueToIgnore = null
+      closePopup()
+    }
+
+    function onCompositionend(e: CompositionEvent): void {
+      if (!isComposing.value) return
+      isComposing.value = false
+      if (props.disabled || props.readonly) return
+      const target = e.target as HTMLTextAreaElement
+      compositionValueToIgnore = target.value
+      setValue(target.value)
+      nextTick(() => {
+        refreshMatch()
+        adjustHeight()
+      })
     }
 
     function onFocus(e: FocusEvent): void {
@@ -204,6 +260,7 @@ export default defineComponent({
     }
     function onBlur(e: FocusEvent): void {
       emit('blur', e)
+      closePopup()
       formItem?.validate('blur')
     }
 
@@ -212,7 +269,7 @@ export default defineComponent({
       const target = e.target as Node | null
       if (!target) return
       if (rootRef.value?.contains(target)) return
-      open.value = false
+      closePopup()
     }
 
     onMounted(() => {
@@ -223,9 +280,34 @@ export default defineComponent({
       document.removeEventListener('mousedown', onClickOutside, true)
       // flush 搜索 debounce，避免卸载后仍触发一次 emit('search')
       if (debounceTimer) {
-        clearTimeout(debounceTimer)
-        debounceTimer = null
+        cancelPendingSearch()
       }
+    })
+
+    watch(
+      () => [props.disabled, props.readonly] as const,
+      ([disabled, readonly]) => {
+        if (disabled || readonly) {
+          isComposing.value = false
+          compositionValueToIgnore = null
+          closePopup()
+        }
+      },
+    )
+
+    watch(
+      () => props.prefix,
+      () => {
+        if (open.value) refreshMatch()
+      },
+      { deep: true },
+    )
+
+    watch(currentValue, () => {
+      nextTick(() => {
+        adjustHeight()
+        if (open.value) refreshMatch()
+      })
     })
 
     function renderOption(opt: NormalizedOption, index: number): VNode {
@@ -284,44 +366,62 @@ export default defineComponent({
       )
     }
 
-    return () => (
-      <div
-        ref={rootRef}
-        class={[
-          ns.b(),
-          props.disabled ? ns.is('disabled') : '',
-          props.variant ? ns.m(`variant-${props.variant}`) : '',
-          mergedStatus.value ? ns.m(`status-${mergedStatus.value}`) : '',
-          props.classNames?.root,
-        ]}
-        style={props.styles?.root}
-      >
-        <textarea
-          ref={textareaRef}
-          class={[ns.e('textarea'), props.classNames?.textarea]}
-          style={props.styles?.textarea}
-          value={currentValue.value}
-          rows={props.rows}
-          placeholder={props.placeholder}
-          disabled={props.disabled}
-          spellcheck={false}
-          role="combobox"
-          aria-autocomplete="list"
-          aria-haspopup="listbox"
-          aria-expanded={open.value}
-          aria-controls={popupId}
-          aria-activedescendant={
-            open.value && filteredOptions.value[activeIndex.value] ? optionId(activeIndex.value) : undefined
-          }
-          onInput={onInput}
-          onKeyup={onKeyup}
-          onKeydown={onKeydown}
-          onClick={onClick}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
-        {renderPopup()}
-      </div>
-    )
+    return () => {
+      const { class: rootClass, style: rootStyle, 'aria-describedby': describedBy, ...nativeAttrs } = attrs
+      const descriptionIds = [describedBy, formItem?.messageId?.value]
+        .filter((value): value is string => typeof value === 'string' && value.length > 0)
+        .flatMap((value) => value.split(/\s+/))
+      const ariaDescribedBy = [...new Set(descriptionIds)].join(' ') || undefined
+
+      return (
+        <div
+          ref={rootRef}
+          class={[
+            ns.b(),
+            props.disabled ? ns.is('disabled') : '',
+            props.readonly ? ns.is('readonly') : '',
+            props.variant ? ns.m(`variant-${props.variant}`) : '',
+            mergedStatus.value ? ns.m(`status-${mergedStatus.value}`) : '',
+            props.classNames?.root,
+            rootClass,
+          ]}
+          style={[props.styles?.root, rootStyle]}
+        >
+          <textarea
+            {...nativeAttrs}
+            ref={textareaRef}
+            class={[ns.e('textarea'), props.classNames?.textarea]}
+            style={props.styles?.textarea}
+            value={currentValue.value}
+            rows={props.rows}
+            placeholder={props.placeholder}
+            disabled={props.disabled}
+            readonly={props.readonly}
+            spellcheck={false}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-expanded={open.value}
+            aria-controls={popupId}
+            aria-activedescendant={open.value && activeIndex.value >= 0 ? optionId(activeIndex.value) : undefined}
+            aria-disabled={props.disabled || undefined}
+            aria-readonly={props.readonly || undefined}
+            aria-invalid={mergedStatus.value === 'error' || undefined}
+            aria-describedby={ariaDescribedBy}
+            onInput={onInput}
+            onKeyup={(e: KeyboardEvent) => {
+              if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) onKeyup()
+            }}
+            onKeydown={onKeydown}
+            onClick={onClick}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onCompositionstart={onCompositionstart}
+            onCompositionend={onCompositionend}
+          />
+          {renderPopup()}
+        </div>
+      )
+    }
   },
 })

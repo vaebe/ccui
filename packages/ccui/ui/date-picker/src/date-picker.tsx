@@ -4,7 +4,6 @@ import type {
   DatePickerPlacement,
   DatePickerProps,
   DatePickerType,
-  DisabledTimeReturn,
   PresetItem,
   TimeShowConfig,
 } from './date-picker-types'
@@ -111,6 +110,8 @@ export default defineComponent({
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
+    // inputReadOnly=false 时保留用户正在录入的文本；null 表示跟随受控 modelValue 展示。
+    const inputDraft = shallowRef<string | null>(null)
     const open = shallowRef(false)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
@@ -140,6 +141,14 @@ export default defineComponent({
     function isDateDisabled(d: Dayjs, unit: 'day' | 'month' | 'year' | 'quarter' = 'day'): boolean {
       if (isOutOfRange(d, unit)) return true
       return !!props.disabledDate?.(d)
+    }
+    function normalizePickerValue(d: Dayjs): Dayjs {
+      return props.picker === 'week' ? startOfWeek(d, props.weekStart) : d
+    }
+    function isPickerValueDisabled(d: Dayjs): boolean {
+      const unit =
+        props.picker === 'month' || props.picker === 'year' || props.picker === 'quarter' ? props.picker : 'day'
+      return isDateDisabled(normalizePickerValue(d), unit)
     }
     const effectiveTimeFormat = computed(() =>
       showTimeActive.value ? timeCfg.value.format || DEFAULT_TIME_FORMAT : '',
@@ -175,6 +184,17 @@ export default defineComponent({
       () => props.picker,
       (p) => {
         panelMode.value = defaultPanelMode(p)
+      },
+    )
+
+    watch([() => props.modelValue, effectiveFormat, () => props.picker], () => {
+      inputDraft.value = null
+    })
+
+    watch(
+      () => props.inputReadOnly,
+      (readOnly) => {
+        if (readOnly) inputDraft.value = null
       },
     )
 
@@ -236,11 +256,12 @@ export default defineComponent({
       pendingDirty.value = false
     }
 
-    function closePopup() {
+    function closePopup(restoreFocus = false) {
       if (!open.value) return
       open.value = false
       focusedCellDate.value = null
       emit('open-change', false)
+      if (restoreFocus) nextTick(() => inputRef.value?.focus())
     }
 
     function togglePopup() {
@@ -249,6 +270,7 @@ export default defineComponent({
     }
 
     function emitChange(next: Dayjs | null) {
+      inputDraft.value = null
       const value = emitValue(next, props.valueFormat, effectiveFormat.value)
       emit('update:modelValue', value)
       emit('change', value, next ? next.format(effectiveFormat.value) : '')
@@ -261,12 +283,13 @@ export default defineComponent({
       if (isDateDisabled(cell)) return
       if (props.picker === 'week') {
         const wkStart = startOfWeek(cell, props.weekStart)
+        if (isDateDisabled(wkStart)) return
         if (selectedDayjs.value && isSameWeek(selectedDayjs.value, cell, props.weekStart)) {
           closePopup()
           return
         }
         emitChange(wkStart)
-        closePopup()
+        closePopup(true)
         return
       }
       // showTime 启用：暂存选中日期 + 保留当前时分秒，不立即关闭
@@ -277,11 +300,11 @@ export default defineComponent({
         return
       }
       if (selectedDayjs.value && isSameDay(selectedDayjs.value, cell)) {
-        closePopup()
+        closePopup(true)
         return
       }
       emitChange(cell)
-      closePopup()
+      closePopup(true)
     }
 
     function pickTime(unit: 'hour' | 'minute' | 'second', value: number) {
@@ -297,29 +320,24 @@ export default defineComponent({
       if (showTimeActive.value) {
         // 与 cell 选择 / 时间列保持一致：此刻命中 disabledDate / minDate / maxDate / disabledTime 时不提交
         if (isDateDisabled(now)) return
-        if (
-          mergedDisabledHours().includes(now.hour()) ||
-          mergedDisabledMinutes(now.hour()).includes(now.minute()) ||
-          mergedDisabledSeconds(now.hour(), now.minute()).includes(now.second())
-        )
-          return
+        if (isTimeDisabled(now)) return
         emitChange(now)
       } else {
         const target = now.startOf('day')
         if (isDateDisabled(target)) return
         emitChange(target)
       }
-      closePopup()
+      closePopup(true)
     }
 
     function clickOk() {
-      if (!pendingValue.value) {
+      if (!pendingValue.value || isPendingDisabled.value) {
         // 没选过日期，但 pendingValue 在 openPopup 时被初始化过 — 只有不在 showTime 模式时才会是 null
         closePopup()
         return
       }
       emitChange(pendingValue.value)
-      closePopup()
+      closePopup(true)
     }
 
     function clickPreset(p: PresetItem) {
@@ -327,26 +345,24 @@ export default defineComponent({
       // 预设值用非严格解析：业务常用 '2026-05-09' / Date / Dayjs 等，不强求匹配 effectiveFormat
       const d = toDayjs(raw as never)
       if (!d) return
+      const normalized = normalizePickerValue(d)
+      if (isPickerValueDisabled(normalized)) return
       if (showTimeActive.value) {
-        pendingValue.value = d
+        pendingValue.value = normalized
         pendingDirty.value = true
-        viewMonth.value = d
+        viewMonth.value = normalized
         return
       }
       // 非 showTime：立即提交（按 picker 模式语义对齐）
-      if (props.picker === 'week') {
-        emitChange(startOfWeek(d, props.weekStart))
-      } else {
-        emitChange(d)
-      }
-      closePopup()
+      emitChange(normalized)
+      closePopup(true)
     }
 
     function pickMonth(cell: Dayjs) {
       if (isDateDisabled(cell, 'month')) return
       if (props.picker === 'month') {
         emitChange(cell)
-        closePopup()
+        closePopup(true)
         return
       }
       // date / week 模式：选中月后下钻回 date 视图
@@ -358,7 +374,7 @@ export default defineComponent({
       if (isDateDisabled(cell, 'year')) return
       if (props.picker === 'year') {
         emitChange(cell)
-        closePopup()
+        closePopup(true)
         return
       }
       viewMonth.value = cell
@@ -373,7 +389,7 @@ export default defineComponent({
     function pickQuarter(cell: Dayjs) {
       if (isDateDisabled(cell, 'quarter')) return
       emitChange(cell)
-      closePopup()
+      closePopup(true)
     }
 
     // ===== 上一/下一与逐级展开 =====
@@ -414,6 +430,22 @@ export default defineComponent({
       emitChange(null)
     }
 
+    function commitInput() {
+      if (props.inputReadOnly || inputDraft.value === null) return
+      const raw = inputDraft.value.trim()
+      if (!raw) {
+        if (selectedDayjs.value) emitChange(null)
+        else inputDraft.value = null
+        return
+      }
+      const parsed = toDayjs(raw, effectiveFormat.value)
+      if (!parsed || isPickerValueDisabled(parsed)) {
+        inputDraft.value = null
+        return
+      }
+      emitChange(normalizePickerValue(parsed))
+    }
+
     function onClickOutside(e: MouseEvent) {
       if (!open.value) return
       const target = e.target as Node | null
@@ -433,6 +465,13 @@ export default defineComponent({
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)
     })
+
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        if (disabled) closePopup()
+      },
+    )
 
     const showClear = computed(() => props.clearable && !props.disabled && !!selectedDayjs.value)
 
@@ -558,6 +597,22 @@ export default defineComponent({
       return Array.from(new Set([...fromTime, ...fromDynamic]))
     }
 
+    function isTimeDisabled(value: Dayjs): boolean {
+      if (mergedDisabledHours().includes(value.hour())) return true
+      if (hasMinutes.value && mergedDisabledMinutes(value.hour()).includes(value.minute())) return true
+      return hasSeconds.value && mergedDisabledSeconds(value.hour(), value.minute()).includes(value.second())
+    }
+
+    const isPendingDisabled = computed(() => {
+      const pending = pendingValue.value
+      if (!pending || isDateDisabled(pending)) return true
+      return isTimeDisabled(pending)
+    })
+
+    function dateCellId(value: Dayjs): string {
+      return `${popupId}-cell-${value.format('YYYY-MM-DD')}`
+    }
+
     function renderCellInner(current: Dayjs, type: 'date' | 'month' | 'year' | 'quarter', fallback: string | number) {
       if (slots.cell) {
         return slots.cell({ current, type, today: dayjs() })
@@ -581,7 +636,7 @@ export default defineComponent({
       // 面板已打开
       if (k === 'Escape') {
         e.preventDefault()
-        closePopup()
+        closePopup(true)
         return
       }
       if (k === 'Tab') {
@@ -622,14 +677,17 @@ export default defineComponent({
               <div class={ns.e('week-cell')}>{w}</div>
             ))}
           </div>
-          <div class={[ns.e('grid'), weekPicker && ns.em('grid', 'with-week')]}>
+          <div class={[ns.e('grid'), weekPicker && ns.em('grid', 'with-week')]} role="grid">
             {rows.map((row) => {
               const rowWeekInfo = weekPicker ? getWeekInfo(row[0].date, props.weekStart) : null
               const rowSelected = weekPicker && !!sel && row.some((c) => isSameWeek(sel, c.date, props.weekStart))
               return (
-                <Fragment>
+                <div class={ns.e('grid-row')} role="row">
                   {rowWeekInfo && (
-                    <div class={[ns.e('week-number'), rowSelected && ns.em('week-number', 'selected')]}>
+                    <div
+                      class={[ns.e('week-number'), rowSelected && ns.em('week-number', 'selected')]}
+                      role="rowheader"
+                    >
                       {rowWeekInfo.weekNumber}
                     </div>
                   )}
@@ -648,6 +706,7 @@ export default defineComponent({
                     ]
                     return (
                       <div
+                        id={dateCellId(cell.date)}
                         class={cellCls}
                         role="gridcell"
                         aria-selected={selected}
@@ -658,7 +717,7 @@ export default defineComponent({
                       </div>
                     )
                   })}
-                </Fragment>
+                </div>
               )
             })}
           </div>
@@ -735,7 +794,8 @@ export default defineComponent({
 
     function renderFooter() {
       // ok 禁用：showTime 启用且既无已有 modelValue 又未动过任何格
-      const okDisabled = showTimeActive.value && !selectedDayjs.value && !pendingDirty.value
+      const okDisabled =
+        showTimeActive.value && ((!selectedDayjs.value && !pendingDirty.value) || isPendingDisabled.value)
       const hasExtra = !!slots['extra-footer']
       const showActions = showTimeActive.value
       if (!hasExtra && !showActions) return null
@@ -765,91 +825,106 @@ export default defineComponent({
 
     function renderMonthPanel() {
       const cells = generateYearMonthGrid(viewMonth.value)
+      const rows = Array.from({ length: 4 }, (_, index) => cells.slice(index * 3, index * 3 + 3))
       return (
-        <div class={[ns.e('grid'), ns.em('grid', 'month')]}>
-          {cells.map((c) => {
-            const disabled = isDateDisabled(c.date, 'month')
-            const selected = !!selectedDayjs.value && isSameMonth(selectedDayjs.value, c.date)
-            const cellCls = [
-              ns.e('cell'),
-              ns.em('cell', 'month'),
-              c.isToday && ns.em('cell', 'today'),
-              selected && ns.em('cell', 'selected'),
-              disabled && ns.em('cell', 'disabled'),
-            ]
-            return (
-              <div
-                class={cellCls}
-                role="gridcell"
-                aria-selected={selected}
-                aria-disabled={disabled}
-                onClick={() => !disabled && pickMonth(c.date)}
-              >
-                {renderCellInner(c.date, 'month', monthNames.value[c.month])}
-              </div>
-            )
-          })}
+        <div class={[ns.e('grid'), ns.em('grid', 'month')]} role="grid">
+          {rows.map((row) => (
+            <div class={ns.e('grid-row')} role="row">
+              {row.map((c) => {
+                const disabled = isDateDisabled(c.date, 'month')
+                const selected = !!selectedDayjs.value && isSameMonth(selectedDayjs.value, c.date)
+                const cellCls = [
+                  ns.e('cell'),
+                  ns.em('cell', 'month'),
+                  c.isToday && ns.em('cell', 'today'),
+                  selected && ns.em('cell', 'selected'),
+                  disabled && ns.em('cell', 'disabled'),
+                ]
+                return (
+                  <div
+                    class={cellCls}
+                    role="gridcell"
+                    aria-selected={selected}
+                    aria-disabled={disabled}
+                    onClick={() => !disabled && pickMonth(c.date)}
+                  >
+                    {renderCellInner(c.date, 'month', monthNames.value[c.month])}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
       )
     }
 
     function renderYearPanel() {
       const cells = generateDecadeYearGrid(viewMonth.value)
+      const rows = Array.from({ length: 4 }, (_, index) => cells.slice(index * 3, index * 3 + 3))
       return (
-        <div class={[ns.e('grid'), ns.em('grid', 'year')]}>
-          {cells.map((c) => {
-            const disabled = isDateDisabled(c.date, 'year')
-            const selected = !!selectedDayjs.value && selectedDayjs.value.year() === c.year
-            const cellCls = [
-              ns.e('cell'),
-              ns.em('cell', 'year'),
-              !c.isInDecade && ns.em('cell', 'outside'),
-              c.isToday && ns.em('cell', 'today'),
-              selected && ns.em('cell', 'selected'),
-              disabled && ns.em('cell', 'disabled'),
-            ]
-            return (
-              <div
-                class={cellCls}
-                role="gridcell"
-                aria-selected={selected}
-                aria-disabled={disabled}
-                onClick={() => !disabled && pickYear(c.date)}
-              >
-                {renderCellInner(c.date, 'year', c.year)}
-              </div>
-            )
-          })}
+        <div class={[ns.e('grid'), ns.em('grid', 'year')]} role="grid">
+          {rows.map((row) => (
+            <div class={ns.e('grid-row')} role="row">
+              {row.map((c) => {
+                const disabled = isDateDisabled(c.date, 'year')
+                const selected = !!selectedDayjs.value && selectedDayjs.value.year() === c.year
+                const cellCls = [
+                  ns.e('cell'),
+                  ns.em('cell', 'year'),
+                  !c.isInDecade && ns.em('cell', 'outside'),
+                  c.isToday && ns.em('cell', 'today'),
+                  selected && ns.em('cell', 'selected'),
+                  disabled && ns.em('cell', 'disabled'),
+                ]
+                return (
+                  <div
+                    class={cellCls}
+                    role="gridcell"
+                    aria-selected={selected}
+                    aria-disabled={disabled}
+                    onClick={() => !disabled && pickYear(c.date)}
+                  >
+                    {renderCellInner(c.date, 'year', c.year)}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
       )
     }
 
     function renderQuarterPanel() {
       const cells = generateQuarterGrid(viewMonth.value)
+      const rows = Array.from({ length: 2 }, (_, index) => cells.slice(index * 2, index * 2 + 2))
       return (
-        <div class={[ns.e('grid'), ns.em('grid', 'quarter')]}>
-          {cells.map((c) => {
-            const disabled = isDateDisabled(c.date, 'quarter')
-            const selected = !!selectedDayjs.value && isSameQuarter(selectedDayjs.value, c.date)
-            const cellCls = [
-              ns.e('cell'),
-              ns.em('cell', 'quarter'),
-              c.isCurrentQuarter && ns.em('cell', 'today'),
-              selected && ns.em('cell', 'selected'),
-              disabled && ns.em('cell', 'disabled'),
-            ]
-            return (
-              <div
-                class={cellCls}
-                role="gridcell"
-                aria-selected={selected}
-                aria-disabled={disabled}
-                onClick={() => !disabled && pickQuarter(c.date)}
-              >
-                {renderCellInner(c.date, 'quarter', quarterNames.value[c.quarter - 1])}
-              </div>
-            )
-          })}
+        <div class={[ns.e('grid'), ns.em('grid', 'quarter')]} role="grid">
+          {rows.map((row) => (
+            <div class={ns.e('grid-row')} role="row">
+              {row.map((c) => {
+                const disabled = isDateDisabled(c.date, 'quarter')
+                const selected = !!selectedDayjs.value && isSameQuarter(selectedDayjs.value, c.date)
+                const cellCls = [
+                  ns.e('cell'),
+                  ns.em('cell', 'quarter'),
+                  c.isCurrentQuarter && ns.em('cell', 'today'),
+                  selected && ns.em('cell', 'selected'),
+                  disabled && ns.em('cell', 'disabled'),
+                ]
+                return (
+                  <div
+                    class={cellCls}
+                    role="gridcell"
+                    aria-selected={selected}
+                    aria-disabled={disabled}
+                    onClick={() => !disabled && pickQuarter(c.date)}
+                  >
+                    {renderCellInner(c.date, 'quarter', quarterNames.value[c.quarter - 1])}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
       )
     }
@@ -933,12 +1008,22 @@ export default defineComponent({
             readonly={props.inputReadOnly}
             disabled={props.disabled}
             placeholder={placeholderText.value}
-            value={inputDisplay.value}
+            value={inputDraft.value ?? inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
             aria-controls={popupId}
+            aria-activedescendant={
+              open.value && panelMode.value === 'date' && focusedCellDate.value
+                ? dateCellId(focusedCellDate.value)
+                : undefined
+            }
             onFocus={() => emit('focus')}
+            onInput={(e: Event) => {
+              if (!props.inputReadOnly) inputDraft.value = (e.target as HTMLInputElement).value
+            }}
+            onChange={commitInput}
             onBlur={() => {
+              commitInput()
               emit('blur')
               formItem?.validate('blur')
             }}

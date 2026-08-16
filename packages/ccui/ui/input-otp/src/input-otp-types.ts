@@ -2,6 +2,7 @@ import type { ExtractPropTypes, PropType } from 'vue'
 
 export type InputOtpSize = 'large' | 'default' | 'small'
 export type InputOtpStatus = '' | 'error' | 'warning'
+export type InputOtpType = 'number' | 'text'
 
 export type InputOtpFormatter = (value: string) => string
 
@@ -24,11 +25,19 @@ export const inputOtpProps = {
     default: undefined,
   },
   /**
-   * OTP 单元格数量。默认 6。
+   * OTP 单元格数量。取整并限制在 1–64，默认 6。
    */
   length: {
     type: Number,
     default: 6,
+  },
+  /**
+   * 移动端软键盘提示。`number` 使用数字键盘，`text` 使用文本键盘。
+   * 字符过滤仍由 formatter 控制。
+   */
+  type: {
+    type: String as PropType<InputOtpType>,
+    default: 'number',
   },
   /**
    * 自动获得首个 cell 焦点。
@@ -41,6 +50,13 @@ export const inputOtpProps = {
    * 整体禁用。
    */
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 只读。仍可聚焦和选择内容，但不会接受输入、粘贴或删除操作。
+   */
+  readOnly: {
     type: Boolean,
     default: false,
   },

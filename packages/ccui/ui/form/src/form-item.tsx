@@ -40,6 +40,8 @@ import {
 } from './utils'
 import './form.scss'
 
+let formItemId = 0
+
 export default defineComponent({
   name: 'CFormItem',
   props: formItemProps,
@@ -52,6 +54,7 @@ export default defineComponent({
     const validateMessage = ref('')
     const warningState = ref(false)
     const itemRef = ref<HTMLElement | null>(null)
+    const itemId = ++formItemId
     const fieldName = computed<FormNamePath | undefined>(() => {
       const raw = props.name
       if (!formList) {
@@ -104,6 +107,7 @@ export default defineComponent({
       return validateState.value
     })
     const currentMessage = computed(() => validateMessage.value || props.help)
+    const messageId = computed(() => (currentMessage.value ? `ccui-form-item-${itemId}-message` : undefined))
     const shouldShowOptional = computed(() => !isRequired.value && form?.requiredMark.value === 'optional')
     const shouldShowRequiredMark = computed(() => isRequired.value && form?.requiredMark.value !== false)
     const mergedColon = computed(() => props.colon ?? form?.colon.value ?? true)
@@ -141,26 +145,51 @@ export default defineComponent({
       [ns.m('top')]: form?.labelPosition.value === 'top' || form?.layout.value === 'vertical',
     }))
 
+    let validationGeneration = 0
+    let validateTimer: ReturnType<typeof setTimeout> | null = null
+    let pendingValidateResolvers: Array<(valid: boolean) => void> = []
+
+    const settleResolvers = (resolvers: Array<(valid: boolean) => void>, valid: boolean) => {
+      resolvers.forEach((resolve) => resolve(valid))
+    }
+
+    const cancelPendingDebouncedValidations = () => {
+      if (validateTimer) {
+        clearTimeout(validateTimer)
+        validateTimer = null
+      }
+      const resolvers = pendingValidateResolvers
+      pendingValidateResolvers = []
+      settleResolvers(resolvers, false)
+    }
+
     const clearValidate = () => {
+      validationGeneration += 1
+      cancelPendingDebouncedValidations()
       validateState.value = ''
       validateMessage.value = ''
       warningState.value = false
     }
 
-    let validateTimer: ReturnType<typeof setTimeout> | null = null
-
-    const doValidate = async (trigger?: FormValidateTrigger) => {
+    const doValidate = async (trigger: FormValidateTrigger | undefined, generation: number) => {
       if (!fieldKey.value || !form) {
         return true
       }
 
       const rules = getTriggeredRules(mergedRules.value, trigger)
       if (rules.length === 0) {
-        clearValidate()
+        if (generation === validationGeneration) {
+          validateState.value = ''
+          validateMessage.value = ''
+          warningState.value = false
+        }
         return true
       }
 
-      validateState.value = 'validating'
+      if (generation === validationGeneration) {
+        warningState.value = false
+        validateState.value = 'validating'
+      }
       const value = getValueByPath(form.model.value, fieldName.value)
 
       // warningOnly 规则：失败时降级为 warning，不阻塞 submit
@@ -180,11 +209,17 @@ export default defineComponent({
             // 继续校验其它规则，不立即返回
             continue
           }
-          validateState.value = 'error'
-          validateMessage.value = error.message
-          form.emitValidate(fieldKey.value, false, error.message)
+          if (generation === validationGeneration) {
+            validateState.value = 'error'
+            validateMessage.value = error.message
+            form.emitValidate(fieldKey.value, false, error.message)
+          }
           return false
         }
+      }
+
+      if (generation !== validationGeneration) {
+        return true
       }
 
       if (warningMessage) {
@@ -205,15 +240,23 @@ export default defineComponent({
     }
 
     const validate = async (trigger?: FormValidateTrigger) => {
+      const generation = ++validationGeneration
       if (props.validateDebounce > 0) {
         if (validateTimer) clearTimeout(validateTimer)
         return new Promise<boolean>((resolve) => {
+          pendingValidateResolvers.push(resolve)
           validateTimer = setTimeout(() => {
-            doValidate(trigger).then(resolve)
+            validateTimer = null
+            const resolvers = pendingValidateResolvers
+            pendingValidateResolvers = []
+            doValidate(trigger, generation).then(
+              (valid) => settleResolvers(resolvers, valid),
+              () => settleResolvers(resolvers, false),
+            )
           }, props.validateDebounce)
         })
       }
-      return doValidate(trigger)
+      return doValidate(trigger, generation)
     }
 
     const resetField = () => {
@@ -257,7 +300,11 @@ export default defineComponent({
       }
     }
 
-    const onFocusoutCapture = () => {
+    const onFocusoutCapture = (event: FocusEvent) => {
+      const nextTarget = event.relatedTarget
+      if (nextTarget instanceof Node && itemRef.value?.contains(nextTarget)) {
+        return
+      }
       void validate('blur')
     }
 
@@ -273,11 +320,8 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
-      // 卸载时清理仍处于防抖窗口的定时器，避免触发已卸载组件的 doValidate
-      if (validateTimer) {
-        clearTimeout(validateTimer)
-        validateTimer = null
-      }
+      validationGeneration += 1
+      cancelPendingDebouncedValidations()
       form?.removeField(fieldContext)
       const itemPreserve = props.preserve
       const formPreserve = form?.preserve.value ?? true
@@ -295,12 +339,13 @@ export default defineComponent({
 
     provide(formItemInjectionKey, {
       validateStatus: currentStatus,
+      messageId,
       isInsideForm: !!form,
       validate,
     })
 
     watch(
-      () => form?.model.value,
+      () => props.dependencies.map((dependency) => getValueByPath(form?.model.value ?? {}, dependency)),
       () => {
         if (props.dependencies.length > 0) {
           void validate()
@@ -362,7 +407,9 @@ export default defineComponent({
           slots.default?.(),
           renderFeedbackIcon(),
         ]),
-        currentMessage.value ? h('div', { class: ns.e('message'), role: 'alert' }, currentMessage.value) : null,
+        currentMessage.value
+          ? h('div', { id: messageId.value, class: ns.e('message'), role: 'alert' }, currentMessage.value)
+          : null,
         props.extra ? h('div', { class: ns.e('extra') }, props.extra) : null,
       ])
 

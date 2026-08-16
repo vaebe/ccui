@@ -36,6 +36,7 @@ async function typeAt(wrapper: VueWrapper, value: string, cursor?: number) {
 
 afterEach(() => {
   wrappers.splice(0).forEach((w) => w.unmount())
+  vi.useRealTimers()
 })
 
 describe('findActiveMention pure function', () => {
@@ -294,6 +295,27 @@ describe('mentions v-model', () => {
     await nextTick()
     expect(value.value).toBe('start @al')
   })
+
+  it('controlled writeback does not duplicate the search event', async () => {
+    const value = ref('')
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Mentions, {
+            modelValue: value.value,
+            options: SAMPLE,
+            'onUpdate:modelValue': (next: string) => (value.value = next),
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+
+    await typeAt(wrapper, '@a')
+    await nextTick()
+
+    expect(wrapper.findComponent(Mentions).emitted('search')).toEqual([['a', '@']])
+  })
 })
 
 describe('mentions Tab selection', () => {
@@ -434,5 +456,225 @@ describe('mentions XL-4 ARIA combobox / activedescendant', () => {
     const activeOpt = wrapper.find(`#${desc}`)
     expect(activeOpt.exists()).toBe(true)
     expect(activeOpt.attributes('role')).toBe('option')
+  })
+})
+
+describe('mentions hardened interaction regressions', () => {
+  it('does not emit intermediate IME input and commits composition exactly once', async () => {
+    const wrapper = mountM()
+    const textarea = wrapper.find('textarea')
+    const element = textarea.element as HTMLTextAreaElement
+
+    await textarea.trigger('compositionstart')
+    element.value = '@张'
+    element.setSelectionRange(2, 2)
+    element.dispatchEvent(
+      new InputEvent('input', { bubbles: true, inputType: 'insertCompositionText', isComposing: true }),
+    )
+    await nextTick()
+    expect(wrapper.emitted('change')).toBeUndefined()
+    expect(wrapper.emitted('search')).toBeUndefined()
+
+    element.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '张' }))
+    element.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }))
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.emitted('change')).toEqual([['@张']])
+    expect(wrapper.emitted('search')).toEqual([['张', '@']])
+  })
+
+  it('does not reopen on Escape keyup while the mention remains under the cursor', async () => {
+    const wrapper = mountM()
+    await typeAt(wrapper, '@a')
+    const textarea = wrapper.find('textarea')
+
+    await textarea.trigger('keydown', { key: 'Escape' })
+    await textarea.trigger('keyup', { key: 'Escape' })
+    await nextTick()
+
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(textarea.attributes('aria-expanded')).toBe('false')
+  })
+
+  it('closes on keyboard blur and cancels the active mention', async () => {
+    const wrapper = mountM()
+    await typeAt(wrapper, '@a')
+
+    await wrapper.find('textarea').trigger('blur')
+
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.find('textarea').attributes('aria-expanded')).toBe('false')
+  })
+
+  it('cancels a stale debounced search when the active mention disappears', async () => {
+    vi.useFakeTimers()
+    const wrapper = mountM({ searchDebounce: 100 })
+    await typeAt(wrapper, '@alice')
+    await typeAt(wrapper, '@alice ')
+
+    vi.advanceTimersByTime(100)
+    await nextTick()
+
+    expect(wrapper.emitted('search')).toBeUndefined()
+  })
+
+  it('does not expose a disabled option as active when every candidate is disabled', async () => {
+    const wrapper = mountM({ options: [{ value: 'anna', disabled: true }] })
+    await typeAt(wrapper, '@')
+
+    expect(wrapper.find('textarea').attributes('aria-activedescendant')).toBeUndefined()
+    expect(wrapper.find(ns.e('option')).attributes('aria-selected')).toBe('false')
+  })
+
+  it('normalizes the active option when options become disabled dynamically', async () => {
+    const wrapper = mountM({ options: ['anna', 'bob'] })
+    await typeAt(wrapper, '@')
+    const firstId = wrapper.find('textarea').attributes('aria-activedescendant')
+
+    await wrapper.setProps({ options: [{ value: 'anna', disabled: true }, 'bob'] })
+    await nextTick()
+
+    const nextId = wrapper.find('textarea').attributes('aria-activedescendant')
+    expect(nextId).not.toBe(firstId)
+    expect(wrapper.find(`#${nextId}`).text()).toBe('bob')
+  })
+
+  it('restores the first active option when an empty result becomes available', async () => {
+    const wrapper = mountM({ options: [] })
+    await typeAt(wrapper, '@')
+    expect(wrapper.find('textarea').attributes('aria-activedescendant')).toBeUndefined()
+
+    await wrapper.setProps({ options: ['bob'] })
+    await nextTick()
+
+    const activeId = wrapper.find('textarea').attributes('aria-activedescendant')
+    expect(activeId).toBeTruthy()
+    expect(wrapper.find(`#${activeId}`).text()).toBe('bob')
+    await wrapper.find('textarea').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ value: 'bob' })
+  })
+
+  it('restores the first active option when an all-disabled result becomes available', async () => {
+    const wrapper = mountM({ options: [{ value: 'anna', disabled: true }] })
+    await typeAt(wrapper, '@')
+    expect(wrapper.find('textarea').attributes('aria-activedescendant')).toBeUndefined()
+
+    await wrapper.setProps({ options: [{ value: 'anna', disabled: true }, 'bob'] })
+    await nextTick()
+
+    const activeId = wrapper.find('textarea').attributes('aria-activedescendant')
+    expect(activeId).toBeTruthy()
+    expect(wrapper.find(`#${activeId}`).text()).toBe('bob')
+    await wrapper.find('textarea').trigger('keydown', { key: 'Tab' })
+    expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ value: 'bob' })
+  })
+
+  it.each(['disabled', 'readonly'] as const)('closes an open popup when %s becomes true', async (prop) => {
+    const wrapper = mountM()
+    await typeAt(wrapper, '@')
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+
+    await wrapper.setProps({ [prop]: true })
+
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.find('textarea').attributes(`aria-${prop === 'readonly' ? 'readonly' : 'disabled'}`)).toBe('true')
+  })
+
+  it('readonly blocks synthetic input updates and mention popup opening', async () => {
+    const wrapper = mountM({ readonly: true, modelValue: 'fixed' })
+    await typeAt(wrapper, '@changed')
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('fixed')
+  })
+
+  it('refreshes an open query when the prefix set changes', async () => {
+    const wrapper = mountM({ prefix: '@' })
+    await typeAt(wrapper, '@anna')
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+
+    await wrapper.setProps({ prefix: '#' })
+    await nextTick()
+
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('closes an open query when a controlled external value removes the mention', async () => {
+    const wrapper = mountM({ modelValue: '@anna' })
+    const textarea = wrapper.find('textarea').element as HTMLTextAreaElement
+    textarea.setSelectionRange(5, 5)
+    textarea.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+
+    await wrapper.setProps({ modelValue: 'plain' })
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('ignores empty prefixes instead of matching every cursor position', async () => {
+    const wrapper = mountM({ prefix: ['', '@'] })
+    await typeAt(wrapper, 'plain text')
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('forwards native textarea attrs and merges FormItem description/status semantics', () => {
+    const validate = vi.fn(async () => true)
+    const wrapper = mount(Mentions, {
+      props: { options: SAMPLE },
+      attrs: {
+        name: 'reviewers',
+        autocomplete: 'off',
+        'aria-label': '提及审核人',
+        'aria-describedby': 'hint-id',
+      },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref('error'),
+            messageId: ref('error-id'),
+            isInsideForm: true,
+            validate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const textarea = wrapper.find('textarea')
+
+    expect(textarea.attributes('name')).toBe('reviewers')
+    expect(textarea.attributes('autocomplete')).toBe('off')
+    expect(textarea.attributes('aria-label')).toBe('提及审核人')
+    expect(textarea.attributes('aria-describedby')).toBe('hint-id error-id')
+    expect(textarea.attributes('aria-invalid')).toBe('true')
+    expect(wrapper.find(ns.b()).attributes('name')).toBeUndefined()
+  })
+
+  it('validates FormItem once for change and once for blur', async () => {
+    const validate = vi.fn(async (_trigger?: string) => true)
+    const wrapper = mount(Mentions, {
+      props: { options: SAMPLE },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+
+    await typeAt(wrapper, 'hello')
+    await wrapper.find('textarea').trigger('blur')
+
+    expect(validate.mock.calls.map(([trigger]) => trigger)).toEqual(['change', 'blur'])
   })
 })

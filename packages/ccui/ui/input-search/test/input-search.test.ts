@@ -1,9 +1,48 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
+import { ref } from 'vue'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import type { InputSearchProps } from '../index'
 import { InputSearch } from '../index'
 
 const ns = useNamespace('input-search', true)
+const legacyPropsTypeCompatibility = {
+  showPassword: true,
+  prepend: 'before',
+  append: 'after',
+  showCount: true,
+  variant: 'filled',
+} satisfies Partial<InputSearchProps>
+const focusRemovalCases: Array<{
+  name: string
+  props: Partial<InputSearchProps>
+  selector: string
+  removeProps: Partial<InputSearchProps>
+  restoreProps: Partial<InputSearchProps>
+}> = [
+  {
+    name: 'loading 卸载 inline search',
+    props: {},
+    selector: ns.e('inline-icon'),
+    removeProps: { loading: true },
+    restoreProps: { loading: false },
+  },
+  {
+    name: 'modelValue 清空卸载 clear',
+    props: { clearable: true, modelValue: 'query' },
+    selector: ns.e('clear'),
+    removeProps: { modelValue: '' },
+    restoreProps: { modelValue: 'query' },
+  },
+  {
+    name: 'disabled 卸载 clear',
+    props: { clearable: true, modelValue: 'query' },
+    selector: ns.e('clear'),
+    removeProps: { disabled: true },
+    restoreProps: { disabled: false },
+  },
+]
 
 describe('input-search', () => {
   describe('基本渲染', () => {
@@ -34,6 +73,16 @@ describe('input-search', () => {
       const wrapper = mount(InputSearch, { props: { size: 'large' } })
       expect(wrapper.find(ns.m('large')).exists()).toBe(true)
     })
+
+    it('保留历史 Input props 的类型和运行时识别兼容', () => {
+      const wrapper = mount(InputSearch, { props: legacyPropsTypeCompatibility })
+      expect(wrapper.props()).toMatchObject(legacyPropsTypeCompatibility)
+      expect(wrapper.find('input').attributes('showpassword')).toBeUndefined()
+      expect(wrapper.find('input').attributes('prepend')).toBeUndefined()
+      expect(wrapper.find('input').attributes('append')).toBeUndefined()
+      expect(wrapper.find('input').attributes('showcount')).toBeUndefined()
+      expect(wrapper.find('input').attributes('variant')).toBeUndefined()
+    })
   })
 
   describe('v-model + defaultValue', () => {
@@ -45,6 +94,17 @@ describe('input-search', () => {
     it('defaultValue 在未传 modelValue 时生效', () => {
       const wrapper = mount(InputSearch, { props: { defaultValue: 'preset' } })
       expect((wrapper.find('input').element as HTMLInputElement).value).toBe('preset')
+    })
+
+    it('显式空 modelValue 优先于 defaultValue', () => {
+      const wrapper = mount(InputSearch, { props: { modelValue: '', defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('')
+    })
+
+    it('从缺省 modelValue 切换为显式空值时同步受控值', async () => {
+      const wrapper = mount(InputSearch, { props: { defaultValue: 'preset' } })
+      await wrapper.setProps({ modelValue: '' })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('')
     })
 
     it('输入触发 update:modelValue + input', async () => {
@@ -75,6 +135,7 @@ describe('input-search', () => {
       const btn = wrapper.find(ns.e('button'))
       expect(btn.exists()).toBe(true)
       expect(wrapper.find(ns.em('button', 'icon-only')).exists()).toBe(true)
+      expect(btn.attributes('aria-label')).toBe('搜索')
     })
 
     it('enterButton="搜索" 渲染文字按钮', () => {
@@ -137,6 +198,14 @@ describe('input-search', () => {
       expect(wrapper.emitted('search')).toBeUndefined()
     })
 
+    it('loading 时清除仍更新值但不触发 search', async () => {
+      const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'kw', loading: true } })
+      await wrapper.find(ns.e('clear')).trigger('click')
+      expect(wrapper.emitted('update:modelValue')).toEqual([['']])
+      expect(wrapper.emitted('clear')).toEqual([[]])
+      expect(wrapper.emitted('search')).toBeUndefined()
+    })
+
     it('清除按钮也会触发 search("")', async () => {
       const wrapper = mount(InputSearch, { props: { clearable: true, modelValue: 'kw' } })
       await wrapper.find(ns.e('clear')).trigger('click')
@@ -153,6 +222,7 @@ describe('input-search', () => {
       const btn = wrapper.find(ns.e('button'))
       expect(btn.find(ns.e('loading-icon')).exists()).toBe(true)
       expect(btn.attributes('disabled')).toBeDefined()
+      expect(btn.attributes('aria-busy')).toBe('true')
     })
 
     it('loading=true 且无按钮时 suffix 渲染 loading 图标', () => {
@@ -194,6 +264,124 @@ describe('input-search', () => {
       await wrapper.find(ns.e('clear')).trigger('click')
       expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
     })
+
+    it('清除后把焦点恢复到输入框', async () => {
+      const wrapper = mount(InputSearch, { attachTo: document.body, props: { clearable: true, modelValue: 'x' } })
+      const input = wrapper.find('input')
+      ;(input.element as HTMLInputElement).focus()
+      await wrapper.find(ns.e('clear')).trigger('click')
+      expect(document.activeElement).toBe(input.element)
+      wrapper.unmount()
+    })
+  })
+
+  describe('IME、原生属性与 FormItem', () => {
+    it('IME 组合期间不提交中间值，compositionend 最终值只提交一次', async () => {
+      const wrapper = mount(InputSearch)
+      const input = wrapper.find('input')
+      const element = input.element as HTMLInputElement
+
+      element.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }))
+      element.value = 'h'
+      await input.trigger('input')
+      await input.trigger('keydown', { key: 'Enter', isComposing: true })
+      expect(wrapper.emitted('input')).toBeUndefined()
+      expect(wrapper.emitted('search')).toBeUndefined()
+
+      element.value = '汉'
+      element.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '汉' }))
+      await input.trigger('input')
+      expect(wrapper.emitted('input')).toEqual([['汉']])
+      expect(wrapper.emitted('update:modelValue')).toEqual([['汉']])
+    })
+
+    it('把原生属性透传给 input，并将 class/style 保留在根节点', () => {
+      const wrapper = mount(InputSearch, {
+        attrs: {
+          class: 'consumer-root',
+          style: 'width: 240px',
+          name: 'query',
+          autocomplete: 'off',
+          'aria-label': '站内搜索',
+        },
+      })
+      const input = wrapper.find('input')
+      expect(input.attributes('name')).toBe('query')
+      expect(input.attributes('autocomplete')).toBe('off')
+      expect(input.attributes('aria-label')).toBe('站内搜索')
+      expect(input.classes()).not.toContain('consumer-root')
+      expect(wrapper.classes()).toContain('consumer-root')
+    })
+
+    it('继承 FormItem 状态、描述，并在 change/blur 时触发校验', async () => {
+      const validate = vi.fn(async () => true)
+      const wrapper = mount(InputSearch, {
+        attachTo: document.body,
+        attrs: { 'aria-describedby': 'hint' },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref('error'),
+              messageId: ref('field-error'),
+              isInsideForm: true,
+              validate,
+            },
+          },
+        },
+      })
+      const input = wrapper.find('input')
+      expect(wrapper.find(ns.m('status-error')).exists()).toBe(true)
+      expect(input.attributes('aria-invalid')).toBe('true')
+      expect(input.attributes('aria-describedby')).toBe('hint field-error')
+
+      await input.setValue('query')
+      expect(validate).toHaveBeenCalledWith('change')
+      ;(input.element as HTMLInputElement).focus()
+      ;(input.element as HTMLInputElement).blur()
+      await wrapper.vm.$nextTick()
+      expect(validate).toHaveBeenCalledWith('blur')
+      wrapper.unmount()
+    })
+
+    it('disabled 的内联搜索控件退出 Tab 顺序并暴露禁用状态', () => {
+      const wrapper = mount(InputSearch, { props: { disabled: true } })
+      const icon = wrapper.find(ns.e('inline-icon'))
+      expect(icon.attributes('tabindex')).toBe('-1')
+      expect(icon.attributes('aria-disabled')).toBe('true')
+    })
+
+    it.each(focusRemovalCases)(
+      '$name 时恰好结算一次 blur，恢复后可再次 focus',
+      async ({ props, selector, removeProps, restoreProps }) => {
+        const validate = vi.fn(async (_trigger?: string) => true)
+        const wrapper = mount(InputSearch, {
+          attachTo: document.body,
+          props,
+          global: {
+            provide: {
+              [formItemInjectionKey as symbol]: {
+                validateStatus: ref(''),
+                isInsideForm: true,
+                validate,
+              },
+            },
+          },
+        })
+
+        ;(wrapper.find(selector).element as HTMLElement).focus()
+        expect(wrapper.emitted('focus')).toHaveLength(1)
+        await wrapper.setProps(removeProps)
+        await wrapper.vm.$nextTick()
+        expect(wrapper.emitted('blur')).toHaveLength(1)
+        expect(validate.mock.calls.filter(([trigger]) => trigger === 'blur')).toHaveLength(1)
+
+        await wrapper.setProps(restoreProps)
+        ;(wrapper.find('input').element as HTMLInputElement).focus()
+        expect(wrapper.emitted('focus')).toHaveLength(2)
+        expect(wrapper.emitted('blur')).toHaveLength(1)
+        wrapper.unmount()
+      },
+    )
   })
 
   describe('prefix / suffix slot', () => {

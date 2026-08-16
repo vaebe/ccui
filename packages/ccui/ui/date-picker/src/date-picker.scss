@@ -351,6 +351,10 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  &__grid-row {
+    display: contents;
+  }
+
   &__week-cell {
     padding: 4px 0;
   }

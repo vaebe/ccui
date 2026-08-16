@@ -109,6 +109,9 @@
     line-height: 1;
     font-size: $ccui-font-size-sm;
     font-style: normal;
+    padding: 0;
+    background: transparent;
+    border: 0;
 
     &:hover {
       color: $ccui-color-text-secondary;

@@ -195,4 +195,17 @@
       color: $ccui-text;
     }
   }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    line-height: 1;
+  }
 }

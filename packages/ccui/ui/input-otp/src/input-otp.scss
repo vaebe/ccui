@@ -52,6 +52,10 @@
     font-size: $ccui-font-size-sm;
   }
 
+  &--readonly &__cell {
+    cursor: default;
+  }
+
   &--status-error &__cell {
     border-color: $ccui-color-error;
 

@@ -108,6 +108,69 @@ describe('time-picker popup open/close', () => {
     await nextTick()
     expect(document.activeElement).toBe(wrapper.find('input').element)
   })
+
+  it('closes an open panel when disabled becomes true', async () => {
+    const wrapper = mountTP()
+    await openPanel(wrapper)
+    await wrapper.setProps({ disabled: true })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('open-change')?.at(-1)).toEqual([false])
+  })
+})
+
+describe('time-picker editable input', () => {
+  it('strictly parses and emits a valid typed time', async () => {
+    const wrapper = mountTP({ inputReadOnly: false, format: 'HH:mm' })
+    const input = wrapper.find('input')
+    await input.setValue('09:35')
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['09:35'])
+    expect(wrapper.emitted('change')?.[0]).toEqual(['09:35', '09:35'])
+  })
+
+  it('restores the controlled display for invalid or disabled typed values', async () => {
+    const wrapper = mountTP({
+      inputReadOnly: false,
+      modelValue: '09:30:00',
+      disabledHours: () => [10],
+    })
+    const input = wrapper.find('input')
+    await input.setValue('10:30:00')
+    await input.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect((input.element as HTMLInputElement).value).toBe('09:30:00')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('clears a selected value from editable input', async () => {
+    const wrapper = mountTP({ inputReadOnly: false, modelValue: '09:30:00' })
+    const input = wrapper.find('input')
+    await input.setValue('')
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([null])
+  })
+
+  it('resets an in-progress draft when format or modelValue changes', async () => {
+    const wrapper = mountTP({ inputReadOnly: false, modelValue: '09:30:00' })
+    const input = wrapper.find('input')
+    await input.setValue('draft')
+    await wrapper.setProps({ modelValue: '11:45', format: 'HH:mm' })
+    await nextTick()
+    expect((input.element as HTMLInputElement).value).toBe('11:45')
+  })
+
+  it('keeps a draft uncommitted while focus moves to a popup option so the option click wins', async () => {
+    const wrapper = mountTP({ inputReadOnly: false, modelValue: '09:30:00', showOk: false })
+    const input = wrapper.find('input')
+    await openPanel(wrapper)
+    await input.setValue('08:15:00')
+    const option = findCells(wrapper, 'hour')[10]
+    await input.trigger('blur', { relatedTarget: option.element })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    await option.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['10:30:00'])
+  })
 })
 
 describe('time-picker columns', () => {
@@ -206,6 +269,31 @@ describe('time-picker disabled values', () => {
     await openPanel(wrapper)
     const cells = findCells(wrapper, 'hour')
     await cells[5].trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('does not commit a final value disabled by a dependent minute rule', async () => {
+    const wrapper = mountTP({
+      modelValue: '09:30:00',
+      showOk: false,
+      disabledMinutes: (hour: number) => (hour === 10 ? [30] : []),
+    })
+    await openPanel(wrapper)
+    await findCells(wrapper, 'hour')[10].trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('disables Now and OK when the final value violates disabled values or steps', async () => {
+    const wrapper = mountTP({
+      modelValue: '09:31:00',
+      minuteStep: 15,
+      disabledHours: () => [new Date().getHours()],
+    })
+    await openPanel(wrapper)
+    expect(wrapper.find(`${ns.em('footer-btn', 'now')}`).attributes('disabled')).toBeDefined()
+    expect(wrapper.find(`${ns.em('footer-btn', 'ok')}`).attributes('disabled')).toBeDefined()
+    await wrapper.find(`${ns.em('footer-btn', 'ok')}`).trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
 })
@@ -339,6 +427,15 @@ describe('time-picker clearable', () => {
     expect(wrapper.emitted('change')?.[0]).toEqual([null, ''])
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
   })
+
+  it('exposes a keyboard-operable clear control', async () => {
+    const wrapper = mountTP({ modelValue: '08:15:30' })
+    const clear = wrapper.find(ns.e('clear'))
+    expect(clear.attributes('tabindex')).toBe('0')
+    await clear.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([null])
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
 })
 
 describe('time-picker size and status', () => {
@@ -377,6 +474,61 @@ describe('time-picker integrations', () => {
     wrappers.push(wrapper)
     await wrapper.find('input').trigger('blur')
     expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
+  it('does not emit blur or validate while focus moves into the popup', async () => {
+    const onValidate = vi.fn(async () => true)
+    const { formItemInjectionKey } = await import('../../form/src/form-types')
+    const wrapper = mount(TimePicker, {
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await openPanel(wrapper)
+    const option = wrapper.find(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await wrapper.find('input').trigger('blur', { relatedTarget: option.element })
+    await wrapper.find(ns.b()).trigger('focusout', { relatedTarget: option.element })
+    expect(wrapper.emitted('blur')).toBeUndefined()
+    expect(onValidate).not.toHaveBeenCalled()
+  })
+
+  it('aggregates blur across the clear control and validates exactly once when focus leaves', async () => {
+    const onValidate = vi.fn(async () => true)
+    const { formItemInjectionKey } = await import('../../form/src/form-types')
+    const wrapper = mount(TimePicker, {
+      props: { modelValue: '09:30:00' },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const clear = wrapper.find(ns.e('clear'))
+    await wrapper.find(ns.b()).trigger('focusout', { relatedTarget: clear.element })
+    expect(wrapper.emitted('blur')).toBeUndefined()
+    expect(onValidate).not.toHaveBeenCalled()
+
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    await wrapper.find(ns.b()).trigger('focusout', { relatedTarget: outside })
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+    expect(onValidate).toHaveBeenCalledTimes(1)
+    expect(onValidate).toHaveBeenCalledWith('blur')
+    outside.remove()
   })
 
   it('inherits validate status from FormItem', async () => {
@@ -590,7 +742,17 @@ describe('time-picker 键盘导航', () => {
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
   })
 
-  it('Escape 关闭面板（不 emit）', async () => {
+  it('showOk=false 时方向键预览后 Enter 提交 pending 并关闭', async () => {
+    const wrapper = mountTP({ modelValue: '00:00:00', showOk: false, showNow: false })
+    await openPanel(wrapper)
+    const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
+    await hourCells[0].trigger('keydown', { key: 'ArrowDown' })
+    await hourCells[1].trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['01:00:00'])
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('Escape 关闭面板、恢复输入焦点（不 emit）', async () => {
     const wrapper = mountTP({ modelValue: '00:00:00' })
     await openPanel(wrapper)
     const hourCells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
@@ -598,14 +760,27 @@ describe('time-picker 键盘导航', () => {
     await nextTick()
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(document.activeElement).toBe(wrapper.find('input').element)
   })
 
-  it('cell 默认 tabindex=0，disabled cell tabindex=-1', async () => {
+  it('每列只有一个 roving tab stop，disabled cell tabindex=-1', async () => {
     const wrapper = mountTP({ disabledHours: () => [5, 6, 7] })
     await openPanel(wrapper)
     const cells = wrapper.findAll(`${ns.em('column', 'hour')} ${ns.e('cell')}`)
-    expect(cells[0].attributes('tabindex')).toBe('0')
+    expect(cells.filter((cell) => cell.attributes('tabindex') === '0')).toHaveLength(1)
     expect(cells[5].attributes('tabindex')).toBe('-1')
+  })
+
+  it('opens and closes from the input keyboard without duplicate events', async () => {
+    const wrapper = mountTP()
+    const input = wrapper.find('input')
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    await input.trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('open-change')).toEqual([[true], [false]])
+    expect(document.activeElement).toBe(input.element)
   })
 })
 

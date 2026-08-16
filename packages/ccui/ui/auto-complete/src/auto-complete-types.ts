@@ -40,6 +40,10 @@ export const autoCompleteProps = {
     type: Boolean,
     default: false,
   },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
   allowClear: {
     type: Boolean,
     default: false,

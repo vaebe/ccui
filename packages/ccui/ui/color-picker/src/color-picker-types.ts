@@ -16,7 +16,7 @@ export interface ColorPickerPresetGroup {
   label?: string
   colors: ColorPickerPresetColor[]
 }
-export type ColorPickerPresetItem = string | ColorPickerPresetGroup
+export type ColorPickerPresetItem = ColorPickerPresetColor | ColorPickerPresetGroup
 /**
  * 颜色格式：`'hex' | 'rgb' | 'hsb'`（HSB = Hue / Saturation / Brightness）。
  */

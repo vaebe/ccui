@@ -204,6 +204,14 @@
       color: $ccui-primary;
     }
 
+    &:disabled,
+    &:disabled:hover {
+      border-color: $ccui-color-border;
+      background-color: $ccui-disabled-bg;
+      color: $ccui-color-text-disabled;
+      cursor: not-allowed;
+    }
+
     &--ok {
       border-color: $ccui-primary;
       background-color: $ccui-primary;
@@ -213,6 +221,13 @@
         border-color: $ccui-color-primary-hover;
         background-color: $ccui-color-primary-hover;
         color: #fff;
+      }
+
+      &:disabled,
+      &:disabled:hover {
+        border-color: $ccui-color-border;
+        background-color: $ccui-disabled-bg;
+        color: $ccui-color-text-disabled;
       }
     }
   }

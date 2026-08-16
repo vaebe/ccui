@@ -110,6 +110,14 @@ describe('date-picker popup open/close', () => {
     await nextTick()
     expect(document.activeElement).toBe(wrapper.find('input').element)
   })
+
+  it('closes an open panel when disabled becomes true', async () => {
+    const wrapper = mountDP()
+    await openPanel(wrapper)
+    await wrapper.setProps({ disabled: true })
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('open-change')?.at(-1)).toEqual([false])
+  })
 })
 
 describe('date-picker selection', () => {
@@ -158,6 +166,17 @@ describe('date-picker selection', () => {
     await target!.trigger('click')
     await nextTick()
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('restores focus to the input after an internal selection closes the panel', async () => {
+    const wrapper = mountDP({ picker: 'month', modelValue: '2026-05' })
+    await openPanel(wrapper)
+    const nextYear = wrapper.find(ns.em('arrow', 'next-year'))
+    ;(nextYear.element as HTMLButtonElement).focus()
+    expect(document.activeElement).toBe(nextYear.element)
+    await wrapper.findAll(ns.em('cell', 'month'))[6].trigger('click')
+    await nextTick()
+    expect(document.activeElement).toBe(wrapper.find('input').element)
   })
 
   it('does not re-emit change when clicking the same selected day', async () => {
@@ -248,6 +267,71 @@ describe('date-picker clearable', () => {
     expect(wrapper.emitted('change')?.[0]).toEqual([null, ''])
     // panel 没被打开（stopPropagation 生效）
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+})
+
+describe('date-picker editable input', () => {
+  it('strictly parses and emits a valid typed value on change', async () => {
+    const wrapper = mountDP({ inputReadOnly: false, format: 'YYYY/MM/DD' })
+    const input = wrapper.find('input')
+    await input.setValue('2026/06/18')
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['2026/06/18'])
+    expect(wrapper.emitted('change')?.[0]).toEqual(['2026/06/18', '2026/06/18'])
+  })
+
+  it('rejects invalid or disabled typed values and restores the controlled display', async () => {
+    const wrapper = mountDP({ inputReadOnly: false, modelValue: '2026-05-09', minDate: '2026-05-10' })
+    const input = wrapper.find('input')
+    await input.setValue('2026-05-01')
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((input.element as HTMLInputElement).value).toBe('2026-05-09')
+  })
+
+  it('lets external controlled state and dynamic parsing props replace an in-progress draft', async () => {
+    const model = ref<Date | string>(new Date('2026-05-09T00:00:00'))
+    const format = ref('YYYY-MM-DD')
+    const picker = ref<'date' | 'month'>('date')
+    const readOnly = ref(false)
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(DatePicker, {
+            modelValue: model.value,
+            format: format.value,
+            picker: picker.value,
+            inputReadOnly: readOnly.value,
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper as unknown as VueWrapper)
+    const typeDraft = (value: string) => {
+      const input = wrapper.find('input').element as HTMLInputElement
+      input.value = value
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+
+    typeDraft('stale-model')
+    model.value = new Date('2026-06-18T00:00:00')
+    await nextTick()
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2026-06-18')
+
+    typeDraft('stale-format')
+    format.value = 'YYYY/MM/DD'
+    await nextTick()
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2026/06/18')
+
+    typeDraft('stale-picker')
+    picker.value = 'month'
+    await nextTick()
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2026/06/18')
+
+    typeDraft('stale-readonly')
+    readOnly.value = true
+    await nextTick()
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('2026/06/18')
   })
 })
 
@@ -856,6 +940,41 @@ describe('date-picker showTime', () => {
     expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-03')
   })
 
+  it('disables confirmation when the pending time is forbidden', async () => {
+    const wrapper = mountDP({ showTime: { disabledHours: () => [0] } })
+    await openPanel(wrapper)
+    const dateCell = wrapper
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '20')
+    await dateCell!.trigger('click')
+    expect(wrapper.find(ns.em('footer-btn', 'ok')).attributes('disabled')).toBeDefined()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('ignores disabled rules for minute/second columns hidden by the time format', async () => {
+    const minuteHidden = mountDP({ showTime: { format: 'HH', disabledMinutes: () => [0] } })
+    await openPanel(minuteHidden)
+    const firstDate = minuteHidden
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '20')!
+    await firstDate.trigger('click')
+    expect(minuteHidden.find(ns.em('footer-btn', 'ok')).attributes('disabled')).toBeUndefined()
+
+    const secondHidden = mountDP({
+      showTime: { format: 'HH:mm' },
+      disabledTime: () => ({ disabledSeconds: () => [0] }),
+    })
+    await openPanel(secondHidden)
+    const secondDate = secondHidden
+      .findAll(ns.e('cell'))
+      .find((c) => !c.classes(ns.em('cell', 'outside').slice(1)) && c.text() === '21')!
+    await secondDate.trigger('click')
+    const ok = secondHidden.find(ns.em('footer-btn', 'ok'))
+    expect(ok.attributes('disabled')).toBeUndefined()
+    await ok.trigger('click')
+    expect(secondHidden.emitted('update:modelValue')?.[0]).toEqual(['2026-05-21 00:00'])
+  })
+
   it('format 显式覆盖 showTime 的兜底（YYYY/MM/DD HH:mm）', async () => {
     const wrapper = mountDP({ showTime: { format: 'HH:mm' }, format: 'YYYY/MM/DD HH:mm' })
     await openPanel(wrapper)
@@ -962,6 +1081,43 @@ describe('date-picker presets', () => {
     const wrapper = mountDP({ presets: samplePresets })
     await openPanel(wrapper)
     expect(wrapper.find(ns.em('panel', 'with-presets')).exists()).toBe(true)
+  })
+
+  it('does not let presets bypass minDate / disabledDate constraints', async () => {
+    const wrapper = mountDP({
+      minDate: '2026-05-10',
+      disabledDate: (d: dayjs.Dayjs) => d.date() === 12,
+      presets: [
+        { label: '过早', value: '2026-05-09' },
+        { label: '禁用', value: '2026-05-12' },
+      ],
+    })
+    await openPanel(wrapper)
+    await wrapper.findAll(ns.e('preset-item'))[0].trigger('click')
+    await wrapper.findAll(ns.e('preset-item'))[1].trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('checks week constraints against the normalized week start for presets and typed input', async () => {
+    const preset = mountDP({
+      picker: 'week',
+      weekStart: 0,
+      minDate: '2026-05-11',
+      presets: [{ label: '本周', value: '2026-05-12' }],
+    })
+    await openPanel(preset)
+    await preset.find(ns.e('preset-item')).trigger('click')
+    expect(preset.emitted('update:modelValue')).toBeUndefined()
+
+    const editable = mountDP({ picker: 'week', weekStart: 0, minDate: '2026-05-11', inputReadOnly: false })
+    const input = editable.find('input').element as HTMLInputElement
+    input.value = '2026-05-12'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    await nextTick()
+    expect(editable.emitted('update:modelValue')).toBeUndefined()
+    expect(input.value).toBe('')
   })
 
   describe('variant', () => {
@@ -1235,5 +1391,29 @@ describe('XL-4 ARIA dialog', () => {
     const panel = wrapper.find(ns.e('panel'))
     expect(panel.attributes('role')).toBe('dialog')
     expect(panel.attributes('aria-label')).toBeTruthy()
+  })
+
+  it('uses real row context and exposes keyboard navigation through aria-activedescendant', async () => {
+    const wrapper = mountDP({ modelValue: '2026-05-09' })
+    await openPanel(wrapper)
+    const grid = wrapper.find(ns.e('grid'))
+    expect(grid.attributes('role')).toBe('grid')
+    expect(Array.from(grid.element.children).every((node) => node.getAttribute('role') === 'row')).toBe(true)
+    expect(
+      Array.from(grid.element.querySelectorAll('[role="gridcell"]')).every(
+        (cell) => cell.parentElement?.getAttribute('role') === 'row',
+      ),
+    ).toBe(true)
+
+    const input = wrapper.find('input').element as HTMLInputElement
+    input.focus()
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))
+    await nextTick()
+    const activeId = input.getAttribute('aria-activedescendant')
+    const activeCell = activeId ? document.getElementById(activeId) : null
+    expect(document.activeElement).toBe(input)
+    expect(activeCell?.getAttribute('role')).toBe('gridcell')
+    expect(activeCell?.textContent).toContain('10')
+    expect(document.querySelectorAll(`#${activeId}`).length).toBe(1)
   })
 })

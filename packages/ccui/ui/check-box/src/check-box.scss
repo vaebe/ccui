@@ -80,6 +80,11 @@
     }
   }
 
+  &__input:focus-visible + &__icon {
+    outline: 2px solid $ccui-color-primary;
+    outline-offset: 2px;
+  }
+
   &:not(.disabled):hover {
     .#{$cls-prefix}-check-box__icon {
       color: $ccui-color-primary;
@@ -104,6 +109,26 @@
     }
   }
 
+  &.indeterminate {
+    .#{$cls-prefix}-check-box__icon {
+      color: $ccui-color-primary;
+
+      &::before {
+        background-color: currentColor;
+        border-color: currentColor;
+      }
+
+      &::after {
+        width: 8px;
+        height: 2px;
+        border: 0;
+        background-color: var(--ccui-check-box-indeterminate-mark-color, #fff);
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+  }
+
   &.disabled {
     color: $ccui-color-text-disabled;
     cursor: not-allowed;
@@ -119,12 +144,25 @@
     &.active {
       .#{$cls-prefix}-check-box__icon {
         &::before {
-          background-color: $ccui-color-fill;
+          background-color: var(--ccui-check-box-indeterminate-background, $ccui-color-fill);
           border-color: $ccui-color-border-disabled;
         }
 
         &::after {
           border-color: $ccui-color-text-disabled;
+        }
+      }
+    }
+
+    &.indeterminate {
+      .#{$cls-prefix}-check-box__icon {
+        &::before {
+          background-color: $ccui-color-fill;
+          border-color: $ccui-color-border-disabled;
+        }
+
+        &::after {
+          background-color: var(--ccui-check-box-indeterminate-mark-color, $ccui-color-text-secondary);
         }
       }
     }

@@ -12,6 +12,16 @@
   // M-A1：录入组件统一 variant 形态 —— 视觉边框在 __trigger
   @include form-control-variants-on('.#{$cls-prefix}-color-picker__trigger');
 
+  &__trigger-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__trigger-custom {
+    display: inline-block;
+  }
+
   &__trigger {
     display: inline-flex;
     align-items: center;
@@ -95,6 +105,17 @@
     color: $ccui-color-text;
     font-size: 13px;
     font-family: monospace;
+  }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border: 0;
+    background: transparent;
+    color: $ccui-color-text-tertiary;
+    cursor: pointer;
   }
 
   &__panel {

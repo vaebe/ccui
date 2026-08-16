@@ -367,4 +367,195 @@ describe('inputNumber', () => {
       expect(inp.attributes('aria-invalid')).toBe('true')
     })
   })
+
+  describe('deep review regressions', () => {
+    it('emits one committed change with the value from before typing', async () => {
+      const wrapper = createWrapper({ modelValue: 2 })
+      const input = wrapper.find('.ccui-input-number__inner')
+
+      ;(input.element as HTMLInputElement).value = '12'
+      await input.trigger('input')
+      await input.trigger('change')
+
+      expect(wrapper.emitted('update:modelValue')).toEqual([[12]])
+      expect(wrapper.emitted('input')).toEqual([[12]])
+      expect(wrapper.emitted('change')).toEqual([[12, 2]])
+    })
+
+    it('commits typed input with Enter without emitting a duplicate native change', async () => {
+      const wrapper = createWrapper({ modelValue: 2 })
+      const input = wrapper.find('.ccui-input-number__inner')
+
+      ;(input.element as HTMLInputElement).value = '3'
+      await input.trigger('input')
+      await input.trigger('keydown', { key: 'Enter' })
+      await input.trigger('change')
+
+      expect(wrapper.emitted('change')).toEqual([[3, 2]])
+    })
+
+    it('forwards native form and accessibility attributes to the input', () => {
+      const wrapper = mount(InputNumber, {
+        attrs: {
+          id: 'quantity',
+          name: 'quantity',
+          'aria-label': 'Quantity',
+          autocomplete: 'off',
+          class: 'outer-class',
+        },
+      })
+      const input = wrapper.find('.ccui-input-number__inner')
+
+      expect(input.attributes('id')).toBe('quantity')
+      expect(input.attributes('name')).toBe('quantity')
+      expect(input.attributes('aria-label')).toBe('Quantity')
+      expect(input.attributes('autocomplete')).toBe('off')
+      expect(wrapper.classes()).toContain('outer-class')
+      expect(wrapper.attributes('name')).toBeUndefined()
+    })
+
+    it('merges external and FormItem aria-describedby ids', () => {
+      const wrapper = mount(InputNumber, {
+        attrs: { 'aria-describedby': 'hint shared' },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              messageId: ref('error shared'),
+              isInsideForm: true,
+              validate: vi.fn(async () => true),
+            },
+          },
+        },
+      })
+
+      expect(wrapper.find('input').attributes('aria-describedby')).toBe('hint shared error')
+    })
+
+    it('does not mutate readonly values through controls or exposed methods', async () => {
+      const wrapper = createWrapper({ modelValue: 5, readonly: true })
+      const vm = wrapper.vm as any
+
+      await wrapper.find('.ccui-input-number__increase').trigger('click')
+      vm.increase()
+      vm.decrease()
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect(wrapper.find('.ccui-input-number__increase').attributes('aria-disabled')).toBe('true')
+      expect(wrapper.find('.ccui-input-number__increase').attributes('tabindex')).toBe('-1')
+    })
+
+    it('clears focused state when disabled dynamically', async () => {
+      const wrapper = mount(InputNumber, { attachTo: document.body })
+      const input = wrapper.find('input')
+      ;(input.element as HTMLInputElement).focus()
+      await nextTick()
+      expect(wrapper.classes()).toContain('ccui-input-number--focused')
+
+      await wrapper.setProps({ disabled: true })
+      expect(wrapper.classes()).not.toContain('ccui-input-number--focused')
+      expect(wrapper.emitted('blur')).toHaveLength(1)
+      wrapper.unmount()
+    })
+
+    it('keeps floating point steps stable without requiring precision', async () => {
+      const wrapper = createWrapper({ modelValue: 0.2, step: 0.1 })
+
+      await wrapper.find('.ccui-input-number__increase').trigger('click')
+
+      expect(wrapper.emitted('update:modelValue')).toEqual([[0.3]])
+      expect(wrapper.emitted('change')).toEqual([[0.3, 0.2]])
+    })
+
+    it('normalizes invalid step and precision values without crashing', async () => {
+      const wrapper = createWrapper({ modelValue: 1.25, step: 0, precision: -3 })
+      const input = wrapper.find('input')
+
+      expect((input.element as HTMLInputElement).value).toBe('1')
+      expect(input.attributes('step')).toBe('1')
+      await wrapper.find('.ccui-input-number__increase').trigger('click')
+      expect(wrapper.emitted('update:modelValue')).toEqual([[2]])
+    })
+
+    it('does not expose non-finite defaults as invalid native or ARIA values', () => {
+      const wrapper = createWrapper({ modelValue: Number.NaN })
+      const input = wrapper.find('input')
+
+      expect((input.element as HTMLInputElement).value).toBe('0')
+      expect(input.attributes('min')).toBeUndefined()
+      expect(input.attributes('max')).toBeUndefined()
+      expect(input.attributes('aria-valuemin')).toBeUndefined()
+      expect(input.attributes('aria-valuemax')).toBeUndefined()
+      expect(input.attributes('aria-valuenow')).toBe('0')
+    })
+
+    it('renormalizes and emits when dynamic bounds invalidate the current value', async () => {
+      const wrapper = createWrapper({ modelValue: 5, min: 0, max: 10 })
+
+      await wrapper.setProps({ min: 7 })
+
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('7')
+      expect(wrapper.emitted('update:modelValue')).toEqual([[7]])
+      expect(wrapper.emitted('change')).toEqual([[7, 5]])
+    })
+
+    it('reuses global regular expressions without leaking lastIndex', async () => {
+      const wrapper = createWrapper({ modelValue: 1, reg: /^\d+$/g })
+      const input = wrapper.find('input')
+
+      ;(input.element as HTMLInputElement).value = '2'
+      await input.trigger('input')
+      ;(input.element as HTMLInputElement).value = '3'
+      await input.trigger('input')
+
+      expect(wrapper.emitted('update:modelValue')).toEqual([[2], [3]])
+    })
+
+    it('commits a complete IME sequence exactly once', async () => {
+      const onValidate = vi.fn(async () => true)
+      const wrapper = mount(InputNumber, {
+        props: { modelValue: 1 },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate: onValidate,
+            },
+          },
+        },
+      })
+      const input = wrapper.find('input')
+
+      await input.trigger('compositionstart')
+      ;(input.element as HTMLInputElement).value = '2'
+      await input.trigger('input')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+      await input.trigger('compositionend')
+      // 真实浏览器会在 compositionend 后派发一次相同最终值的 input。
+      await input.trigger('input')
+      await input.trigger('change')
+
+      expect(wrapper.emitted('update:modelValue')).toEqual([[2]])
+      expect(wrapper.emitted('input')).toEqual([[2]])
+      expect(wrapper.emitted('change')).toEqual([[2, 1]])
+      expect(onValidate).toHaveBeenCalledTimes(1)
+      expect(onValidate).toHaveBeenCalledWith('change')
+    })
+
+    it('does not crash when a dynamic regexp string is invalid', async () => {
+      const wrapper = createWrapper({ modelValue: 1, reg: '[' })
+      const input = wrapper.find('input')
+
+      ;(input.element as HTMLInputElement).value = '2'
+      await expect(input.trigger('input')).resolves.toBeUndefined()
+      expect(wrapper.emitted('update:modelValue')).toEqual([[2]])
+    })
+
+    it('uses the formatted display as aria-valuetext', () => {
+      const wrapper = createWrapper({ modelValue: 1.2, precision: 2 })
+      expect(wrapper.find('input').attributes('aria-valuetext')).toBe('1.20')
+    })
+  })
 })

@@ -1,6 +1,6 @@
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { InputProps, InputShowCountObject } from './input-types'
-import { computed, defineComponent, inject, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, inject, onBeforeUpdate, ref, watch } from 'vue'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { inputProps } from './input-types'
@@ -12,9 +12,10 @@ function isShowCountObject(value: unknown): value is InputShowCountObject {
 
 export default defineComponent({
   name: 'CInput',
+  inheritAttrs: false,
   props: inputProps,
   emits: ['update:modelValue', 'input', 'change', 'focus', 'blur', 'clear', 'press-enter'],
-  setup(props: InputProps, { emit, slots }) {
+  setup(props: InputProps, { attrs, emit, slots }) {
     const ns = useNamespace('input')
     const inputRef = ref<HTMLInputElement | null>(null)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
@@ -22,7 +23,13 @@ export default defineComponent({
     const mergedStatus = computed(() => props.status || validationStatus.value)
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────
-    const initial = props.modelValue !== '' ? props.modelValue : (props.defaultValue ?? '')
+    const instance = getCurrentInstance()
+    const hasModelValue = () => {
+      const vnodeProps = instance?.vnode.props
+      return !!vnodeProps && ('modelValue' in vnodeProps || 'model-value' in vnodeProps)
+    }
+    let modelValueWasProvided = hasModelValue()
+    const initial = modelValueWasProvided ? props.modelValue : (props.defaultValue ?? '')
     const inputValue = ref(initial)
     const isFocused = ref(false)
     const isPasswordVisible = ref(false)
@@ -150,6 +157,16 @@ export default defineComponent({
       },
     )
 
+    // raw prop 从“缺省”切换为显式空字符串时，resolved prop 仍是默认值 ''，
+    // 普通 props watcher 不会触发；在组件更新前按 vnode prop 存在性补一次同步。
+    onBeforeUpdate(() => {
+      const modelValueIsProvided = hasModelValue()
+      if (modelValueIsProvided && !modelValueWasProvided && props.modelValue !== inputValue.value) {
+        inputValue.value = props.modelValue
+      }
+      modelValueWasProvided = modelValueIsProvided
+    })
+
     // 当密码显隐能力关闭（type 离开 'password' 或 showPassword 关闭）时，
     // 复位 isPasswordVisible，避免残留显隐态在下次进入 password 模式时直接以明文展示
     watch(
@@ -182,7 +199,17 @@ export default defineComponent({
 
       return (
         <div class={ns.e('suffix')}>
-          {hasClear && <i class={ns.e('clear')} onClick={clearInput}></i>}
+          {hasClear && (
+            <button
+              type="button"
+              class={ns.e('clear')}
+              aria-label="清除输入"
+              onMousedown={(event: MouseEvent) => event.preventDefault()}
+              onClick={clearInput}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
           {hasPasswordToggle && (
             <i
               role="button"
@@ -206,24 +233,34 @@ export default defineComponent({
       )
     }
 
-    const getInputAttrs = () => ({
-      ref: inputRef,
-      class: [inputClass.value, props.classNames?.input],
-      style: props.styles?.input,
-      placeholder: props.placeholder,
-      disabled: props.disabled,
-      readonly: props.readonly,
-      maxlength: props.maxLength,
-      value: inputValue.value,
-      'aria-invalid': mergedStatus.value === 'error' ? true : undefined,
-      'aria-disabled': props.disabled ? true : undefined,
-      'aria-readonly': props.readonly ? true : undefined,
-      onInput: handleInput,
-      onChange: handleChange,
-      onFocus: handleFocus,
-      onBlur: handleBlur,
-      onKeydown: handleKeydown,
-    })
+    const getInputAttrs = () => {
+      const { class: _class, style: _style, 'aria-describedby': describedBy, ...nativeAttrs } = attrs
+      const descriptionIds = [describedBy, formItem?.messageId?.value]
+        .filter((value): value is string => typeof value === 'string' && value.length > 0)
+        .flatMap((value) => value.split(/\s+/))
+      const ariaDescribedBy = [...new Set(descriptionIds)].join(' ') || undefined
+
+      return {
+        ...nativeAttrs,
+        ref: inputRef,
+        class: [inputClass.value, props.classNames?.input],
+        style: props.styles?.input,
+        placeholder: props.placeholder,
+        disabled: props.disabled,
+        readonly: props.readonly,
+        maxlength: props.maxLength,
+        value: inputValue.value,
+        'aria-invalid': mergedStatus.value === 'error' ? true : undefined,
+        'aria-describedby': ariaDescribedBy,
+        'aria-disabled': props.disabled ? true : undefined,
+        'aria-readonly': props.readonly ? true : undefined,
+        onInput: handleInput,
+        onChange: handleChange,
+        onFocus: handleFocus,
+        onBlur: handleBlur,
+        onKeydown: handleKeydown,
+      }
+    }
 
     return () => {
       const prependContent = renderAddonBefore()
@@ -241,7 +278,10 @@ export default defineComponent({
 
       if (prependContent || appendContent) {
         return (
-          <div class={[getBaseClass.value, props.classNames?.root]} style={props.styles?.root}>
+          <div
+            class={[getBaseClass.value, props.classNames?.root, attrs.class]}
+            style={[props.styles?.root, attrs.style]}
+          >
             {prependContent}
             <div class={[getWrapperClass.value, props.classNames?.wrapper]} style={props.styles?.wrapper}>
               {mainContent}
@@ -257,8 +297,8 @@ export default defineComponent({
       }
       return (
         <div
-          class={[combinedClass, props.classNames?.root, props.classNames?.wrapper]}
-          style={[props.styles?.root, props.styles?.wrapper] as any}
+          class={[combinedClass, props.classNames?.root, props.classNames?.wrapper, attrs.class]}
+          style={[props.styles?.root, props.styles?.wrapper, attrs.style] as any}
         >
           {mainContent}
         </div>
