@@ -60,6 +60,14 @@ const tagClosed = ref(false)
       <Badge :count="120"><span>Inbox</span></Badge>
       <BadgeRibbon text="Featured" placement="end"><div>Ribbon content</div></BadgeRibbon>
       <BorderBeam color="#1677ff"><div>Beam content</div></BorderBeam>
+      <BorderBeam as-child :count="3" border-width="2px">
+        <div
+          data-testid="border-beam-child-host"
+          style="position: relative; border: 2px solid transparent; border-radius: 12px 12px 0 0"
+        >
+          Auto beam content
+        </div>
+      </BorderBeam>
       <Tag v-if="!tagClosed" color="success" closable @close="tagClosed = true">Stable</Tag>
     </section>
 

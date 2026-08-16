@@ -14,7 +14,12 @@
     padding: var(--ccui-bb-border-width); // 边框 / 光带粗细
     overflow: hidden;
     pointer-events: none;
-    border-radius: var(--ccui-bb-radius);
+    border-radius: var(--ccui-bb-radius, inherit);
+
+    // asChild 将流光层挂到真实宿主中，inset 可按四边实际边框分别计算。
+    &--child {
+      inset: var(--ccui-bb-inset-offset);
+    }
 
     // 只显示 padding 环（边框）：content-box 实心 + 整体实心，取异或得到边框环
     @supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
@@ -48,6 +53,7 @@
           offset-path: rect(0 auto auto 0 round var(--ccui-bb-size));
           offset-rotate: auto;
           animation: ccui-border-beam-move var(--ccui-bb-duration) linear infinite;
+          animation-delay: var(--ccui-bb-delay, 0s);
           will-change: offset-distance;
         }
       }

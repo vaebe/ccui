@@ -46,13 +46,21 @@ test('[BadgeRibbon] applies end placement state', async ({ page }) => {
 })
 
 test('[BorderBeam] renders its decorative layer as hidden from assistive technology', async ({ page }) => {
-  await expect(page.locator('.ccui-border-beam__effect')).toHaveAttribute('aria-hidden', 'true')
+  await expect(page.locator('.ccui-border-beam__effect').first()).toHaveAttribute('aria-hidden', 'true')
 })
 
 test('[BorderBeam] exposes configured animation geometry and content', async ({ page }) => {
   const beam = page.locator('.ccui-border-beam')
   await expect(beam).toContainText('Beam content')
   await expect(beam).toHaveCSS('--ccui-bb-border-width', '1px')
+})
+
+test('[BorderBeam] mounts evenly delayed effects into an asChild host', async ({ page }) => {
+  const host = page.getByTestId('border-beam-child-host')
+  const effects = host.locator('.ccui-border-beam__effect--child')
+  await expect(effects).toHaveCount(3)
+  await expect(effects.nth(1)).toHaveCSS('--ccui-bb-delay', '-2s')
+  await expect(effects.first()).toHaveCSS('--ccui-bb-inset-offset', '-2px -2px -2px -2px')
 })
 
 test('[Breadcrumb] renders a labelled navigation landmark', async ({ page }) => {

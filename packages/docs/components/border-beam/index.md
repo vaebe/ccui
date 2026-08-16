@@ -120,6 +120,24 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 :::
 
+## 多条流光
+
+`count` 控制同时显示的流光数量。多条流光会沿路径均匀错开，不会在起点重叠。
+
+:::demo
+
+```vue
+<script setup lang="ts"></script>
+
+<template>
+  <c-border-beam :count="3" :duration="9" style="width: 280px">
+    <c-card header="三条流光">三条光束每隔 3 秒经过同一位置。</c-card>
+  </c-border-beam>
+</template>
+```
+
+:::
+
 ## 外扩与圆角
 
 `outset` 让流光层相对容器边缘向外扩展，`borderWidth` 调整光带粗细，`borderRadius` 决定边框环圆角；较小的 `size` 可以缩短光带，避免在紧凑卡片的拐角处形成过长尾迹。
@@ -138,18 +156,69 @@ const preset = computed(() => borderBeamPresets[current.value])
 
 :::
 
+## 继承真实边框
+
+开启 `asChild` 后不会生成包装层，流光层会直接挂载到唯一的默认插槽元素中。未传 `outset` 时，组件会读取目标元素四边的实际边框宽度；未传 `borderRadius` 时，流光会继承目标元素的圆角，因此支持非对称圆角和 CSS 变量。
+
+目标元素需要建立定位上下文（例如 `position: relative`），并且默认插槽只能包含一个最终渲染为 `HTMLElement` 的元素或单根组件。
+
+:::demo
+
+```vue
+<script setup lang="ts"></script>
+
+<template>
+  <c-border-beam as-child :count="2" border-width="0.125rem" size="3rem">
+    <div
+      style="
+        position: relative;
+        width: 280px;
+        padding: 20px;
+        border: 2px solid #d9d9d9;
+        border-radius: 20px 20px 0 0;
+      "
+    >
+      自动读取 2px 边框，并继承非对称圆角。
+    </div>
+  </c-border-beam>
+</template>
+```
+
+:::
+
+## Hover 控制
+
+流光层使用 `.ccui-border-beam__effect` 类，可以通过普通 CSS 控制 hover 时的显示或暂停，不需要额外属性。
+
+```css
+.beam-on-hover .ccui-border-beam__effect {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.beam-on-hover:hover .ccui-border-beam__effect {
+  opacity: 1;
+}
+```
+
+## size 使用限制
+
+建议保持 `size < 2 × min(容器宽度, 容器高度)`。超过该范围时，光带可能同时覆盖两条相对边，视觉上不再像单条连续流光。
+
 ## API
 
 ### Props
 
-| 参数         | 说明                                                           | 类型                                | 默认值 |
-| ------------ | -------------------------------------------------------------- | ----------------------------------- | ------ |
-| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变     | [BorderBeamColor](#borderbeamcolor) | -      |
-| outset       | 流光层相对容器边缘的外扩距离（number 视为 px）                 | `number \| string`                  | `0`    |
-| borderWidth  | 边框 / 光带粗细（px）                                          | `number`                            | `1`    |
-| borderRadius | 容器圆角（px），与被包裹内容保持一致即可严丝合缝               | `number`                            | `8`    |
-| size         | 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px） | `number \| string`                  | `100`  |
-| duration     | 跑完一圈的时长（秒）                                           | `number`                            | `6`    |
+| 参数         | 说明                                                                               | 类型                                | 默认值           |
+| ------------ | ---------------------------------------------------------------------------------- | ----------------------------------- | ---------------- |
+| color        | 流光颜色，单色字符串或渐变停靠点数组；不传时用主题主色渐变                         | [BorderBeamColor](#borderbeamcolor) | -                |
+| outset       | 流光层相对容器边缘的外扩距离；`asChild` 下不传则读取目标元素四边边框               | `number \| string`                  | 包装模式下为 `0` |
+| borderWidth  | 边框 / 光带粗细（number 视为 px）                                                  | `number \| string`                  | `1`              |
+| borderRadius | 流光层圆角；`asChild` 下不传则继承目标元素，可使用非对称 CSS 圆角                  | `number \| string`                  | 包装模式下为 `8` |
+| size         | 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px）                     | `number \| string`                  | `100`            |
+| duration     | 跑完一圈的时长（秒），必须大于 0                                                   | `number`                            | `6`              |
+| count        | 同时显示的流光数量，取大于等于 1 的整数                                            | `number`                            | `1`              |
+| asChild      | 移除包装层，并把流光层挂载到唯一的默认插槽 HTMLElement；目标元素需要建立定位上下文 | `boolean`                           | `false`          |
 
 ### Slots
 
