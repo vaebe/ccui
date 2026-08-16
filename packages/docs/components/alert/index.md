@@ -206,7 +206,7 @@ function reset() {
   >
     <template #default>
       <ul style="margin: 8px 0 0; padding-left: 20px">
-        <li v-for="e in errors" :key="e" style="color: #d32029">{{ e }}</li>
+        <li v-for="e in errors" :key="e" style="color: var(--ccui-color-error)">{{ e }}</li>
       </ul>
     </template>
   </c-alert>
@@ -223,10 +223,14 @@ Alert 嵌在卡片或表单内部，作为局部提示。
 
 ```vue
 <template>
-  <div style="border: 1px solid #eee; border-radius: 8px; padding: 16px; max-width: 480px">
+  <div
+    style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px; padding: 16px; max-width: 480px"
+  >
     <h3 style="margin: 0 0 12px">API 接入配置</h3>
     <c-alert show-icon type="warning" message="生产环境密钥泄露将导致严重后果，请妥善保管。" />
-    <div style="margin-top: 12px; color: #666; font-size: 13px">App Key：sk-prod-XXXXXXXXXXXX</div>
+    <div style="margin-top: 12px; color: var(--ccui-color-text-secondary); font-size: 13px">
+      App Key：sk-prod-XXXXXXXXXXXX
+    </div>
   </div>
 </template>
 ```
@@ -245,8 +249,14 @@ Alert 嵌在卡片或表单内部，作为局部提示。
 | closeText   | string                                   | --     | 自定义关闭按钮文本 |
 | banner      | boolean                                  | false  | 是否用作顶部公告   |
 
+除 `message` 和 `description` 外，默认插槽可放置错误明细等补充内容。关闭后组件会在内部移除；如需由外部重新展示，请配合 `v-if` 或 `@close` 管理状态。关闭按钮可通过 Tab 聚焦，并可用 Enter 或 Space 触发。
+
 ## Alert 事件
 
-| 事件名 | 参数 | 说明           |
-| ------ | ---- | -------------- |
-| close  | --   | 关闭按钮被点击 |
+| 事件名 | 参数       | 说明           |
+| ------ | ---------- | -------------- |
+| close  | MouseEvent | 关闭按钮被点击 |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`icon`、`message`、`description`。

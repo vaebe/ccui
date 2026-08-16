@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 
 interface IconGroup {
   title: string
@@ -9,24 +9,37 @@ interface IconGroup {
 defineProps<{ groups: IconGroup[] }>()
 
 const copiedName = ref<string | null>(null)
+const copyStatus = ref('')
 let copiedTimer: ReturnType<typeof setTimeout> | null = null
+
+onBeforeUnmount(() => {
+  if (copiedTimer) clearTimeout(copiedTimer)
+})
 
 async function copy(name: string) {
   try {
     await navigator.clipboard.writeText(name)
     copiedName.value = name
+    copyStatus.value = `已复制 ${name}`
     if (copiedTimer) clearTimeout(copiedTimer)
     copiedTimer = setTimeout(() => {
       copiedName.value = null
+      copyStatus.value = ''
     }, 1400)
   } catch {
-    // 剪贴板不可用时静默失败（HTTP / 部分浏览器）
+    if (copiedTimer) clearTimeout(copiedTimer)
+    copiedTimer = null
+    copiedName.value = null
+    copyStatus.value = `复制 ${name} 失败，请手动复制图标名称`
   }
 }
 </script>
 
 <template>
   <div class="icon-showcase">
+    <p class="icon-showcase__status" aria-live="polite" aria-atomic="true">
+      {{ copyStatus }}
+    </p>
     <section v-for="group in groups" :key="group.title" class="icon-showcase__section">
       <h4 class="icon-showcase__title">
         {{ group.title }}
@@ -41,13 +54,14 @@ async function copy(name: string) {
           class="icon-showcase__card"
           :class="{ 'is-copied': copiedName === name }"
           :title="`点击复制 ${name}`"
+          :aria-label="copiedName === name ? `${name}，已复制` : `复制图标名称 ${name}`"
           @click="copy(name)"
         >
           <span class="icon-showcase__icon-wrap">
             <c-icon :name="name" :size="26" />
           </span>
           <code class="icon-showcase__name">{{ name }}</code>
-          <span v-if="copiedName === name" class="icon-showcase__toast">已复制</span>
+          <span v-if="copiedName === name" class="icon-showcase__toast" aria-hidden="true">已复制</span>
         </button>
       </div>
     </section>
@@ -59,6 +73,18 @@ async function copy(name: string) {
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+.icon-showcase__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .icon-showcase__section {

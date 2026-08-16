@@ -348,6 +348,8 @@ export default defineComponent({
 
 ## 图标按钮
 
+纯图标按钮没有可见文字时，请通过 `aria-label` 提供明确操作名称，例如 `<c-button icon="mdi:magnify" aria-label="搜索" />`。
+
 :::demo
 
 ```vue
@@ -432,30 +434,30 @@ export default defineComponent({
 
 ## Button参数
 
-| 参数            | 类型                                                  | 默认    | 说明                                                                                                                    |
-| --------------- | ----------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------- |
-| size            | [ButtonSizeType](#buttonsizetype)                     | --      | 尺寸                                                                                                                    |
-| type            | [ButtonType](#buttontype)                             | --      | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
-| plain           | boolean                                               | false   | 朴素按钮：背景透明，文字与边框跟主色                                                                                    |
-| round           | boolean                                               | false   | 圆角按钮                                                                                                                |
-| circle          | boolean                                               | false   | 圆形按钮（常用于纯图标场景）                                                                                            |
-| native-type     | [ButtonNativeType](#buttonnativetype)                 | button  | 原生 `<button>` 的 type 属性                                                                                            |
-| danger          | boolean                                               | false   | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
-| ghost           | boolean                                               | false   | 幽灵按钮（透明背景 + 描边色）                                                                                           |
-| block           | boolean                                               | false   | 撑满父宽度                                                                                                              |
-| autoInsertSpace | boolean                                               | true    | 两个 CJK 字符之间自动插入空格                                                                                           |
-| href            | string                                                | --      | 设置后用 `<a role="button">` 渲染                                                                                       |
-| target          | string                                                | --      | 配合 `href` 透传 `target`                                                                                               |
-| icon            | string \| VNode                                       | --      | 图标（也可用 `icon` slot）                                                                                              |
-| iconPosition    | 'start' \| 'end'                                      | start   | 图标位置                                                                                                                |
-| disabled        | boolean                                               | false   | 是否为禁用状态                                                                                                          |
-| autofocus       | boolean                                               | false   | 原生 autofocus 属性                                                                                                     |
-| loading         | boolean \| { delay?: number; icon?: VNode \| string } | false   | 加载状态；对象形支持 `delay` 推迟显示与自定义 `icon`                                                                    |
-| color           | string                                                | --      | 自定义按钮颜色（任意 CSS color 字符串）；实心型 type 注入 bg + border；描边型注入 color + border；text/link 仅 color    |
+| 参数            | 类型                                                  | 默认   | 说明                                                                                                                    |
+| --------------- | ----------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+| size            | [ButtonSizeType](#buttonsizetype)                     | --     | 尺寸                                                                                                                    |
+| type            | [ButtonType](#buttontype)                             | --     | 类型：`'primary' \| 'default' \| 'dashed' \| 'link' \| 'text'`，加语义色 `'success' \| 'warning' \| 'danger' \| 'info'` |
+| plain           | boolean                                               | false  | 朴素按钮：背景透明，文字与边框跟主色                                                                                    |
+| round           | boolean                                               | false  | 圆角按钮                                                                                                                |
+| circle          | boolean                                               | false  | 圆形按钮（常用于纯图标场景）                                                                                            |
+| native-type     | [ButtonNativeType](#buttonnativetype)                 | button | 原生 `<button>` 的 type 属性                                                                                            |
+| danger          | boolean                                               | false  | 危险按钮（与 `type` 任意值叠加，渲染 `--dangerous` 类）                                                                 |
+| ghost           | boolean                                               | false  | 幽灵按钮（透明背景 + 描边色）                                                                                           |
+| block           | boolean                                               | false  | 撑满父宽度                                                                                                              |
+| autoInsertSpace | boolean                                               | true   | 两个 CJK 字符之间自动插入空格                                                                                           |
+| href            | string                                                | --     | 设置后用原生 `<a>` 渲染并保留链接键盘语义                                                                               |
+| target          | string                                                | --     | 配合 `href` 透传 `target`                                                                                               |
+| icon            | string                                                | --     | 图标名称；含 `:` 时按 Iconify 名称解析，否则作为 CSS 类名（也可用 `icon` slot）                                         |
+| iconPosition    | 'start' \| 'end'                                      | start  | 图标位置                                                                                                                |
+| disabled        | boolean                                               | false  | 是否为禁用状态                                                                                                          |
+| autofocus       | boolean                                               | false  | 原生 autofocus 属性                                                                                                     |
+| loading         | boolean \| { delay?: number; icon?: VNode \| string } | false  | 加载状态；对象形 `delay` 仅推迟图标显示，点击与表单提交会立即禁用；支持自定义 `icon`                                    |
+| color           | string                                                | --     | 自定义按钮颜色（任意 CSS color 字符串）；实心型 type 注入 bg + border；描边型注入 color + border；text/link 仅 color    |
 
 ## ButtonGroup 参数
 
-`ButtonGroup`（`<c-button-group>`）：按钮组，向子按钮注入 `size` / `disabled`，并让相邻边框对齐。
+`ButtonGroup`（`<c-button-group>`）：按钮组，向子按钮注入 `size` / `disabled`，并让相邻边框对齐。需要向辅助技术说明用途时，可直接传入 `aria-label`。
 
 | 参数     | 类型                            | 默认    | 说明                                       |
 | -------- | ------------------------------- | ------- | ------------------------------------------ |
@@ -495,6 +497,13 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset'
 
 ## Button插槽
 
-| 插槽名 | 说明           |
-| ------ | -------------- |
-| icon   | 自定义图标组件 |
+| 插槽名  | 说明           |
+| ------- | -------------- |
+| default | 按钮内容       |
+| icon    | 自定义图标组件 |
+
+## Button事件
+
+| 事件名 | 回调参数              | 说明                                             |
+| ------ | --------------------- | ------------------------------------------------ |
+| click  | `(event: MouseEvent)` | 点击时触发；禁用或加载状态下不会触发组件点击事件 |

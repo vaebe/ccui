@@ -411,7 +411,7 @@ const value = ref([])
 | popupAppendToBody | boolean                                                    | `false`                   | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                               |
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                        | 自定义浮层挂载点                                                                                                                                                                                     |
 | autoFocus         | boolean                                                    | `false`                   | 挂载后自动 focus 起始输入框                                                                                                                                                                          |
-| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读                                                                                                                                                                                           |
+| inputReadOnly     | boolean                                                    | `true`                    | 输入框只读；设为 `false` 后可按 `format` 手动录入，change / blur 时提交，非法值会恢复原显示                                                                                                          |
 | transitionName    | string                                                     | `ccui-range-picker-fade`  | 浮层过渡名                                                                                                                                                                                           |
 | weekStart         | `0 \| 1`                                                   | `0`                       | 周起始：`0` 周日开头，`1` 周一开头                                                                                                                                                                   |
 | presets           | `RangePresetItem[]`                                        | `[]`                      | 左侧快捷项；每项 `{ label, value }`，`value` 可为元组或返回元组的函数；空数组不渲染 rail                                                                                                             |
@@ -429,5 +429,9 @@ const value = ref([])
 
 ## 已知限制（未交付）
 
-- **键盘导航**：方向键 / Enter 切换尚未实现。
+- **日期网格键盘导航**：输入框已支持 Enter / ArrowDown 打开、Escape 关闭与焦点恢复；日期格之间的方向键移动和 Enter 选中尚未实现。
 - **响应式单面板**：移动端 PC 双面板会溢出，自动切单面板留给后续。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。

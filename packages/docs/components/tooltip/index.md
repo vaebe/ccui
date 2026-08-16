@@ -276,7 +276,7 @@ const visible = ref(false)
     <c-button type="primary" plain @click="visible = !visible">
       {{ visible ? '隐藏' : '显示' }}
     </c-button>
-    <span style="color: #666">visible = {{ visible }}</span>
+    <span style="color: var(--ccui-color-text-secondary)">visible = {{ visible }}</span>
   </div>
 </template>
 ```
@@ -310,7 +310,7 @@ function log(type) {
     >
       <c-button type="primary" plain>触发器</c-button>
     </c-tooltip>
-    <ul style="margin: 0; padding-left: 18px; color: #666; font-size: 12px">
+    <ul style="margin: 0; padding-left: 18px; color: var(--ccui-color-text-secondary); font-size: 12px">
       <li v-if="!logs.length">尚无事件</li>
       <li v-for="(log, i) in logs" :key="i">{{ log }}</li>
     </ul>
@@ -333,7 +333,7 @@ function log(type) {
       <span>邮箱地址</span>
       <c-tooltip content="用于接收账号通知与重置密码邮件" placement="right">
         <span
-          style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: #f0f0f0; color: #666; align-items: center; justify-content: center; font-size: 11px; cursor: help"
+          style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: var(--ccui-area); color: var(--ccui-color-text-secondary); align-items: center; justify-content: center; font-size: 11px; cursor: help"
         >
           ?
         </span>
@@ -359,28 +359,28 @@ function log(type) {
 
 ### Tooltip Props
 
-| 参数                      | 说明                                                  | 类型                                         | 默认值 |
-| ------------------------- | ----------------------------------------------------- | -------------------------------------------- | ------ |
-| content                   | 浮层显示文本。也可用同名 `content` slot 传入富文本    | string                                       | —      |
-| visible / v-model:visible | 受控显示状态                                          | boolean                                      | false  |
-| placement                 | 出现位置（12 种）                                     | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
-| effect                    | 内置主题                                              | `'dark' \| 'light'`                          | dark   |
-| color                     | 自定义背景色（覆盖 `effect`）                         | string                                       | —      |
-| show-arrow                | 是否显示箭头                                          | boolean                                      | true   |
-| show-after                | 鼠标进入触发显示的延迟（ms）                          | number                                       | 0      |
-| hide-after                | 鼠标离开触发隐藏的延迟（ms）                          | number                                       | 200    |
-| popper-class              | 浮层根节点 class                                      | string                                       | —      |
-| trigger                   | 触发方式                                              | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
-| disabled                  | 是否禁用                                              | boolean                                      | false  |
-| offset                    | 距触发器的偏移量（px）                                | number                                       | 8      |
-| enterable                 | 鼠标是否可进入到 tooltip 中                           | boolean                                      | true   |
-| raw-content               | 是否将 content 作为 HTML 字符串处理                   | boolean                                      | false  |
-| fresh                     | 关闭后是否销毁内部内容                                | boolean                                      | false  |
-| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                               | boolean                                      | false  |
-| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）           | boolean                                      | true   |
-| align                     | floating-ui offset / flip 等微调参数                  | object                                       | —      |
-| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）             | `(trigger) => HTMLElement \| null`           | —      |
-| aria-label                | 屏幕阅读器标签                                        | string                                       | —      |
+| 参数                      | 说明                                               | 类型                                         | 默认值 |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------- | ------ |
+| content                   | 浮层显示文本。也可用同名 `content` slot 传入富文本 | string                                       | —      |
+| visible / v-model:visible | 受控显示状态                                       | boolean                                      | false  |
+| placement                 | 出现位置（12 种）                                  | `'top' \| 'top-start' \| ... \| 'right-end'` | bottom |
+| effect                    | 内置主题                                           | `'dark' \| 'light'`                          | dark   |
+| color                     | 自定义背景色（覆盖 `effect`）                      | string                                       | —      |
+| show-arrow                | 是否显示箭头                                       | boolean                                      | true   |
+| show-after                | 鼠标进入触发显示的延迟（ms）                       | number                                       | 0      |
+| hide-after                | 鼠标离开触发隐藏的延迟（ms）                       | number                                       | 200    |
+| popper-class              | 浮层根节点 class                                   | string                                       | —      |
+| trigger                   | 触发方式                                           | `'hover' \| 'focus' \| 'click' \| 'manual'`  | hover  |
+| disabled                  | 是否禁用                                           | boolean                                      | false  |
+| offset                    | 距触发器的偏移量（px）                             | number                                       | 6      |
+| enterable                 | 鼠标是否可进入到 tooltip 中                        | boolean                                      | true   |
+| raw-content               | 是否将 content 作为 HTML 字符串处理                | boolean                                      | false  |
+| fresh                     | 关闭后是否销毁内部内容                             | boolean                                      | false  |
+| destroyTooltipOnHide      | 隐藏时销毁 tooltip 节点                            | boolean                                      | false  |
+| autoAdjustOverflow        | 自动调整方向避免溢出（接 floating-ui flip）        | boolean                                      | true   |
+| align                     | floating-ui offset / flip 等微调参数               | object                                       | —      |
+| getPopupContainer         | 自定义弹层容器（返回 `null` 不 Teleport）          | `(trigger) => HTMLElement \| null`           | —      |
+| aria-label                | 屏幕阅读器标签                                     | string                                       | —      |
 
 ### Tooltip Events
 
@@ -394,7 +394,7 @@ function log(type) {
 
 ### Tooltip Slots
 
-| 插槽名  | 说明                                |
-| ------- | ----------------------------------- |
-| default | Tooltip 触发 & 引用的元素           |
+| 插槽名  | 说明                                    |
+| ------- | --------------------------------------- |
+| default | Tooltip 触发 & 引用的元素               |
 | content | 自定义浮层内容（优先于 `content` prop） |

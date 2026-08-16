@@ -8,8 +8,8 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
+    <c-float-button aria-label="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" />
       </template>
@@ -26,10 +26,11 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       type="primary"
       :badge="5"
+      aria-label="通知，5 条未读"
       :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
     >
       <template #icon>
@@ -48,8 +49,12 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
-    <c-float-button shape="square" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
+    <c-float-button
+      shape="square"
+      aria-label="首页"
+      :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
+    >
       <template #icon>
         <c-icon name="mdi:home-outline" />
       </template>
@@ -68,7 +73,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button description="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" :size="20" />
@@ -97,10 +102,11 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       href="https://github.com/vaebe/ccui"
       target="_blank"
+      aria-label="打开 CCUI GitHub 文档"
       :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }"
     >
       <template #icon>
@@ -121,7 +127,7 @@
 
 ```vue
 <template>
-  <div style="position: relative; height: 200px; background: #f6f8fa">
+  <div style="position: relative; height: 200px; background: var(--ccui-area)">
     <c-float-button
       type="primary"
       tooltip="点击查看帮助文档"
@@ -139,13 +145,13 @@
 
 ## 多按钮组合
 
-通过 `inset-*` 偏移叠放多个 FloatButton，构成右下角操作组。
+当前没有独立 FloatButtonGroup 组件；通过 `inset-*` 偏移叠放多个 FloatButton，构成右下角操作组。
 
 :::demo
 
 ```vue
 <template>
-  <div style="position: relative; height: 280px; background: #f6f8fa">
+  <div style="position: relative; height: 280px; background: var(--ccui-area)">
     <c-float-button tooltip="帮助" :style="{ insetBlockEnd: '16px', insetInlineEnd: '16px', position: 'absolute' }">
       <template #icon>
         <c-icon name="mdi:help-circle-outline" />
@@ -189,17 +195,24 @@
 ## BackTop 自定义阈值
 
 `visibility-height` 控制按钮出现的滚动阈值（默认 400px），`duration` 控制滚回动画时长（默认 450ms）。
+`target` 可传选择器、滚动元素、`window`，或返回滚动目标的函数；运行时切换 target 会迁移监听并取消旧容器上的滚动动画。
 
 :::demo
 
 ```vue
 <template>
   <c-back-top :visibility-height="100" :duration="800" />
-  <div style="color: #999; font-size: 12px">滚动超过 100px 即出现按钮，动画时长 800ms。</div>
+  <div style="color: var(--ccui-color-text-tertiary); font-size: 12px">滚动超过 100px 即出现按钮，动画时长 800ms。</div>
 </template>
 ```
 
 :::
+
+## 可访问性与动态效果
+
+- FloatButton 始终使用原生 `<button>` 或 `<a>`。纯图标按钮请通过 `aria-label` 提供操作名称；`tooltip` 只提供原生 `title` 提示，不能替代所有场景下的明确命名。
+- 徽标是视觉提示，不会自动加入可访问名称；需要朗读数量时，应把数量包含在 `aria-label` 中。
+- BackTop 默认名称为 `Back to top`，可直接传入本地化 `aria-label` 覆盖。系统启用“减少动态效果”时，滚回操作立即完成，并关闭悬浮位移和显隐过渡。
 
 ## BackTop 自定义形状 / 类型
 
@@ -239,11 +252,15 @@
 
 ### BackTop Props
 
-| 参数             | 类型                                           | 默认值      | 说明                                                   |
-| ---------------- | ---------------------------------------------- | ----------- | ------------------------------------------------------ |
-| visibilityHeight | number                                         | `400`       | 滚动条到达多少 px 时显示按钮                           |
-| duration         | number                                         | `450`       | 滚回顶部的动画时长（ms）                               |
-| target           | `string \| HTMLElement \| (() => HTMLElement)` | `window`    | 监听滚动的目标容器                                     |
-| shape            | `'circle' \| 'square'`                         | `'circle'`  | 形状                                                   |
-| type             | `'default' \| 'primary'`                       | `'default'` | 类型                                                   |
-| icon             | string                                         | —           | iconfont CSS 类名；推荐改用 `#icon` slot 放 `<c-icon>` |
+| 参数             | 类型                                                               | 默认值      | 说明                                                   |
+| ---------------- | ------------------------------------------------------------------ | ----------- | ------------------------------------------------------ |
+| visibilityHeight | number                                                             | `400`       | 滚动条到达多少 px 时显示按钮                           |
+| duration         | number                                                             | `450`       | 滚回顶部的动画时长（ms）                               |
+| target           | `string \| HTMLElement \| Window \| (() => HTMLElement \| Window)` | `window`    | 监听滚动的目标容器                                     |
+| shape            | `'circle' \| 'square'`                                             | `'circle'`  | 形状                                                   |
+| type             | `'default' \| 'primary'`                                           | `'default'` | 类型                                                   |
+| icon             | string                                                             | —           | iconfont CSS 类名；推荐改用 `#icon` slot 放 `<c-icon>` |
+
+### Events
+
+FloatButton 与 BackTop 都会在可用状态下发送 `click(event: MouseEvent)`；BackTop 随后滚动当前 target。

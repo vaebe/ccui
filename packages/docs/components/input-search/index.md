@@ -123,6 +123,8 @@ export default defineComponent({
 
 `clearable` 开启后，清除会同时 emit `@search('')`。
 
+清除按钮支持 Enter/Space，并会在清除后把焦点归还输入框。中文等输入法组合期间不会提交中间值，也不会因为组合确认键误触发搜索。
+
 :::demo
 
 ```vue
@@ -146,19 +148,23 @@ export default defineComponent({
 
 ## InputSearch 参数
 
-| 参数         | 类型                                       | 默认    | 说明                                                                               |
-| ------------ | ------------------------------------------ | ------- | ---------------------------------------------------------------------------------- |
-| modelValue   | string                                     | --      | 绑定值（v-model）                                                                  |
-| defaultValue | string                                     | --      | 非受控初值                                                                         |
-| placeholder  | string                                     | --      | 占位符                                                                             |
-| enterButton  | boolean \| string \| VNode                 | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
-| loading      | boolean                                    | false   | 搜索中状态，按钮变 disabled                                                        |
-| size         | 'large' \| 'default' \| 'small'            | default | 尺寸                                                                               |
-| disabled     | boolean                                    | false   | 整体禁用                                                                           |
-| readonly     | boolean                                    | false   | 只读                                                                               |
-| clearable    | boolean                                    | false   | 清除按钮，清除时同步 emit @search('')                                              |
-| maxLength    | number                                     | --      | 最大长度                                                                           |
-| status       | '' \| 'error' \| 'warning'                 | ''      | 校验状态                                                                           |
+| 参数         | 类型                            | 默认    | 说明                                                                               |
+| ------------ | ------------------------------- | ------- | ---------------------------------------------------------------------------------- |
+| modelValue   | string                          | --      | 绑定值（v-model）                                                                  |
+| defaultValue | string                          | --      | 非受控初值                                                                         |
+| placeholder  | string                          | --      | 占位符                                                                             |
+| enterButton  | boolean \| string \| VNode      | false   | 搜索按钮：false 仅 suffix 放大镜；true 默认图标按钮；string 文字按钮；VNode 自定义 |
+| loading      | boolean                         | false   | 搜索中状态，搜索入口暂停；清除仍更新值但不会触发 search                            |
+| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                                                               |
+| disabled     | boolean                         | false   | 整体禁用                                                                           |
+| readonly     | boolean                         | false   | 只读                                                                               |
+| clearable    | boolean                         | false   | 清除按钮，清除时同步 emit @search('')                                              |
+| maxLength    | number                          | --      | 最大长度                                                                           |
+| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                                                           |
+
+原生输入属性（例如 `name`、`autocomplete`、`aria-label`）会透传到内部 `input`；外部 `class` 和 `style` 仍作用于组件根节点。位于 FormItem 内时，组件会继承校验状态及错误描述，并在值变化和组件失焦时触发对应校验。
+
+> 兼容说明：`showPassword`、`prepend`、`append`、`showCount`、`variant` 曾随 Input props 一并暴露，因此当前仍保留类型和运行时识别，避免升级破坏；InputSearch 不实现这些效果，现已弃用，请勿在新代码中使用。后续只会在破坏性版本中移除。
 
 ## InputSearch 事件
 

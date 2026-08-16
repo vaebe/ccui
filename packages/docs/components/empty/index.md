@@ -61,7 +61,10 @@
 
 ```vue
 <template>
-  <c-empty description="搜索没有命中任何条目" image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDY0IDQxIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwwLDAsMC4yNSkiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAxNiBMMjAgMTYgTDI0IDIyIEw0MCAyMiBMNDQgMTYgTDU2IDE2IEw1MiAzNCBMMTIgMzQgWiIgZmlsbD0icmdiYSgwLDAsMCwwLjA0KSIvPjxwYXRoIGQ9Ik04IDE2IEwxNCA2IEw1MCA2IEw1NiAxNiIvPjwvZz48ZWxsaXBzZSBjeD0iMzIiIGN5PSIzOCIgcng9IjIyIiByeT0iMi41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDYpIi8+PC9zdmc+" />
+  <c-empty
+    description="搜索没有命中任何条目"
+    image="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDY0IDQxIj48ZyBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwwLDAsMC4yNSkiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAxNiBMMjAgMTYgTDI0IDIyIEw0MCAyMiBMNDQgMTYgTDU2IDE2IEw1MiAzNCBMMTIgMzQgWiIgZmlsbD0icmdiYSgwLDAsMCwwLjA0KSIvPjxwYXRoIGQ9Ik04IDE2IEwxNCA2IEw1MCA2IEw1NiAxNiIvPjwvZz48ZWxsaXBzZSBjeD0iMzIiIGN5PSIzOCIgcng9IjIyIiByeT0iMi41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDYpIi8+PC9zdmc+"
+  />
 </template>
 ```
 
@@ -124,7 +127,9 @@
 
 ```vue
 <template>
-  <div style="border: 1px solid #f0f0f0; border-radius: 6px; padding: 24px 16px; background: #fff">
+  <div
+    style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 6px; padding: 24px 16px; background: var(--ccui-color-bg-container)"
+  >
     <c-empty description="该项目还没有任何成员" :image-style="{ height: '56px' }">
       <c-button type="primary">+ 邀请成员</c-button>
     </c-empty>
@@ -171,9 +176,9 @@ function reset() {
 <template>
   <c-empty>
     <template #description>
-      <div style="color: rgba(0, 0, 0, 0.65); line-height: 1.6">
+      <div style="color: var(--ccui-color-text-secondary); line-height: 1.6">
         当前账户尚未开通任何应用 <br />
-        <a href="#" style="color: #1677ff">查看接入指引 <c-icon name="mdi:arrow-right" /></a>
+        <a href="#" style="color: var(--ccui-color-primary)">查看接入指引 <c-icon name="mdi:arrow-right" /></a>
       </div>
     </template>
     <c-button type="primary">立即开通</c-button>
@@ -193,15 +198,15 @@ function reset() {
 <template>
   <div style="display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap">
     <div>
-      <p style="color: #666; margin: 0 0 8px">迷你（嵌入式）</p>
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">迷你（嵌入式）</p>
       <c-empty description="无数据" :image-style="{ height: '32px' }" />
     </div>
     <div>
-      <p style="color: #666; margin: 0 0 8px">默认</p>
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">默认</p>
       <c-empty description="暂无数据" />
     </div>
     <div>
-      <p style="color: #666; margin: 0 0 8px">大插图（专题页）</p>
+      <p style="color: var(--ccui-color-text-secondary); margin: 0 0 8px">大插图（专题页）</p>
       <c-empty description="还没有任何项目" :image-style="{ height: '120px' }" />
     </div>
   </div>

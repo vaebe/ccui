@@ -32,7 +32,7 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 6px">status="error"（当前步骤报错）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 6px">status="error"（当前步骤报错）</p>
   <c-steps
     :current="1"
     status="error"
@@ -127,7 +127,7 @@
 
 ## 受控切换
 
-通过 `update:current` 事件接收用户的点击，配合按钮控制流程进度。
+通过 `update:current` 事件接收用户的点击，配合按钮控制流程进度。步骤支持点击、Enter 和 Space；禁用步骤不响应切换。
 
 :::demo
 
@@ -180,9 +180,10 @@ const items = [{ title: '第一步' }, { title: '第二步' }, { title: '第三�
 
 ### Events
 
-| 事件名         | 回调签名          | 说明         |
-| -------------- | ----------------- | ------------ |
-| update:current | `(index: number)` | 当前步骤变化 |
+| 事件名         | 回调签名          | 说明                       |
+| -------------- | ----------------- | -------------------------- |
+| update:current | `(index: number)` | 当前步骤变化               |
+| change         | `(index: number)` | 用户点击或键盘切换当前步骤 |
 
 ### 类型定义
 

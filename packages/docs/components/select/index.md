@@ -479,13 +479,13 @@ const opts = [
 | filterOption             | `boolean / (input, option) => boolean`                | `true`             | 过滤策略；`false` 走远程搜索；函数自定义谓词    |
 | placement                | `'bottom' / 'top' / 'auto'`                           | `'bottom'`         | 浮层位置（基于 floating-ui，自动 flip / shift） |
 | popupClassName           | `string`                                              | `''`               | 浮层附加类                                      |
-| placeholder              | `string`                                              | --                 | 占位文本                                        |
+| placeholder              | `string`                                              | `'Please select'`  | 占位文本                                        |
 | disabled                 | `boolean`                                             | `false`            | 是否禁用                                        |
 | clearable                | `boolean`                                             | `false`            | 是否可清空                                      |
 | loading                  | `boolean`                                             | `false`            | 加载中                                          |
 | size                     | `'large' / 'default' / 'small'`                       | `'default'`        | 尺寸                                            |
 | noDataText               | `string`                                              | `No data`          | 空状态文本                                      |
-| loadingText              | `string`                                              | `Loading`          | 加载文本                                        |
+| loadingText              | `string`                                              | `'Loading...'`     | 加载文本                                        |
 | maxTagCount              | `number`                                              | `3`                | 多选最多直接展示的标签数                        |
 | status                   | `'' / 'error' / 'warning' / 'success' / 'validating'` | `''`               | 显式校验状态，覆盖 FormItem 注入                |
 | labelInValue             | `boolean`                                             | `false`            | 启用后 modelValue 变成 `{ value, label }` 形态  |
@@ -566,3 +566,7 @@ type SelectFilterOption = boolean | ((input: string, option: SelectOption) => bo
 - `filterOption=false` 完全跳过前端过滤；函数返回 `true` 即视为命中。
 - `fieldNames` 不影响 `modelValue`：传入和回传仍然是 `value` 字段（按映射后的字段）的原始值。
 - 注入到 FormItem 时 `status` 优先级高于 `formItem.validateStatus`。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`selector`、`popup`。

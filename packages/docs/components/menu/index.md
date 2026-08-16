@@ -20,6 +20,7 @@ Menu 数据结构高度规整（树形 + 类型枚举），配置式 API 在动�
 | `'divider'` | `{ key, type: 'divider' }`                                           | 分割线                   |
 
 `type` 字段缺省时自动推断：有 `children` 视为 `'submenu'`，无 `children` 视为 `'item'`。
+整棵 `items` 树中的 `String(key)` 必须唯一；因此数字 `1` 与字符串 `'1'` 也视为冲突。开发环境会报告重复 key，键盘查找确定性使用首个声明项。
 
 ## 基本使用
 
@@ -228,6 +229,7 @@ const items = [
 
 ```ts
 interface MenuItem {
+  // 全树 String(key) 唯一；1 与 '1' 不可并存。
   key: string | number
   label?: VNodeChild
   title?: string
@@ -250,10 +252,20 @@ interface MenuItem {
 | select              | 选中菜单项，参数为 `MenuInfo`                         |
 | deselect            | 多选模式下取消选中，参数为 `MenuInfo`                 |
 | open-change         | 子菜单展开状态变化，参数为 `(openKeys, MenuOpenInfo)` |
-| openChange          | `open-change` 的 camelCase 事件别名                   |
+
+Vue 会把模板中的 `@open-change` 与 JSX/渲染函数中的 `onOpenChange` 归一到同一事件监听器；一次展开变化只调用一次处理函数。
 
 ## 键盘交互
 
-- `ArrowUp` / `ArrowDown`：在可见菜单项中移动焦点。
-- `ArrowLeft` / `ArrowRight`：在水平菜单中移动焦点，在子菜单上收起或展开。
+- `ArrowUp` / `ArrowDown`：inline 模式按当前可见扁平顺序移动；vertical/horizontal popup 只在当前兄弟层移动。水平 submenu title 使用 Down 进入首子项、Up 进入末子项。
+- `ArrowLeft` / `ArrowRight`：在水平菜单根项间移动焦点，在纵向子菜单上收起或展开。
+- `Home` / `End`：移动到首个 / 末个可用项。
+- `Escape`：收起当前或最近的展开子菜单，并把焦点返回子菜单标题。
 - `Enter` / `Space`：选中当前菜单项或切换当前子菜单。
+
+`items` 为空时保留 default slot 兼容入口。slot 内容需自行提供 `role="menuitem"` 与 `aria-disabled`；Menu 仅接管最近 `role="menu"` / `role="menubar"` 为当前根的直属所有权项，嵌套菜单独立处理。它为这些实际 DOM 项提供 Home/End/Up/Down roving 和 Enter/Space 原生 click 激活，禁用项不会回退激活其他项；不推断业务 key、选中或展开状态。配置式 `items` 仍是推荐 API。
+
+## 路由与 hover 边界
+
+- Menu 不绑定特定 Router，也没有 `href` / `to` prop；导航请在 `click` 事件中调用项目 Router。`label` 用于展示内容，不建议嵌套可交互链接；禁用项会阻止 label 内原生链接或 RouterLink 的导航与冒泡。
+- `triggerSubMenuAction="hover"` 没有延迟配置：非 inline 模式在指针进入/离开时立即展开或收起，inline 模式进入后保持展开。需要延时策略时由业务层控制 `openKeys`。

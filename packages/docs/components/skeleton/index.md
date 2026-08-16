@@ -45,7 +45,7 @@
 ```vue
 <template>
   <c-skeleton avatar />
-  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed #d9d9d9" />
+  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed var(--ccui-color-border)" />
   <c-skeleton :avatar="{ shape: 'square', size: 'large' }" active />
 </template>
 ```
@@ -61,7 +61,7 @@
 ```vue
 <template>
   <c-skeleton :paragraph="{ rows: 4 }" />
-  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed #d9d9d9" />
+  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed var(--ccui-color-border)" />
   <c-skeleton :paragraph="{ rows: 3, width: ['80%', '95%', '60%'] }" active />
 </template>
 ```
@@ -77,7 +77,7 @@
 ```vue
 <template>
   <c-skeleton :title="{ width: 240 }" :paragraph="false" />
-  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed #d9d9d9" />
+  <hr style="margin: 16px 0; border: 0; border-top: 1px dashed var(--ccui-color-border)" />
   <c-skeleton :title="{ width: '50%' }" :paragraph="{ rows: 2 }" active />
 </template>
 ```
@@ -129,7 +129,7 @@ refresh()
       </div>
       <div>
         <h4 style="margin: 0">真实标题已加载</h4>
-        <p style="margin: 4px 0; color: #666">这里是异步取回的内容…</p>
+        <p style="margin: 4px 0; color: var(--ccui-color-text-secondary)">这里是异步取回的内容…</p>
       </div>
     </div>
   </c-skeleton>

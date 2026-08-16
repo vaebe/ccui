@@ -236,24 +236,27 @@ export default defineComponent({
 
 ## Tabs参数
 
-| 参数         | 类型                                  | 默认 | 说明                      |
-| ------------ | ------------------------------------- | ---- | ------------------------- |
-| v-model      | [ModelValueType](#modelvaluetype)     | -    | 绑定值，选中选项卡的 name |
-| type         | [TabsType](#itabstype)                | -    | 风格类型                  |
-| tab-position | [ITabPositionType](#itabpositiontype) | top  | 选项卡所在位置            |
+| 参数          | 类型                                  | 默认 | 说明                                |
+| ------------- | ------------------------------------- | ---- | ----------------------------------- |
+| v-model       | [ModelValueType](#modelvaluetype)     | null | 绑定值，选中选项卡的 name           |
+| type          | [ITabsType](#itabstype)               | `''` | 风格类型                            |
+| custom-width  | string                                | `''` | Tabs 根节点宽度，接受任意 CSS width |
+| css-class     | string                                | `''` | Tabs 根节点附加 class               |
+| before-change | [BeforeChangeType](#beforechangetype) | null | 切换前守卫；返回 `false` 时阻止切换 |
+| tab-position  | [ITabPositionType](#itabpositiontype) | top  | 选项卡所在位置                      |
 
 ## Tabs事件
 
-| 事件   | 类型                                  | 说明                  |
-| ------ | ------------------------------------- | --------------------- |
-| change | [BeforeChangeType](#beforechangetype) | activeName 改变时触发 |
+| 事件   | 类型                                     | 说明                  |
+| ------ | ---------------------------------------- | --------------------- |
+| change | `(activeName: string \| number) => void` | activeName 改变时触发 |
 
 ## tabs类型定义
 
 ### ModelValueType
 
 ```ts
-export type ModelValueType = string | number
+export type ModelValueType = string | number | null
 ```
 
 ### ITabsType
@@ -281,10 +284,11 @@ export type BeforeChangeType = (id: Active) => boolean
 
 ## Tab参数
 
-| 参数  | 类型                    | 默认 | 说明                                              |
-| ----- | ----------------------- | ---- | ------------------------------------------------- |
-| label | [LabelType](#labeltype) | -    | 选项卡标题                                        |
-| name  | [NameType](#nametype)   | -    | 与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+| 参数     | 类型                    | 默认  | 说明                                              |
+| -------- | ----------------------- | ----- | ------------------------------------------------- |
+| label    | [LabelType](#labeltype) | -     | 选项卡标题                                        |
+| name     | [NameType](#nametype)   | -     | 与选项卡绑定值 value 对应的标识符，表示选项卡别名 |
+| disabled | boolean                 | false | 是否禁用该选项卡                                  |
 
 ## tab类型定义
 

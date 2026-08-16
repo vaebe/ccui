@@ -312,9 +312,9 @@ export type InputSize = 'large' | 'default' | 'small'
 
 ## Input插槽
 
-| 插槽名  | 说明              |
-| ------- | ----------------- |
-| prepend | 前置 addon 内容   |
-| append  | 后置 addon 内容   |
-| prefix  | 输入框内左侧前缀  |
-| suffix  | 输入框内右侧后缀  |
+| 插槽名  | 说明             |
+| ------- | ---------------- |
+| prepend | 前置 addon 内容  |
+| append  | 后置 addon 内容  |
+| prefix  | 输入框内左侧前缀 |
+| suffix  | 输入框内右侧后缀 |

@@ -22,11 +22,11 @@
     />
     <div class="anchor-basic" style="flex: 1; max-height: 280px; overflow: auto;">
       <h3 id="part-1" style="margin-top: 0">第一节</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">第一节内容</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">第一节内容</p>
       <h3 id="part-2">第二节</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">第二节内容</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">第二节内容</p>
       <h3 id="part-3">第三节</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">第三节内容</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">第三节内容</p>
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@
 .anchor-demo {
   display: flex;
   gap: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--ccui-color-border-secondary);
   border-radius: 8px;
   padding: 12px;
 }
@@ -56,13 +56,13 @@
     <c-anchor :items="items" style="width: 200px; flex: none" scroll-container=".anchor-nested" />
     <div class="anchor-nested" style="flex: 1; max-height: 320px; overflow: auto">
       <h3 id="api">API</h3>
-      <p style="height: 100px; background: #f6f8fa; padding: 12px">概述...</p>
+      <p style="height: 100px; background: var(--ccui-area); padding: 12px">概述...</p>
       <h4 id="props">Props</h4>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">props 列表...</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">props 列表...</p>
       <h4 id="events">Events</h4>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">events 列表...</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">events 列表...</p>
       <h3 id="faq">FAQ</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">FAQ...</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">FAQ...</p>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ const items = [
 .anchor-demo {
   display: flex;
   gap: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--ccui-color-border-secondary);
   border-radius: 8px;
   padding: 12px;
 }
@@ -115,14 +115,14 @@ const items = [
     />
     <div class="anchor-change" style="flex: 1; max-height: 240px; overflow: auto">
       <h3 id="sec-a" style="margin-top: 0">A 区段</h3>
-      <p style="height: 180px; background: #f6f8fa; padding: 12px">A 内容</p>
+      <p style="height: 180px; background: var(--ccui-area); padding: 12px">A 内容</p>
       <h3 id="sec-b">B 区段</h3>
-      <p style="height: 180px; background: #f6f8fa; padding: 12px">B 内容</p>
+      <p style="height: 180px; background: var(--ccui-area); padding: 12px">B 内容</p>
       <h3 id="sec-c">C 区段</h3>
-      <p style="height: 180px; background: #f6f8fa; padding: 12px">C 内容</p>
+      <p style="height: 180px; background: var(--ccui-area); padding: 12px">C 内容</p>
     </div>
   </div>
-  <p style="margin-top: 8px; color: #666">当前激活：{{ active }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前激活：{{ active }}</p>
 </template>
 
 <script setup>
@@ -139,7 +139,7 @@ function onChange(href) {
 .anchor-demo {
   display: flex;
   gap: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--ccui-color-border-secondary);
   border-radius: 8px;
   padding: 12px;
 }
@@ -170,11 +170,11 @@ function onChange(href) {
     />
     <div class="anchor-bounds" style="flex: 1; max-height: 260px; overflow: auto; position: relative">
       <h3 id="stop-1" style="margin-top: 0">段落 1</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">点击右侧锚点会留 20px 顶部空隙</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">点击右侧锚点会留 20px 顶部空隙</p>
       <h3 id="stop-2">段落 2</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">提前 40px 切高亮</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">提前 40px 切高亮</p>
       <h3 id="stop-3">段落 3</h3>
-      <p style="height: 200px; background: #f6f8fa; padding: 12px">最后一节</p>
+      <p style="height: 200px; background: var(--ccui-area); padding: 12px">最后一节</p>
     </div>
   </div>
 </template>
@@ -183,7 +183,7 @@ function onChange(href) {
 .anchor-demo {
   display: flex;
   gap: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--ccui-color-border-secondary);
   border-radius: 8px;
   padding: 12px;
 }
@@ -212,12 +212,12 @@ function onChange(href) {
     />
     <div class="anchor-click" style="flex: 1; max-height: 240px; overflow: auto">
       <h3 id="hook-1" style="margin-top: 0">区段 1</h3>
-      <p style="height: 180px; background: #f6f8fa; padding: 12px">内容</p>
+      <p style="height: 180px; background: var(--ccui-area); padding: 12px">内容</p>
       <h3 id="hook-2">区段 2</h3>
-      <p style="height: 180px; background: #f6f8fa; padding: 12px">内容</p>
+      <p style="height: 180px; background: var(--ccui-area); padding: 12px">内容</p>
     </div>
   </div>
-  <p style="margin-top: 8px; color: #666">最近点击：{{ lastClicked || '（无）' }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近点击：{{ lastClicked || '（无）' }}</p>
 </template>
 
 <script setup>
@@ -234,7 +234,7 @@ function onClick(_e, link) {
 .anchor-demo {
   display: flex;
   gap: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--ccui-color-border-secondary);
   border-radius: 8px;
   padding: 12px;
 }
@@ -247,17 +247,18 @@ function onClick(_e, link) {
 
 ### Props
 
-| 参数            | 类型                    | 默认值      | 说明                                       |
-| --------------- | ----------------------- | ----------- | ------------------------------------------ |
-| items           | `AnchorLink[]`          | `[]`        | 锚点列表，支持 `children` 嵌套             |
-| affix           | boolean                 | `true`      | 是否固定（保留外观位）                     |
-| bounds          | number                  | `5`         | 元素到顶部小于此距离时视为激活（px）       |
-| offsetTop       | number                  | `0`         | 高亮判定与点击滚动统一加的顶部偏移（px）   |
-| targetOffset    | number                  | `undefined` | 仅点击滚动用的偏移；未传则回退 `offsetTop` |
-| scrollContainer | `string \| HTMLElement` | `window`    | 自定义滚动容器（CSS 选择器或元素引用）     |
-| showInkInFixed  | boolean                 | `false`     | 固定时是否仍显示墨色滑块                   |
+| 参数            | 类型                    | 默认值      | 说明                                         |
+| --------------- | ----------------------- | ----------- | -------------------------------------------- |
+| items           | `AnchorLink[]`          | `[]`        | 锚点列表，支持 `children` 嵌套               |
+| affix           | boolean                 | `true`      | 是否使用 sticky 固定锚点导航                 |
+| bounds          | number                  | `5`         | 元素到顶部小于此距离时视为激活（px）         |
+| offsetTop       | number                  | `0`         | 固定位置、高亮判定与点击滚动的顶部偏移（px） |
+| targetOffset    | number                  | `undefined` | 仅点击滚动用的偏移；未传则回退 `offsetTop`   |
+| scrollContainer | `string \| HTMLElement` | `window`    | 自定义滚动容器（CSS 选择器或元素引用）       |
 
 ### AnchorLink
+
+多个条目可以指向同一 `href`；为保证当前态唯一，声明顺序中的第一个匹配条目持有 `aria-current` 与墨色滑块。
 
 | 字段     | 类型           | 说明                        |
 | -------- | -------------- | --------------------------- |
@@ -267,10 +268,10 @@ function onClick(_e, link) {
 
 ### Events
 
-| 事件名 | 回调签名                                | 触发时机               |
-| ------ | --------------------------------------- | ---------------------- |
-| change | `(activeHref: string)`                  | 当前激活锚点变化时     |
-| click  | `(event: MouseEvent, link: AnchorLink)` | 点击锚点时（已阻默认） |
+| 事件名 | 回调签名                                | 触发时机                   |
+| ------ | --------------------------------------- | -------------------------- |
+| change | `(activeHref: string)`                  | 滚动或点击使当前锚点变化时 |
+| click  | `(event: MouseEvent, link: AnchorLink)` | 点击锚点时（已阻默认）     |
 
 ### Slots
 

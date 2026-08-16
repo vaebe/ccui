@@ -70,6 +70,8 @@ const c = ref<number | null>(null)
 
 :::
 
+当需要手动录入时，可设置 `:input-read-only="false"`。输入会按 `format` 严格解析；空输入会清除当前值，格式非法、命中禁用规则或不符合步长的值会恢复为当前受控值。
+
 ## 步长
 
 `hour-step` / `minute-step` / `second-step` 控制各列步长。常见用法：5 分钟一档、30 秒一档。
@@ -233,11 +235,11 @@ const value = ref('')
 
 ## 键盘导航
 
-打开面板后 Tab 进入任意 cell（每个 cell 均为 `tabindex=0`），即可使用键盘切换：
+输入框支持 `Enter` / `ArrowDown` 打开、`Escape` 关闭。打开面板后，Tab 会按列进入当前选中项（每列仅一个 roving tab stop），即可使用键盘切换：
 
 - `ArrowUp` / `ArrowDown`：在当前列内上下移动（环绕到首 / 尾）。
 - `Home` / `End`：跳到当前列首项 / 末项。
-- `Enter`：相当于点击「确定」，或在 `show-ok=false` 时关闭面板。
+- `Enter`：相当于点击「确定」；在 `show-ok=false` 时提交当前键盘预览值并关闭面板。
 - `Escape`：关闭面板。
 
 :::demo
@@ -397,3 +399,7 @@ const BIZ_HOURS = new Set([9, 10, 11, 12, 13, 14, 15, 16, 17])
 
 - **showTime 嵌入 DatePicker**：DatePicker 推到 90% 时一并接通。
 - **滚轮 snap**：打开时已可自动滚动到选中项（见上文 "自动滚动到选中"），但鼠标滚轮 / 触控板的 snap-to-cell 吸附交互暂未实现，留给后续。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。

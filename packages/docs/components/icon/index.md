@@ -14,7 +14,7 @@
     <c-icon name="mdi:home" />
     <c-icon name="mdi:home" size="20" color="#1677ff" />
     <c-icon name="mdi:reload" spin />
-    <c-icon name="mdi:star" rotate="45" />
+    <c-icon name="mdi:star" :rotate="45" />
   </div>
 </template>
 ```

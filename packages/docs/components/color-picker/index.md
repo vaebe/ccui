@@ -132,7 +132,7 @@ const presets = [{ label: '主题色快选', colors: ['#1677ff', '#36ad6a', '#f7
         </div>
       </div>
       <div
-        style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; color: rgba(0,0,0,.65); font-size: 12px"
+        style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text-secondary); font-size: 12px"
       >
         当前选中：{{ hex }} —— 上线前请走品牌色规范评审
       </div>
@@ -212,6 +212,15 @@ const rules = { brand: [{ required: true, message: '请选择品牌色', trigger
 
 :::
 
+## 键盘与焦点
+
+- 默认触发器以及自定义 `trigger` 均可通过 `Enter` / `Space` 打开面板。
+- 面板打开后焦点进入饱和度/明度区域；方向键调整数值，按住 `Shift` 时使用较大步长。
+- `Escape` 关闭面板并把焦点恢复到触发器。焦点移出整个组件后会触发表单的 blur 校验。
+- 清除按钮是独立的原生按钮，可通过 Tab 聚焦并用键盘清空颜色。
+
+传入自定义 `trigger` 时，组件会在外层触发节点补齐 button 语义、`tabindex`、`aria-expanded`、`aria-controls` 和禁用状态；slot 内容应避免再嵌套交互元素。
+
 ## Variants
 
 录入组件统一 `variant` 形态。四档：`outlined`（默认）/ `filled` / `borderless` / `underlined`。
@@ -239,39 +248,44 @@ const value = ref('#1677ff')
 
 ### Props
 
-| 参数              | 类型                                                       | 默认值                   | 说明                                                                              |
-| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------- |
-| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                            |
-| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                                 |
-| format            | `'hex' \| 'rgb' \| 'hsb'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                        |
-| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                          |
-| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                      |
-| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                              |
-| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                      |
-| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                      |
-| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表       |
-| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                          |
-| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                            |
-| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                            |
-| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                  |
-| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                        |
-| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                            |
+| 参数              | 类型                                                       | 默认值                   | 说明                                                                        |
+| ----------------- | ---------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------- |
+| modelValue        | string \| null                                             | --                       | 当前颜色（hex 字符串），支持 `v-model`                                      |
+| defaultValue      | string                                                     | `#1677ff`                | 非受控初始 hex 值                                                           |
+| format            | `'hex' \| 'rgb' \| 'hsb'`                                  | `'hex'`                  | swatch 文本显示格式（不影响 v-model 输出）                                  |
+| disabled          | boolean                                                    | `false`                  | 是否禁用                                                                    |
+| size              | `'small' \| 'default' \| 'large'`                          | `'default'`              | trigger 尺寸                                                                |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                     | 校验状态；置于 `FormItem` 时自动继承                                        |
+| showText          | boolean                                                    | `false`                  | 是否在 swatch 旁显示色值文本                                                |
+| disabledAlpha     | boolean                                                    | `false`                  | 关闭 alpha 滑块，强制 alpha=1，输出 6 位 hex                                |
+| presets           | `Array<string \| { color, label? } \| { label?, colors }>` | `[]`                     | 预设色板。可传扁平 hex 列表、单色对象列表，或 `{ label?, colors }` 分组列表 |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'` | `'bottomLeft'`           | 浮层方位                                                                    |
+| popupClassName    | string                                                     | --                       | 浮层根元素自定义 class                                                      |
+| popupAppendToBody | boolean                                                    | `false`                  | 是否把浮层 Teleport 到 `document.body`                                      |
+| getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                       | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                            |
+| transitionName    | string                                                     | `ccui-color-picker-fade` | 浮层过渡名                                                                  |
+| allowClear        | boolean                                                    | `false`                  | 是否允许清空（显示 × 按钮，emit null）                                      |
+| clearIcon         | `string \| VNode`                                          | --                       | 自定义清除图标，也可使用 `clearIcon` 插槽                                   |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`   | `'outlined'`             | 触发器形态                                                                  |
+| classNames        | `{ root?, trigger?, popup? }`                              | --                       | 语义化 DOM className 注入                                                   |
+| styles            | `{ root?, trigger?, popup? }`                              | --                       | 语义化 DOM style 注入                                                       |
 
 ### Slots
 
-| 名称    | 作用域                                                                                                              | 说明                                                                                             |
-| ------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| trigger | `{ color: string, open: boolean, disabled: boolean }`                                                               | 自定义触发器，替代默认 swatch 按钮                                                               |
-| panel   | `{ color: string, components: { picker: () => VNode, presets: () => VNode \| null, footer: () => VNode \| null } }` | 自定义面板内容；`components.*` 为面板各子片段的渲染函数，可按需调用、重新排版                    |
-| footer  | `{ color: string }`                                                                                                 | 面板底部追加区。默认面板：放在 picker 之后渲染；`panel` slot 内：通过 `components.footer()` 调用 |
+| 名称      | 作用域                                                                                                              | 说明                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| trigger   | `{ color: string, open: boolean, disabled: boolean }`                                                               | 自定义触发器，替代默认 swatch 按钮                                                               |
+| panel     | `{ color: string, components: { picker: () => VNode, presets: () => VNode \| null, footer: () => VNode \| null } }` | 自定义面板内容；`components.*` 为面板各子片段的渲染函数，可按需调用、重新排版                    |
+| footer    | `{ color: string }`                                                                                                 | 面板底部追加区。默认面板：放在 picker 之后渲染；`panel` slot 内：通过 `components.footer()` 调用 |
+| clearIcon | —                                                                                                                   | 自定义清除图标                                                                                   |
 
 ### Events
 
-| 事件名            | 回调签名                                      | 触发时机                                  |
-| ----------------- | --------------------------------------------- | ----------------------------------------- |
-| update:modelValue | `(hex: string)`                               | 颜色变化时（hex 字符串，alpha<1 时 8 位） |
-| change            | `(hex: string, info: { rgb: RGB; hsv: HSV })` | 颜色变化时（同 update:modelValue）        |
-| open-change       | `(open: boolean)`                             | 浮层打开 / 关闭时                         |
+| 事件名            | 回调签名                                                              | 触发时机                                        |
+| ----------------- | --------------------------------------------------------------------- | ----------------------------------------------- |
+| update:modelValue | `(hex: string \| null)`                                               | 颜色变化或清空时（hex 字符串，alpha<1 时 8 位） |
+| change            | `(hex: string \| null, info: { rgb: RGB \| null; hsv: HSV \| null })` | 颜色变化或清空时（同 update:modelValue）        |
+| open-change       | `(open: boolean)`                                                     | 浮层打开 / 关闭时                               |
 
 ### 键盘导航
 

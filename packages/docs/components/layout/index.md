@@ -16,8 +16,10 @@
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-header style="background: #1677ff; color: #fff">Header</c-layout-header>
-    <c-layout-content style="padding: 24px; background: #f5f5f5">Content</c-layout-content>
+    <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)"
+      >Header</c-layout-header
+    >
+    <c-layout-content style="padding: 24px; background: var(--ccui-area)">Content</c-layout-content>
     <c-layout-footer style="text-align: center">Footer</c-layout-footer>
   </c-layout>
 </template>
@@ -38,7 +40,9 @@
       Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: #1677ff; color: #fff">Header</c-layout-header>
+      <c-layout-header style="background: var(--ccui-color-primary); color: var(--ccui-color-text-light-solid)"
+        >Header</c-layout-header
+      >
       <c-layout-content style="padding: 24px">Main</c-layout-content>
       <c-layout-footer style="text-align: center">Footer</c-layout-footer>
     </c-layout>
@@ -71,7 +75,7 @@ const collapsed = ref(false)
       Sider menu
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: #1677ff" />
+      <c-layout-header style="background: var(--ccui-color-primary)" />
       <c-layout-content style="padding: 24px"> 当前 collapsed = {{ collapsed }} </c-layout-content>
     </c-layout>
   </c-layout>
@@ -114,14 +118,19 @@ const collapsed = ref(false)
 ```vue
 <template>
   <c-layout style="min-height: 240px">
-    <c-layout-sider theme="light" style="border-inline-end: 1px solid #f0f0f0; padding: 12px">
+    <c-layout-sider
+      theme="light"
+      style="border-inline-end: 1px solid var(--ccui-color-border-secondary); padding: 12px"
+    >
       浅色 Sider
     </c-layout-sider>
     <c-layout>
-      <c-layout-header style="background: white; border-bottom: 1px solid #f0f0f0; color: #333">
+      <c-layout-header
+        style="background: var(--ccui-color-bg-container); border-bottom: 1px solid var(--ccui-color-border-secondary); color: var(--ccui-color-text)"
+      >
         Header
       </c-layout-header>
-      <c-layout-content style="padding: 24px; background: #fafafa">主体</c-layout-content>
+      <c-layout-content style="padding: 24px; background: var(--ccui-area)">主体</c-layout-content>
     </c-layout>
   </c-layout>
 </template>
@@ -159,9 +168,13 @@ function onCollapse(val, type) {
 
 ## API
 
-### Layout / Header / Content / Footer
+### Layout Props
 
-直接渲染对应语义化标签，无额外 props。`style` 可自由覆盖背景 / 内边距等。
+| 参数     | 类型      | 默认值 | 说明                                                          |
+| -------- | --------- | ------ | ------------------------------------------------------------- |
+| hasSider | `boolean` | —      | 是否应用包含侧栏的布局；不传时根据后代 `LayoutSider` 自动判断 |
+
+Header / Content / Footer 无额外 props，直接渲染对应语义化标签。`style` 可自由覆盖背景 / 内边距等。
 
 ### LayoutSider Props
 
@@ -173,6 +186,7 @@ function onCollapse(val, type) {
 | defaultCollapsed      | `boolean`                                       | `false`  | 初始折叠状态                                                                                          |
 | collapsible           | `boolean`                                       | `false`  | 显示底部折叠按钮                                                                                      |
 | reverseArrow          | `boolean`                                       | `false`  | 折叠按钮的箭头反向                                                                                    |
+| trigger               | `string \| object \| null`                      | —        | 兼容属性；当前仅 `null` 有效，用于隐藏触发器。自定义渲染内容请使用 `trigger` 插槽                     |
 | theme                 | `'light' \| 'dark'`                             | `'dark'` | 主题色                                                                                                |
 | breakpoint            | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl'` | —        | 响应式断点。视口宽度小于对应断点时自动折叠；解除时自动展开。受控 `collapsed` 时仅 emit 事件不覆盖父值 |
 | zeroWidthTriggerStyle | `CSSProperties`                                 | —        | `collapsedWidth=0` 且当前折叠时，触发器的 inline style（用于做浮动定位）                              |
@@ -184,3 +198,10 @@ function onCollapse(val, type) {
 | update:collapsed | `(value: boolean)`               | 折叠状态变化                                                                 |
 | collapse         | `(value: boolean, type: string)` | 折叠被触发，`type` 为 `'clickTrigger'` / `'responsive'`                      |
 | breakpoint       | `(broken: boolean)`              | 断点状态变化。`broken=true` 表示视口已小于断点（自动折叠），`false` 表示恢复 |
+
+### LayoutSider Slots
+
+| 插槽名  | 说明                 |
+| ------- | -------------------- |
+| default | 侧栏内容             |
+| trigger | 自定义折叠触发器内容 |

@@ -4,11 +4,9 @@ ccui 文档站按 [llms.txt 规范](https://llmstxt.org)发布了纯文本索引
 
 ## 提供的资源
 
-| 路径 | 说明 | 推荐用途 |
-| --- | --- | --- |
-| [`/llms.txt`](https://vaebe.github.io/ccui/llms.txt) | 站点目录索引，列出"入门 / 全部 83+ 组件 / 仓库链接"，每个条目附一句话描述 | 让模型"看一眼就知道 ccui 有哪些组件、点进哪个 URL 看细节" |
-| [`/llms-full.txt`](https://vaebe.github.io/ccui/llms-full.txt) | 单文件聚合了简介 + 全部组件文档的完整 Markdown | 一次性灌入上下文做问答 / 代码生成，或作为 RAG 切分原料 |
-| 单组件页 `https://vaebe.github.io/ccui/components/<name>/index.html` | 组件官网文档页 | 让用户 / 模型从 `llms.txt` 索引点进具体组件 |
+- [`llms.txt`](https://vaebe.github.io/ccui/llms.txt) —— 站点目录索引，列出"入门 / 全部 83+ 组件 / 仓库链接"，每条附一句话描述。适合让模型一眼看清 ccui 有哪些组件、点进哪个 URL 看细节。
+- [`llms-full.txt`](https://vaebe.github.io/ccui/llms-full.txt) —— 单文件聚合简介 + 全部组件文档的完整 Markdown。适合一次性灌入上下文做问答 / 代码生成，或作为 RAG 切分原料。
+- **单组件页** `components/<name>/index.html` —— 组件官网文档页，让用户 / 模型从 `llms.txt` 索引点进具体组件。
 
 > 两个 txt 文件随站点构建生成，跟随 `docs:build` 自动更新；本地 `pnpm dev` 也会在 `predev` 阶段生成 `packages/docs/public/llms{,-full}.txt`。
 
@@ -19,8 +17,9 @@ ccui 文档站按 [llms.txt 规范](https://llmstxt.org)发布了纯文本索引
 ```text
 你正在使用 @vaebe/ccui（Vue 3 + TypeScript 组件库）。
 - 所有组件以 c- 前缀使用，例如 <c-button>、<c-form-item>、<c-table>。
-- 命令式 API（Message / Notification / Modal / Drawer 等）通过 setup 内
-  useMessage() / useNotification() / useModal() hook 调用。
+- Message / Notification / Modal 可直接调用模块级 API；需要继承
+  ConfigProvider / theme / locale 上下文时，在 setup 内使用
+  useMessage() / useNotification() / useModal() 并挂载返回的 holder。
 - 完整引入：app.use(ccui)；按需引入推荐配合
   @vaebe/unplugin-vue-components-ccui 暴露的 Vue3CCUIResolver()。
 - 组件 API、可选 props、slots、事件以 https://vaebe.github.io/ccui/llms-full.txt

@@ -84,7 +84,7 @@
       <div class="g-block">xs=24 sm=12 md=8 lg=6</div>
     </c-col>
   </c-row>
-  <p style="margin-top: 8px; color: #666">缩窄浏览器观察列数变化</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">缩窄浏览器观察列数变化</p>
 </template>
 ```
 
@@ -203,7 +203,9 @@ Row 可以嵌套：外层切大块，内层在大块里再分。注意嵌套时�
       <div class="g-block" style="height: 160px; background: #52c41a">主内容（xs=24 md=18）</div>
     </c-col>
   </c-row>
-  <p style="margin-top: 8px; color: #666">缩窄到 md（&lt;768px）以下时，侧栏与主内容会堆叠为单列</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">
+    缩窄到 md（&lt;768px）以下时，侧栏与主内容会堆叠为单列
+  </p>
 </template>
 ```
 
@@ -224,7 +226,7 @@ Row 可以嵌套：外层切大块，内层在大块里再分。注意嵌套时�
       </c-col>
     </c-row>
   </div>
-  <p style="margin-top: 8px; color: #666">8 张卡片强制一行，超出横向滚动</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">8 张卡片强制一行，超出横向滚动</p>
 </template>
 ```
 

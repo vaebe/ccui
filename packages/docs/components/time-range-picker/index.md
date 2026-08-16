@@ -108,30 +108,41 @@ const value = ref<[string, string] | null>(null)
 
 ### Props
 
-| 参数            | 类型                                                                  | 默认值       | 说明                                              |
-| --------------- | --------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
-| modelValue      | `[DateValue, DateValue] \| null`                                      | --           | 时间范围元组，支持 `v-model`                      |
-| format          | string                                                                | `''`         | 时间格式（dayjs token）；空时按 `use12Hours` 兜底 |
-| valueFormat     | `'string' \| 'date' \| 'number'`                                      | `'string'`   | `v-model` 输出形态                                |
-| use12Hours      | boolean                                                               | `false`      | 12 小时制                                         |
-| placeholder     | `string \| [string, string]`                                          | --           | 占位文案；元组分别给两端                          |
-| disabled        | `boolean \| [boolean, boolean]`                                       | `false`      | 是否禁用；元组分别锁两端                          |
-| allowEmpty      | `boolean \| [boolean, boolean]`                                       | `false`      | 是否允许该端为空；元组分别配置                    |
-| order           | boolean                                                               | `true`       | start > end 时自动交换                            |
-| separator       | string                                                                | `~`          | 中间分隔符                                        |
-| size            | `'small' \| 'default' \| 'large'`                                     | `'default'`  | 输入框尺寸                                        |
-| status          | `'' \| 'error' \| 'warning' \| ...`                                   | `''`         | 校验状态                                          |
-| placement       | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'`            | `bottomLeft` | 浮层方位                                          |
-| clearable       | boolean                                                               | `true`       | 是否显示清除按钮                                  |
-| showHour        | boolean                                                               | `true`       | 是否显示小时列                                    |
-| showMinute      | boolean                                                               | `true`       | 是否显示分钟列                                    |
-| showSecond      | boolean                                                               | `true`       | 是否显示秒列                                      |
-| hourStep        | number                                                                | `1`          | 小时步进                                          |
-| minuteStep      | number                                                                | `1`          | 分钟步进                                          |
-| secondStep      | number                                                                | `1`          | 秒步进                                            |
-| disabledHours   | `(which: 'start' \| 'end') => number[]`                               | --           | 按 which 区分两端的小时禁用                       |
-| disabledMinutes | `(which: 'start' \| 'end', selectedHour: number) => number[]`         | --           | 按 which + 当前 hour 返回禁用分钟                 |
-| disabledSeconds | `(which: 'start' \| 'end', selectedHour, selectedMinute) => number[]` | --           | 按 which + 时分返回禁用秒                         |
+| 参数              | 类型                                                                  | 默认值       | 说明                                              |
+| ----------------- | --------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| modelValue        | `[DateValue, DateValue] \| null`                                      | --           | 时间范围元组，支持 `v-model`                      |
+| format            | string                                                                | `''`         | 时间格式（dayjs token）；空时按 `use12Hours` 兜底 |
+| valueFormat       | `'string' \| 'date' \| 'number'`                                      | `'string'`   | `v-model` 输出形态                                |
+| use12Hours        | boolean                                                               | `false`      | 12 小时制                                         |
+| placeholder       | `string \| [string, string]`                                          | --           | 占位文案；元组分别给两端                          |
+| disabled          | `boolean \| [boolean, boolean]`                                       | `false`      | 是否禁用；元组分别锁两端                          |
+| allowEmpty        | `boolean \| [boolean, boolean]`                                       | `false`      | 是否允许该端为空；元组分别配置                    |
+| order             | boolean                                                               | `true`       | start > end 时自动交换                            |
+| separator         | string                                                                | `~`          | 中间分隔符                                        |
+| size              | `'small' \| 'default' \| 'large'`                                     | `'default'`  | 输入框尺寸                                        |
+| status            | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`             | `''`         | 校验状态                                          |
+| placement         | `'bottomLeft' \| 'bottomRight' \| 'topLeft' \| 'topRight'`            | `bottomLeft` | 浮层方位                                          |
+| clearable         | boolean                                                               | `true`       | 是否显示清除按钮                                  |
+| clearIcon         | `string \| VNode`                                                     | --           | 自定义清除图标，也可使用 `clearIcon` 插槽         |
+| suffixIcon        | `string \| VNode`                                                     | --           | 自定义后缀图标，也可使用 `suffixIcon` 插槽        |
+| popupClassName    | string                                                                | `''`         | 浮层附加 class                                    |
+| popupAppendToBody | boolean                                                               | `false`      | 是否将浮层 Teleport 到 body                       |
+| autoFocus         | boolean                                                               | `false`      | 挂载后是否自动聚焦开始时间输入框                  |
+| inputReadOnly     | boolean                                                               | `true`       | 是否将内部输入框设为只读                          |
+| showHour          | boolean                                                               | `true`       | 是否显示小时列                                    |
+| showMinute        | boolean                                                               | `true`       | 是否显示分钟列                                    |
+| showSecond        | boolean                                                               | `true`       | 是否显示秒列                                      |
+| hourStep          | number                                                                | `1`          | 小时步进                                          |
+| minuteStep        | number                                                                | `1`          | 分钟步进                                          |
+| secondStep        | number                                                                | `1`          | 秒步进                                            |
+| disabledHours     | `(which: 'start' \| 'end') => number[]`                               | --           | 按 which 区分两端的小时禁用                       |
+| disabledMinutes   | `(which: 'start' \| 'end', selectedHour: number) => number[]`         | --           | 按 which + 当前 hour 返回禁用分钟                 |
+| disabledSeconds   | `(which: 'start' \| 'end', selectedHour, selectedMinute) => number[]` | --           | 按 which + 时分返回禁用秒                         |
+| showNow           | boolean                                                               | `true`       | 是否显示“此刻”快捷操作                            |
+| showOk            | boolean                                                               | `true`       | 是否显示确认按钮                                  |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`              | `outlined`   | 输入框形态                                        |
+| classNames        | `{ root?: string }`                                                   | --           | 根节点语义化 class                                |
+| styles            | `{ root?: CSSProperties }`                                            | --           | 根节点语义化样式                                  |
 
 ### Events
 
@@ -140,3 +151,12 @@ const value = ref<[string, string] | null>(null)
 | update:modelValue | `(value: [...] \| null)`      | 任一端变更或清除                   |
 | change            | `(value, [startStr, endStr])` | 选中或清除时（带格式化字符串元组） |
 | open-change       | `(open: boolean)`             | 任一端面板打开 / 关闭              |
+| focus             | --                            | 任一端输入框获得焦点               |
+| blur              | --                            | 任一端输入框失去焦点               |
+
+### Slots
+
+| 插槽名     | 说明           |
+| ---------- | -------------- |
+| clearIcon  | 自定义清除图标 |
+| suffixIcon | 自定义后缀图标 |

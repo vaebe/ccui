@@ -22,7 +22,7 @@ const checked = ref(true)
 
 <template>
   <c-check-box v-model="checked">这是一个多选框</c-check-box>
-  <p style="margin-top: 8px; color: #666">当前：{{ checked ? '选中' : '未选中' }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前：{{ checked ? '选中' : '未选中' }}</p>
 </template>
 ```
 
@@ -116,7 +116,7 @@ const cities = ref(['shanghai'])
     <c-check-box label="guangzhou">广州</c-check-box>
     <c-check-box label="shenzhen">深圳</c-check-box>
   </c-check-box-group>
-  <p style="margin-top: 8px; color: #666">已选：{{ cities.join(', ') || '（空）' }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">已选：{{ cities.join(', ') || '（空）' }}</p>
 </template>
 ```
 
@@ -137,14 +137,14 @@ const b = ref([])
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">column（默认）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">column（默认）</p>
   <c-check-box-group v-model="a" direction="column">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
     <c-check-box label="3">选项 3</c-check-box>
   </c-check-box-group>
 
-  <p style="color: #666; margin: 16px 0 4px">row</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">row</p>
   <c-check-box-group v-model="b" direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
@@ -170,14 +170,14 @@ const b = ref(['1'])
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">整组禁用</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">整组禁用</p>
   <c-check-box-group v-model="a" disabled direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
     <c-check-box label="3">选项 3</c-check-box>
   </c-check-box-group>
 
-  <p style="color: #666; margin: 16px 0 4px">整组改颜色</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">整组改颜色</p>
   <c-check-box-group v-model="b" color="#fa541c" direction="row">
     <c-check-box label="1">选项 1</c-check-box>
     <c-check-box label="2">选项 2</c-check-box>
@@ -217,7 +217,7 @@ function beforeChange(isChecked, label) {
     <c-check-box label="b">B</c-check-box>
     <c-check-box label="locked">锁定项（被禁切换）</c-check-box>
   </c-check-box-group>
-  <p style="margin-top: 8px; color: #666">日志：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">日志：{{ log }}</p>
 </template>
 ```
 
@@ -227,13 +227,15 @@ function beforeChange(isChecked, label) {
 
 ### CheckBox Props
 
-| 参数         | 类型                                                             | 默认值  | 说明                                                    |
-| ------------ | ---------------------------------------------------------------- | ------- | ------------------------------------------------------- |
-| modelValue   | boolean                                                          | —       | 必选，单独使用时绑定布尔；group 内由 group 接管         |
-| label        | `string \| number \| boolean`                                    | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值 |
-| disabled     | boolean                                                          | `false` | 是否禁用                                                |
-| color        | string                                                           | —       | 自定义选中色                                            |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —       | 切换前的钩子                                            |
+| 参数          | 类型                                                                                  | 默认值  | 说明                                                       |
+| ------------- | ------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------- |
+| modelValue    | boolean                                                                               | —       | 必选，单独使用时绑定布尔；group 内由 group 接管            |
+| label         | `string \| number \| boolean`                                                         | —       | 单独使用且无插槽时作为文案；与 group 配合时作为本项的值    |
+| name          | string                                                                                | `''`    | 透传给原生 checkbox 的 `name` 属性                         |
+| disabled      | boolean                                                                               | `false` | 是否禁用                                                   |
+| indeterminate | boolean                                                                               | `false` | 是否显示半选状态；原生状态和 `aria-checked="mixed"` 会同步 |
+| color         | string                                                                                | —       | 自定义选中色                                               |
+| beforeChange  | `(isChecked: boolean, v: string \| number \| boolean) => boolean \| Promise<boolean>` | —       | 切换前的钩子；拒绝 Promise 时阻止切换                      |
 
 ### CheckBox Events
 
@@ -243,19 +245,20 @@ function beforeChange(isChecked, label) {
 
 ### CheckBoxGroup Props
 
-| 参数         | 类型                                                             | 默认值     | 说明                       |
-| ------------ | ---------------------------------------------------------------- | ---------- | -------------------------- |
-| modelValue   | `Array<string \| number>`                                        | `[]`       | 已选项数组，支持 `v-model` |
-| disabled     | boolean                                                          | `false`    | 整组禁用                   |
-| color        | string                                                           | —          | 整组的选中色               |
-| direction    | `'row' \| 'column'`                                              | `'column'` | 排列方向                   |
-| beforeChange | `(isChecked: boolean, v: string) => boolean \| Promise<boolean>` | —          | 切换前的钩子               |
+| 参数         | 类型                                                                                  | 默认值     | 说明                                        |
+| ------------ | ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------- |
+| modelValue   | `Array<string \| number \| boolean>`                                                  | `[]`       | 已选项数组，支持 `v-model`                  |
+| name         | string                                                                                | `''`       | 统一透传给组内未设置 `name` 的原生 checkbox |
+| disabled     | boolean                                                                               | `false`    | 整组禁用                                    |
+| color        | string                                                                                | —          | 整组的选中色                                |
+| direction    | `'row' \| 'column'`                                                                   | `'column'` | 排列方向                                    |
+| beforeChange | `(isChecked: boolean, v: string \| number \| boolean) => boolean \| Promise<boolean>` | —          | 切换前的钩子；动态更新会立即生效            |
 
 ### CheckBoxGroup Events
 
-| 事件   | 回调签名             | 说明             |
-| ------ | -------------------- | ---------------- |
-| change | `(values: string[])` | 选中项改变时触发 |
+| 事件   | 回调签名                                       | 说明             |
+| ------ | ---------------------------------------------- | ---------------- |
+| change | `(values: Array<string \| number \| boolean>)` | 选中项改变时触发 |
 
 ### Slots
 

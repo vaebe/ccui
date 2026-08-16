@@ -81,7 +81,8 @@ const selected = ref<string[]>([])
   <c-transfer v-model:target-keys="target" v-model:selected-keys="selected" :data-source="data">
     <template #render="{ item }">
       <span
-        ><strong>{{ item.title }}</strong> · <small style="color:#999">{{ item.description }}</small></span
+        ><strong>{{ item.title }}</strong> ·
+        <small style="color:var(--ccui-color-text-tertiary)">{{ item.description }}</small></span
       >
     </template>
   </c-transfer>
@@ -191,21 +192,21 @@ const selected = ref<string[]>([])
 
 ### Props
 
-| 参数           | 类型                                                          | 默认值       | 说明                                                                    |
-| -------------- | ------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------- |
-| dataSource     | `TransferItem[]`                                              | `[]`         | 全部数据。`{ key, title?, description?, disabled? }`                    |
-| targetKeys     | `string[]`                                                    | `[]`         | 在右侧（target）的 key 集合，支持 `v-model:targetKeys`                  |
-| selectedKeys   | `string[]`                                                    | `[]`         | 跨两列勾选的 key，支持 `v-model:selectedKeys`                           |
-| titles         | `[string, string]`                                            | `['', '']`   | 两列标题                                                                |
-| operations     | `[string, string]`                                            | `['', '']`   | 中间按钮文案：[右移, 左移]；为空时回退到内置 chevron 图标               |
-| showSearch     | boolean                                                       | `false`      | 显示搜索框                                                              |
-| filterOption   | `(input: string, item: TransferItem) => boolean`              | --           | 自定义过滤；不传走默认 title 包含匹配                                   |
-| disabled       | boolean                                                       | `false`      | 整体禁用                                                                |
-| render         | `(item: TransferItem) => string \| VNode`                     | --           | 自定义单项渲染                                                          |
-| locale         | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --           | 自定义文案                                                              |
-| pagination     | `boolean \| number`                                           | `false`      | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize                  |
-| draggable      | boolean                                                       | `false`      | 是否允许右侧列表拖拽排序                                                |
-| selectionsIcon | `string \| VNode`                                             | --           | 头部全选区状态图标，string 为 Iconify 名或 CSS 类。同名 slot 优先级更高 |
+| 参数           | 类型                                                          | 默认值     | 说明                                                                    |
+| -------------- | ------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
+| dataSource     | `TransferItem[]`                                              | `[]`       | 全部数据。`{ key, title?, description?, disabled? }`                    |
+| targetKeys     | `string[]`                                                    | `[]`       | 在右侧（target）的 key 集合，支持 `v-model:targetKeys`                  |
+| selectedKeys   | `string[]`                                                    | `[]`       | 跨两列勾选的 key，支持 `v-model:selectedKeys`                           |
+| titles         | `[string, string]`                                            | `['', '']` | 两列标题                                                                |
+| operations     | `[string, string]`                                            | `['', '']` | 中间按钮文案：[右移, 左移]；为空时回退到内置 chevron 图标               |
+| showSearch     | boolean                                                       | `false`    | 显示搜索框                                                              |
+| filterOption   | `(input: string, item: TransferItem) => boolean`              | --         | 自定义过滤；不传走默认 title 包含匹配                                   |
+| disabled       | boolean                                                       | `false`    | 整体禁用                                                                |
+| render         | `(item: TransferItem) => string \| VNode`                     | --         | 自定义单项渲染                                                          |
+| locale         | `{ itemUnit, itemsUnit, notFoundContent, searchPlaceholder }` | --         | 自定义文案                                                              |
+| pagination     | `boolean \| number`                                           | `false`    | 分页配置：`true` 用默认 pageSize=10，数字指定 pageSize                  |
+| draggable      | boolean                                                       | `false`    | 是否允许右侧列表拖拽排序                                                |
+| selectionsIcon | `string \| VNode`                                             | --         | 头部全选区状态图标，string 为 Iconify 名或 CSS 类。同名 slot 优先级更高 |
 
 ### Events
 

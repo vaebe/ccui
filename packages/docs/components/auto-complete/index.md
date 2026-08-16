@@ -18,7 +18,7 @@ const options = ['张三', '李四', '王五', '赵六']
 
 <template>
   <c-auto-complete v-model="value" :options="options" placeholder="输入名字" />
-  <div style="margin-top: 8px; color: rgba(0,0,0,.45)">value: {{ value }}</div>
+  <div style="margin-top: 8px; color: var(--ccui-color-text-tertiary)">value: {{ value }}</div>
 </template>
 ```
 
@@ -215,7 +215,9 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | options                  | `(string \| number \| { value, label?, disabled? })[]`     | `[]`                      | 候选项；string/number 形态的 label = value       |
 | placeholder              | string                                                     | --                        | 占位文案                                         |
 | disabled                 | boolean                                                    | `false`                   | 是否禁用                                         |
+| readonly                 | boolean                                                    | `false`                   | 是否只读；只读时不打开候选浮层                   |
 | allowClear               | boolean                                                    | `false`                   | 显示一键清空按钮                                 |
+| clearIcon                | `string \| VNode`                                          | --                        | 自定义清除图标，也可使用 `clearIcon` 插槽        |
 | size                     | `'small' \| 'default' \| 'large'`                          | `'default'`               | 输入框尺寸                                       |
 | status                   | `'' \| 'error' \| 'warning' \| 'success' \| 'validating'`  | `''`                      | 校验状态；置于 `FormItem` 时自动继承             |
 | filterOption             | `boolean \| (input, option) => boolean`                    | `true`                    | 过滤逻辑                                         |
@@ -230,25 +232,29 @@ const opts = ['gmail.com', 'qq.com', '163.com']
 | defaultActiveFirstOption | boolean                                                    | `false`                   | 打开浮层时是否默认高亮第一项                     |
 | backfill                 | boolean                                                    | `false`                   | 键盘导航时是否把高亮项 label 写回 input          |
 | searchDebounce           | number                                                     | `0`                       | 搜索防抖延迟（毫秒），`0` 不防抖                 |
+| variant                  | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`   | `'outlined'`              | 输入框形态                                       |
+| classNames               | `{ root?, input?, popup? }`                                | --                        | 语义化 DOM className 注入                        |
+| styles                   | `{ root?, input?, popup? }`                                | --                        | 语义化 DOM style 注入                            |
 
 ### Events
 
-| 事件名            | 回调签名                                                | 触发时机                            |
-| ----------------- | ------------------------------------------------------- | ----------------------------------- |
-| update:modelValue | `(value: string \| number)`                             | 输入或选中时                        |
-| change            | `(value: string \| number)`                             | 同 update:modelValue                |
-| search            | `(keyword: string)`                                     | 同 update:modelValue（search 别名） |
-| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时                        |
-| open-change       | `(open: boolean)`                                       | 浮层打开 / 关闭时                   |
-| focus             | `(e: FocusEvent)`                                       | 输入框聚焦                          |
-| blur              | `(e: FocusEvent)`                                       | 输入框失焦                          |
+| 事件名            | 回调签名                                                | 触发时机                                       |
+| ----------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| update:modelValue | `(value: string \| number)`                             | 输入或选中时                                   |
+| change            | `(value: string \| number)`                             | 同 update:modelValue                           |
+| search            | `(keyword: string)`                                     | 输入、选择或清除后触发；输入法组合结束后才触发 |
+| select            | `(value: string \| number, option: AutoCompleteOption)` | 选中候选项时                                   |
+| open-change       | `(open: boolean)`                                       | 浮层打开 / 关闭时                              |
+| focus             | `(e: FocusEvent)`                                       | 输入框聚焦                                     |
+| blur              | `(e: FocusEvent)`                                       | 输入框失焦                                     |
 
 ### Slots
 
-| 名称    | 参数                                                                    | 说明                        |
-| ------- | ----------------------------------------------------------------------- | --------------------------- |
-| option  | `{ option: AutoCompleteOption, index: number }`                         | 自定义单项渲染              |
-| trigger | `{ value, onInput, onFocus, onBlur, onKeydown, placeholder, disabled }` | 自定义输入框（如 textarea） |
+| 名称      | 参数                                                                                                                    | 说明                                                                         |
+| --------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| option    | `{ option: AutoCompleteOption, index: number }`                                                                         | 自定义单项渲染                                                               |
+| trigger   | `{ value, onInput, onFocus, onBlur, onKeydown, onCompositionstart, onCompositionend, placeholder, disabled, readonly }` | 自定义输入框（如 textarea）；需透传只读与 composition 事件以保持完整输入行为 |
+| clearIcon | —                                                                                                                       | 自定义清除图标                                                               |
 
 ## 已知限制（未交付）
 

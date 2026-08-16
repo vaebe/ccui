@@ -23,12 +23,12 @@ features:
     details: Vite 8 + Rolldown + OXC 全链路加速，开发服务秒级冷启，生产构建按组件维度自动 split。
 
   - icon: 🧩
-    title: 84 个组件
-    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他 七大类 84 个组件，覆盖中后台常见业务场景。
+    title: 83 个文档入口
+    details: 通用 / 布局 / 导航 / 数据录入 / 数据展示 / 反馈 / 其他七大类 83 个组件、工具与主题指南入口，覆盖中后台常见业务场景。
 
   - icon: 🛠️
     title: TypeScript 优先
-    details: 完整 .d.ts 类型导出，2000+ 个单测覆盖 96 个测试文件，CI 全绿门槛上线。
+    details: 完整 .d.ts 类型导出，2000+ 个单测覆盖 90+ 个组件测试文件，并配套浏览器 E2E 回归。
 
   - icon: 🎨
     title: 主题与暗色

@@ -7,6 +7,18 @@
   display: table;
 }
 
+/* API 表格通常包含不可断行的类型签名。窄屏时让表格自身横向滚动，
+   避免把整个文档页面撑宽，导致导航和正文一起左右漂移。 */
+@media (max-width: 767px) {
+  .vp-doc table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* showcase 顶层组件间距：只在"紧邻的同级 ccui 组件"之间补 8px 横向间隙（挂在后一个元素上）。
    - 用相邻兄弟 + 而非 ~：被 <br> / 包裹层分隔的块级组件（如堆叠的多个 Alert）不会被命中，
      保持满宽、各自用自身分隔；只有真正排在同一行的行内组件（Button/Tag/ColorPicker…）才补间距。

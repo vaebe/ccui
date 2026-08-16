@@ -9,7 +9,7 @@
 
 ## 基本使用
 
-直接 `v-model` 到字符串，与每个 `<c-radio>` 的 `label` 比对决定选中状态。
+将 `v-model` 与每个 `<c-radio>` 的 `label` 比对决定选中状态；值可以是字符串、数字或布尔值。
 
 :::demo
 
@@ -24,7 +24,7 @@ const value = ref('apple')
   <c-radio v-model="value" label="apple">苹果</c-radio>
   <c-radio v-model="value" label="banana">香蕉</c-radio>
   <c-radio v-model="value" label="orange">橙子</c-radio>
-  <p style="margin-top: 8px; color: #666">当前：{{ value }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前：{{ value }}</p>
 </template>
 ```
 
@@ -72,7 +72,7 @@ const city = ref('shanghai')
     <c-radio label="guangzhou">广州</c-radio>
     <c-radio label="shenzhen">深圳</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">已选：{{ city }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">已选：{{ city }}</p>
 </template>
 ```
 
@@ -93,14 +93,14 @@ const b = ref('1')
 </script>
 
 <template>
-  <p style="color: #666; margin: 0 0 4px">column（默认）</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 4px">column（默认）</p>
   <c-radio-group v-model="a" direction="column">
     <c-radio label="1">选项 1</c-radio>
     <c-radio label="2">选项 2</c-radio>
     <c-radio label="3">选项 3</c-radio>
   </c-radio-group>
 
-  <p style="color: #666; margin: 16px 0 4px">row</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 4px">row</p>
   <c-radio-group v-model="b" direction="row">
     <c-radio label="1">选项 1</c-radio>
     <c-radio label="2">选项 2</c-radio>
@@ -164,7 +164,7 @@ function beforeChange(val) {
     <c-radio label="warn">注意</c-radio>
     <c-radio label="danger">危险（被禁）</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">日志：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">日志：{{ log }}</p>
 </template>
 ```
 
@@ -194,44 +194,49 @@ function onChange(val) {
     <c-radio label="m">中</c-radio>
     <c-radio label="l">大</c-radio>
   </c-radio-group>
-  <p style="margin-top: 8px; color: #666">最近 change：{{ lastChange }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 change：{{ lastChange }}</p>
 </template>
 ```
 
 :::
 
+## 键盘与表单
+
+RadioGroup 会为组内原生 radio 使用同一个 `name`：Tab 进入当前选中项后，可使用方向键切换选项，并用 Space 选择。向 RadioGroup 传入 `name` 后，选中值会以该字段名随原生表单提交；未传入时组件会自动生成分组名，需要读取原生 `FormData` 时建议显式传入稳定名称。
+
 ## API
 
 ### Radio Props
 
-| 参数         | 类型               | 默认值  | 说明                                                        |
-| ------------ | ------------------ | ------- | ----------------------------------------------------------- |
-| modelValue   | `string \| number` | —       | 必选，绑定值（与 `label` 比较决定是否选中），支持 `v-model` |
-| label        | `string \| number` | `''`    | 必选，本项的值                                              |
-| name         | string             | `''`    | 原生 `name` 属性                                            |
-| disabled     | boolean            | `false` | 是否禁用                                                    |
-| beforeChange | `BeforeChangeType` | —       | 切换前的钩子，返回 `false` 阻止切换                         |
+| 参数         | 类型                          | 默认值  | 说明                                                   |
+| ------------ | ----------------------------- | ------- | ------------------------------------------------------ |
+| modelValue   | `string \| number \| boolean` | —       | 绑定值（与 `label` 比较决定是否选中），支持 `v-model`  |
+| label        | `string \| number \| boolean` | `''`    | 本项的值                                               |
+| name         | string                        | `''`    | 独立使用时的原生 `name`；组内使用 RadioGroup 的 `name` |
+| disabled     | boolean                       | `false` | 是否禁用                                               |
+| beforeChange | `BeforeChangeType`            | —       | 切换前的钩子，返回 `false` 或拒绝 Promise 时阻止切换   |
 
 ### Radio Events
 
-| 事件   | 回调签名          | 说明         |
-| ------ | ----------------- | ------------ |
-| change | `(value: string)` | 值改变时触发 |
+| 事件   | 回调签名                                       | 说明         |
+| ------ | ---------------------------------------------- | ------------ |
+| change | `(value: string \| number \| boolean) => void` | 值改变时触发 |
 
 ### RadioGroup Props
 
-| 参数         | 类型               | 默认值     | 说明                             |
-| ------------ | ------------------ | ---------- | -------------------------------- |
-| modelValue   | `string \| number` | —          | 必选，被选中的值，支持 `v-model` |
-| disabled     | boolean            | `false`    | 整组禁用                         |
-| direction    | `DirectionType`    | `'column'` | 排列方向（`row` / `column`）     |
-| beforeChange | `BeforeChangeType` | —          | 切换前的钩子，返回 `false` 阻止  |
+| 参数         | 类型                          | 默认值     | 说明                                    |
+| ------------ | ----------------------------- | ---------- | --------------------------------------- |
+| modelValue   | `string \| number \| boolean` | —          | 被选中的值，支持 `v-model`              |
+| name         | string                        | `''`       | 组内原生 radio 的 `name`，用于表单提交  |
+| disabled     | boolean                       | `false`    | 整组禁用                                |
+| direction    | `DirectionType`               | `'column'` | 排列方向（`row` / `column`）            |
+| beforeChange | `BeforeChangeType`            | —          | 切换前的钩子，返回 `false` 或拒绝时阻止 |
 
 ### RadioGroup Events
 
-| 事件   | 回调签名          | 说明         |
-| ------ | ----------------- | ------------ |
-| change | `(value: string)` | 值改变时触发 |
+| 事件   | 回调签名                                       | 说明         |
+| ------ | ---------------------------------------------- | ------------ |
+| change | `(value: string \| number \| boolean) => void` | 值改变时触发 |
 
 ### Slots
 
@@ -242,6 +247,7 @@ function onChange(val) {
 ### 类型定义
 
 ```ts
-type BeforeChangeType = (value: string) => boolean | Promise<boolean>
+type RadioValue = string | number | boolean
+type BeforeChangeType = (value: RadioValue) => boolean | Promise<boolean>
 type DirectionType = 'row' | 'column'
 ```

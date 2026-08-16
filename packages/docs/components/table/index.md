@@ -88,14 +88,14 @@ function sum(field) {
       </template>
       <template v-else-if="column.key === 'action'">
         <a style="margin-inline-end: 12px" @click="onEdit(record)">编辑</a>
-        <a style="color:#ff4d4f" @click="onDelete(record)">删除</a>
+        <a style="color:var(--ccui-color-error)" @click="onDelete(record)">删除</a>
       </template>
     </template>
     <template #header-cell="{ column }">
       <template v-if="column.key === 'salary'">💰 {{ column.title }}</template>
     </template>
   </c-table>
-  <p style="color:#666;margin-top:8px">{{ log || '点击编辑 / 删除查看回调' }}</p>
+  <p style="color:var(--ccui-color-text-secondary);margin-top:8px">{{ log || '点击编辑 / 删除查看回调' }}</p>
 </template>
 
 <script setup>
@@ -351,7 +351,7 @@ const rowSelection = computed(() => ({
 ```vue
 <template>
   <c-table :columns="columns" :data-source="dataSource" row-key="id" :row-selection="rowSelection"></c-table>
-  <p style="color:#666;margin-top:8px">
+  <p style="color:var(--ccui-color-text-secondary);margin-top:8px">
     当前已选：<b>{{ selected ? selected.name : '（未选）' }}</b> ，价格：<b
       >¥{{ selected ? selected.price.toLocaleString() : 0 }}</b
     >
@@ -407,7 +407,9 @@ const selected = computed(() => dataSource.find((r) => r.id === selectedKey.valu
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
     <c-segmented v-model="size" :options="['small', 'middle', 'default']" />
     <c-button @click="reload">刷新（模拟 loading）</c-button>
-    <label style="margin-inline-start:8px;color:#666"> <input v-model="showHeader" type="checkbox" /> 显示表头 </label>
+    <label style="margin-inline-start:8px;color:var(--ccui-color-text-secondary)">
+      <input v-model="showHeader" type="checkbox" /> 显示表头
+    </label>
   </div>
   <c-table
     :columns="columns"
@@ -467,14 +469,14 @@ function reload() {
   </div>
   <c-table :columns="columns" :data-source="mode === 'empty' ? [] : dataSource" row-key="id" bordered>
     <template #empty>
-      <div style="padding:24px 0;text-align:center;color:#999">
+      <div style="padding:24px 0;text-align:center;color:var(--ccui-color-text-tertiary)">
         <div style="font-size:32px">📭</div>
         <div style="margin-top:6px">还没有任何记录</div>
         <c-button type="primary" size="small" style="margin-top:12px" @click="onCreate">创建第一条</c-button>
       </div>
     </template>
   </c-table>
-  <p v-if="log" style="color:#666;margin-top:8px">{{ log }}</p>
+  <p v-if="log" style="color:var(--ccui-color-text-secondary);margin-top:8px">{{ log }}</p>
 </template>
 
 <script setup>
@@ -500,14 +502,14 @@ function onCreate() {
 
 ## change 事件全量追踪
 
-`@change` 在过滤 / 排序任意一项变化时触发，回调签名 `(filters, sorter, currentData)`。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
+`@change` 在过滤 / 排序任意一项变化时触发，回调签名 `(filters, sorter, currentData)`。受控列尚未回写时，参数已反映本次请求的下一状态。业务侧最常用于埋点 / 后端 API 联动 / 持久化筛选状态。
 
 :::demo
 
 ```vue
 <template>
   <c-table :columns="columns" :data-source="dataSource" row-key="id" @change="onChange"></c-table>
-  <pre style="margin-top:8px;padding:8px;background:#f5f5f5;font-size:12px;max-height:200px;overflow:auto">{{
+  <pre style="margin-top:8px;padding:8px;background:var(--ccui-area);font-size:12px;max-height:200px;overflow:auto">{{
     log
   }}</pre>
 </template>
@@ -670,3 +672,7 @@ function onChange(filters, sorter, currentData) {
 | update:selectedRowKeys | 行选择变化                         |
 | update:expandedRowKeys | 展开行变化                         |
 | expand                 | (expanded, record) — 单行展开/收起 |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`header`、`body`、`row`。

@@ -7,39 +7,39 @@ build cmd：`pnpm build:lib`（实际跑 `vp run --filter ccui-cli build:lib` �
 
 ## 总览（全量 all-in-one bundle）
 
-| 项 | raw | gzip |
-|---|---|---|
-| `vue-ccui.es.js` | 515.57 KB | 132.51 KB |
-| `vue-ccui.umd.js` | 418.43 KB | 118.41 KB |
-| `style.css`（顶层合并 css） | 268.59 KB | 36.64 KB |
+| 项                          | raw       | gzip      |
+| --------------------------- | --------- | --------- |
+| `vue-ccui.es.js`            | 515.57 KB | 132.51 KB |
+| `vue-ccui.umd.js`           | 418.43 KB | 118.41 KB |
+| `style.css`（顶层合并 css） | 268.59 KB | 36.64 KB  |
 
 注：`external = ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom']`，gzip 体积已扣掉这些 peer。
 
 ## 前 10 大组件 chunk（按组件目录 `index.es.js`，按 gzip 排序）
 
-| chunk | raw | gzip |
-|---|---|---|
-| tree-select | 79.77 KB | 24.06 KB |
-| date-picker | 73.59 KB | 22.79 KB |
-| range-picker | 67.18 KB | 21.37 KB |
+| chunk             | raw      | gzip     |
+| ----------------- | -------- | -------- |
+| tree-select       | 79.77 KB | 24.06 KB |
+| date-picker       | 73.59 KB | 22.79 KB |
+| range-picker      | 67.18 KB | 21.37 KB |
 | time-range-picker | 68.14 KB | 21.29 KB |
-| time-picker | 62.64 KB | 20.37 KB |
-| cascader | 60.39 KB | 19.06 KB |
-| auto-complete | 51.86 KB | 17.00 KB |
-| modal | 49.99 KB | 16.19 KB |
-| select | 50.81 KB | 15.96 KB |
-| tree | 52.30 KB | 15.77 KB |
+| time-picker       | 62.64 KB | 20.37 KB |
+| cascader          | 60.39 KB | 19.06 KB |
+| auto-complete     | 51.86 KB | 17.00 KB |
+| modal             | 49.99 KB | 16.19 KB |
+| select            | 50.81 KB | 15.96 KB |
+| tree              | 52.30 KB | 15.77 KB |
 
 ## Locale 包
 
 ccui 当前 4 个 locale 用静态 `export` 暴露（`ui/locale/index.ts`），全量 `vue-ccui.es.js` 会把 4 份字符串都打进去；并未单独 emit 为 `locale/zh-CN.js` chunk。源文件体量参考：
 
 | locale 源文件 | source raw |
-|---|---|
-| zh-CN.ts | 1941 B |
-| en-US.ts | 1732 B |
-| ja-JP.ts | 1859 B |
-| ko-KR.ts | 1883 B |
+| ------------- | ---------- |
+| zh-CN.ts      | 1941 B     |
+| en-US.ts      | 1732 B     |
+| ja-JP.ts      | 1859 B     |
+| ko-KR.ts      | 1883 B     |
 
 **结论**：i18n 字符串走 named export，用户侧 `import { enUS } from '@vaebe/ccui'` 走 tree-shaking 即可只带一份。全量 bundle 默认带全 4 份（合计 < 8 KB 源码、gzip 后量级更小），未做强行 split。
 
@@ -47,13 +47,13 @@ ccui 当前 4 个 locale 用静态 `export` 暴露（`ui/locale/index.ts`），�
 
 `packages/ccui/build/` 顶层除主 bundle 外另有以下 lazy chunk：
 
-| chunk | raw | gzip |
-|---|---|---|
-| `en-BVwCvuzF.js` | 840 B | 536 B |
-| `ja-B4U4rt8A.js` | 1763 B | 825 B |
-| `ko-BG35I8uK.js` | 1791 B | 827 B |
-| `zh-cn-C8nbfD5S.js` | 2017 B | 993 B |
-| `chunk-Ndeg2fpE.js`（rolldown 共享 runtime） | 998 B | 560 B |
+| chunk                                        | raw    | gzip  |
+| -------------------------------------------- | ------ | ----- |
+| `en-BVwCvuzF.js`                             | 840 B  | 536 B |
+| `ja-B4U4rt8A.js`                             | 1763 B | 825 B |
+| `ko-BG35I8uK.js`                             | 1791 B | 827 B |
+| `zh-cn-C8nbfD5S.js`                          | 2017 B | 993 B |
+| `chunk-Ndeg2fpE.js`（rolldown 共享 runtime） | 998 B  | 560 B |
 
 每个 chunk 头部都是 `import { t } from "./vue-ccui.es.js"` + `import('dayjs/locale/xxx')` 的产物，说明 `ui/shared/utils/dayjs-locale.ts` 里 `switch` 显式 `import('dayjs/locale/zh-cn')` 等被打包工具成功识别为按需 chunk。
 

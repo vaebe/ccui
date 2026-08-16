@@ -107,7 +107,7 @@ function cancel() {
 
 <template>
   <c-button type="primary" @click="open = true">编辑</c-button>
-  <span style="margin-inline-start: 12px; color: #666">最近操作：{{ result }}</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">最近操作：{{ result }}</span>
   <c-drawer v-model:visible="open" title="编辑信息">
     <p>这里放编辑表单……</p>
     <template #footer>
@@ -164,7 +164,7 @@ const text = ref('')
     <input
       v-model="text"
       placeholder="输点东西然后关掉再打开"
-      style="width: 100%; padding: 6px 8px; border: 1px solid #d9d9d9; border-radius: 4px"
+      style="width: 100%; padding: 6px 8px; border: 1px solid var(--ccui-color-border); border-radius: 4px"
     />
   </c-drawer>
 </template>
@@ -191,7 +191,7 @@ const text = ref('')
 | destroyOnClose         | boolean                                                                              | `false`   | 关闭后销毁内部 DOM                                                  |
 | keepAlive              | boolean                                                                              | `false`   | 即使未打开也保留 DOM（与 `destroyOnClose` 互斥）                    |
 | focusTriggerAfterClose | boolean                                                                              | `true`    | 关闭后聚焦回打开前的触发元素                                        |
-| push                   | `boolean \| { distance?: number }`                                                   | `false`   | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
+| push                   | `boolean \| { distance?: number }`                                                   | `true`    | 嵌套抽屉时让位距离；父抽屉设 `push=false` 表示不让位                |
 | zIndex                 | number                                                                               | `1000`    | 层级                                                                |
 | appendToBody           | boolean                                                                              | `true`    | 是否把浮层 Teleport 到 `document.body`                              |
 
@@ -215,3 +215,7 @@ const text = ref('')
 | footer     | 自定义底部内容（优先级高于 `footer` prop）        |
 | extra      | 标题右侧操作区（与 `title` 同行，inline-flex）    |
 | close-icon | 自定义关闭图标（优先级高于 `closable.closeIcon`） |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`mask`、`wrap`、`header`、`body`、`footer`。

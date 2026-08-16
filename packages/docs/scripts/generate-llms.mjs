@@ -30,7 +30,13 @@ function extractFirstParagraph(content) {
       continue
     }
     if (!line) continue
-    if (line.startsWith('#') || line.startsWith(':::') || line.startsWith('```') || line.startsWith('|') || line.startsWith('-'))
+    if (
+      line.startsWith('#') ||
+      line.startsWith(':::') ||
+      line.startsWith('```') ||
+      line.startsWith('|') ||
+      line.startsWith('-')
+    )
       return ''
     return line.replace(/[。.;；]\s*$/, '')
   }
@@ -43,9 +49,10 @@ function stripLeadingH1(content) {
 
 function collectComponents() {
   if (!fs.existsSync(componentsDir)) return []
-  const dirs = fs.readdirSync(componentsDir, { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name)
+  const dirs = fs
+    .readdirSync(componentsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
     .sort()
 
   const items = []
@@ -115,14 +122,16 @@ function buildFull(items) {
 ${stripLeadingH1(introduceMd).trim()}
 `
 
-  const sections = items.map(({ name, title, content }) => `---
+  const sections = items.map(
+    ({ name, title, content }) => `---
 
 # ${title}
 
 > 文档链接：${SITE_URL}/components/${name}/index.html
 
 ${stripLeadingH1(content).trim()}
-`)
+`,
+  )
 
   return `${header}\n\n${sections.join('\n\n')}\n`
 }

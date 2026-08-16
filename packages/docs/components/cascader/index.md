@@ -717,7 +717,9 @@ const options: Dept[] = [
     <template #option="{ option }">
       <span style="display: inline-flex; align-items: center; gap: 8px">
         <span>{{ option.label }}</span>
-        <span v-if="option.staff" style="font-size: 12px; color: #999">{{ option.staff }} 人</span>
+        <span v-if="option.staff" style="font-size: 12px; color: var(--ccui-color-text-tertiary)"
+          >{{ option.staff }} 人</span
+        >
       </span>
     </template>
   </c-cascader>
@@ -753,7 +755,9 @@ const options = [
 <template>
   <c-cascader v-model="value" :options="options" placeholder="选择派送区域">
     <template #popup="{ default: defaultPopup }">
-      <div style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; font-size: 12px; color: #999">
+      <div
+        style="padding: 8px 12px; border-bottom: 1px solid var(--ccui-color-border-secondary); font-size: 12px; color: var(--ccui-color-text-tertiary)"
+      >
         派送区域影响时效与运费
       </div>
       <component :is="defaultPopup" />
@@ -871,7 +875,7 @@ const opts = [
 | options           | `CascaderOption[]`                                         | `[]`                 | 数据源（递归 children）                                       |
 | fieldNames        | `{ label?, value?, children?, disabled? }`                 | `{}`                 | 字段名映射                                                    |
 | placeholder       | string                                                     | `请选择`             | 占位文案                                                      |
-| separator         | string                                                     | `/`                  | 默认 displayRender 的拼接符                                   |
+| separator         | string                                                     | `' / '`              | 默认 displayRender 的拼接符                                   |
 | displayRender     | `(labels, selectedOptions) => string`                      | --                   | 自定义路径展示                                                |
 | changeOnSelect    | boolean                                                    | `false`              | 中间节点也可选并提交                                          |
 | disabled          | boolean                                                    | `false`              | 是否禁用                                                      |
