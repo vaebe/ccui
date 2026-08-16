@@ -245,8 +245,8 @@ const data = [
 <template>
   <c-tree :data="data" default-expand-all>
     <template #title="{ node, expanded }">
-      <strong style="color: #1677ff;">{{ node.raw.title }}</strong>
-      <span v-if="expanded" style="margin-left: 8px; color: #999;">(展开)</span>
+      <strong style="color: var(--ccui-color-primary);">{{ node.raw.title }}</strong>
+      <span v-if="expanded" style="margin-left: 8px; color: var(--ccui-color-text-tertiary);">(展开)</span>
     </template>
     <template #icon="{ node }">{{ node.raw.icon }}</template>
   </c-tree>
@@ -315,7 +315,7 @@ const data = [
 <!-- 自定义 connector 内容 -->
 <c-tree :data="data" show-line>
   <template #connector="{ depth }">
-    <span style="color: #d9d9d9;">·</span>
+    <span style="color: var(--ccui-color-border);">·</span>
   </template>
 </c-tree>
 ```
@@ -512,3 +512,7 @@ type TreeDropPosition = 'before' | 'inside' | 'after'
 - 父子勾选联动忽略 `disabled` / `disableCheckbox` 后代——它们不计入"全选"判定。
 - `loadData` 完成后由消费者直接修改原 `node.children`，组件通过 reactive 检测重新平铺。
 - `drop` 事件**不会**自动改 `data`——业务实现移动逻辑。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`node`、`switcher`、`label`。

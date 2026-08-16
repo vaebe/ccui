@@ -108,7 +108,12 @@ ccui 的设计变量统一以 `--ccui-` 开头，覆盖颜色、圆角、字号�
   </c-config-provider>
 
   <div style="margin-top: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
-    <c-button v-for="c in colors" :key="c" :style="{ background: c, color: '#fff', border: 'none' }" @click="color = c">
+    <c-button
+      v-for="c in colors"
+      :key="c"
+      :style="{ background: c, color: 'var(--ccui-color-text-light-solid)', border: 'none' }"
+      @click="color = c"
+    >
       {{ c }}
     </c-button>
     <span style="margin-inline-start: 8px">圆角</span>

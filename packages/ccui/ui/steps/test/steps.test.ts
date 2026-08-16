@@ -1,11 +1,20 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Steps } from '../index'
+import type { StepItem, StepsDirection, StepsProps, StepsSize, StepsType, StepStatus } from '../index'
 
 const ns = useNamespace('steps', true)
 
 describe('steps', () => {
+  it('从入口导出文档公开的 Steps 类型', () => {
+    expectTypeOf<StepItem>().toMatchTypeOf<{ disabled?: boolean; status?: StepStatus }>()
+    expectTypeOf<StepsProps['items']>().toMatchTypeOf<StepItem[]>()
+    expectTypeOf<StepsProps['direction']>().toEqualTypeOf<StepsDirection>()
+    expectTypeOf<StepsProps['size']>().toEqualTypeOf<StepsSize>()
+    expectTypeOf<StepsProps['type']>().toEqualTypeOf<StepsType>()
+  })
+
   it('renders all items', () => {
     const wrapper = mount(Steps, {
       props: {
@@ -37,6 +46,25 @@ describe('steps', () => {
     })
     await wrapper.findAll(ns.e('item'))[1].trigger('click')
     expect(wrapper.emitted('update:current')?.[0]).toEqual([1])
+    expect(wrapper.emitted('change')?.[0]).toEqual([1])
+  })
+
+  it('allows keyboard activation while keeping disabled steps out of the tab order', async () => {
+    const wrapper = mount(Steps, {
+      props: {
+        current: 0,
+        items: [{ title: 'A' }, { title: 'B', disabled: true }],
+      },
+    })
+    const items = wrapper.findAll(ns.e('item'))
+
+    expect(items[0].attributes('tabindex')).toBe('0')
+    expect(items[1].attributes('tabindex')).toBe('-1')
+    expect(items[1].attributes('aria-disabled')).toBe('true')
+
+    await items[0].trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:current')).toEqual([[0]])
+    expect(wrapper.emitted('change')).toEqual([[0]])
   })
 
   it('does not emit on disabled item', async () => {
@@ -48,6 +76,7 @@ describe('steps', () => {
     })
     await wrapper.findAll(ns.e('item'))[1].trigger('click')
     expect(wrapper.emitted('update:current')).toBeUndefined()
+    expect(wrapper.emitted('change')).toBeUndefined()
   })
 
   it('respects custom item status', () => {

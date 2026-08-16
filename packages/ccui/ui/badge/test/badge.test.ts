@@ -1,11 +1,16 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import type { BadgeProps } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Badge } from '../index'
 
 const ns = useNamespace('badge', true)
 
 describe('badge', () => {
+  it('exposes the documented prop type from the public entry', () => {
+    const props: Partial<BadgeProps> = { count: 1 }
+    expect(props.count).toBe(1)
+  })
   it('renders count number', () => {
     const wrapper = mount(Badge, { props: { count: 5 } })
     expect(wrapper.text()).toBe('5')
@@ -29,6 +34,7 @@ describe('badge', () => {
   it('renders status dot', () => {
     const wrapper = mount(Badge, { props: { status: 'success', text: 'Success' } })
     expect(wrapper.find(ns.em('status-dot', 'success')).exists()).toBe(true)
+    expect(wrapper.find(ns.em('status-dot', 'success')).attributes('aria-hidden')).toBe('true')
     expect(wrapper.text()).toContain('Success')
   })
 

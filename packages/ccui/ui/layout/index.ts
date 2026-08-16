@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import { Content, Footer, Header, Layout, Sider } from './src/layout'
+export type { LayoutProps, SiderBreakpoint, SiderProps, SiderTheme } from './src/layout-types'
 
 const components = [Layout, Header, Footer, Content, Sider]
 

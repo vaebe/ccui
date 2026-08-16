@@ -74,6 +74,16 @@ describe('progress', () => {
     expect(bg.attributes('style')).toContain('height: 12px')
   })
 
+  it('applies numeric thickness and tuple width/thickness without prop coercion', () => {
+    const numeric = mount(Progress, { props: { percent: 60, size: 16 } })
+    expect(numeric.find(ns.e('inner')).attributes('style')).toContain('height: 16px')
+    expect(numeric.find(ns.e('bg')).attributes('style')).toContain('height: 16px')
+
+    const tuple = mount(Progress, { props: { percent: 60, size: [240, 12] } })
+    expect(tuple.attributes('style')).toContain('width: 240px')
+    expect(tuple.find(ns.e('inner')).attributes('style')).toContain('height: 12px')
+  })
+
   it('renders dashboard progress with custom width and slot formatter', () => {
     const wrapper = mount(Progress, {
       props: { type: 'dashboard', percent: 25, width: 80, strokeWidth: 10, trailColor: 'gray' },
@@ -93,5 +103,17 @@ describe('progress', () => {
     expect(wrapper.find(ns.m('status-active')).exists()).toBe(true)
     expect(wrapper.find(ns.e('status-icon')).exists()).toBe(false)
     expect(wrapper.text()).toContain('50%')
+  })
+
+  it('exposes progress semantics, attrs, and finite percent clamping', () => {
+    const wrapper = mount(Progress, {
+      attrs: { id: 'upload-progress', 'aria-label': 'Upload' },
+      props: { percent: Number.POSITIVE_INFINITY },
+    })
+    const root = wrapper.element
+    expect(root.getAttribute('role')).toBe('progressbar')
+    expect(root.getAttribute('aria-valuenow')).toBe('0')
+    expect(root.getAttribute('aria-label')).toBe('Upload')
+    expect(root.id).toBe('upload-progress')
   })
 })

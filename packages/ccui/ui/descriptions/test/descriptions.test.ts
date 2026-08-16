@@ -121,4 +121,30 @@ describe('descriptions', () => {
     })
     expect(wrapper.find(ns.e('header')).exists()).toBe(false)
   })
+
+  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'forwards attrs and clamps invalid grid value %s',
+    (invalid) => {
+      const wrapper = mount(Descriptions, {
+        attrs: { id: 'details', 'aria-label': 'Details' },
+        props: { column: invalid, items: [{ label: 'A', value: '1', span: invalid }] },
+      })
+      expect(wrapper.attributes('id')).toBe('details')
+      expect(wrapper.attributes('aria-label')).toBe('Details')
+      expect(wrapper.find('td').attributes('colspan')).toBe('1')
+    },
+  )
+
+  it('floors finite fractional spans while preserving valid columns', () => {
+    const wrapper = mount(Descriptions, {
+      props: {
+        column: 2.9,
+        items: [
+          { label: 'A', value: '1', span: 1.9 },
+          { label: 'B', value: '2', span: 1 },
+        ],
+      },
+    })
+    expect(wrapper.findAll('td')[0].attributes('colspan')).toBe('1')
+  })
 })

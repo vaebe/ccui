@@ -110,7 +110,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <c-input-otp v-model="v1" :length="6" :formatter="upper" />
+  <c-input-otp v-model="v1" type="text" :length="6" :formatter="upper" />
   <c-input-otp v-model="v2" :length="6" :formatter="digit" style="margin-top: 12px" />
 </template>
 ```
@@ -146,26 +146,29 @@ export default defineComponent({
 
 ## InputOtp 参数
 
-| 参数         | 类型                            | 默认    | 说明                                         |
-| ------------ | ------------------------------- | ------- | -------------------------------------------- |
-| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model         |
-| defaultValue | string                          | --      | 非受控初值                                   |
-| length       | number                          | 6       | 单元格数量                                   |
-| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示 |
-| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用               |
-| autoFocus    | boolean                         | false   | 挂载时聚焦首格                               |
-| disabled     | boolean                         | false   | 整体禁用                                     |
-| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                         |
-| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                     |
+| 参数         | 类型                            | 默认    | 说明                                          |
+| ------------ | ------------------------------- | ------- | --------------------------------------------- |
+| modelValue   | string                          | ''      | 完整字符串（长度 ≤ length），v-model          |
+| defaultValue | string                          | --      | 非受控初值                                    |
+| length       | number                          | 6       | 单元格数量；取整并限制在 1–64                 |
+| type         | 'number' \| 'text'              | number  | 移动端软键盘类型；字符过滤仍由 formatter 控制 |
+| mask         | boolean \| string               | false   | true 用 `•`；string 用任意单字符；仅影响显示  |
+| formatter    | (v: string) => string           | --      | 单字符变换器，写入 cell 前调用                |
+| autoFocus    | boolean                         | false   | 挂载时聚焦首格                                |
+| disabled     | boolean                         | false   | 整体禁用                                      |
+| readOnly     | boolean                         | false   | 只读；仍可聚焦和选择                          |
+| size         | 'large' \| 'default' \| 'small' | default | 尺寸                                          |
+| status       | '' \| 'error' \| 'warning'      | ''      | 校验状态                                      |
 
 ## InputOtp 事件
 
-| 事件名            | 参数               | 说明                                     |
-| ----------------- | ------------------ | ---------------------------------------- |
-| update:modelValue | value              | v-model                                  |
-| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号 |
-| focus             | event              | 任一 cell 获得焦点                       |
-| blur              | event              | 任一 cell 失去焦点                       |
+| 事件名            | 参数               | 说明                                       |
+| ----------------- | ------------------ | ------------------------------------------ |
+| update:modelValue | value              | v-model                                    |
+| change            | (value, { index }) | 任意格内容变化时触发，index 是触发格序号   |
+| complete          | value              | 所有 cell 填满时触发；同一完成值仅触发一次 |
+| focus             | event              | 焦点从组件外进入整个 OTP group             |
+| blur              | event              | 焦点离开整个 OTP group                     |
 
 ## 行为说明
 
@@ -173,4 +176,5 @@ export default defineComponent({
 - **Backspace**：当前格有值 → 清掉；当前格为空且不在首格 → 回到上一格并清掉。
 - **ArrowLeft / ArrowRight**：显式跨格焦点。
 - **`autocomplete="one-time-code"`**：首格设置该属性，配合 iOS / Android 系统自动填充短信验证码。
-- **`inputmode="numeric"`**：移动端默认弹出数字键盘。
+- **移动端键盘**：`type="number"` 使用 `inputmode="numeric"`，`type="text"` 使用文本键盘；字符过滤请使用 `formatter`。
+- **焦点事件**：cell 之间移动不会重复触发 `focus` / `blur`；仅进入或离开整个组件时触发。

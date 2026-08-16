@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Image from './src/image'
+export type { ImageFit, ImageProps } from './src/image-types'
 
 Image.install = function (app: App): void {
   app.component(Image.name!, Image)

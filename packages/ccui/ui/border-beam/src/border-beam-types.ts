@@ -23,20 +23,35 @@ export const borderBeamProps = {
     type: [Number, String] as PropType<number | string>,
     default: 0,
   },
-  /** 边框 / 光带粗细（px） */
+  /** 边框 / 光带粗细（number 视为 px） */
   borderWidth: {
-    type: Number,
+    type: [Number, String] as PropType<number | string>,
     default: 1,
   },
-  /** 容器圆角（px），与被包裹内容保持一致即可严丝合缝 */
+  /** 容器圆角（number 视为 px）；asChild 时不传则继承目标元素 */
   borderRadius: {
-    type: Number,
+    type: [Number, String] as PropType<number | string>,
     default: 8,
+  },
+  /** 流光渐变层边长，同时控制拐角处的平滑转弯半径（number 视为 px） */
+  size: {
+    type: [Number, String] as PropType<number | string>,
+    default: 100,
   },
   /** 跑完一圈的时长（秒） */
   duration: {
     type: Number,
     default: 6,
+  },
+  /** 同时显示的流光数量，动画会均匀错开 */
+  count: {
+    type: Number,
+    default: 1,
+  },
+  /** 是否移除包装层，并把流光层挂载到唯一的默认插槽元素中 */
+  asChild: {
+    type: Boolean,
+    default: false,
   },
 } as const
 

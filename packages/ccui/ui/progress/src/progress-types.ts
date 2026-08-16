@@ -2,7 +2,8 @@ import type { ExtractPropTypes, PropType } from 'vue'
 
 export type ProgressType = 'line' | 'circle' | 'dashboard'
 export type ProgressStatus = 'success' | 'exception' | 'normal' | 'active'
-export type ProgressSize = 'default' | 'small'
+/** Line progress preset, thickness, or `[width, thickness]` in pixels. */
+export type ProgressSize = 'default' | 'small' | number | [number, number]
 
 export const progressProps = {
   percent: {
@@ -38,7 +39,7 @@ export const progressProps = {
     default: 120,
   },
   size: {
-    type: String as PropType<ProgressSize>,
+    type: [String, Number, Array] as PropType<ProgressSize>,
     default: 'default',
   },
   format: {
@@ -50,7 +51,8 @@ export const progressProps = {
 export type ProgressProps = ExtractPropTypes<typeof progressProps>
 
 export function clampPercent(p: number): number {
-  if (Number.isNaN(p)) {
+  // Progress is a finite percentage; reject infinities as well as NaN so CSS never receives invalid widths.
+  if (!Number.isFinite(p)) {
     return 0
   }
   return Math.min(100, Math.max(0, p))

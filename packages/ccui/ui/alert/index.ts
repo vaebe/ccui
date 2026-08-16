@@ -1,6 +1,9 @@
 import type { App } from 'vue'
 import Alert from './src/alert'
 
+// Keep the documented component contracts importable from Alert's public entry.
+export type { AlertProps, AlertType } from './src/alert-types'
+
 Alert.install = function (app: App): void {
   app.component(Alert.name!, Alert)
 }

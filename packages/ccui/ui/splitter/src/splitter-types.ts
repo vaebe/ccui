@@ -68,6 +68,8 @@ export interface SplitterContext {
   unregisterPanel: (id: number) => void
   getSize: (id: number) => number | undefined
   startResize: (id: number, e: PointerEvent) => void
+  resizeByKeyboard: (id: number, action: 'decrease' | 'increase' | 'min' | 'max') => void
+  getSeparatorValue: (id: number) => { min: number; max?: number; now: number }
   // 折叠 / 展开。
   isCollapsed: (id: number) => boolean
   toggleCollapse: (id: number) => void

@@ -70,7 +70,10 @@ export default defineComponent({
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
+    // inputReadOnly=false 时保留用户正在录入的文本；null 表示跟随受控 modelValue 展示。
+    const inputDraft = shallowRef<string | null>(null)
     const open = shallowRef(false)
+    let suppressNextFocusout = false
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const effectiveFormat = computed(() => props.format || (props.use12Hours ? 'h:mm:ss a' : 'HH:mm:ss'))
@@ -88,6 +91,17 @@ export default defineComponent({
       // 外部值改变 → 同步到 pending（避免 popup 打开期间外部 setState 导致面板停留在旧值）
       syncPendingFromSelected()
     })
+
+    watch([() => props.modelValue, effectiveFormat], () => {
+      inputDraft.value = null
+    })
+
+    watch(
+      () => props.inputReadOnly,
+      (readOnly) => {
+        if (readOnly) inputDraft.value = null
+      },
+    )
 
     const placement = computed(() => PLACEMENT_TO_FLOATING[props.placement])
     const popupContainer = computed<HTMLElement | null>(() => {
@@ -146,10 +160,11 @@ export default defineComponent({
       emit('open-change', true)
     }
 
-    function closePopup() {
+    function closePopup(restoreFocus = false) {
       if (!open.value) return
       open.value = false
       emit('open-change', false)
+      if (restoreFocus) nextTick(() => inputRef.value?.focus())
     }
 
     function togglePopup() {
@@ -161,6 +176,7 @@ export default defineComponent({
     }
 
     function emitChange(next: Dayjs | null) {
+      inputDraft.value = null
       const value = emitValue(next, props.valueFormat, effectiveFormat.value)
       emit('update:modelValue', value)
       emit('change', value, next ? next.format(effectiveFormat.value) : '')
@@ -194,29 +210,100 @@ export default defineComponent({
     function pickValue(type: ColumnType, value: number) {
       const next = previewValue(type, value)
       if (!props.showOk) {
+        if (!isTimeSelectable(next)) return
         emitChange(next)
-        closePopup()
+        closePopup(true)
       }
     }
 
     function clickNow() {
       const now = dayjs()
+      if (!isTimeSelectable(now)) return
       pendingDayjs.value = now
       if (!props.showOk) {
         emitChange(now)
-        closePopup()
+        closePopup(true)
       }
     }
 
     function clickOk() {
+      if (!isTimeSelectable(pendingDayjs.value)) return
       emitChange(pendingDayjs.value)
-      closePopup()
+      closePopup(true)
     }
 
-    function clear(e: MouseEvent) {
+    function clear(e: Event) {
       e.stopPropagation()
       if (!selectedDayjs.value) return
       emitChange(null)
+      nextTick(() => inputRef.value?.focus())
+    }
+
+    function onClearKeydown(e: KeyboardEvent) {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      e.preventDefault()
+      clear(e)
+    }
+
+    function commitInput() {
+      if (props.inputReadOnly || inputDraft.value === null) return
+      const raw = inputDraft.value.trim()
+      if (!raw) {
+        if (selectedDayjs.value) emitChange(null)
+        else inputDraft.value = null
+        return
+      }
+      const parsed = toDayjs(raw, effectiveFormat.value)
+      if (!parsed || !isTimeSelectable(parsed)) {
+        inputDraft.value = null
+        return
+      }
+      emitChange(parsed)
+      closePopup(true)
+    }
+
+    function onInputKeydown(e: KeyboardEvent) {
+      if (props.disabled) return
+      if (!props.inputReadOnly && inputDraft.value !== null && e.key === 'Enter') {
+        e.preventDefault()
+        commitInput()
+        return
+      }
+      if (!open.value && (e.key === 'Enter' || e.key === 'ArrowDown' || (props.inputReadOnly && e.key === ' '))) {
+        e.preventDefault()
+        openPopup()
+        return
+      }
+      if (!open.value) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closePopup(true)
+      } else if (e.key === 'Tab') {
+        closePopup()
+      }
+    }
+
+    function onInputBlur(e: FocusEvent) {
+      const next = e.relatedTarget as Node | null
+      if (next && (rootRef.value?.contains(next) || popupRef.value?.contains(next))) return
+      commitInput()
+      suppressNextFocusout = true
+      emit('blur')
+      formItem?.validate('blur')
+      Promise.resolve().then(() => {
+        suppressNextFocusout = false
+      })
+    }
+
+    function onComponentFocusout(e: FocusEvent) {
+      const next = e.relatedTarget as Node | null
+      if (next && (rootRef.value?.contains(next) || popupRef.value?.contains(next))) return
+      if (suppressNextFocusout) {
+        suppressNextFocusout = false
+        return
+      }
+      emit('blur')
+      formItem?.validate('blur')
     }
 
     function onClickOutside(e: MouseEvent) {
@@ -239,6 +326,13 @@ export default defineComponent({
       document.removeEventListener('mousedown', onClickOutside, true)
     })
 
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        if (disabled) closePopup()
+      },
+    )
+
     const showClear = computed(() => props.clearable && !props.disabled && !!selectedDayjs.value)
 
     function valuesFor(type: ColumnType): { value: number; disabled: boolean }[] {
@@ -250,6 +344,38 @@ export default defineComponent({
         { value: 0, disabled: false },
         { value: 1, disabled: false },
       ]
+    }
+
+    function isTimeSelectable(value: Dayjs): boolean {
+      if (props.showHour) {
+        const hour = value.hour()
+        if (props.disabledHours?.().includes(hour)) return false
+        if (props.use12Hours) {
+          const display = to12h(hour).display
+          const order = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          const step = Number.isFinite(props.hourStep) && props.hourStep > 0 ? props.hourStep : 1
+          if (!order.filter((_, index) => index % step === 0).includes(display)) return false
+        } else if (!buildTimeColumnValues(24, props.hourStep).some((cell) => cell.value === hour)) {
+          return false
+        }
+      }
+      if (
+        props.showMinute &&
+        !buildTimeColumnValues(60, props.minuteStep, props.disabledMinutes?.(value.hour())).some(
+          (cell) => cell.value === value.minute() && !cell.disabled,
+        )
+      ) {
+        return false
+      }
+      if (
+        props.showSecond &&
+        !buildTimeColumnValues(60, props.secondStep, props.disabledSeconds?.(value.hour(), value.minute())).some(
+          (cell) => cell.value === value.second() && !cell.disabled,
+        )
+      ) {
+        return false
+      }
+      return true
     }
 
     function selectedValue(type: ColumnType): number {
@@ -318,18 +444,29 @@ export default defineComponent({
       } else if (e.key === 'Enter') {
         e.preventDefault()
         if (props.showOk) clickOk()
-        else closePopup()
+        else if (isTimeSelectable(pendingDayjs.value)) {
+          emitChange(pendingDayjs.value)
+          closePopup(true)
+        }
       } else if (e.key === 'Escape') {
         e.preventDefault()
-        closePopup()
+        closePopup(true)
       }
     }
 
     function renderColumn(type: ColumnType) {
       const values = valuesFor(type)
       const selected = selectedValue(type)
+      const selectedIndex = values.findIndex((cell) => cell.value === selected && !cell.disabled)
+      const tabStopIndex = selectedIndex >= 0 ? selectedIndex : values.findIndex((cell) => !cell.disabled)
+      const columnLabel = type === 'hour' ? '小时' : type === 'minute' ? '分钟' : type === 'second' ? '秒' : 'AM/PM'
       return (
-        <ul class={[ns.e('column'), ns.em('column', type)]} role="listbox" aria-label={type} data-time-column={type}>
+        <ul
+          class={[ns.e('column'), ns.em('column', type)]}
+          role="listbox"
+          aria-label={columnLabel}
+          data-time-column={type}
+        >
           {values.map((cell, i) => {
             const isSelected = cell.value === selected
             const label = cellLabel(type, cell.value)
@@ -343,8 +480,9 @@ export default defineComponent({
                   isSelected && ns.em('cell', 'selected'),
                   cell.disabled && ns.em('cell', 'disabled'),
                 ]}
+                id={`${popupId}-${type}-${cell.value}`}
                 role="option"
-                tabindex={cell.disabled ? -1 : 0}
+                tabindex={!cell.disabled && i === tabStopIndex ? 0 : -1}
                 aria-selected={isSelected}
                 aria-disabled={cell.disabled}
                 onClick={() => !cell.disabled && pickValue(type, cell.value)}
@@ -390,15 +528,26 @@ export default defineComponent({
 
       const footerNodes = []
       if (props.showNow) {
+        const nowDisabled = !isTimeSelectable(dayjs())
         footerNodes.push(
-          <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'now')]} onClick={clickNow}>
+          <button
+            type="button"
+            class={[ns.e('footer-btn'), ns.em('footer-btn', 'now')]}
+            disabled={nowDisabled}
+            onClick={clickNow}
+          >
             {nowText.value}
           </button>,
         )
       }
       if (props.showOk) {
         footerNodes.push(
-          <button type="button" class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]} onClick={clickOk}>
+          <button
+            type="button"
+            class={[ns.e('footer-btn'), ns.em('footer-btn', 'ok')]}
+            disabled={!isTimeSelectable(pendingDayjs.value)}
+            onClick={clickOk}
+          >
             {okText.value}
           </button>,
         )
@@ -414,6 +563,7 @@ export default defineComponent({
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
           'aria-label': placeholderText.value || '选择时间',
+          onFocusout: teleported.value ? onComponentFocusout : undefined,
         },
         [
           <div class={ns.e('columns')}>{columns}</div>,
@@ -445,7 +595,12 @@ export default defineComponent({
     ])
 
     return () => (
-      <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
+      <div
+        ref={rootRef}
+        class={[rootCls.value, props.classNames?.root]}
+        style={props.styles?.root}
+        onFocusout={onComponentFocusout}
+      >
         <div class={ns.e('input-wrap')} onClick={togglePopup}>
           <input
             ref={inputRef}
@@ -455,18 +610,26 @@ export default defineComponent({
             readonly={props.inputReadOnly}
             disabled={props.disabled}
             placeholder={placeholderText.value}
-            value={inputDisplay.value}
+            value={inputDraft.value ?? inputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value}
             aria-controls={popupId}
             onFocus={() => emit('focus')}
-            onBlur={() => {
-              emit('blur')
-              formItem?.validate('blur')
+            onInput={(e: Event) => {
+              if (!props.inputReadOnly) inputDraft.value = (e.target as HTMLInputElement).value
             }}
+            onBlur={onInputBlur}
+            onKeydown={onInputKeydown}
           />
           {showClear.value ? (
-            <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
+            <span
+              class={ns.e('clear')}
+              role="button"
+              tabindex={0}
+              aria-label={locale.value.clearLabel || '清除'}
+              onClick={clear}
+              onKeydown={onClearKeydown}
+            >
               {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}
             </span>
           ) : props.showSuffix ? (

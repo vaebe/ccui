@@ -36,4 +36,12 @@ describe('skeleton-node', () => {
   it('active=true 应用 --active modifier', () => {
     expect(mount(SkeletonNode, { props: { active: true } }).classes()).toContain('ccui-skeleton-node--active')
   })
+
+  it('forwards root attrs while retaining decorative semantics', () => {
+    const wrapper = mount(SkeletonNode, { attrs: { id: 'node', 'data-test': 'skeleton-node' } })
+    expect(wrapper.attributes('id')).toBe('node')
+    expect(wrapper.attributes('data-test')).toBe('skeleton-node')
+    expect(wrapper.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.attributes('aria-busy')).toBe('true')
+  })
 })

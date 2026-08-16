@@ -6,7 +6,7 @@ import type {
   TextareaShowCountObject,
 } from './textarea-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, defineComponent, getCurrentInstance, nextTick, onBeforeUpdate, onMounted, ref, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { textareaProps } from './textarea-types'
 import './textarea.scss'
@@ -50,7 +50,13 @@ export default defineComponent({
     const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
     // ── 受控 / 非受控值（defaultValue 仅在首次取） ─────────
-    const initial = props.modelValue !== '' ? props.modelValue : (props.defaultValue ?? '')
+    const instance = getCurrentInstance()
+    const hasModelValue = () => {
+      const vnodeProps = instance?.vnode.props
+      return !!vnodeProps && ('modelValue' in vnodeProps || 'model-value' in vnodeProps)
+    }
+    let modelValueWasProvided = hasModelValue()
+    const initial = modelValueWasProvided ? props.modelValue : (props.defaultValue ?? '')
     const innerValue = ref(initial)
 
     // ── allowClear 解析 ──────────────────────────────────
@@ -171,6 +177,7 @@ export default defineComponent({
     const clearValue = () => {
       updateValue('')
       emit('clear')
+      textareaRef.value?.focus()
       if (autoSizeEnabled.value) {
         void nextTick(resizeTextarea)
       }
@@ -187,6 +194,16 @@ export default defineComponent({
         }
       },
     )
+
+    // raw prop 从缺省切到显式 '' 时 resolved prop 值不变，watch 不会触发。
+    onBeforeUpdate(() => {
+      const modelValueIsProvided = hasModelValue()
+      if (modelValueIsProvided && !modelValueWasProvided && props.modelValue !== innerValue.value) {
+        innerValue.value = props.modelValue
+        if (autoSizeEnabled.value) void nextTick(resizeTextarea)
+      }
+      modelValueWasProvided = modelValueIsProvided
+    })
 
     watch(
       () => props.autoSize,
@@ -218,24 +235,48 @@ export default defineComponent({
       const custom = customClearIcon.value
       if (!custom) {
         return (
-          <i class={ns.e('clear')} onClick={clearValue} aria-label="clear">
+          <button
+            type="button"
+            class={ns.e('clear')}
+            onMousedown={(event: MouseEvent) => event.preventDefault()}
+            onClick={clearValue}
+            aria-label="清除输入"
+          >
             ×
-          </i>
+          </button>
         )
       }
       if (typeof custom === 'string') {
         return isIconifyName(custom) ? (
-          <span class={ns.e('clear')} onClick={clearValue}>
+          <button
+            type="button"
+            class={ns.e('clear')}
+            onMousedown={(event: MouseEvent) => event.preventDefault()}
+            onClick={clearValue}
+            aria-label="清除输入"
+          >
             <IconifyIcon icon={custom} />
-          </span>
+          </button>
         ) : (
-          <i class={[ns.e('clear'), custom]} onClick={clearValue}></i>
+          <button
+            type="button"
+            class={[ns.e('clear'), custom]}
+            onMousedown={(event: MouseEvent) => event.preventDefault()}
+            onClick={clearValue}
+            aria-label="清除输入"
+          ></button>
         )
       }
       return (
-        <span class={ns.e('clear')} onClick={clearValue}>
+        <button
+          type="button"
+          class={ns.e('clear')}
+          onMousedown={(event: MouseEvent) => event.preventDefault()}
+          onClick={clearValue}
+          aria-label="清除输入"
+        >
           {custom as VNode}
-        </span>
+        </button>
       )
     }
 

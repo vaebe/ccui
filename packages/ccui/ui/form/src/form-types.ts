@@ -125,6 +125,7 @@ export const formInjectionKey: InjectionKey<FormContext> = Symbol('ccuiForm')
 
 export interface FormItemInjectedContext {
   validateStatus: Ref<FormValidateStatus>
+  messageId?: ComputedRef<string | undefined>
   isInsideForm: boolean
   validate: (trigger?: FormValidateTrigger) => Promise<boolean>
 }

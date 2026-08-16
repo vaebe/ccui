@@ -1,6 +1,6 @@
 # 简介
 
-vue3-ccui 是基于 Vue 3 + TypeScript 的现代组件库，提供完整 Design Token 系统与工业级视觉规范。覆盖七大类 84 个组件 / 工具入口，内置完整 i18n（zhCN / enUS / jaJP / koKR）与 ARIA 审计。
+vue3-ccui 是基于 Vue 3 + TypeScript 的现代组件库，提供完整 Design Token 系统与工业级视觉规范。文档站覆盖七大类 83 个组件 / 工具与主题指南入口，内置完整 i18n（zhCN / enUS / jaJP / koKR）与 ARIA 审计。
 
 升级指南、组件文档与设计 Token 详见 [文档站](https://vaebe.github.io/ccui)。
 
@@ -18,7 +18,7 @@ $ npm install @vaebe/ccui --save
 $ yarn add @vaebe/ccui
 
 # pnpm
-$ pnpm install @vaebe/ccui
+$ pnpm add @vaebe/ccui
 ```
 
 ### 完整引入

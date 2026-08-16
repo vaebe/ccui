@@ -36,3 +36,9 @@ $skeleton-icon: $ccui-color-fill;
     background-position: 0 50%;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-skeleton-node--active {
+    animation: none;
+  }
+}

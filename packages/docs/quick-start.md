@@ -10,7 +10,7 @@ $ npm install @vaebe/ccui --save
 $ yarn add @vaebe/ccui
 
 # pnpm
-$ pnpm install @vaebe/ccui
+$ pnpm add @vaebe/ccui
 ```
 
 ## 完整引入
@@ -74,7 +74,7 @@ Webpack / Rspack / Rollup / esbuild 把 `Vue3CCUIResolver()` 注册到对应构�
   <!-- 导入样式 -->
   <link rel="stylesheet" href="https://unpkg.com/@vaebe/ccui/style.css" />
   <!-- 导入 Vue 3 -->
-  <script src="//cdn.jsdelivr.net/npm/vue@next"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
   <!-- 导入组件库 -->
   <script src="https://unpkg.com/@vaebe/ccui"></script>
 </head>

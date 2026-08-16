@@ -65,13 +65,13 @@ const b = ref(['1'])
 </script>
 
 <template>
-  <p style="color: #666; margin-bottom: 4px">bordered=false</p>
+  <p style="color: var(--ccui-color-text-secondary); margin-bottom: 4px">bordered=false</p>
   <c-collapse v-model="a" :bordered="false">
     <c-collapse-item name="1" title="无边框面板一">内容</c-collapse-item>
     <c-collapse-item name="2" title="无边框面板二">内容</c-collapse-item>
   </c-collapse>
 
-  <p style="color: #666; margin-top: 16px; margin-bottom: 4px">ghost</p>
+  <p style="color: var(--ccui-color-text-secondary); margin-top: 16px; margin-bottom: 4px">ghost</p>
   <c-collapse v-model="b" ghost>
     <c-collapse-item name="1" title="幽灵面板一">内容</c-collapse-item>
     <c-collapse-item name="2" title="幽灵面板二">内容</c-collapse-item>
@@ -159,7 +159,7 @@ function onChange(names) {
     <c-collapse-item name="2" title="面板二">内容 2</c-collapse-item>
     <c-collapse-item name="3" title="面板三">内容 3</c-collapse-item>
   </c-collapse>
-  <p style="margin-top: 8px; color: #666">最近一次激活：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近一次激活：{{ log }}</p>
 </template>
 ```
 
@@ -243,10 +243,10 @@ const faqs = [
   <c-collapse v-model="v" accordion>
     <c-collapse-item v-for="(faq, i) in faqs" :key="faq.name" :name="faq.name">
       <template #title>
-        <span style="color: #1677ff; font-weight: 500; margin-inline-end: 6px">Q{{ i + 1 }}</span>
+        <span style="color: var(--ccui-color-primary); font-weight: 500; margin-inline-end: 6px">Q{{ i + 1 }}</span>
         <span>{{ faq.q }}</span>
       </template>
-      <p style="margin: 0; color: #595959; line-height: 1.6">{{ faq.a }}</p>
+      <p style="margin: 0; color: var(--ccui-color-text-secondary); line-height: 1.6">{{ faq.a }}</p>
     </c-collapse-item>
   </c-collapse>
 </template>

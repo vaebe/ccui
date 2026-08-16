@@ -115,6 +115,7 @@ export default defineComponent({
     const notFoundLocal = computed(() => props.notFoundContent || cfg.locale?.TreeSelect?.notFoundContent || '暂无数据')
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
+    const inputWrapRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
     const searchInputRef = ref<HTMLInputElement | null>(null)
     const treeRootRef = ref<HTMLElement | null>(null)
@@ -296,7 +297,7 @@ export default defineComponent({
         nextTick(() => {
           if (props.multiple) {
             // 多选模式不渲染 <input>，inputRef 恒为 null；真正可聚焦的是 tabindex=0 的 input-wrap
-            ;(rootRef.value?.querySelector(`.${ns.e('input-wrap')}`) as HTMLElement | null)?.focus()
+            inputWrapRef.value?.focus()
           } else {
             inputRef.value?.focus()
           }
@@ -373,6 +374,8 @@ export default defineComponent({
           style: [popupStyle, props.styles?.popup] as any,
           role: 'dialog',
           'aria-label': props.placeholder || '选择',
+          onFocusin: props.multiple ? onComponentFocusin : undefined,
+          onFocusout: props.multiple ? onComponentFocusout : undefined,
         },
         [
           renderSearchBox(),
@@ -427,7 +430,7 @@ export default defineComponent({
       if (k === 'Escape') {
         e.preventDefault()
         closePopup()
-        inputRef.value?.focus()
+        ;(inputRef.value ?? inputWrapRef.value)?.focus()
         return
       }
       if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(k)) {
@@ -435,6 +438,21 @@ export default defineComponent({
         e.preventDefault()
         forwardKeydownToTree(k)
       }
+    }
+
+    function containsFocusTarget(target: EventTarget | null) {
+      if (!(target instanceof Node)) return false
+      return !!rootRef.value?.contains(target) || !!popupRef.value?.contains(target)
+    }
+
+    function onComponentFocusin(e: FocusEvent) {
+      if (!containsFocusTarget(e.relatedTarget)) emit('focus')
+    }
+
+    function onComponentFocusout(e: FocusEvent) {
+      if (containsFocusTarget(e.relatedTarget)) return
+      emit('blur')
+      formItem?.validate('blur')
     }
 
     function renderPopup() {
@@ -531,15 +549,19 @@ export default defineComponent({
     return () => (
       <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
         <div
+          ref={inputWrapRef}
           class={[ns.e('input-wrap'), props.classNames?.inputWrap]}
           style={props.styles?.inputWrap}
-          tabindex={props.multiple ? 0 : undefined}
+          tabindex={props.multiple ? (props.disabled ? -1 : 0) : undefined}
           role={props.multiple ? 'combobox' : undefined}
           aria-haspopup={props.multiple ? 'tree' : undefined}
           aria-expanded={props.multiple ? open.value : undefined}
           aria-controls={props.multiple ? popupId : undefined}
+          aria-disabled={props.multiple ? props.disabled : undefined}
           onClick={togglePopup}
           onKeydown={props.multiple ? onInputKeydown : undefined}
+          onFocusin={props.multiple ? onComponentFocusin : undefined}
+          onFocusout={props.multiple ? onComponentFocusout : undefined}
         >
           {renderInputContent()}
           {showClear.value ? (

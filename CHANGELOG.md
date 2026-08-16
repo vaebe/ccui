@@ -29,14 +29,14 @@ v2 beta 阶段集中清理：把 v2 引入的 Ant 风格新名（v2 beta 期间�
 
 模板批量替换（kebab-case 与 PascalCase 同时改）：
 
-| 组件 | 删除（新名） | 替换为（旧名） |
-|---|---|---|
-| Input | `allow-clear` / `addon-before` / `addon-after` | `clearable` / `prepend` / `append` |
-| Tooltip | `title` / `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name` | `content` / `show-arrow` / `show-after` / `hide-after` / `popper-class` |
-| Popover | `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name` / `get-popup-container` | `show-arrow` / `show-after` / `hide-after` / `popper-class` / `teleported` |
-| Popconfirm | `ok-text` / `ok-type` | `confirm-text` / `confirm-type` |
-| Button | `html-type` / `shape="round"` / `shape="circle"` / `variant="..."` | `native-type` / `round` boolean / `circle` boolean / `plain` boolean |
-| InputNumber | `size="lg"` / `"md"` / `"sm"` | `size="large"` / `"default"` / `"small"` |
+| 组件        | 删除（新名）                                                                                       | 替换为（旧名）                                                             |
+| ----------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Input       | `allow-clear` / `addon-before` / `addon-after`                                                     | `clearable` / `prepend` / `append`                                         |
+| Tooltip     | `title` / `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name`               | `content` / `show-arrow` / `show-after` / `hide-after` / `popper-class`    |
+| Popover     | `arrow` / `mouse-enter-delay` / `mouse-leave-delay` / `overlay-class-name` / `get-popup-container` | `show-arrow` / `show-after` / `hide-after` / `popper-class` / `teleported` |
+| Popconfirm  | `ok-text` / `ok-type`                                                                              | `confirm-text` / `confirm-type`                                            |
+| Button      | `html-type` / `shape="round"` / `shape="circle"` / `variant="..."`                                 | `native-type` / `round` boolean / `circle` boolean / `plain` boolean       |
+| InputNumber | `size="lg"` / `"md"` / `"sm"`                                                                      | `size="large"` / `"default"` / `"small"`                                   |
 
 `<c-tooltip>` / `<c-popover>` 自定义浮层内容：原来用 `<template #title>` 的需要改为 `<template #content>`；Tooltip 浮层箭头 `pointAtCenter` 复合用法以及 Tooltip / Popover 的 `getPopupContainer` 容器函数已无替代——继续依赖请评估自行 fork 或在外层 portal 组件包装。
 

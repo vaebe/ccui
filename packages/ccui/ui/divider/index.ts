@@ -6,6 +6,7 @@ Divider.install = function (app: App): void {
 }
 
 export { Divider }
+export type { BorderStyleType, ContentPositionType, DirectionType, DividerProps } from './src/divider-types'
 
 export default {
   title: 'Divider 分隔线',

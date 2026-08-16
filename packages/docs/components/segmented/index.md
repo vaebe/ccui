@@ -22,7 +22,7 @@ const v = ref('Daily')
 
 <template>
   <c-segmented v-model="v" :options="['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']" />
-  <p style="margin-top: 8px; color: #666">当前：{{ v }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">当前：{{ v }}</p>
 </template>
 ```
 
@@ -121,7 +121,7 @@ function onChange(val) {
 
 <template>
   <c-segmented v-model="v" :options="['all', 'todo', 'done']" @change="onChange" />
-  <p style="margin-top: 8px; color: #666">最近 change：{{ log }}</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 change：{{ log }}</p>
 </template>
 ```
 
@@ -142,7 +142,9 @@ const pageSize = ref(20)
 
 <template>
   <c-segmented v-model="pageSize" :options="[10, 20, 50, 100]" />
-  <p style="margin-top: 8px; color: #666">每页 {{ pageSize }} 条（typeof = {{ typeof pageSize }}）</p>
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">
+    每页 {{ pageSize }} 条（typeof = {{ typeof pageSize }}）
+  </p>
 </template>
 ```
 
@@ -204,7 +206,7 @@ const members = [
             height: '20px',
             borderRadius: '50%',
             background: option.color,
-            color: '#fff',
+            color: 'var(--ccui-color-text-light-solid)',
             fontSize: '12px',
             display: 'inline-flex',
             alignItems: 'center',
@@ -266,15 +268,15 @@ const view = ref('list')
   <c-segmented v-model="view" :options="['list', 'kanban', 'chart']" style="margin-bottom: 12px" />
   <div
     style="
-      background: #fafafa;
-      border: 1px dashed #d9d9d9;
+      background: var(--ccui-area);
+      border: 1px dashed var(--ccui-color-border);
       border-radius: 6px;
       padding: 24px;
       min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #666;
+      color: var(--ccui-color-text-secondary);
     "
   >
     <span v-if="view === 'list'">📋 列表视图占位</span>
@@ -297,6 +299,10 @@ const view = ref('list')
 | block      | boolean                                   | `false`    | 撑满父容器             |
 | disabled   | boolean                                   | `false`    | 整组禁用               |
 | size       | `'small' \| 'middle' \| 'large'`          | `'middle'` | 尺寸                   |
+
+### 键盘与无障碍
+
+组件使用原生单选组语义：Tab 进入当前选项，方向键切换到相邻可用选项，Home / End 跳转到首个 / 最后一个可用选项。请通过可见标签或 `aria-label` 为整组提供名称。
 
 ### SegmentedOption
 

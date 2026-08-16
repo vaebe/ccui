@@ -1,7 +1,7 @@
 @use '../../style-var/index.scss' as *;
 
-// 实现：mask 取边框环 + offset-path 矩形路径（固定 round 100px，
-// 大圆角让过弯旋转平滑无卡顿）+ offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
+// 实现：mask 取边框环 + size 控制渐变层及平滑转弯路径，
+// 再用 offset-anchor 90% 50% 形成拖尾彗星，offset-distance 0→100% 循环。
 .#{$cls-prefix}-border-beam {
   position: relative;
   border-radius: var(--ccui-bb-radius);
@@ -14,7 +14,12 @@
     padding: var(--ccui-bb-border-width); // 边框 / 光带粗细
     overflow: hidden;
     pointer-events: none;
-    border-radius: var(--ccui-bb-radius);
+    border-radius: var(--ccui-bb-radius, inherit);
+
+    // asChild 将流光层挂到真实宿主中，inset 可按四边实际边框分别计算。
+    &--child {
+      inset: var(--ccui-bb-inset-offset);
+    }
 
     // 只显示 padding 环（边框）：content-box 实心 + 整体实心，取异或得到边框环
     @supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
@@ -35,7 +40,7 @@
           position: absolute;
           top: 0;
           left: 0;
-          width: 100px;
+          width: var(--ccui-bb-size);
           aspect-ratio: 1 / 1;
           opacity: 0.95;
           background-image: var(
@@ -44,9 +49,11 @@
           );
           offset-anchor: 90% 50%;
           offset-distance: 0%;
-          offset-path: rect(0 auto auto 0 round 100px);
+          // 与渐变层使用同一个 size，让较短光带仍沿较缓的路径连续转弯。
+          offset-path: rect(0 auto auto 0 round var(--ccui-bb-size));
           offset-rotate: auto;
           animation: ccui-border-beam-move var(--ccui-bb-duration) linear infinite;
+          animation-delay: var(--ccui-bb-delay, 0s);
           will-change: offset-distance;
         }
       }

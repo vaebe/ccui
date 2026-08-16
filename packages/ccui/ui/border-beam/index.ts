@@ -6,6 +6,7 @@ BorderBeam.install = function (app: App): void {
 }
 
 export { BorderBeam }
+export type { BorderBeamColor, BorderBeamColorStop, BorderBeamProps } from './src/border-beam-types'
 export { borderBeamPresetKeys, borderBeamPresets } from './src/border-beam-presets'
 export type { BorderBeamPreset } from './src/border-beam-presets'
 

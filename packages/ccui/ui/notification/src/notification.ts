@@ -9,6 +9,7 @@ import type {
 } from './notification-types'
 import { createApp, h, reactive } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { canUseDom } from '../../shared/utils/overlay'
 import NotificationItem from './notification-item'
 import './notification.scss'
 
@@ -116,6 +117,7 @@ function enforceMaxCount(placement: NotificationPlacement) {
 }
 
 function open(options: NotificationOptions): NotificationHandle {
+  if (!canUseDom()) return { close: () => {} }
   const placement = options.placement ?? globalConfig.placement ?? 'topRight'
   ensureContainer(placement)
   const id = `noti-${++counter}`

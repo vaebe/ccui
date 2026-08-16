@@ -25,6 +25,13 @@ describe('image-preview', () => {
       const wrapper = mount(ImagePreview, { props: { items: ['x.jpg', 'y.jpg'] } })
       expect(wrapper.findAll(ns.e('thumb')).length).toBe(2)
       expect((wrapper.findAll(ns.e('thumb'))[0].element as HTMLImageElement).src).toContain('x.jpg')
+      expect(wrapper.findAll(ns.e('thumb'))[0].attributes('aria-label')).toBe('Preview image 1')
+      expect(wrapper.findAll(ns.e('thumb'))[1].attributes('aria-label')).toBe('Preview image 2')
+    })
+
+    it('uses item alt as the interactive thumbnail name', () => {
+      const wrapper = mount(ImagePreview, { props: { items } })
+      expect(wrapper.findAll(ns.e('thumb'))[0].attributes('aria-label')).toBe('A')
     })
 
     it('点击缩略图打开 mask + 显示当前图', async () => {
@@ -35,6 +42,32 @@ describe('image-preview', () => {
       expect(mask).toBeTruthy()
       const img = mask?.querySelector(`.${cls.b().replace('.', '')}__img`) as HTMLImageElement | null
       expect(img?.src).toContain('b.jpg')
+      expect(mask?.getAttribute('role')).toBe('dialog')
+      expect(mask?.getAttribute('aria-modal')).toBe('true')
+      expect(mask?.getAttribute('aria-label')).toBe('B preview')
+      wrapper.unmount()
+    })
+
+    it('locks scroll, traps focus, and restores the thumbnail focus after close', async () => {
+      const wrapper = mount(ImagePreview, { props: { items }, attachTo: document.body })
+      const thumb = wrapper.findAll(ns.e('thumb'))[0].element as HTMLElement
+      thumb.focus()
+      await wrapper.findAll(ns.e('thumb'))[0].trigger('click')
+      await nextTick()
+
+      const prefix = cls.b().replace('.', '')
+      const toolbarButtons = Array.from(document.querySelectorAll<HTMLButtonElement>(`.${prefix}__toolbar button`))
+      expect(document.body.style.overflow).toBe('hidden')
+      expect(document.activeElement).toBe(toolbarButtons[0])
+
+      toolbarButtons.at(-1)!.focus()
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+      expect(document.activeElement).toBe(toolbarButtons[0])
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+      await nextTick()
+      expect(document.body.style.overflow).toBe('')
+      expect(document.activeElement).toBe(thumb)
       wrapper.unmount()
     })
 
@@ -144,6 +177,25 @@ describe('image-preview', () => {
   })
 
   describe('受控 preview', () => {
+    it('slot 触发器受控打开后恢复打开前焦点', async () => {
+      const wrapper = mount(ImagePreview, {
+        props: { items, preview: { visible: false, current: 0 } },
+        slots: { default: '<button class="custom-trigger">打开预览</button>' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.custom-trigger').element as HTMLButtonElement
+      trigger.focus()
+
+      await wrapper.setProps({ preview: { visible: true, current: 0 } })
+      await nextTick()
+      expect(document.activeElement).not.toBe(trigger)
+
+      await wrapper.setProps({ preview: { visible: false, current: 0 } })
+      await nextTick()
+      expect(document.activeElement).toBe(trigger)
+      wrapper.unmount()
+    })
+
     it('preview.visible=true 立即显示当前图', async () => {
       const wrapper = mount(ImagePreview, {
         props: { items, preview: { visible: true, current: 1 } },

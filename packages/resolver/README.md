@@ -111,9 +111,9 @@ monorepo 内做了 re-export、或者你自定义了 CSS bundle 文件名时使�
 
 ## 支持的组件列表
 
-`message` / `notification` / `util` 为命令式或工具入口，不在此列：
+`message` / `notification` / `util` 为命令式或工具入口，不是模板组件，不在此列。当前 resolver 映射与 `src/components.ts` 一致：
 
-`Affix · Alert · Anchor · AutoComplete · Avatar · BackTop · Badge · Breadcrumb / Item · Button · Button3d · Calendar · Card · Carousel · Cascader · CheckBox · Col · Collapse / Item · ColorPicker · ConfigProvider · DatePicker · Descriptions / Item · Divider · Drawer · Dropdown · Empty · Flex · FloatButton · Form / Item / List / Provider · Icon · Image · Input · InputNumber · Layout / Header / Footer / Sider / Content · Masonry · Mentions · Menu · Modal · Pagination · Popconfirm · Popover · Progress · Radio / Group · RangePicker · Rate · Result · Row · Segmented · Select · Skeleton · Slider · Space · Spin · Splitter / Panel · Status · Steps · Switch · Tab · Table · Tabs · Tag · TimePicker · Timeline / Item · Tooltip · Transfer · Tree · TreeSelect · Typography / Link / Paragraph / Text / Title · Upload · Watermark`
+`Affix · Alert · Anchor · AutoComplete · Avatar · BackTop · Badge · BadgeRibbon · BorderBeam · Breadcrumb · BreadcrumbItem · Button · Button3d · ButtonGroup · Calendar · Card · CardMeta · Carousel · Cascader · CheckBox · CheckableTag · CheckableTagGroup · Col · Collapse · CollapseItem · ColorPicker · ConfigProvider · DatePicker · Descriptions · DescriptionsItem · Divider · Drawer · Dropdown · Empty · Flex · FloatButton · Form · FormItem · FormList · FormProvider · Icon · Image · ImagePreview · Input · InputNumber · InputOtp · InputSearch · Layout · LayoutContent · LayoutFooter · LayoutHeader · LayoutSider · Masonry · Mentions · Menu · Modal · Pagination · Popconfirm · Popover · Progress · Radio · RadioGroup · RangePicker · Rate · Result · Row · Segmented · Select · Skeleton · SkeletonNode · Slider · Space · SpaceCompact · Spin · Splitter · SplitterPanel · Steps · Switch · Tab · Table · TableColumn · TableColumnGroup · TableSummary · Tabs · Tag · Textarea · TimePicker · TimeRangePicker · Timeline · TimelineItem · Tooltip · Transfer · Tree · TreeSelect · Typography · TypographyLink · TypographyParagraph · TypographyText · TypographyTitle · Upload · Watermark`
 
 不包含 `message` / `notification` —— 它们是命令式 API，不在模板里使用。直接 `import { message, notification } from '@vaebe/ccui'` 即可，按需引入由 ESM tree-shaking 直接处理。
 

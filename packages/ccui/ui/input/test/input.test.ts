@@ -51,6 +51,27 @@ describe('input', () => {
     expect(wrapper.find('input').attributes('placeholder')).toBe('请输入内容')
   })
 
+  it('forwards native attributes to the input while keeping class and style on the root', () => {
+    const wrapper = mount(Input, {
+      attrs: {
+        id: 'account-input',
+        name: 'account',
+        autocomplete: 'username',
+        class: 'custom-root',
+        style: 'width: 240px',
+      },
+    })
+    const input = wrapper.find('input')
+
+    expect(input.attributes('id')).toBe('account-input')
+    expect(input.attributes('name')).toBe('account')
+    expect(input.attributes('autocomplete')).toBe('username')
+    expect(input.classes()).not.toContain('custom-root')
+    expect(wrapper.classes()).toContain('custom-root')
+    expect(wrapper.attributes('style')).toContain('width: 240px')
+    wrapper.unmount()
+  })
+
   it('disabled', async () => {
     const wrapper = createShallowWrapper({ disabled: true })
     const disabledClass = ns.m('disabled').substring(1)
@@ -66,6 +87,25 @@ describe('input', () => {
   it('clearable', async () => {
     const wrapper = createShallowWrapper({ clearable: true, modelValue: 'test' })
     expect(wrapper.find(ns.e('clear')).exists()).toBeTruthy()
+    expect(wrapper.find(ns.e('clear')).element.tagName).toBe('BUTTON')
+    expect(wrapper.find(ns.e('clear')).attributes('aria-label')).toBe('清除输入')
+    expect(wrapper.find(ns.e('clear')).text()).toBe('×')
+    expect(wrapper.find(`${ns.e('clear')} [aria-hidden="true"]`).exists()).toBe(true)
+  })
+
+  it('prevents clear-button mousedown from stealing input focus', () => {
+    const wrapper = mount(Input, { props: { clearable: true, modelValue: 'test' }, attachTo: document.body })
+    const input = wrapper.find('input').element as HTMLInputElement
+    const clear = wrapper.find(ns.e('clear')).element
+    input.focus()
+    const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+
+    clear.dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(input)
+    expect(wrapper.emitted('blur')).toBeUndefined()
+    wrapper.unmount()
   })
 
   it('prepend', async () => {
@@ -340,6 +380,22 @@ describe('input', () => {
     it('显式 modelValue 优先于 defaultValue', () => {
       const wrapper = mount(Input, { props: { modelValue: 'real', defaultValue: 'preset' } })
       expect((wrapper.find('input').element as HTMLInputElement).value).toBe('real')
+      wrapper.unmount()
+    })
+
+    it('显式空 modelValue 也优先于 defaultValue', () => {
+      const wrapper = mount(Input, { props: { modelValue: '', defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('')
+      wrapper.unmount()
+    })
+
+    it('运行时新增显式空 modelValue 会接管 defaultValue', async () => {
+      const wrapper = mount(Input, { props: { defaultValue: 'preset' } })
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('preset')
+
+      await wrapper.setProps({ modelValue: '' })
+
+      expect((wrapper.find('input').element as HTMLInputElement).value).toBe('')
       wrapper.unmount()
     })
   })

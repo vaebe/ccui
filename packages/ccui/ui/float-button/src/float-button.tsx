@@ -22,7 +22,8 @@ export default defineComponent({
       emit('click', e)
     }
 
-    const inner = (
+    /** 每次 render 读取最新 props/slots，避免 setup 时缓存 VNode 导致描述、图标和徽标失去响应性。 */
+    const renderInner = () => (
       <span class={ns.e('body')}>
         <span class={ns.e('content')}>
           {(slots.icon || props.icon) && (
@@ -32,7 +33,11 @@ export default defineComponent({
             <span class={ns.e('description')}>{slots.description ? slots.description() : props.description}</span>
           )}
         </span>
-        {props.badge !== undefined && props.badge !== '' && <sup class={ns.e('badge')}>{props.badge}</sup>}
+        {props.badge !== undefined && props.badge !== '' && (
+          <sup class={ns.e('badge')} aria-hidden="true">
+            {props.badge}
+          </sup>
+        )}
       </span>
     )
 
@@ -43,16 +48,16 @@ export default defineComponent({
             class={cls.value}
             href={props.href}
             target={props.target || undefined}
-            title={props.tooltip}
+            title={props.tooltip || undefined}
             onClick={onClick}
           >
-            {inner}
+            {renderInner()}
           </a>
         )
       }
       return (
-        <button class={cls.value} type="button" title={props.tooltip} onClick={onClick}>
-          {inner}
+        <button class={cls.value} type="button" title={props.tooltip || undefined} onClick={onClick}>
+          {renderInner()}
         </button>
       )
     }

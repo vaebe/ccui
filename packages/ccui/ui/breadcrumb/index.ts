@@ -7,6 +7,7 @@ import { Breadcrumb, BreadcrumbItem } from './src/breadcrumb'
 }
 
 export { Breadcrumb, BreadcrumbItem }
+export type { BreadcrumbItemProps, BreadcrumbProps, BreadcrumbRoute } from './src/breadcrumb-types'
 
 export default {
   title: 'Breadcrumb 面包屑',

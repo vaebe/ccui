@@ -33,6 +33,9 @@
   }
 
   &__close {
+    padding: 0;
+    border: 0;
+    background: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -44,6 +47,11 @@
 
     &:hover {
       color: $ccui-color-text;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $ccui-color-primary;
+      outline-offset: 2px;
     }
   }
 
@@ -123,6 +131,18 @@
       border-color: var(--ccui-#{$name}-3);
       color: var(--ccui-#{$name}-7);
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-tag,
+  .#{$cls-prefix}-tag__close {
+    // 标签动画只用于装饰，遵循减少动画偏好可避免非必要的视觉扰动。
+    transition: none;
+  }
+
+  .#{$cls-prefix}-tag--processing::before {
+    animation: none;
   }
 }
 

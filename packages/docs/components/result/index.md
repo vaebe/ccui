@@ -129,7 +129,7 @@
 ```vue
 <template>
   <c-result status="error" title="提交失败" sub-title="请处理以下问题后重新提交。">
-    <ul style="margin: 0; padding-left: 20px; color: #666">
+    <ul style="margin: 0; padding-left: 20px; color: var(--ccui-color-text-secondary)">
       <li>用户名不能为空</li>
       <li>身份证号格式错误</li>
       <li>地址必须填写省 / 市 / 区</li>
@@ -152,10 +152,10 @@
 ```vue
 <template>
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
-    <div style="border: 1px solid #eee; border-radius: 8px; padding: 16px">
+    <div style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px; padding: 16px">
       <c-result status="success" title="已激活" />
     </div>
-    <div style="border: 1px solid #eee; border-radius: 8px; padding: 16px">
+    <div style="border: 1px solid var(--ccui-color-border-secondary); border-radius: 8px; padding: 16px">
       <c-result status="info" title="等待审核" />
     </div>
   </div>

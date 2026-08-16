@@ -2,11 +2,11 @@
 
 仓库一次发 3 个公开包到 npm：
 
-| 包名 | 角色 | 工作目录 | 发布工具 |
-|---|---|---|---|
-| `@vaebe/ccui-icons` | 离线 SVG 图标库（Tree switcher 等内部用） | `packages/icons/` | `pnpm publish` |
-| `@vaebe/ccui` | 组件主包 | `packages/ccui/build/`（由 cli 生成） | `npm publish` |
-| `@vaebe/unplugin-vue-components-ccui` | 按需引入 resolver | `packages/resolver/` | `pnpm publish` |
+| 包名                                  | 角色                                      | 工作目录                              | 发布工具       |
+| ------------------------------------- | ----------------------------------------- | ------------------------------------- | -------------- |
+| `@vaebe/ccui-icons`                   | 离线 SVG 图标库（Tree switcher 等内部用） | `packages/icons/`                     | `pnpm publish` |
+| `@vaebe/ccui`                         | 组件主包                                  | `packages/ccui/build/`（由 cli 生成） | `npm publish`  |
+| `@vaebe/unplugin-vue-components-ccui` | 按需引入 resolver                         | `packages/resolver/`                  | `pnpm publish` |
 
 私有包（不上 npm）：`@vaebe/ccui-theme`、`ccui-cli`，都标了 `private: true`。
 
@@ -37,10 +37,10 @@ node scripts/publish.mjs --skip-login                 # 已确认 session 有效
 
 npm 从 **2025-09** 起**停止接受新的 TOTP 注册**，全面推 WebAuthn / passkey。当前规则：
 
-| 账号状态 | 老 TOTP（authenticator app） | Passkey / WebAuthn |
-|---|---|---|
-| 已绑过 TOTP 的老账号 | ✅ 仍可用 `--otp=<6位>` | ✅ 可叠加 |
-| 新账号 / 重新绑 2FA | ❌ UI 选项已移除 | ✅ 唯一选择 |
+| 账号状态             | 老 TOTP（authenticator app） | Passkey / WebAuthn |
+| -------------------- | ---------------------------- | ------------------ |
+| 已绑过 TOTP 的老账号 | ✅ 仍可用 `--otp=<6位>`      | ✅ 可叠加          |
+| 新账号 / 重新绑 2FA  | ❌ UI 选项已移除             | ✅ 唯一选择        |
 
 ### 推荐：passkey 流程
 

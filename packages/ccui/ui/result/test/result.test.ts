@@ -59,4 +59,15 @@ describe('result', () => {
     expect(wrapper.find(ns.e('title')).exists()).toBe(false)
     expect(wrapper.find(ns.e('subtitle')).exists()).toBe(false)
   })
+
+  it('marks the built-in icon as decorative and forwards root attrs', () => {
+    const wrapper = mount(Result, {
+      attrs: { 'data-testid': 'result', 'aria-live': 'polite' },
+      props: { title: '完成' },
+    })
+
+    expect(wrapper.attributes('data-testid')).toBe('result')
+    expect(wrapper.attributes('aria-live')).toBe('polite')
+    expect(wrapper.find('svg').attributes('aria-hidden')).toBe('true')
+  })
 })

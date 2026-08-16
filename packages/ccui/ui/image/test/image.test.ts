@@ -42,6 +42,28 @@ describe('image', () => {
     expect(fallbackImg.attributes('src')).toBe('/fallback.png')
   })
 
+  it('falls back to the error UI when the fallback resource also fails', async () => {
+    const wrapper = mount(Image, { props: { src: '/bad.png', fallback: '/also-bad.png' } })
+    await wrapper.find('img').trigger('error')
+    await nextTick()
+    await wrapper.find(ns.e('error')).find('img').trigger('error')
+    await nextTick()
+    expect(wrapper.find(ns.e('error')).text()).toBe('加载失败')
+    expect(wrapper.find(ns.e('error')).find('img').exists()).toBe(false)
+  })
+
+  it('resets fallback failure when the source changes', async () => {
+    const wrapper = mount(Image, { props: { src: '/bad.png', fallback: '/also-bad.png' } })
+    await wrapper.find('img').trigger('error')
+    await nextTick()
+    await wrapper.find(ns.e('error')).find('img').trigger('error')
+    await wrapper.setProps({ src: '/next-bad.png' })
+    await nextTick()
+    await wrapper.find('img').trigger('error')
+    await nextTick()
+    expect(wrapper.find(ns.e('error')).find('img').attributes('src')).toBe('/also-bad.png')
+  })
+
   it('applies width and height styles', () => {
     const wrapper = mount(Image, {
       props: { src: '/foo.png', width: 100, height: '50px' },
@@ -49,6 +71,21 @@ describe('image', () => {
     const style = wrapper.find(ns.b()).attributes('style') ?? ''
     expect(style).toContain('width: 100px')
     expect(style).toContain('height: 50px')
+  })
+
+  it('forwards root attrs and exposes keyboard preview semantics', async () => {
+    const wrapper = mount(Image, {
+      attrs: { id: 'photo', 'aria-label': 'Photo' },
+      props: { src: '/foo.png', preview: true },
+      attachTo: document.body,
+    })
+    expect(wrapper.find('.ccui-image').attributes('id')).toBe('photo')
+    const img = wrapper.find('img')
+    await img.trigger('load')
+    expect(img.attributes('role')).toBe('button')
+    await img.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(document.body.querySelector(ns.e('preview-mask'))).not.toBeNull()
   })
 
   it('emits click on image click', async () => {
@@ -91,6 +128,27 @@ describe('image', () => {
     mask?.click()
     await nextTick()
     expect(document.body.querySelector(ns.e('preview-mask'))).toBeNull()
+  })
+
+  it('closes preview with Escape and restores focus to the source image', async () => {
+    const wrapper = mount(Image, {
+      props: { src: '/foo.png', preview: true, alt: 'preview image' },
+      attachTo: document.body,
+    })
+    const image = wrapper.find('img')
+    await image.trigger('load')
+    ;(image.element as HTMLImageElement).focus()
+    await image.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+
+    const close = document.body.querySelector('button[aria-label="close"]') as HTMLButtonElement
+    expect(document.activeElement).toBe(close)
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await nextTick()
+
+    expect(document.body.querySelector(ns.e('preview-mask'))).toBeNull()
+    expect(document.activeElement).toBe(image.element)
+    wrapper.unmount()
   })
 
   it('renders custom placeholder and error slots', async () => {

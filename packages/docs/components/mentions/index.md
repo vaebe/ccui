@@ -131,9 +131,9 @@ const opts = ['Anna', 'ALICE', 'bob']
 </script>
 
 <template>
-  <p style="margin: 0 0 4px; color: #666">caseSensitive=false（默认，An 也能匹配 Anna）</p>
+  <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">caseSensitive=false（默认，An 也能匹配 Anna）</p>
   <c-mentions v-model="v1" :options="opts" :rows="2" />
-  <p style="margin: 12px 0 4px; color: #666">caseSensitive=true（必须严格大小写）</p>
+  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">caseSensitive=true（必须严格大小写）</p>
   <c-mentions v-model="v2" :options="opts" case-sensitive :rows="2" />
 </template>
 ```
@@ -155,9 +155,11 @@ const v2 = ref('')
 </script>
 
 <template>
-  <p style="margin: 0 0 4px; color: #666">autoSize=true（无限制）</p>
+  <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">autoSize=true（无限制）</p>
   <c-mentions v-model="v1" :options="['anna', 'bob']" auto-size placeholder="多输几行回车试试" />
-  <p style="margin: 12px 0 4px; color: #666">autoSize=&#123; minRows: 2, maxRows: 6 &#125;</p>
+  <p style="margin: 12px 0 4px; color: var(--ccui-color-text-secondary)">
+    autoSize=&#123; minRows: 2, maxRows: 6 &#125;
+  </p>
   <c-mentions
     v-model="v2"
     :options="['anna', 'bob']"
@@ -251,7 +253,7 @@ const team = [
             height: '24px',
             borderRadius: '50%',
             background: option.color,
-            color: '#fff',
+            color: 'var(--ccui-color-text-light-solid)',
             fontSize: '12px',
             display: 'inline-flex',
             alignItems: 'center',
@@ -262,7 +264,9 @@ const team = [
         </span>
         <span>
           <strong>{{ option.label }}</strong>
-          <span style="margin-left: 6px; color: #999; font-size: 12px">{{ option.role }}</span>
+          <span style="margin-left: 6px; color: var(--ccui-color-text-tertiary); font-size: 12px">{{
+            option.role
+          }}</span>
         </span>
       </div>
     </template>
@@ -335,6 +339,7 @@ const opts = ['alice', 'bob', 'charlie']
 | split           | string                                                   | `' '`        | 选中后追加的分隔符                                |
 | placeholder     | string                                                   | --           | 占位文案                                          |
 | disabled        | boolean                                                  | `false`      | 是否禁用                                          |
+| readonly        | boolean                                                  | `false`      | 是否只读；只读时不打开候选浮层                    |
 | rows            | number                                                   | `3`          | textarea 行数                                     |
 | filterOption    | `boolean \| (input, option) => boolean`                  | `true`       | 过滤逻辑                                          |
 | caseSensitive   | boolean                                                  | `false`      | 默认过滤是否区分大小写                            |
@@ -345,6 +350,8 @@ const opts = ['alice', 'bob', 'charlie']
 | searchDebounce  | number                                                   | `0`          | 搜索防抖延迟（毫秒），`0` 不防抖                  |
 | variant         | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态                                  |
 | status          | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传                     |
+| classNames      | `Record<'root' \| 'textarea' \| 'popup', string>`        | --           | 语义化 DOM 类名                                   |
+| styles          | `Record<'root' \| 'textarea' \| 'popup', CSSProperties>` | --           | 语义化 DOM 样式                                   |
 
 ### Events
 

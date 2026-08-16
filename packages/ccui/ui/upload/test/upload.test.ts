@@ -1,7 +1,9 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
+import { uploadProps } from '../src/upload-types'
 import { Upload } from '../index'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
@@ -33,13 +35,15 @@ function mockSelectFiles(wrapper: VueWrapper, files: File[]): void {
   input.dispatchEvent(new Event('change', { bubbles: true }))
 }
 
-function dispatchDrop(target: HTMLElement, files: File[]): void {
+/** 构造可检查 defaultPrevented 的文件拖放事件。 */
+function dispatchDrop(target: HTMLElement, files: File[]): DragEvent {
   const dropEvent = new Event('drop', { bubbles: true, cancelable: true }) as DragEvent
   Object.defineProperty(dropEvent, 'dataTransfer', {
     value: { files: makeFileList(files) },
     configurable: true,
   })
   target.dispatchEvent(dropEvent)
+  return dropEvent
 }
 
 function mountU(props: Record<string, unknown> = {}, slots?: Record<string, unknown>) {
@@ -86,9 +90,34 @@ describe('upload trigger rendering', () => {
     expect(input.accept).toBe('image/*')
     expect(input.multiple).toBe(true)
   })
+
+  it('passes name and capture to the native file input', () => {
+    const wrapper = mountU({ name: 'attachment', capture: 'environment' })
+    const input = wrapper.find('input[type="file"]')
+    expect(input.attributes('name')).toBe('attachment')
+    expect(input.attributes('capture')).toBe('environment')
+  })
+
+  it('opens the picker with Enter and Space in drag mode', async () => {
+    const wrapper = mountU({ drag: true })
+    const click = vi.spyOn(wrapper.find('input[type="file"]').element as HTMLInputElement, 'click')
+    const drag = wrapper.find(ns.e('drag'))
+
+    await drag.trigger('keydown', { key: 'Enter' })
+    await drag.trigger('keydown', { key: ' ' })
+
+    expect(click).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('upload file selection', () => {
+  it('limits defaultStatus to states valid for newly selected files', () => {
+    expect(uploadProps.defaultStatus.validator('uploading')).toBe(true)
+    expect(uploadProps.defaultStatus.validator('done')).toBe(true)
+    expect(uploadProps.defaultStatus.validator('error')).toBe(true)
+    expect(uploadProps.defaultStatus.validator('removed' as never)).toBe(false)
+  })
+
   it('emits update:fileList and change after picking a file', async () => {
     const wrapper = mountU()
     mockSelectFiles(wrapper, [makeFile('a.txt')])
@@ -250,9 +279,25 @@ describe('upload drag and drop', () => {
 
   it('drop on disabled drag area does not pick files', async () => {
     const wrapper = mountU({ drag: true, disabled: true })
-    dispatchDrop(wrapper.find(ns.e('drag')).element as HTMLElement, [makeFile('a.txt')])
+    const event = dispatchDrop(wrapper.find(ns.e('drag')).element as HTMLElement, [makeFile('a.txt')])
     await nextTick()
     expect(wrapper.emitted('update:fileList')).toBeUndefined()
+    expect(event.defaultPrevented).toBe(true)
+  })
+
+  it('applies accept and multiple restrictions to dropped files', async () => {
+    const wrapper = mountU({ drag: true, accept: '.png' })
+    dispatchDrop(wrapper.find(ns.e('drag')).element as HTMLElement, [
+      makeFile('first.png', 10, 'image/png'),
+      makeFile('second.png', 10, 'image/png'),
+      makeFile('notes.txt'),
+    ])
+    await nextTick()
+    await nextTick()
+
+    const list = wrapper.emitted('update:fileList')!.slice(-1)[0][0] as Array<{ name: string }>
+    expect(list.map((file) => file.name)).toEqual(['first.png'])
+    expect(wrapper.emitted('reject')!.map((event) => event[1])).toEqual(['multiple', 'accept'])
   })
 })
 
@@ -280,13 +325,153 @@ describe('upload v-model:fileList', () => {
     await wrapper.findAll(ns.e('item-remove'))[0].trigger('click')
     expect(list.value.map((f) => f.name)).toEqual(['new.txt'])
   })
+
+  it('preserves a newly selected controlled file through synchronous request callbacks', async () => {
+    const list = ref<
+      Array<{
+        uid: string
+        name: string
+        status?: 'done' | 'uploading' | 'error' | 'removed'
+        percent?: number
+        response?: unknown
+      }>
+    >([])
+    const emittedLists: Array<typeof list.value> = []
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Upload as never, {
+            fileList: list.value,
+            customRequest: (options: any) => {
+              options.onProgress(40)
+              options.onSuccess({ requestId: 'controlled-success' })
+            },
+            'onUpdate:fileList': (next: typeof list.value) => {
+              emittedLists.push(next)
+              list.value = next
+            },
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+
+    mockSelectFiles(wrapper as never, [makeFile('controlled.txt')])
+    await nextTick()
+
+    expect(emittedLists.every((files) => files.length === 1)).toBe(true)
+    expect(list.value).toHaveLength(1)
+    expect(list.value[0]).toMatchObject({
+      name: 'controlled.txt',
+      status: 'done',
+      percent: 100,
+      response: { requestId: 'controlled-success' },
+    })
+    expect(wrapper.find(ns.e('item')).text()).toContain('controlled.txt')
+    expect(wrapper.find(ns.e('item')).classes()).toContain('ccui-upload__item--status-done')
+  })
+
+  it('aborts an active request when a controlled parent removes its file', async () => {
+    const abort = vi.fn()
+    const list = ref<Array<{ uid: string; name: string; status?: string }>>([])
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Upload as never, {
+            fileList: list.value,
+            customRequest: () => ({ abort }),
+            'onUpdate:fileList': (next: typeof list.value) => (list.value = next),
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    mockSelectFiles(wrapper as never, [makeFile('controlled-active.txt')])
+    await nextTick()
+    await nextTick()
+
+    list.value = []
+    await nextTick()
+
+    expect(abort).toHaveBeenCalledOnce()
+  })
+
+  it('detects in-place controlled removal and preserves the last list when control is released', async () => {
+    const abort = vi.fn()
+    const controlled = ref(true)
+    const list = ref<Array<{ uid: string; name: string; status?: string }>>([])
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Upload as never, {
+            fileList: controlled.value ? list.value : undefined,
+            customRequest: () => ({ abort }),
+            'onUpdate:fileList': (next: typeof list.value) => (list.value = next),
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    mockSelectFiles(wrapper as never, [makeFile('mutable.txt')])
+    await nextTick()
+    await nextTick()
+
+    controlled.value = false
+    await nextTick()
+    expect(wrapper.find(ns.e('item')).text()).toContain('mutable.txt')
+
+    controlled.value = true
+    await nextTick()
+    list.value.splice(0, 1)
+    await nextTick()
+    expect(abort).toHaveBeenCalledOnce()
+  })
+
+  it('still aborts a late handle when a controlled parent removes and re-adds the same uid', async () => {
+    const abort = vi.fn()
+    let resolveHandle!: (handle: { abort: () => void }) => void
+    const list = ref<Array<{ uid: string; name: string; status?: string }>>([])
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Upload as never, {
+            fileList: list.value,
+            customRequest: () => new Promise<{ abort: () => void }>((resolve) => (resolveHandle = resolve)),
+            'onUpdate:fileList': (next: typeof list.value) => (list.value = next),
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    mockSelectFiles(wrapper as never, [makeFile('aba.txt')])
+    await nextTick()
+    const uploaded = list.value[0]
+
+    list.value = []
+    await nextTick()
+    list.value = [uploaded]
+    await nextTick()
+    resolveHandle({ abort })
+    await nextTick()
+
+    expect(abort).toHaveBeenCalledOnce()
+  })
+
+  it('uses the optimistic controlled snapshot when the parent delays write-back', async () => {
+    const wrapper = mountU({ fileList: [], maxCount: 1 })
+    mockSelectFiles(wrapper, [makeFile('first-controlled.txt')])
+    mockSelectFiles(wrapper, [makeFile('second-controlled.txt')])
+    await nextTick()
+
+    const emittedLists = wrapper.emitted('update:fileList') as Array<[Array<{ name: string }>]> | undefined
+    expect(emittedLists).toHaveLength(1)
+    expect(emittedLists![0][0].map((file) => file.name)).toEqual(['first-controlled.txt'])
+    expect(wrapper.emitted('reject')!.slice(-1)[0][1]).toBe('maxCount')
+  })
 })
 
 describe('upload customRequest and action', () => {
   it('calls customRequest for each accepted file when provided', async () => {
-    const onProgress = (_p: number) => {}
-    const onSuccess = (_r?: unknown) => {}
-    const onError = (_e: Error) => {}
     const requests: Array<{ file: File }> = []
     const wrapper = mountU({
       customRequest: (opts: any) => {
@@ -310,6 +495,82 @@ describe('upload customRequest and action', () => {
     const list = wrapper.emitted('update:fileList')!.slice(-1)[0][0] as any[]
     expect(list[0].status).toBe('uploading')
   })
+
+  it('aborts an active request when its file is removed', async () => {
+    const abort = vi.fn()
+    const wrapper = mountU({ customRequest: () => ({ abort }) })
+    mockSelectFiles(wrapper, [makeFile('slow.txt')])
+    await nextTick()
+
+    await wrapper.find(ns.e('item-remove')).trigger('click')
+    expect(abort).toHaveBeenCalledOnce()
+  })
+
+  it('aborts all active requests when unmounted', async () => {
+    const aborts = [vi.fn(), vi.fn()]
+    let requestIndex = 0
+    const wrapper = mountU({ customRequest: () => ({ abort: aborts[requestIndex++] }) })
+    mockSelectFiles(wrapper, [makeFile('one.txt'), makeFile('two.txt')])
+    await nextTick()
+
+    wrapper.unmount()
+    expect(aborts[0]).toHaveBeenCalledOnce()
+    expect(aborts[1]).toHaveBeenCalledOnce()
+  })
+
+  it('aborts an async request handle that resolves after removal', async () => {
+    const abort = vi.fn()
+    let resolveHandle!: (handle: { abort: () => void }) => void
+    const wrapper = mountU({
+      customRequest: () => new Promise<{ abort: () => void }>((resolve) => (resolveHandle = resolve)),
+    })
+    mockSelectFiles(wrapper, [makeFile('late-handle.txt')])
+    await nextTick()
+
+    await wrapper.find(ns.e('item-remove')).trigger('click')
+    resolveHandle({ abort })
+    await nextTick()
+
+    expect(abort).toHaveBeenCalledOnce()
+  })
+
+  it.each([
+    [
+      'synchronous throw',
+      () => {
+        throw new Error('sync failed')
+      },
+    ],
+    ['rejected promise', () => Promise.reject(new Error('async failed'))],
+  ])('converts a %s from customRequest into error state', async (_caseName, customRequest) => {
+    const wrapper = mountU({ customRequest })
+    mockSelectFiles(wrapper, [makeFile('failure.txt')])
+    await nextTick()
+    await nextTick()
+
+    const list = wrapper.emitted('update:fileList')!.slice(-1)[0][0] as Array<{
+      status: string
+      response: string
+    }>
+    expect(list[0].status).toBe('error')
+    expect(list[0].response).toContain('failed')
+  })
+
+  it('clamps invalid progress values before publishing them', async () => {
+    const values: number[] = []
+    const wrapper = mountU({
+      customRequest: (options: any) => {
+        options.onProgress(-20)
+        options.onProgress(Number.POSITIVE_INFINITY)
+        options.onProgress(150)
+      },
+      'onUpdate:fileList': (list: Array<{ percent: number }>) => values.push(list[0].percent),
+    })
+    mockSelectFiles(wrapper, [makeFile('progress.txt')])
+    await nextTick()
+
+    expect(values.slice(-3)).toEqual([0, 0, 99])
+  })
 })
 
 describe('upload async beforeUpload', () => {
@@ -326,6 +587,148 @@ describe('upload async beforeUpload', () => {
     const list = emitted!.slice(-1)[0][0] as any[]
     expect(list.map((f: any) => f.name)).toEqual(['good.txt'])
     expect(wrapper.emitted('reject')!.length).toBe(1)
+  })
+
+  it('turns a rejected beforeUpload promise into a beforeUpload rejection', async () => {
+    const wrapper = mountU({ beforeUpload: () => Promise.reject(new Error('filter failed')) })
+    mockSelectFiles(wrapper, [makeFile('blocked.txt')])
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.emitted('update:fileList')).toBeUndefined()
+    expect(wrapper.emitted('reject')).toHaveLength(1)
+    expect(wrapper.emitted('reject')![0][1]).toBe('beforeUpload')
+  })
+
+  it('does not commit a pending selection after disable or unmount', async () => {
+    let resolveFilter!: (value: boolean) => void
+    const wrapper = mountU({
+      beforeUpload: () => new Promise<boolean>((resolve) => (resolveFilter = resolve)),
+    })
+    mockSelectFiles(wrapper, [makeFile('pending.txt')])
+    await nextTick()
+
+    await wrapper.setProps({ disabled: true })
+    resolveFilter(true)
+    await nextTick()
+    expect(wrapper.emitted('update:fileList')).toBeUndefined()
+
+    const unmounted = mountU({
+      beforeUpload: () => Promise.resolve(true),
+    })
+    mockSelectFiles(unmounted, [makeFile('unmounted.txt')])
+    unmounted.unmount()
+    await nextTick()
+    expect(unmounted.emitted('update:fileList')).toBeUndefined()
+  })
+
+  it('serializes overlapping selections so maxCount uses the latest list', async () => {
+    let releaseFirst!: () => void
+    let callCount = 0
+    const wrapper = mountU({
+      maxCount: 1,
+      beforeUpload: () => {
+        callCount += 1
+        return callCount === 1 ? new Promise<boolean>((resolve) => (releaseFirst = () => resolve(true))) : true
+      },
+    })
+    mockSelectFiles(wrapper, [makeFile('first.txt')])
+    mockSelectFiles(wrapper, [makeFile('second.txt')])
+    await nextTick()
+    releaseFirst()
+    await nextTick()
+    await nextTick()
+
+    const list = wrapper.emitted('update:fileList')!.slice(-1)[0][0] as Array<{ name: string }>
+    expect(list.map((file) => file.name)).toEqual(['first.txt'])
+    expect(wrapper.emitted('reject')!.slice(-1)[0][1]).toBe('maxCount')
+  })
+
+  it('rechecks maxCount after beforeUpload when the controlled list grows', async () => {
+    let release!: () => void
+    const list = ref<Array<{ uid: string; name: string; status?: string }>>([])
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(Upload as never, {
+            fileList: list.value,
+            maxCount: 1,
+            beforeUpload: () => new Promise<boolean>((resolve) => (release = () => resolve(true))),
+            'onUpdate:fileList': (next: typeof list.value) => (list.value = next),
+          })
+      },
+    })
+    const wrapper = mount(Host, { attachTo: document.body })
+    wrappers.push(wrapper)
+    mockSelectFiles(wrapper as never, [makeFile('pending-limit.txt')])
+    await nextTick()
+
+    list.value = [{ uid: 'external', name: 'external.txt', status: 'done' }]
+    await nextTick()
+    release()
+    await nextTick()
+    await nextTick()
+
+    expect(list.value.map((file) => file.name)).toEqual(['external.txt'])
+    expect(wrapper.find(ns.e('item')).text()).toContain('external.txt')
+    expect(wrapper.findComponent(Upload).emitted('reject')!.slice(-1)[0][1]).toBe('maxCount')
+  })
+})
+
+describe('upload form and accessibility integration', () => {
+  it('validates on structural changes and when focus leaves the component', async () => {
+    const validate = vi.fn(() => Promise.resolve(true))
+    const wrapper = mount(Upload, {
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validate,
+            validateStatus: ref(''),
+            isInsideForm: true,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+
+    mockSelectFiles(wrapper, [makeFile('form.txt')])
+    await nextTick()
+    expect(validate).toHaveBeenCalledWith('change')
+
+    await wrapper.find(ns.e('trigger')).trigger('focusout', { relatedTarget: null })
+    expect(validate).toHaveBeenCalledWith('blur')
+  })
+
+  it('uses keyboard-operable preview controls and unique remove names', () => {
+    const wrapper = mountU({
+      defaultFileList: [
+        { uid: '1', name: 'first.txt', status: 'uploading', percent: 25 },
+        { uid: '2', name: 'second.txt', status: 'done' },
+      ],
+    })
+
+    expect(wrapper.findAll(ns.e('item-name')).every((node) => node.element.tagName === 'BUTTON')).toBe(true)
+    expect(wrapper.findAll(ns.e('item-remove')).map((node) => node.attributes('aria-label'))).toEqual([
+      '删除 first.txt',
+      '删除 second.txt',
+    ])
+    expect(wrapper.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('25')
+    expect(wrapper.findAll(ns.e('item'))[0].attributes('aria-busy')).toBe('true')
+  })
+
+  it('normalizes externally supplied progress before rendering text and ARIA', () => {
+    const wrapper = mountU({
+      defaultFileList: [
+        { uid: '1', name: 'negative.txt', status: 'uploading', percent: -1 },
+        { uid: '2', name: 'infinite.txt', status: 'uploading', percent: Number.POSITIVE_INFINITY },
+        { uid: '3', name: 'overflow.txt', status: 'uploading', percent: 150 },
+      ],
+    })
+
+    const progress = wrapper.findAll('[role="progressbar"]')
+    expect(progress.map((node) => node.attributes('aria-valuenow'))).toEqual(['0', '0', '100'])
+    expect(progress.map((node) => node.text())).toEqual(['0%', '0%', '100%'])
   })
 })
 

@@ -63,6 +63,7 @@ export default defineComponent({
             <span
               class={[ns.e('status-dot'), props.status && ns.em('status-dot', props.status), props.classNames?.dot]}
               style={[props.color ? { backgroundColor: props.color } : undefined, props.styles?.dot] as any}
+              aria-hidden="true"
             />
             {props.text && <span class={ns.e('status-text')}>{props.text}</span>}
           </span>

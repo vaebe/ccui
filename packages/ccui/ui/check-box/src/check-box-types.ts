@@ -12,7 +12,7 @@ export const checkBoxProps = {
     default: null,
   },
   label: {
-    type: String as PropType<LabelType>,
+    type: [String, Number, Boolean] as PropType<LabelType>,
     default: '',
   },
   name: {
@@ -24,6 +24,10 @@ export const checkBoxProps = {
     default: undefined,
   },
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  indeterminate: {
     type: Boolean,
     default: false,
   },
@@ -40,7 +44,7 @@ export const checkBoxGroupProps = {
   ...checkBoxProps,
   modelValue: {
     type: Array,
-    default: [],
+    default: () => [],
     required: true,
   },
   direction: {
@@ -55,7 +59,8 @@ export type CheckBoxGroupProps = ExtractPropTypes<typeof checkBoxGroupProps>
 interface CheckBoxGroupInjection {
   disabled: Ref<boolean>
   color: Ref<string | undefined>
-  beforeChange: undefined | BeforeChangeType
+  name: Ref<string>
+  beforeChange: Ref<BeforeChangeType | undefined>
   toggleGroupVal: (v: LabelType) => void
   isItemChecked: (v: LabelType) => boolean
 }

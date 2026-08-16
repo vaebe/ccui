@@ -10,6 +10,7 @@ import {
   inject,
   onMounted,
   onUnmounted,
+  nextTick,
   ref,
   shallowRef,
   Teleport,
@@ -49,6 +50,7 @@ export default defineComponent({
     const open = shallowRef(false)
     const innerValue = shallowRef<string | number>(props.defaultValue ?? '')
     const activeIndex = shallowRef(-1)
+    const isComposing = shallowRef(false)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const isControlled = computed(() => props.modelValue !== undefined)
@@ -101,7 +103,7 @@ export default defineComponent({
     }
 
     function openPopup() {
-      if (props.disabled || open.value) return
+      if (props.disabled || props.readonly || open.value) return
       open.value = true
       activeIndex.value = findFirstEnabledIndex()
       emit('open-change', true)
@@ -117,6 +119,7 @@ export default defineComponent({
     const backfillDisplay = shallowRef<string | null>(null)
 
     let debounceTimer: ReturnType<typeof setTimeout> | null = null
+    let compositionValueToIgnore: string | null = null
 
     function setValue(next: string | number) {
       backfillDisplay.value = null
@@ -126,9 +129,13 @@ export default defineComponent({
       emit('update:modelValue', next)
       emit('change', next)
 
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+        debounceTimer = null
+      }
       if (props.searchDebounce > 0) {
-        if (debounceTimer) clearTimeout(debounceTimer)
         debounceTimer = setTimeout(() => {
+          debounceTimer = null
           emit('search', String(next))
         }, props.searchDebounce)
       } else {
@@ -148,6 +155,32 @@ export default defineComponent({
 
     function onInput(e: Event) {
       const target = e.target as HTMLInputElement
+      if (props.disabled || props.readonly || isComposing.value) return
+      if (compositionValueToIgnore === target.value) {
+        compositionValueToIgnore = null
+        return
+      }
+      setValue(target.value)
+      if (!open.value) openPopup()
+      activeIndex.value = -1
+    }
+
+    function onCompositionstart() {
+      if (props.disabled || props.readonly) return
+      isComposing.value = true
+      compositionValueToIgnore = null
+    }
+
+    function onCompositionend(e: CompositionEvent) {
+      if (!isComposing.value) return
+      isComposing.value = false
+      if (props.disabled || props.readonly) return
+      const target = e.target as HTMLInputElement
+      // 部分浏览器会在 compositionend 后额外派发一次同值 input，避免重复 search/change。
+      compositionValueToIgnore = target.value
+      queueMicrotask(() => {
+        compositionValueToIgnore = null
+      })
       setValue(target.value)
       if (!open.value) openPopup()
       activeIndex.value = -1
@@ -155,16 +188,19 @@ export default defineComponent({
 
     function onFocus(e: FocusEvent) {
       emit('focus', e)
-      if (!props.disabled) openPopup()
+      openPopup()
     }
 
     function onBlur(e: FocusEvent) {
+      const next = e.relatedTarget as Node | null
+      if (next && (rootRef.value?.contains(next) || popupRef.value?.contains(next))) return
       emit('blur', e)
+      closePopup()
       formItem?.validate('blur')
     }
 
     function onKeydown(e: KeyboardEvent) {
-      if (props.disabled) return
+      if (props.disabled || props.readonly || isComposing.value) return
       const list = filteredOptions.value
       const enabled = list.filter((o) => !o.disabled)
       function applyBackfill(idx: number) {
@@ -217,10 +253,20 @@ export default defineComponent({
       closePopup()
     }
 
-    function clear(e: MouseEvent) {
+    function clear(e: Event) {
       e.stopPropagation()
       e.preventDefault()
       setValue('')
+    }
+
+    async function onClearKeydown(e: KeyboardEvent) {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      clear(e)
+      await nextTick()
+      const trigger =
+        inputRef.value ??
+        rootRef.value?.querySelector<HTMLElement>('input, textarea, [contenteditable="true"], [tabindex]')
+      trigger?.focus()
     }
 
     onMounted(() => {
@@ -239,16 +285,27 @@ export default defineComponent({
 
     // 当 options 变化或 keyword 变化时，如果当前 active index 越界，重置
     watch(filteredOptions, (list) => {
-      if (activeIndex.value >= list.length) activeIndex.value = -1
+      const active = list[activeIndex.value]
+      if (!active || active.disabled) activeIndex.value = findFirstEnabledIndex()
     })
 
-    const showClear = computed(() => props.allowClear && !props.disabled && inputDisplay.value !== '')
+    watch(
+      () => [props.disabled, props.readonly] as const,
+      ([disabled, readonly]) => {
+        if (disabled || readonly) closePopup()
+      },
+    )
+
+    const showClear = computed(
+      () => props.allowClear && !props.disabled && !props.readonly && inputDisplay.value !== '',
+    )
 
     function renderInput(): VNode {
       const wrapClass = [
         ns.e('wrap'),
         ns.em('size', props.size),
         props.disabled ? ns.is('disabled') : '',
+        props.readonly ? ns.is('readonly') : '',
         open.value ? ns.is('open') : '',
         mergedStatus.value ? ns.em('wrap', `status-${mergedStatus.value}`) : '',
       ]
@@ -262,6 +319,9 @@ export default defineComponent({
           onKeydown,
           placeholder: props.placeholder,
           disabled: props.disabled,
+          readonly: props.readonly,
+          onCompositionstart,
+          onCompositionend,
         })
       ) : (
         <input
@@ -271,31 +331,46 @@ export default defineComponent({
           value={inputDisplay.value}
           placeholder={props.placeholder}
           disabled={props.disabled}
+          readonly={props.readonly}
           autocomplete="off"
           spellcheck={false}
           role="combobox"
           aria-autocomplete="list"
+          aria-label={props.placeholder || '请输入'}
           aria-haspopup="listbox"
           aria-expanded={open.value}
+          aria-readonly={props.readonly || undefined}
           aria-controls={popupId}
           aria-activedescendant={open.value && activeIndex.value >= 0 ? optionId(activeIndex.value) : undefined}
           onInput={onInput}
           onFocus={onFocus}
           onBlur={onBlur}
           onKeydown={onKeydown}
+          onCompositionstart={onCompositionstart}
+          onCompositionend={onCompositionend}
         />
       )
+      const clearIconNode = slots.clearIcon
+        ? slots.clearIcon()
+        : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close-circle'))
+      const clearNode = showClear.value ? (
+        <span
+          class={ns.e('clear')}
+          role="button"
+          tabindex={0}
+          aria-label="clear"
+          onMousedown={clear}
+          onKeydown={onClearKeydown}
+          onBlur={onBlur}
+        >
+          {clearIconNode}
+        </span>
+      ) : null
 
       return (
         <div ref={rootRef} class={[wrapClass, props.classNames?.input]} style={props.styles?.input}>
           {inputNode}
-          {showClear.value && (
-            <span class={ns.e('clear')} role="button" aria-label="clear" onMousedown={clear}>
-              {slots.clearIcon
-                ? slots.clearIcon()
-                : (renderIconNode(props.clearIcon) ?? renderIconNode('mdi:close-circle'))}
-            </span>
-          )}
+          {clearNode}
         </div>
       )
     }
@@ -349,7 +424,9 @@ export default defineComponent({
               {list.length === 0 ? (
                 <div class={ns.e('empty')}>{notFoundLocal.value}</div>
               ) : (
-                <ul class={ns.e('options')}>{list.map((opt, i) => renderOption(opt, i))}</ul>
+                <ul class={ns.e('options')} role="presentation">
+                  {list.map((opt, i) => renderOption(opt, i))}
+                </ul>
               )}
             </div>
           </Transition>

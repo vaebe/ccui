@@ -1,5 +1,5 @@
 import type { EmptyProps } from './empty-types'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, useAttrs } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emptyProps } from './empty-types'
@@ -22,14 +22,16 @@ const DEFAULT_IMG = (
 
 export default defineComponent({
   name: 'CEmpty',
+  inheritAttrs: false,
   props: emptyProps,
   setup(props: EmptyProps, { slots }) {
     const ns = useNamespace('empty')
     const cfg = useConfig()
+    const attrs = useAttrs()
     const descLocal = computed(() => props.description || cfg.locale?.Empty?.description || '暂无数据')
 
     return () => (
-      <div class={ns.b()}>
+      <div {...attrs} class={ns.b()}>
         <div class={ns.e('image')} style={props.imageStyle}>
           {slots.image ? slots.image() : props.image ? <img src={props.image} alt="" /> : DEFAULT_IMG}
         </div>

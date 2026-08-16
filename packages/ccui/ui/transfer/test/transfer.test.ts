@@ -293,6 +293,23 @@ describe('transfer pagination', () => {
     expect(wrapper.findAll(ns.e('item'))).toHaveLength(5)
     expect(wrapper.find(ns.e('page-info')).text()).toBe('1 / 3')
   })
+
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'normalizes non-finite pageSize %s without rendering invalid page state',
+    (pagination) => {
+      const wrapper = mountT({ dataSource: LARGE, pagination })
+      expect(wrapper.findAll(ns.e('item'))).toHaveLength(1)
+      expect(wrapper.find(ns.e('page-info')).text()).toBe('1 / 15')
+    },
+  )
+
+  it('provides accessible names for icon-only pagination buttons', () => {
+    const wrapper = mountT({ dataSource: LARGE, pagination: true })
+    expect(wrapper.findAll(ns.e('page-btn')).map((button) => button.attributes('aria-label'))).toEqual([
+      '上一页',
+      '下一页',
+    ])
+  })
 })
 
 describe('transfer selectAllLabels slot', () => {
@@ -330,6 +347,24 @@ describe('transfer draggable', () => {
     const columns = wrapper.findAll(ns.e('column'))
     const rightItems = columns[1].findAll(ns.e('item'))
     expect(rightItems[0].attributes('draggable')).not.toBe('true')
+  })
+})
+
+describe('transfer operation accessibility', () => {
+  it('provides accessible names for default icon-only operation buttons', () => {
+    const wrapper = mountT()
+    expect(wrapper.findAll(ns.e('operation')).map((button) => button.attributes('aria-label'))).toEqual([
+      '移到右侧',
+      '移到左侧',
+    ])
+  })
+
+  it('uses custom operation text as the accessible name', () => {
+    const wrapper = mountT({ operations: ['加入', '移除'] })
+    expect(wrapper.findAll(ns.e('operation')).map((button) => button.attributes('aria-label'))).toEqual([
+      '加入',
+      '移除',
+    ])
   })
 })
 

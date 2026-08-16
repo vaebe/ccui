@@ -171,7 +171,7 @@ export const popoverProps = {
   },
   persistent: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   virtualTriggering: {
     type: Boolean,

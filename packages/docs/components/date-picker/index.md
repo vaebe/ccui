@@ -374,6 +374,7 @@ const timeConfig = {
 `disabledTime(current)` 接当前编辑日期（pending）作为入参，返回 `{ disabledHours, disabledMinutes, disabledSeconds }`。其中 `disabledMinutes` 接 `hour`、`disabledSeconds` 接 `hour + minute`，方便实现「8:00 后才可选 / 仅整点」等业务约束。
 
 与 `showTime.disabledHours / Minutes / Seconds`（静态）取并集 —— 静态规则用作全表禁用，动态规则按 pending 时间联动。
+只有 `showTime.format` 实际显示的时间列会参与确认校验：小时始终参与，未显示分钟或秒时，对应禁用规则不会阻止提交。
 
 :::demo
 
@@ -506,6 +507,7 @@ const value = ref('')
 ## presets 预设快捷项
 
 `presets` 在面板左侧渲染一列快捷项，`label` / `value` 均支持函数形式延迟求值，便于「今天 / 昨天」这种相对时刻。
+快捷值同样受 `minDate` / `maxDate` / `disabledDate` 约束；`picker="week"` 会先归一到周起始日，再检查并提交。
 
 :::demo
 
@@ -590,11 +592,11 @@ const b = ref('')
 <template>
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">weekStart=0（默认，周日开头）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">weekStart=0（默认，周日开头）</p>
       <c-date-picker v-model="a" :week-start="0" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">weekStart=1（周一开头）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">weekStart=1（周一开头）</p>
       <c-date-picker v-model="b" :week-start="1" />
     </div>
   </div>
@@ -649,8 +651,8 @@ function onChange(v, dateString) {
 
 <template>
   <c-date-picker v-model="value" value-format="date" @change="onChange" />
-  <p style="margin: 8px 0 0; color: #666">最近一次 change：</p>
-  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastChange }}</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-secondary)">最近一次 change：</p>
+  <p style="margin: 4px 0 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ lastChange }}</p>
 </template>
 ```
 
@@ -676,9 +678,11 @@ function onPanelChange(mode, viewMonth) {
 
 <template>
   <c-date-picker v-model="value" @panel-change="onPanelChange" />
-  <p style="margin: 8px 0 0; color: #666">最近一次 panel-change：</p>
-  <p style="margin: 4px 0 0; color: #595959; font-size: 12px">{{ lastPanel }}</p>
-  <p style="margin: 8px 0 0; color: #999; font-size: 12px">提示：点击年份 / 月份头部进入上钻视图触发该事件</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-secondary)">最近一次 panel-change：</p>
+  <p style="margin: 4px 0 0; color: var(--ccui-color-text-secondary); font-size: 12px">{{ lastPanel }}</p>
+  <p style="margin: 8px 0 0; color: var(--ccui-color-text-tertiary); font-size: 12px">
+    提示：点击年份 / 月份头部进入上钻视图触发该事件
+  </p>
 </template>
 ```
 
@@ -730,7 +734,7 @@ const value = ref('')
 | popupAppendToBody | boolean                                                    | `false`                 | 是否把浮层 Teleport 到 `document.body`                                                                                                                                                                                                                                                            |
 | getPopupContainer | `(trigger: HTMLElement \| null) => HTMLElement \| null`    | --                      | 自定义浮层挂载点，优先级高于 `popupAppendToBody`                                                                                                                                                                                                                                                  |
 | autoFocus         | boolean                                                    | `false`                 | 挂载后自动 focus 输入框                                                                                                                                                                                                                                                                           |
-| inputReadOnly     | boolean                                                    | `true`                  | 输入框只读（不允许键盘输入日期，仅通过面板选择）                                                                                                                                                                                                                                                  |
+| inputReadOnly     | boolean                                                    | `true`                  | 输入框是否只读；设为 `false` 后可按 `format` 严格录入，change / blur 时提交合法且未被禁用的值，无效输入会恢复为当前受控值；外部 `modelValue` / `format` / `picker` 更新或切回只读时会覆盖未提交草稿                                                                                               |
 | transitionName    | string                                                     | `ccui-date-picker-fade` | 浮层过渡名                                                                                                                                                                                                                                                                                        |
 | picker            | `'date' \| 'week' \| 'month' \| 'year' \| 'quarter'`       | `'date'`                | 选择粒度；面板形态、`format` 兜底与 emit 值随之变化                                                                                                                                                                                                                                               |
 | showTime          | `boolean \| TimeShowConfig`                                | `false`                 | 仅 `picker="date"` 生效；开启后面板追加时间选择列与「此刻 / 确定」footer。`TimeShowConfig` 支持 `format`（默认 `'HH:mm:ss'`，含 `m` 显示分列、含 `s` 显示秒列）、`defaultValue`、`hourStep / minuteStep / secondStep`、`disabledHours / disabledMinutes / disabledSeconds`、`hideDisabledOptions` |
@@ -765,3 +769,7 @@ const value = ref('')
 - range 区间选择（请使用独立的 `RangePicker` 组件）。
 - `TimePicker` 组件、`format` 含时分秒时的面板分栏。
 - `showToday`。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`popup`。

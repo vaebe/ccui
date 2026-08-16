@@ -31,6 +31,11 @@
     &:hover {
       background-color: $ccui-color-fill-quaternary;
     }
+
+    &:focus-visible {
+      outline: 2px solid $ccui-color-primary;
+      outline-offset: -2px;
+    }
   }
 
   &__header-text {
@@ -125,4 +130,15 @@
 .#{$cls-prefix}-collapse-enter-from,
 .#{$cls-prefix}-collapse-leave-to {
   height: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // Collapse still mounts/unmounts content, but avoids a height animation for motion-sensitive users.
+  .#{$cls-prefix}-collapse__header,
+  .#{$cls-prefix}-collapse__arrow,
+  .#{$cls-prefix}-collapse__wrapper,
+  .#{$cls-prefix}-collapse-enter-active,
+  .#{$cls-prefix}-collapse-leave-active {
+    transition-duration: 0.01ms;
+  }
 }

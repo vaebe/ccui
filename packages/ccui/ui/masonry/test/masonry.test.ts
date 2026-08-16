@@ -67,6 +67,18 @@ describe('masonry', () => {
     expect(wrapper.findAll(ns.e('column')).length).toBe(4)
   })
 
+  it('switches from the hydration-safe default to the client viewport', async () => {
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(500)
+    const wrapper = mount(Masonry, {
+      props: { columns: { xs: 1, sm: 2 } },
+      slots: { default: '<div>1</div><div>2</div>' },
+    })
+
+    // onMounted applies the real viewport while preserving the responsive contract.
+    await nextTick()
+    expect(wrapper.findAll(ns.e('column')).length).toBe(1)
+  })
+
   it('flattens fragment slot children before distributing items', () => {
     const wrapper = mount(Masonry, {
       props: { columns: 2 },
@@ -94,5 +106,22 @@ describe('masonry', () => {
     const columns = wrapper.findAll(ns.e('column'))
     expect(columns[0].text()).toBe('AC')
     expect(columns[1].text()).toBe('B')
+  })
+
+  it('falls back to one column for non-finite responsive values', () => {
+    const wrapper = mount(Masonry, {
+      props: { columns: { xs: Number.NaN } },
+      slots: { default: '<div>1</div>' },
+    })
+    expect(wrapper.findAll(ns.e('column')).length).toBe(1)
+  })
+
+  it('forwards root attributes', () => {
+    const wrapper = mount(Masonry, {
+      attrs: { id: 'gallery', 'aria-label': 'gallery' },
+      slots: { default: '<div>1</div>' },
+    })
+    expect(wrapper.attributes('id')).toBe('gallery')
+    expect(wrapper.attributes('aria-label')).toBe('gallery')
   })
 })

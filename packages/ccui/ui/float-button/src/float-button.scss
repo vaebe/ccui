@@ -2,8 +2,8 @@
 
 .#{$cls-prefix}-float-button {
   position: fixed;
-  right: 24px;
-  bottom: 48px;
+  inset-inline-end: 24px;
+  inset-block-end: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -28,6 +28,12 @@
 
   &:hover {
     transform: translateY(-2px);
+  }
+
+  // outline:none 后仅在键盘导航时恢复焦点环，鼠标点击仍保持原视觉。
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary;
+    outline-offset: 2px;
   }
 
   &__body {
@@ -61,7 +67,7 @@
   &__badge {
     position: absolute;
     top: -4px;
-    right: -8px;
+    inset-inline-end: -8px;
     min-width: 16px;
     height: 16px;
     padding: 0 4px;
@@ -72,6 +78,11 @@
     text-align: center;
     border-radius: 8px;
     transform: translate(50%, -50%);
+
+    // 逻辑端点在 RTL 下位于左侧，水平位移也需反向，徽标才能继续向按钮外侧偏移。
+    &:dir(rtl) {
+      transform: translate(-50%, -50%);
+    }
   }
 
   &--circle {
@@ -107,7 +118,16 @@
   }
 
   &--back-top {
-    bottom: 100px;
+    inset-block-end: 100px;
+  }
+
+  // 减少动态效果时取消悬浮位移及过渡，避免位置变化；功能和可见状态保持不变。
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }
 
@@ -122,4 +142,16 @@
 .#{$cls-prefix}-float-button-fade-leave-to {
   opacity: 0;
   transform: translateY(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$cls-prefix}-float-button-fade-enter-active,
+  .#{$cls-prefix}-float-button-fade-leave-active {
+    transition: none;
+  }
+
+  .#{$cls-prefix}-float-button-fade-enter-from,
+  .#{$cls-prefix}-float-button-fade-leave-to {
+    transform: none;
+  }
 }

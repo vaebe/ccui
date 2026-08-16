@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Textarea } from '../index'
@@ -56,6 +56,20 @@ describe('textarea', () => {
     it('显式 modelValue 优先于 defaultValue', () => {
       const wrapper = mount(Textarea, { props: { modelValue: 'real', defaultValue: 'preset' } })
       expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('real')
+    })
+
+    it('显式空 modelValue 也优先于 defaultValue', () => {
+      const wrapper = mount(Textarea, { props: { modelValue: '', defaultValue: 'preset' } })
+      expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('')
+    })
+
+    it('运行时新增显式空 modelValue 会接管 defaultValue', async () => {
+      const wrapper = mount(Textarea, { props: { defaultValue: 'preset' } })
+      expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('preset')
+
+      await wrapper.setProps({ modelValue: '' })
+
+      expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('')
     })
 
     it('input 触发 update:modelValue + input 双事件', async () => {
@@ -122,10 +136,37 @@ describe('textarea', () => {
     })
 
     it('点击清除按钮清空 + emit clear', async () => {
-      const wrapper = mount(Textarea, { props: { allowClear: true, modelValue: 'x' } })
+      const wrapper = mount(Textarea, { props: { allowClear: true, modelValue: 'x' }, attachTo: document.body })
       await wrapper.find(ns.e('clear')).trigger('click')
       expect(wrapper.emitted('clear')).toBeTruthy()
       expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
+      expect(document.activeElement).toBe(wrapper.find('textarea').element)
+      wrapper.unmount()
+    })
+
+    it('清除控件使用原生按钮语义', () => {
+      const wrapper = mount(Textarea, { props: { allowClear: true, modelValue: 'x' } })
+      const clearButton = wrapper.find('button.ccui-textarea__clear')
+      expect(clearButton.attributes('type')).toBe('button')
+      expect(clearButton.attributes('aria-label')).toBe('清除输入')
+    })
+
+    it('清除按钮 mousedown 不抢走 textarea 焦点', () => {
+      const wrapper = mount(Textarea, {
+        props: { allowClear: true, modelValue: 'x' },
+        attachTo: document.body,
+      })
+      const textarea = wrapper.find('textarea').element as HTMLTextAreaElement
+      const clear = wrapper.find(ns.e('clear')).element
+      textarea.focus()
+      const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+
+      clear.dispatchEvent(event)
+
+      expect(event.defaultPrevented).toBe(true)
+      expect(document.activeElement).toBe(textarea)
+      expect(wrapper.emitted('blur')).toBeUndefined()
+      wrapper.unmount()
     })
 
     it('allowClear={ clearIcon } 用 Iconify name', () => {

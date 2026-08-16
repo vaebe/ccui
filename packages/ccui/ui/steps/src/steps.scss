@@ -30,6 +30,12 @@
         color: $ccui-color-text-disabled;
       }
     }
+
+    &:focus-visible {
+      // Steps are keyboard-operable; the outline makes the current focus target visible without changing status colors.
+      outline: 2px solid $ccui-color-primary;
+      outline-offset: 2px;
+    }
   }
 
   &__container {
@@ -341,6 +347,39 @@
       display: block;
       width: 100%;
       height: 100%;
+    }
+  }
+
+  @media (max-width: 575px) {
+    &--navigation {
+      flex-direction: column;
+      gap: 16px;
+
+      .#{$cls-prefix}-steps__item {
+        display: block;
+        flex: none;
+        overflow: visible;
+      }
+
+      .#{$cls-prefix}-steps__container {
+        display: flex;
+      }
+
+      .#{$cls-prefix}-steps__item:not(:first-child) .#{$cls-prefix}-steps__icon {
+        margin-inline-start: 0;
+      }
+
+      .#{$cls-prefix}-steps__title {
+        padding-inline-end: 0;
+
+        &::after {
+          display: none;
+        }
+      }
+
+      .#{$cls-prefix}-steps__description {
+        max-width: none;
+      }
     }
   }
 }

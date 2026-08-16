@@ -14,6 +14,7 @@ import {
   ref,
   shallowRef,
   Teleport,
+  toRef,
   Transition,
   watch,
 } from 'vue'
@@ -134,8 +135,8 @@ export default defineComponent({
 
     const virtualItems = computed(() => visibleFlatOptions.value)
     const virtual = useVirtualList(virtualItems, {
-      itemHeight: props.virtualItemHeight,
-      maxHeight: props.virtualMaxHeight,
+      itemHeight: toRef(props, 'virtualItemHeight'),
+      maxHeight: toRef(props, 'virtualMaxHeight'),
     })
 
     const setOpen = (value: boolean) => {

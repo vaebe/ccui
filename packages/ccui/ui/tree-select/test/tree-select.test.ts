@@ -621,6 +621,17 @@ describe('tree-select M-B5 键盘导航', () => {
     await nextTick()
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
   })
+
+  it('多选搜索框 Escape 关闭后把焦点还给 combobox 触发器', async () => {
+    const wrapper = mountTS({ multiple: true, showSearch: true })
+    await openPanel(wrapper)
+    const search = wrapper.find(ns.e('search-input'))
+    expect(document.activeElement).toBe(search.element)
+    await search.trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(document.activeElement).toBe(wrapper.find(ns.e('input-wrap')).element)
+  })
 })
 
 describe('XL-4 ARIA combobox / dialog', () => {
@@ -641,5 +652,96 @@ describe('XL-4 ARIA combobox / dialog', () => {
     const panel = wrapper.find(ns.e('panel'))
     expect(panel.attributes('role')).toBe('dialog')
     expect(panel.attributes('aria-label')).toBe('请选择部门')
+  })
+
+  it('多选禁用态暴露 aria-disabled 且退出 Tab 顺序', () => {
+    const wrapper = mountTS({ multiple: true, disabled: true })
+    const trigger = wrapper.find(ns.e('input-wrap'))
+    expect(trigger.attributes('aria-disabled')).toBe('true')
+    expect(trigger.attributes('tabindex')).toBe('-1')
+  })
+
+  it('多选触发器对外发出 focus/blur，并在真实离开时触发表单校验', async () => {
+    const onValidate = vi.fn(async () => true)
+    const wrapper = mount(TreeSelect, {
+      props: { treeData, multiple: true },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const trigger = wrapper.find(ns.e('input-wrap'))
+    await trigger.trigger('focusin', { relatedTarget: document.body })
+    await trigger.trigger('focusout', { relatedTarget: document.body })
+    expect(wrapper.emitted('focus')).toHaveLength(1)
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
+  it('多选 Teleport 搜索面板与触发器之间移动焦点不会提前 blur', async () => {
+    const onValidate = vi.fn(async () => true)
+    const wrapper = mount(TreeSelect, {
+      props: { treeData, multiple: true, showSearch: true, popupAppendToBody: true },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const trigger = wrapper.find(ns.e('input-wrap'))
+    await trigger.trigger('focusin', { relatedTarget: document.body })
+    await openPanel(wrapper)
+    const search = document.querySelector(ns.e('search-input')) as HTMLInputElement
+    expect(search).not.toBeNull()
+
+    await trigger.trigger('focusout', { relatedTarget: search })
+    expect(wrapper.emitted('blur')).toBeUndefined()
+    expect(onValidate).not.toHaveBeenCalled()
+
+    search.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body }))
+    await nextTick()
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+    expect(onValidate).toHaveBeenCalledWith('blur')
+  })
+
+  it('多选焦点先进入内部 tag 关闭按钮，再离开组件时仍发出 blur', async () => {
+    const onValidate = vi.fn(async () => true)
+    const wrapper = mount(TreeSelect, {
+      props: { treeData, multiple: true, modelValue: ['leaf-1-1'] },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate: onValidate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    const trigger = wrapper.find(ns.e('input-wrap'))
+    const tagClose = wrapper.find(ns.e('tag-close'))
+
+    await trigger.trigger('focusin', { relatedTarget: document.body })
+    await trigger.trigger('focusout', { relatedTarget: tagClose.element })
+    expect(wrapper.emitted('blur')).toBeUndefined()
+
+    await tagClose.trigger('focusout', { relatedTarget: document.body })
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+    expect(onValidate).toHaveBeenCalledWith('blur')
   })
 })

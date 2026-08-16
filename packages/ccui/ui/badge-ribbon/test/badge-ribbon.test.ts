@@ -108,5 +108,17 @@ describe('badge-ribbon', () => {
       const style = wrapper.find(ns.b()).attributes('style') ?? ''
       expect(style).toContain('background-color')
     })
+
+    it('将根 attrs 透传到 wrapper，便于定位和无障碍标记', () => {
+      const wrapper = mount(BadgeRibbon, {
+        attrs: { id: 'featured', 'aria-label': '精选内容', 'data-testid': 'ribbon' },
+      })
+
+      expect(wrapper.find(ns.e('wrapper')).attributes()).toMatchObject({
+        id: 'featured',
+        'aria-label': '精选内容',
+        'data-testid': 'ribbon',
+      })
+    })
   })
 })

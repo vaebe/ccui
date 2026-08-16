@@ -83,9 +83,41 @@ describe('typography', () => {
     expect(wrapper.find(ns.m('danger')).exists()).toBe(true)
   })
 
+  it('preserves link attrs when href and target props are omitted', () => {
+    const wrapper = mount(Link, {
+      attrs: { href: '/from-attrs', target: '_blank' },
+      slots: { default: 'go' },
+    })
+
+    expect(wrapper.attributes('href')).toBe('/from-attrs')
+    expect(wrapper.attributes('target')).toBe('_blank')
+  })
+
   it('typography root renders article wrapper', () => {
     const wrapper = mount(Typography, { slots: { default: '<p>Body</p>' } })
     expect(wrapper.element.tagName).toBe('ARTICLE')
     expect(wrapper.find(ns.b()).exists()).toBe(true)
+  })
+
+  it('forwards root attrs and gives interactive controls accessible names', () => {
+    const wrapper = mount(Text, {
+      attrs: { 'data-testid': 'text', 'aria-describedby': 'description' },
+      props: { copyable: true, editable: true },
+      slots: { default: 'Body' },
+    })
+
+    expect(wrapper.attributes('data-testid')).toBe('text')
+    expect(wrapper.attributes('aria-describedby')).toBe('description')
+    expect(wrapper.find('.ccui-typography__copy').attributes('aria-label')).toBe('复制')
+    expect(wrapper.find('.ccui-typography__edit').attributes('aria-label')).toBe('编辑')
+  })
+
+  it('preserves caller title when ellipsis tooltip is disabled', () => {
+    const wrapper = mount(Text, {
+      attrs: { title: 'Keep this native hint' },
+      slots: { default: 'Body' },
+    })
+
+    expect(wrapper.attributes('title')).toBe('Keep this native hint')
   })
 })

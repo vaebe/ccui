@@ -28,7 +28,7 @@ const baseConfig = defineConfig({
 const rollupOptions = {
   external: ['vue', 'vue-router', '@vueuse/core', '@floating-ui/dom'],
   output: {
-    globals: { vue: 'Vue' },
+    globals: { vue: 'Vue', '@floating-ui/dom': 'FloatingUIDOM' },
     exports: 'named',
   },
   onwarn(warning, warn) {

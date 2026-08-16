@@ -26,7 +26,7 @@ npm install @vaebe/ccui --save
 yarn add @vaebe/ccui
 
 # pnpm
-pnpm install @vaebe/ccui
+pnpm add @vaebe/ccui
 ```
 
 ## 🚀 快速开始
@@ -61,7 +61,7 @@ app.mount('#app')
 
 ## 📚 组件
 
-覆盖通用 / 导航 / 反馈 / 数据录入 / 数据展示 / 布局 / 其他七大类，共 **84 个组件 / 工具入口**。**API 命名采用 Vue-first 习惯**（受控显示用 `visible` / `v-model:visible`，而非 React 生态的 `open`），完整命名约定见 [`docs-notes/decisions/benchmark-principles.md`](./docs-notes/decisions/benchmark-principles.md)。
+覆盖通用 / 导航 / 反馈 / 数据录入 / 数据展示 / 布局 / 其他七大类，共 **83 个组件 / 工具与主题指南入口**。**API 命名采用 Vue-first 习惯**（受控显示用 `visible` / `v-model:visible`，而非 React 生态的 `open`），完整命名约定见 [`docs-notes/decisions/benchmark-principles.md`](./docs-notes/decisions/benchmark-principles.md)。
 
 完整组件列表、API 与在线示例见 [📖 在线文档](https://vaebe.github.io/ccui/)。
 
@@ -71,11 +71,13 @@ app.mount('#app')
 
 ## 🛠️ 开发
 
-> 仓库已接入 [Vite+](https://viteplus.dev/)，需要预先全局安装 `vp`：
+> 仓库已接入 [Vite+](https://viteplus.dev/)，需要预先全局安装 `vp`（Linux / macOS）：
 >
 > ```bash
-> npm i -g vp
+> curl -fsSL https://vite.plus | bash
 > ```
+>
+> Windows 安装方式见 [Vite+ 官方指南](https://viteplus.dev/guide/)。
 >
 > 同时要求 Node `>= 22.10`（用于 cli 包的原生 TypeScript type stripping）。
 
@@ -146,7 +148,7 @@ node scripts/publish.mjs --tag latest    # 正式发版
 
 ## 📄 许可证
 
-[Apache-2.0](./LICENSE)
+[MIT](./LICENSE)
 
 ## 🔗 相关链接
 

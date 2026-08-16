@@ -1,7 +1,7 @@
 import type { ComputedRef, ExtractPropTypes, InjectionKey, PropType } from 'vue'
 import type { TabProps } from './components/tab/tab-types'
 
-export type ModelValueType = string | number
+export type ModelValueType = string | number | null
 
 export type ITabsType = '' | 'card' | 'border-card'
 
@@ -12,7 +12,7 @@ export type BeforeChangeType = (id: Active) => boolean
 
 export interface TabsState {
   data?: TabProps[]
-  active: string | number
+  active: ModelValueType
   slots: any[]
 }
 

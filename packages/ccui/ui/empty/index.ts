@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Empty from './src/empty'
+export type { EmptyProps } from './src/empty-types'
 
 Empty.install = function (app: App): void {
   app.component(Empty.name!, Empty)

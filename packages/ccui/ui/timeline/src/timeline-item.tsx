@@ -1,14 +1,16 @@
 import type { TimelineItemProps } from './timeline-types'
-import { computed, defineComponent, h, markRaw } from 'vue'
+import { computed, defineComponent, h, markRaw, mergeProps, useAttrs } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { timelineItemProps } from './timeline-types'
 
 export default defineComponent({
   name: 'CTimelineItem',
+  inheritAttrs: false,
   props: timelineItemProps,
   emits: [],
   setup(props: TimelineItemProps, { slots }) {
     const ns = useNamespace('timeline-item')
+    const attrs = useAttrs()
 
     // 计算节点的样式类名
     const nodeClasses = computed(() => {
@@ -29,10 +31,10 @@ export default defineComponent({
     const renderIcon = () => {
       if (props.icon) {
         if (typeof props.icon === 'string') {
-          return <i class={[props.icon, ns.e('icon')]}></i>
+          return <i aria-hidden="true" class={[props.icon, ns.e('icon')]}></i>
         } else {
           // 如果是组件，使用 markRaw 避免不必要的响应式转换，然后使用 h 函数渲染
-          return h(markRaw(props.icon), { class: ns.e('icon') })
+          return h(markRaw(props.icon), { class: ns.e('icon'), 'aria-hidden': 'true' })
         }
       }
       return null
@@ -63,9 +65,9 @@ export default defineComponent({
 
     return () => {
       return (
-        <li class={[ns.b(), props.center && ns.e('center')]}>
+        <li {...mergeProps(attrs, { class: [ns.b(), props.center && ns.e('center')] })}>
           {/* 连接线 */}
-          <div class={ns.e('tail')}></div>
+          <div aria-hidden="true" class={ns.e('tail')}></div>
 
           {/* 节点 */}
           {renderNode()}

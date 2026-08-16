@@ -610,6 +610,19 @@ describe('carousel slidesToScroll', () => {
 })
 
 describe('carousel edge cases', () => {
+  it('uses tab selection semantics and one roving tab stop for dots', async () => {
+    const wrapper = mountCarousel()
+    const dots = wrapper.findAll(`${ns.e('dot')} button`)
+    expect(dots.map((dot) => dot.attributes('aria-selected'))).toEqual(['true', 'false', 'false'])
+    expect(dots.map((dot) => dot.attributes('tabindex'))).toEqual(['0', '-1', '-1'])
+    expect(dots[0].attributes('aria-current')).toBeUndefined()
+
+    await dots[2].trigger('click')
+    await nextTick()
+    const updatedDots = wrapper.findAll(`${ns.e('dot')} button`)
+    expect(updatedDots.map((dot) => dot.attributes('tabindex'))).toEqual(['-1', '-1', '0'])
+  })
+
   it('renders nothing breaking with zero slides', () => {
     const wrapper = mountCarousel({ slides: 0 })
     expect(wrapper.findAll(ns.e('slide'))).toHaveLength(0)

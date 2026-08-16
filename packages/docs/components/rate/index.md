@@ -21,7 +21,7 @@ const value = ref(3)
 
 <template>
   <c-rate v-model="value" />
-  <span style="margin-inline-start: 12px; color: #666">当前：{{ value }} 星</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">当前：{{ value }} 星</span>
 </template>
 ```
 
@@ -41,7 +41,7 @@ const value = ref(3.5)
 
 <template>
   <c-rate v-model="value" :read-only="true" :allow-half="true" />
-  <span style="margin-inline-start: 12px; color: #666">{{ value }} 分</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">{{ value }} 分</span>
 </template>
 ```
 
@@ -61,7 +61,7 @@ const value = ref(2.5)
 
 <template>
   <c-rate v-model="value" :allow-half="true" />
-  <span style="margin-inline-start: 12px; color: #666">{{ value }}</span>
+  <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">{{ value }}</span>
 </template>
 ```
 
@@ -84,15 +84,15 @@ const v10 = ref(8)
 <template>
   <div style="margin-bottom: 12px">
     <c-rate v-model="v5" :count="5" />
-    <span style="margin-inline-start: 12px; color: #666">5 分制：{{ v5 }}</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">5 分制：{{ v5 }}</span>
   </div>
   <div style="margin-bottom: 12px">
     <c-rate v-model="v7" :count="7" />
-    <span style="margin-inline-start: 12px; color: #666">7 分制：{{ v7 }}</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">7 分制：{{ v7 }}</span>
   </div>
   <div>
     <c-rate v-model="v10" :count="10" />
-    <span style="margin-inline-start: 12px; color: #666">10 分制：{{ v10 }}</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">10 分制：{{ v10 }}</span>
   </div>
 </template>
 ```
@@ -117,19 +117,19 @@ const v4 = ref(2)
 <template>
   <div style="margin-bottom: 12px">
     <c-rate v-model="v1" color="#fadb14" />
-    <span style="margin-inline-start: 12px; color: #666">金色（默认风）</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">金色（默认风）</span>
   </div>
   <div style="margin-bottom: 12px">
     <c-rate v-model="v2" color="#fa541c" />
-    <span style="margin-inline-start: 12px; color: #666">橙红</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">橙红</span>
   </div>
   <div style="margin-bottom: 12px">
     <c-rate v-model="v3" color="#52c41a" />
-    <span style="margin-inline-start: 12px; color: #666">绿（好评向）</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">绿（好评向）</span>
   </div>
   <div>
     <c-rate v-model="v4" color="#722ed1" />
-    <span style="margin-inline-start: 12px; color: #666">紫（品牌向）</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">紫（品牌向）</span>
   </div>
 </template>
 ```
@@ -152,11 +152,11 @@ const letter = ref(2)
 <template>
   <div style="margin-bottom: 12px">
     <c-rate v-model="heart" color="#eb2f96">❤</c-rate>
-    <span style="margin-inline-start: 12px; color: #666">心形评分</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">心形评分</span>
   </div>
   <div>
     <c-rate v-model="letter" color="#1677ff" :count="5">A</c-rate>
-    <span style="margin-inline-start: 12px; color: #666">字母分级</span>
+    <span style="margin-inline-start: 12px; color: var(--ccui-color-text-secondary)">字母分级</span>
   </div>
 </template>
 ```
@@ -180,10 +180,10 @@ const text = computed(() => (value.value > 0 ? desc[value.value - 1] : '请评�
 <template>
   <c-rate v-model="value">
     <template #info="info">
-      <span style="margin-inline-start: 12px; color: #999">{{ info }} / 5</span>
+      <span style="margin-inline-start: 12px; color: var(--ccui-color-text-tertiary)">{{ info }} / 5</span>
     </template>
   </c-rate>
-  <div style="margin-top: 8px; font-size: 13px; color: #666">{{ text }}</div>
+  <div style="margin-top: 8px; font-size: 13px; color: var(--ccui-color-text-secondary)">{{ text }}</div>
 </template>
 ```
 
@@ -209,7 +209,7 @@ function onChange(v) {
 
 <template>
   <c-rate v-model="value" @change="onChange" />
-  <ul style="margin-top: 8px; color: #666; font-size: 12px">
+  <ul style="margin-top: 8px; color: var(--ccui-color-text-secondary); font-size: 12px">
     <li v-for="l in log" :key="l">{{ l }}</li>
   </ul>
 </template>
@@ -289,22 +289,22 @@ const service = ref(4.5)
 <template>
   <div style="display: grid; gap: 8px; max-width: 360px">
     <div style="display: flex; align-items: center">
-      <span style="width: 80px; color: #666">综合：</span>
+      <span style="width: 80px; color: var(--ccui-color-text-secondary)">综合：</span>
       <c-rate v-model="overall" :read-only="true" :allow-half="true" />
       <span style="margin-inline-start: 12px; color: #faad14; font-weight: 600">{{ overall }}</span>
     </div>
     <div style="display: flex; align-items: center">
-      <span style="width: 80px; color: #666">描述：</span>
+      <span style="width: 80px; color: var(--ccui-color-text-secondary)">描述：</span>
       <c-rate v-model="desc" :read-only="true" />
       <span style="margin-inline-start: 12px; color: #faad14">{{ desc }}</span>
     </div>
     <div style="display: flex; align-items: center">
-      <span style="width: 80px; color: #666">物流：</span>
+      <span style="width: 80px; color: var(--ccui-color-text-secondary)">物流：</span>
       <c-rate v-model="speed" :read-only="true" />
       <span style="margin-inline-start: 12px; color: #faad14">{{ speed }}</span>
     </div>
     <div style="display: flex; align-items: center">
-      <span style="width: 80px; color: #666">服务：</span>
+      <span style="width: 80px; color: var(--ccui-color-text-secondary)">服务：</span>
       <c-rate v-model="service" :read-only="true" :allow-half="true" />
       <span style="margin-inline-start: 12px; color: #faad14">{{ service }}</span>
     </div>

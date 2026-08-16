@@ -24,6 +24,30 @@ describe('pagination', () => {
     expect(active.text()).toBe('3')
   })
 
+  it('shows the clamped initial current in the quick jumper', () => {
+    const wrapper = mount(Pagination, {
+      props: { current: 99, total: 25, pageSize: 10, showQuickJumper: true },
+    })
+    expect(wrapper.find(ns.em('item', 'active')).text()).toBe('3')
+    expect(wrapper.find(ns.e('next')).attributes('aria-disabled')).toBe('true')
+    expect(wrapper.find<HTMLInputElement>(ns.e('jumper-input')).element.value).toBe('3')
+  })
+
+  it('restores an unchanged controlled current after total shrinks and grows', async () => {
+    const wrapper = mount(Pagination, {
+      props: { current: 5, total: 50, pageSize: 10 },
+    })
+    await wrapper.setProps({ total: 15 })
+    expect(wrapper.find(ns.em('item', 'active')).text()).toBe('2')
+    expect(wrapper.emitted('update:current')?.at(-1)).toEqual([2])
+    expect(wrapper.emitted('change')?.at(-1)).toEqual([2, 10])
+
+    await wrapper.setProps({ total: 50 })
+    expect(wrapper.find(ns.em('item', 'active')).text()).toBe('5')
+    expect(wrapper.emitted('update:current')).toHaveLength(1)
+    expect(wrapper.emitted('change')).toHaveLength(1)
+  })
+
   it('emits update:current on click', async () => {
     const wrapper = mount(Pagination, {
       props: { current: 1, total: 50, pageSize: 10 },

@@ -803,6 +803,128 @@ describe('range-picker M-B2 disabled 元组', () => {
   })
 })
 
+describe('range-picker editable input and interaction hardening', () => {
+  it('commits a valid editable endpoint and keeps the other controlled endpoint', async () => {
+    const wrapper = mountRP({
+      inputReadOnly: false,
+      modelValue: ['2026-05-01', '2026-05-15'],
+    })
+    const start = wrapper.find(ns.em('input', 'start'))
+    await start.setValue('2026-05-10')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['2026-05-10', '2026-05-15'])
+  })
+
+  it('rejects side-disabled typed values and restores the controlled display', async () => {
+    const wrapper = mountRP({
+      inputReadOnly: false,
+      modelValue: ['2026-05-10', '2026-05-15'],
+      disabledStartDate: (date: dayjs.Dayjs) => date.date() < 10,
+    })
+    const start = wrapper.find(ns.em('input', 'start'))
+    await start.setValue('2026-05-05')
+    await start.trigger('blur')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((start.element as HTMLInputElement).value).toBe('2026-05-10')
+  })
+
+  it('rejects strictly invalid typed dates and restores the controlled display', async () => {
+    const wrapper = mountRP({
+      inputReadOnly: false,
+      modelValue: ['2026-05-10', '2026-05-15'],
+    })
+    const end = wrapper.find(ns.em('input', 'end'))
+    await end.setValue('2026-02-30')
+    await end.trigger('blur')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((end.element as HTMLInputElement).value).toBe('2026-05-15')
+  })
+
+  it('allows clearing only an endpoint configured by allowEmpty', async () => {
+    const wrapper = mountRP({
+      inputReadOnly: false,
+      allowEmpty: [true, false],
+      modelValue: ['2026-05-10', '2026-05-15'],
+    })
+    await wrapper.find(ns.em('input', 'start')).setValue('')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual([null, '2026-05-15'])
+  })
+
+  it('closes when the currently active endpoint becomes disabled', async () => {
+    const wrapper = mountRP({ disabled: [false, false] })
+    await openPanel(wrapper, 'end')
+    await wrapper.setProps({ disabled: [false, true] })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('open-change')?.at(-1)).toEqual([false])
+  })
+
+  it('opens from ArrowDown and Escape closes while restoring focus', async () => {
+    const wrapper = mountRP()
+    const end = wrapper.find(ns.em('input', 'end'))
+    ;(end.element as HTMLInputElement).focus()
+    await end.trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    await end.trigger('keydown', { key: 'Escape' })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(document.activeElement).toBe(end.element)
+  })
+
+  it('switches the active endpoint when the other input is clicked while open', async () => {
+    const wrapper = mountRP()
+    await openPanel(wrapper, 'start')
+    await wrapper.find(ns.em('input', 'end')).trigger('click')
+    expect(wrapper.find(ns.em('input', 'start')).attributes('aria-expanded')).toBe('false')
+    expect(wrapper.find(ns.em('input', 'end')).attributes('aria-expanded')).toBe('true')
+    expect(wrapper.emitted('open-change')).toEqual([[true]])
+  })
+
+  it('restores focus to the endpoint that opened the popup after selection', async () => {
+    const wrapper = mountRP()
+    const start = wrapper.find(ns.em('input', 'start'))
+    ;(start.element as HTMLInputElement).focus()
+    await openPanel(wrapper, 'start')
+    const panelButton = wrapper.find(`${ns.e('panel')} button`)
+    ;(panelButton.element as HTMLButtonElement).focus()
+    expect(document.activeElement).toBe(panelButton.element)
+    await findCellByDay(wrapper, 'left', '10')!.trigger('click')
+    await findCellByDay(wrapper, 'left', '20')!.trigger('click')
+    await nextTick()
+    expect(document.activeElement).toBe(start.element)
+  })
+
+  it('exposes a named controlled dialog and valid grid row hierarchy', async () => {
+    const wrapper = mountRP()
+    await openPanel(wrapper)
+    const start = wrapper.find(ns.em('input', 'start'))
+    const panel = wrapper.find(ns.e('panel'))
+    expect(start.attributes('aria-controls')).toBe(panel.attributes('id'))
+    expect(panel.attributes('aria-label')).toBeTruthy()
+    expect(wrapper.findAll(`${ns.e('grid')} > [role="row"]`)).toHaveLength(12)
+    expect(wrapper.findAll('[role="gridcell"]')).toHaveLength(84)
+  })
+
+  it('rechecks side-specific constraints after auto-swapping an inverted range', async () => {
+    const wrapper = mountRP({ disabledStartDate: (date: dayjs.Dayjs) => date.date() < 10 })
+    await openPanel(wrapper)
+    await findCellByDay(wrapper, 'left', '20')!.trigger('click')
+    await findCellByDay(wrapper, 'left', '5')!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+
+  it('rejects presets that violate endpoint-specific disabled rules', async () => {
+    const wrapper = mountRP({
+      disabledEndDate: (date: dayjs.Dayjs) => date.date() > 20,
+      presets: [{ label: '非法区间', value: ['2026-05-10', '2026-05-25'] }],
+    })
+    await openPanel(wrapper)
+    await wrapper.find(ns.e('preset-item')).trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+  })
+})
+
 describe('range-picker M-B2 allowEmpty 元组', () => {
   it('allowEmpty 默认 false', () => {
     const wrapper = mountRP()

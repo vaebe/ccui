@@ -1,6 +1,6 @@
 import { mount, shallowMount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import { Popover } from '../index'
 
 // 测试辅助函数
@@ -136,6 +136,14 @@ describe('popover', () => {
       }
     })
 
+    it('运行时更新定位配置不会丢失浮层', async () => {
+      wrapper = createWrapper({ content: 'Test', visible: true, offset: 4 })
+      await nextTick()
+      await wrapper.setProps({ offset: 12, autoAdjustOverflow: false })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+    })
+
     it.each([
       [true, true],
       [false, false],
@@ -174,14 +182,45 @@ describe('popover', () => {
     })
 
     it('获得焦点时显示，失焦时隐藏', async () => {
-      wrapper = createWrapper({ content: 'Test', trigger: 'focus', hideAfter: 0 }, { default: '<input type="text" />' })
-      const trigger = wrapper.find('.ccui-popover__trigger')
-      await trigger.trigger('focus')
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'focus', hideAfter: 0, teleported: false },
+        slots: { default: '<input type="text" />' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger input')
+      ;(trigger.element as HTMLInputElement).focus()
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
-      await trigger.trigger('blur')
+      ;(trigger.element as HTMLInputElement).blur()
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+
+    it('非 focus 模式保留自定义 trigger 的 tabindex、ARIA 关系和可访问名称', async () => {
+      wrapper = createWrapper(
+        { content: 'Test', trigger: 'click' },
+        {
+          default:
+            '<div class="custom-trigger" tabindex="3" aria-label="Custom name" aria-describedby="help-id" aria-controls="owned-id">Trigger</div>',
+        },
+      )
+      const trigger = wrapper.find('.custom-trigger')
+
+      expect(trigger.attributes('tabindex')).toBe('3')
+      expect(trigger.attributes('aria-label')).toBe('Custom name')
+      expect(trigger.attributes('aria-describedby')).toBe('help-id')
+      expect(trigger.attributes('aria-controls')).toBe('owned-id')
+
+      await trigger.trigger('click')
+      await nextTick()
+      const popperId = wrapper.find('.ccui-popover__popper').attributes('id')
+      expect(trigger.attributes('aria-describedby').split(' ')).toEqual(['help-id', popperId])
+      expect(trigger.attributes('aria-controls').split(' ')).toEqual(['owned-id', popperId])
+
+      await trigger.trigger('click')
+      await nextTick()
+      expect(trigger.attributes('aria-describedby')).toBe('help-id')
+      expect(trigger.attributes('aria-controls')).toBe('owned-id')
     })
   })
 
@@ -253,22 +292,28 @@ describe('popover', () => {
       expect(hide).toHaveBeenCalled()
     })
 
-    it('aRIA 属性', async () => {
+    it('ARIA 属性命名 popper，且描述关系落在真实 trigger 上', async () => {
       wrapper = createWrapper({ content: 'Test', ariaLabel: 'Test popover', visible: true })
       await nextTick()
-      const trigger = wrapper.find('.ccui-popover__trigger')
+      const triggerWrapper = wrapper.find('.ccui-popover__trigger')
+      const trigger = triggerWrapper.find('button')
       const popper = wrapper.find('.ccui-popover__popper')
-      expect(trigger.attributes('aria-label')).toBe('Test popover')
+      expect(trigger.attributes('aria-label')).toBeUndefined()
+      expect(triggerWrapper.attributes('aria-label')).toBeUndefined()
       // aria-describedby 应该匹配实际的 popper ID，格式为 ccui-popover__popper-{数字}
       const popperId = popper.attributes('id')
       expect(trigger.attributes('aria-describedby')).toBe(popperId)
       expect(popper.attributes('role')).toBe('dialog')
+      expect(popper.attributes('aria-label')).toBe('Test popover')
     })
 
-    it('trigger 携带 aria-haspopup / aria-expanded / aria-controls', async () => {
+    it('单一真实 trigger 携带 aria-haspopup / aria-expanded / aria-controls', async () => {
       wrapper = createWrapper({ content: 'Test', trigger: 'click' })
       await nextTick()
-      const trigger = wrapper.find('.ccui-popover__trigger')
+      const triggerWrapper = wrapper.find('.ccui-popover__trigger')
+      const trigger = triggerWrapper.find('button')
+      expect(triggerWrapper.attributes('aria-haspopup')).toBeUndefined()
+      expect(triggerWrapper.attributes('aria-expanded')).toBeUndefined()
       // 关闭态
       expect(trigger.attributes('aria-haspopup')).toBe('dialog')
       expect(trigger.attributes('aria-expanded')).toBe('false')
@@ -280,6 +325,32 @@ describe('popover', () => {
       expect(trigger.attributes('aria-expanded')).toBe('true')
       const popperId = wrapper.find('.ccui-popover__popper').attributes('id')
       expect(trigger.attributes('aria-controls')).toBe(popperId)
+    })
+
+    it('组件 trigger 的根按钮接收 ARIA 属性并保留自定义属性', async () => {
+      const CustomTrigger = defineComponent({
+        inheritAttrs: true,
+        setup(_, { attrs }) {
+          return () => h('button', { ...attrs, class: 'custom-trigger', 'data-source': 'custom' }, 'Custom')
+        },
+      })
+
+      wrapper = mount(Popover, {
+        props: { content: 'Test', trigger: 'click', teleported: false },
+        slots: { default: () => h(CustomTrigger, { 'aria-label': 'Open details' }) },
+      })
+      await nextTick()
+
+      const trigger = wrapper.find('button.custom-trigger')
+      expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+      expect(trigger.attributes('aria-expanded')).toBe('false')
+      expect(trigger.attributes('aria-label')).toBe('Open details')
+      expect(trigger.attributes('data-source')).toBe('custom')
+
+      await trigger.trigger('click')
+      await nextTick()
+      expect(trigger.attributes('aria-expanded')).toBe('true')
+      expect(trigger.attributes('aria-controls')).toBe(wrapper.find('.ccui-popover__popper').attributes('id'))
     })
 
     it('有 title 时 popper aria-labelledby 指向 header id', async () => {
@@ -342,6 +413,28 @@ describe('popover', () => {
   })
 
   describe('新增功能测试', () => {
+    it('persistent 控制关闭后的 DOM 缓存，destroy/fresh 会销毁', async () => {
+      wrapper = createWrapper({ content: 'Test', trigger: 'click', persistent: true })
+      const trigger = wrapper.find('.ccui-popover__trigger')
+      await trigger.trigger('click')
+      await nextTick()
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
+      expect(wrapper.find('.ccui-popover__popper').element.style.display).toBe('none')
+
+      await wrapper.setProps({ destroyTooltipOnHide: true })
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+
+      await wrapper.setProps({ destroyTooltipOnHide: false, fresh: true })
+      await trigger.trigger('click')
+      await nextTick()
+      await trigger.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.ccui-popover__popper').exists()).toBe(false)
+    })
+
     it('右键菜单触发', async () => {
       wrapper = createWrapper({ content: 'Test', trigger: 'contextmenu' })
       const trigger = wrapper.find('.ccui-popover__trigger')
@@ -386,14 +479,21 @@ describe('popover', () => {
     })
 
     it('键盘触发功能', async () => {
-      wrapper = createWrapper(
-        { content: 'Test', trigger: 'focus', triggerKeys: ['Enter', ' '], hideAfter: 0 },
-        { default: '<input type="text" />' },
-      )
-      const trigger = wrapper.find('.ccui-popover__trigger')
+      wrapper = mount(Popover, {
+        props: {
+          content: 'Test',
+          trigger: 'focus',
+          triggerKeys: ['Enter', ' '],
+          hideAfter: 0,
+          teleported: false,
+        },
+        slots: { default: '<input type="text" />' },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.ccui-popover__trigger input')
 
       // focus 事件会自动显示 popover
-      await trigger.trigger('focus')
+      ;(trigger.element as HTMLInputElement).focus()
       await nextTick()
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
 
@@ -418,7 +518,7 @@ describe('popover', () => {
       expect(wrapper.find('.ccui-popover__popper').exists()).toBe(true)
 
       // 清理：失焦关闭
-      await trigger.trigger('blur')
+      ;(trigger.element as HTMLInputElement).blur()
       await nextTick()
     })
 

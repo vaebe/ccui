@@ -6,12 +6,14 @@ import { BREAKPOINT_PX, BREAKPOINTS, masonryProps } from './masonry-types'
 import './masonry.scss'
 
 function useViewportWidth() {
-  const w = ref(typeof window === 'undefined' ? 1024 : window.innerWidth)
+  // SSR 与 hydration 首帧必须使用同一宽度；真实视口在挂载后再应用，避免列结构不一致。
+  const w = ref(1024)
   const update = () => {
     w.value = window.innerWidth
   }
   onMounted(() => {
     if (typeof window !== 'undefined') {
+      update()
       window.addEventListener('resize', update)
     }
   })
@@ -24,8 +26,9 @@ function useViewportWidth() {
 }
 
 function resolveColumns(columns: MasonryColumns, viewportWidth: number): number {
+  const clamp = (value: number) => (Number.isFinite(value) ? Math.max(1, Math.floor(value)) : 1)
   if (typeof columns === 'number') {
-    return Math.max(1, Math.floor(columns))
+    return clamp(columns)
   }
   let resolved = 1
   for (const bp of BREAKPOINTS) {
@@ -33,7 +36,7 @@ function resolveColumns(columns: MasonryColumns, viewportWidth: number): number 
       resolved = columns[bp]!
     }
   }
-  return Math.max(1, Math.floor(resolved))
+  return clamp(resolved)
 }
 
 function flatChildren(nodes: VNode[]): VNode[] {
@@ -90,12 +93,10 @@ export default defineComponent({
       const items = flatChildren(slots.default?.() ?? [])
       const cols: VNode[][] = Array.from({ length: colCount.value }, () => [])
       if (props.sequential) {
-        // 顺序填充：尽量不打乱
-        items.forEach((item, idx) => {
-          cols[idx % colCount.value].push(item)
-        })
+        // 顺序填充保持子项顺序，按固定列轮询，避免依赖浏览器布局测量。
+        items.forEach((item, idx) => cols[idx % colCount.value].push(item))
       } else {
-        // 默认：依次轮询
+        // 默认轮询分列，避免依赖浏览器布局测量，SSR 与客户端结果保持一致。
         items.forEach((item, idx) => {
           cols[idx % colCount.value].push(item)
         })

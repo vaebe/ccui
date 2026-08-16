@@ -391,3 +391,7 @@ function ask() {
 | title      | -                | 自定义标题区                                      |
 | footer     | `{ ok, cancel }` | 自定义底部按钮（优先级高于 `footer` prop）        |
 | close-icon | -                | 自定义关闭图标（优先级高于 `closable.closeIcon`） |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`mask`、`wrap`、`header`、`body`、`footer`。

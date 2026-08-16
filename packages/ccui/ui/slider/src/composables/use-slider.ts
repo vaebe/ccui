@@ -202,6 +202,7 @@ export function useSliderInteraction(
     document.removeEventListener('mouseup', handleDragEnd)
     document.removeEventListener('touchmove', handleDragMove)
     document.removeEventListener('touchend', handleDragEnd)
+    document.removeEventListener('touchcancel', handleDragEnd)
 
     emit('change', currentValue.value)
     emit('change-complete', currentValue.value)
@@ -219,6 +220,7 @@ export function useSliderInteraction(
     document.addEventListener('mouseup', handleDragEnd)
     document.addEventListener('touchmove', handleDragMove)
     document.addEventListener('touchend', handleDragEnd)
+    document.addEventListener('touchcancel', handleDragEnd)
   }
 
   // Cleanup function

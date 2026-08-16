@@ -29,11 +29,19 @@ export default defineComponent({
     const ns = useNamespace('message')
     const visible = ref(false)
     let timer: number | null = null
+    let remaining = props.duration
+    let startedAt = 0
+    const autoClose = props.duration > 0
 
     const startTimer = () => {
-      if (props.duration > 0) {
-        timer = window.setTimeout(close, props.duration)
+      clearTimer()
+      if (!autoClose) return
+      if (remaining <= 0) {
+        close()
+        return
       }
+      startedAt = Date.now()
+      timer = window.setTimeout(close, remaining)
     }
 
     const clearTimer = () => {
@@ -44,6 +52,8 @@ export default defineComponent({
     }
 
     const close = () => {
+      if (!visible.value) return
+      clearTimer()
       visible.value = false
       emit('close')
     }
@@ -53,14 +63,18 @@ export default defineComponent({
     }
 
     const onMouseenter = () => {
-      if (props.pauseOnHover) clearTimer()
+      if (props.pauseOnHover && timer !== null) {
+        remaining = Math.max(0, remaining - (Date.now() - startedAt))
+        clearTimer()
+      }
     }
     const onMouseleave = () => {
-      if (props.pauseOnHover) startTimer()
+      if (props.pauseOnHover && autoClose) startTimer()
     }
 
     onMounted(() => {
       visible.value = true
+      remaining = props.duration
       startTimer()
     })
     onBeforeUnmount(() => clearTimer())
@@ -87,7 +101,7 @@ export default defineComponent({
                 {slots.default ? slots.default() : props.content}
               </span>
               {props.showClose && (
-                <button class={ns.e('close')} onClick={close} aria-label="Close">
+                <button type="button" class={ns.e('close')} onClick={close} aria-label="Close">
                   ×
                 </button>
               )}

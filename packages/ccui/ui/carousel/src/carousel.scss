@@ -7,6 +7,11 @@
   overflow: hidden;
   user-select: none;
 
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary;
+    outline-offset: 2px;
+  }
+
   &__viewport {
     position: relative;
     width: 100%;
@@ -146,11 +151,25 @@
       background: $ccui-color-bg-spotlight;
     }
 
+    &:focus-visible {
+      outline: 2px solid $ccui-color-primary;
+      outline-offset: 2px;
+    }
+
     &--prev {
       left: 12px;
     }
     &--next {
       right: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__track,
+    &__track--fade &__slide,
+    &__dot > button,
+    &__arrow {
+      transition-duration: 0s;
     }
   }
 }

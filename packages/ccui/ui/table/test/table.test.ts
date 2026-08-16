@@ -182,6 +182,27 @@ describe('table', () => {
     expect(wrapper.emitted('update:sorter')?.[1][0]).toMatchObject({ columnKey: 'name', order: 'descend' })
   })
 
+  it('supports keyboard sorting and exposes aria-sort', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        dataSource: [
+          { key: 1, age: 20 },
+          { key: 2, age: 10 },
+        ],
+        columns: [{ title: 'Age', dataIndex: 'age', sorter: true }],
+      },
+    })
+    const header = wrapper.find('th')
+
+    expect(header.attributes('tabindex')).toBe('0')
+    expect(header.attributes('aria-sort')).toBe('none')
+    await header.trigger('keydown', { key: 'Enter' })
+    expect(header.attributes('aria-sort')).toBe('ascending')
+    await header.trigger('keydown', { key: ' ' })
+    expect(header.attributes('aria-sort')).toBe('descending')
+    wrapper.unmount()
+  })
+
   it('clears sorting on the third sortable header click', async () => {
     const wrapper = mount(Table, {
       props: { columns, dataSource },
@@ -236,6 +257,35 @@ describe('table', () => {
 
     expect(rowTexts(wrapper)[0]).toContain('Alice')
     expect(wrapper.find(ns.em('th', 'ascend')).exists()).toBe(true)
+  })
+
+  it('uses the current column definition after a sorted column is replaced', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Age', dataIndex: 'age', key: 'age', sorter: (a: any, b: any) => a.age - b.age }],
+        dataSource,
+      },
+    })
+
+    await wrapper.find('th').trigger('click')
+    expect(rowTexts(wrapper)[0]).toBe('24')
+
+    await wrapper.setProps({
+      columns: [{ title: 'Age', dataIndex: 'age', key: 'age', sorter: (a: any, b: any) => b.age - a.age }],
+    })
+    expect(rowTexts(wrapper)[0]).toBe('32')
+  })
+
+  it('clears internal sorting when the sorted column is removed', async () => {
+    const wrapper = mount(Table, {
+      props: { columns: [{ title: 'Age', dataIndex: 'age', key: 'age', sorter: true }], dataSource },
+    })
+
+    await wrapper.find('th').trigger('click')
+    expect(rowTexts(wrapper)[0]).toBe('24')
+    await wrapper.setProps({ columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }] })
+
+    expect(rowTexts(wrapper)).toEqual(['Tom', 'Alice', 'Bob'])
   })
 
   it('derives sorter columnKey from dataIndex when key is absent', async () => {
@@ -425,6 +475,24 @@ describe('table', () => {
     expect(rowTexts(wrapper)).toEqual(['Tomuser28', 'Bobuser24'])
   })
 
+  it('drops internal filters when their column is removed', async () => {
+    const wrapper = mount(Table, {
+      props: { columns, dataSource },
+    })
+
+    await wrapper.find('select').setValue('0')
+    await wrapper.setProps({
+      columns: [
+        { title: 'Name', dataIndex: 'name', key: 'name', sorter: true },
+        { title: 'Age', dataIndex: 'age', key: 'age' },
+      ],
+    })
+    await wrapper.find('th').trigger('click')
+
+    expect(wrapper.emitted('change')?.[1][0]).toEqual({})
+    expect(rowTexts(wrapper)).toHaveLength(3)
+  })
+
   it('emits change with filters, sorter, and current data on sort', async () => {
     const wrapper = mount(Table, {
       props: { columns, dataSource },
@@ -439,6 +507,21 @@ describe('table', () => {
     expect(sortedPayload.map((item: any) => item.name)).toEqual(['Alice', 'Bob', 'Tom'])
   })
 
+  it('emits the requested sorter snapshot before controlled columns update', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Age', dataIndex: 'age', key: 'age', sorter: true, sortOrder: 'ascend' }],
+        dataSource,
+      },
+    })
+
+    await wrapper.find('th').trigger('click')
+    const payload = wrapper.emitted('change')?.[0]
+
+    expect(payload?.[1]).toMatchObject({ columnKey: 'age', order: 'descend' })
+    expect((payload?.[2] as any[] | undefined)?.map((item) => item.age)).toEqual([32, 28, 24])
+  })
+
   it('emits change with filtered data after filtering', async () => {
     const wrapper = mount(Table, {
       props: { columns, dataSource },
@@ -451,6 +534,36 @@ describe('table', () => {
     const filteredPayload = payload?.[2] as any[]
     expect(filteredPayload.map((item) => item.name)).toEqual(['Alice'])
     expect(rowTexts(wrapper)).toEqual(['Aliceadmin32'])
+  })
+
+  it('emits the requested filter snapshot before controlled columns update', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ ...columns[1], filteredValue: ['admin'] }],
+        dataSource,
+      },
+    })
+
+    await wrapper.find('select').setValue('1')
+    const payload = wrapper.emitted('change')?.[0]
+
+    expect(payload?.[0]).toEqual({ role: ['user'] })
+    expect((payload?.[2] as any[] | undefined)?.map((item) => item.name)).toEqual(['Tom', 'Bob'])
+  })
+
+  it('does not sort a header when keyboard events originate from its filter', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ ...columns[1], sorter: true }],
+        dataSource,
+      },
+    })
+
+    await wrapper.find('select').trigger('keydown', { key: 'Enter' })
+    await wrapper.find('select').trigger('keydown', { key: ' ' })
+
+    expect(wrapper.emitted('update:sorter')).toBeUndefined()
+    expect(wrapper.find('select').attributes('aria-label')).toBe('Filter by Role')
   })
 
   it('sorts filtered data without bringing filtered-out rows back', async () => {
@@ -471,6 +584,8 @@ describe('table', () => {
 
     expect(wrapper.find(ns.e('empty')).exists()).toBe(true)
     expect(wrapper.find(ns.e('loading')).exists()).toBe(true)
+    expect(wrapper.find('table').attributes('aria-busy')).toBe('true')
+    expect(wrapper.find('[role="status"]').attributes('aria-label')).toBe('Loading')
   })
 
   it('renders custom empty content', () => {
@@ -645,6 +760,54 @@ describe('table', () => {
     expect(wrapper.findAll('tbody input[type="checkbox"]').every((input) => !asInput(input.element).checked)).toBe(true)
   })
 
+  it('keeps default selection when only rowSelection callbacks change', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns,
+        dataSource,
+        rowSelection: { defaultSelectedRowKeys: ['1'] },
+      },
+    })
+
+    await wrapper.findAll('tbody input[type="checkbox"]')[1].setValue(true)
+    await wrapper.setProps({ rowSelection: { defaultSelectedRowKeys: ['1'], onChange: vi.fn() } })
+
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[0].element).checked).toBe(true)
+    expect(asInput(wrapper.findAll('tbody input[type="checkbox"]')[1].element).checked).toBe(true)
+  })
+
+  it('uses source indexes as fallback row keys after sorting', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Age', dataIndex: 'age', sorter: true }],
+        dataSource: [{ age: 30 }, { age: 10 }, { age: 20 }],
+        rowSelection: {},
+        rowKey: 'missing',
+      },
+    })
+
+    await wrapper.findAll('th')[1].trigger('click')
+    await wrapper.findAll('tbody input[type="checkbox"]')[0].setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual([1])
+  })
+
+  it('passes the current display index to function rowKey after sorting', async () => {
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Age', dataIndex: 'age', sorter: true }],
+        dataSource: [{ age: 30 }, { age: 10 }, { age: 20 }],
+        rowSelection: {},
+        rowKey: (_record: any, index: number) => `row-${index}`,
+      },
+    })
+
+    await wrapper.findAll('th')[1].trigger('click')
+    await wrapper.findAll('tbody input[type="checkbox"]')[0].setValue(true)
+
+    expect(wrapper.emitted('update:selectedRowKeys')?.[0][0]).toEqual(['row-0'])
+  })
+
   it('reorders columns so left-fixed appear first and right-fixed last', () => {
     const wrapper = mount(Table, {
       props: {
@@ -766,6 +929,27 @@ describe('table', () => {
       },
     })
     expect(wrapper.findAll('tbody tr')[1].text()).toContain('Profile A')
+  })
+
+  it('keeps default expansion when only expandable callbacks change', async () => {
+    const expandedRowRender = (record: any) => record.detail
+    const wrapper = mount(Table, {
+      props: {
+        columns: [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+        dataSource: [
+          { key: '1', name: 'Alice', detail: 'A' },
+          { key: '2', name: 'Bob', detail: 'B' },
+        ],
+        expandable: { defaultExpandedRowKeys: ['1'], expandedRowRender },
+      },
+    })
+
+    await wrapper.findAll(ns.e('expand-icon'))[1].trigger('click')
+    await wrapper.setProps({
+      expandable: { defaultExpandedRowKeys: ['1'], expandedRowRender, onChange: vi.fn() },
+    })
+
+    expect(wrapper.findAll(ns.e('expanded-row'))).toHaveLength(2)
   })
 
   it('expands all rows by default when defaultExpandAllRows is true', () => {
@@ -931,6 +1115,9 @@ describe('table tree data', () => {
     const icons = wrapper.findAll(ns.e('tree-expand-icon'))
     expect(icons.length).toBe(1) // 只有 Parent 1 有 children
     expect(icons[0].text()).toBe('+')
+    expect(icons[0].element.tagName).toBe('BUTTON')
+    expect(icons[0].attributes('aria-expanded')).toBe('false')
+    expect(icons[0].attributes('aria-label')).toBe('Expand row')
   })
 
   it('does not show tree expand icon for leaf rows', () => {

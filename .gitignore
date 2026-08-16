@@ -38,6 +38,11 @@ packages/*/CHANGELOG.md
 # test
 packages/ccui/coverage
 packages/ccui/ui/**/__snapshots__
+packages/e2e/blob-report/
+packages/e2e/all-blob-reports/
+packages/e2e/playwright-report/
+packages/e2e/test-results/
+test-results/
 .pnpm-debug.log
 .claude
 .codeflicker

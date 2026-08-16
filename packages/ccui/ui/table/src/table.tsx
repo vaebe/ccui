@@ -9,8 +9,23 @@ import type {
   TableSelectionKey,
   TableSorter,
   TableSortOrder,
+  TableSummaryFixed,
 } from './table-types'
-import { computed, defineComponent, h, provide, ref, shallowRef, triggerRef, watch } from 'vue'
+import {
+  cloneVNode,
+  Comment,
+  computed,
+  defineComponent,
+  Fragment,
+  h,
+  isVNode,
+  provide,
+  ref,
+  shallowRef,
+  Text,
+  triggerRef,
+  watch,
+} from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { tableColumnsCollectorKey, tableProps, tableSummaryCollectorKey } from './table-types'
 import './table.scss'
@@ -96,17 +111,35 @@ export default defineComponent({
 
     // L-2.12 模板式列收集：`<c-table-column>` / `<c-table-column-group>` 在挂载时调用 register。
     // shallowRef + 手动 trigger 比 reactive Map 更稳，避免深层代理串扰 column 对象。
-    const collectedEntries = new Map<symbol, { column: TableColumn; order: number }>()
+    const collectedEntries = new Map<symbol, { column: TableColumn; order: number; declarationOrder?: number }>()
     const collectedColumns = shallowRef<TableColumn[]>([])
     const recomputeCollected = () => {
-      collectedColumns.value = Array.from(collectedEntries.values())
-        .sort((a, b) => a.order - b.order)
-        .map((entry) => entry.column)
+      const entries = Array.from(collectedEntries.values()).sort((a, b) => a.order - b.order)
+      const declarativeEntries = entries
+        .filter((entry) => entry.declarationOrder !== undefined)
+        .sort((a, b) => a.declarationOrder! - b.declarationOrder!)
+      let declarativeIndex = 0
+      // 只替换顶层 TableColumn 原本占据的位置，使其可重排，同时不改变 ColumnGroup 的既有位置。
+      collectedColumns.value = entries.map((entry) =>
+        entry.declarationOrder === undefined ? entry.column : declarativeEntries[declarativeIndex++].column,
+      )
       triggerRef(collectedColumns)
     }
     const collector: TableColumnsCollector = {
       register(id, column, order) {
         collectedEntries.set(id, { column, order })
+        recomputeCollected()
+      },
+      updateOrder(id, declarationOrder) {
+        const entry = collectedEntries.get(id)
+        // 相同顺序必须保持 no-op，否则子列更新会反复触发父 Table 重渲染。
+        if (!entry || entry.declarationOrder === declarationOrder) return
+        entry.declarationOrder = declarationOrder
+        recomputeCollected()
+      },
+      refresh(id) {
+        // 已卸载列的延迟刷新应保持 no-op，不能重新创建注册项。
+        if (!collectedEntries.has(id)) return
         recomputeCollected()
       },
       unregister(id) {
@@ -116,11 +149,47 @@ export default defineComponent({
     }
     provide(tableColumnsCollectorKey, collector)
 
-    // L-2.12 模板式 summary 收集：`<c-table-summary>` 在挂载时把 default slot 注入；Table 渲染 tfoot。
-    const summarySlot = shallowRef<Slot | null>(null)
+    interface SummaryEntry {
+      id: symbol
+      slot: Slot | null
+      fixed: TableSummaryFixed
+      attrs: Record<string, unknown>
+      order: number
+      registrationOrder: number
+    }
+    const summaryEntries = new Map<symbol, SummaryEntry>()
+    const collectedSummaries = shallowRef<SummaryEntry[]>([])
+    let summaryRegistrationOrder = 0
+    /** 复制并排序实例快照，使 slot/attrs 原地更新也能通知 Table render 重新选择当前 Summary。 */
+    const recomputeSummary = () => {
+      collectedSummaries.value = Array.from(summaryEntries.values())
+        .sort((a, b) => a.order - b.order || a.registrationOrder - b.registrationOrder)
+        .map((entry) => ({ ...entry }))
+    }
     provide(tableSummaryCollectorKey, {
-      setSummary(slot) {
-        summarySlot.value = slot
+      register(id, slot, fixed, attrs, order) {
+        summaryEntries.set(id, {
+          id,
+          slot,
+          fixed,
+          attrs,
+          order: order ?? Number.MAX_SAFE_INTEGER,
+          registrationOrder: ++summaryRegistrationOrder,
+        })
+        recomputeSummary()
+      },
+      update(id, slot, fixed, attrs, order) {
+        const entry = summaryEntries.get(id)
+        if (!entry) return
+        entry.slot = slot
+        entry.fixed = fixed
+        entry.attrs = attrs
+        entry.order = order ?? Number.MAX_SAFE_INTEGER
+        recomputeSummary()
+      },
+      unregister(id) {
+        if (!summaryEntries.delete(id)) return
+        recomputeSummary()
       },
     })
 
@@ -154,12 +223,13 @@ export default defineComponent({
 
     watch(
       () => props.rowSelection,
-      (rowSelection) => {
-        if (rowSelection?.selectedRowKeys) {
+      (rowSelection, previousRowSelection) => {
+        if (rowSelection?.selectedRowKeys !== undefined) {
           innerSelectedRowKeys.value = [...rowSelection.selectedRowKeys]
           return
         }
-        if (rowSelection?.defaultSelectedRowKeys) {
+        // defaultSelectedRowKeys 只在配置首次出现时生效；仅替换回调或 guard 不应抹掉用户选择。
+        if (!previousRowSelection && rowSelection?.defaultSelectedRowKeys) {
           innerSelectedRowKeys.value = [...rowSelection.defaultSelectedRowKeys]
         }
       },
@@ -168,16 +238,17 @@ export default defineComponent({
 
     watch(
       () => props.expandable,
-      (expandable) => {
-        if (expandable?.expandedRowKeys) {
+      (expandable, previousExpandable) => {
+        if (expandable?.expandedRowKeys !== undefined) {
           innerExpandedRowKeys.value = [...expandable.expandedRowKeys]
           return
         }
-        if (expandable?.defaultExpandAllRows) {
+        // 默认展开值只初始化一次；动态替换回调时保留当前非受控展开状态。
+        if (!previousExpandable && expandable?.defaultExpandAllRows) {
           innerExpandedRowKeys.value = props.dataSource.map((record, index) => getRowKey(record, index, props.rowKey))
           return
         }
-        if (expandable?.defaultExpandedRowKeys) {
+        if (!previousExpandable && expandable?.defaultExpandedRowKeys) {
           innerExpandedRowKeys.value = [...expandable.defaultExpandedRowKeys]
         }
       },
@@ -286,6 +357,7 @@ export default defineComponent({
       return style
     })
 
+    /** 返回当前列集合中的有效排序器，避免动态列继续引用已移除或已替换的列对象。 */
     const activeSorter = computed<TableSorter>(() => {
       const controlledIndex = leafColumns.value.findIndex((column) => column.sortOrder !== undefined)
       if (controlledIndex >= 0) {
@@ -296,53 +368,84 @@ export default defineComponent({
           order: column.sortOrder ?? null,
         }
       }
-      return innerSorter.value
+      if (!innerSorter.value.columnKey || !innerSorter.value.order) {
+        return innerSorter.value
+      }
+      const currentIndex = leafColumns.value.findIndex(
+        (column, index) => getColumnKey(column, index) === innerSorter.value.columnKey,
+      )
+      const column = leafColumns.value[currentIndex]
+      return column?.sorter
+        ? { column, columnKey: innerSorter.value.columnKey, order: innerSorter.value.order }
+        : { order: null }
     })
 
+    /** 只保留当前列的过滤状态，并让列上的受控值覆盖内部状态。 */
     const activeFilters = computed<TableFilters>(() => {
-      const filters: TableFilters = { ...innerFilters.value }
+      const filters: TableFilters = {}
       leafColumns.value.forEach((column, index) => {
+        const key = getColumnKey(column, index)
         if (column.filteredValue !== undefined) {
-          filters[getColumnKey(column, index)] = column.filteredValue
+          filters[key] = column.filteredValue
+        } else if (innerFilters.value[key] !== undefined) {
+          filters[key] = innerFilters.value[key]
         }
       })
       return filters
     })
 
-    const filteredData = computed(() => {
+    /** 按给定过滤状态筛选当前数据源，供渲染和事件快照共用。 */
+    const getFilteredData = (filters: TableFilters) => {
       return props.dataSource.filter((record) => {
         return leafColumns.value.every((column, index) => {
-          const values = activeFilters.value[getColumnKey(column, index)]
+          const values = filters[getColumnKey(column, index)]
           if (!values?.length) {
             return true
           }
           return values.includes(getValueByPath(record, column.dataIndex))
         })
       })
-    })
+    }
 
-    const sortedData = computed(() => {
-      const { column, order } = activeSorter.value
+    const filteredData = computed(() => getFilteredData(activeFilters.value))
+
+    /** 按给定排序器返回新数组，避免排序事件修改原始 dataSource。 */
+    const getSortedData = (data: any[], sorter: TableSorter) => {
+      const { column, order } = sorter
       if (!column || !order || !column.sorter) {
-        return filteredData.value
+        return data
       }
       const factor = order === 'ascend' ? 1 : -1
-      return [...filteredData.value].sort((a, b) => {
+      return [...data].sort((a, b) => {
         const result =
           typeof column.sorter === 'function'
             ? column.sorter(a, b)
             : compareValues(getValueByPath(a, column.dataIndex), getValueByPath(b, column.dataIndex))
         return result * factor
       })
-    })
+    }
+
+    const sortedData = computed(() => getSortedData(filteredData.value, activeSorter.value))
 
     const selectedRowKeySet = computed(() => new Set(props.rowSelection?.selectedRowKeys ?? innerSelectedRowKeys.value))
 
     const expandedRowKeySet = computed(() => new Set(props.expandable?.expandedRowKeys ?? innerExpandedRowKeys.value))
 
+    /**
+     * 字符串 rowKey 缺失时使用原数据位置作为稳定回退；函数式 rowKey 仍接收当前展示索引，
+     * 保持其排序/过滤后的既有回调契约。
+     */
+    const getRecordKey = (record: any, displayIndex: number) => {
+      if (typeof props.rowKey === 'function') {
+        return getRowKey(record, displayIndex, props.rowKey)
+      }
+      const sourceIndex = props.dataSource.indexOf(record)
+      return getRowKey(record, sourceIndex >= 0 ? sourceIndex : displayIndex, props.rowKey)
+    }
+
     const getSelectionRows = (selectedKeys: TableSelectionKey[]) => {
       const keySet = new Set(selectedKeys)
-      return sortedData.value.filter((record, index) => keySet.has(getRowKey(record, index, props.rowKey)))
+      return sortedData.value.filter((record, index) => keySet.has(getRecordKey(record, index)))
     }
 
     const getRowSelectionProps = (record: any) => props.rowSelection?.getCheckboxProps?.(record) ?? {}
@@ -351,7 +454,7 @@ export default defineComponent({
 
     const selectableDisplayRows = computed(() =>
       sortedData.value
-        .map((record, index) => ({ record, index, key: getRowKey(record, index, props.rowKey) }))
+        .map((record, index) => ({ record, index, key: getRecordKey(record, index) }))
         .filter(({ record }) => !isRowSelectionDisabled(record)),
     )
 
@@ -382,7 +485,7 @@ export default defineComponent({
       if (!props.rowSelection || isRowSelectionDisabled(record)) {
         return
       }
-      const key = getRowKey(record, rowIndex, props.rowKey)
+      const key = getRecordKey(record, rowIndex)
       const selectedKeys = selectedRowKeySet.value
       const nextKeys =
         props.rowSelection.type === 'radio'
@@ -450,10 +553,12 @@ export default defineComponent({
       setExpandedRowKeys(nextKeys, record, !expanded)
     }
 
-    const emitChange = () => {
-      emit('change', activeFilters.value, activeSorter.value, sortedData.value)
+    /** 发出一次与本次操作目标一致的快照，受控 props 尚未回写时也不会回退到旧状态。 */
+    const emitChange = (filters: TableFilters, sorter: TableSorter) => {
+      emit('change', filters, sorter, getSortedData(getFilteredData(filters), sorter))
     }
 
+    /** 计算并提交下一排序状态；内部状态仍用于非受控列。 */
     const handleSort = (column: TableColumn, originalIndex: number) => {
       if (!column.sorter) {
         return
@@ -464,14 +569,16 @@ export default defineComponent({
       const sorter = { column: nextOrder ? column : undefined, columnKey, order: nextOrder }
       innerSorter.value = sorter
       emit('update:sorter', sorter)
-      emitChange()
+      emitChange(activeFilters.value, sorter)
     }
 
+    /** 计算并提交下一过滤状态，同时保留其他当前有效列的过滤值。 */
     const handleFilter = (column: TableColumn, originalIndex: number, values: TableFilterValue[]) => {
       const key = getColumnKey(column, originalIndex)
       innerFilters.value = { ...innerFilters.value, [key]: values }
-      emit('update:filters', innerFilters.value)
-      emitChange()
+      const filters = { ...activeFilters.value, [key]: values }
+      emit('update:filters', filters)
+      emitChange(filters, activeSorter.value)
     }
 
     const renderCell = (record: any, rowIndex: number, column: TableColumn) => {
@@ -548,7 +655,7 @@ export default defineComponent({
         return null
       }
       const rowSelection = props.rowSelection!
-      const key = getRowKey(record, rowIndex, props.rowKey)
+      const key = getRecordKey(record, rowIndex)
       const checkboxProps = getRowSelectionProps(record)
       const style: CSSProperties = {}
       if (selectionFixed.value) {
@@ -668,7 +775,9 @@ export default defineComponent({
                   .filter((idx) => idx >= 0)
                   .map(String),
           multiple: column.filterMultiple !== false,
+          'aria-label': `Filter by ${column.title}`,
           onClick: (event: MouseEvent) => event.stopPropagation(),
+          onKeydown: (event: KeyboardEvent) => event.stopPropagation(),
           onChange: (event: Event) => {
             const target = event.target as HTMLSelectElement
             const values =
@@ -720,7 +829,20 @@ export default defineComponent({
           style: fixedCellStyle(orderedIndex, column, headerCellProps.style),
           rowspan: headerCellProps.rowSpan ?? extraAttrs?.rowspan,
           colspan: headerCellProps.colSpan ?? extraAttrs?.colspan,
+          tabindex: column.sorter ? 0 : undefined,
+          'aria-sort': column.sorter
+            ? sortOrder === 'ascend'
+              ? 'ascending'
+              : sortOrder === 'descend'
+                ? 'descending'
+                : 'none'
+            : undefined,
           onClick: () => handleSort(column, originalIndex),
+          onKeydown: (event: KeyboardEvent) => {
+            if (!column.sorter || (event.key !== 'Enter' && event.key !== ' ')) return
+            event.preventDefault()
+            handleSort(column, originalIndex)
+          },
         },
         [
           h('div', { class: ns.e('title') }, [
@@ -789,6 +911,7 @@ export default defineComponent({
                   column.fixed === 'right' && ns.em('cell', 'fixed-right'),
                   headerCellProps.class,
                 ],
+                scope: 'colgroup',
                 style: headerCellProps.style,
                 colspan: leafCount,
               },
@@ -851,7 +974,7 @@ export default defineComponent({
     }
 
     const renderRow = (record: any, rowIndex: number, depth = 0): VNodeChild[] => {
-      const key = getRowKey(record, rowIndex, props.rowKey)
+      const key = getRecordKey(record, rowIndex)
       const children = record[props.childrenColumnName] as any[] | undefined
       const hasChildren = Array.isArray(children) && children.length > 0
       const isTreeExpanded = hasChildren && expandedRowKeySet.value.has(key)
@@ -874,10 +997,12 @@ export default defineComponent({
                   [
                     hasChildren
                       ? h(
-                          'span',
+                          'button',
                           {
+                            type: 'button',
                             class: [ns.e('tree-expand-icon')],
-                            style: { cursor: 'pointer', userSelect: 'none' },
+                            'aria-label': isTreeExpanded ? 'Collapse row' : 'Expand row',
+                            'aria-expanded': isTreeExpanded,
                             onClick: (e: MouseEvent) => {
                               e.stopPropagation()
                               toggleExpand(record, key)
@@ -937,9 +1062,53 @@ export default defineComponent({
       return rows
     }
 
+    /**
+     * Vue 会把空 slot 规范化为 Comment/Text/Fragment 等 VNode；递归忽略这些占位内容，
+     * 才能让前一个“视觉为空”的 Summary 正确回退到后续真实汇总行。
+     */
+    const hasRenderableSummaryContent = (content: VNodeChild): boolean => {
+      if (content === null || content === undefined || typeof content === 'boolean') return false
+      if (Array.isArray(content)) return content.some(hasRenderableSummaryContent)
+      if (typeof content === 'string') return content.trim().length > 0
+      if (typeof content === 'number') return true
+      if (!isVNode(content)) return false
+      if (content.type === Comment) return false
+      if (content.type === Text || content.type === Fragment) {
+        return hasRenderableSummaryContent(content.children as VNodeChild)
+      }
+      return true
+    }
+
     const renderSummary = () => {
-      if (!summarySlot.value) return null
-      return h('tfoot', { class: ns.e('summary') }, [summarySlot.value()])
+      let selected: { summary: SummaryEntry; content: VNodeChild[] } | undefined
+      for (const summary of collectedSummaries.value) {
+        if (!summary.slot) continue
+        const content = summary.slot()
+        if (!hasRenderableSummaryContent(content)) continue
+        selected = { summary, content }
+        break
+      }
+      if (!selected) return null
+      const { summary, content } = selected
+      const fixedPosition = summary.fixed === true ? 'bottom' : summary.fixed || undefined
+      const fixedStyle = fixedPosition
+        ? {
+            // top 模式必须先进入表头行组布局，才能从容器起点参与 sticky，而不是滚到原 tfoot 位置才出现。
+            display: fixedPosition === 'top' ? 'table-header-group' : undefined,
+            position: 'sticky',
+            [fixedPosition]: '0px',
+            zIndex: 3,
+          }
+        : undefined
+      const tfootAttrs: Record<string, unknown> = {
+        ...summary.attrs,
+        class: [ns.e('summary'), fixedPosition && ns.em('summary', `fixed-${fixedPosition}`), summary.attrs.class],
+      }
+      // 没有固定状态或用户样式时不生成空 style 属性，保持普通 tfoot 的原生输出。
+      if (fixedStyle || summary.attrs.style !== undefined) {
+        tfootAttrs.style = [fixedStyle, summary.attrs.style]
+      }
+      return { fixedPosition, vnode: h('tfoot', tfootAttrs, content) }
     }
 
     // L-2.12 渲染默认 slot：让 `<c-table-column>` / `<c-table-column-group>` / `<c-table-summary>` 走完 setup
@@ -947,15 +1116,49 @@ export default defineComponent({
     // 用一层 display:none 包装保护：万一未来用户在 default slot 里混入了真实 DOM，也不会破坏表格布局。
     const renderHiddenChildren = () => {
       if (!slots.default) return null
-      return h('div', { class: ns.e('children-collector'), style: { display: 'none' } }, slots.default())
+      let declarationOrder = 0
+      let summaryDeclarationOrder = 0
+      /**
+       * 显式把当前 slot 顺序传给顶层 TableColumn / TableColumnGroup，避免 keyed VNode 复用时沿用首次挂载顺序。
+       * 这里只递归 Fragment，不查询 DOM，也不进入 ColumnGroup 或其他组件的私有 slot。
+       */
+      const attachDeclarationOrder = (vnode: VNode): VNode => {
+        const componentName =
+          typeof vnode.type === 'object' && vnode.type !== null ? (vnode.type as { name?: string }).name : undefined
+        if (componentName === 'CTableColumn' || componentName === 'CTableColumnGroup') {
+          return cloneVNode(vnode, { __ccuiDeclarationOrder: declarationOrder++ })
+        }
+        if (componentName === 'CTableSummary') {
+          return cloneVNode(vnode, { __ccuiDeclarationOrder: summaryDeclarationOrder++ })
+        }
+        if (vnode.type === Fragment && Array.isArray(vnode.children)) {
+          const cloned = cloneVNode(vnode)
+          cloned.children = vnode.children.map((child) =>
+            typeof child === 'object' && child !== null && '__v_isVNode' in child
+              ? attachDeclarationOrder(child as VNode)
+              : child,
+          )
+          return cloned
+        }
+        return vnode
+      }
+      return h(
+        'div',
+        { class: ns.e('children-collector'), style: { display: 'none' } },
+        slots.default().map(attachDeclarationOrder),
+      )
     }
 
-    return () =>
-      h('div', { class: [cls.value, props.classNames?.root], style: props.styles?.root }, [
+    return () => {
+      const renderedSummary = renderSummary()
+      const summaryAtTop = renderedSummary?.fixedPosition === 'top'
+      return h('div', { class: [cls.value, props.classNames?.root], style: props.styles?.root }, [
         renderHiddenChildren(),
         h('div', { class: ns.e('container'), style: containerStyle.value }, [
-          h('table', { class: ns.e('table'), style: tableStyle.value }, [
+          h('table', { class: ns.e('table'), style: tableStyle.value, 'aria-busy': props.loading }, [
             renderHeader(),
+            // top Summary 紧随列标题成为第二个 header-group；表头先读、先滚出后，汇总才贴到容器顶部。
+            summaryAtTop ? renderedSummary.vnode : null,
             h(
               'tbody',
               { class: [ns.e('tbody'), props.classNames?.body], style: props.styles?.body },
@@ -963,10 +1166,15 @@ export default defineComponent({
                 ? sortedData.value.flatMap((record, rowIndex) => renderRow(record, rowIndex))
                 : renderEmpty(),
             ),
-            renderSummary(),
+            summaryAtTop ? null : renderedSummary?.vnode,
           ]),
-          props.loading ? h('div', { class: ns.e('loading') }, [h('span', { class: ns.e('loading-dot') })]) : null,
+          props.loading
+            ? h('div', { class: ns.e('loading'), role: 'status', 'aria-label': 'Loading' }, [
+                h('span', { class: ns.e('loading-dot') }),
+              ])
+            : null,
         ]),
       ])
+    }
   },
 })

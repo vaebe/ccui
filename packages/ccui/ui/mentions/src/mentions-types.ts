@@ -52,6 +52,10 @@ export const mentionsProps = {
     type: Boolean,
     default: false,
   },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
   rows: {
     type: Number,
     default: 3,

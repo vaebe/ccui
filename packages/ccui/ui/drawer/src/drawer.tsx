@@ -5,6 +5,7 @@ import {
   computed,
   defineComponent,
   inject,
+  nextTick,
   onBeforeUnmount,
   provide,
   ref,
@@ -14,6 +15,7 @@ import {
   watch,
 } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { activateOverlay, canUseDom, lockBodyScroll } from '../../shared/utils/overlay'
 import { drawerParentInjectionKey, drawerProps } from './drawer-types'
 import './drawer.scss'
 
@@ -46,7 +48,10 @@ export default defineComponent({
     const isOpen = computed(() => props.visible)
 
     const trigger = ref<HTMLElement | null>(null)
+    const contentRef = ref<HTMLElement | null>(null)
     const rendered = ref(isOpen.value || props.keepAlive)
+    let releaseScroll: (() => void) | null = null
+    let releaseOverlay: (() => void) | null = null
 
     // ── closable 复合解析 ─────────────────────────────────
     const closableObj = computed<DrawerClosableObject | null>(() =>
@@ -132,42 +137,12 @@ export default defineComponent({
 
     // ── 关闭流程 ──────────────────────────────────────────
     const close = () => {
-      if (closeDisabled.value) return
       emit('update:visible', false)
       emit('close')
     }
 
     const onMaskClick = () => {
       if (props.maskClosable) close()
-    }
-
-    const onKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && props.closeOnEsc && isOpen.value) {
-        close()
-      }
-    }
-
-    // ── body scroll lock ────────────────────────────────
-    const lockScroll = () => {
-      const body = document.body
-      if (body.dataset.ccuiDrawerCount) {
-        body.dataset.ccuiDrawerCount = String(Number(body.dataset.ccuiDrawerCount) + 1)
-        return
-      }
-      body.dataset.ccuiDrawerCount = '1'
-      body.dataset.ccuiDrawerOverflow = body.style.overflow
-      body.style.overflow = 'hidden'
-    }
-    const unlockScroll = () => {
-      const body = document.body
-      const count = Number(body.dataset.ccuiDrawerCount ?? 0) - 1
-      if (count <= 0) {
-        body.style.overflow = body.dataset.ccuiDrawerOverflow ?? ''
-        delete body.dataset.ccuiDrawerCount
-        delete body.dataset.ccuiDrawerOverflow
-      } else {
-        body.dataset.ccuiDrawerCount = String(count)
-      }
     }
 
     watch(
@@ -179,12 +154,22 @@ export default defineComponent({
             if (active instanceof HTMLElement) trigger.value = active
           }
           rendered.value = true
-          lockScroll()
-          document.addEventListener('keydown', onKeydown)
+          releaseScroll = lockBodyScroll()
+          void nextTick(() => {
+            if (!isOpen.value || !contentRef.value) return
+            releaseOverlay?.()
+            releaseOverlay = activateOverlay({
+              container: contentRef.value,
+              closeOnEsc: props.closeOnEsc,
+              onEscape: close,
+            })
+          })
           emit('open')
         } else {
-          document.removeEventListener('keydown', onKeydown)
-          unlockScroll()
+          releaseOverlay?.()
+          releaseOverlay = null
+          releaseScroll?.()
+          releaseScroll = null
         }
         emit('after-open-change', val)
       },
@@ -192,8 +177,8 @@ export default defineComponent({
     )
 
     onBeforeUnmount(() => {
-      document.removeEventListener('keydown', onKeydown)
-      if (isOpen.value) unlockScroll()
+      releaseOverlay?.()
+      releaseScroll?.()
       // 卸载时若仍有 push 状态，主动解除父亲让位
       if (parent && pushedToParent) {
         parent.unregister()
@@ -206,7 +191,7 @@ export default defineComponent({
       if (props.destroyOnClose && !props.keepAlive) {
         rendered.value = false
       }
-      if (props.focusTriggerAfterClose && trigger.value && document.body.contains(trigger.value)) {
+      if (canUseDom() && props.focusTriggerAfterClose && trigger.value && document.body.contains(trigger.value)) {
         try {
           trigger.value.focus({ preventScroll: true })
         } catch {}
@@ -237,6 +222,7 @@ export default defineComponent({
           {slots.extra && <div class={ns.e('extra')}>{slots.extra()}</div>}
           {closableEnabled.value && (
             <button
+              type="button"
               class={[ns.e('close'), closeDisabled.value && ns.is('disabled')]}
               onClick={close}
               disabled={closeDisabled.value}
@@ -318,10 +304,11 @@ export default defineComponent({
         <div
           class={[ns.b(), ns.m(props.placement), props.classNames?.root]}
           style={[{ zIndex: props.zIndex }, props.styles?.root] as any}
-          aria-modal="true"
-          role="dialog"
-          aria-labelledby={hasTitle ? titleId : undefined}
-          aria-describedby={bodyId}
+          aria-modal={isOpen.value ? 'true' : undefined}
+          role={isOpen.value ? 'dialog' : undefined}
+          aria-hidden={isOpen.value ? undefined : 'true'}
+          aria-labelledby={isOpen.value && hasTitle ? titleId : undefined}
+          aria-describedby={isOpen.value ? bodyId : undefined}
         >
           <Transition name={`${ns.b()}-fade`}>
             {props.mask && isOpen.value && (
@@ -331,8 +318,10 @@ export default defineComponent({
           <Transition name={`${ns.b()}-${props.placement}`} onAfterEnter={onAfterEnter} onAfterLeave={onAfterLeave}>
             {isOpen.value && (
               <div
+                ref={contentRef}
                 class={[ns.e('content'), props.classNames?.wrap]}
                 style={[sizeStyle.value, props.styles?.wrap] as any}
+                tabindex={-1}
               >
                 <div class={ns.e('inner')}>
                   {renderHeader()}

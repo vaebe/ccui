@@ -4,6 +4,8 @@
 
 ::: tip 使用前提
 TableColumnGroup 必须与 [`<c-table-column>`](/components/table-column/) 一起使用（模板式列声明）。
+
+当前仅支持一层分组：Group 的直接子项应为 `<c-table-column>`，不支持在 Group 内继续嵌套 Group。
 :::
 
 ## 何时使用
@@ -119,12 +121,12 @@ export default defineComponent({
 
 ## TableColumnGroup 参数
 
-| 参数         | 类型                               | 默认 | 说明                                 |
-| ------------ | ---------------------------------- | ---- | ------------------------------------ |
-| title        | `string`                           | `''` | 组标题，渲染在 thead 顶部行          |
-| align        | `'left' \| 'center' \| 'right'`    | -    | 组标题对齐                           |
-| fixed        | `'left' \| 'right'`                | -    | 组固定方向（实际固定行为以子列为准） |
-| onHeaderCell | `(column) => TableCellRenderProps` | -    | 组标题单元格 props 工厂              |
+| 参数         | 类型                               | 默认 | 说明                                                                   |
+| ------------ | ---------------------------------- | ---- | ---------------------------------------------------------------------- |
+| title        | `string`                           | `''` | 组标题，渲染在 thead 顶部行                                            |
+| align        | `'left' \| 'center' \| 'right'`    | -    | 组标题对齐                                                             |
+| fixed        | `'left' \| 'right'`                | -    | 组固定方向（实际固定行为以子列为准）                                   |
+| onHeaderCell | `(column) => TableCellRenderProps` | -    | 组标题单元格 props 工厂；应用 `class` / `style`，跨度由 Group 自动计算 |
 
 ## TableColumnGroup 插槽
 

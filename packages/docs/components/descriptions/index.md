@@ -87,7 +87,7 @@
 
 ```vue
 <template>
-  <p style="color: #666; margin: 0 0 6px">small</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 0 0 6px">small</p>
   <c-descriptions
     bordered
     size="small"
@@ -99,7 +99,7 @@
     ]"
   />
 
-  <p style="color: #666; margin: 16px 0 6px">default</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 6px">default</p>
   <c-descriptions
     bordered
     :column="3"
@@ -110,7 +110,7 @@
     ]"
   />
 
-  <p style="color: #666; margin: 16px 0 6px">middle</p>
+  <p style="color: var(--ccui-color-text-secondary); margin: 16px 0 6px">middle</p>
   <c-descriptions
     bordered
     size="middle"
@@ -203,3 +203,5 @@
 | span         | number             | 跨列数（默认 1） |
 | labelStyle   | `CSSProperties`    | 单项 label 样式  |
 | contentStyle | `CSSProperties`    | 单项内容样式     |
+
+`id`、`aria-*`、`data-*` 等原生属性会透传到根节点。`column` 和 `span` 应使用正整数；无效值会按 1 列处理。

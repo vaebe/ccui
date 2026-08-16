@@ -1,4 +1,5 @@
 import type { ExtractPropTypes, PropType } from 'vue'
+import type { TableSummaryFixed } from '../../table/src/table-types'
 
 /**
  * 表格汇总行：在表格底部渲染 `<tfoot>` 汇总区。
@@ -18,12 +19,12 @@ import type { ExtractPropTypes, PropType } from 'vue'
  * </c-table>
  * ```
  *
- * `fixed` 控制汇总行是否在垂直滚动时贴底（保留位置）。当前实现把它透传到 SCSS class，
- * 真实粘性效果依赖容器 `scroll.y`。
+ * `fixed` 控制汇总行是否在垂直滚动时贴顶或贴底；`true` 等同于 `'bottom'`，
+ * 真实粘性效果依赖 Table 的 `scroll.y` 容器。
  */
 export const tableSummaryProps = {
   fixed: {
-    type: [Boolean, String] as PropType<boolean | 'top' | 'bottom'>,
+    type: [Boolean, String] as PropType<TableSummaryFixed>,
     default: false,
   },
 } as const

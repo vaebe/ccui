@@ -484,3 +484,162 @@ describe('XL-4 ARIA combobox / activedescendant', () => {
     expect(activeOpt.attributes('aria-selected')).toBe('true')
   })
 })
+
+describe('auto-complete composition and debounce lifecycle', () => {
+  it('does not search or change for intermediate IME input and commits once on compositionend', async () => {
+    const wrapper = mountAC()
+    const input = wrapper.find('input')
+    const element = input.element as HTMLInputElement
+    element.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }))
+    element.value = 'に'
+    element.dispatchEvent(new Event('input', { bubbles: true }))
+    element.value = '日本'
+    element.dispatchEvent(new Event('input', { bubbles: true }))
+    expect(wrapper.emitted('search')).toBeUndefined()
+    expect(wrapper.emitted('change')).toBeUndefined()
+
+    // 浏览器会紧随 compositionend 派发同值 input；两者必须只提交一次。
+    element.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }))
+    element.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('search')).toEqual([['日本']])
+    expect(wrapper.emitted('change')).toEqual([['日本']])
+    expect(wrapper.emitted('update:modelValue')).toEqual([['日本']])
+  })
+
+  it('cancels a pending debounced query before an immediate query after debounce changes', async () => {
+    vi.useFakeTimers()
+    try {
+      const wrapper = mountAC({ searchDebounce: 100 })
+      await wrapper.find('input').setValue('old')
+      await wrapper.setProps({ searchDebounce: 0 })
+      await wrapper.find('input').setValue('new')
+      expect(wrapper.emitted('search')).toEqual([['new']])
+      vi.runAllTimers()
+      expect(wrapper.emitted('search')).toEqual([['new']])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('cancels a pending debounced search when unmounted', async () => {
+    vi.useFakeTimers()
+    try {
+      const wrapper = mountAC({ searchDebounce: 100 })
+      await wrapper.find('input').setValue('pending')
+      wrapper.unmount()
+      vi.runAllTimers()
+      expect(wrapper.emitted('search')).toBeUndefined()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
+describe('auto-complete focus, readonly, and dynamic option safety', () => {
+  it('closes on keyboard blur and validates FormItem blur once', async () => {
+    const validate = vi.fn(async () => true)
+    const wrapper = mount(AutoComplete, {
+      props: { options: SAMPLE },
+      attachTo: document.body,
+      global: {
+        provide: {
+          [formItemInjectionKey as symbol]: {
+            validateStatus: ref(''),
+            isInsideForm: true,
+            validate,
+          },
+        },
+      },
+    })
+    wrappers.push(wrapper)
+    await focus(wrapper)
+    await wrapper.find('input').trigger('blur', { relatedTarget: document.body })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('open-change')).toEqual([[true], [false]])
+    expect(validate).toHaveBeenCalledWith('blur')
+  })
+
+  it('does not emit composite blur while focus moves to the clear control', async () => {
+    const wrapper = mountAC({ allowClear: true, defaultValue: 'Apple' })
+    await focus(wrapper)
+    const clear = wrapper.find(ns.e('clear'))
+    await wrapper.find('input').trigger('blur', { relatedTarget: clear.element })
+    expect(wrapper.emitted('blur')).toBeUndefined()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(true)
+    await clear.trigger('blur', { relatedTarget: document.body })
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('closes when disabled or readonly changes while open', async () => {
+    const wrapper = mountAC()
+    await focus(wrapper)
+    await wrapper.setProps({ disabled: true })
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+
+    await wrapper.setProps({ disabled: false })
+    await focus(wrapper)
+    await wrapper.setProps({ readonly: true })
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.find('input').attributes('readonly')).toBeDefined()
+    expect(wrapper.find('input').attributes('aria-readonly')).toBe('true')
+    await focus(wrapper)
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('moves an invalid active descendant to the first enabled async replacement option', async () => {
+    const wrapper = mountAC({ defaultActiveFirstOption: true, options: ['Apple', 'Banana'] })
+    await focus(wrapper)
+    const oldActiveId = wrapper.find('input').attributes('aria-activedescendant')
+    expect(wrapper.find(`#${oldActiveId}`).text()).toBe('Apple')
+
+    await wrapper.setProps({
+      options: [{ value: 'Apple', disabled: true }, { value: 'Banana' }],
+    })
+    await nextTick()
+    const activeId = wrapper.find('input').attributes('aria-activedescendant')
+    expect(wrapper.find(`#${activeId}`).text()).toBe('Banana')
+    expect(wrapper.find(`#${activeId}`).attributes('aria-disabled')).toBe('false')
+  })
+
+  it.each([
+    ['Enter', 'Enter'],
+    ['Space', ' '],
+  ])('supports %s clearing, then restores input focus', async (_label, key) => {
+    const wrapper = mountAC({ allowClear: true, defaultValue: 'Apple' })
+    const clear = wrapper.find(ns.e('clear'))
+    expect(clear.attributes('tabindex')).toBe('0')
+    ;(clear.element as HTMLElement).focus()
+    expect(document.activeElement).toBe(clear.element)
+    await clear.trigger('keydown', { key })
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')?.slice(-1)[0]).toEqual([''])
+    expect(document.activeElement).toBe(wrapper.find('input').element)
+  })
+
+  it('blocks custom-trigger input events while readonly', async () => {
+    const wrapper = mount(AutoComplete, {
+      props: { options: SAMPLE, readonly: true },
+      slots: {
+        trigger: (slotProps: any) =>
+          h('textarea', {
+            class: 'readonly-trigger',
+            value: slotProps.value,
+            readonly: slotProps.readonly,
+            onInput: slotProps.onInput,
+          }),
+      },
+      attachTo: document.body,
+    })
+    wrappers.push(wrapper)
+    await wrapper.find('.readonly-trigger').setValue('blocked')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('gives an unlabeled combobox a fallback accessible name', () => {
+    const wrapper = mountAC()
+    expect(wrapper.find('input').attributes('aria-label')).toBe('请输入')
+  })
+})

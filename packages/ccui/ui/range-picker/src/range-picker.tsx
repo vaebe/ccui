@@ -9,11 +9,12 @@ import type {
   RangeTimeShowConfig,
   RangeValue,
 } from './range-picker-types'
-import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import { autoUpdate, flip, offset, shift, size, useFloating } from '@floating-ui/vue'
 import dayjs from 'dayjs'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   h,
   inject,
   nextTick,
@@ -73,12 +74,19 @@ export default defineComponent({
     const ns = useNamespace('range-picker')
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.DatePicker ?? {})
+    const uid = getCurrentInstance()?.uid ?? 0
+    const popupId = `ccui-range-picker-popup-${uid}`
     const rootRef = ref<HTMLElement | null>(null)
     const popupRef = ref<HTMLElement | null>(null)
     const startInputRef = ref<HTMLInputElement | null>(null)
     const endInputRef = ref<HTMLInputElement | null>(null)
     const open = shallowRef(false)
     const phase = shallowRef<Phase>('start')
+    const openedFrom = shallowRef<Phase>('start')
+    const startInputDraft = shallowRef<string | null>(null)
+    const endInputDraft = shallowRef<string | null>(null)
+    const startInputRejected = shallowRef(false)
+    const endInputRejected = shallowRef(false)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const showTimeActive = computed(() => !!props.showTime)
@@ -122,6 +130,24 @@ export default defineComponent({
       syncPendingFromSelected()
     })
 
+    watch([() => props.modelValue, effectiveFormat], () => {
+      startInputDraft.value = null
+      endInputDraft.value = null
+      startInputRejected.value = false
+      endInputRejected.value = false
+    })
+
+    watch(
+      () => props.inputReadOnly,
+      (readOnly) => {
+        if (!readOnly) return
+        startInputDraft.value = null
+        endInputDraft.value = null
+        startInputRejected.value = false
+        endInputRejected.value = false
+      },
+    )
+
     const viewMonth = shallowRef<Dayjs>(selectedStart.value ?? dayjs())
 
     const placement = computed(() => PLACEMENT_TO_FLOATING[props.placement])
@@ -137,7 +163,17 @@ export default defineComponent({
       placement: placement as never,
       open,
       whileElementsMounted: autoUpdate,
-      middleware: [offset(4), flip(), shift({ padding: 8 })],
+      middleware: [
+        offset(4),
+        flip(),
+        size({
+          padding: 8,
+          apply({ availableWidth, elements }) {
+            elements.floating.style.maxWidth = `${Math.max(0, availableWidth)}px`
+          },
+        }),
+        shift({ padding: 8 }),
+      ],
       strategy: computed(() => (teleported.value ? 'fixed' : 'absolute')) as never,
     })
 
@@ -145,10 +181,12 @@ export default defineComponent({
     const mergedStatus = computed(() => props.status || validationStatus.value)
 
     const startInputDisplay = computed(() => {
+      if (startInputDraft.value !== null) return startInputDraft.value
       const d = open.value ? pendingStart.value : selectedStart.value
       return d ? d.format(effectiveFormat.value) : ''
     })
     const endInputDisplay = computed(() => {
+      if (endInputDraft.value !== null) return endInputDraft.value
       const d = open.value ? pendingEnd.value : selectedEnd.value
       return d ? d.format(effectiveFormat.value) : ''
     })
@@ -183,22 +221,30 @@ export default defineComponent({
 
     function openPopup(focus: Phase = 'start') {
       // 全禁用（boolean=true 或 [true, true]）则不打开；按 focus 端被禁用同样不打开
-      if (allDisabled.value || open.value) return
+      if (allDisabled.value) return
       if (disabledTuple.value[focus === 'start' ? 0 : 1]) return
+      if (open.value) {
+        phase.value = focus
+        return
+      }
       syncPendingFromSelected()
       hoverDate.value = null
       phase.value = focus
+      openedFrom.value = focus
       // 把面板对齐到现有的 start（或当前月）
-      if (selectedStart.value) viewMonth.value = selectedStart.value
+      if (selectedStart.value || selectedEnd.value) viewMonth.value = selectedStart.value ?? selectedEnd.value!
       open.value = true
       emit('open-change', true)
     }
 
-    function closePopup() {
+    function closePopup(restoreFocus: Phase | null = null) {
       if (!open.value) return
       open.value = false
       hoverDate.value = null
       emit('open-change', false)
+      if (restoreFocus) {
+        nextTick(() => (restoreFocus === 'start' ? startInputRef.value : endInputRef.value)?.focus())
+      }
     }
 
     function emitRange(start: Dayjs | null, end: Dayjs | null) {
@@ -217,6 +263,21 @@ export default defineComponent({
       const sideFn = side === 'start' ? props.disabledStartDate : props.disabledEndDate
       if (sideFn) return sideFn(cell)
       return !!props.disabledDate?.(cell)
+    }
+
+    function normalizeAndValidateRange(
+      start: Dayjs | null,
+      end: Dayjs | null,
+      unit: 'day' | 'minute' = 'day',
+    ): [Dayjs | null, Dayjs | null] | null {
+      let normalizedStart = start
+      let normalizedEnd = end
+      if (normalizedStart && normalizedEnd && normalizedEnd.isBefore(normalizedStart, unit)) {
+        ;[normalizedStart, normalizedEnd] = [normalizedEnd, normalizedStart]
+      }
+      if (normalizedStart && isDisabledFor(normalizedStart, 'start')) return null
+      if (normalizedEnd && isDisabledFor(normalizedEnd, 'end')) return null
+      return [normalizedStart, normalizedEnd]
     }
 
     function getInitialStartTime(): Dayjs {
@@ -244,18 +305,15 @@ export default defineComponent({
       }
       // phase === 'end'
       const endMerged = showTimeActive.value ? combineDayWithTime(cell, pendingEnd.value ?? getInitialEndTime()) : cell
-      let s = pendingStart.value
-      let e = endMerged
-      // 自动调换：end < start（按日级别比较，时间部分忽略）
-      if (s && e.isBefore(s, 'day')) {
-        ;[s, e] = [e, s]
-      }
+      const normalized = normalizeAndValidateRange(pendingStart.value, endMerged)
+      if (!normalized) return
+      const [s, e] = normalized
       pendingStart.value = s
       pendingEnd.value = e
       // showTime 启用时等待 ok 确认；常规模式立即提交
       if (showTimeActive.value) return
       emitRange(s, e)
-      closePopup()
+      closePopup(openedFrom.value)
     }
 
     function onCellMouseEnter(cell: Dayjs) {
@@ -299,13 +357,15 @@ export default defineComponent({
       const ds = toDayjs(s as never)
       const de = toDayjs(e as never)
       if (!ds || !de) return
-      const [normStart, normEnd] = ds.isAfter(de, 'day') ? [de, ds] : [ds, de]
+      const normalized = normalizeAndValidateRange(ds, de)
+      if (!normalized) return
+      const [normStart, normEnd] = normalized
       pendingStart.value = normStart
       pendingEnd.value = normEnd
       // showTime 共存：仅更新 pending，由 ok 提交；非 showTime 立即提交 + 关
       if (showTimeActive.value) return
       emitRange(normStart, normEnd)
-      closePopup()
+      closePopup(openedFrom.value)
     }
 
     function pickTime(side: Phase, unit: 'hour' | 'minute' | 'second', value: number) {
@@ -326,13 +386,70 @@ export default defineComponent({
       const eNull = !pendingEnd.value
       if (sNull && !allowEmptyTuple.value[0]) return
       if (eNull && !allowEmptyTuple.value[1]) return
-      let s = pendingStart.value
-      let e = pendingEnd.value
-      if (s && e && e.isBefore(s, 'minute')) {
-        ;[s, e] = [e, s]
-      }
+      const normalized = normalizeAndValidateRange(pendingStart.value, pendingEnd.value, 'minute')
+      if (!normalized) return
+      const [s, e] = normalized
       emitRange(s, e)
-      closePopup()
+      closePopup(openedFrom.value)
+    }
+
+    function commitInput(side: Phase) {
+      if (props.inputReadOnly) return
+      const draft = side === 'start' ? startInputDraft : endInputDraft
+      const rejected = side === 'start' ? startInputRejected : endInputRejected
+      if (draft.value === null) return
+      if (rejected.value) return
+      const restoreControlledDisplay = () => {
+        const selected = side === 'start' ? selectedStart.value : selectedEnd.value
+        const display = selected ? selected.format(effectiveFormat.value) : ''
+        draft.value = display
+        const input = side === 'start' ? startInputRef.value : endInputRef.value
+        if (input) input.value = display
+        rejected.value = true
+      }
+      const raw = draft.value.trim()
+      if (!raw) {
+        if (!allowEmptyTuple.value[side === 'start' ? 0 : 1]) {
+          restoreControlledDisplay()
+          return
+        }
+        const normalized = normalizeAndValidateRange(
+          side === 'start' ? null : selectedStart.value,
+          side === 'end' ? null : selectedEnd.value,
+          showTimeActive.value ? 'minute' : 'day',
+        )
+        draft.value = null
+        if (normalized) emitRange(...normalized)
+        return
+      }
+      const parsed = toDayjs(raw, effectiveFormat.value)
+      if (!parsed || isDisabledFor(parsed, side)) {
+        restoreControlledDisplay()
+        return
+      }
+      const normalized = normalizeAndValidateRange(
+        side === 'start' ? parsed : selectedStart.value,
+        side === 'end' ? parsed : selectedEnd.value,
+        showTimeActive.value ? 'minute' : 'day',
+      )
+      draft.value = null
+      if (normalized) emitRange(...normalized)
+    }
+
+    function onInputKeydown(e: KeyboardEvent, side: Phase) {
+      if (disabledTuple.value[side === 'start' ? 0 : 1]) return
+      if (!open.value && (e.key === 'Enter' || e.key === 'ArrowDown' || (props.inputReadOnly && e.key === ' '))) {
+        e.preventDefault()
+        openPopup(side)
+        return
+      }
+      if (!open.value) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closePopup(side)
+      } else if (e.key === 'Tab') {
+        closePopup()
+      }
     }
 
     function onClickOutside(e: MouseEvent) {
@@ -353,6 +470,10 @@ export default defineComponent({
 
     onUnmounted(() => {
       document.removeEventListener('mousedown', onClickOutside, true)
+    })
+
+    watch(disabledTuple, (disabled) => {
+      if (open.value && disabled[phase.value === 'start' ? 0 : 1]) closePopup()
     })
 
     const showClear = computed(
@@ -450,44 +571,52 @@ export default defineComponent({
     }
 
     function renderGrid(cells: ReturnType<typeof generateMonthGrid>) {
+      const rows: ReturnType<typeof generateMonthGrid>[] = []
+      for (let i = 0; i < 6; i += 1) rows.push(cells.slice(i * 7, i * 7 + 7))
       return (
         <div
           class={ns.e('grid')}
+          role="grid"
           onMouseleave={() => {
             // 指针移出整个网格时清除 hover 预览，避免残留高亮
             hoverDate.value = null
           }}
         >
-          {cells.map((cell) => {
-            // 显示禁用以当前 phase 为准（用户先填 start 再填 end，对应该侧的限制）
-            const disabled = isDisabledFor(cell.date, phase.value)
-            const isStart = isCellRangeStart(cell.date)
-            const isEnd = isCellRangeEnd(cell.date)
-            const inRange = isCellInRange(cell.date)
-            const inHover = isCellInHoverRange(cell.date)
-            const cellCls = [
-              ns.e('cell'),
-              !cell.isCurrentMonth && ns.em('cell', 'outside'),
-              cell.isToday && ns.em('cell', 'today'),
-              isStart && ns.em('cell', 'range-start'),
-              isEnd && ns.em('cell', 'range-end'),
-              inRange && ns.em('cell', 'in-range'),
-              inHover && ns.em('cell', 'in-hover-range'),
-              disabled && ns.em('cell', 'disabled'),
-            ]
-            return (
-              <div
-                class={cellCls}
-                role="gridcell"
-                aria-disabled={disabled}
-                onClick={() => !disabled && selectDate(cell.date)}
-                onMouseenter={() => onCellMouseEnter(cell.date)}
-                onMouseleave={onCellMouseLeave}
-              >
-                <span class={ns.e('cell-inner')}>{cell.day}</span>
-              </div>
-            )
-          })}
+          {rows.map((row) => (
+            <div class={ns.e('grid-row')} role="row">
+              {row.map((cell) => {
+                // 显示禁用以当前 phase 为准（用户先填 start 再填 end，对应该侧的限制）
+                const disabled = isDisabledFor(cell.date, phase.value)
+                const isStart = isCellRangeStart(cell.date)
+                const isEnd = isCellRangeEnd(cell.date)
+                const inRange = isCellInRange(cell.date)
+                const inHover = isCellInHoverRange(cell.date)
+                const cellCls = [
+                  ns.e('cell'),
+                  !cell.isCurrentMonth && ns.em('cell', 'outside'),
+                  cell.isToday && ns.em('cell', 'today'),
+                  isStart && ns.em('cell', 'range-start'),
+                  isEnd && ns.em('cell', 'range-end'),
+                  inRange && ns.em('cell', 'in-range'),
+                  inHover && ns.em('cell', 'in-hover-range'),
+                  disabled && ns.em('cell', 'disabled'),
+                ]
+                return (
+                  <div
+                    class={cellCls}
+                    role="gridcell"
+                    aria-selected={isStart || isEnd}
+                    aria-disabled={disabled}
+                    onClick={() => !disabled && selectDate(cell.date)}
+                    onMouseenter={() => onCellMouseEnter(cell.date)}
+                    onMouseleave={onCellMouseLeave}
+                  >
+                    <span class={ns.e('cell-inner')}>{cell.day}</span>
+                  </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
       )
     }
@@ -498,7 +627,17 @@ export default defineComponent({
           {props.presets.map((p) => {
             const label = typeof p.label === 'function' ? (p.label as () => string)() : p.label
             return (
-              <li class={ns.e('preset-item')} role="button" onClick={() => clickPreset(p)}>
+              <li
+                class={ns.e('preset-item')}
+                role="button"
+                tabindex={0}
+                onClick={() => clickPreset(p)}
+                onKeydown={(e: KeyboardEvent) => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return
+                  e.preventDefault()
+                  clickPreset(p)
+                }}
+              >
                 {label}
               </li>
             )
@@ -603,6 +742,8 @@ export default defineComponent({
           class: [popupCls, props.classNames?.popup],
           style: [floatingStyles.value, props.styles?.popup] as any,
           role: 'dialog',
+          id: popupId,
+          'aria-label': locale.value.rangePlaceholder?.join(' - ') || '选择日期范围',
         },
         children,
       )
@@ -643,9 +784,19 @@ export default defineComponent({
             value={startInputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value && phase.value === 'start'}
+            aria-controls={popupId}
             onClick={() => openPopup('start')}
+            onInput={(e: Event) => {
+              if (!props.inputReadOnly) {
+                startInputRejected.value = false
+                startInputDraft.value = (e.target as HTMLInputElement).value
+              }
+            }}
+            onChange={() => commitInput('start')}
+            onKeydown={(e: KeyboardEvent) => onInputKeydown(e, 'start')}
             onFocus={() => emit('focus')}
             onBlur={() => {
+              commitInput('start')
               emit('blur')
               formItem?.validate('blur')
             }}
@@ -663,9 +814,19 @@ export default defineComponent({
             value={endInputDisplay.value}
             aria-haspopup="dialog"
             aria-expanded={open.value && phase.value === 'end'}
+            aria-controls={popupId}
             onClick={() => openPopup('end')}
+            onInput={(e: Event) => {
+              if (!props.inputReadOnly) {
+                endInputRejected.value = false
+                endInputDraft.value = (e.target as HTMLInputElement).value
+              }
+            }}
+            onChange={() => commitInput('end')}
+            onKeydown={(e: KeyboardEvent) => onInputKeydown(e, 'end')}
             onFocus={() => emit('focus')}
             onBlur={() => {
+              commitInput('end')
               emit('blur')
               formItem?.validate('blur')
             }}

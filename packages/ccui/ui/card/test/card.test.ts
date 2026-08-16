@@ -146,4 +146,10 @@ describe('card', () => {
       expect(wrapper.find('.ccui-card').attributes('style') || '').toContain('red')
     })
   })
+
+  it('forwards native attributes to the root element', () => {
+    const wrapper = mount(Card, { attrs: { id: 'orders', 'aria-label': '订单卡片' } })
+    expect(wrapper.find('.ccui-card').attributes('id')).toBe('orders')
+    expect(wrapper.find('.ccui-card').attributes('aria-label')).toBe('订单卡片')
+  })
 })

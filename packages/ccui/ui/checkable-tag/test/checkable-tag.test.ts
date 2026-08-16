@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
-import { h } from 'vue'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { h, ref } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { CheckableTag, CheckableTagGroup } from '../index'
 
@@ -59,6 +60,20 @@ describe('checkable-tag', () => {
       const wrapper = mount(CheckableTag, { slots: { default: '标签' } })
       expect(wrapper.find(ns.b()).attributes('role')).toBe('checkbox')
       expect(wrapper.find(ns.b()).attributes('tabindex')).toBe('0')
+    })
+
+    it('透传根属性并在独立切换时触发 FormItem change 校验', async () => {
+      const validate = vi.fn().mockResolvedValue(true)
+      const wrapper = mount(CheckableTag, {
+        attrs: { id: 'tag', 'data-testid': 'tag' },
+        global: {
+          provide: { [formItemInjectionKey as symbol]: { validate, validateStatus: ref(''), isInsideForm: true } },
+        },
+        slots: { default: '标签' },
+      })
+      expect(wrapper.attributes('id')).toBe('tag')
+      await wrapper.trigger('click')
+      expect(validate).toHaveBeenCalledWith('change')
     })
   })
 

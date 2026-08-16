@@ -9,6 +9,8 @@
 
   &--vertical {
     position: relative;
+    // 字形视觉中心略高于行盒中心，轻微上移可避免竖线在行内操作项之间显得偏下。
+    top: -0.06em;
     display: inline-block;
     width: 1px;
     height: 1em;

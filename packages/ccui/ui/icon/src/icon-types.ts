@@ -33,7 +33,7 @@ export const iconProps = {
     default: '',
   },
   component: {
-    type: Object as PropType<Component>,
+    type: [Object, Function] as PropType<Component>,
     default: undefined,
   },
   size: {

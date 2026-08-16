@@ -8,6 +8,7 @@ Timeline.install = function (app: App) {
 }
 
 export { Timeline, TimelineItem }
+export type { TimelineItemProps, TimelineItemType, TimelineProps } from './src/timeline-types'
 
 export default {
   title: 'Timeline 时间线',

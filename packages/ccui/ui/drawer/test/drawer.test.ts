@@ -8,8 +8,7 @@ const ns = useNamespace('drawer', true)
 
 afterEach(() => {
   document.body.innerHTML = ''
-  delete document.body.dataset.ccuiDrawerCount
-  delete document.body.dataset.ccuiDrawerOverflow
+  delete document.body.dataset.ccuiOverlayCount
   document.body.style.overflow = ''
 })
 
@@ -140,17 +139,17 @@ describe('drawer', () => {
     const second = mount(Drawer, { props: { visible: true } })
     await nextTick()
 
-    expect(document.body.dataset.ccuiDrawerCount).toBe('2')
+    expect(document.body.dataset.ccuiOverlayCount).toBe('2')
     expect(document.body.style.overflow).toBe('hidden')
 
     await first.setProps({ visible: false })
     await nextTick()
-    expect(document.body.dataset.ccuiDrawerCount).toBe('1')
+    expect(document.body.dataset.ccuiOverlayCount).toBe('1')
     expect(document.body.style.overflow).toBe('hidden')
 
     await second.setProps({ visible: false })
     await nextTick()
-    expect(document.body.dataset.ccuiDrawerCount).toBeUndefined()
+    expect(document.body.dataset.ccuiOverlayCount).toBeUndefined()
     expect(document.body.style.overflow).toBe('')
     first.unmount()
     second.unmount()
@@ -179,6 +178,19 @@ describe('drawer', () => {
       expect(closeBtn.disabled).toBe(true)
       closeBtn.click()
       expect(wrapper.emitted('update:visible')).toBeUndefined()
+      wrapper.unmount()
+    })
+
+    it('closable.disabled only disables the close button, not mask or Escape dismissal', async () => {
+      const wrapper = mount(Drawer, {
+        props: { visible: true, closable: { disabled: true }, maskClosable: true },
+      })
+      await nextTick()
+      ;(document.body.querySelector(ns.e('mask')) as HTMLElement).click()
+      expect(wrapper.emitted('update:visible')?.[0]).toEqual([false])
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+      expect(wrapper.emitted('update:visible')?.[1]).toEqual([false])
       wrapper.unmount()
     })
 
@@ -372,6 +384,20 @@ describe('drawer', () => {
   })
 
   describe('可访问性 ARIA', () => {
+    it('关闭但保留挂载时从可访问性树中隐藏 dialog 语义', async () => {
+      const wrapper = mount(Drawer, {
+        props: { visible: false, title: 'Drawer Title' },
+      })
+      await nextTick()
+      const root = document.body.querySelector(ns.b()) as HTMLElement
+      expect(root.getAttribute('role')).toBeNull()
+      expect(root.getAttribute('aria-modal')).toBeNull()
+      expect(root.getAttribute('aria-labelledby')).toBeNull()
+      expect(root.getAttribute('aria-describedby')).toBeNull()
+      expect(root.getAttribute('aria-hidden')).toBe('true')
+      wrapper.unmount()
+    })
+
     it('root 为 role=dialog aria-modal=true，并 aria-labelledby/aria-describedby 指向 title/body', async () => {
       const wrapper = mount(Drawer, {
         props: { visible: true, title: 'Drawer Title' },

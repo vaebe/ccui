@@ -23,7 +23,6 @@ export default defineConfig({
     },
   },
   lastUpdated: true,
-  ignoreDeadLinks: true, // 忽略死链接
   head: [
     // 这里的路径没有被自动更改 手动更改路径
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${prod ? '/ccui/' : '/'}logo.svg` }],

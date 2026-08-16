@@ -98,6 +98,80 @@ describe('time-range-picker clear', () => {
   })
 })
 
+describe('time-range-picker forwarded events', () => {
+  it('forwards focus and blur from either input', async () => {
+    const wrapper = mountTRP()
+    const inputs = wrapper.findAll('input')
+
+    await inputs[0].trigger('focus')
+    await inputs[1].trigger('blur')
+
+    expect(wrapper.emitted('focus')).toHaveLength(1)
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+  })
+
+  it('does not emit a false → true transient state while switching endpoints, then emits final close', async () => {
+    vi.useFakeTimers()
+    const wrapper = mountTRP()
+    const inputs = wrapper.findAll('input')
+
+    await inputs[0].trigger('click')
+    await nextTick()
+    expect(wrapper.emitted('open-change')).toEqual([[true]])
+
+    inputs[1].element.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+    inputs[1].element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await nextTick()
+    vi.runAllTimers()
+    expect(wrapper.emitted('open-change')).toEqual([[true]])
+
+    inputs[1].element.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('open-change')).toEqual([[true]])
+
+    await inputs[1].trigger('click')
+    await nextTick()
+    expect(wrapper.emitted('open-change')).toEqual([[true]])
+
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('open-change')).toEqual([[true], [false]])
+  })
+
+  it.each([['pointer'], ['mouse']])(
+    'settles the aggregate close when a %s handoff is released outside without click',
+    async (inputKind) => {
+      const wrapper = mountTRP()
+      const inputs = wrapper.findAll('input')
+
+      await inputs[0].trigger('click')
+      if (inputKind === 'pointer') {
+        inputs[1].element.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+      }
+      inputs[1].element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      await nextTick()
+      expect(wrapper.emitted('open-change')).toEqual([[true]])
+
+      document.body.dispatchEvent(new MouseEvent(`${inputKind}up`, { bubbles: true }))
+      await nextTick()
+      expect(wrapper.emitted('open-change')).toEqual([[true], [false]])
+    },
+  )
+
+  it('clears a keyboard focus handoff when the destination endpoint does not open', async () => {
+    const wrapper = mountTRP()
+    const inputs = wrapper.findAll('input')
+
+    await inputs[0].trigger('click')
+    await inputs[1].trigger('focus')
+    await nextTick()
+
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('open-change')).toEqual([[true], [false]])
+  })
+})
+
 describe('time-range-picker size / status', () => {
   it.each([['small'], ['default'], ['large']])('applies size modifier %s', (size) => {
     const wrapper = mountTRP({ size })
@@ -112,9 +186,16 @@ describe('time-range-picker size / status', () => {
 
 describe('time-range-picker order 自动保序', () => {
   it('start > end 时 order=true 自动交换 emit', async () => {
-    // 触发交换需要走面板；此处验证 prop 默认值
-    const wrapper = mountTRP()
-    expect(wrapper.props('order')).toBe(true)
+    const wrapper = mountTRP({ modelValue: ['09:00:00', '18:00:00'] })
+    const pickers = wrapper.findAllComponents({ name: 'CTimePicker' })
+
+    pickers[0].vm.$emit('update:modelValue', '20:00:00')
     await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['18:00:00', '20:00:00']])
+    expect(wrapper.emitted('change')?.[0]).toEqual([
+      ['18:00:00', '20:00:00'],
+      ['18:00:00', '20:00:00'],
+    ])
   })
 })

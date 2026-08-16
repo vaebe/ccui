@@ -7,6 +7,8 @@ Space.install = function (app: App): void {
 
 export { Space }
 
+export type { SpaceAlign, SpaceDirection, SpaceProps, SpaceSize } from './src/space-types'
+
 export default {
   title: 'Space 间距',
   category: '布局',

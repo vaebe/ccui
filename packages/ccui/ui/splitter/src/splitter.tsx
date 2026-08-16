@@ -60,6 +60,8 @@ export const Splitter = defineComponent({
     const getSize = (id: number) => panels.find((p) => p.id === id)?.size
 
     let dragState: { panelIdx: number; startPos: number; startA: number; startB: number; total: number } | null = null
+    let previousBodyCursor: string | null = null
+    let previousBodyUserSelect: string | null = null
 
     const computePixel = (
       panel: { props: PanelProps; size: number | undefined; pixelized: boolean },
@@ -115,8 +117,15 @@ export const Splitter = defineComponent({
       dragState = null
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
+      window.removeEventListener('pointercancel', onPointerUp)
+      if (previousBodyCursor !== null) {
+        document.body.style.cursor = previousBodyCursor
+        previousBodyCursor = null
+      }
+      if (previousBodyUserSelect !== null) {
+        document.body.style.userSelect = previousBodyUserSelect
+        previousBodyUserSelect = null
+      }
     }
 
     const startResize = (id: number, e: PointerEvent) => {
@@ -143,6 +152,9 @@ export const Splitter = defineComponent({
       }
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
+      window.addEventListener('pointercancel', onPointerUp)
+      previousBodyCursor = document.body.style.cursor
+      previousBodyUserSelect = document.body.style.userSelect
       document.body.style.cursor = isH ? 'col-resize' : 'row-resize'
       document.body.style.userSelect = 'none'
       emit(
@@ -151,14 +163,49 @@ export const Splitter = defineComponent({
       )
     }
 
+    const getSeparatorValue = (id: number) => {
+      const panel = panels.find((item) => item.id === id)
+      return {
+        min: toNumber(panel?.props.min) ?? 0,
+        max: toNumber(panel?.props.max),
+        now: panel?.size ?? toNumber(panel?.props.size ?? panel?.props.defaultSize) ?? 0,
+      }
+    }
+
+    const resizeByKeyboard = (id: number, action: 'decrease' | 'increase' | 'min' | 'max') => {
+      const idx = panels.findIndex((panel) => panel.id === id)
+      if (idx < 0 || idx === panels.length - 1 || !containerRef.value) return
+      const rect = containerRef.value.getBoundingClientRect()
+      const total = effectiveLayout.value === 'horizontal' ? rect.width : rect.height
+      panels.forEach((panel) => {
+        panel.size = computePixel(panel, total)
+        panel.pixelized = true
+      })
+      const a = panels[idx]
+      const b = panels[idx + 1]
+      const pairTotal = a.size! + b.size!
+      const minA = toPixel(a.props.min, total) ?? 0
+      const maxA = Math.min(toPixel(a.props.max, total) ?? total, pairTotal - (toPixel(b.props.min, total) ?? 0))
+      let nextA = action === 'min' ? minA : action === 'max' ? maxA : a.size! + (action === 'increase' ? 10 : -10)
+      nextA = Math.max(minA, Math.min(maxA, nextA))
+      a.size = nextA
+      b.size = pairTotal - nextA
+      const sizes = panels.map((panel) => panel.size)
+      emit('resize', sizes)
+      emit('resizeEnd', sizes)
+    }
+
     onBeforeUnmount(() => {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerUp)
       // 拖拽进行中被卸载时，还原 body 全局样式，避免残留 col-resize 光标与禁用文本选择。
       if (dragState) {
-        document.body.style.cursor = ''
-        document.body.style.userSelect = ''
+        document.body.style.cursor = previousBodyCursor ?? ''
+        document.body.style.userSelect = previousBodyUserSelect ?? ''
       }
+      previousBodyCursor = null
+      previousBodyUserSelect = null
     })
 
     // L-2.23：折叠 panel 入口。toggle 时记录或恢复 size，让 panel style 计算走 collapsed=0 分支。
@@ -185,6 +232,8 @@ export const Splitter = defineComponent({
       unregisterPanel,
       getSize,
       startResize,
+      resizeByKeyboard,
+      getSeparatorValue,
       isCollapsed,
       toggleCollapse,
     })
@@ -222,7 +271,7 @@ export const Panel = defineComponent({
     const style = computed<CSSProperties>(() => {
       // L-2.23：折叠状态下强制 flex:0 0 0 + 隐藏溢出。
       if (ctx?.isCollapsed(id)) {
-        return { flex: '0 0 0', overflow: 'hidden' }
+        return { flex: '0 0 0px', overflow: 'hidden' }
       }
       const size = ctx?.getSize(id)
       if (size === undefined) {
@@ -251,6 +300,25 @@ export const Panel = defineComponent({
       ctx.startResize(id, e)
     }
 
+    const onSplitterKeydown = (e: KeyboardEvent) => {
+      if (!props.resizable || !ctx) return
+      const decreaseKey = isHorizontal.value ? 'ArrowLeft' : 'ArrowUp'
+      const increaseKey = isHorizontal.value ? 'ArrowRight' : 'ArrowDown'
+      const action =
+        e.key === decreaseKey
+          ? 'decrease'
+          : e.key === increaseKey
+            ? 'increase'
+            : e.key === 'Home'
+              ? 'min'
+              : e.key === 'End'
+                ? 'max'
+                : null
+      if (!action) return
+      e.preventDefault()
+      ctx.resizeByKeyboard(id, action)
+    }
+
     return () => {
       const splitterCls = [
         ns.e('resizer'),
@@ -260,6 +328,7 @@ export const Panel = defineComponent({
       // 这里简化为：showCollapsibleIcon 时把本 panel 的折叠按钮挂在 resizer 上，方向由 layout 决定。
       const showIcon = props.showCollapsibleIcon && (collapsibleConfig.value.start || collapsibleConfig.value.end)
       const collapsed = ctx?.isCollapsed(id) ?? false
+      const separatorValue = ctx?.getSeparatorValue(id)
       // 折叠按钮箭头朝向：未折叠时朝 start（指示「点击折叠到 start」），已折叠时朝 end。
       const arrow = isHorizontal.value ? (collapsed ? '▶' : '◀') : collapsed ? '▼' : '▲'
 
@@ -269,7 +338,17 @@ export const Panel = defineComponent({
             {slots.default?.()}
           </div>
           {props.resizable && (
-            <div class={splitterCls} onPointerdown={onSplitterPointerDown}>
+            <div
+              class={splitterCls}
+              role="separator"
+              tabindex={0}
+              aria-orientation={isHorizontal.value ? 'vertical' : 'horizontal'}
+              aria-valuemin={separatorValue?.min}
+              aria-valuemax={separatorValue?.max}
+              aria-valuenow={separatorValue?.now}
+              onPointerdown={onSplitterPointerDown}
+              onKeydown={onSplitterKeydown}
+            >
               {showIcon && (
                 <button
                   type="button"

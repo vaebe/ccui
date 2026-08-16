@@ -50,7 +50,7 @@ export const backTopProps = {
     default: 450,
   },
   target: {
-    type: [String, Object, Function] as PropType<string | HTMLElement | (() => HTMLElement | Window)>,
+    type: [String, Object, Function] as PropType<string | HTMLElement | Window | (() => HTMLElement | Window)>,
     default: undefined,
   },
   shape: {

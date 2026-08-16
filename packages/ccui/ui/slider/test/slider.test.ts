@@ -82,12 +82,20 @@ describe('slider', () => {
 
   it('applies ariaLabel and label props', () => {
     const w1 = mount(Slider, { props: { ariaLabel: 'Volume' } })
-    expect(w1.find(ns.e('wrapper')).attributes('aria-label')).toBe('Volume')
+    expect(w1.find(ns.e('button')).attributes('aria-label')).toBe('Volume')
     w1.unmount()
 
     const w2 = mount(Slider, { props: { label: 'Brightness' } })
-    expect(w2.attributes('aria-label')).toBe('Brightness')
+    expect(w2.find(ns.e('button')).attributes('aria-label')).toBe('Brightness')
     w2.unmount()
+  })
+
+  it('exposes only the interactive thumb as a slider', () => {
+    const wrapper = mount(Slider, { props: { modelValue: 30, ariaLabel: 'Volume' } })
+    expect(wrapper.find(ns.e('wrapper')).attributes('role')).toBeUndefined()
+    expect(wrapper.findAll('[role="slider"]')).toHaveLength(1)
+    expect(wrapper.find('[role="slider"]').attributes('aria-label')).toBe('Volume')
+    wrapper.unmount()
   })
 
   it('range mode shows custom aria labels for start and end', () => {
@@ -191,6 +199,22 @@ describe('slider', () => {
     expect(addSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
     expect(addSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
     addSpy.mockRestore()
+    wrapper.unmount()
+  })
+
+  it('touchcancel ends a drag and removes touch listeners', async () => {
+    const removeSpy = vi.spyOn(document, 'removeEventListener')
+    const wrapper = mount(Slider, { props: { modelValue: 50 } })
+
+    stubSliderRect(wrapper)
+    const touchStart = new Event('touchstart', { bubbles: true, cancelable: true })
+    Object.defineProperty(touchStart, 'touches', { value: [{ clientX: 100, clientY: 0 }] })
+    wrapper.find(ns.e('button')).element.dispatchEvent(touchStart)
+    document.dispatchEvent(new Event('touchcancel'))
+
+    expect(removeSpy).toHaveBeenCalledWith('touchcancel', expect.any(Function))
+    expect(wrapper.emitted('change-complete')).toBeDefined()
+    removeSpy.mockRestore()
     wrapper.unmount()
   })
 

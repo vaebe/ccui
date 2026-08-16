@@ -1,9 +1,10 @@
 import type { VNode } from 'vue'
 import type { ModalClosableObject, ModalProps } from './modal-types'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { computed, defineComponent, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, ref, Teleport, Transition, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
+import { activateOverlay, canUseDom, lockBodyScroll } from '../../shared/utils/overlay'
 import { modalProps } from './modal-types'
 import './modal.scss'
 
@@ -32,7 +33,10 @@ export default defineComponent({
 
     // 触发节点：用于 focusTriggerAfterClose
     const trigger = ref<HTMLElement | null>(null)
+    const contentRef = ref<HTMLElement | null>(null)
     const rendered = ref(isOpen.value || props.keepAlive)
+    let releaseScroll: (() => void) | null = null
+    let releaseOverlay: (() => void) | null = null
 
     // ── 解析 closable 复合对象 ────────────────────────────
     const closableObj = computed<ModalClosableObject | null>(() =>
@@ -62,7 +66,6 @@ export default defineComponent({
 
     // ── 关闭流程 ────────────────────────────────────────
     const close = () => {
-      if (closeDisabled.value) return
       emit('update:visible', false)
       emit('close')
     }
@@ -77,35 +80,6 @@ export default defineComponent({
       if (props.maskClosable) close()
     }
 
-    const onKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && props.closeOnEsc && isOpen.value) {
-        close()
-      }
-    }
-
-    // ── body scroll lock ────────────────────────────────
-    const lockScroll = () => {
-      const body = document.body
-      if (body.dataset.ccuiModalCount) {
-        body.dataset.ccuiModalCount = String(Number(body.dataset.ccuiModalCount) + 1)
-        return
-      }
-      body.dataset.ccuiModalCount = '1'
-      body.dataset.ccuiOriginalOverflow = body.style.overflow
-      body.style.overflow = 'hidden'
-    }
-    const unlockScroll = () => {
-      const body = document.body
-      const count = Number(body.dataset.ccuiModalCount ?? 0) - 1
-      if (count <= 0) {
-        body.style.overflow = body.dataset.ccuiOriginalOverflow ?? ''
-        delete body.dataset.ccuiModalCount
-        delete body.dataset.ccuiOriginalOverflow
-      } else {
-        body.dataset.ccuiModalCount = String(count)
-      }
-    }
-
     watch(
       isOpen,
       (val) => {
@@ -116,12 +90,22 @@ export default defineComponent({
             if (active instanceof HTMLElement) trigger.value = active
           }
           rendered.value = true
-          lockScroll()
-          document.addEventListener('keydown', onKeydown)
+          releaseScroll = lockBodyScroll()
+          void nextTick(() => {
+            if (!isOpen.value || !contentRef.value) return
+            releaseOverlay?.()
+            releaseOverlay = activateOverlay({
+              container: contentRef.value,
+              closeOnEsc: props.closeOnEsc,
+              onEscape: close,
+            })
+          })
           emit('open')
         } else {
-          document.removeEventListener('keydown', onKeydown)
-          unlockScroll()
+          releaseOverlay?.()
+          releaseOverlay = null
+          releaseScroll?.()
+          releaseScroll = null
         }
         emit('after-open-change', val)
       },
@@ -129,8 +113,8 @@ export default defineComponent({
     )
 
     onBeforeUnmount(() => {
-      document.removeEventListener('keydown', onKeydown)
-      if (isOpen.value) unlockScroll()
+      releaseOverlay?.()
+      releaseScroll?.()
     })
 
     const onAfterEnter = () => emit('opened')
@@ -139,7 +123,7 @@ export default defineComponent({
         rendered.value = false
       }
       // 焦点还给触发节点
-      if (props.focusTriggerAfterClose && trigger.value && document.body.contains(trigger.value)) {
+      if (canUseDom() && props.focusTriggerAfterClose && trigger.value && document.body.contains(trigger.value)) {
         try {
           trigger.value.focus({ preventScroll: true })
         } catch {}
@@ -190,10 +174,11 @@ export default defineComponent({
       // 默认 ok / cancel 按钮
       return (
         <div class={footerClass} style={footerStyle}>
-          <button class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
+          <button type="button" class={[ns.e('btn'), ns.em('btn', 'cancel')]} onClick={onCancel}>
             {cancelTextLocal.value}
           </button>
           <button
+            type="button"
             class={[ns.e('btn'), ns.em('btn', props.okType), props.confirmLoading && ns.is('loading')]}
             disabled={props.confirmLoading}
             onClick={onOk}
@@ -223,10 +208,11 @@ export default defineComponent({
         <div
           class={[ns.b(), props.centered && ns.m('centered'), props.wrapClassName, props.classNames?.root]}
           style={[wrapStyle, props.styles?.root] as any}
-          aria-modal="true"
-          role="dialog"
-          aria-labelledby={hasTitle ? titleId : undefined}
-          aria-describedby={bodyId}
+          aria-modal={isOpen.value ? 'true' : undefined}
+          role={isOpen.value ? 'dialog' : undefined}
+          aria-hidden={isOpen.value ? undefined : 'true'}
+          aria-labelledby={isOpen.value && hasTitle ? titleId : undefined}
+          aria-describedby={isOpen.value ? bodyId : undefined}
         >
           <Transition name={maskTransition}>
             {props.mask && isOpen.value && (
@@ -244,9 +230,10 @@ export default defineComponent({
                   }
                 }}
               >
-                <div class={ns.e('content')} style={dialogStyle}>
+                <div ref={contentRef} class={ns.e('content')} style={dialogStyle} tabindex={-1}>
                   {closableEnabled.value && (
                     <button
+                      type="button"
                       class={[ns.e('close'), closeDisabled.value && ns.is('disabled')]}
                       aria-label={closeAriaLabel.value}
                       disabled={closeDisabled.value}

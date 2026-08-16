@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import { Col, Row } from './src/grid'
+export type { Align, Breakpoint, ColProps, ColSize, ColSizeProp, Gutter, Justify, RowProps } from './src/grid-types'
 
 ;(Row as any).install = function (app: App): void {
   app.component((Row as any).name, Row)

@@ -62,7 +62,7 @@ const value = ref(99.5)
 
 <template>
   <c-input-number v-model="value" readonly />
-  <p style="color: #666">值由后端计算得出，仅供展示</p>
+  <p style="color: var(--ccui-color-text-secondary)">值由后端计算得出，仅供展示</p>
 </template>
 ```
 
@@ -211,7 +211,7 @@ const value = ref(undefined)
 
 ## 监听 change 事件
 
-`change` 返回当前值与变更前的旧值两个参数，方便埋点 / 撤销栈等场景。
+`input` 会随每次合法输入更新，`change` 在输入通过原生 change（通常是失焦）或按 Enter 提交时触发一次，并返回本次编辑后的值与编辑前的旧值两个参数，方便埋点 / 撤销栈等场景。上下方向键和控制按钮会立即提交。
 
 :::demo
 
@@ -230,8 +230,8 @@ function onChange(curr, prev) {
 
 <template>
   <c-input-number v-model="value" @change="onChange" />
-  <p style="margin-top: 8px; color: #666">最近 5 次变更：</p>
-  <ul style="margin: 4px 0; padding-left: 20px; color: #666">
+  <p style="margin-top: 8px; color: var(--ccui-color-text-secondary)">最近 5 次变更：</p>
+  <ul style="margin: 4px 0; padding-left: 20px; color: var(--ccui-color-text-secondary)">
     <li v-for="(log, i) in logs" :key="i">[{{ log.at }}] {{ log.prev }} → {{ log.curr }}</li>
   </ul>
 </template>
@@ -302,7 +302,7 @@ const price = ref(0)
 
 ## 正则限制 reg
 
-`reg` 接受 RegExp 或字符串，输入时不匹配的字符会被过滤；常用于「只允许正整数」「只允许非负数」之类的约束。
+`reg` 接受 RegExp 或字符串；整段输入不匹配时会恢复为上一次合法显示值，常用于「只允许正整数」「只允许非负数」之类的约束。
 
 :::demo
 
@@ -317,11 +317,11 @@ const positiveOnly = ref(0)
 <template>
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">仅正整数（reg = /^\d+$/）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">仅正整数（reg = /^\d+$/）</p>
       <c-input-number v-model="intOnly" :reg="/^\d+$/" :min="0" placeholder="只能输入整数" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">非负小数（reg = /^\d+(\.\d{0,2})?$/）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">非负小数（reg = /^\d+(\.\d{0,2})?$/）</p>
       <c-input-number v-model="positiveOnly" :reg="/^\d+(\.\d{0,2})?$/" :min="0" :precision="2" placeholder="0.00" />
     </div>
   </div>
@@ -347,11 +347,11 @@ const b = ref(10)
 <template>
   <div style="display: flex; gap: 16px">
     <div>
-      <p style="margin: 0 0 4px; color: #666">默认（发光）</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">默认（发光）</p>
       <c-input-number v-model="a" />
     </div>
     <div>
-      <p style="margin: 0 0 4px; color: #666">关闭发光</p>
+      <p style="margin: 0 0 4px; color: var(--ccui-color-text-secondary)">关闭发光</p>
       <c-input-number v-model="b" :show-glow-style="false" />
     </div>
   </div>
@@ -410,24 +410,24 @@ const v3 = ref(0)
 
 ## InputNumber参数
 
-| 参数              | 类型                                                             | 默认值       | 说明                                                                                         |
-| ----------------- | ---------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------- |
-| v-model           | `number \| undefined`                                            | `undefined`  | 绑定值                                                                                       |
-| step              | `number`                                                         | `1`          | 计数器步长                                                                                   |
-| placeholder       | `string`                                                         | `''`         | 输入框占位文本                                                                               |
-| max               | `number`                                                         | `Infinity`   | 设置计数器允许的最大值                                                                       |
-| min               | `number`                                                         | `-Infinity`  | 设置计数器允许的最小值                                                                       |
-| disabled          | `boolean`                                                        | `false`      | 是否禁用计数器                                                                               |
-| readonly          | `boolean`                                                        | `false`      | 是否只读                                                                                     |
-| precision         | `number`                                                         | `undefined`  | 数值精度                                                                                     |
-| size              | `'large' \| 'default' \| 'small'`                                | `'default'`  | 输入框尺寸                                                                                   |
-| controls          | `boolean`                                                        | `true`       | 是否显示控制按钮                                                                             |
-| controls-position | `'both' \| 'right'`                                              | `'both'`     | 控制按钮位置                                                                                 |
-| allow-empty       | `boolean`                                                        | `false`      | 是否允许空值                                                                                 |
-| show-glow-style   | `boolean`                                                        | `true`       | 是否显示悬浮发光效果                                                                         |
-| reg               | `RegExp \| string`                                               | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤                                                   |
-| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'`         | `'outlined'` | 录入组件统一形态                                                                             |
-| status            | `'' \| 'error' \| 'warning'`                                     | `''`         | 校验状态，Form 联动会自动透传                                                                |
+| 参数              | 类型                                                     | 默认值       | 说明                                       |
+| ----------------- | -------------------------------------------------------- | ------------ | ------------------------------------------ |
+| v-model           | `number \| undefined`                                    | `undefined`  | 绑定值                                     |
+| step              | `number`                                                 | `1`          | 计数器步长                                 |
+| placeholder       | `string`                                                 | `''`         | 输入框占位文本                             |
+| max               | `number`                                                 | `Infinity`   | 设置计数器允许的最大值                     |
+| min               | `number`                                                 | `-Infinity`  | 设置计数器允许的最小值                     |
+| disabled          | `boolean`                                                | `false`      | 是否禁用计数器                             |
+| readonly          | `boolean`                                                | `false`      | 是否只读                                   |
+| precision         | `number`                                                 | `undefined`  | 数值精度                                   |
+| size              | `'large' \| 'default' \| 'small'`                        | `'default'`  | 输入框尺寸                                 |
+| controls          | `boolean`                                                | `true`       | 是否显示控制按钮                           |
+| controls-position | `'both' \| 'right'`                                      | `'both'`     | 控制按钮位置                               |
+| allow-empty       | `boolean`                                                | `false`      | 是否允许空值                               |
+| show-glow-style   | `boolean`                                                | `true`       | 是否显示悬浮发光效果                       |
+| reg               | `RegExp \| string`                                       | `undefined`  | 输入限制的正则表达式，不匹配的字符会被过滤 |
+| variant           | `'outlined' \| 'filled' \| 'borderless' \| 'underlined'` | `'outlined'` | 录入组件统一形态                           |
+| status            | `'' \| 'error' \| 'warning'`                             | `''`         | 校验状态，Form 联动会自动透传              |
 
 ## InputNumber事件
 
@@ -450,3 +450,15 @@ const v3 = ref(0)
 | decrease | 按 `step` 减少一次            | —                     | `void`                |
 | getValue | 获取当前值                    | —                     | `number \| undefined` |
 | setValue | 设置值（受 min/max/精度约束） | `number \| undefined` | `void`                |
+
+在 `disabled` 或 `readonly` 状态下，`increase` / `decrease` 不会修改值。
+
+## 原生输入属性与无障碍
+
+未被组件声明的原生输入属性（例如 `name`、`id`、`form`、`autocomplete`、`aria-label`）会透传到内部 `<input>`；`class` 和 `style` 仍作用于组件根节点。内部输入使用 `spinbutton` 语义，自动提供有效的 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 与格式化后的 `aria-valuetext`。默认无限边界不会输出无效的 `Infinity` ARIA 值。
+
+控制按钮不增加额外 Tab 停靠点；聚焦输入后可使用 ↑ / ↓ 步进，并使用 Enter 提交当前编辑值。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`input`、`controls`。

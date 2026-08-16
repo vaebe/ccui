@@ -1,5 +1,5 @@
 import type { SpaceCompactProps } from './space-compact-types'
-import { computed, defineComponent } from 'vue'
+import { cloneVNode, computed, defineComponent, mergeProps } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { spaceCompactProps } from './space-compact-types'
 import './space-compact.scss'
@@ -17,6 +17,16 @@ export default defineComponent({
       [ns.m('block')]: props.block,
     }))
 
-    return () => <div class={cls.value}>{slots.default?.()}</div>
+    return () => {
+      const children = slots.default?.() ?? []
+      // Pass the compact size to child controls while preserving an explicit child size.
+      const sizedChildren = children.map((child) => {
+        // Native elements interpret `size` as a numeric HTML attribute; only
+        // component VNodes should receive the compact control-size prop.
+        if (typeof child.type === 'string') return child
+        return cloneVNode(child, mergeProps({ size: props.size }, child.props ?? {}))
+      })
+      return <div class={cls.value}>{sizedChildren}</div>
+    }
   },
 })

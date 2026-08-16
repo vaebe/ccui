@@ -121,6 +121,13 @@
     box-sizing: border-box;
   }
 
+  @media (max-width: 575px) {
+    &__panel {
+      max-width: calc(100vw - 16px);
+      overflow-x: auto;
+    }
+  }
+
   &__main-row {
     display: flex;
     align-items: stretch;
@@ -214,6 +221,10 @@
     color: $ccui-color-text-tertiary;
     font-size: $ccui-font-size-sm;
     text-align: center;
+  }
+
+  &__grid-row {
+    display: contents;
   }
 
   &__week-cell {

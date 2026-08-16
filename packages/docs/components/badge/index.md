@@ -43,7 +43,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -80,7 +80,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -139,7 +139,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -178,7 +178,7 @@
 .head-example {
   width: 42px;
   height: 42px;
-  background: #eee;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -214,7 +214,7 @@
 .head-example-lg {
   width: 60px;
   height: 60px;
-  background: #f0f0f0;
+  background: var(--ccui-area);
   border-radius: 4px;
   display: inline-block;
 }
@@ -263,3 +263,9 @@ const count = ref(8)
 | text          | string                                                     | --     | 状态点的文字               |
 | color         | string                                                     | --     | 自定义小圆点颜色           |
 | offset        | [number, number]                                           | --     | 设置徽标数偏移             |
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`count`、`dot`。
+
+状态点是装饰性指示器；状态文字请通过 `text` 提供，以便辅助技术读取。`BadgeProps` 与 `BadgeStatus` 可从组件入口导入。

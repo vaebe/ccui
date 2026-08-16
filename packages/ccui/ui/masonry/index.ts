@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Masonry from './src/masonry'
+export type { MasonryColumns, MasonryProps } from './src/masonry-types'
 
 Masonry.install = function (app: App): void {
   app.component(Masonry.name!, Masonry)

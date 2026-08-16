@@ -502,3 +502,7 @@ import { TREE_SELECT_SHOW_ALL, TREE_SELECT_SHOW_CHILD, TREE_SELECT_SHOW_PARENT }
 
 - **showCheckedStrategy**：多选 checkable 模式下，输出的 v-model 总是 `c-tree` 的 `checkedKeys` 全集；不暴露 `SHOW_PARENT` / `SHOW_CHILD` / `SHOW_ALL` 切换。常量符号已顶层 export，未来接入实际逻辑后即可直接使用。
 - **半选 v-model 输出**：多选模式 v-model 不携带 `halfCheckedKeys`（业务需要时可监听 `c-tree` 的 check 事件自取）。
+
+## 语义化 DOM
+
+`classNames?: Record<RegionKey, string | undefined>` 与 `styles?: Record<RegionKey, CSSProperties | undefined>` 分别向语义区域注入 class 和内联样式，默认均为 `undefined`。`RegionKey` 可用值为 `root`、`inputWrap`、`popup`。

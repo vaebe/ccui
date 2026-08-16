@@ -27,4 +27,25 @@ describe('empty', () => {
     expect(wrapper.find(ns.e('footer')).exists()).toBe(true)
     expect(wrapper.text()).toContain('retry')
   })
+
+  it('forwards root attrs and keeps custom image decorative', () => {
+    const wrapper = mount(Empty, {
+      attrs: { 'data-testid': 'empty', 'aria-live': 'polite' },
+      props: { image: '/empty.png' },
+    })
+
+    expect(wrapper.attributes('data-testid')).toBe('empty')
+    expect(wrapper.attributes('aria-live')).toBe('polite')
+    expect(wrapper.find('img').attributes('alt')).toBe('')
+  })
+
+  it('renders image slot instead of the image prop', () => {
+    const wrapper = mount(Empty, {
+      props: { image: '/unused.png' },
+      slots: { image: '<span class="custom-image">custom</span>' },
+    })
+
+    expect(wrapper.find('.custom-image').exists()).toBe(true)
+    expect(wrapper.find('img').exists()).toBe(false)
+  })
 })

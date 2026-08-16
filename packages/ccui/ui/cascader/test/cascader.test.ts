@@ -1,8 +1,9 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { Cascader } from '../index'
+import { settleCascaderLoadData } from '../src/cascader'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { Form, FormItem } from '../../form'
 
@@ -140,6 +141,15 @@ describe('cascader popup open/close', () => {
     const wrapper = mountCascader({ disabled: true })
     await openPanel(wrapper)
     expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+  })
+
+  it('closes an open panel when disabled becomes true', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    await wrapper.setProps({ disabled: true })
+    await nextTick()
+    expect(wrapper.find(ns.e('panel')).exists()).toBe(false)
+    expect(wrapper.emitted('popup-visible-change')?.at(-1)).toEqual([false])
   })
 
   it('focuses input on autoFocus', async () => {
@@ -370,6 +380,34 @@ describe('cascader integrations', () => {
     ).toBe(true)
   })
 
+  it('triggers FormItem blur validation when the input loses focus', async () => {
+    const Wrapper = defineComponent({
+      setup() {
+        const model = ref<{ region: string[] | null }>({ region: null })
+        const rules = { region: [{ required: true, trigger: 'blur' as const, message: '请选择地区' }] }
+        return () =>
+          h(
+            Form,
+            { model: model.value, rules },
+            {
+              default: () =>
+                h(
+                  FormItem,
+                  { name: 'region', prop: 'region' },
+                  { default: () => h(Cascader, { options, modelValue: model.value.region }) },
+                ),
+            },
+          )
+      },
+    })
+    const wrapper = mount(Wrapper, { attachTo: document.body })
+    wrappers.push(wrapper as unknown as VueWrapper)
+    await wrapper.find('input').trigger('blur')
+    await nextTick()
+    await nextTick()
+    expect(wrapper.text()).toContain('请选择地区')
+  })
+
   it('teleports panel to body when popupAppendToBody', async () => {
     const wrapper = mountCascader({ popupAppendToBody: true })
     await openPanel(wrapper)
@@ -561,6 +599,29 @@ describe('cascader loadData', () => {
     await nextTick()
     await nextTick()
     expect(a.classes().some((c) => c.endsWith('item--loading'))).toBe(false)
+  })
+
+  it('loadData rejection 会结束 loading 且不产生未处理拒绝', async () => {
+    const opts = [{ value: 'a', label: 'A', isLeaf: false }]
+    const wrapper = mountCascader({ options: opts, loadData: () => Promise.reject(new Error('load failed')) })
+    await openPanel(wrapper)
+    const a = findItemByLabel(findColumn(wrapper, 0), 'A')!
+    await a.trigger('click')
+    await Promise.resolve()
+    await nextTick()
+    expect(a.classes().some((c) => c.endsWith('item--loading'))).toBe(false)
+  })
+
+  it('卸载后 loadData 完成不会调用状态提交边界', async () => {
+    let resolve: () => void = () => {}
+    const pending = new Promise<void>((r) => (resolve = r))
+    const writeLoadingState = vi.fn()
+    let active = true
+    settleCascaderLoadData(pending, () => active, writeLoadingState)
+    active = false
+    resolve()
+    await Promise.resolve()
+    expect(writeLoadingState).not.toHaveBeenCalled()
   })
 
   it('isLeaf=false 时仍渲染 expand-icon', async () => {
@@ -992,16 +1053,43 @@ describe('cascader M-B4 option / popup / searchOption slot', () => {
   })
 })
 
-describe('XL-4 ARIA combobox / tree-popup', () => {
-  it('input 暴露 role="combobox" / aria-haspopup="tree" / aria-controls', async () => {
+describe('XL-4 ARIA combobox / listbox popup', () => {
+  it('input 暴露 role="combobox" / aria-haspopup="listbox" / aria-controls', async () => {
     const wrapper = mountCascader()
     const input = wrapper.find('input')
     expect(input.attributes('role')).toBe('combobox')
-    expect(input.attributes('aria-haspopup')).toBe('tree')
+    expect(input.attributes('aria-haspopup')).toBe('listbox')
     expect(input.attributes('aria-controls')).toBeTruthy()
     expect(input.attributes('aria-expanded')).toBe('false')
     await openPanel(wrapper)
     expect(wrapper.find('input').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('键盘导航通过 aria-activedescendant 暴露当前视觉焦点', async () => {
+    const wrapper = mountCascader()
+    await openPanel(wrapper)
+    const input = wrapper.find('input')
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    const activeId = input.attributes('aria-activedescendant')
+    expect(activeId).toBeTruthy()
+    expect(wrapper.find(`#${activeId}`).classes()).toContain(ns.em('item', 'focused').slice(1))
+  })
+
+  it('搜索结果变化会清除旧焦点并为新键盘焦点设置有效 aria-activedescendant', async () => {
+    const wrapper = mountCascader({ showSearch: true })
+    await openPanel(wrapper)
+    const input = wrapper.find('input')
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    expect(input.attributes('aria-activedescendant')).toBeTruthy()
+    await input.setValue('西湖')
+    await nextTick()
+    expect(input.attributes('aria-activedescendant')).toBeUndefined()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    const activeId = input.attributes('aria-activedescendant')
+    expect(activeId).toBeTruthy()
+    expect(wrapper.find(`#${activeId}`).classes()).toContain(ns.em('search-item', 'focused').slice(1))
   })
 
   it('面板列暴露 role="group"，叶子项 role="option"，非叶子项 aria-expanded', async () => {
@@ -1015,11 +1103,21 @@ describe('XL-4 ARIA combobox / tree-popup', () => {
     expect(items[0].attributes('aria-expanded')).toBeDefined()
   })
 
-  it('popup dialog 暴露 role="dialog" 与 aria-label', async () => {
+  it('popup 暴露与 combobox 一致的 listbox role 与 aria-label', async () => {
     const wrapper = mountCascader({ placeholder: '请选择地区' })
     await openPanel(wrapper)
     const panel = wrapper.find(ns.e('panel'))
-    expect(panel.attributes('role')).toBe('dialog')
+    expect(panel.attributes('role')).toBe('listbox')
     expect(panel.attributes('aria-label')).toBe('请选择地区')
+  })
+
+  it('仅 multiple 模式声明 aria-multiselectable', async () => {
+    const single = mountCascader()
+    await openPanel(single)
+    expect(single.find(ns.e('panel')).attributes('aria-multiselectable')).toBeUndefined()
+
+    const multiple = mountCascader({ multiple: true })
+    await openPanel(multiple)
+    expect(multiple.find(ns.e('panel')).attributes('aria-multiselectable')).toBe('true')
   })
 })

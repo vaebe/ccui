@@ -1,5 +1,5 @@
 import type { TabsProps, TabsState } from './tabs-types'
-import { defineComponent, provide, reactive } from 'vue'
+import { defineComponent, provide, reactive, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import TabsNav from './components/tabs-nav'
 import { tabsInjectionKey, tabsProps } from './tabs-types'
@@ -19,6 +19,13 @@ export default defineComponent({
     })
 
     provide<TabsState>(tabsInjectionKey, state)
+
+    watch(
+      () => props.modelValue,
+      (value) => {
+        state.active = value
+      },
+    )
 
     const setActiveTab = (name: string | number) => {
       if (props.beforeChange && props.beforeChange(name) === false) return
@@ -41,7 +48,11 @@ export default defineComponent({
     }
 
     return () => {
-      return <div class={ns.b()}>{tabsContent()}</div>
+      return (
+        <div class={[ns.b(), props.cssClass]} style={props.customWidth ? { width: props.customWidth } : undefined}>
+          {tabsContent()}
+        </div>
+      )
     }
   },
 })

@@ -7,7 +7,13 @@ InputOtp.install = function (app: App): void {
 
 export { InputOtp }
 
-export type { InputOtpFormatter, InputOtpProps, InputOtpSize, InputOtpStatus } from './src/input-otp-types'
+export type {
+  InputOtpFormatter,
+  InputOtpProps,
+  InputOtpSize,
+  InputOtpStatus,
+  InputOtpType,
+} from './src/input-otp-types'
 
 export default {
   title: 'InputOtp 一次性密码',

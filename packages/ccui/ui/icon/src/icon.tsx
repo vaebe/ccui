@@ -133,6 +133,8 @@ export default defineComponent({
 
     return () => {
       const { class: attrClass, style: attrStyle, ...restAttrs } = attrs as Record<string, unknown>
+      // 允许原生 aria-label/title 参与语义推导，避免 inheritAttrs=false 时被组件默认值覆盖。
+      const accessibleLabel = props.ariaLabel || props.title || attrs['aria-label'] || attrs.title
 
       let content
       if (props.loading) {
@@ -161,7 +163,7 @@ export default defineComponent({
       }
 
       const interactive = props.clickable
-      const role = interactive ? 'button' : props.title || props.ariaLabel ? 'img' : undefined
+      const role = interactive ? 'button' : accessibleLabel ? 'img' : undefined
       const tabindex = interactive ? (props.disabled ? -1 : 0) : undefined
 
       return h(
@@ -172,11 +174,11 @@ export default defineComponent({
           style: [attrStyle as CSSProperties, iconStyle.value],
           role,
           tabindex,
-          'aria-hidden': interactive ? undefined : props.title || props.ariaLabel ? undefined : 'true',
-          'aria-label': props.ariaLabel || props.title || undefined,
+          'aria-hidden': interactive ? undefined : accessibleLabel ? undefined : 'true',
+          'aria-label': props.ariaLabel || props.title || attrs['aria-label'] || undefined,
           'aria-disabled': interactive && props.disabled ? 'true' : undefined,
           'aria-busy': props.loading ? 'true' : undefined,
-          title: props.title || undefined,
+          title: props.title || (attrs.title as string | undefined) || undefined,
           onClick,
           onKeydown,
         },

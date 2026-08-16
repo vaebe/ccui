@@ -173,16 +173,7 @@ export default defineComponent({
         )}
 
         {/* 滑块容器 */}
-        <div
-          ref="sliderRef"
-          class={this.ns.e('wrapper')}
-          onClick={this.handleSliderClick}
-          role="slider"
-          aria-label={this.ariaLabel || (this.range ? 'range slider' : 'slider')}
-          aria-valuemin={this.min}
-          aria-valuemax={this.max}
-          aria-orientation={this.vertical ? 'vertical' : 'horizontal'}
-        >
+        <div ref="sliderRef" class={this.ns.e('wrapper')} onClick={this.handleSliderClick}>
           {/* 轨道 */}
           <div class={this.ns.e('track')}>
             <div class={this.ns.e('bar')} style={this.trackStyle}></div>
@@ -225,7 +216,12 @@ export default defineComponent({
             class={[this.ns.e('button-wrapper'), { [this.ns.em('button-wrapper', 'first')]: isRange }]}
             style={this.firstButtonStyle}
           >
-            {this.renderButton(0, firstValue, this.firstButtonStyle, this.rangeStartLabel || 'start value')}
+            {this.renderButton(
+              0,
+              firstValue,
+              this.firstButtonStyle,
+              this.range ? this.rangeStartLabel || 'start value' : this.ariaLabel || this.label || 'slider',
+            )}
           </div>
 
           {/* 第二个滑块按钮（范围模式） */}

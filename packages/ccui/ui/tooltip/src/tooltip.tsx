@@ -177,6 +177,12 @@ export default defineComponent({
       }
     }
 
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !actualVisible.value) return
+      event.preventDefault()
+      doHide()
+    }
+
     const handlePopperMouseEnter = () => {
       if (props.trigger === 'hover' && props.enterable) {
         clearTimers()
@@ -221,6 +227,7 @@ export default defineComponent({
         cleanup = autoUpdate(triggerRef.value, popperRef.value, update)
       } else {
         cleanup?.()
+        cleanup = undefined
       }
     })
 
@@ -263,7 +270,9 @@ export default defineComponent({
             class={ns.e('trigger')}
             aria-describedby={actualVisible.value ? popperId : undefined}
             aria-label={props.ariaLabel}
-            tabindex={props.trigger === 'focus' ? 0 : undefined}
+            aria-disabled={props.disabled || undefined}
+            tabindex={props.disabled ? -1 : props.trigger === 'focus' ? 0 : undefined}
+            onKeydown={handleKeydown}
             {...triggerEvents}
           >
             {slots.default?.()}

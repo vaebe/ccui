@@ -71,6 +71,14 @@
     }
   }
 
+  &__input:focus-visible + &__icon {
+    color: $ccui-color-primary;
+
+    &::before {
+      box-shadow: 0 0 0 2px $ccui-color-primary-bg;
+    }
+  }
+
   &:not(.disabled):hover {
     .#{$cls-prefix}-radio__icon {
       color: $ccui-color-primary;

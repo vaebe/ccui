@@ -41,12 +41,10 @@ $button-info-plain-border: $ccui-button-info-plain-border;
     border-color: $ccui-color-primary-active;
   }
 
-  &:disabled {
-    cursor: not-allowed;
-    color: $ccui-color-text-disabled;
-    background-color: $ccui-color-fill-tertiary;
-    border-color: $ccui-color-border;
-    box-shadow: none;
+  // 只在键盘导航时恢复明确焦点环，避免全局 outline:none 让默认与实色按钮失去焦点位置。
+  &:focus-visible {
+    outline: 2px solid $ccui-color-primary;
+    outline-offset: 2px;
   }
 
   // 实色按钮
@@ -447,7 +445,16 @@ $button-info-plain-border: $ccui-button-info-plain-border;
   &--loading {
     cursor: default;
     opacity: 0.65;
-    pointer-events: none;
+  }
+
+  // href 模式没有原生 :disabled；把共享 modifier 放在各 variant 之后以覆盖其 hover/active 色。
+  &:disabled,
+  &.#{$cls-prefix}-button--disabled {
+    cursor: not-allowed;
+    color: $ccui-color-text-disabled;
+    background-color: $ccui-color-fill-tertiary;
+    border-color: $ccui-color-border;
+    box-shadow: none;
   }
 
   // 内容区域

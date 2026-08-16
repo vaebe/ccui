@@ -1,9 +1,10 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { Icon as IconifyIcon } from '@iconify/vue'
-import { defineComponent, h, nextTick, reactive } from 'vue'
+import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import { Form, FormItem, FormList, FormProvider } from '../index'
+import { Input } from '../../input'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 
 const formNs = useNamespace('form', true)
@@ -373,6 +374,24 @@ describe('form', () => {
 
     expect(wrapper.findComponent(FormItem).classes()).toContain(itemNs.m('error').slice(1))
     expect(wrapper.find(itemNs.e('message')).text()).toBe('External error')
+  })
+
+  it('associates an Input with its label and validation message', () => {
+    const wrapper = mount(Form, {
+      props: { model: { email: '' } },
+      slots: {
+        default: () =>
+          h(FormItem, { label: 'Email', name: 'email', htmlFor: 'email-input', help: 'Use a work email' }, () =>
+            h(Input, { id: 'email-input' }),
+          ),
+      },
+    })
+    const input = wrapper.find('input')
+    const message = wrapper.find(itemNs.e('message'))
+
+    expect(wrapper.find(itemNs.e('label')).attributes('for')).toBe(input.attributes('id'))
+    expect(message.attributes('id')).toBeTruthy()
+    expect(input.attributes('aria-describedby')).toBe(message.attributes('id'))
   })
 
   it('clears validation state for all fields', async () => {
@@ -1146,6 +1165,28 @@ describe('form validateDebounce', () => {
     expect(wrapper.find(itemNs.b()).classes()).toContain('ccui-form-item--error')
     vi.useRealTimers()
   })
+
+  it('settles every validation promise when repeated calls reset the debounce timer', async () => {
+    vi.useFakeTimers()
+    const model = reactive({ name: '' })
+    const wrapper = mount(Form, {
+      props: {
+        model,
+        rules: { name: [{ required: true, message: 'required' }] },
+      },
+      slots: {
+        default: () => h(FormItem, { name: 'name', validateDebounce: 200 }, () => h('input')),
+      },
+    })
+    const form = getFormVm(wrapper)
+
+    const firstValidation = form.validate()
+    const secondValidation = form.validate()
+    vi.advanceTimersByTime(200)
+
+    await expect(Promise.all([firstValidation, secondValidation])).resolves.toEqual([false, false])
+    vi.useRealTimers()
+  })
 })
 
 describe('form normalize', () => {
@@ -1380,5 +1421,251 @@ describe('L-1.6 rules 函数式', () => {
     await nextTick()
     expect(wrapper.find('.ccui-form-item').classes()).toContain('ccui-form-item--error')
     expect(wrapper.find('.ccui-form-item__message').text()).toBe('两次密码不一致')
+  })
+})
+
+describe('form deep-review regressions', () => {
+  it('validates a dependent field once for one model mutation', async () => {
+    const validator = vi.fn(() => true)
+    const model = reactive({ source: 'one', dependent: 'value', unrelated: 'first' })
+    mount(Form, {
+      props: { model },
+      slots: {
+        default: () =>
+          h(FormItem, { name: 'dependent', dependencies: ['source'], rules: { validator } }, () => h('input')),
+      },
+    })
+
+    await nextTick()
+    model.source = 'two'
+    await nextTick()
+    await Promise.resolve()
+
+    expect(validator).toHaveBeenCalledTimes(1)
+
+    model.unrelated = 'second'
+    await nextTick()
+    model.dependent = 'next value'
+    await nextTick()
+    expect(validator).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not let an older async validation overwrite the latest result', async () => {
+    const resolvers: Array<(result: true | string) => void> = []
+    const model = reactive({ name: 'old' })
+    const wrapper = mount(Form, {
+      props: {
+        model,
+        rules: {
+          name: {
+            validator: () => new Promise<true | string>((resolve) => resolvers.push(resolve)),
+          },
+        },
+      },
+      slots: { default: () => h(FormItem, { name: 'name' }, () => h('input')) },
+    })
+    const form = getFormVm(wrapper)
+
+    const older = form.validateField('name')
+    model.name = 'new'
+    const latest = form.validateField('name')
+    resolvers[1](true)
+    await latest
+    resolvers[0]('stale error')
+    await older
+    await nextTick()
+
+    expect(wrapper.find(itemNs.e('message')).exists()).toBe(false)
+    expect(wrapper.findComponent(FormItem).classes()).toContain(itemNs.m('success').slice(1))
+  })
+
+  it('settles an obsolete multi-rule validation with its own blocking result', async () => {
+    const resolvers: Array<(result: true) => void> = []
+    const model = reactive({ name: 'invalid' })
+    const wrapper = mount(Form, {
+      props: {
+        model,
+        rules: {
+          name: [
+            { validator: () => new Promise<true>((resolve) => resolvers.push(resolve)) },
+            { pattern: /^valid$/, message: 'invalid value' },
+          ],
+        },
+      },
+      slots: { default: () => h(FormItem, { name: 'name' }, () => h('input')) },
+    })
+    const form = getFormVm(wrapper)
+
+    const older = form.validateField('name')
+    model.name = 'valid'
+    const latest = form.validateField('name')
+    resolvers[1](true)
+    await expect(latest).resolves.toBe(true)
+    resolvers[0](true)
+    await expect(older).resolves.toBe(false)
+
+    expect(wrapper.find(itemNs.e('message')).exists()).toBe(false)
+    expect(wrapper.findComponent(FormItem).classes()).toContain(itemNs.m('success').slice(1))
+  })
+
+  it.each(['clearValidate', 'resetFields'] as const)(
+    '%s cancels and settles validation still waiting in the debounce window',
+    async (method) => {
+      vi.useFakeTimers()
+      const model = reactive({ name: '' })
+      const wrapper = mount(Form, {
+        props: { model, rules: { name: { required: true, message: 'required' } } },
+        slots: {
+          default: () => h(FormItem, { name: 'name', validateDebounce: 200 }, () => h('input')),
+        },
+      })
+      const form = getFormVm(wrapper)
+      const item = wrapper.findComponent(FormItem).vm.$.exposed as {
+        validate: () => Promise<boolean>
+      }
+
+      const pending = item.validate()
+      form[method]('name')
+      await expect(pending).resolves.toBe(false)
+      vi.advanceTimersByTime(200)
+      await nextTick()
+
+      expect(wrapper.findComponent(FormItem).classes()).not.toContain(itemNs.m('error').slice(1))
+      expect(wrapper.find(itemNs.e('message')).exists()).toBe(false)
+      vi.useRealTimers()
+    },
+  )
+
+  it('does not emit or write state after an active async validator is unmounted', async () => {
+    const show = ref(true)
+    let resolveValidator!: (result: string) => void
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          h(Form, { model: { name: 'value' } }, () =>
+            show.value
+              ? h(
+                  FormItem,
+                  {
+                    name: 'name',
+                    rules: {
+                      validator: () => new Promise<string>((resolve) => (resolveValidator = resolve)),
+                    },
+                  },
+                  () => h('input'),
+                )
+              : null,
+          ),
+      }),
+    )
+    const formWrapper = wrapper.findComponent(Form)
+    const pending = getFormVm(formWrapper).validateField('name')
+
+    show.value = false
+    await nextTick()
+    resolveValidator('late error')
+    await expect(pending).resolves.toBe(false)
+    await nextTick()
+
+    expect(formWrapper.emitted('validate')).toBeUndefined()
+    expect(wrapper.findComponent(FormItem).exists()).toBe(false)
+  })
+
+  it('invalidates an active async validator as soon as a newer debounced request is queued', async () => {
+    vi.useFakeTimers()
+    const resolvers: Array<(result: true | string) => void> = []
+    const wrapper = mount(Form, {
+      props: { model: { name: 'value' } },
+      slots: {
+        default: () =>
+          h(
+            FormItem,
+            {
+              name: 'name',
+              validateDebounce: 200,
+              rules: { validator: () => new Promise<true | string>((resolve) => resolvers.push(resolve)) },
+            },
+            () => h('input'),
+          ),
+      },
+    })
+    const formWrapper = wrapper.findComponent(Form)
+    const item = wrapper.findComponent(FormItem).vm.$.exposed as {
+      validate: () => Promise<boolean>
+    }
+
+    const older = item.validate()
+    vi.advanceTimersByTime(200)
+    await Promise.resolve()
+    expect(resolvers).toHaveLength(1)
+
+    const latest = item.validate()
+    resolvers[0]('stale error')
+    await expect(older).resolves.toBe(false)
+    await nextTick()
+
+    expect(wrapper.find(itemNs.e('message')).exists()).toBe(false)
+    expect(formWrapper.emitted('validate')).toBeUndefined()
+
+    vi.advanceTimersByTime(200)
+    await Promise.resolve()
+    resolvers[1](true)
+    await expect(latest).resolves.toBe(true)
+    vi.useRealTimers()
+  })
+
+  it('keeps blur validation idle while focus moves inside one FormItem', async () => {
+    const validator = vi.fn(() => true)
+    const wrapper = mount(Form, {
+      props: { model: { value: 'ok' }, rules: { value: { trigger: 'blur', validator } } },
+      slots: {
+        default: () => h(FormItem, { name: 'value' }, () => [h('input'), h('button', 'Next')]),
+      },
+    })
+    const input = wrapper.find('input')
+    const button = wrapper.find('button')
+
+    input.element.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: button.element }))
+    await nextTick()
+    expect(validator).not.toHaveBeenCalled()
+
+    button.element.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body }))
+    await nextTick()
+    await Promise.resolve()
+    expect(validator).toHaveBeenCalledTimes(1)
+  })
+
+  it('reuses global regular expressions without leaking lastIndex', async () => {
+    const wrapper = mount(Form, {
+      props: { model: { code: 'ok' }, rules: { code: { pattern: /^ok$/g } } },
+      slots: { default: () => h(FormItem, { name: 'code' }, () => h('input')) },
+    })
+    const form = getFormVm(wrapper)
+
+    await expect(form.validateField('code')).resolves.toBe(true)
+    await expect(form.validateField('code')).resolves.toBe(true)
+  })
+
+  it('updates FormProvider registration when the form name changes', async () => {
+    const changeHandler = vi.fn()
+    const formName = reactive({ value: 'old-name' })
+    const model = reactive({ name: '' })
+    const wrapper = mount(FormProvider, {
+      props: { onFormChange: changeHandler },
+      slots: {
+        default: () => h(Form, { name: formName.value, model }, () => h(FormItem, { name: 'name' }, () => h('input'))),
+      },
+    })
+
+    formName.value = 'new-name'
+    await nextTick()
+    model.name = 'updated'
+    await wrapper.find('input').trigger('change')
+    await nextTick()
+
+    const [name, info] = changeHandler.mock.calls.at(-1)!
+    expect(name).toBe('new-name')
+    expect(info.forms['new-name']).toBeDefined()
+    expect(info.forms['old-name']).toBeUndefined()
   })
 })

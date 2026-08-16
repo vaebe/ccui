@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
-import { nextTick } from 'vue'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { defineComponent, h, nextTick, ref } from 'vue'
+import { formItemInjectionKey } from '../../form/src/form-types'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { InputOtp } from '../index'
 
@@ -17,6 +18,27 @@ describe('input-otp', () => {
     it('length=4 渲染 4 个 cell', () => {
       const wrapper = mount(InputOtp, { props: { length: 4 } })
       expect(wrapper.findAll(ns.e('cell')).length).toBe(4)
+    })
+
+    it.each([
+      [0, 1],
+      [-10, 1],
+      [2.9, 2],
+      [Number.NaN, 1],
+      [Number.POSITIVE_INFINITY, 1],
+      [Number.MAX_VALUE, 64],
+    ])('length=%s 安全归一为 %s 个 cell', (length, expected) => {
+      const wrapper = mount(InputOtp, { props: { length } })
+      expect(wrapper.findAll(ns.e('cell'))).toHaveLength(expected)
+    })
+
+    it('动态超大 length 被限制为 64，随后缩短仍同步归一值', async () => {
+      const wrapper = mount(InputOtp, { props: { modelValue: '1234', length: 4 } })
+      await wrapper.setProps({ length: Number.MAX_VALUE })
+      expect(wrapper.findAll(ns.e('cell'))).toHaveLength(64)
+      await wrapper.setProps({ length: 2.9 })
+      expect(wrapper.findAll(ns.e('cell'))).toHaveLength(2)
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['12'])
     })
 
     it('disabled 时所有 cell disabled', () => {
@@ -37,6 +59,13 @@ describe('input-otp', () => {
       const first = wrapper.findAll(ns.e('cell'))[0]
       expect(first.attributes('inputmode')).toBe('numeric')
       expect(first.attributes('maxlength')).toBe('1')
+    })
+
+    it('动态 type 切换移动端 inputmode，但不负责字符过滤', async () => {
+      const wrapper = mount(InputOtp, { props: { type: 'number' } })
+      expect(wrapper.findAll(ns.e('cell'))[0].attributes('inputmode')).toBe('numeric')
+      await wrapper.setProps({ type: 'text' })
+      expect(wrapper.findAll(ns.e('cell'))[0].attributes('inputmode')).toBe('text')
     })
   })
 
@@ -69,6 +98,41 @@ describe('input-otp', () => {
       const cells = wrapper.findAll(ns.e('cell'))
       expect((cells[0].element as HTMLInputElement).value).toBe('2')
     })
+
+    it('显式空 modelValue 不会错误采用 defaultValue', () => {
+      const wrapper = mount(InputOtp, {
+        props: { modelValue: '', defaultValue: '1234', length: 4 },
+      })
+      expect(wrapper.findAll(ns.e('cell')).map((cell) => (cell.element as HTMLInputElement).value)).toEqual([
+        '',
+        '',
+        '',
+        '',
+      ])
+    })
+
+    it('从非受控动态切换为显式空 modelValue 时清空 defaultValue', async () => {
+      const wrapper = mount(InputOtp, { props: { defaultValue: '1234', length: 4 } })
+      await wrapper.setProps({ modelValue: '' })
+      expect(wrapper.findAll(ns.e('cell')).map((cell) => (cell.element as HTMLInputElement).value)).toEqual([
+        '',
+        '',
+        '',
+        '',
+      ])
+    })
+
+    it('截断超长外部值，并在 length 缩短时同步归一值', async () => {
+      const wrapper = mount(InputOtp, { props: { modelValue: '123456', length: 6 } })
+      await wrapper.setProps({ length: 4 })
+      expect(wrapper.findAll(ns.e('cell')).map((cell) => (cell.element as HTMLInputElement).value)).toEqual([
+        '1',
+        '2',
+        '3',
+        '4',
+      ])
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['1234'])
+    })
   })
 
   describe('输入 + 焦点流转', () => {
@@ -95,6 +159,32 @@ describe('input-otp', () => {
       wrapper.unmount()
     })
 
+    it('在真实 v-model 父组件中保留输入值并推进焦点', async () => {
+      const Host = defineComponent({
+        setup() {
+          const value = ref('')
+          return () =>
+            h(InputOtp, {
+              modelValue: value.value,
+              length: 4,
+              'onUpdate:modelValue': (next: string) => {
+                value.value = next
+              },
+            })
+        },
+      })
+      const wrapper = mount(Host, { attachTo: document.body })
+      const cells = wrapper.findAll(ns.e('cell'))
+      ;(cells[0].element as HTMLInputElement).focus()
+      ;(cells[0].element as HTMLInputElement).value = '1'
+      await cells[0].trigger('input')
+      await nextTick()
+
+      expect((cells[0].element as HTMLInputElement).value).toBe('1')
+      expect(document.activeElement).toBe(cells[1].element)
+      wrapper.unmount()
+    })
+
     it('一次输入多字符（IME / 安卓）逐格填入', async () => {
       const wrapper = mount(InputOtp, { props: { length: 4 } })
       const cells = wrapper.findAll(ns.e('cell'))
@@ -103,6 +193,36 @@ describe('input-otp', () => {
       await first.trigger('input')
       const emitted = wrapper.emitted('update:modelValue')
       expect(emitted?.[emitted.length - 1]).toEqual(['123'])
+    })
+
+    it('IME 组合期间不提交中间态，并吞掉 compositionend 后同任务尾随 input', async () => {
+      const validate = vi.fn(() => Promise.resolve(true))
+      const wrapper = mount(InputOtp, {
+        props: { length: 1 },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref(''),
+              isInsideForm: true,
+              validate,
+            },
+          },
+        },
+      })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      first.element.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }))
+      ;(first.element as HTMLInputElement).value = 'h'
+      first.element.dispatchEvent(new InputEvent('input', { bubbles: true, data: 'h', isComposing: true }))
+      expect(wrapper.emitted('change')).toBeUndefined()
+      ;(first.element as HTMLInputElement).value = '汉'
+      first.element.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '汉' }))
+      first.element.dispatchEvent(new InputEvent('input', { bubbles: true, data: '汉' }))
+      await nextTick()
+      expect(wrapper.emitted('update:modelValue')).toEqual([['汉']])
+      expect(wrapper.emitted('change')).toEqual([['汉', { index: 0 }]])
+      expect(wrapper.emitted('complete')).toEqual([['汉']])
+      expect(validate).toHaveBeenCalledTimes(1)
+      expect(validate).toHaveBeenCalledWith('change')
     })
   })
 
@@ -128,6 +248,19 @@ describe('input-otp', () => {
       await second.trigger('keydown', { key: 'Backspace' })
       const emitted = wrapper.emitted('update:modelValue')
       expect(emitted?.[emitted.length - 1]).toEqual([''])
+      wrapper.unmount()
+    })
+
+    it('Delete 清除当前格且不移动焦点', async () => {
+      const wrapper = mount(InputOtp, {
+        props: { modelValue: '12', length: 4 },
+        attachTo: document.body,
+      })
+      const second = wrapper.findAll(ns.e('cell'))[1]
+      ;(second.element as HTMLInputElement).focus()
+      await second.trigger('keydown', { key: 'Delete' })
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['1'])
+      expect(document.activeElement).toBe(second.element)
       wrapper.unmount()
     })
   })
@@ -170,6 +303,19 @@ describe('input-otp', () => {
       const emitted = wrapper.emitted('update:modelValue')
       expect(emitted?.[emitted.length - 1]).toEqual(['ABXY'])
     })
+
+    it('填满时 complete 对同一完成值只触发一次，变为未完成后可再次触发', async () => {
+      const wrapper = mount(InputOtp, { props: { length: 4 } })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      const dt = { getData: (_t: string) => '1234' }
+      await first.trigger('paste', { clipboardData: dt })
+      await first.trigger('paste', { clipboardData: dt })
+      expect(wrapper.emitted('complete')).toEqual([['1234']])
+      await wrapper.findAll(ns.e('cell'))[3].trigger('keydown', { key: 'Backspace' })
+      ;(wrapper.findAll(ns.e('cell'))[3].element as HTMLInputElement).value = '4'
+      await wrapper.findAll(ns.e('cell'))[3].trigger('input')
+      expect(wrapper.emitted('complete')).toEqual([['1234'], ['1234']])
+    })
   })
 
   describe('formatter', () => {
@@ -180,6 +326,16 @@ describe('input-otp', () => {
       await first.trigger('input')
       const emitted = wrapper.emitted('update:modelValue')
       expect(emitted?.[0]).toEqual(['A'])
+    })
+
+    it('formatter 拒绝字符时不发出无变化事件', async () => {
+      const wrapper = mount(InputOtp, { props: { length: 4, formatter: () => '' } })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      ;(first.element as HTMLInputElement).value = 'x'
+      await first.trigger('input')
+      await first.trigger('paste', { clipboardData: { getData: () => 'abcd' } })
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect(wrapper.emitted('change')).toBeUndefined()
     })
   })
 
@@ -196,6 +352,15 @@ describe('input-otp', () => {
       const wrapper = mount(InputOtp, { props: { length: 4, modelValue: '99', mask: '#' } })
       const first = wrapper.findAll(ns.e('cell'))[0]
       expect((first.element as HTMLInputElement).value).toBe('#')
+    })
+
+    it('mask 显示值产生的尾随 input 不会覆盖真实字符', async () => {
+      const wrapper = mount(InputOtp, { props: { length: 4, modelValue: '1', mask: true } })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      ;(first.element as HTMLInputElement).value = '•'
+      await first.trigger('input')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect((first.element as HTMLInputElement).value).toBe('•')
     })
   })
 
@@ -220,6 +385,90 @@ describe('input-otp', () => {
       expect(wrapper.emitted('focus')).toBeTruthy()
       expect(wrapper.emitted('blur')).toBeTruthy()
     })
+
+    it('内部 cell 间移动只产生一次 group focus，离开 group 才产生 blur', async () => {
+      const outside = document.createElement('button')
+      document.body.append(outside)
+      const wrapper = mount(InputOtp, { props: { length: 4 }, attachTo: document.body })
+      const cells = wrapper.findAll(ns.e('cell'))
+      ;(cells[0].element as HTMLInputElement).focus()
+      ;(cells[1].element as HTMLInputElement).focus()
+      await nextTick()
+      expect(wrapper.emitted('focus')).toHaveLength(1)
+      expect(wrapper.emitted('blur')).toBeUndefined()
+      outside.focus()
+      await nextTick()
+      expect(wrapper.emitted('blur')).toHaveLength(1)
+      wrapper.unmount()
+      outside.remove()
+    })
+
+    it('readonly 保持可聚焦，但输入、粘贴和删除均不修改值', async () => {
+      const wrapper = mount(InputOtp, { props: { modelValue: '12', length: 4, readOnly: true } })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      expect(first.attributes('readonly')).toBeDefined()
+      ;(first.element as HTMLInputElement).value = '9'
+      await first.trigger('input')
+      await first.trigger('keydown', { key: 'Backspace' })
+      await first.trigger('paste', { clipboardData: { getData: () => '9876' } })
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect((first.element as HTMLInputElement).value).toBe('1')
+      expect(wrapper.attributes('aria-readonly')).toBe('true')
+    })
+
+    it('聚焦期间动态 disabled 会退出组件并只触发一次聚合 blur', async () => {
+      const wrapper = mount(InputOtp, { props: { length: 4 }, attachTo: document.body })
+      ;(wrapper.findAll(ns.e('cell'))[0].element as HTMLInputElement).focus()
+      await wrapper.setProps({ disabled: true })
+      await nextTick()
+      expect(wrapper.emitted('blur')).toHaveLength(1)
+      expect(wrapper.findAll(ns.e('cell')).every((cell) => cell.attributes('disabled') !== undefined)).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('卸载会取消排队中的 group blur 提交', async () => {
+      const wrapper = mount(InputOtp, { props: { length: 4 }, attachTo: document.body })
+      const first = wrapper.findAll(ns.e('cell'))[0]
+      ;(first.element as HTMLInputElement).focus()
+      await first.trigger('blur')
+      wrapper.unmount()
+      await nextTick()
+      expect(wrapper.emitted('blur')).toBeUndefined()
+    })
+
+    it('通知 FormItem change/blur，内部焦点移动不误触 blur 校验', async () => {
+      const validate = vi.fn(() => Promise.resolve(true))
+      const outside = document.createElement('button')
+      document.body.append(outside)
+      const wrapper = mount(InputOtp, {
+        props: { length: 4 },
+        attachTo: document.body,
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref('error'),
+              messageId: ref('otp-error'),
+              isInsideForm: true,
+              validate,
+            },
+          },
+        },
+      })
+      const cells = wrapper.findAll(ns.e('cell'))
+      ;(cells[0].element as HTMLInputElement).value = '1'
+      await cells[0].trigger('input')
+      ;(cells[1].element as HTMLInputElement).focus()
+      await nextTick()
+      expect(validate).toHaveBeenCalledTimes(1)
+      outside.focus()
+      await nextTick()
+      expect(validate.mock.calls).toEqual([['change'], ['blur']])
+      expect(wrapper.attributes('aria-invalid')).toBe('true')
+      expect(wrapper.attributes('aria-describedby')).toBe('otp-error')
+      expect(cells.every((cell) => cell.attributes('aria-describedby') === 'otp-error')).toBe(true)
+      wrapper.unmount()
+      outside.remove()
+    })
   })
 
   describe('XL-4 ARIA', () => {
@@ -233,6 +482,32 @@ describe('input-otp', () => {
       const wrapper = mount(InputOtp, { props: { disabled: true, status: 'error' } })
       expect(wrapper.attributes('aria-disabled')).toBe('true')
       expect(wrapper.attributes('aria-invalid')).toBe('true')
+    })
+
+    it('允许覆盖 group 名称，并为 cell 暴露位置与总数', () => {
+      const wrapper = mount(InputOtp, { props: { length: 4 }, attrs: { 'aria-label': '短信验证码' } })
+      expect(wrapper.attributes('aria-label')).toBe('短信验证码')
+      expect(wrapper.findAll(ns.e('cell'))[2].attributes('aria-label')).toBe('短信验证码, cell 3 of 4')
+    })
+
+    it('group 与每个 cell 都关联去重后的调用方及 FormItem 描述', () => {
+      const wrapper = mount(InputOtp, {
+        attrs: { 'aria-describedby': 'hint shared' },
+        global: {
+          provide: {
+            [formItemInjectionKey as symbol]: {
+              validateStatus: ref('error'),
+              messageId: ref('shared'),
+              isInsideForm: true,
+              validate: vi.fn(),
+            },
+          },
+        },
+      })
+      expect(wrapper.attributes('aria-describedby')).toBe('hint shared')
+      expect(wrapper.findAll(ns.e('cell')).every((cell) => cell.attributes('aria-describedby') === 'hint shared')).toBe(
+        true,
+      )
     })
   })
 })

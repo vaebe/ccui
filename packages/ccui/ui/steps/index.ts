@@ -1,6 +1,9 @@
 import type { App } from 'vue'
 import Steps from './src/steps'
 
+// Keep the types documented for Steps available from the same public entry as the component.
+export type { StepItem, StepsDirection, StepsProps, StepsSize, StepsType, StepStatus } from './src/steps-types'
+
 Steps.install = function (app: App): void {
   app.component(Steps.name!, Steps)
 }

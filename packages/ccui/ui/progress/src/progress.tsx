@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'vue'
 import type { ProgressProps, ProgressStatus } from './progress-types'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, mergeProps } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { clampPercent, progressProps } from './progress-types'
 import './progress.scss'
@@ -16,8 +16,9 @@ const STATUS_ICONS: Record<ProgressStatus, string | null> = {
 
 export default defineComponent({
   name: 'CProgress',
+  inheritAttrs: false,
   props: progressProps,
-  setup(props: ProgressProps, { slots }) {
+  setup(props: ProgressProps, { attrs, slots }) {
     const ns = useNamespace('progress')
 
     const percent = computed(() => clampPercent(props.percent))
@@ -71,7 +72,14 @@ export default defineComponent({
 
     const renderLine = () => {
       const sizeIsSmall = props.size === 'small'
-      const height = props.strokeWidth ?? (sizeIsSmall ? 6 : 8)
+      const tupleSize = Array.isArray(props.size) ? props.size : undefined
+      // 非法尺寸回退默认值，避免向 CSS 输出 NaN、Infinity 或非正尺寸。
+      const sizeHeight = typeof props.size === 'number' ? props.size : tupleSize?.[1]
+      const normalizedSizeHeight =
+        Number.isFinite(sizeHeight) && Number(sizeHeight) > 0 ? Number(sizeHeight) : undefined
+      const normalizedWidth =
+        Number.isFinite(tupleSize?.[0]) && Number(tupleSize?.[0]) > 0 ? Number(tupleSize?.[0]) : undefined
+      const height = props.strokeWidth ?? normalizedSizeHeight ?? (sizeIsSmall ? 6 : 8)
       const lineStyle: CSSProperties = {
         width: `${percent.value}%`,
         backgroundColor: trackColor.value,
@@ -83,7 +91,16 @@ export default defineComponent({
       }
 
       return (
-        <div class={[ns.b(), ns.m('line'), ns.m(`status-${finalStatus.value}`), sizeIsSmall && ns.m('small')]}>
+        <div
+          {...mergeProps(attrs, {
+            role: 'progressbar',
+            'aria-valuemin': '0',
+            'aria-valuemax': '100',
+            'aria-valuenow': percent.value,
+            class: [ns.b(), ns.m('line'), ns.m(`status-${finalStatus.value}`), sizeIsSmall && ns.m('small')],
+            style: normalizedWidth ? { width: `${normalizedWidth}px` } : undefined,
+          })}
+        >
           <div class={ns.e('outer')}>
             <div class={ns.e('inner')} style={trailStyle}>
               <div class={ns.e('bg')} style={lineStyle} />
@@ -112,10 +129,16 @@ export default defineComponent({
 
       return (
         <div
-          class={[ns.b(), ns.m(props.type), ns.m(`status-${finalStatus.value}`)]}
+          {...mergeProps(attrs, {
+            role: 'progressbar',
+            'aria-valuemin': '0',
+            'aria-valuemax': '100',
+            'aria-valuenow': percent.value,
+            class: [ns.b(), ns.m(props.type), ns.m(`status-${finalStatus.value}`)],
+          })}
           style={{ width: `${size}px`, height: `${size}px` }}
         >
-          <svg viewBox="0 0 100 100" class={ns.e('svg')} style={{ transform }}>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 100 100" class={ns.e('svg')} style={{ transform }}>
             <circle
               cx="50"
               cy="50"
@@ -138,7 +161,7 @@ export default defineComponent({
               }
               stroke-dashoffset={isDashboard ? adjustedDashOffset : dashOffset}
               stroke-linecap="round"
-              style={{ transition: 'stroke-dashoffset 0.3s ease 0s, stroke 0.3s' }}
+              class={ns.e('track')}
             />
           </svg>
           {props.showInfo && <span class={ns.e('inner-text')}>{renderInfo()}</span>}

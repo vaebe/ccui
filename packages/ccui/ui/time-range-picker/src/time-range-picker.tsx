@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs'
 import type { FormItemInjectedContext } from '../../form/src/form-types'
 import type { TimeRangePickerProps, TimeRangeValue } from './time-range-picker-types'
-import { computed, defineComponent, h, inject, ref, shallowRef } from 'vue'
+import { computed, defineComponent, h, inject, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { formItemInjectionKey } from '../../form/src/form-types'
 import { renderIconWithFallback } from '../../shared/hooks/use-icon'
@@ -13,6 +13,8 @@ import './time-range-picker.scss'
 
 type TupleBool = [boolean, boolean]
 type TuplePlaceholder = [string, string]
+type RangeEndpoint = 'start' | 'end'
+type HandoffInput = 'pointer' | 'mouse' | null
 
 function asTuple<T>(v: T | [T, T], _fallback: [T, T]): [T, T] {
   if (Array.isArray(v) && v.length === 2) return v as [T, T]
@@ -32,6 +34,8 @@ export default defineComponent({
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.DatePicker ?? {})
     const rootRef = ref<HTMLElement | null>(null)
+    const startEndpointRef = ref<HTMLElement | null>(null)
+    const endEndpointRef = ref<HTMLElement | null>(null)
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const effectiveFormat = computed(() => props.format || (props.use12Hours ? 'h:mm:ss a' : 'HH:mm:ss'))
@@ -54,6 +58,110 @@ export default defineComponent({
 
     const startOpen = shallowRef(false)
     const endOpen = shallowRef(false)
+    let lastEmittedOpen = false
+    let handoffTarget: RangeEndpoint | null = null
+    let handoffInput: HandoffInput = null
+    let handoffPointerId: number | null = null
+    let closeCheckPending = false
+    let disposed = false
+
+    function endpointIsOpen(which: RangeEndpoint) {
+      return which === 'start' ? startOpen.value : endOpen.value
+    }
+
+    function scheduleClosedStateCheck() {
+      if (closeCheckPending) return
+      closeCheckPending = true
+      void nextTick(() => {
+        closeCheckPending = false
+        if (disposed || handoffTarget || startOpen.value || endOpen.value || !lastEmittedOpen) return
+        lastEmittedOpen = false
+        emit('open-change', false)
+      })
+    }
+
+    function resetEndpointHandoff() {
+      handoffTarget = null
+      handoffInput = null
+      handoffPointerId = null
+    }
+
+    function markEndpointHandoff(
+      which: RangeEndpoint,
+      input: Exclude<HandoffInput, null> | 'focus',
+      pointerId: number | null = null,
+    ) {
+      if (endpointIsOpen(which) || !lastEmittedOpen) return
+      handoffTarget = which
+      if (input === 'pointer') {
+        handoffInput = input
+        handoffPointerId = pointerId
+      } else if (input === 'mouse' && handoffInput !== 'pointer') {
+        handoffInput = input
+        handoffPointerId = null
+      }
+
+      if (input === 'focus') {
+        void nextTick(() => {
+          if (disposed || handoffTarget !== which) return
+          const otherOpen = which === 'start' ? endOpen.value : startOpen.value
+          if (otherOpen) resetEndpointHandoff()
+        })
+      }
+    }
+
+    function clearEndpointHandoff() {
+      if (!handoffTarget) return
+      resetEndpointHandoff()
+      scheduleClosedStateCheck()
+    }
+
+    function releaseTargetMatchesHandoff(target: EventTarget | null) {
+      if (!(target instanceof Node) || !handoffTarget) return false
+      const endpoint = handoffTarget === 'start' ? startEndpointRef.value : endEndpointRef.value
+      return !!endpoint?.contains(target)
+    }
+
+    function onDocumentPointerup(event: PointerEvent) {
+      if (handoffInput !== 'pointer') return
+      if (handoffPointerId !== null && event.pointerId !== handoffPointerId) return
+      if (!releaseTargetMatchesHandoff(event.target)) clearEndpointHandoff()
+    }
+
+    function onDocumentMouseup(event: MouseEvent) {
+      if (handoffInput !== 'mouse') return
+      if (!releaseTargetMatchesHandoff(event.target)) clearEndpointHandoff()
+    }
+
+    function updateEndpointOpen(which: RangeEndpoint, open: boolean) {
+      if (which === 'start') startOpen.value = open
+      else endOpen.value = open
+
+      if (open) {
+        resetEndpointHandoff()
+        if (lastEmittedOpen) return
+        lastEmittedOpen = true
+        emit('open-change', true)
+      } else {
+        scheduleClosedStateCheck()
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('click', clearEndpointHandoff)
+      document.addEventListener('pointercancel', clearEndpointHandoff)
+      document.addEventListener('pointerup', onDocumentPointerup)
+      document.addEventListener('mouseup', onDocumentMouseup)
+    })
+
+    onBeforeUnmount(() => {
+      disposed = true
+      resetEndpointHandoff()
+      document.removeEventListener('click', clearEndpointHandoff)
+      document.removeEventListener('pointercancel', clearEndpointHandoff)
+      document.removeEventListener('pointerup', onDocumentPointerup)
+      document.removeEventListener('mouseup', onDocumentMouseup)
+    })
 
     function emitTuple(nextStart: Dayjs | null, nextEnd: Dayjs | null) {
       let s = nextStart
@@ -134,10 +242,11 @@ export default defineComponent({
         clearable: false, // 范围共用一个清除按钮；单端不显示
         showSuffix: false, // 时钟图标由外层统一展示，避免内嵌的两个 TimePicker 各渲染一个
         variant: 'borderless',
-        // 转发 open-change 用于全局状态（暂只内部追踪）
+        onFocus: () => emit('focus'),
+        onBlur: () => emit('blur'),
+        // 对外转发整个范围组件的聚合打开状态。
         'onOpen-change': (open: boolean) => {
-          if (which === 'start') startOpen.value = open
-          else endOpen.value = open
+          updateEndpointOpen(which, open)
         },
       })
     }
@@ -153,11 +262,29 @@ export default defineComponent({
 
     return () => (
       <div ref={rootRef} class={[rootCls.value, props.classNames?.root]} style={props.styles?.root}>
-        <div class={ns.e('start')}>{buildEndPicker('start')}</div>
+        <div
+          ref={startEndpointRef}
+          class={ns.e('start')}
+          onPointerdownCapture={(event: PointerEvent) =>
+            markEndpointHandoff('start', 'pointer', event.pointerId ?? null)
+          }
+          onMousedownCapture={() => markEndpointHandoff('start', 'mouse')}
+          onFocusCapture={() => markEndpointHandoff('start', 'focus')}
+        >
+          {buildEndPicker('start')}
+        </div>
         <span class={ns.e('separator')} aria-hidden="true">
           {props.separator}
         </span>
-        <div class={ns.e('end')}>{buildEndPicker('end')}</div>
+        <div
+          ref={endEndpointRef}
+          class={ns.e('end')}
+          onPointerdownCapture={(event: PointerEvent) => markEndpointHandoff('end', 'pointer', event.pointerId ?? null)}
+          onMousedownCapture={() => markEndpointHandoff('end', 'mouse')}
+          onFocusCapture={() => markEndpointHandoff('end', 'focus')}
+        >
+          {buildEndPicker('end')}
+        </div>
         {showClear.value ? (
           <span class={ns.e('clear')} role="button" aria-label={locale.value.clearLabel || '清除'} onClick={clear}>
             {renderIconWithFallback(slots.clearIcon, props.clearIcon, 'mdi:close-circle')}

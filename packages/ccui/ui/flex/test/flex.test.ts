@@ -29,4 +29,15 @@ describe('flex', () => {
     const style = wrapper.attributes('style') ?? ''
     expect(style).toContain('gap: 12px')
   })
+
+  it('forwards root attrs and preserves component semantics', () => {
+    const wrapper = mount(Flex, {
+      attrs: { id: 'layout', 'aria-label': 'content layout', role: 'group' },
+      props: { component: 'section' },
+    })
+    expect(wrapper.element.tagName).toBe('SECTION')
+    expect(wrapper.attributes('id')).toBe('layout')
+    expect(wrapper.attributes('aria-label')).toBe('content layout')
+    expect(wrapper.attributes('role')).toBe('group')
+  })
 })

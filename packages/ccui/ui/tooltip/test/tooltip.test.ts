@@ -165,6 +165,17 @@ describe('tooltip', () => {
       await nextTick()
       expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(false)
     })
+
+    it('Escape hides an open tooltip and emits the visibility update', async () => {
+      wrapper = createWrapper({ content: 'Test', trigger: 'click' })
+      const trigger = wrapper.find('.ccui-tooltip__trigger')
+      await trigger.trigger('click')
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(true)
+
+      await trigger.trigger('keydown', { key: 'Escape' })
+      expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(false)
+      expect(wrapper.emitted('update:visible')?.at(-1)).toEqual([false])
+    })
   })
 
   describe('禁用状态', () => {
@@ -174,6 +185,8 @@ describe('tooltip', () => {
       await trigger.trigger('mouseenter')
       await nextTick()
       expect(wrapper.find('.ccui-tooltip__popper').exists()).toBe(false)
+      expect(trigger.attributes('aria-disabled')).toBe('true')
+      expect(trigger.attributes('tabindex')).toBe('-1')
     })
   })
 

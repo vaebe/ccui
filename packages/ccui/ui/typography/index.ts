@@ -1,5 +1,16 @@
 import type { App } from 'vue'
 import { Link, Paragraph, Text, Title, Typography } from './src/typography'
+export type {
+  CopyableConfig,
+  EditableConfig,
+  EllipsisConfig,
+  LinkProps,
+  ParagraphProps,
+  TextProps,
+  TitleLevel,
+  TitleProps,
+  TypographyType,
+} from './src/typography-types'
 
 const components = [Typography, Text, Paragraph, Title, Link]
 

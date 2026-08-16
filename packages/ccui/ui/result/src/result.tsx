@@ -41,7 +41,8 @@ export default defineComponent({
       // SVG fill 属性不支持 var()，因此用 currentColor 引用 CSS 类上的 color，
       // 由 result.scss 通过状态修饰类设置为对应 token（brand/success/danger/warning）。
       return (
-        <svg viewBox="64 64 896 896" width="72" height="72" fill="currentColor">
+        // 内置图标只提供视觉状态，标题/副标题承载可访问名称，避免重复读屏。
+        <svg aria-hidden="true" viewBox="64 64 896 896" width="72" height="72" fill="currentColor">
           <path d={path} />
         </svg>
       )

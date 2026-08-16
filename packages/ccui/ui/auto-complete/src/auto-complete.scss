@@ -42,6 +42,14 @@
       }
     }
 
+    &.is-readonly {
+      cursor: default;
+
+      input {
+        cursor: default;
+      }
+    }
+
     &--size-small {
       height: 24px;
     }

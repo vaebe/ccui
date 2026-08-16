@@ -88,6 +88,20 @@ describe('calendar', () => {
     wrapper.unmount()
   })
 
+  it('目标月 1 号禁用时仍可浏览该月，且不伪造日期选择', async () => {
+    const wrapper = createWrapper({
+      modelValue: '2026-03-15',
+      disabledDate: (date: any) => date.date() === 1,
+    })
+    const buttons = wrapper.find(headerClass).findAllComponents(Button)
+    await buttons[2].trigger('click')
+
+    expect(wrapper.find(headerClass).text()).toContain('2026 年 4 月')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.find('[role="gridcell"][tabindex="0"]').attributes('aria-label')).toBe('2026-04-02')
+    wrapper.unmount()
+  })
+
   it('highlights current date', async () => {
     const today = new Date()
     const wrapper = createWrapper({ modelValue: today })
@@ -101,6 +115,62 @@ describe('calendar', () => {
       readOnly: true,
     })
     expect(wrapper.props().readOnly).toBe(true)
+    expect(wrapper.find('[role="grid"]').attributes('aria-readonly')).toBe('true')
+    expect(wrapper.findAll(dayClass).every((cell) => cell.attributes('tabindex') === '-1')).toBe(true)
+    await wrapper.find(dayClass).trigger('click')
+    expect(wrapper.emitted('change')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('禁用日期不可通过点击或键盘选择', async () => {
+    const wrapper = createWrapper({
+      modelValue: '2026-03-15',
+      disabledDate: (date: any) => date.date() === 20,
+    })
+    const disabled = wrapper
+      .findAll(dayClass)
+      .find((cell) => cell.text() === '20' && cell.classes().includes('current-month'))!
+    expect(disabled.attributes('aria-disabled')).toBe('true')
+    expect(disabled.classes()).toContain('is-disabled')
+    await disabled.trigger('click')
+    await disabled.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('change')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('grid 使用完整行列层级，受控值被禁用时仍只有一个 Tab 入口', async () => {
+    const wrapper = createWrapper({
+      modelValue: '2026-03-15',
+      disabledDate: (date: any) => date.date() === 15,
+    })
+    document.body.appendChild(wrapper.element)
+    const grid = wrapper.find('[role="grid"]')
+    const rows = Array.from(grid.element.children) as HTMLElement[]
+
+    expect(rows).toHaveLength(7)
+    expect(rows.every((row) => row.getAttribute('role') === 'row')).toBe(true)
+    expect(Array.from(rows[0].children).every((cell) => cell.getAttribute('role') === 'columnheader')).toBe(true)
+    expect(
+      rows.slice(1).every((row) => Array.from(row.children).every((cell) => cell.getAttribute('role') === 'gridcell')),
+    ).toBe(true)
+
+    const tabStops = wrapper.findAll('[role="gridcell"][tabindex="0"]')
+    expect(tabStops).toHaveLength(1)
+    expect(tabStops[0].attributes('aria-label')).toBe('2026-03-01')
+    await tabStops[0].trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-03-02')
+    expect(document.activeElement).toBe(wrapper.find('[role="gridcell"][tabindex="0"]').element)
+    wrapper.unmount()
+  })
+
+  it('方向键跨月选择并恢复焦点到新日期', async () => {
+    const wrapper = createWrapper({ modelValue: '2026-03-31' })
+    document.body.appendChild(wrapper.element)
+    const selected = wrapper.find(currentDateClass)
+    await selected.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')![0][0]).toBe('2026-04-01')
+    expect(wrapper.find(headerClass).text()).toContain('2026 年 4 月')
+    expect(document.activeElement).toBe(wrapper.find(currentDateClass).element)
     wrapper.unmount()
   })
 

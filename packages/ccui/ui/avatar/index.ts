@@ -1,6 +1,8 @@
 import type { App } from 'vue'
 import Avatar from './src/avatar'
 
+export type { AvatarProps, FitType, GenderType } from './src/avatar-types'
+
 Avatar.install = function (app: App): void {
   app.component(Avatar.name!, Avatar)
 }
