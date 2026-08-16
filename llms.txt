@@ -39,7 +39,7 @@
 - [Empty 空状态](https://vaebe.github.io/ccui/components/empty/index.html)：数据缺失或还没创建时的占位提示
 - [Flex 弹性布局](https://vaebe.github.io/ccui/components/flex/index.html)：封装 CSS flexbox 的常用属性，配合主题间距 token 让"行内 / 垂直 / 两端对齐"等场景更直白
 - [FloatButton 悬浮按钮](https://vaebe.github.io/ccui/components/float-button/index.html)：固定在视图角落的按钮
-- [Form 表单](https://vaebe.github.io/ccui/components/form/index.html)：用于收集、校验和提交一组输入项。`validateDebounce` / `normalize` 等边角能力后续迭代
+- [Form 表单](https://vaebe.github.io/ccui/components/form/index.html)：用于收集、校验和提交一组输入项，支持 `validateDebounce` / `normalize` 等高级字段配置
 - [Grid 栅格](https://vaebe.github.io/ccui/components/grid/index.html)：24 等分的响应式栅格系统。`<c-row>` 是行容器，`<c-col>` 是列；列的 `span` 之和满 24 即填满一行
 - [Icon 图标](https://vaebe.github.io/ccui/components/icon/index.html)：统一图标尺寸、颜色、旋转和无障碍属性的基础包装器，内置 [Iconify](https://iconify.design/) 适配，可直接通过 `name="<prefix>:<icon>"` 渲染来自 200+ 图标集的任意图标
 - [Image 图片](https://vaebe.github.io/ccui/components/image/index.html)：带占位、错误兜底、懒加载和大图预览的图片组件
@@ -49,7 +49,7 @@
 - [InputOtp 一次性密码](https://vaebe.github.io/ccui/components/input-otp/index.html)：分格的一次性密码 / 验证码输入框，作为独立顶层组件存在（不挂在 Input 命名空间下）
 - [InputSearch 搜索框](https://vaebe.github.io/ccui/components/input-search/index.html)：带搜索按钮的输入框，作为独立顶层组件存在（不挂在 Input 命名空间下）
 - [Layout 布局](https://vaebe.github.io/ccui/components/layout/index.html)：帮助构建中后台页面的整体框架，提供 `<c-layout>`、`<c-layout-header>`、`<c-layout-sider>`、`<c-layout-content>`、`<c-layout-footer>` 五个组件
-- [Masonry 瀑布流](https://vaebe.github.io/ccui/components/masonry/index.html)：按列分布、高度自适应的多列布局。卡片墙、画廊、动态列表的常见排版方式
+- [Masonry 瀑布流](https://vaebe.github.io/ccui/components/masonry/index.html)：按列轮询分布的多列布局。卡片墙、画廊、动态列表的常见排版方式；组件不会测量内容高度，列高由内容自然决定
 - [Mentions 提及](https://vaebe.github.io/ccui/components/mentions/index.html)：带「@提及」语法的多行输入框。在 textarea 中输入特定 prefix（默认 `@`）后弹出候选浮层，选中后插入 `@username ` 到光标位置。常见于评论、IM、协作工具的 @ 队友、`#` 话题、`/` 命令场景
 - [Menu 导航菜单](https://vaebe.github.io/ccui/components/menu/index.html)：为页面、侧边栏和应用顶部提供导航，使用 Vue 组件的声明式 props、`v-model` 和事件风格
 - [Message 全局提示](https://vaebe.github.io/ccui/components/message/index.html)：轻量的全局反馈提示，从顶部弹入，几秒后自动消失。适合用于操作成功 / 失败的简短确认，不打断用户操作
@@ -90,7 +90,7 @@
 - [Tree 树](https://vaebe.github.io/ccui/components/tree/index.html)：层级数据展示与管理：选中、勾选（含父子半选联动）、展开、异步加载、搜索高亮、自定义渲染、拖拽
 - [TreeSelect 树选择](https://vaebe.github.io/ccui/components/tree-select/index.html)：把 `Tree` 嵌进下拉浮层做为选项面板的选择器。`v-model` 在单选模式下是单值（节点 value），多选模式下是 value 数组。多选默认渲染 checkbox（`treeCheckable=true`），关闭后回退到 `c-tree` 的 multiple selectable 模式。fieldNames 与 Cascader/Select 保持一致（`label/value/children/disabled`），内部映射到 `c-tree` 的 `title/key/...`
 - [Typography 排版](https://vaebe.github.io/ccui/components/typography/index.html)：文本内容的基本格式
-- [Upload 上传](https://vaebe.github.io/ccui/components/upload/index.html)：文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。**组件不内置 HTTP 上传请求** —— 业务侧通过 `update:fileList` 拿到文件后自行发请求并回写状态，组件只负责 UI 与状态同步
+- [Upload 上传](https://vaebe.github.io/ccui/components/upload/index.html)：文件上传控件。提供文件选择、拖拽接收、文件列表、删除四个核心能力。可以通过 `customRequest` 或 `action` 执行上传；两者均未提供时，业务侧可通过 `update:fileList` 自行发请求并回写状态
 - [Util 工具集](https://vaebe.github.io/ccui/components/util/index.html)：vue3-ccui 内部使用的公共工具函数
 - [Watermark 水印](https://vaebe.github.io/ccui/components/watermark/index.html)：为页面或局部容器盖上重复的、平铺的水印。常用于"版权提示 / 数据保密 / 防截图泄露"等场景
 
