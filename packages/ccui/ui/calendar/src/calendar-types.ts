@@ -1,3 +1,4 @@
+import type { Dayjs } from 'dayjs'
 import type { ExtractPropTypes, PropType } from 'vue'
 import type { CcSemanticClasses, CcSemanticStyles } from '../../shared/hooks/use-semantic'
 import type { DateValue } from '../../shared/utils/date'
@@ -33,6 +34,11 @@ export const calendarProps = {
   readOnly: {
     type: Boolean,
     default: false,
+  },
+  /** 返回 true 时该日期不可选择。 */
+  disabledDate: {
+    type: Function as PropType<(current: Dayjs) => boolean>,
+    default: undefined,
   },
   /**
    * 语义化 DOM className 注入。可用 key：`root` / `header` / `body` / `cell`。

@@ -8,6 +8,13 @@ Collapse.install = function (app: App): void {
 }
 
 export { Collapse, CollapseItem }
+export type {
+  CollapseContext,
+  CollapseExpandIconPosition,
+  CollapseItemProps,
+  CollapseModelValue,
+  CollapseProps,
+} from './src/collapse-types'
 
 export default {
   title: 'Collapse 折叠面板',

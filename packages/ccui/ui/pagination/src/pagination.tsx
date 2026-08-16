@@ -7,6 +7,17 @@ import './pagination.scss'
 
 const ELLIPSIS = -1
 
+function getTotalPages(total: number, pageSize: number): number {
+  const safeTotal = Math.max(0, Number.isFinite(total) ? total : 0)
+  const safePageSize = pageSize > 0 && Number.isFinite(pageSize) ? pageSize : 1
+  return Math.max(1, Math.ceil(safeTotal / safePageSize))
+}
+
+function clampPage(page: number, totalPages: number): number {
+  const normalized = Number.isFinite(page) ? Math.floor(page) : 1
+  return Math.max(1, Math.min(totalPages, normalized))
+}
+
 function buildPageList(current: number, totalPages: number): number[] {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -33,14 +44,14 @@ export default defineComponent({
     const cfg = useConfig()
     const locale = computed(() => cfg.locale?.Pagination ?? {})
 
-    const innerCurrent = ref(props.current)
+    const innerCurrent = ref(clampPage(props.current, getTotalPages(props.total, props.pageSize)))
     const innerPageSize = ref(props.pageSize)
-    const jumperValue = ref(String(props.current))
+    const jumperValue = ref(String(innerCurrent.value))
 
     watch(
       () => props.current,
       (val) => {
-        innerCurrent.value = val
+        innerCurrent.value = clampPage(val, getTotalPages(props.total, innerPageSize.value))
       },
     )
     watch(innerCurrent, (val) => {
@@ -54,8 +65,17 @@ export default defineComponent({
     )
 
     const totalPages = computed(() => {
-      const size = innerPageSize.value || 1
-      return Math.max(1, Math.ceil(props.total / size))
+      return getTotalPages(props.total, innerPageSize.value)
+    })
+
+    watch(totalPages, (pages) => {
+      const next = clampPage(props.current, pages)
+      if (next === innerCurrent.value) return
+      innerCurrent.value = next
+      if (next !== props.current) {
+        emit('update:current', next)
+        emit('change', next, innerPageSize.value)
+      }
     })
 
     const pageList = computed(() => buildPageList(innerCurrent.value, totalPages.value))
@@ -106,7 +126,7 @@ export default defineComponent({
       }
       innerPageSize.value = newSize
       emit('update:pageSize', newSize)
-      const newTotalPages = Math.max(1, Math.ceil(props.total / newSize))
+      const newTotalPages = getTotalPages(props.total, newSize)
       if (innerCurrent.value > newTotalPages) {
         innerCurrent.value = newTotalPages
         emit('update:current', newTotalPages)

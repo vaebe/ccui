@@ -10,7 +10,7 @@ export const affixProps = {
     default: undefined,
   },
   target: {
-    type: [String, Object, Function] as PropType<string | HTMLElement | (() => HTMLElement | Window | null)>,
+    type: [String, Object, Function] as PropType<string | HTMLElement | Window | (() => HTMLElement | Window | null)>,
     default: undefined,
   },
   zIndex: {

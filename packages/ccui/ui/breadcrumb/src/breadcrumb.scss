@@ -1,12 +1,18 @@
 @use '../../style-var/index.scss' as *;
 
 .#{$cls-prefix}-breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   color: $ccui-color-text-secondary;
   font-size: $ccui-font-size;
   line-height: $ccui-line-height-base;
+
+  &__list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
   &__item {
     display: inline-flex;
@@ -17,11 +23,6 @@
     color: $ccui-color-text-secondary;
     text-decoration: none !important;
     transition: color $ccui-motion-duration-mid;
-
-    &:hover {
-      color: $ccui-color-text;
-      text-decoration: none !important;
-    }
   }
 
   a.#{$cls-prefix}-breadcrumb__link {
@@ -36,7 +37,8 @@
     }
   }
 
-  &__item:last-child &__link {
+  // 当前页样式跟随 aria-current，而非依赖 DOM :last-child，避免 slot 中的非条目节点干扰。
+  &__link[aria-current='page'] {
     color: $ccui-color-text;
   }
 
@@ -44,10 +46,5 @@
     margin: 0 8px;
     color: $ccui-color-text-quaternary;
     user-select: none;
-  }
-
-  // 末项分隔符依赖 BreadcrumbItem 为 nav 的最后一个直接子节点；若其后另有节点则 :last-child 失效
-  &__item:last-child &__separator {
-    display: none;
   }
 }

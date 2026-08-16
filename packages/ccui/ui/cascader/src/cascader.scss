@@ -125,6 +125,7 @@
   }
 
   &__column {
+    flex: 0 0 160px;
     width: 160px;
     max-height: 240px;
     margin: 0;
@@ -141,6 +142,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 575px) {
+    &__panel {
+      max-width: calc(100vw - 16px);
+      overflow-x: auto;
     }
   }
 

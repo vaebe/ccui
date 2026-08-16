@@ -1,25 +1,45 @@
-import type { TableColumn } from '../../table/src/table-types'
+import type { TableColumn, TableColumnsCollector } from '../../table/src/table-types'
 import type { TableColumnProps } from './table-column-types'
-import { defineComponent, inject, onBeforeUnmount } from 'vue'
+import { defineComponent, getCurrentInstance, inject, onBeforeUnmount, onUpdated, watch } from 'vue'
 import { nextColumnOrder, tableColumnGroupCollectorKey, tableColumnsCollectorKey } from '../../table/src/table-types'
 import { tableColumnProps } from './table-column-types'
 
 export default defineComponent({
   name: 'CTableColumn',
-  props: tableColumnProps,
-  setup(props: TableColumnProps, { slots }) {
+  props: {
+    ...tableColumnProps,
+    // Table 内部注入的声明位置；不属于公开 TableColumnProps，也不会渲染到 DOM。
+    __ccuiDeclarationOrder: { type: Number, default: undefined },
+  },
+  setup(props: TableColumnProps & { __ccuiDeclarationOrder?: number }, { slots }) {
     // 优先注册到外层 ColumnGroup；不在 group 内则注册到 root Table。
     const group = inject(tableColumnGroupCollectorKey, null)
     const root = inject(tableColumnsCollectorKey, null)
-    const collector = group ?? root
+    const collector: TableColumnsCollector | null = group ?? root
 
     const id = Symbol('CTableColumn')
     const order = nextColumnOrder()
+    const instance = getCurrentInstance()!
+
+    /**
+     * 只读取当前 VNode 是否声明 customRender slot，不比较每次 render 都可能变化的函数引用，
+     * 以便 slot 有无切换时只刷新父 Table 一次。
+     */
+    const readCustomRenderSlotPresence = () => {
+      const children = instance.vnode.children
+      return Boolean(
+        children &&
+        typeof children === 'object' &&
+        !Array.isArray(children) &&
+        typeof (children as Record<string, unknown>).customRender === 'function',
+      )
+    }
+    let hasCustomRenderSlot = readCustomRenderSlotPresence()
 
     // 稳定的渲染代理：闭包内部读 slot/prop 最新值（slot 优先于 function prop，且保留响应式），
     // 引用始终复用，避免 getter 每次读取都新建临时闭包。
     const renderProxy = (scope: { text: any; record: any; index: number; column: TableColumn }) => {
-      if (slots.customRender) return slots.customRender(scope)
+      if (hasCustomRenderSlot && slots.customRender) return slots.customRender(scope)
       return props.customRender?.(scope)
     }
 
@@ -43,7 +63,7 @@ export default defineComponent({
       onHeaderCell: { get: () => props.onHeaderCell, enumerable: true, configurable: true },
       // slot 优先于 function prop；复用稳定闭包代理，仅在两者皆无时返回 undefined。
       customRender: {
-        get: () => (slots.customRender || props.customRender ? renderProxy : undefined),
+        get: () => (hasCustomRenderSlot || props.customRender ? renderProxy : undefined),
         enumerable: true,
         configurable: true,
       },
@@ -51,6 +71,21 @@ export default defineComponent({
 
     if (collector) {
       collector.register(id, column, order)
+      // keyed 子组件重排不会重新 setup，必须显式同步位置，不能依赖首次挂载序号或 DOM 查询。
+      watch(
+        () => props.__ccuiDeclarationOrder,
+        (declarationOrder) => {
+          if (declarationOrder !== undefined) collector.updateOrder?.(id, declarationOrder)
+        },
+        { immediate: true },
+      )
+      onUpdated(() => {
+        const nextHasCustomRenderSlot = readCustomRenderSlotPresence()
+        if (nextHasCustomRenderSlot === hasCustomRenderSlot) return
+        // 必须先更新 gate 再刷新父表，否则父 render 仍会读取旧 slot 形态并形成重复更新。
+        hasCustomRenderSlot = nextHasCustomRenderSlot
+        collector.refresh?.(id)
+      })
       onBeforeUnmount(() => collector.unregister(id))
     }
     // 脱离 <c-table> 父级时静默渲染 null —— 用户语义错误由开发者审视，不打 warn 避免污染日志。

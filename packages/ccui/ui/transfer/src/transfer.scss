@@ -13,6 +13,7 @@
   &__column {
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     width: 200px;
     max-height: 320px;
     border: 1px solid $ccui-color-border;
@@ -174,6 +175,24 @@
       color: $ccui-color-text-disabled;
       background: $ccui-list-item-hover-bg;
       cursor: not-allowed;
+    }
+  }
+
+  @media (max-width: 575px) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &__column {
+      width: 100%;
+    }
+
+    &__operations {
+      flex-direction: row;
+    }
+
+    &__operation svg {
+      transform: rotate(90deg);
     }
   }
 }

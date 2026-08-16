@@ -2,6 +2,7 @@ import type { ExtractPropTypes, InjectionKey, PropType, Ref, VNodeChild } from '
 
 export type MenuMode = 'vertical' | 'horizontal' | 'inline'
 export type MenuTheme = 'light' | 'dark'
+/** 菜单项标识；全树 `String(key)` 必须唯一，因此数字 `1` 与字符串 `'1'` 不可同时使用。 */
 export type MenuKey = string | number
 export type MenuTriggerAction = 'click' | 'hover'
 
@@ -23,6 +24,7 @@ export interface MenuOpenInfo {
 }
 
 export interface MenuItem {
+  /** 全树唯一业务标识；DOM/键盘查找按 `String(key)` 规范化。 */
   key: MenuKey
   label?: VNodeChild
   title?: string

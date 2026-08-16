@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import Carousel from './src/carousel'
+export type { CarouselDotPosition, CarouselEffect, CarouselExpose, CarouselProps } from './src/carousel-types'
 
 Carousel.install = function (app: App): void {
   app.component(Carousel.name!, Carousel)

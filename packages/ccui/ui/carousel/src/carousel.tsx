@@ -42,7 +42,7 @@ export default defineComponent({
   name: 'CCarousel',
   props: carouselProps,
   emits: ['update:modelValue', 'change', 'afterChange'],
-  setup(props: CarouselProps, { slots, emit, expose }) {
+  setup(props: CarouselProps, { slots, emit, expose, attrs }) {
     const ns = useNamespace('carousel')
     const rootRef = shallowRef<HTMLElement | null>(null)
     const innerActive = shallowRef(props.defaultActive ?? 0)
@@ -301,8 +301,10 @@ export default defineComponent({
           ? slots.customDot({ index: i, isActive })
           : h('button', {
               type: 'button',
+              role: 'tab',
               'aria-label': `Go to slide ${i + 1}`,
-              'aria-current': isActive ? 'true' : 'false',
+              'aria-selected': isActive ? 'true' : 'false',
+              tabindex: isActive ? 0 : -1,
               onClick: () => goTo(pageToIndex(i)),
             })
         items.push(
@@ -369,11 +371,16 @@ export default defineComponent({
         animating.value ? ns.is('animating') : '',
       ]
 
+      // 保留调用方的无障碍与 data 属性；组件自身的交互属性仍由 Carousel 统一维护。
+      const { class: userClass, style: userStyle, ...fallthroughAttrs } = attrs
+
       return h(
         'div',
         {
+          ...fallthroughAttrs,
           ref: rootRef,
-          class: rootClass,
+          class: [rootClass, userClass],
+          style: userStyle,
           tabindex: 0,
           role: 'region',
           'aria-roledescription': 'carousel',

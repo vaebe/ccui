@@ -33,6 +33,35 @@ describe('splitter', () => {
     expect(wrapper.findAll(pNs.e('resizer')).length).toBe(2)
   })
 
+  it('exposes separator semantics and supports keyboard resizing', async () => {
+    const wrapper = mount({
+      components: { Splitter, Panel },
+      template: `<Splitter><Panel :default-size="200" :min="100" :max="300">A</Panel><Panel :default-size="200">B</Panel></Splitter>`,
+    })
+    const container = wrapper.find(sNs.b()).element as HTMLElement
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+      width: 400,
+      height: 200,
+      top: 0,
+      right: 400,
+      bottom: 200,
+      left: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    })
+    const separator = wrapper.find(pNs.e('resizer'))
+
+    expect(separator.attributes('role')).toBe('separator')
+    expect(separator.attributes('tabindex')).toBe('0')
+    expect(separator.attributes('aria-orientation')).toBe('vertical')
+    expect(separator.attributes('aria-valuenow')).toBe('200')
+    await separator.trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    expect(wrapper.findAll(pNs.b())[0].attributes('style')).toContain('width: 210px')
+    expect(separator.attributes('aria-valuenow')).toBe('210')
+  })
+
   it('vertical layout adds modifier', () => {
     const wrapper = mount({
       components: { Splitter, Panel },
@@ -75,7 +104,8 @@ describe('splitter', () => {
       toJSON: () => ({}),
     })
 
-    await wrapper.find(pNs.e('resizer')).trigger('pointerdown', { clientX: 200 })
+    wrapper.find(pNs.e('resizer')).element.dispatchEvent(createPointerEvent('pointerdown', { clientX: 200 }))
+    await nextTick()
     window.dispatchEvent(createPointerEvent('pointermove', { clientX: 260 }))
     await nextTick()
     window.dispatchEvent(createPointerEvent('pointerup', {}))
@@ -86,6 +116,81 @@ describe('splitter', () => {
     expect(wrapper.vm.$options.methods?.onResize).toHaveBeenCalledWith([260, 140])
     expect(wrapper.vm.$options.methods?.onResizeStart).toHaveBeenCalledWith([200, 200])
     expect(wrapper.vm.$options.methods?.onResizeEnd).toHaveBeenCalledWith([260, 140])
+  })
+
+  it('restores host body styles when a pointer drag ends or is cancelled', async () => {
+    const originalCursor = document.body.style.cursor
+    const originalUserSelect = document.body.style.userSelect
+    document.body.style.cursor = 'wait'
+    document.body.style.userSelect = 'text'
+
+    try {
+      const wrapper = mount({
+        components: { Splitter, Panel },
+        template: `<Splitter><Panel :default-size="200">A</Panel><Panel :default-size="200">B</Panel></Splitter>`,
+      })
+      const container = wrapper.find(sNs.b()).element as HTMLElement
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+        width: 400,
+        height: 200,
+        top: 0,
+        right: 400,
+        bottom: 200,
+        left: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      })
+
+      wrapper.find(pNs.e('resizer')).element.dispatchEvent(createPointerEvent('pointerdown', { clientX: 200 }))
+      await nextTick()
+      expect(document.body.style.cursor).toBe('col-resize')
+      expect(document.body.style.userSelect).toBe('none')
+
+      window.dispatchEvent(createPointerEvent('pointercancel', {}))
+      expect(document.body.style.cursor).toBe('wait')
+      expect(document.body.style.userSelect).toBe('text')
+      wrapper.unmount()
+    } finally {
+      document.body.style.cursor = originalCursor
+      document.body.style.userSelect = originalUserSelect
+    }
+  })
+
+  it('restores host body styles when unmounted during a pointer drag', async () => {
+    const originalCursor = document.body.style.cursor
+    const originalUserSelect = document.body.style.userSelect
+    document.body.style.cursor = 'crosshair'
+    document.body.style.userSelect = 'all'
+
+    try {
+      const wrapper = mount({
+        components: { Splitter, Panel },
+        template: `<Splitter><Panel :default-size="200">A</Panel><Panel :default-size="200">B</Panel></Splitter>`,
+      })
+      const container = wrapper.find(sNs.b()).element as HTMLElement
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+        width: 400,
+        height: 200,
+        top: 0,
+        right: 400,
+        bottom: 200,
+        left: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      })
+
+      wrapper.find(pNs.e('resizer')).element.dispatchEvent(createPointerEvent('pointerdown', { clientX: 200 }))
+      await nextTick()
+      wrapper.unmount()
+
+      expect(document.body.style.cursor).toBe('crosshair')
+      expect(document.body.style.userSelect).toBe('all')
+    } finally {
+      document.body.style.cursor = originalCursor
+      document.body.style.userSelect = originalUserSelect
+    }
   })
 
   it('uses percentage size and vertical axis during resize', async () => {
@@ -106,7 +211,8 @@ describe('splitter', () => {
       toJSON: () => ({}),
     })
 
-    await wrapper.find(pNs.e('resizer')).trigger('pointerdown', { clientY: 200 })
+    wrapper.find(pNs.e('resizer')).element.dispatchEvent(createPointerEvent('pointerdown', { clientY: 200 }))
+    await nextTick()
     window.dispatchEvent(createPointerEvent('pointermove', { clientY: 300 }))
     await nextTick()
 

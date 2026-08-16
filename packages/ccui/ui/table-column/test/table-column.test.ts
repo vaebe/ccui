@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { defineComponent, h, nextTick } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { defineComponent, Fragment, h, nextTick, ref } from 'vue'
+import { describe, expect, it, vi } from 'vitest'
 import { Table } from '../../table'
 import { TableColumn } from '../index'
 
@@ -94,6 +94,111 @@ describe('table-column', () => {
     expect(wrapper.find('.my-cell').text()).toBe('slot-Tom')
   })
 
+  it('动态 props 与 customRender slot 更新会传递到 Table', async () => {
+    const field = ref<'name' | 'age'>('name')
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(
+            Table,
+            { dataSource: [dataSource[0]] },
+            {
+              default: () => [
+                h(
+                  TableColumn,
+                  {
+                    title: field.value === 'name' ? '姓名' : '年龄',
+                    dataIndex: field.value,
+                    columnKey: field.value,
+                    width: field.value === 'name' ? 120 : 144,
+                    align: field.value === 'name' ? 'left' : 'right',
+                    customRender: ({ text }: any) => `prop-${text}`,
+                  },
+                  { customRender: ({ text }: any) => `slot-${text}` },
+                ),
+              ],
+            },
+          )
+      },
+    })
+    const wrapper = mount(Host)
+    await nextTick()
+    expect(wrapper.find('thead th').text()).toContain('姓名')
+    expect(wrapper.find('tbody td').text()).toBe('slot-Tom')
+
+    field.value = 'age'
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.find('thead th').text()).toContain('年龄')
+    expect(wrapper.find('thead th').attributes('style')).toContain('144px')
+    expect(
+      wrapper
+        .find('thead th')
+        .classes()
+        .some((name) => name.includes('right')),
+    ).toBe(true)
+    expect(wrapper.find('tbody td').text()).toBe('slot-28')
+  })
+
+  it('customRender slot 有无双向切换时在 slot 与 prop 间回退且不递归更新', async () => {
+    const showSlot = ref(true)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const Host = defineComponent({
+      setup() {
+        const propRender = ({ text }: any) => `prop-${text}`
+        return () =>
+          h(
+            Table,
+            { dataSource: [dataSource[0]] },
+            {
+              default: () => [
+                h(
+                  TableColumn,
+                  {
+                    title: '姓名',
+                    dataIndex: 'name',
+                    columnKey: 'name',
+                    customRender: propRender,
+                  },
+                  showSlot.value ? { customRender: ({ text }: any) => `slot-${text}` } : undefined,
+                ),
+              ],
+            },
+          )
+      },
+    })
+
+    try {
+      const wrapper = mount(Host)
+      await nextTick()
+      expect(wrapper.find('tbody td').text()).toBe('slot-Tom')
+
+      showSlot.value = false
+      await nextTick()
+      await nextTick()
+      expect(wrapper.find('tbody td').text()).toBe('prop-Tom')
+
+      showSlot.value = true
+      await nextTick()
+      await nextTick()
+      expect(wrapper.find('tbody td').text()).toBe('slot-Tom')
+      expect(warn.mock.calls.flat().some((args) => String(args).includes('Maximum recursive updates'))).toBe(false)
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
+  it('customRender slot 与 prop 都不存在时保留普通文本渲染', async () => {
+    const Host = makeHost({
+      default: () => [h(TableColumn, { title: '姓名', dataIndex: 'name', columnKey: 'name' })],
+    })
+    const wrapper = mount(Host)
+    await nextTick()
+
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).toBe('Tom')
+  })
+
   it('width / align / fixed props 透传到 Table', async () => {
     const Host = makeHost({
       default: () => [
@@ -154,6 +259,120 @@ describe('table-column', () => {
     await nextTick()
     expect(wrapper.findAll('thead th')).toHaveLength(1)
     expect(wrapper.find('thead th').text()).toContain('姓名')
+  })
+
+  it('keyed 列仅重排时保持与最新声明顺序一致', async () => {
+    const Host = defineComponent({
+      setup() {
+        const fields = ref<Array<'name' | 'age'>>(['name', 'age'])
+        return { fields }
+      },
+      render() {
+        return h(
+          Table,
+          { dataSource },
+          {
+            default: () => [
+              h(Fragment, null, [
+                h('span', { class: 'ignored-slot-node' }, '不会进入列定义'),
+                ...this.fields.map((field) =>
+                  h(TableColumn, {
+                    key: field,
+                    title: field === 'name' ? '姓名' : '年龄',
+                    dataIndex: field,
+                    columnKey: field,
+                  }),
+                ),
+              ]),
+            ],
+          },
+        )
+      },
+    })
+    const wrapper = mount(Host)
+    await nextTick()
+    expect(wrapper.findAll('thead th').map((cell) => cell.text())).toEqual(['姓名', '年龄'])
+
+    ;(wrapper.vm as any).fields = ['age', 'name']
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.findAll('thead th').map((cell) => cell.text())).toEqual(['年龄', '姓名'])
+    expect(
+      wrapper
+        .findAll('tbody tr')[0]
+        .findAll('td')
+        .map((cell) => cell.text()),
+    ).toEqual(['28', 'Tom'])
+  })
+
+  it('声明顺序未变化时保持稳定且不重复注册', async () => {
+    const revision = ref(0)
+    const Host = defineComponent({
+      setup() {
+        return () => {
+          return h(
+            Table,
+            { dataSource, class: `revision-${revision.value}` },
+            {
+              default: () => [
+                h(TableColumn, { key: 'name', title: '姓名', dataIndex: 'name', columnKey: 'name' }),
+                h(TableColumn, { key: 'age', title: '年龄', dataIndex: 'age', columnKey: 'age' }),
+              ],
+            },
+          )
+        }
+      },
+    })
+    const wrapper = mount(Host)
+    await nextTick()
+
+    revision.value += 1
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.findAll('thead th').map((cell) => cell.text())).toEqual(['姓名', '年龄'])
+    expect(wrapper.findAll('tbody tr')[0].findAll('td')).toHaveLength(2)
+  })
+
+  it('keyed 列重排后卸载列会清理对应注册项', async () => {
+    const fields = ref<Array<'name' | 'age'>>(['name', 'age'])
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(
+            Table,
+            { dataSource },
+            {
+              default: () =>
+                fields.value.map((field) =>
+                  h(TableColumn, {
+                    key: field,
+                    title: field === 'name' ? '姓名' : '年龄',
+                    dataIndex: field,
+                    columnKey: field,
+                  }),
+                ),
+            },
+          )
+      },
+    })
+    const wrapper = mount(Host)
+    await nextTick()
+
+    fields.value = ['age', 'name']
+    await nextTick()
+    fields.value = ['name']
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.findAll('thead th').map((cell) => cell.text())).toEqual(['姓名'])
+    expect(
+      wrapper
+        .findAll('tbody tr')[0]
+        .findAll('td')
+        .map((cell) => cell.text()),
+    ).toEqual(['Tom'])
   })
 
   it('脱离 Table 父级时不渲染 DOM 节点', () => {

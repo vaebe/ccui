@@ -12,8 +12,10 @@
     background-color: $ccui-color-bg-container;
   }
 
-  &__table {
+  // 组件结构选择器需高于宿主的 `.vp-doc table` 等标签规则，才能稳定隔离全局 table margin。
+  & > &__container > &__table {
     width: 100%;
+    margin: 0;
     border-spacing: 0;
     border-collapse: separate;
     table-layout: auto;
@@ -40,6 +42,13 @@
 
   &__tbody > tr.#{$cls-prefix}-table__tr--selected > td {
     background-color: $ccui-color-primary-bg;
+  }
+
+  &__summary--fixed-top > tr > th,
+  &__summary--fixed-top > tr > td,
+  &__summary--fixed-bottom > tr > th,
+  &__summary--fixed-bottom > tr > td {
+    background-color: $ccui-color-bg-container;
   }
 
   &__th,
@@ -191,6 +200,21 @@
       color: $ccui-color-primary;
       border-color: $ccui-color-primary;
     }
+  }
+
+  &__tree-expand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
   }
 
   &__expanded-row > td {

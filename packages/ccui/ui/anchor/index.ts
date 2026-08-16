@@ -6,6 +6,7 @@ Anchor.install = function (app: App): void {
 }
 
 export { Anchor }
+export type { AnchorLink, AnchorProps } from './src/anchor-types'
 
 export default {
   title: 'Anchor 锚点',

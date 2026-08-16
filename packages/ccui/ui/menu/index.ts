@@ -6,6 +6,16 @@ Menu.install = function (app: App): void {
 }
 
 export { Menu }
+export type {
+  MenuInfo,
+  MenuItem,
+  MenuKey,
+  MenuMode,
+  MenuOpenInfo,
+  MenuProps,
+  MenuTheme,
+  MenuTriggerAction,
+} from './src/menu-types'
 
 export default {
   title: 'Menu 导航菜单',

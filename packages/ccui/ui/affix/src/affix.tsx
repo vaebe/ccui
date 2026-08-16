@@ -17,11 +17,21 @@ function resolveTarget(target: AffixProps['target']): HTMLElement | Window {
     const result = target()
     return (result as HTMLElement | Window) ?? window
   }
-  return target as HTMLElement
+  return target as HTMLElement | Window
 }
 
 function isWindow(target: HTMLElement | Window): target is Window {
   return target === window
+}
+
+function getContainerViewportRect(container: HTMLElement) {
+  const rect = container.getBoundingClientRect()
+  const bottomBorder = Math.max(0, container.offsetHeight - container.clientHeight - container.clientTop)
+  return {
+    top: rect.top + container.clientTop,
+    bottom: rect.bottom - bottomBorder,
+    left: rect.left + container.clientLeft,
+  }
 }
 
 function getOffsetRect(el: HTMLElement, container: HTMLElement | Window) {
@@ -45,7 +55,7 @@ function getOffsetRect(el: HTMLElement, container: HTMLElement | Window) {
       height: rect.height,
     }
   }
-  const containerRect = containerEl.getBoundingClientRect()
+  const containerRect = getContainerViewportRect(containerEl)
   return {
     top: rect.top - containerRect.top,
     bottom: containerRect.bottom - rect.bottom,
@@ -62,6 +72,7 @@ export default defineComponent({
   setup(props: AffixProps, { emit, slots }) {
     const ns = useNamespace('affix')
     const wrapperRef = ref<HTMLElement>()
+    const innerRef = ref<HTMLElement>()
     const fixed = ref(false)
     const placeholderStyle = ref<CSSProperties>({})
     const fixedStyle = ref<CSSProperties>({})
@@ -69,6 +80,7 @@ export default defineComponent({
     let container: HTMLElement | Window | null = null
     let resizeObserver: ResizeObserver | null = null
     let rafId: number | null = null
+    let stopTargetWatch: (() => void) | null = null
 
     const isTopMode = computed(() => props.offsetBottom === undefined)
     const offsetTop = computed(() => props.offsetTop ?? 0)
@@ -85,14 +97,14 @@ export default defineComponent({
         const containerEl = targetIsWindow ? null : (container as HTMLElement)
         const baseRect =
           containerEl && typeof containerEl.getBoundingClientRect === 'function'
-            ? containerEl.getBoundingClientRect()
+            ? getContainerViewportRect(containerEl)
             : null
         const wrapperRect = wrapperRef.value.getBoundingClientRect()
+        const innerRect = innerRef.value?.getBoundingClientRect()
 
         const style: CSSProperties = {
           position: 'fixed',
           width: `${offset.width}px`,
-          height: `${offset.height}px`,
           zIndex: props.zIndex,
           left: `${wrapperRect.left}px`,
         }
@@ -106,7 +118,7 @@ export default defineComponent({
         fixedStyle.value = style
         placeholderStyle.value = {
           width: `${offset.width}px`,
-          height: `${offset.height}px`,
+          height: `${innerRect?.height ?? offset.height}px`,
         }
       } else {
         fixedStyle.value = {}
@@ -119,13 +131,31 @@ export default defineComponent({
       }
     }
 
-    const bindContainer = () => {
-      container = resolveTarget(props.target)
+    const observeSizeChanges = () => {
+      resizeObserver?.disconnect()
+      if (typeof ResizeObserver === 'undefined') {
+        return
+      }
+      resizeObserver = new ResizeObserver(() => update())
+      if (wrapperRef.value) {
+        resizeObserver.observe(wrapperRef.value)
+      }
+      if (innerRef.value) {
+        resizeObserver.observe(innerRef.value)
+      }
+      if (container && !isWindow(container)) {
+        resizeObserver.observe(container)
+      }
+    }
+
+    const bindContainer = (nextContainer = resolveTarget(props.target)) => {
+      container = nextContainer
       container.addEventListener('scroll', update, { passive: true })
       // 当滚动容器不是 window 时，仍需监听窗口滚动以处理嵌套滚动场景
       if (!isWindow(container)) {
         window.addEventListener('scroll', update, { passive: true })
       }
+      observeSizeChanges()
     }
 
     const unbindContainer = () => {
@@ -133,13 +163,22 @@ export default defineComponent({
       window.removeEventListener('scroll', update)
     }
 
+    const rebindContainer = (nextContainer: HTMLElement | Window) => {
+      if (nextContainer === container) {
+        return
+      }
+      unbindContainer()
+      bindContainer(nextContainer)
+      update()
+    }
+
     onMounted(() => {
       bindContainer()
       window.addEventListener('resize', update)
-      if (typeof ResizeObserver !== 'undefined' && wrapperRef.value) {
-        resizeObserver = new ResizeObserver(() => update())
-        resizeObserver.observe(wrapperRef.value)
-      }
+      // Start resolving function targets only on the client. Calling user target
+      // functions during setup would make SSR unsafe, while watching the resolved
+      // value here also tracks refs read by a stable target function.
+      stopTargetWatch = watch(() => resolveTarget(props.target), rebindContainer, { flush: 'post' })
       // 等下一帧再计算，避免初次布局未完成
       rafId = requestAnimationFrame(() => update())
     })
@@ -149,6 +188,8 @@ export default defineComponent({
       window.removeEventListener('resize', update)
       resizeObserver?.disconnect()
       resizeObserver = null
+      stopTargetWatch?.()
+      stopTargetWatch = null
       // 卸载时取消未执行的下一帧回调，避免卸载后再触发一次 update()
       if (rafId !== null && typeof cancelAnimationFrame === 'function') {
         cancelAnimationFrame(rafId)
@@ -157,22 +198,14 @@ export default defineComponent({
     })
 
     watch(
-      () => props.target,
-      () => {
-        unbindContainer()
-        bindContainer()
-        update()
-      },
-    )
-
-    watch(
-      () => [props.offsetTop, props.offsetBottom],
+      () => [props.offsetTop, props.offsetBottom, props.zIndex],
       () => update(),
     )
 
     return () => (
       <div ref={wrapperRef} class={ns.b()} style={fixed.value ? placeholderStyle.value : undefined}>
         <div
+          ref={innerRef}
           class={[ns.e('inner'), fixed.value && ns.em('inner', 'fixed')]}
           style={fixed.value ? fixedStyle.value : undefined}
         >

@@ -51,7 +51,8 @@ export default defineComponent({
     const pageSize = computed(() => {
       if (props.pagination === false) return 0
       if (props.pagination === true) return 10
-      return Math.max(1, props.pagination as number)
+      const value = props.pagination as number
+      return Number.isFinite(value) ? Math.max(1, Math.floor(value)) : 1
     })
 
     const partitioned = computed(() => partition(props.dataSource, props.targetKeys))
@@ -270,7 +271,13 @@ export default defineComponent({
       }
       return (
         <div class={ns.e('pagination')}>
-          <button type="button" class={ns.e('page-btn')} disabled={current <= 1} onClick={() => setPage(current - 1)}>
+          <button
+            type="button"
+            class={ns.e('page-btn')}
+            aria-label="上一页"
+            disabled={current <= 1}
+            onClick={() => setPage(current - 1)}
+          >
             {renderIconNode('mdi:chevron-left')}
           </button>
           <span class={ns.e('page-info')}>
@@ -279,6 +286,7 @@ export default defineComponent({
           <button
             type="button"
             class={ns.e('page-btn')}
+            aria-label="下一页"
             disabled={current >= pages}
             onClick={() => setPage(current + 1)}
           >
@@ -341,6 +349,7 @@ export default defineComponent({
           <button
             type="button"
             class={[ns.e('operation'), ns.em('operation', 'right')]}
+            aria-label={props.operations[0] || '移到右侧'}
             disabled={props.disabled || leftSelected.value.length === 0}
             onClick={() => move('right')}
           >
@@ -349,6 +358,7 @@ export default defineComponent({
           <button
             type="button"
             class={[ns.e('operation'), ns.em('operation', 'left')]}
+            aria-label={props.operations[1] || '移到左侧'}
             disabled={props.disabled || rightSelected.value.length === 0}
             onClick={() => move('left')}
           >

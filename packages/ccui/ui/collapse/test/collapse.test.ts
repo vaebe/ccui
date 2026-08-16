@@ -25,6 +25,17 @@ describe('collapse', () => {
     expect(wrapper.findAll(ns.e('item')).length).toBe(3)
   })
 
+  it('forwards root attributes', () => {
+    const wrapper = mount(Collapse, {
+      attrs: { id: 'collapse-root', 'aria-label': 'Sections' },
+      slots: {
+        default: () => h(CollapseItem, { name: 'attrs', title: 'Attrs' }),
+      },
+    })
+    expect(wrapper.attributes('id')).toBe('collapse-root')
+    expect(wrapper.attributes('aria-label')).toBe('Sections')
+  })
+
   it('marks active item', () => {
     const wrapper = makeWrapper({ modelValue: ['1'] })
     expect(wrapper.findAll(ns.em('item', 'active')).length).toBe(1)

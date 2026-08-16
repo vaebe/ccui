@@ -1,5 +1,5 @@
 import type { CollapseContext, CollapseProps } from './collapse-types'
-import { computed, defineComponent, provide, ref, toRef, watch } from 'vue'
+import { computed, defineComponent, h, provide, ref, toRef, watch } from 'vue'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { collapseContextKey, collapseProps } from './collapse-types'
 import './collapse.scss'
@@ -19,7 +19,7 @@ export default defineComponent({
   name: 'CCollapse',
   props: collapseProps,
   emits: ['update:modelValue', 'change'],
-  setup(props: CollapseProps, { emit, slots }) {
+  setup(props: CollapseProps, { attrs, emit, slots }) {
     const ns = useNamespace('collapse')
 
     const activeNames = ref<(string | number)[]>(normalize(props.modelValue, props.accordion))
@@ -68,6 +68,7 @@ export default defineComponent({
       [ns.m(`icon-${props.expandIconPosition}`)]: true,
     }))
 
-    return () => <div class={cls.value}>{slots.default?.()}</div>
+    // Keep caller-supplied semantics on the public root while merging the namespace class.
+    return () => h('div', { ...attrs, class: [cls.value, attrs.class] }, slots.default?.())
   },
 })

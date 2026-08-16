@@ -8,6 +8,7 @@ export type TableSortOrder = 'ascend' | 'descend' | null
 export type TableFilterValue = string | number | boolean
 export type TableSelectionType = 'checkbox' | 'radio'
 export type TableSelectionKey = string | number
+export type TableSummaryFixed = boolean | 'top' | 'bottom'
 
 export interface TableFilterOption {
   text: string
@@ -157,6 +158,10 @@ export type TableProps = ExtractPropTypes<typeof tableProps>
  */
 export interface TableColumnsCollector {
   register: (id: symbol, column: TableColumn, order: number) => void
+  /** 同步顶层 TableColumn 的最新声明顺序；ColumnGroup 使用原有注册顺序，不调用此协议。 */
+  updateOrder?: (id: symbol, declarationOrder: number) => void
+  /** 列的 slot 形态变化后请求父 Table 重新读取稳定列代理。 */
+  refresh?: (id: symbol) => void
   unregister: (id: symbol) => void
 }
 
@@ -185,10 +190,24 @@ export const tableColumnGroupCollectorKey = Symbol(
 ) as InjectionKey<TableColumnGroupCollector>
 
 /**
- * Summary slot 注入容器：`<c-table-summary>` 通过此 key 把 default slot 暴露给父 Table 渲染到 tfoot。
+ * Summary 收集器：按实例身份管理 default slot 与 fixed 状态，避免一个实例卸载时清除其他实例。
  */
 export interface TableSummaryCollector {
-  setSummary: (slot: Slot | null) => void
+  register: (
+    id: symbol,
+    slot: Slot | null,
+    fixed: TableSummaryFixed,
+    attrs: Record<string, unknown>,
+    order?: number,
+  ) => void
+  update: (
+    id: symbol,
+    slot: Slot | null,
+    fixed: TableSummaryFixed,
+    attrs: Record<string, unknown>,
+    order?: number,
+  ) => void
+  unregister: (id: symbol) => void
 }
 
 export const tableSummaryCollectorKey = Symbol('TableSummaryCollector') as InjectionKey<TableSummaryCollector>

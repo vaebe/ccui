@@ -33,7 +33,7 @@ export default defineComponent({
     }
 
     const navItemClick = (item: TabProps) => {
-      if (tabsState) {
+      if (tabsState && !item.disabled) {
         // 相同不进行切换
         if (tabsState.active === item.name) {
           return
@@ -47,22 +47,35 @@ export default defineComponent({
       const list = navList.value
       if (!list.length) return
       let nextIndex: number | null = null
+      let direction = 0
       const isHorizontal = ['top', 'bottom'].includes(props.tabPosition)
       if ((isHorizontal && event.key === 'ArrowRight') || (!isHorizontal && event.key === 'ArrowDown')) {
-        nextIndex = (index + 1) % list.length
+        direction = 1
       } else if ((isHorizontal && event.key === 'ArrowLeft') || (!isHorizontal && event.key === 'ArrowUp')) {
-        nextIndex = (index - 1 + list.length) % list.length
+        direction = -1
       } else if (event.key === 'Home') {
-        nextIndex = 0
+        nextIndex = list.findIndex((item) => !item.disabled)
       } else if (event.key === 'End') {
-        nextIndex = list.length - 1
+        for (let i = list.length - 1; i >= 0; i--) {
+          if (!list[i].disabled) {
+            nextIndex = i
+            break
+          }
+        }
+      }
+      if (direction !== 0) {
+        for (let offset = 1; offset <= list.length; offset++) {
+          const candidate = (index + direction * offset + list.length) % list.length
+          if (!list[candidate].disabled) {
+            nextIndex = candidate
+            break
+          }
+        }
       }
       if (nextIndex !== null) {
         event.preventDefault()
         const target = list[nextIndex]
-        if (target && !target.disabled) {
-          navItemClick(target)
-        }
+        if (target) navItemClick(target)
       }
     }
 
@@ -78,7 +91,7 @@ export default defineComponent({
             aria-selected={active}
             aria-controls={`c-tabpanel-${String(item.name)}`}
             aria-disabled={item.disabled || undefined}
-            tabindex={active ? 0 : -1}
+            tabindex={active && !item.disabled ? 0 : -1}
             onClick={() => {
               navItemClick(item)
             }}

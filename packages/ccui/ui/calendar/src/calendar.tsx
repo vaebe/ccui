@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import type { CalendarProps, dateItem } from './calendar-types'
 import dayjs from 'dayjs'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, nextTick, ref, watch } from 'vue'
 import { useConfig } from '../../config-provider/src/config-provider'
 import { useNamespace } from '../../shared/hooks/use-namespace'
 import { emitValue, toDayjs } from '../../shared/utils/date'
@@ -17,6 +17,7 @@ export default defineComponent({
   setup(props: CalendarProps, { emit, slots }) {
     const ns = useNamespace('calendar')
     const cfg = useConfig()
+    const rootRef = ref<HTMLElement | null>(null)
 
     const localeCalendar = computed(() => cfg.locale?.Calendar ?? {})
     const weekList = computed<string[]>(() => {
@@ -80,7 +81,9 @@ export default defineComponent({
     const setCurrentDate = (date: string) => {
       // 只读模式下禁止任何改值（日期格点击、月份切换、header slot 暴露的 setDate/changeMonth 均经此收口）
       if (props.readOnly) return
-      currentDate.value = dayjs(date).format('YYYY-MM-DD')
+      const parsed = dayjs(date)
+      if (!parsed.isValid() || props.disabledDate?.(parsed)) return
+      currentDate.value = parsed.format('YYYY-MM-DD')
       // 月份不同 重新生成日历
       if (!date.includes(currentMonth.value)) {
         currentMonth.value = dayjs(date).format('YYYY-MM')
@@ -94,6 +97,7 @@ export default defineComponent({
 
     // 上一月 下一月 当前月
     const changeMonth = (type: string) => {
+      if (props.readOnly) return
       let month = ''
       // 下个月
       if (type === 'nextMonth') {
@@ -105,13 +109,19 @@ export default defineComponent({
         month = dayjs(currentMonth.value).subtract(1, 'month').format('YYYY-MM')
       }
 
-      // 传入YYYY-MM 格式的月份 格式化后会获取到当月的第一天
-      setCurrentDate(month)
+      if (!month) return
+
+      // 月份导航与日期选择是两个独立动作：月初被禁用时仍允许浏览该月。
+      currentMonth.value = month
+      generatedDate(month)
+
+      const firstDay = dayjs(month).startOf('month')
+      if (!props.disabledDate?.(firstDay)) setCurrentDate(firstDay.format('YYYY-MM-DD'))
     }
 
     // props.modelValue 改变刷新数据
     watch(
-      () => props.modelValue,
+      () => [props.modelValue, props.format],
       () => {
         currentDate.value = parseValue().format('YYYY-MM-DD')
         // 月份不同 重新生成日历
@@ -122,6 +132,20 @@ export default defineComponent({
       },
     )
 
+    const isDateDisabled = (date: string) => props.readOnly || !!props.disabledDate?.(dayjs(date))
+
+    // roving tabindex 在受控值被禁用时仍保留一个可达入口，优先当月的第一个可用日期。
+    const tabStopDate = computed(() => {
+      if (props.readOnly) return null
+      const selected = curDateList.value.find((item) => item.date === currentDate.value)
+      if (selected && !isDateDisabled(selected.date)) return selected.date
+      return (
+        curDateList.value.find((item) => item.date.includes(currentMonth.value) && !isDateDisabled(item.date))?.date ??
+        curDateList.value.find((item) => !isDateDisabled(item.date))?.date ??
+        null
+      )
+    })
+
     // 获取每天 设置样式及操作
     const dateItemList = computed(() => {
       return curDateList.value.map((item) => {
@@ -129,10 +153,13 @@ export default defineComponent({
         const isCurrentMonth = item.date.includes(currentMonth.value)
 
         const isSelected = currentDate.value === item.date
+        const itemDate = dayjs(item.date)
+        const isDisabled = isDateDisabled(item.date)
         // 计算 绑定的class
         const className = {
           'current-month': isCurrentMonth,
           'current-date': isSelected,
+          'is-disabled': isDisabled,
           [ns.em('day-box', 'day')]: true,
         }
 
@@ -144,17 +171,32 @@ export default defineComponent({
 
         return (
           <div
-            role="button"
-            tabindex={0}
+            role="gridcell"
+            tabindex={tabStopDate.value === item.date ? 0 : -1}
             aria-selected={dateCellOpts.isSelected}
+            aria-disabled={isDisabled}
+            aria-label={dateCellOpts.date}
+            aria-current={itemDate.isSame(dayjs(), 'day') ? 'date' : undefined}
             onClick={() => {
+              if (isDisabled) return
               setCurrentDate(dateCellOpts.date)
             }}
             onKeydown={(e: KeyboardEvent) => {
+              if (isDisabled) return
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 setCurrentDate(dateCellOpts.date)
+                return
               }
+              const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key]
+              if (offset === undefined) return
+              e.preventDefault()
+              const target = itemDate.add(offset, 'day')
+              if (props.disabledDate?.(target)) return
+              setCurrentDate(target.format('YYYY-MM-DD'))
+              nextTick(() => {
+                ;(rootRef.value?.querySelector('[role="gridcell"][tabindex="0"]') as HTMLElement | null)?.focus()
+              })
             }}
             class={[className, props.classNames?.cell]}
             style={props.styles?.cell}
@@ -165,8 +207,22 @@ export default defineComponent({
       })
     })
 
+    const dateRows = computed(() =>
+      Array.from({ length: 6 }, (_, rowIndex) => (
+        <div role="row" class={ns.e('day-row')}>
+          {dateItemList.value.slice(rowIndex * 7, rowIndex * 7 + 7)}
+        </div>
+      )),
+    )
+
     // header 周 列表
-    const weekItemList = computed(() => weekList.value.map((item) => <div class={ns.em('week', 'item')}>{item}</div>))
+    const weekItemList = computed(() =>
+      weekList.value.map((item) => (
+        <div role="columnheader" class={ns.em('week', 'item')}>
+          {item}
+        </div>
+      )),
+    )
 
     const monthLabel = computed(() => dayjs(currentMonth.value).format(monthFormat.value))
 
@@ -178,6 +234,7 @@ export default defineComponent({
             <c-button
               type="primary"
               plain={true}
+              disabled={props.readOnly}
               onClick={() => {
                 changeMonth('lastMonth')
               }}
@@ -187,6 +244,7 @@ export default defineComponent({
             <c-button
               type="primary"
               plain={true}
+              disabled={props.readOnly || !!props.disabledDate?.(dayjs())}
               onClick={() => {
                 setCurrentDate(dayjs().format('YYYY-MM-DD'))
               }}
@@ -196,6 +254,7 @@ export default defineComponent({
             <c-button
               type="primary"
               plain={true}
+              disabled={props.readOnly}
               onClick={() => {
                 changeMonth('nextMonth')
               }}
@@ -218,11 +277,19 @@ export default defineComponent({
     }))
 
     return () => (
-      <div class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
+      <div ref={rootRef} class={[ns.b(), props.classNames?.root]} style={props.styles?.root}>
         {slots.header ? slots.header(headerScope.value) : defaultHeader()}
-        <div class={ns.e('week')}>{weekItemList.value}</div>
-        <div class={[ns.e('day-box'), props.classNames?.body]} style={props.styles?.body}>
-          {dateItemList.value}
+        <div
+          role="grid"
+          aria-readonly={props.readOnly}
+          aria-label={monthLabel.value}
+          class={[ns.e('day-box'), props.classNames?.body]}
+          style={props.styles?.body}
+        >
+          <div role="row" class={ns.e('week')}>
+            {weekItemList.value}
+          </div>
+          {dateRows.value}
         </div>
       </div>
     )

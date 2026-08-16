@@ -9,7 +9,7 @@ import type {
   CascaderRawValue,
   CascaderValuePath,
 } from './cascader-types'
-import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import { autoUpdate, flip, offset, shift, size, useFloating } from '@floating-ui/vue'
 import {
   computed,
   defineComponent,
@@ -106,6 +106,18 @@ function toColumnItem(opt: CascaderOption, fn: ResolvedFieldNames): CascaderColu
   }
 }
 
+/** @internal 统一消费 loadData Promise，并只在组件仍存活时提交状态。 */
+export function settleCascaderLoadData(
+  result: Promise<void> | void,
+  isActive: () => boolean,
+  onSettled: () => void,
+): void {
+  const commit = () => {
+    if (isActive()) onSettled()
+  }
+  void Promise.resolve(result).then(commit, commit)
+}
+
 export default defineComponent({
   name: 'CCascader',
   props: cascaderProps,
@@ -120,6 +132,7 @@ export default defineComponent({
     const popupRef = ref<HTMLElement | null>(null)
     const inputRef = ref<HTMLInputElement | null>(null)
     const open = shallowRef(false)
+    let unmounted = false
     const formItem = inject<FormItemInjectedContext | null>(formItemInjectionKey, null)
 
     const fn = computed(() => resolveFieldNames(props.fieldNames))
@@ -173,7 +186,13 @@ export default defineComponent({
       setLoading(item.raw, true)
       try {
         const ret = props.loadData([...pathUpTo, item.raw])
-        Promise.resolve(ret).finally(() => setLoading(item.raw, false))
+        // loadData 是用户回调：拒绝应当只结束 loading，不能制造未处理的
+        // Promise rejection；组件卸载后也不再回写响应式状态。
+        settleCascaderLoadData(
+          ret,
+          () => !unmounted,
+          () => setLoading(item.raw, false),
+        )
       } catch {
         setLoading(item.raw, false)
       }
@@ -265,7 +284,17 @@ export default defineComponent({
       placement: placement as never,
       open,
       whileElementsMounted: autoUpdate,
-      middleware: [offset(4), flip(), shift({ padding: 8 })],
+      middleware: [
+        offset(4),
+        flip(),
+        size({
+          padding: 8,
+          apply({ availableWidth, elements }) {
+            elements.floating.style.maxWidth = `${Math.max(0, availableWidth)}px`
+          },
+        }),
+        shift({ padding: 8 }),
+      ],
       strategy: computed(() => (teleported.value ? 'fixed' : 'absolute')) as never,
     })
 
@@ -321,6 +350,13 @@ export default defineComponent({
         openPopup()
       }
     }
+
+    watch(
+      () => props.disabled,
+      (disabled) => {
+        if (disabled) closePopup()
+      },
+    )
 
     function emitChange(path: CascaderOption[]) {
       const value: CascaderValuePath = path.map((opt) => getOptionValue(opt, fn.value))
@@ -398,6 +434,9 @@ export default defineComponent({
       if (!showSearchActive.value) return
       const v = (e.target as HTMLInputElement).value
       searchValue.value = v
+      // 查询变化后旧结果/列索引可能已不存在，等待下一次方向键重新定位。
+      focusedColumn.value = -2
+      focusedIndex.value = -1
       if (v && !open.value) openPopup()
     }
 
@@ -559,6 +598,8 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
+      unmounted = true
+      loadingSet.value = new Set()
       document.removeEventListener('mousedown', onClickOutside, true)
     })
 
@@ -578,6 +619,27 @@ export default defineComponent({
       const path = [...activePath.value.slice(0, columnIndex), item.raw]
       return checkedKeys.value.has(pathKey(path))
     }
+
+    function itemId(columnIndex: number, itemIndex: number): string {
+      return `${popupId}-column-${columnIndex}-option-${itemIndex}`
+    }
+
+    function searchItemId(itemIndex: number): string {
+      return `${popupId}-search-option-${itemIndex}`
+    }
+
+    const activeDescendant = computed(() => {
+      if (!open.value || focusedIndex.value < 0) return undefined
+      if (focusedColumn.value === -1) {
+        return searchResults.value[focusedIndex.value] ? searchItemId(focusedIndex.value) : undefined
+      }
+      if (focusedColumn.value >= 0) {
+        return columns.value[focusedColumn.value]?.[focusedIndex.value]
+          ? itemId(focusedColumn.value, focusedIndex.value)
+          : undefined
+      }
+      return undefined
+    })
 
     function renderItemCheckbox(columnIndex: number, item: CascaderColumnItem) {
       const checked = isItemChecked(columnIndex, item)
@@ -651,12 +713,13 @@ export default defineComponent({
         )
       }
       return (
-        <ul class={ns.e('column')} role="group">
+        <ul class={ns.e('column')} role="group" aria-label={`第 ${columnIndex + 1} 级`}>
           {items.map((item, idx) => {
             const active = isItemActive(columnIndex, item)
             const focused = focusedColumn.value === columnIndex && focusedIndex.value === idx
             return (
               <li
+                id={itemId(columnIndex, idx)}
                 class={[
                   ns.e('item'),
                   active && ns.em('item', 'active'),
@@ -713,7 +776,7 @@ export default defineComponent({
         )
       }
       return (
-        <ul class={[ns.e('column'), ns.em('column', 'search')]} role="listbox">
+        <ul class={[ns.e('column'), ns.em('column', 'search')]} role="presentation">
           {results.map((path, idx) => {
             const labels = path.map((n) => getOptionLabel(n, fn.value))
             const disabled = path.some((n) => isOptionDisabled(n, fn.value))
@@ -721,13 +784,16 @@ export default defineComponent({
             const leaf = path[path.length - 1]
             return (
               <li
+                id={searchItemId(idx)}
                 class={[
                   ns.e('search-item'),
                   disabled && ns.em('search-item', 'disabled'),
                   focused && ns.em('search-item', 'focused'),
                 ]}
                 role="option"
-                aria-selected={focused}
+                aria-selected={
+                  props.multiple ? checkedKeys.value.has(pathKey(path)) : pathKey(path) === pathKey(selectedPath.value)
+                }
                 aria-disabled={disabled}
                 onClick={() => pickSearchResult(path)}
               >
@@ -758,8 +824,9 @@ export default defineComponent({
           id: popupId,
           class: [popupCls, props.classNames?.popup],
           style: [floatingStyles.value, props.styles?.popup] as any,
-          role: 'dialog',
+          role: 'listbox',
           'aria-label': props.placeholder || '请选择',
+          'aria-multiselectable': props.multiple || undefined,
         },
         [content],
       )
@@ -824,11 +891,15 @@ export default defineComponent({
             placeholder={inputPlaceholder.value}
             value={props.multiple ? searchValue.value : inputValueShown.value}
             role="combobox"
-            aria-haspopup="tree"
+            aria-haspopup="listbox"
             aria-expanded={open.value}
             aria-controls={popupId}
+            aria-activedescendant={activeDescendant.value}
             onFocus={() => emit('focus')}
-            onBlur={() => emit('blur')}
+            onBlur={() => {
+              emit('blur')
+              formItem?.validate('blur')
+            }}
             onInput={onInputInput}
             onKeydown={onInputKeydown}
           />

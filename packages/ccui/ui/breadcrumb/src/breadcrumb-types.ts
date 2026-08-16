@@ -25,7 +25,7 @@ export const breadcrumbItemProps = {
   },
   separator: {
     type: String,
-    default: '',
+    default: undefined,
   },
 } as const
 

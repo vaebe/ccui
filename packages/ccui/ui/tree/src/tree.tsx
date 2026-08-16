@@ -117,8 +117,8 @@ export default defineComponent({
 
     const virtualEnabled = computed(() => props.virtualScroll && visibleNodes.value.length > 0)
     const virtual = useVirtualList(visibleNodes, {
-      itemHeight: props.virtualItemHeight,
-      maxHeight: props.virtualMaxHeight,
+      itemHeight: toRef(props, 'virtualItemHeight'),
+      maxHeight: toRef(props, 'virtualMaxHeight'),
     })
 
     const runLoadData = async (node: FlattenedTreeNode, event?: Event) => {

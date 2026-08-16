@@ -71,6 +71,18 @@ describe('tabs', () => {
     expect(wrapper.find(baseClass).classes()).toContain('ccui-tabs')
   })
 
+  it('applies the legacy cssClass and customWidth props to the root', () => {
+    const wrapper = mount(Tabs, {
+      props: {
+        cssClass: 'account-tabs',
+        customWidth: '24rem',
+      },
+    })
+
+    expect(wrapper.classes()).toContain('account-tabs')
+    expect(wrapper.attributes('style')).toContain('width: 24rem')
+  })
+
   it('renders tab content correctly when active', () => {
     const wrapper = mount(Tabs, {
       props: {
@@ -154,6 +166,42 @@ describe('tabs', () => {
     await wrapper.find('p').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  it('updates the active tab when modelValue changes externally', async () => {
+    const wrapper = mount(Tabs, {
+      props: { modelValue: 'tab1' },
+      slots: {
+        default: () => [
+          h(Tab, { name: 'tab1', label: 'Tab 1' }, () => h('div', { class: 'content-1' }, 'One')),
+          h(Tab, { name: 'tab2', label: 'Tab 2' }, () => h('div', { class: 'content-2' }, 'Two')),
+        ],
+      },
+    })
+
+    await wrapper.setProps({ modelValue: 'tab2' })
+    expect(wrapper.find('.content-1').exists()).toBe(false)
+    expect(wrapper.find('.content-2').exists()).toBe(true)
+  })
+
+  it('does not activate disabled tabs and skips them during keyboard navigation', async () => {
+    const wrapper = mount(Tabs, {
+      props: { modelValue: 'tab1' },
+      slots: {
+        default: () => [
+          h(Tab, { name: 'tab1', label: 'Tab 1' }),
+          h(Tab, { name: 'tab2', label: 'Tab 2', disabled: true }),
+          h(Tab, { name: 'tab3', label: 'Tab 3' }),
+        ],
+      },
+    })
+    await nextTick()
+    const tabs = wrapper.findAll('[role="tab"]')
+
+    await tabs[1].trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    await tabs[0].trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab3'])
   })
 
   it('exposes tablist tab and tabpanel aria roles linking each other', async () => {

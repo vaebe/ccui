@@ -22,9 +22,6 @@
   }
 
   &__day-box {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
     width: 100%;
 
     &--day {
@@ -48,10 +45,21 @@
       background: $ccui-list-item-active-hover-bg;
     }
 
+    &--day.is-disabled {
+      color: $ccui-color-text-disabled;
+      cursor: not-allowed;
+      background: transparent;
+    }
+
     .current-date {
       color: $ccui-list-item-active-text;
       background: $ccui-list-item-active-bg;
     }
+  }
+
+  &__day-row {
+    display: flex;
+    width: 100%;
   }
 
   &__week {
