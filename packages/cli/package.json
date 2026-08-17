@@ -32,8 +32,7 @@
     "prepare-release": "node ./index.js prepare-release",
     "release": "node ./index.js prepare-release",
     "cli": "node ./index.js create",
-    "cli:create": "node ./index.js create -t component",
-    "changelog": "conventional-changelog -k '../ccui/package.json' -p angular -i CHANGELOG.md -s"
+    "cli:create": "node ./index.js create -t component"
   },
   "dependencies": {
     "@vaebe/ccui-theme": "workspace:*",
@@ -46,7 +45,6 @@
     "@vitejs/plugin-vue-jsx": "^5.1.5",
     "chalk": "^4.1.2",
     "commander": "^14.0.2",
-    "conventional-changelog-cli": "^5.0.0",
     "inquirer": "^12.10.0",
     "ora": "^5.4.1",
     "vite": "catalog:"

@@ -13,25 +13,31 @@
 ## 一键发布
 
 ```bash
-pnpm release                                          # 交互选版本 + dist-tag=beta 预发布
-pnpm release:dry                                      # 跳过 bump/changelog，只走构建发布预演
-node scripts/publish.mjs --release 2.0.0 --tag latest # 指定版本 + 正式发版（dist-tag=latest）
-node scripts/publish.mjs --release patch              # 非交互 patch 升版
-node scripts/publish.mjs --skip-bump                  # 复用已 bump 好的版本号
-node scripts/publish.mjs --skip-login                 # 已确认 session 有效时跳过登录预检
+pnpm release                                               # 交互选版本 + dist-tag=beta
+pnpm release:dry                                           # 完整检查、构建与 pack，不访问 registry
+node scripts/publish.mjs --release 2.2.0 --tag latest      # 指定版本 + 正式版
+node scripts/publish.mjs --release patch                   # 非交互 patch 升版
+node scripts/publish.mjs --use-current-version --resume    # 中断后续发
 ```
 
 脚本执行顺序：
 
-1. **登录预检** —— `npm whoami` 失败时引导 `npm login --auth-type=web`（`--skip-login` 跳过）
-2. **工作区检查 + 版本号 bump** —— 工作区必须干净（否则拒绝）；用 `bumpp` 一把同步 bump 三个发布包的 version（交互选档，或 `--release patch|minor|major|2.0.0` 非交互）。`--skip-bump` 复用现有版本号，`--dry-run` 跳过本步。
-3. **版本一致性校验** —— 三包 version 必须相等，否则拒绝
-4. **顺序构建**：
+1. **发布来源检查** —— 真实发布只能从 `main` 执行；脚本 fetch 后要求 `HEAD === origin/main`。续发仅额外允许本地存在一个尚未推送的 release commit。
+2. **工作区与质量门禁** —— 除允许提前编辑的根 `CHANGELOG.md` 外，工作区必须干净；在修改版本文件前依次执行 `pnpm check`、`pnpm test`、`pnpm check:e2e-coverage`。
+3. **版本号 bump** —— 用 `bumpp` 同步更新三个公开包版本。
+4. **Changelog 检查** —— 根 `CHANGELOG.md` 必须存在 `## [目标版本]` 标题。它是唯一正式发布说明，会和三个版本文件一起进入 release commit。
+5. **本地 release commit** —— 构建和发包前固定源码版本；成功前不推送。
+6. **顺序构建**：
    - icons：`pnpm --filter @vaebe/ccui-icons build`（tsdown 出 `dist/`）
-   - ccui：`cli create -t ccui` → `cli build` → `cli prepare-release`（生成 `packages/ccui/build/package.json`，展开 `workspace:` 协议）
+   - ccui：`cli generate:theme` → `cli create -t ccui` → `cli build` → `cli release`
    - resolver：`pnpm --filter @vaebe/unplugin-vue-components-ccui build`
-5. **顺序 publish**（依赖顺序：icons → ccui → resolver）
-6. **git tag** `v<version>` + `git push origin v<version>`
+   - consumer fixture：验证主入口、组件 subpath、CSS 与 resolver 能被下游构建
+7. **固定 pack 产物** —— 三个包全部通过 `pnpm pack` 生成临时 tarball，发布阶段不再重新构建。
+8. **Registry 预检** —— 普通发布要求三个目标版本都不存在；只有显式 `--resume` 才能跳过已存在包。
+9. **隔离发布** —— 先发布到 `release-<version>` 临时 dist-tag；三个包全部成功后，再统一提升到目标 `beta` / `latest`。
+10. **Git 收尾** —— 创建 annotated tag `v<version>`，最后 push release commit 与 tag。
+
+`pnpm release:dry` 会运行质量门禁、构建和 pack，但不会 fetch、bump、查询 registry、创建 commit/tag、修改 dist-tag 或 push。npm 的 `publish --dry-run` 仍会查询 registry 并对已发布版本报 E409，因此离线预演以三个固定 tarball 成功生成为完成标准。
 
 ## 2FA / 鉴权（重点）
 
@@ -97,7 +103,13 @@ npm login --auth-type=web
 
 ### `E409 cannot publish over previously published versions`
 
-版本号撞了。bump 三包 version 后重试。脚本会**致命退出**不重试，防止误覆盖。
+普通发布遇到版本占用会终止，防止误把其他发布当作当前批次。若确认是本脚本中断造成的部分发布，保持 release commit 不变并执行：
+
+```bash
+node scripts/publish.mjs --use-current-version --resume --tag beta
+```
+
+续发会重新检查、构建和 pack，跳过 registry 已存在的包，然后补发其余包并统一提升最终 dist-tag。
 
 ### `ERR_PNPM_CATALOG_ENTRY_NOT_FOUND_FOR_SPEC`
 
@@ -125,4 +137,24 @@ packages/resolver/package.json
 npx bumpp packages/icons/package.json packages/ccui/package.json packages/resolver/package.json
 ```
 
-之后用 `node scripts/publish.mjs --skip-bump` 复用已 bump 好的版本号发布。
+提前升版时必须同时更新根 `CHANGELOG.md`，把版本文件和 Changelog 提交到 `main`，然后使用：
+
+```bash
+node scripts/publish.mjs --use-current-version
+```
+
+旧参数 `--skip-bump` 目前仍是兼容别名，但会显示弃用警告。
+
+## Changelog 约定
+
+- 根 `CHANGELOG.md` 是唯一正式发布记录；`packages/*/CHANGELOG.md` 不参与发布。
+- 开发期间把内容写在 `## [Unreleased]`。
+- 发布前将其整理为 `## [x.y.z] - YYYY-MM-DD`；脚本会校验目标版本标题并纳入 release commit。
+- `--yes` 不会跳过 Changelog 校验，因此非交互发布必须提前准备好目标版本标题。
+
+## 中断恢复边界
+
+- release commit 已创建但尚未发布：修复环境后使用 `--use-current-version --resume`。
+- 部分包已经发布到临时 tag：同一命令会显式跳过已存在版本并继续。
+- 三包已发布但最终 tag 或 Git push 失败：续发会幂等地重做 dist-tag 提升并补推 Git。
+- 不确认 registry 中的版本是否属于当前 release commit 时，不要使用 `--resume`。

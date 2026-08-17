@@ -9,7 +9,7 @@
     "release": "node scripts/publish.mjs",
     "release:dry": "node scripts/publish.mjs --dry-run",
     "check": "vp run --filter ccui-cli generate:meta && vp check",
-    "test": "vp run --filter @vaebe/ccui --filter @vaebe/unplugin-vue-components-ccui test",
+    "test": "vp run --filter @vaebe/ccui --filter @vaebe/unplugin-vue-components-ccui test && node --test scripts/publish.test.mjs",
     "e2e:install": "pnpm --filter @vaebe/ccui-e2e exec playwright install chromium",
     "check:e2e-coverage": "node packages/e2e/scripts/check-coverage.mjs",
     "test:e2e": "pnpm check:e2e-coverage && vp run --filter @vaebe/ccui-e2e test:e2e",

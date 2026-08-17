@@ -125,18 +125,19 @@ vp lint . --fix
 仓库通过根目录的 `scripts/publish.mjs` 一键发布 3 个公开包到 npm（`@vaebe/ccui` / `@vaebe/ccui-icons` / `@vaebe/unplugin-vue-components-ccui`）。
 
 ```bash
-pnpm release          # 默认 dist-tag=beta
-pnpm release:dry      # 走全流程但不真正 publish
-node scripts/publish.mjs --tag latest    # 正式发版
+pnpm release                                      # 默认 dist-tag=beta
+pnpm release:dry                                  # 完整构建/打包预演，不接触 registry
+node scripts/publish.mjs --release 2.2.0 --tag latest
+node scripts/publish.mjs --use-current-version --resume # 中断后显式续发
 ```
 
 脚本会自动：
 
-1. 预检 npm 登录态；缺失会引导走 `npm login --auth-type=web`（passkey / Touch ID / WebAuthn）
-2. 校验三个发布包版本号一致
-3. 按依赖顺序构建：icons → ccui → resolver
-4. 顺序 publish；2FA 失败时给出 `[r]` 重登 / `[o]` 兜底输 TOTP / `[x]` 终止三选项
-5. 打 git tag `v<version>` 并 push origin
+1. 校验 `main`、`origin/main` 和工作区，运行静态检查、单测及 E2E 清单检查
+2. 同步三包版本、校验根 Changelog，创建本地 release commit
+3. 按依赖顺序构建并生成固定 tarball：icons → ccui → resolver
+4. 使用版本专属临时 dist-tag 发布；三包全部成功后统一提升到 `beta` / `latest`
+5. 创建 annotated tag `v<version>`，最后推送 release commit 与 tag
 
 > npm 自 2025-09 起停止接受新的 TOTP 注册，全面推 WebAuthn / passkey。
 > 老 TOTP 账号仍可用，发布失败时按 `o` 输 6 位码兜底。

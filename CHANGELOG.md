@@ -3,6 +3,15 @@
 本项目变更遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格。
 2.x 是当前开发分支，对照 main 主分支记录。
 
+## [Unreleased]
+
+### Changed
+
+- 发布流程增加 main/远端同步、质量门禁、固定 tarball 和 npm 版本占用预检。
+- 三个公开包先发布到版本专属临时 dist-tag，全部成功后再统一提升到 `beta` / `latest`。
+- 中断发布改由 `--use-current-version --resume` 显式续发，避免普通版本冲突被静默跳过。
+- 根 `CHANGELOG.md` 成为唯一正式发布说明；生产文档仅在 `main` push 时部署。
+
 ## [2.0.1-beta.4] (unreleased)
 
 v2 beta 阶段集中清理：把 v2 引入的 Ant 风格新名（v2 beta 期间引入的 deprecation 兼容层）整批删除，prop 命名按"哪种更顺 Vue 习惯"做反向决策。**v2 还未 GA，按 beta 内部演进处理，不 bump major**。
