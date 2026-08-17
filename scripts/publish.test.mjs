@@ -5,6 +5,7 @@ import {
   classifyRegistryLookup,
   createStagingTag,
   isAllowedReleaseHead,
+  parsePorcelainPaths,
 } from './publish-helpers.mjs'
 
 test('changelogHasVersion 只接受独立的目标版本标题', () => {
@@ -29,4 +30,9 @@ test('isAllowedReleaseHead 仅为续发放行一个本地 release commit', () =>
   assert.equal(isAllowedReleaseHead({ head: 'b', remoteHead: 'a', parentHead: 'a', resume: true }), true)
   assert.equal(isAllowedReleaseHead({ head: 'c', remoteHead: 'a', parentHead: 'b', resume: true }), false)
   assert.equal(isAllowedReleaseHead({ head: 'b', remoteHead: 'a', parentHead: 'a', resume: false }), false)
+})
+
+test('parsePorcelainPaths 不会截断首个未暂存文件路径', () => {
+  const output = ' M CHANGELOG.md\n M packages/ccui/package.json\n'
+  assert.deepEqual(parsePorcelainPaths(output), ['CHANGELOG.md', 'packages/ccui/package.json'])
 })

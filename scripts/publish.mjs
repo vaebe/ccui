@@ -27,6 +27,7 @@ import {
   classifyRegistryLookup,
   createStagingTag,
   isAllowedReleaseHead,
+  parsePorcelainPaths,
 } from './publish-helpers.mjs'
 
 // Windows 需要 shell 才能找到 pnpm.cmd 一类 shim；所有参数均来自仓库常量或受控版本字段。
@@ -148,12 +149,13 @@ function gitText(commandArgs, { optional = false } = {}) {
 
 /** 返回 porcelain 状态中的仓库相对路径。 */
 function changedPaths() {
-  const output = gitText(['status', '--porcelain', '--untracked-files=all'])
-  if (!output) return []
-  return output.split('\n').map((line) => {
-    const path = line.slice(3)
-    return path.includes(' -> ') ? path.split(' -> ').at(-1) : path
-  })
+  // porcelain 首列允许为空格，不能复用会 trim 的 gitText，否则首条路径会少一个字符。
+  const result = runCapture('git', ['status', '--porcelain', '--untracked-files=all'])
+  if (result.status !== 0) {
+    process.stderr.write(result.stderr || '')
+    fatal('git status --porcelain --untracked-files=all 失败')
+  }
+  return parsePorcelainPaths(result.stdout || '')
 }
 
 /** 限定当前工作区只能包含发布流程允许的文件变化。 */

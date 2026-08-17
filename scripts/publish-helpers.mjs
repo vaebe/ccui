@@ -8,6 +8,21 @@ export function changelogHasVersion(content, version) {
 }
 
 /**
+ * 从 `git status --porcelain` 原始输出提取仓库相对路径。
+ * 首列空格是 Git 状态的一部分，调用方不得先 trim，否则第一条路径会被截断。
+ */
+export function parsePorcelainPaths(output) {
+  if (!output) return []
+  return output
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      const path = line.slice(3)
+      return path.includes(' -> ') ? path.split(' -> ').at(-1) : path
+    })
+}
+
+/**
  * 为一次发布生成不会与公开 beta/latest 混用的临时 dist-tag。
  */
 export function createStagingTag(version) {
