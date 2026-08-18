@@ -84,6 +84,8 @@
 
   &--block {
     display: flex;
+    // block 模式至少占满可用宽度，选项更宽时由完整内容撑开根元素。
+    min-width: max-content;
 
     .#{$cls-prefix}-segmented__group {
       width: 100%;
